@@ -13,9 +13,15 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_participants', name: 'last_read_message', type: ColumnType::BIGINT)]
+#[AddColumn(table: 'talk_participants', name: 'last_mention_message', type: ColumnType::BIGINT)]
+#[DataCleansing(table: 'talk_participants', description: 'set last read message from comment read markers')]
 class Version7000Date20190724121136 extends SimpleMigrationStep {
 
 	public function __construct(

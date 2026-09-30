@@ -11,6 +11,7 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
@@ -18,6 +19,7 @@ use Override;
 /**
  * Remove createdAt column from scheduled messages as the property is overlapping with snowflake aware entity now
  */
+#[DropColumn(table: 'talk_scheduled_msg', name: 'created_at')]
 class Version23000Date20260107162758 extends SimpleMigrationStep {
 
 	/**

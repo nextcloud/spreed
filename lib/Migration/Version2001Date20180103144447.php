@@ -12,9 +12,22 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'active_since', type: ColumnType::DATETIME)]
+#[AddColumn(table: 'talk_rooms', name: 'active_guests', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_participants', name: 'user_id', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_participants', name: 'room_id', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_participants', name: 'last_ping', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_participants', name: 'session_id', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_participants', name: 'participant_type', type: ColumnType::SMALLINT)]
+#[AddColumn(table: 'talk_participants', name: 'in_call', type: ColumnType::BOOLEAN)]
+#[DataCleansing(table: 'talk_rooms', description: 'copy values from camelCase columns to snake_case columns')]
+#[DataCleansing(table: 'talk_participants', description: 'copy values from camelCase columns to snake_case columns')]
 class Version2001Date20180103144447 extends SimpleMigrationStep {
 
 	public function __construct(

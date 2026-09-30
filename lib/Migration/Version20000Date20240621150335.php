@@ -11,9 +11,15 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(
+	table: 'talk_bans',
+	columns: ['id', 'moderator_actor_type', 'moderator_actor_id', 'moderator_displayname', 'banned_actor_type', 'banned_actor_id', 'banned_displayname', 'room_id', 'banned_time', 'internal_note'],
+	description: 'bans of actors from conversations'
+)]
 class Version20000Date20240621150335 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

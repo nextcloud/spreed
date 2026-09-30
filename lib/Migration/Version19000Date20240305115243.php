@@ -12,12 +12,16 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Add creation datetime and meta-data columns to the proxy cache
  */
+#[AddColumn(table: 'talk_proxy_messages', name: 'creation_datetime', type: ColumnType::DATETIME)]
+#[AddColumn(table: 'talk_proxy_messages', name: 'meta_data', type: ColumnType::TEXT)]
 class Version19000Date20240305115243 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

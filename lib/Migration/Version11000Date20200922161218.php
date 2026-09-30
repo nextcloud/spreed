@@ -13,9 +13,15 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_bridges', name: 'enabled', type: ColumnType::SMALLINT)]
+#[AddColumn(table: 'talk_bridges', name: 'pid', type: ColumnType::INTEGER)]
+#[DataCleansing(table: 'talk_bridges', description: 'move enabled and pid out of json_values')]
 class Version11000Date20200922161218 extends SimpleMigrationStep {
 
 	public function __construct(

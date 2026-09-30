@@ -11,9 +11,11 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropColumn(table: 'talk_rooms', name: 'active_guests')]
 class Version22000Date20250526102909 extends SimpleMigrationStep {
 
 	/**

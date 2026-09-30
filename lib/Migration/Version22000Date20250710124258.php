@@ -12,6 +12,11 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DropColumn;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
@@ -19,6 +24,13 @@ use Override;
 /**
  * Add the last activity (for sorting) and thread name for future feature to name a thread
  */
+#[AddColumn(table: 'talk_threads', name: 'last_activity', type: ColumnType::DATETIME)]
+#[AddColumn(table: 'talk_threads', name: 'name', type: ColumnType::STRING)]
+#[AddIndex(table: 'talk_threads', type: IndexType::INDEX, description: 'index on last activity')]
+#[DropColumn(table: 'talk_thread_attendees', name: 'last_read_message')]
+#[DropColumn(table: 'talk_thread_attendees', name: 'last_mention_message')]
+#[DropColumn(table: 'talk_thread_attendees', name: 'last_mention_direct')]
+#[DropColumn(table: 'talk_thread_attendees', name: 'read_privacy')]
 class Version22000Date20250710124258 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

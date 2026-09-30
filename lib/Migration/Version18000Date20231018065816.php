@@ -12,9 +12,11 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_consent', columns: ['id', 'token', 'actor_type', 'actor_id', 'date_time'], description: 'recording consent')]
 class Version18000Date20231018065816 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

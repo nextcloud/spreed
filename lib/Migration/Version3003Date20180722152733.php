@@ -9,9 +9,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropColumn(table: 'talk_participants', name: 'in_call')]
 class Version3003Date20180722152733 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

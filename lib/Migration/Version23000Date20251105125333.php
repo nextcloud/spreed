@@ -12,10 +12,19 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
+#[CreateTable(
+	table: 'talk_scheduled_msg',
+	columns: ['id', 'room_id', 'actor_id', 'actor_type', 'message', 'message_type', 'meta_data', 'thread_id', 'parent_id', 'send_at'],
+	description: 'scheduled chat messages'
+)]
+#[AddColumn(table: 'talk_attendees', name: 'has_scheduled_messages', type: ColumnType::BOOLEAN)]
 class Version23000Date20251105125333 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

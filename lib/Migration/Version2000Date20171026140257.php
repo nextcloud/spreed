@@ -11,10 +11,12 @@ namespace OCA\Talk\Migration;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Security\ISecureRandom;
 
+#[DataCleansing(table: 'spreedme_rooms', description: 'generate tokens for rooms without a token')]
 class Version2000Date20171026140257 extends SimpleMigrationStep {
 
 	/** @var string[] */

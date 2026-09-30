@@ -13,12 +13,20 @@ use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\CreateTable;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Add table to queue federation notifications to retry
  */
+#[CreateTable(
+	table: 'talk_retry_ocm',
+	columns: ['id', 'remote_server', 'num_attempts', 'next_retry', 'notification_type', 'resource_type', 'provider_id', 'notification'],
+	description: 'retry queue for failed federation notifications'
+)]
+#[DataCleansing(table: 'jobs', description: 'remove the former retry background job')]
 class Version19000Date20240312105627 extends SimpleMigrationStep {
 	public function __construct(
 		private readonly IDBConnection $connection,

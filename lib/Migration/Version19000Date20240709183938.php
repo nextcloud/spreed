@@ -12,6 +12,7 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -19,6 +20,9 @@ use OCP\Migration\SimpleMigrationStep;
  * Heal federation from before Nextcloud 29.0.4 which sends requests
  * without the protocol on the remote in case it is https://
  */
+#[DataCleansing(table: 'talk_invitations', description: 'add missing https:// protocol to remote_server_url')]
+#[DataCleansing(table: 'talk_proxy_messages', description: 'add missing https:// protocol to remote_server_url')]
+#[DataCleansing(table: 'talk_rooms', description: 'add missing https:// protocol to remote_server')]
 class Version19000Date20240709183938 extends SimpleMigrationStep {
 	public function __construct(
 		private readonly IDBConnection $connection,

@@ -10,9 +10,14 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddIndex(table: 'talk_bots_server', type: IndexType::UNIQUE, description: 'unique url hash')]
+#[AddIndex(table: 'talk_bots_server', type: IndexType::UNIQUE, description: 'unique secret')]
+#[AddIndex(table: 'talk_bots_conversation', type: IndexType::UNIQUE, description: 'unique bot per conversation')]
 class Version18000Date20230824123939 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

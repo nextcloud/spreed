@@ -14,9 +14,13 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\CreateTable;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_attachments', columns: ['id', 'room_id', 'message_id', 'message_time', 'object_type', 'actor_type', 'actor_id'])]
+#[DataCleansing(table: 'talk_attachments', description: 'import shared objects from chat messages')]
 class Version14000Date20220330141647 extends SimpleMigrationStep {
 
 	public function __construct(

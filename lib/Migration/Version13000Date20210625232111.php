@@ -12,9 +12,14 @@ use Closure;
 use Doctrine\DBAL\Schema\SchemaException;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_attendees', name: 'access_token', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_attendees', name: 'remote_id', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_rooms', name: 'server_url', type: ColumnType::STRING)]
 class Version13000Date20210625232111 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

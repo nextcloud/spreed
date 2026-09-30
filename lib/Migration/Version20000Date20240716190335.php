@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddIndex(table: 'talk_invitations', type: IndexType::INDEX, description: 'index on user and state')]
 class Version20000Date20240716190335 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

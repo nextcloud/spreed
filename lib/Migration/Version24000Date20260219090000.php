@@ -12,10 +12,13 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
+#[AddColumn(table: 'talk_rooms', name: 'attributes', type: ColumnType::BIGINT)]
 class Version24000Date20260219090000 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

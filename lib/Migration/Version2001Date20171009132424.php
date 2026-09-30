@@ -10,9 +10,13 @@ namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'spreedme_rooms', name: 'activeSince', type: ColumnType::DATETIME)]
+#[AddColumn(table: 'spreedme_rooms', name: 'activeGuests', type: ColumnType::INTEGER)]
 class Version2001Date20171009132424 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

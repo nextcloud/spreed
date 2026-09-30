@@ -12,12 +12,16 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Add inviter information to the invites for rendering them outside of notifications later
  */
+#[AddColumn(table: 'talk_invitations', name: 'inviter_cloud_id', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_invitations', name: 'inviter_display_name', type: ColumnType::STRING)]
 class Version19000Date20240212155937 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_attendees', name: 'last_mention_direct', type: ColumnType::BIGINT)]
 class Version13000Date20210901164235 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

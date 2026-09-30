@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_sessions', name: 'state', type: ColumnType::SMALLINT)]
 class Version18000Date20230920182747 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

@@ -11,6 +11,9 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\DropIndex;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
@@ -19,6 +22,8 @@ use Override;
  * Replacing @see Version25000Date20260923155555
  * and @see Version22001Date20250927174738
  */
+#[DropIndex(table: 'talk_thread_attendees', type: IndexType::UNIQUE, description: 'remove unique index on thread and actor')]
+#[AddIndex(table: 'talk_thread_attendees', type: IndexType::UNIQUE, description: 'unique index on thread, room and actor')]
 class Version25000Date20260925166666 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

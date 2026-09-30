@@ -12,9 +12,11 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DataCleansing(table: 'spreedme_rooms', description: 'reset generated 12 character room names that are not a group name')]
 class Version2000Date20171026140256 extends SimpleMigrationStep {
 
 	public function __construct(

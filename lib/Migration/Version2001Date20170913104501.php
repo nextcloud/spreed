@@ -10,9 +10,13 @@ namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
+use OCP\Migration\Attributes\DropTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'videocalls_signaling', columns: ['sender', 'recipient', 'message', 'timestamp'])]
+#[DropTable(table: 'spreedme_messages')]
 class Version2001Date20170913104501 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

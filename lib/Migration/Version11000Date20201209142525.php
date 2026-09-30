@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_internalsignaling', columns: ['id', 'sender', 'recipient', 'message', 'timestamp'])]
+#[CreateTable(table: 'talk_guestnames', columns: ['id', 'session_hash', 'display_name'])]
 class Version11000Date20201209142525 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

@@ -18,6 +18,8 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\CreateTable;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -25,6 +27,12 @@ use OCP\Migration\SimpleMigrationStep;
  * In order to be able to keep "attendees" which are not users, but groups,
  * email addresses, etc the sessions had to be decoupled from the participants
  */
+#[CreateTable(
+	table: 'talk_attendees',
+	columns: ['id', 'room_id', 'actor_type', 'actor_id', 'display_name', 'pin', 'participant_type', 'favorite', 'notification_level', 'last_joined_call', 'last_read_message', 'last_mention_message'],
+)]
+#[CreateTable(table: 'talk_sessions', columns: ['id', 'attendee_id', 'session_id', 'in_call', 'last_ping'])]
+#[DataCleansing(table: 'talk_attendees', description: 'copy users from talk_participants')]
 class Version10000Date20201015134000 extends SimpleMigrationStep {
 
 	public function __construct(

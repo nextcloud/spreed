@@ -12,12 +12,18 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * A temporary message cache for TalkV1 proxying to serve "last message" and help with notifications
  */
+#[CreateTable(
+	table: 'talk_proxy_messages',
+	columns: ['id', 'local_token', 'remote_server_url', 'remote_token', 'remote_message_id', 'actor_type', 'actor_id', 'actor_display_name', 'message_type', 'system_message', 'expiration_datetime', 'message', 'message_parameters'],
+	description: 'cached messages of federated conversations'
+)]
 class Version19000Date20240227084313 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

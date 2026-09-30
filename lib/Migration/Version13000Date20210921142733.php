@@ -11,9 +11,16 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropColumn(table: 'talk_attendees', name: 'publishing_permissions')]
+#[AddColumn(table: 'talk_attendees', name: 'permissions', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_rooms', name: 'default_permissions', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_rooms', name: 'call_permissions', type: ColumnType::INTEGER)]
 class Version13000Date20210921142733 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

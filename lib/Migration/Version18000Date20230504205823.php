@@ -11,9 +11,20 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(
+	table: 'talk_bots_server',
+	columns: ['id', 'name', 'url', 'url_hash', 'description', 'secret', 'error_count', 'last_error_date', 'last_error_message', 'state'],
+	description: 'bots installed on the server'
+)]
+#[CreateTable(
+	table: 'talk_bots_conversation',
+	columns: ['id', 'bot_id', 'token', 'state'],
+	description: 'bots enabled in conversations'
+)]
 class Version18000Date20230504205823 extends SimpleMigrationStep {
 
 	/**

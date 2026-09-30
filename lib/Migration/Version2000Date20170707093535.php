@@ -10,9 +10,13 @@ namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'spreedme_messages', columns: ['id', 'sender', 'recipient', 'sessionId', 'object', 'timestamp'])]
+#[CreateTable(table: 'spreedme_rooms', columns: ['id', 'name', 'token', 'type'])]
+#[CreateTable(table: 'spreedme_room_participants', columns: ['userId', 'roomId', 'lastPing', 'sessionId'])]
 class Version2000Date20170707093535 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

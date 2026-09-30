@@ -13,9 +13,13 @@ use Doctrine\DBAL\Schema\SchemaException;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\DataCleansing;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DataCleansing(table: 'talk_participants', description: 'set last mention message from the last mention datetime')]
+#[DropColumn(table: 'talk_participants', name: 'last_mention')]
 class Version7000Date20190724121137 extends SimpleMigrationStep {
 
 	public function __construct(

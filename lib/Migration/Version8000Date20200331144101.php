@@ -10,9 +10,15 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddIndex(table: 'talk_participants', type: IndexType::UNIQUE, description: 'room, user and session')]
+#[AddIndex(table: 'talk_participants', type: IndexType::INDEX, description: 'room')]
+#[AddIndex(table: 'talk_participants', type: IndexType::INDEX, description: 'last ping')]
+#[AddIndex(table: 'talk_participants', type: IndexType::INDEX, description: 'in call')]
 class Version8000Date20200331144101 extends SimpleMigrationStep {
 	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ISchemaWrapper {

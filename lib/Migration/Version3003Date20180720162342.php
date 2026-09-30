@@ -10,9 +10,16 @@ namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'object_type', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_rooms', name: 'object_id', type: ColumnType::STRING)]
+#[AddIndex(table: 'talk_rooms', type: IndexType::INDEX)]
 class Version3003Date20180720162342 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

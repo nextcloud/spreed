@@ -12,9 +12,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'message_expiration', type: ColumnType::INTEGER)]
 class Version15000Date20220506005058 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

@@ -10,6 +10,8 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\ModifyColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -17,6 +19,7 @@ use OCP\Migration\SimpleMigrationStep;
  * The HPB is generating sessions longer than 255 chars. So we update the length
  * But the install migration was fixed, so this only does something on update.
  */
+#[ModifyColumn(table: 'talk_sessions', name: 'session_id', type: ColumnType::STRING, description: 'increase length to 512')]
 class Version10000Date20201015150000 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

@@ -11,9 +11,11 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_commands', columns: ['id', 'app', 'name', 'command', 'script', 'response', 'enabled'])]
 class Version5099Date20190121102337 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

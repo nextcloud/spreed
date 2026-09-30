@@ -10,9 +10,11 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\IConfig;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DataCleansing(table: 'appconfig', description: 'delete hosted-signaling-server-account-last-checked app config')]
 class Version14000Date20220217115327 extends SimpleMigrationStep {
 
 	public function __construct(

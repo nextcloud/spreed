@@ -11,6 +11,8 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\ModifyColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -18,6 +20,8 @@ use OCP\Migration\SimpleMigrationStep;
  * Adjust session id length in internal signaling messages to maximum Nextcloud
  * session id length.
  */
+#[ModifyColumn(table: 'talk_internalsignaling', name: 'sender', type: ColumnType::STRING, description: 'increase length to 512')]
+#[ModifyColumn(table: 'talk_internalsignaling', name: 'recipient', type: ColumnType::STRING, description: 'increase length to 512')]
 class Version20000Date20240718031959 extends SimpleMigrationStep {
 
 	/**
