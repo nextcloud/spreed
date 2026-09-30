@@ -278,6 +278,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
 		$context->registerEventListener(AttendeesRemovedEvent::class, ShareListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ShareListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, ShareListener::class);
 
 		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);

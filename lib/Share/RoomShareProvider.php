@@ -153,7 +153,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			)
 		);
 
-		$data = $this->atomic(function () use ($share) {
+		$data = $this->atomic(function () use ($share, $room) {
 			$shareId = $this->addShareToDB(
 				$share->getSharedWith(),
 				$share->getSharedBy(),
@@ -163,7 +163,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$share->getTarget(),
 				$share->getPermissions(),
 				$share->getToken(),
-				$share->getExpirationDate()
+				$share->getExpirationDate(),
+				$room->getPassword(),
 			);
 
 			return $this->getRawShare($shareId);
@@ -186,6 +187,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * @param int $permissions
 	 * @param string $token
 	 * @param \DateTime|null $expirationDate
+	 * @param string $passwordHash
 	 * @return int
 	 */
 	private function addShareToDB(
@@ -198,6 +200,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		int $permissions,
 		string $token,
 		?\DateTime $expirationDate,
+		string $passwordHash,
 	): int {
 		$insert = $this->dbConnection->getQueryBuilder();
 		$insert->insert('share')
@@ -211,6 +214,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->setValue('file_target', $insert->createNamedParameter($target))
 			->setValue('permissions', $insert->createNamedParameter($permissions))
 			->setValue('token', $insert->createNamedParameter($token))
+			->setValue('password', $insert->createNamedParameter($passwordHash))
 			->setValue('stime', $insert->createNamedParameter($this->timeFactory->getTime()));
 
 		if ($expirationDate !== null) {
@@ -280,6 +284,10 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$share->setNodeId((int)$data['file_source']);
 		$share->setNodeType($data['item_type']);
 
+		if (!empty($data['password'])) {
+			$share->setPasswordHash($data['password']);
+		}
+
 		$share->setProviderId($this->identifier());
 
 		if (isset($data['f_permissions'])) {
@@ -303,9 +311,21 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	public function update(IShare $share): IShare {
 		$this->cleanSharesByIdCache();
 
+		try {
+			$passwordHash = $this->manager->getRoomByToken($share->getSharedWith())->getPassword();
+		} catch (RoomNotFoundException) {
+			$passwordHash = '';
+		}
+		if ($passwordHash !== '') {
+			$share->setPasswordHash($passwordHash);
+		} else {
+			$share->setPassword(null);
+		}
+
 		$update = $this->dbConnection->getQueryBuilder();
 		$update->update('share')
 			->where($update->expr()->eq('id', $update->createNamedParameter($share->getId())))
+			->set('password', $update->createNamedParameter($passwordHash))
 			->set('uid_owner', $update->createNamedParameter($share->getShareOwner()))
 			->set('uid_initiator', $update->createNamedParameter($share->getSharedBy()))
 			->set('permissions', $update->createNamedParameter($share->getPermissions()))
@@ -1071,12 +1091,25 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		}
 
 		$share = $this->createShareObject($data);
-		if ($room->hasPassword()) {
-			$share->setPasswordHash($room->getPassword());
+		if ($share->isPasswordProtected()) {
 			$this->markAuthenticatedForParticipant($share, $room);
 		}
 
 		return $share;
+	}
+
+	/**
+	 * Copy the password hash of the conversation to all its shares
+	 */
+	public function setPasswordInRoom(string $roomToken, string $passwordHash): void {
+		$this->cleanSharesByIdCache();
+
+		$update = $this->dbConnection->getQueryBuilder();
+		$update->update('share')
+			->set('password', $update->createNamedParameter($passwordHash))
+			->where($update->expr()->eq('share_type', $update->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($update->expr()->eq('share_with', $update->createNamedParameter($roomToken)));
+		$update->executeStatement();
 	}
 
 	/**

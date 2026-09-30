@@ -801,6 +801,7 @@ class RoomService {
 		$passwordHash = $this->hasher->hash($password);
 		$this->manager->setPublic($room->getId(), $passwordHash);
 		$room->setType(Room::TYPE_PUBLIC);
+		$room->setPassword($passwordHash);
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, Room::TYPE_PUBLIC, $room->getType());
 		$this->dispatcher->dispatchTyped($event);
