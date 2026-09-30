@@ -12,7 +12,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
-use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -59,9 +58,6 @@ class PublicShareAuthController extends OCSController {
 	#[PublicPage]
 	#[OpenAPI(tags: ['files_integration'])]
 	#[AnonRateLimit(12, 3600)]
-	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/publicshareauth', requirements: [
-		'apiVersion' => '(v1)',
-	])]
 	public function createRoom(string $shareToken): DataResponse {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
