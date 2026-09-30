@@ -45,8 +45,8 @@ class CanUseTalkMiddleware extends Middleware {
 	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
 	public const TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
 
-	// Talk Android >= 25 handles the configuration flag for E2EE and shows a appropiate message
-	// Support for E2EE on Talk Android is still pending
+	// Talk Android >= 25 handles the configuration flag for E2EE and shows an appropriate message
+	// Talk Android >= 26 supports E2EE calls
 	public const TALK_ANDROID_MIN_VERSION_E2EE_CALLS = '25.0.0';
 
 	public const TALK_IOS_MIN_VERSION = '15.0.0';
