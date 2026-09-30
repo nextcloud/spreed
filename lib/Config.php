@@ -90,6 +90,7 @@ class Config {
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
+	public const string CALL_RECORDING_TRANSCRIPTION = 'call_recording_transcription';
 
 	/**
 	 * 1. Call recording, …
