@@ -10,20 +10,19 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use OCA\Talk\Share\RoomShareProvider;
+use OCA\Talk\BackgroundJob\CopyRoomPasswordsToShares;
+use OCP\BackgroundJob\IJobList;
 use OCP\DB\ISchemaWrapper;
-use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
 /**
- * Copy the password of conversations to their existing file shares
+ * Schedule copying the password of conversations to their existing file shares
  */
 class Version26000Date20260930120000 extends SimpleMigrationStep {
 	public function __construct(
-		protected IDBConnection $connection,
-		protected RoomShareProvider $roomShareProvider,
+		protected IJobList $jobList,
 	) {
 	}
 
@@ -34,15 +33,6 @@ class Version26000Date20260930120000 extends SimpleMigrationStep {
 	 */
 	#[Override]
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
-		$query = $this->connection->getQueryBuilder();
-		$query->select('token', 'password')
-			->from('talk_rooms')
-			->where($query->expr()->nonEmptyString('password'));
-
-		$result = $query->executeQuery();
-		while ($row = $result->fetchAssociative()) {
-			$this->roomShareProvider->setPasswordInRoom($row['token'], $row['password']);
-		}
-		$result->closeCursor();
+		$this->jobList->add(CopyRoomPasswordsToShares::class);
 	}
 }
