@@ -11,10 +11,12 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
+#[DropColumn(table: 'talk_attendees', name: 'has_scheduled_messages')]
 class Version23000Date20251215204457 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

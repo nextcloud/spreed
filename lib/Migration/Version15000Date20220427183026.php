@@ -12,9 +12,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DataCleansing(table: 'talk_rooms', description: 'add chat permission to custom default and call permissions')]
+#[DataCleansing(table: 'talk_attendees', description: 'add chat permission to custom attendee permissions')]
 class Version15000Date20220427183026 extends SimpleMigrationStep {
 
 	public function __construct(

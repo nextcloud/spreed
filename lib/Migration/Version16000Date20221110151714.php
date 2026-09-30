@@ -12,12 +12,16 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Breakout rooms configuration
  */
+#[AddColumn(table: 'talk_rooms', name: 'breakout_room_mode', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_rooms', name: 'breakout_room_status', type: ColumnType::INTEGER)]
 class Version16000Date20221110151714 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

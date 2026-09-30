@@ -11,9 +11,13 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_attendees', name: 'phone_number', type: ColumnType::STRING)]
+#[AddColumn(table: 'talk_attendees', name: 'call_id', type: ColumnType::STRING)]
 class Version18000Date20230928131717 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

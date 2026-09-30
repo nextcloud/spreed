@@ -12,6 +12,7 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
@@ -19,6 +20,7 @@ use Override;
 /**
  * Persist the previous default for group notifications for installations on update.
  */
+#[DataCleansing(table: 'appconfig', description: 'switch default group notification level from default to mention when unset')]
 class Version23000Date20251114105144 extends SimpleMigrationStep {
 	public function __construct(
 		protected readonly IAppConfig $appConfig,

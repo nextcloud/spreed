@@ -10,9 +10,11 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropTable(table: 'talk_guestnames')]
 class Version11001Date20210212105406 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

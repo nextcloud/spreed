@@ -10,6 +10,9 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\DropIndex;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -17,6 +20,8 @@ use OCP\Migration\SimpleMigrationStep;
  * Replace the former unique attendee key with a normal index
  * allowing an attendee to have multiple sessions in the same conversation.
  */
+#[DropIndex(table: 'talk_sessions', type: IndexType::UNIQUE)]
+#[AddIndex(table: 'talk_sessions', type: IndexType::INDEX)]
 class Version12000Date20210217134030 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

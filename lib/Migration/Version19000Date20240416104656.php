@@ -12,6 +12,8 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -19,6 +21,7 @@ use OCP\Migration\SimpleMigrationStep;
  * Add a column to track the last read marker update so conversations marked
  * as (un)read on other devices are properly updated with the "lazy" update.
  */
+#[AddColumn(table: 'talk_attendees', name: 'last_attendee_activity', type: ColumnType::BIGINT)]
 class Version19000Date20240416104656 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

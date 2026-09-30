@@ -11,9 +11,15 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(
+	table: 'talk_reminders',
+	columns: ['id', 'user_id', 'token', 'message_id', 'date_time'],
+	description: 'message reminders'
+)]
 class Version18000Date20230808120823 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

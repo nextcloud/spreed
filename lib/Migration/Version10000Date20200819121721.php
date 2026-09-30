@@ -11,9 +11,11 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_bridges', columns: ['id', 'room_id', 'json_values'])]
 class Version10000Date20200819121721 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

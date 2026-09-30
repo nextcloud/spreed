@@ -13,10 +13,21 @@ use Closure;
 use OCA\Talk\Participant;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
+#[CreateTable(table: 'talk_threads', columns: ['id', 'room_id', 'last_message_id', 'num_replies'])]
+#[CreateTable(
+	table: 'talk_thread_attendees',
+	columns: ['id', 'room_id', 'thread_id', 'attendee_id', 'actor_type', 'actor_id', 'notification_level', 'last_read_message', 'last_mention_message', 'last_mention_direct', 'read_privacy']
+)]
+#[AddColumn(table: 'talk_attendees', name: 'has_unread_threads', type: ColumnType::BOOLEAN)]
+#[AddColumn(table: 'talk_attendees', name: 'has_unread_thread_mentions', type: ColumnType::BOOLEAN)]
+#[AddColumn(table: 'talk_attendees', name: 'has_unread_thread_directs', type: ColumnType::BOOLEAN)]
 class Version22000Date20250623142327 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

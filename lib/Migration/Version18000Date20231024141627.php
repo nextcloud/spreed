@@ -12,12 +12,18 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
+#[CreateTable(
+	table: 'talk_invitations',
+	columns: ['id', 'user_id', 'state', 'local_room_id', 'access_token', 'remote_server_url', 'remote_token', 'remote_attendee_id'],
+	description: 'federation invitations'
+)]
 class Version18000Date20231024141627 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

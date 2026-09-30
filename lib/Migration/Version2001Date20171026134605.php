@@ -15,9 +15,18 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\CreateTable;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_rooms', columns: ['id', 'name', 'token', 'type', 'password', 'activeSince', 'activeGuests'])]
+#[CreateTable(table: 'talk_participants', columns: ['userId', 'roomId', 'lastPing', 'sessionId', 'participantType'])]
+#[DataCleansing(table: 'talk_rooms', description: 'copy rooms from spreedme_rooms')]
+#[DataCleansing(table: 'talk_participants', description: 'copy participants from spreedme_room_participants')]
+#[DataCleansing(table: 'notifications', description: 'update room ids of talk notifications and delete orphaned ones')]
+#[DataCleansing(table: 'activity', description: 'update room ids of talk activities and delete orphaned ones')]
+#[DataCleansing(table: 'activity_mq', description: 'update room ids of queued talk activity mails and delete orphaned ones')]
 class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 	public function __construct(

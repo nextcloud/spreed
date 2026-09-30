@@ -12,9 +12,20 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(
+	table: 'talk_polls',
+	columns: ['id', 'room_id', 'question', 'options', 'votes', 'num_voters', 'actor_type', 'actor_id', 'display_name', 'status', 'result_mode', 'max_votes'],
+	description: 'polls in conversations'
+)]
+#[CreateTable(
+	table: 'talk_poll_votes',
+	columns: ['id', 'poll_id', 'room_id', 'actor_type', 'actor_id', 'display_name', 'option_id'],
+	description: 'votes of polls'
+)]
 class Version15000Date20220503121308 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

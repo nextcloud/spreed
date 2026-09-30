@@ -9,9 +9,18 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropColumn(table: 'talk_rooms', name: 'activeSince')]
+#[DropColumn(table: 'talk_rooms', name: 'activeGuests')]
+#[DropColumn(table: 'talk_participants', name: 'userId')]
+#[DropColumn(table: 'talk_participants', name: 'roomId')]
+#[DropColumn(table: 'talk_participants', name: 'lastPing')]
+#[DropColumn(table: 'talk_participants', name: 'sessionId')]
+#[DropColumn(table: 'talk_participants', name: 'participantType')]
+#[DropColumn(table: 'talk_participants', name: 'inCall')]
 class Version2001Date20180103150836 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

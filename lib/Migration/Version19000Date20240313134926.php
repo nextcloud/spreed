@@ -15,12 +15,20 @@ use OCA\Talk\Model\Invitation;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Cache the invite state in the attendees and room table to allow reducing efforts
  */
+#[AddColumn(table: 'talk_attendees', name: 'state', type: ColumnType::SMALLINT)]
+#[AddColumn(table: 'talk_attendees', name: 'unread_messages', type: ColumnType::BIGINT)]
+#[AddColumn(table: 'talk_rooms', name: 'has_federation', type: ColumnType::SMALLINT)]
+#[DataCleansing(table: 'talk_attendees', description: 'mark federated attendees as accepted')]
+#[DataCleansing(table: 'talk_rooms', description: 'flag rooms with federated attendees')]
 class Version19000Date20240313134926 extends SimpleMigrationStep {
 	public function __construct(
 		private readonly IDBConnection $connection,

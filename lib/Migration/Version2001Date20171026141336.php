@@ -9,9 +9,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropTable(table: 'videocalls_signaling')]
+#[DropTable(table: 'spreedme_rooms')]
+#[DropTable(table: 'spreedme_room_participants')]
 class Version2001Date20171026141336 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

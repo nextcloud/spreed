@@ -12,9 +12,11 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[CreateTable(table: 'talk_phone_numbers', columns: ['id', 'phone_number', 'actor_id'], description: 'mapping of phone numbers to actors')]
 class Version21001Date20250417141337 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

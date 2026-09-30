@@ -12,9 +12,17 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'last_activity', type: ColumnType::DATETIME)]
+#[AddIndex(table: 'talk_rooms', type: IndexType::INDEX)]
+#[DataCleansing(table: 'talk_rooms', description: 'set last activity from the latest chat message')]
 class Version3003Date20180718112436 extends SimpleMigrationStep {
 
 	public function __construct(

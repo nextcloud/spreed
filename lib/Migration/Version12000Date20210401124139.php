@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\ModifyColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[ModifyColumn(table: 'talk_attendees', name: 'favorite', type: ColumnType::BOOLEAN, description: 'make nullable')]
 class Version12000Date20210401124139 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

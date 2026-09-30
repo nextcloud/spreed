@@ -12,10 +12,15 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
+#[CreateTable(table: 'talk_conversation_tags', columns: ['id', 'user_id', 'name', 'sort_order', 'collapsed', 'type'], description: 'user defined conversation tags')]
+#[AddColumn(table: 'talk_attendees', name: 'tag_ids', type: ColumnType::TEXT)]
 class Version24000Date20260313120000 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

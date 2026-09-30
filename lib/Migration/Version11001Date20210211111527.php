@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'call_flag', type: ColumnType::INTEGER)]
 class Version11001Date20210211111527 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

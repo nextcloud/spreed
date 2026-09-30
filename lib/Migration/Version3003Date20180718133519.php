@@ -11,9 +11,14 @@ namespace OCA\Talk\Migration;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'last_message', type: ColumnType::BIGINT)]
+#[DataCleansing(table: 'talk_rooms', description: 'set last message from the latest chat message')]
 class Version3003Date20180718133519 extends SimpleMigrationStep {
 
 	public function __construct(

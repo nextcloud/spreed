@@ -10,9 +10,12 @@ namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_participants', name: 'favorite', type: ColumnType::BOOLEAN)]
 class Version3003Date20180707222130 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

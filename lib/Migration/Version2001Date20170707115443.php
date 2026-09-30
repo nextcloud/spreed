@@ -15,9 +15,14 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'spreedme_room_participants', name: 'participantType', type: ColumnType::SMALLINT)]
+#[DataCleansing(table: 'spreedme_room_participants', description: 'make participants owners of one-to-one rooms and moderators of group rooms')]
 class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 	public function __construct(

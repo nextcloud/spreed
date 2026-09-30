@@ -11,9 +11,13 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\DropIndex;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[DropIndex(table: 'talk_attendees', type: IndexType::INDEX, description: 'remove redundant ta_room index')]
+#[DropIndex(table: 'talk_bots_conversation', type: IndexType::INDEX, description: 'remove redundant talk_bots_convo_id index')]
 class Version20000Date20240717180417 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

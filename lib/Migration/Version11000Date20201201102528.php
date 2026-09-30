@@ -11,12 +11,18 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\AddIndex;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\IndexType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Add listable column to the rooms table.
  */
+#[AddColumn(table: 'talk_rooms', name: 'listable', type: ColumnType::SMALLINT)]
+#[AddIndex(table: 'talk_rooms', type: IndexType::INDEX)]
 class Version11000Date20201201102528 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

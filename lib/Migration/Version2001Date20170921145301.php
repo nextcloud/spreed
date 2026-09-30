@@ -10,9 +10,12 @@ namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'spreedme_rooms', name: 'password', type: ColumnType::STRING)]
 class Version2001Date20170921145301 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

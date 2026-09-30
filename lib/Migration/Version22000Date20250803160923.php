@@ -14,6 +14,9 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Share\IShare;
@@ -22,6 +25,8 @@ use Override;
 /**
  * Add column on rooms if they have at least one attachment
  */
+#[AddColumn(table: 'talk_rooms', name: 'has_attachments', type: ColumnType::SMALLINT)]
+#[DataCleansing(table: 'talk_rooms', description: 'flag conversations with room shares as having attachments')]
 class Version22000Date20250803160923 extends SimpleMigrationStep {
 	public function __construct(
 		private readonly IDBConnection $db,

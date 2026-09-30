@@ -13,6 +13,7 @@ use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
@@ -21,6 +22,8 @@ use OCP\Migration\SimpleMigrationStep;
  * This migration splits the combined "chat" permission into separate "chat" (post messages)
  * and "react" (add reactions) permissions for backward compatibility.
  */
+#[DataCleansing(table: 'talk_rooms', description: 'add react permission to default permissions that include chat')]
+#[DataCleansing(table: 'talk_attendees', description: 'add react permission to permissions that include chat')]
 class Version23000Date20260123100000 extends SimpleMigrationStep {
 
 	public function __construct(

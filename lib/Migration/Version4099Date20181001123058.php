@@ -12,9 +12,12 @@ use Closure;
 use OCA\Talk\Participant;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_participants', name: 'notification_level', type: ColumnType::INTEGER)]
 class Version4099Date20181001123058 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

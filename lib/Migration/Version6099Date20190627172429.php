@@ -11,9 +11,13 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[AddColumn(table: 'talk_rooms', name: 'lobby_state', type: ColumnType::INTEGER)]
+#[AddColumn(table: 'talk_rooms', name: 'lobby_timer', type: ColumnType::DATETIME)]
 class Version6099Date20190627172429 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output

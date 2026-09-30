@@ -11,9 +11,12 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\ModifyColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
+#[ModifyColumn(table: 'talk_attendees', name: 'display_name', type: ColumnType::STRING, description: 'increase length to 255')]
 class Version14000Date20220328153054 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
