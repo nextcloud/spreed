@@ -1670,6 +1670,24 @@ class RoomService {
 	}
 
 	/**
+	 * Extract the first conversation URL from a free text property.
+	 *
+	 * Calendar properties like DESCRIPTION hold prose around the link, so the
+	 * URL has to be isolated before the token can be parsed from it.
+	 *
+	 * @param string $value
+	 * @return string|null The URL or null when the value holds no call link
+	 */
+	public function extractRoomUrlFromText(string $value): ?string {
+		if (preg_match('#https?://\S*/call/[^\s<>"\']+#', $value, $matches) !== 1) {
+			return null;
+		}
+
+		// Trailing punctuation is part of the sentence, not of the link
+		return rtrim($matches[0], '.,;:!?)]}>');
+	}
+
+	/**
 	 * @param string $url
 	 * @return string
 	 */

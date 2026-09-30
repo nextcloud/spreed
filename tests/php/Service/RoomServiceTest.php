@@ -317,6 +317,27 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
 	}
 
+	public static function dataExtractRoomUrlFromText(): array {
+		return [
+			'bare url' => ['https://cloud.example.com/call/abc123', 'https://cloud.example.com/call/abc123'],
+			'surrounded by prose' => ['Join us: https://cloud.example.com/call/abc123 see you there', 'https://cloud.example.com/call/abc123'],
+			'sentence punctuation' => ['See https://cloud.example.com/call/abc123.', 'https://cloud.example.com/call/abc123'],
+			'wrapped in brackets' => ['(https://cloud.example.com/call/abc123)', 'https://cloud.example.com/call/abc123'],
+			'on its own line' => ["Agenda\r\nhttps://cloud.example.com/call/abc123\r\nRegards", 'https://cloud.example.com/call/abc123'],
+			'keeps query string' => ['https://cloud.example.com/call/abc123?from=mail', 'https://cloud.example.com/call/abc123?from=mail'],
+			'index.php in path' => ['https://cloud.example.com/index.php/call/abc123', 'https://cloud.example.com/index.php/call/abc123'],
+			'empty value' => ['', null],
+			'no link at all' => ['Meeting room 2, bring your laptop', null],
+			'unrelated url' => ['https://example.com/some/other/page', null],
+			'without a scheme' => ['cloud.example.com/call/abc123', null],
+		];
+	}
+
+	#[DataProvider('dataExtractRoomUrlFromText')]
+	public function testExtractRoomUrlFromText(string $input, ?string $expected): void {
+		$this->assertSame($expected, $this->service->extractRoomUrlFromText($input));
+	}
+
 	public function testValidateLobbyTimerDoesNothingWithNullTimer(): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getLobbyTimer')->willReturn(null);
