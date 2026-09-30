@@ -356,6 +356,20 @@ class SharingContext implements Context {
 		$this->sendingTo('GET', $url);
 	}
 
+	/**
+	 * The share token is only returned while the conversation is public, so
+	 * it needs to be reloaded after a conversation was made public.
+	 */
+	#[When('user :user refreshes last share')]
+	public function userRefreshesLastShare(string $user): void {
+		$this->userGetsLastShare($user);
+		\PHPUnit\Framework\Assert::assertEquals(200, $this->response->getStatusCode());
+
+		// Unwrap the single <element> of the list to match the create response
+		$element = $this->getXmlResponse()->data[0]->element[0]->asXML();
+		$this->lastCreatedShareData = simplexml_load_string('<ocs><data>' . substr($element, strlen('<element>'), -strlen('</element>')) . '</data></ocs>');
+	}
+
 	#[When('user :user accepts last share')]
 	public function userAcceptsLastShare(string $user): void {
 		$this->currentUser = $user;

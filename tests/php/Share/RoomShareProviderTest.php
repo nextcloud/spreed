@@ -13,6 +13,7 @@ use OC\Share20\Share;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -25,6 +26,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IMimeTypeLoader;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
@@ -43,6 +45,7 @@ use Test\TestCase;
 #[Group('DB')]
 class RoomShareProviderTest extends TestCase {
 	protected IDBConnection $connection;
+	protected ISecureRandom&MockObject $secureRandom;
 	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected IUserSession&MockObject $userSession;
@@ -58,6 +61,7 @@ class RoomShareProviderTest extends TestCase {
 		parent::setUp();
 
 		$this->connection = Server::get(IDBConnection::class);
+		$this->secureRandom = $this->createMock(ISecureRandom::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
@@ -70,7 +74,7 @@ class RoomShareProviderTest extends TestCase {
 
 		$this->provider = new RoomShareProvider(
 			$this->connection,
-			$this->createMock(ISecureRandom::class),
+			$this->secureRandom,
 			$shareManager,
 			$this->createMock(IEventDispatcher::class),
 			$this->manager,
@@ -100,7 +104,7 @@ class RoomShareProviderTest extends TestCase {
 		parent::tearDown();
 	}
 
-	protected function createShare(int $shareType, string $shareWith, ?int $parent = null, ?string $token = null): int {
+	protected function createShare(int $shareType, string $shareWith, ?int $parent = null, ?string $token = null, string $password = ''): int {
 		$insert = $this->connection->getQueryBuilder();
 		$insert->insert('share')
 			->values([
@@ -113,12 +117,26 @@ class RoomShareProviderTest extends TestCase {
 				'file_target' => $insert->createNamedParameter('/file.txt'),
 				'parent' => $insert->createNamedParameter($parent, $parent === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
 				'token' => $insert->createNamedParameter($token),
+				'password' => $insert->createNamedParameter($password),
 			]);
 		$insert->executeStatement();
 
 		$shareId = $insert->getLastInsertId();
 		$this->shareIds[] = $shareId;
 		return $shareId;
+	}
+
+	protected function getSharePassword(int $id): ?string {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('password')
+			->from('share')
+			->where($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+
+		$result = $query->executeQuery();
+		$password = $result->fetchOne();
+		$result->closeCursor();
+
+		return $password;
 	}
 
 	protected function shareExists(int $id): bool {
@@ -237,7 +255,7 @@ class RoomShareProviderTest extends TestCase {
 	public function testGetShareByTokenWithRoomPasswordForNonParticipant(): void {
 		$hash = Server::get(IHasher::class)->hash('secret');
 		$this->mockPublicRoom($hash);
-		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
+		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $hash);
 
 		$this->participantService->method('getParticipant')
 			->willThrowException(new ParticipantNotFoundException());
@@ -264,7 +282,7 @@ class RoomShareProviderTest extends TestCase {
 	public function testGetShareByTokenWithRoomPasswordForParticipant(bool $isUser): void {
 		$hash = Server::get(IHasher::class)->hash('secret');
 		$this->mockPublicRoom($hash);
-		$shareId = $this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
+		$shareId = $this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $hash);
 
 		if ($isUser) {
 			$user = $this->createMock(IUser::class);
@@ -292,5 +310,81 @@ class RoomShareProviderTest extends TestCase {
 			json_decode($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND), true),
 		);
 		$this->assertSame([(string)$shareId], $this->session->get('public_link_authenticated'));
+	}
+
+	public function testCreateCopiesRoomPassword(): void {
+		$hash = Server::get(IHasher::class)->hash('secret');
+
+		$room = $this->createMock(Room::class);
+		$room->method('getReadOnly')->willReturn(Room::READ_WRITE);
+		$room->method('getPassword')->willReturn($hash);
+		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getPermissions')->willReturn(Attendee::PERMISSIONS_CHAT);
+		$this->participantService->method('getParticipant')->willReturn($participant);
+
+		$this->secureRandom->method('generate')->willReturn('newsharetoken');
+
+		$node = $this->createMock(Node::class);
+		$node->method('getId')->willReturn(4242);
+
+		$share = new Share($this->createMock(IRootFolder::class), $this->createMock(IUserManager::class));
+		$share->setSharedWith('roomtoken')
+			->setSharedBy('owner')
+			->setShareOwner('owner')
+			->setNode($node)
+			->setNodeType('file')
+			->setTarget('/file.txt')
+			->setPermissions(1);
+
+		$created = $this->provider->create($share);
+		$this->shareIds[] = (int)$created->getId();
+
+		$this->assertTrue($created->isPasswordProtected());
+		$this->assertSame($hash, $created->getPassword());
+		$this->assertSame($hash, $this->getSharePassword((int)$created->getId()));
+	}
+
+	public static function dataUpdateCopiesRoomPassword(): array {
+		return [
+			'room with password' => [true],
+			'room without password' => [false],
+		];
+	}
+
+	#[DataProvider('dataUpdateCopiesRoomPassword')]
+	public function testUpdateCopiesRoomPassword(bool $withPassword): void {
+		$hash = Server::get(IHasher::class)->hash('secret');
+		$this->mockPublicRoom($withPassword ? $hash : '');
+		$shareId = $this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $withPassword ? '' : $hash);
+
+		$node = $this->createMock(Node::class);
+		$node->method('getId')->willReturn(42);
+
+		$share = new Share($this->createMock(IRootFolder::class), $this->createMock(IUserManager::class));
+		$share->setId((string)$shareId)
+			->setSharedWith('roomtoken')
+			->setSharedBy('owner')
+			->setShareOwner('owner')
+			->setNode($node)
+			->setPermissions(1);
+
+		$this->provider->update($share);
+
+		$this->assertSame($withPassword, $share->isPasswordProtected());
+		$this->assertSame($withPassword ? $hash : '', (string)$this->getSharePassword($shareId));
+	}
+
+	public function testSetPasswordInRoom(): void {
+		$roomShare = $this->createShare(IShare::TYPE_ROOM, 'roomtoken');
+		$userRoomShare = $this->createShare(RoomShareProvider::SHARE_TYPE_USERROOM, 'alice', $roomShare);
+		$otherRoomShare = $this->createShare(IShare::TYPE_ROOM, 'othertoken');
+
+		$this->provider->setPasswordInRoom('roomtoken', 'hash');
+
+		$this->assertSame('hash', $this->getSharePassword($roomShare));
+		$this->assertSame('', (string)$this->getSharePassword($userRoomShare));
+		$this->assertSame('', (string)$this->getSharePassword($otherRoomShare));
 	}
 }

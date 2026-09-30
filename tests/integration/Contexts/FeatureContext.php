@@ -1866,11 +1866,12 @@ class FeatureContext implements Context {
 	}
 
 	#[Then('/^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+) \((v4)\)$/')]
-	public function userChangesTypeOfTheRoom(string $user, string $identifier, string $newType, int $statusCode, string $apiVersion): void {
+	public function userChangesTypeOfTheRoom(string $user, string $identifier, string $newType, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$newType === 'public' ? 'POST' : 'DELETE',
-			'/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/public'
+			'/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/public',
+			$formData
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}

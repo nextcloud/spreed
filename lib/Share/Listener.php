@@ -10,8 +10,10 @@ namespace OCA\Talk\Share;
 
 use OC\Files\Filesystem;
 use OCA\Talk\Config;
+use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -41,6 +43,7 @@ class Listener implements IEventListener {
 			$event instanceof VerifyMountPointEvent => $this->overwriteMountPoint($event),
 			$event instanceof RoomDeletedEvent => $this->roomDeletedEvent($event),
 			$event instanceof AttendeesRemovedEvent => $this->roomAttendeesRemovedEvent($event),
+			$event instanceof RoomModifiedEvent => $this->roomModifiedEvent($event),
 			default => null,
 		};
 	}
@@ -149,6 +152,15 @@ class Listener implements IEventListener {
 
 	protected function roomDeletedEvent(RoomDeletedEvent $event): void {
 		$this->roomShareProvider->deleteInRoom($event->getRoom()->getToken());
+	}
+
+	protected function roomModifiedEvent(RoomModifiedEvent $event): void {
+		if ($event->getProperty() !== ARoomModifiedEvent::PROPERTY_PASSWORD) {
+			return;
+		}
+
+		$room = $event->getRoom();
+		$this->roomShareProvider->setPasswordInRoom($room->getToken(), $room->getPassword());
 	}
 
 	protected function roomAttendeesRemovedEvent(AttendeesRemovedEvent $event): void {

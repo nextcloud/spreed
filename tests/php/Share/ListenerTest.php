@@ -9,7 +9,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Share;
 
 use OCA\Talk\Config;
+use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -373,5 +375,26 @@ class ListenerTest extends TestCase {
 			->with('token123', []);
 
 		$this->listener->handle($event);
+	}
+
+	public function testRoomPasswordChangeUpdatesShares(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('token1');
+		$room->method('getPassword')->willReturn('hash');
+
+		$this->roomShareProvider->expects($this->once())
+			->method('setPasswordInRoom')
+			->with('token1', 'hash');
+
+		$this->listener->handle(new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PASSWORD, 'secret'));
+	}
+
+	public function testOtherRoomChangesDoNotUpdateShares(): void {
+		$room = $this->createMock(Room::class);
+
+		$this->roomShareProvider->expects($this->never())
+			->method('setPasswordInRoom');
+
+		$this->listener->handle(new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_NAME, 'new name'));
 	}
 }
