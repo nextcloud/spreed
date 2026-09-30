@@ -19,7 +19,9 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Db\TTransactional;
+use OCP\AppFramework\PublicShareController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -29,8 +31,10 @@ use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -73,6 +77,9 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		private readonly IMimeTypeLoader $mimeTypeLoader,
 		private readonly IUserManager $userManager,
 		private readonly Config $config,
+		private readonly ISession $session,
+		private readonly IUserSession $userSession,
+		private readonly TalkSession $talkSession,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -1063,7 +1070,53 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			throw new ShareNotFound();
 		}
 
-		return $this->createShareObject($data);
+		$share = $this->createShareObject($data);
+		if ($room->hasPassword()) {
+			$share->setPasswordHash($room->getPassword());
+			$this->markAuthenticatedForParticipant($share, $room);
+		}
+
+		return $share;
+	}
+
+	/**
+	 * Participants already passed the conversation password, so the share is
+	 * marked as authenticated in the session the same way the public share
+	 * password form does it.
+	 */
+	private function markAuthenticatedForParticipant(IShare $share, Room $room): void {
+		try {
+			$this->participantService->getParticipant($room, $this->userSession->getUser()?->getUID(), false);
+		} catch (ParticipantNotFoundException) {
+			try {
+				$this->participantService->getParticipantBySession($room, $this->talkSession->getSessionForRoom($room->getToken()));
+			} catch (ParticipantNotFoundException) {
+				return;
+			}
+		}
+
+		$allowedTokens = json_decode($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND) ?? '[]', true);
+		if (!is_array($allowedTokens)) {
+			$allowedTokens = [];
+		}
+		$allowedShareIds = $this->session->get('public_link_authenticated');
+		if (!is_array($allowedShareIds)) {
+			$allowedShareIds = [];
+		}
+
+		if (($allowedTokens[$share->getToken()] ?? null) === $share->getPassword()
+			&& in_array($share->getId(), $allowedShareIds, true)) {
+			return;
+		}
+
+		$reopened = $this->session->reopen();
+		$allowedTokens[$share->getToken()] = $share->getPassword();
+		$this->session->set(PublicShareController::DAV_AUTHENTICATED_FRONTEND, json_encode($allowedTokens));
+		$allowedShareIds[] = $share->getId();
+		$this->session->set('public_link_authenticated', array_values(array_unique($allowedShareIds)));
+		if ($reopened) {
+			$this->session->close();
+		}
 	}
 
 	/**
