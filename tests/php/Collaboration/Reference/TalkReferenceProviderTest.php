@@ -12,9 +12,14 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\ProxyCacheMessageMapper;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Webinary;
+use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -78,5 +83,46 @@ class TalkReferenceProviderTest extends TestCase {
 
 		$actual = self::invokePrivate($this->provider, 'getTalkAppLinkToken', [$reference]);
 		self::assertSame($expected, $actual);
+	}
+
+	public static function dataResolveReferenceLobby(): array {
+		return [
+			'no lobby' => [Webinary::LOBBY_NONE, 0, true],
+			'lobby' => [Webinary::LOBBY_NON_MODERATORS, 0, false],
+			'lobby with bypass' => [Webinary::LOBBY_NON_MODERATORS, Attendee::PERMISSIONS_LOBBY_IGNORE, true],
+		];
+	}
+
+	#[DataProvider('dataResolveReferenceLobby')]
+	public function testResolveReferenceLobby(int $lobbyState, int $permissions, bool $canSeeMessage): void {
+		$this->urlGenerator->method('getAbsoluteURL')
+			->willReturnCallback(static fn ($url) => 'https://localhost' . $url);
+
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyState')->willReturn($lobbyState);
+		$room->method('getDescription')->willReturn('description');
+		$this->roomManager->method('getRoomForUserByToken')
+			->with('abcdef', 'test')
+			->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getPermissions')->willReturn($permissions);
+		$this->participantService->method('getParticipant')
+			->willReturn($participant);
+
+		// Loading the comment is only attempted when the message may be seen
+		$this->chatManager->expects($canSeeMessage ? $this->once() : $this->never())
+			->method('getComment')
+			->with($room, '123')
+			->willThrowException(new NotFoundException());
+
+		$reference = $this->provider->resolveReference('https://localhost/call/abcdef#message_123');
+		if ($canSeeMessage) {
+			self::assertFalse($reference->getAccessible());
+		} else {
+			self::assertTrue($reference->getAccessible());
+			self::assertSame('description', $reference->getDescription());
+			self::assertArrayNotHasKey('message-id', $reference->getRichObject());
+		}
 	}
 }

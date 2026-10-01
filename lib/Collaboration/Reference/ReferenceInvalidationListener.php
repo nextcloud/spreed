@@ -8,9 +8,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Collaboration\Reference;
 
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCP\Collaboration\Reference\IReferenceManager;
@@ -33,7 +35,11 @@ class ReferenceInvalidationListener implements IEventListener {
 			|| $event instanceof AttendeesRemovedEvent
 			|| $event instanceof LobbyModifiedEvent
 			|| $event instanceof RoomDeletedEvent
-			|| $event instanceof RoomModifiedEvent) {
+			|| $event instanceof RoomModifiedEvent
+			|| ($event instanceof ParticipantModifiedEvent && in_array($event->getProperty(), [
+				AParticipantModifiedEvent::PROPERTY_PERMISSIONS,
+				AParticipantModifiedEvent::PROPERTY_TYPE,
+			], true))) {
 			$this->referenceManager->invalidateCache($event->getRoom()->getToken());
 		}
 	}

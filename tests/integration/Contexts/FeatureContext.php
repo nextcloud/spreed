@@ -2921,6 +2921,23 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" resolves reference to message "([^"]*)" in room "([^"]*)" with (\d+)$/')]
+	public function userResolvesReferenceToMessage(string $user, string $message, string $identifier, int $statusCode, TableNode $formData): void {
+		$this->setCurrentUser($user);
+		$reference = $this->baseUrl . 'index.php/call/' . self::$identifierToToken[$identifier] . '#message_' . self::$textToMessageId[$message];
+		$this->sendRequest('GET', '/references/resolve?reference=' . urlencode($reference));
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$data = $this->getDataFromResponse($this->response);
+		$resolved = $data['references'][$reference];
+		$actual = [
+			'title' => $resolved['openGraphObject']['name'],
+			'description' => $resolved['openGraphObject']['description'],
+			'message-id' => isset($resolved['richObject']['message-id']) ? (self::$messageIdToText[(int)$resolved['richObject']['message-id']] ?? 'UNKNOWN_MESSAGE') : '',
+		];
+		Assert::assertEquals($formData->getRowsHash(), $actual);
+	}
+
 	#[Then('/^user "([^"]*)" deletes chat history for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userDeletesHistoryFromRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
