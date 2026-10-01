@@ -1320,6 +1320,32 @@ class FeatureContext implements Context {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
+	/**
+	 * The share page answers with a 303 redirect to the password form when
+	 * the share is not authenticated.
+	 */
+	#[Then('/^user "([^"]*)" opens the share page of last share with (\d+)$/')]
+	public function userOpensSharePageOfLastShare(string $user, int $statusCode): void {
+		$shareToken = $this->sharingContext->getLastShareToken();
+
+		$this->setCurrentUser($user);
+		$this->sendRequestFullUrl('GET', $this->baseUrl . 'index.php/s/' . $shareToken, options: ['allow_redirects' => false]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * Only works for guests, as basic auth credentials are interpreted as
+	 * share token and password by the public DAV endpoint.
+	 */
+	#[Then('/^user "([^"]*)" downloads last share via public DAV with (\d+)$/')]
+	public function userDownloadsLastShareViaPublicDav(string $user, int $statusCode): void {
+		$shareToken = $this->sharingContext->getLastShareToken();
+
+		$this->setCurrentUser($user);
+		$this->sendRequestFullUrl('GET', $this->baseUrl . 'public.php/dav/files/' . $shareToken);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" creates the password request room for last share with (\d+) \((v1)\)$/')]
 	public function userCreatesThePasswordRequestRoomForLastShare(string $user, int $statusCode, string $apiVersion): void {
 		$shareToken = $this->sharingContext->getLastShareToken();
@@ -1840,11 +1866,12 @@ class FeatureContext implements Context {
 	}
 
 	#[Then('/^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+) \((v4)\)$/')]
-	public function userChangesTypeOfTheRoom(string $user, string $identifier, string $newType, int $statusCode, string $apiVersion): void {
+	public function userChangesTypeOfTheRoom(string $user, string $identifier, string $newType, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$newType === 'public' ? 'POST' : 'DELETE',
-			'/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/public'
+			'/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/public',
+			$formData
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}

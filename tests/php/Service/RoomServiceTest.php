@@ -317,6 +317,22 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
 	}
 
+	public function testMakePublicWithPasswordUpdatesRoomPassword(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(23);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
+
+		$this->hasher->method('hash')->with('secret')->willReturn('hash');
+		$this->manager->expects($this->once())
+			->method('setPublic')
+			->with(23, 'hash');
+		$room->expects($this->once())
+			->method('setPassword')
+			->with('hash');
+
+		$this->service->makePublicWithPassword($room, 'secret');
+	}
+
 	public function testValidateLobbyTimerDoesNothingWithNullTimer(): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getLobbyTimer')->willReturn(null);
