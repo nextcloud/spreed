@@ -9,6 +9,7 @@ import type {
 	AutocompleteResponse,
 	SearchMessagePayload,
 	TaskProcessingResponse,
+	TaskProcessingTaskTypesResponse,
 	UnifiedSearchResponse,
 	UserProfileResponse,
 } from '../types/index.ts'
@@ -85,6 +86,15 @@ async function getUserProfile(userId: string, options?: AxiosRequestConfig): Use
 }
 
 /**
+ * Get all task types available on the server, including their input options
+ *
+ * @param options Axios request options
+ */
+async function getTaskTypes(options?: AxiosRequestConfig): TaskProcessingTaskTypesResponse {
+	return axios.get(generateOcsUrl('taskprocessing/tasktypes'), options)
+}
+
+/**
  *
  * @param id
  * @param options
@@ -130,6 +140,7 @@ export {
 	autocompleteQuery,
 	deleteTaskById,
 	getTaskById,
+	getTaskTypes,
 	getUserProfile,
 	searchMessages,
 	searchMessagesInCurrentConversation,
