@@ -54,6 +54,7 @@ use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
+use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -197,9 +198,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 
 			try {
-				$this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
+				$targetParentParticipant = $this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
 				$this->participantService->getParticipantByActor($targetParentRoom, $parentActorType, $parentActorId);
 			} catch (ParticipantNotFoundException) {
+				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
+			}
+
+			if ($targetParentRoom->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($targetParentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
 			}
 

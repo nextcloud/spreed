@@ -206,3 +206,16 @@ Feature: chat-4/private-reply
     And user "participant2" joins room "one-to-one room" with 200 (v4)
     And user "participant1" sends message "Original Message" to room "group room" with 201
     When user "participant2" sends private reply "Private Response" on message "Original Message" from room "group room" to room "one-to-one room" with 403
+
+  Scenario: user can not send a private reply to a message of a conversation they are blocked from by the lobby
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant2" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant1 |
+    And user "participant1" sends message "Original Message" to room "group room" with 201
+    And user "participant1" sets lobby state for room "group room" to "non moderators" with 200 (v4)
+    When user "participant2" sends private reply "Private Response" on message "Original Message" from room "group room" to room "one-to-one room" with 403
+    And user "participant1" promotes "participant2" in room "group room" with 200 (v4)
+    Then user "participant2" sends private reply "Private Response" on message "Original Message" from room "group room" to room "one-to-one room" with 201
