@@ -19,7 +19,9 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Db\TTransactional;
+use OCP\AppFramework\PublicShareController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -29,8 +31,10 @@ use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -73,6 +77,9 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		private readonly IMimeTypeLoader $mimeTypeLoader,
 		private readonly IUserManager $userManager,
 		private readonly Config $config,
+		private readonly ISession $session,
+		private readonly IUserSession $userSession,
+		private readonly TalkSession $talkSession,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -146,7 +153,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			)
 		);
 
-		$data = $this->atomic(function () use ($share) {
+		$data = $this->atomic(function () use ($share, $room) {
 			$shareId = $this->addShareToDB(
 				$share->getSharedWith(),
 				$share->getSharedBy(),
@@ -156,7 +163,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$share->getTarget(),
 				$share->getPermissions(),
 				$share->getToken(),
-				$share->getExpirationDate()
+				$share->getExpirationDate(),
+				$room->getPassword(),
 			);
 
 			return $this->getRawShare($shareId);
@@ -179,6 +187,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * @param int $permissions
 	 * @param string $token
 	 * @param \DateTime|null $expirationDate
+	 * @param string $passwordHash
 	 * @return int
 	 */
 	private function addShareToDB(
@@ -191,6 +200,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		int $permissions,
 		string $token,
 		?\DateTime $expirationDate,
+		string $passwordHash,
 	): int {
 		$insert = $this->dbConnection->getQueryBuilder();
 		$insert->insert('share')
@@ -204,6 +214,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->setValue('file_target', $insert->createNamedParameter($target))
 			->setValue('permissions', $insert->createNamedParameter($permissions))
 			->setValue('token', $insert->createNamedParameter($token))
+			->setValue('password', $insert->createNamedParameter($passwordHash))
 			->setValue('stime', $insert->createNamedParameter($this->timeFactory->getTime()));
 
 		if ($expirationDate !== null) {
@@ -273,6 +284,10 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$share->setNodeId((int)$data['file_source']);
 		$share->setNodeType($data['item_type']);
 
+		if (!empty($data['password'])) {
+			$share->setPasswordHash($data['password']);
+		}
+
 		$share->setProviderId($this->identifier());
 
 		if (isset($data['f_permissions'])) {
@@ -296,9 +311,21 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	public function update(IShare $share): IShare {
 		$this->cleanSharesByIdCache();
 
+		try {
+			$passwordHash = $this->manager->getRoomByToken($share->getSharedWith())->getPassword();
+		} catch (RoomNotFoundException) {
+			$passwordHash = '';
+		}
+		if ($passwordHash !== '') {
+			$share->setPasswordHash($passwordHash);
+		} else {
+			$share->setPassword(null);
+		}
+
 		$update = $this->dbConnection->getQueryBuilder();
 		$update->update('share')
 			->where($update->expr()->eq('id', $update->createNamedParameter($share->getId())))
+			->set('password', $update->createNamedParameter($passwordHash))
 			->set('uid_owner', $update->createNamedParameter($share->getShareOwner()))
 			->set('uid_initiator', $update->createNamedParameter($share->getSharedBy()))
 			->set('permissions', $update->createNamedParameter($share->getPermissions()))
@@ -1065,7 +1092,66 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			throw new ShareNotFound();
 		}
 
-		return $this->createShareObject($data);
+		$share = $this->createShareObject($data);
+		if ($share->isPasswordProtected()) {
+			$this->markAuthenticatedForParticipant($share, $room);
+		}
+
+		return $share;
+	}
+
+	/**
+	 * Copy the password hash of the conversation to all its shares
+	 */
+	public function setPasswordInRoom(string $roomToken, string $passwordHash): void {
+		$this->cleanSharesByIdCache();
+
+		$update = $this->dbConnection->getQueryBuilder();
+		$update->update('share')
+			->set('password', $update->createNamedParameter($passwordHash))
+			->where($update->expr()->eq('share_type', $update->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($update->expr()->eq('share_with', $update->createNamedParameter($roomToken)));
+		$update->executeStatement();
+	}
+
+	/**
+	 * Participants already passed the conversation password, so the share is
+	 * marked as authenticated in the session the same way the public share
+	 * password form does it.
+	 */
+	private function markAuthenticatedForParticipant(IShare $share, Room $room): void {
+		try {
+			$this->participantService->getParticipant($room, $this->userSession->getUser()?->getUID(), false);
+		} catch (ParticipantNotFoundException) {
+			try {
+				$this->participantService->getParticipantBySession($room, $this->talkSession->getSessionForRoom($room->getToken()));
+			} catch (ParticipantNotFoundException) {
+				return;
+			}
+		}
+
+		$allowedTokens = json_decode($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND) ?? '[]', true);
+		if (!is_array($allowedTokens)) {
+			$allowedTokens = [];
+		}
+		$allowedShareIds = $this->session->get('public_link_authenticated');
+		if (!is_array($allowedShareIds)) {
+			$allowedShareIds = [];
+		}
+
+		if (($allowedTokens[$share->getToken()] ?? null) === $share->getPassword()
+			&& in_array($share->getId(), $allowedShareIds, true)) {
+			return;
+		}
+
+		$reopened = $this->session->reopen();
+		$allowedTokens[$share->getToken()] = $share->getPassword();
+		$this->session->set(PublicShareController::DAV_AUTHENTICATED_FRONTEND, json_encode($allowedTokens));
+		$allowedShareIds[] = $share->getId();
+		$this->session->set('public_link_authenticated', array_values(array_unique($allowedShareIds)));
+		if ($reopened) {
+			$this->session->close();
+		}
 	}
 
 	/**
