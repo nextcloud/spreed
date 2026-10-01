@@ -24,6 +24,7 @@ use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\NotFoundException;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IConditionalWidget;
@@ -270,6 +271,11 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 		if ($attendee->isSensitive()) {
 			// Don't leak sensitive last messages on dashboard
+		} elseif ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+			$subtitle = $this->l10n->t('Call in progress');
+		} elseif ($attendee->getLastMentionMessage() && $room->isFederatedConversation()) {
+			// Can't access the last mention message ID atm in federated conversations
+			$subtitle = $this->l10n->t('You were mentioned');
 		} elseif ($room->getLastMessageId() && $room->isFederatedConversation()) {
 			try {
 				$cachedMessage = $this->pcmService->findByRemote(
@@ -283,16 +289,17 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				// Fallback to empty subtitle
 			}
 		} elseif ($room->getLastMessageId() && $room->getLastMessage() && !$room->isFederatedConversation()) {
-			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
+			$comment = $room->getLastMessage();
+			if ($attendee->getLastMentionMessage() > $attendee->getLastReadMessage()) {
+				// Last mention is unread, show that instead
+				try {
+					$comment = $this->chatManager->getComment($room, (string)$attendee->getLastMentionMessage());
+				} catch (NotFoundException) {
+				}
+			}
+			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l10n);
 			$this->messageParser->parseMessage($message, true);
 			$subtitle = $this->getSubtitleFromMessage($message);
-		}
-
-		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
-			$subtitle = $this->l10n->t('Call in progress');
-		} elseif (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
-			|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
-			$subtitle = $this->l10n->t('You were mentioned');
 		}
 
 		return new WidgetItem(
