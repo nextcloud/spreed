@@ -205,6 +205,10 @@ PROMPT;
 			new Entry(Config::MATTERBRIDGE_BOT_PASSWORD, ValueType::STRING, '', definition: 'Automatically generated password of the matterbridge bot user profile', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations'),
 			new Entry(Config::CALL_RECORDING_TRANSCRIPTION, ValueType::BOOL, false, definition: 'Whether call recordings should automatically be transcribed when a transcription provider is enabled.'),
+			new Entry(Config::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Default chat style when not overwritten by the user'),
+			new Entry(Config::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, definition: 'Default conversation list style when not overwritten by the user'),
+			new Entry(Config::HIDE_SIGNALING_WARNING, ValueType::BOOL, false, definition: 'Flag that allows to suppress the warning that an HPB should be configured'),
+			new Entry(Config::CHANGELOG, ValueType::BOOL, true, definition: 'Whether the changelog conversation is updated with new features on major releases'),
 		];
 	}
 

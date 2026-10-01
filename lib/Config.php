@@ -91,7 +91,10 @@ class Config {
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
 	public const string CALL_RECORDING_TRANSCRIPTION = 'call_recording_transcription';
-
+	public const string CHAT_STYLE = 'chat_style';
+	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
+	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
+	public const string CHANGELOG = 'changelog';
 	/**
 	 * 1. Call recording, …
 	 */
@@ -663,7 +666,7 @@ class Config {
 	}
 
 	public function getHideSignalingWarning(): bool {
-		return $this->config->getAppValue('spreed', 'hide_signaling_warning', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(Config::HIDE_SIGNALING_WARNING);
 	}
 
 	/**
