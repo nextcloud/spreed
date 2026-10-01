@@ -61,7 +61,7 @@ Feature: integration/dashboard-server
       | title                    | subtitle                   | link            | iconUrl                                                               | sinceId | overlayIconUrl |
       | call room                | Call in progress           | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | lobby room with bypass   | Lobby @all but with bypass | lobby room with bypass | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
-      | group room               | Lobby @all but with bypass | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
+      | group room               | Hello @all                 | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | participant2-displayname | Hello                      | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v2)
       | title                    | subtitle                   | link            | iconUrl                                                               | sinceId | overlayIconUrl |
