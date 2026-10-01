@@ -167,6 +167,7 @@
 					<NcActionButton
 						v-if="supportScheduleMessages && !dialog && !isPrivateReply"
 						key="action-schedule"
+						:disabled="hasUpload"
 						isMenu
 						@click.stop="submenu = 'schedule'">
 						<template #icon>
@@ -292,7 +293,7 @@
 			<template v-else>
 				<NcButton
 					v-if="supportScheduleMessages && scheduleMessageTime"
-					:disabled="disabled || !text || isScheduling"
+					:disabled="disabled || !text || isScheduling || hasUpload"
 					variant="tertiary"
 					type="submit"
 					:title="t('spreed', 'Schedule message')"
@@ -1048,7 +1049,7 @@ export default {
 				return
 			}
 
-			if (supportScheduleMessages && !this.scheduleMessageTime && this.showScheduledMessages) {
+			if (supportScheduleMessages && !this.scheduleMessageTime && this.showScheduledMessages && !this.hasUpload) {
 				// Block sending and prompt user to pick a time for scheduling
 				this.submenu = 'schedule'
 				this.isNcActionsOpen = true
