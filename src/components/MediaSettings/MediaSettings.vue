@@ -298,6 +298,8 @@ import { localMediaModel } from '../../utils/webrtc/index.js'
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
+
 export default {
 	name: 'MediaSettings',
 
@@ -475,14 +477,30 @@ export default {
 			if (!this.audioPreviewAvailable) {
 				return t('spreed', 'No audio')
 			}
-			return this.audioOn ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
+			if (this.audioOn) {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Mute audio')
+					: t('spreed', 'Mute audio (M)')
+			} else {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Unmute audio')
+					: t('spreed', 'Unmute audio (M)')
+			}
 		},
 
 		videoButtonTitle() {
 			if (!this.videoPreviewAvailable) {
 				return t('spreed', 'No camera')
 			}
-			return this.videoOn ? t('spreed', 'Disable video') : t('spreed', 'Enable video')
+			if (this.videoOn) {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Disable video')
+					: t('spreed', 'Disable video (V)')
+			} else {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Enable video')
+					: t('spreed', 'Enable video (V)')
+			}
 		},
 
 		mirrorToggleLabel() {
