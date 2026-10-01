@@ -216,7 +216,6 @@ class HostedSignalingServerService {
 
 		$accountId = (string)$data['account_id'];
 		$this->appConfig->setAppValueString(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID, $accountId);
-		;
 
 		return new AccountId($accountId);
 	}

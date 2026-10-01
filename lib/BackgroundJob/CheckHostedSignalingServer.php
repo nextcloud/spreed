@@ -17,7 +17,6 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
-use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -29,12 +28,10 @@ class CheckHostedSignalingServer extends TimedJob {
 	public function __construct(
 		ITimeFactory $timeFactory,
 		private readonly HostedSignalingServerService $hostedSignalingServerService,
-		private readonly IConfig $config,
 		private readonly IManager $notificationManager,
 		private readonly IGroupManager $groupManager,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly LoggerInterface $logger,
-		private readonly Config $talkConfig,
 		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct($timeFactory);
@@ -71,7 +68,7 @@ class CheckHostedSignalingServer extends TimedJob {
 
 	private function updateStunTurnSettings(array $oldAccountInfo, array $accountInfo) {
 		if (!empty($accountInfo['stun']['servers'])) {
-			if ($this->talkConfig->getStunServers() !== $accountInfo['stun']['servers']) {
+			if ($this->appConfig->getAppValueArray('stun_servers') !== $accountInfo['stun']['servers']) {
 				// STUN servers were added / changed
 				$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $accountInfo['stun']['servers']);
 			}
@@ -91,7 +88,7 @@ class CheckHostedSignalingServer extends TimedJob {
 				];
 			}
 
-			if ($this->talkConfig->getTurnServers() !== $newTurnServers) {
+			if ($this->appConfig->getAppValueArray('turn_servers') !== $newTurnServers) {
 				// TURN servers were added / changed
 				$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $newTurnServers);
 			}
@@ -132,12 +129,13 @@ class CheckHostedSignalingServer extends TimedJob {
 		if ($oldStatus !== $newStatus) {
 			if ($newStatus === 'deleted') {
 				// remove signaling servers if account is not active anymore
-				$this->config->deleteAppValue('spreed', 'signaling_servers');
+				$this->appConfig->deleteAppValue('signaling_servers');
+				//$this->config->deleteAppValue('spreed', 'signaling_servers');
 
 				$notificationSubject = 'removed';
 			} elseif ($newStatus === 'active') {
 				// add signaling servers if account got active
-				$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
+				$this->appConfig->setAppValueArray('signaling_servers', [
 					'servers' => [
 						[
 							'server' => $accountInfo['signaling']['url'],
@@ -145,7 +143,7 @@ class CheckHostedSignalingServer extends TimedJob {
 						]
 					],
 					'secret' => $accountInfo['signaling']['secret'],
-				]));
+				]);
 				$this->updateStunTurnSettings($oldAccountInfo, $accountInfo);
 
 				$notificationSubject = 'added';
@@ -163,7 +161,7 @@ class CheckHostedSignalingServer extends TimedJob {
 		} elseif ($newStatus === 'active') {
 			if ($oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url']
 				|| $oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret']) {
-				$this->config->setAppValue('spreed', 'signaling_servers', json_encode([
+				$this->appConfig->setAppValueArray('signaling_servers', [
 					'servers' => [
 						[
 							'server' => $accountInfo['signaling']['url'],
@@ -171,7 +169,7 @@ class CheckHostedSignalingServer extends TimedJob {
 						]
 					],
 					'secret' => $accountInfo['signaling']['secret'],
-				]));
+				]);
 			}
 			$this->updateStunTurnSettings($oldAccountInfo, $accountInfo);
 		}
