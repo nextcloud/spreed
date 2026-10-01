@@ -5,6 +5,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.5 – 2026-10-02
+### Fixed
+- fix: web application does not load due to a regression in the build config
+  [#19670](https://github.com/nextcloud/spreed/pull/19670)
+
 ## 25.0.4 – 2026-10-01
 ### Fixed
 - fix(sharing): Fix undefined method setPasswordHash which is only added in Nextcloud 35.0.2
