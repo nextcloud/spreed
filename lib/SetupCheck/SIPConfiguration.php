@@ -48,9 +48,11 @@ class SIPConfiguration implements ISetupCheck {
 		$query->select('phone_number')
 			->from('talk_phone_numbers')
 			->where($query->expr()->like('phone_number', $query->createNamedParameter(
-				$this->connection->escapeLikeParameter('+') . '%'
-			)))
-			->orWhere($query->expr()->like('phone_number', $query->createNamedParameter(
+				// TODO: Temporary disabled while we migrate to leading `+` for international numbers
+				// TODO: Either to be deleted later or should complain for numbers without it
+				// 	$this->connection->escapeLikeParameter('+') . '%'
+				// )))
+				// ->orWhere($query->expr()->like('phone_number', $query->createNamedParameter(
 				$this->connection->escapeLikeParameter('0') . '%'
 			)));
 
