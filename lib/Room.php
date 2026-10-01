@@ -320,6 +320,14 @@ class Room {
 		return $this->lastMessage;
 	}
 
+	public function getLastMentionForAttendee(int $messageId): ?IComment {
+		if ($this->isFederatedConversation()) {
+			return null;
+		}
+
+		return Server::get(Manager::class)->loadLastCommentInfo($messageId);
+	}
+
 	public function setLastMessage(IComment $message): void {
 		$this->lastMessage = $message;
 		$this->lastMessageId = (int)$message->getId();
