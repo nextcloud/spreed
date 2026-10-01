@@ -305,7 +305,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 								@scroll.passive="updateScrollableFlags">
 								<EventCard
 									v-for="eventRoom in eventRooms"
-									:key="eventRoom.eventLink"
+									:key="`${eventRoom.eventLink}-${eventRoom.start}`"
 									:eventRoom="eventRoom"
 									class="talk-dashboard__event-card" />
 							</div>

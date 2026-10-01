@@ -5,7 +5,7 @@
 
 import { emit } from '@nextcloud/event-bus'
 import { createSharedComposable } from '@vueuse/core'
-import { onBeforeUnmount, readonly, ref } from 'vue'
+import { onScopeDispose, readonly, ref } from 'vue'
 
 const isFullscreen = ref<boolean>(document.fullscreenElement !== null)
 
@@ -28,7 +28,7 @@ function useDocumentFullscreenComposable() {
 	document.addEventListener('fullscreenchange', changeIsFullscreen)
 	document.addEventListener('webkitfullscreenchange', changeIsFullscreen)
 
-	onBeforeUnmount(() => {
+	onScopeDispose(() => {
 		document.removeEventListener('fullscreenchange', changeIsFullscreen)
 		document.removeEventListener('webkitfullscreenchange', changeIsFullscreen)
 	})

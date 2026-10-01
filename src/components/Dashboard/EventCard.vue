@@ -10,7 +10,6 @@ import type { Conversation, DashboardEventRoom } from '../../types/index.ts'
 import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
-import { useIntervalFn, useNow } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -22,6 +21,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconTalk from '../../../img/app-dark.svg?raw'
+import { useCurrentTimeWithSeconds } from '../../composables/useCurrentTime.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.ts'
 import { localCapabilities } from '../../services/CapabilitiesManager.ts'
@@ -51,12 +51,16 @@ const conversation = computed<ConversationFromEvent>(() => {
 	}
 })
 
+// 10 minutes boundary before start and after end of event to show it as in active call
+const EVENT_THRESHOLD_MS = 10 * 60_000
+
+const now = useCurrentTimeWithSeconds()
+
 const hasCall = computed(() => {
 	return (conversation.value.hasCall || props.eventRoom.roomActiveSince !== null)
-		&& props.eventRoom.start * 1000 >= (Date.now() - 600_000) // 10 minutes buffer
+		&& props.eventRoom.start * 1000 - EVENT_THRESHOLD_MS <= +now.value
+		&& +now.value <= props.eventRoom.end * 1000 + EVENT_THRESHOLD_MS
 })
-
-const now = useNow({ scheduler: (cb) => useIntervalFn(cb, 1_000) })
 
 const elapsedTime = computed(() => {
 	if (!hasCall.value || !(props.eventRoom.roomActiveSince ?? conversation.value.callStartTime)) {
