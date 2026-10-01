@@ -25,7 +25,7 @@ const minBrowserVersion = browsers
 const targets = Object.entries(minBrowserVersion).map(([browser, version]) => `${browser} >=${version}`).join(',')
 
 module.exports = defineConfig((env) => {
-	const appName = process.env.npm_package_name
+	const appName = 'talk'
 	const appVersion = process.env.npm_package_version
 
 	const mode = (env.development && 'development') || (env.production && 'production') || process.env.NODE_ENV || 'production'
