@@ -1,5 +1,5 @@
 {
-  "name": "talk",
+  "name": "@nextcloud/talk",
   "version": "26.0.0-dev.0",
   "private": true,
   "description": "",
