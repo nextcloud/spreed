@@ -40,7 +40,7 @@ occ_remote() {
 	NEXTCLOUD_CONFIG_DIR=${REAL_FEDERATED_SERVER_CONFIG_DIR} ${REMOTE_ROOT_DIR}/occ "$@"
 }
 
-MAIN_SERVER_CONFIG_DIR=${ROOT_DIR}/config
+MAIN_SERVER_CONFIG_DIR=${NEXTCLOUD_CONFIG_DIR:-${ROOT_DIR}/config}
 MAIN_SERVER_DATA_DIR=$(occ_host config:system:get datadirectory)
 MAIN_SERVER_APPS_PATHS=$(occ_host config:system:get apps_paths --output json)
 
