@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Share;
 
+use OC\Share20\Share;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Service\ParticipantService;
@@ -17,6 +18,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IMimeTypeLoader;
+use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUserManager;
@@ -24,12 +26,15 @@ use OCP\Security\ISecureRandom;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 #[Group('DB')]
 class RoomShareProviderTest extends TestCase {
 	protected IDBConnection $connection;
+	protected Manager&MockObject $manager;
 	protected RoomShareProvider $provider;
 	protected Config&MockObject $config;
 
@@ -43,20 +48,29 @@ class RoomShareProviderTest extends TestCase {
 		parent::setUp();
 
 		$this->connection = Server::get(IDBConnection::class);
+		$this->manager = $this->createMock(Manager::class);
+
+		$shareManager = $this->createMock(IShareManager::class);
+		$shareManager->method('newShare')
+			->willReturnCallback(fn () => new Share($this->createMock(IRootFolder::class), $this->createMock(IUserManager::class)));
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory->method('getDateTime')
+			->willReturnCallback(fn () => new \DateTime());
+		$this->config = $this->createMock(Config::class);
 
 		$this->provider = new RoomShareProvider(
 			$this->connection,
 			$this->createMock(ISecureRandom::class),
-			$this->createMock(IShareManager::class),
+			$shareManager,
 			$this->createMock(IEventDispatcher::class),
-			$this->createMock(Manager::class),
+			$this->manager,
 			$this->createMock(ParticipantService::class),
 			$this->createMock(RoomService::class),
 			$timeFactory,
 			$this->createMock(IL10N::class),
 			$this->createMock(IMimeTypeLoader::class),
 			$this->createMock(IUserManager::class),
-			$this->createMock(Config::class),
+			$this->config,
 		);
 	}
 
@@ -80,7 +94,15 @@ class RoomShareProviderTest extends TestCase {
 		parent::tearDown();
 	}
 
-	protected function createShare(int $shareType, string $shareWith, ?int $parent = null): int {
+	protected function createShare(
+		int $shareType,
+		string $shareWith,
+		?int $parent = null,
+		string $owner = 'owner',
+		string $initiator = 'owner',
+		int $fileSource = 42,
+		string $target = '/file.txt',
+	): int {
 		$insert = $this->connection->getQueryBuilder();
 		$insert->insert('share')
 			->values([
@@ -98,6 +120,22 @@ class RoomShareProviderTest extends TestCase {
 		$shareId = $insert->getLastInsertId();
 		$this->shareIds[] = $shareId;
 		return $shareId;
+	}
+
+	protected function createFile(string $path): int {
+		$insert = $this->connection->getQueryBuilder();
+		$insert->insert('filecache')
+			->values([
+				'storage' => $insert->createNamedParameter(424242, IQueryBuilder::PARAM_INT),
+				'path' => $insert->createNamedParameter($path),
+				'path_hash' => $insert->createNamedParameter(md5($path)),
+				'name' => $insert->createNamedParameter(basename($path)),
+			]);
+		$insert->executeStatement();
+
+		$fileId = $insert->getLastInsertId();
+		$this->fileIds[] = $fileId;
+		return $fileId;
 	}
 
 	protected function shareExists(int $id): bool {
@@ -192,5 +230,52 @@ class RoomShareProviderTest extends TestCase {
 
 		$this->assertTrue($this->shareExists($userShare));
 		$this->assertFalse($this->shareExists($userRoomShare));
+	}
+
+	public static function dataGetSharedWithByPathWithoutUserRoomShare(): array {
+		// alice's own file, reshared into the conversation by bob
+		$ownFileReshared = ['owner' => 'alice', 'initiator' => 'bob', 'room' => 'token123'];
+		$received = ['owner' => 'bob', 'initiator' => 'bob', 'room' => 'token123'];
+		$otherRoom = ['owner' => 'bob', 'initiator' => 'bob', 'room' => 'token456'];
+
+		return [
+			'own reshared file before received share' => [['own' => $ownFileReshared, 'received' => $received], ['received']],
+			'share of other conversation before received share' => [['other' => $otherRoom, 'received' => $received], ['received']],
+		];
+	}
+
+	/**
+	 * Older shares without a userroom share are found by the target of the room share.
+	 *
+	 * @param array<string, array{owner: string, initiator: string, room: string}> $shares
+	 * @param list<string> $expected
+	 */
+	#[DataProvider('dataGetSharedWithByPathWithoutUserRoomShare')]
+	public function testGetSharedWithByPathWithoutUserRoomShare(array $shares, array $expected): void {
+		$this->manager->method('getRoomTokensWithAttachmentsForUser')
+			->with('alice')
+			->willReturn(['token123']);
+		$this->config->method('getAttachmentFolder')
+			->with('alice')
+			->willReturn('/Talk');
+
+		$shareIds = [];
+		foreach ($shares as $key => $share) {
+			$shareIds[$key] = $this->createShare(
+				IShare::TYPE_ROOM,
+				$share['room'],
+				owner: $share['owner'],
+				initiator: $share['initiator'],
+				fileSource: $this->createFile('files/' . $key . '.xml'),
+				target: RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/settings.xml',
+			);
+		}
+		$expectedIds = array_map(fn (string $key): string => (string)$shareIds[$key], $expected);
+
+		$shares = iterator_to_array($this->provider->getSharedWithByPath('alice', IShare::TYPE_ROOM, '/Talk/settings.xml', false, -1, 0), false);
+		$this->assertSame($expectedIds, array_map(fn (IShare $share): string => $share->getId(), $shares));
+		foreach ($shares as $share) {
+			$this->assertSame('/Talk/settings.xml', $share->getTarget());
+		}
 	}
 }
