@@ -251,6 +251,7 @@
 <script>
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, h, markRaw, ref, useId } from 'vue'
@@ -296,6 +297,8 @@ import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
+
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
 export default {
 	name: 'MediaSettings',
@@ -474,14 +477,30 @@ export default {
 			if (!this.audioPreviewAvailable) {
 				return t('spreed', 'No audio')
 			}
-			return this.audioOn ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
+			if (this.audioOn) {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Mute audio')
+					: t('spreed', 'Mute audio (M)')
+			} else {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Unmute audio')
+					: t('spreed', 'Unmute audio (M)')
+			}
 		},
 
 		videoButtonTitle() {
 			if (!this.videoPreviewAvailable) {
 				return t('spreed', 'No camera')
 			}
-			return this.videoOn ? t('spreed', 'Disable video') : t('spreed', 'Enable video')
+			if (this.videoOn) {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Disable video')
+					: t('spreed', 'Disable video (V)')
+			} else {
+				return disableKeyboardShortcuts
+					? t('spreed', 'Enable video')
+					: t('spreed', 'Enable video (V)')
+			}
 		},
 
 		mirrorToggleLabel() {
@@ -714,6 +733,11 @@ export default {
 		},
 	},
 
+	created() {
+		useHotKey('m', this.handleAudioHotKey, { allowInModal: true })
+		useHotKey('v', this.handleVideoHotKey, { allowInModal: true })
+	},
+
 	beforeMount() {
 		subscribe('talk:media-settings:show', this.showMediaSettings)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
@@ -787,6 +811,18 @@ export default {
 				this.audioOn = false
 			}
 			this.audioDeviceStateChanged = true
+		},
+
+		handleAudioHotKey() {
+			if (this.show && this.audioPreviewAvailable && !this.audioStreamError) {
+				this.toggleAudio()
+			}
+		},
+
+		handleVideoHotKey() {
+			if (this.show && this.videoPreviewAvailable && !this.videoStreamError) {
+				this.toggleVideo()
+			}
 		},
 
 		toggleVideo() {
