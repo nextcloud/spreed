@@ -5,6 +5,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.3 – 2026-10-01
+### Added
+- feat(CallButton): add a split-menu with 'silent call' action
+  [#19655](https://github.com/nextcloud/spreed/pull/19655)
+
+### Changed
+- Update translations
+
+### Fixed
+- fix(dashboard): Display actual last mention for user in Dashboard widget
+  [#19656](https://github.com/nextcloud/spreed/pull/19656)
+- fix(media-settings): Allow keyboard shortcuts on device checker
+  [#19644](https://github.com/nextcloud/spreed/pull/19644)
+- fix(sharing): Automatically set room password for file shares in protected conversations
+  [#19641](https://github.com/nextcloud/spreed/pull/19641)
+- fix(publicshareauth): rate-limit and expire password verification rooms
+  [#19632](https://github.com/nextcloud/spreed/pull/19632)
+  [#19617](https://github.com/nextcloud/spreed/pull/19617)
+- fix(recording): Support long room tokens in upload config key
+  [#19612](https://github.com/nextcloud/spreed/pull/19612)
+- fix(chat): Allow search all messages in chat from selected user
+  [#19590](https://github.com/nextcloud/spreed/pull/19590)
+
+
+## 25.0.2 – 2026-09-25
+
+### Fixed
+- fix(migration): Correctly check for Index rather than Constraint
+  [#19540](https://github.com/nextcloud/spreed/pull/19540)
+
 ## 25.0.1 – 2026-09-24
 ### Changed
 - Update dependencies
