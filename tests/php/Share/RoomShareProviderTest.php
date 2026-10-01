@@ -31,9 +31,12 @@ use Test\TestCase;
 class RoomShareProviderTest extends TestCase {
 	protected IDBConnection $connection;
 	protected RoomShareProvider $provider;
+	protected Config&MockObject $config;
 
 	/** @var list<int> */
 	protected array $shareIds = [];
+	/** @var list<int> */
+	protected array $fileIds = [];
 
 	#[\Override]
 	public function setUp(): void {
@@ -49,7 +52,7 @@ class RoomShareProviderTest extends TestCase {
 			$this->createMock(Manager::class),
 			$this->createMock(ParticipantService::class),
 			$this->createMock(RoomService::class),
-			$this->createMock(ITimeFactory::class),
+			$timeFactory,
 			$this->createMock(IL10N::class),
 			$this->createMock(IMimeTypeLoader::class),
 			$this->createMock(IUserManager::class),
@@ -66,6 +69,13 @@ class RoomShareProviderTest extends TestCase {
 			$delete->executeStatement();
 			$this->shareIds = [];
 		}
+		if (!empty($this->fileIds)) {
+			$delete = $this->connection->getQueryBuilder();
+			$delete->delete('filecache')
+				->where($delete->expr()->in('fileid', $delete->createNamedParameter($this->fileIds, IQueryBuilder::PARAM_INT_ARRAY)));
+			$delete->executeStatement();
+			$this->fileIds = [];
+		}
 
 		parent::tearDown();
 	}
@@ -76,11 +86,11 @@ class RoomShareProviderTest extends TestCase {
 			->values([
 				'share_type' => $insert->createNamedParameter($shareType, IQueryBuilder::PARAM_INT),
 				'share_with' => $insert->createNamedParameter($shareWith),
-				'uid_owner' => $insert->createNamedParameter('owner'),
-				'uid_initiator' => $insert->createNamedParameter('owner'),
+				'uid_owner' => $insert->createNamedParameter($owner),
+				'uid_initiator' => $insert->createNamedParameter($initiator),
 				'item_type' => $insert->createNamedParameter('file'),
-				'file_source' => $insert->createNamedParameter(42, IQueryBuilder::PARAM_INT),
-				'file_target' => $insert->createNamedParameter('/file.txt'),
+				'file_source' => $insert->createNamedParameter($fileSource, IQueryBuilder::PARAM_INT),
+				'file_target' => $insert->createNamedParameter($target),
 				'parent' => $insert->createNamedParameter($parent, $parent === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_INT),
 			]);
 		$insert->executeStatement();
