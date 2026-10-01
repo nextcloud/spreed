@@ -45,6 +45,7 @@
 | `roomToken`           | string | v4    |         | Optional: Only available with `breakout-rooms-v1` capability                                                                                                                                                            |
 | `phoneNumber`         | string | v4    |         | Optional: Only available with `sip-support-dialout` capability and only filled for moderators that are allowed to configure SIP for conversations                                                                       |
 | `callId`              | string | v4    |         | Optional: Only available with `sip-support-dialout` capability and only filled for moderators that are allowed to configure SIP for conversations                                                                       |
+| `actorAvatarVersion`  | string | v4    |         | Optional: Only available for users. Pass it as `v` to the avatar endpoint to get a longer cache lifetime                                                                                                                |
 
 
 ## Get list of participants in a conversation including its breakout rooms

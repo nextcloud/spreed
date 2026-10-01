@@ -374,6 +374,8 @@ namespace OCA\Talk;
  *     roomToken: string,
  *     // Array of session ids, each are up to 512 character long strings, or empty if no session
  *     sessionIds: list<string>,
+ *     // Version of the actor's avatar, only for users. Passing it to the avatar endpoint allows a much longer cache lifetime
+ *     actorAvatarVersion?: string,
  *     // Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
  *     status?: string,
  *     // Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
