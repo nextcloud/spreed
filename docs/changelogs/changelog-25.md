@@ -5,6 +5,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.4 – 2026-10-01
+### Fixed
+- fix(sharing): Fix undefined method setPasswordHash which is only added in Nextcloud 35.0.2
+  [#19665](https://github.com/nextcloud/spreed/pull/19665)
+
 ## 25.0.3 – 2026-10-01
 ### Added
 - feat(CallButton): add a split-menu with 'silent call' action
