@@ -35,7 +35,7 @@ async function addReactionToMessage(token: string, messageId: number, selectedEm
  * @param selectedEmoji
  * @param options
  */
-async function removeReactionFromMessage(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options?: AxiosRequestConfig): deleteReactionResponse {
+async function removeReactionFromMessage(token: string, messageId: number, selectedEmoji: deleteReactionParams['reaction'], options?: AxiosRequestConfig<unknown, deleteReactionParams>): deleteReactionResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
 		...options,
 		params: {
