@@ -75,7 +75,7 @@ async function fetchMessages({
 	lookIntoFuture = CHAT.FETCH_OLD,
 	threadId,
 	limit = 100,
-}: ReceiveMessagesPayload, options?: AxiosRequestConfig): receiveMessagesResponse {
+}: ReceiveMessagesPayload, options?: AxiosRequestConfig<unknown, receiveMessagesParams>): receiveMessagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		...options,
 		params: {
@@ -106,7 +106,7 @@ async function pollNewMessages({
 	lastKnownMessageId,
 	limit = 100,
 	timeout,
-}: ReceiveMessagesPayload, options?: AxiosRequestConfig): receiveMessagesResponse {
+}: ReceiveMessagesPayload, options?: AxiosRequestConfig<unknown, receiveMessagesParams>): receiveMessagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		...options,
 		params: {
@@ -327,12 +327,12 @@ async function summarizeChat(token: string, fromMessageId: summarizeChatParams['
  * @param [data.limit] Number of threads to return
  * @param [options] Axios request options
  */
-async function getRecentThreadsForConversation({ token, limit }: { token: string } & getRecentThreadsParams, options?: AxiosRequestConfig): getRecentThreadsResponse {
+async function getRecentThreadsForConversation({ token, limit }: { token: string } & getRecentThreadsParams, options?: AxiosRequestConfig<unknown, NonNullable<getRecentThreadsParams>>): getRecentThreadsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/threads/recent', { token }), {
 		...options,
 		params: {
 			limit,
-		},
+		} as NonNullable<getRecentThreadsParams>,
 	})
 }
 
@@ -355,13 +355,13 @@ async function getSingleThreadForConversation(token: string, threadId: number, o
  * @param [data.offset] Thread offset to fetch from
  * @param [options] Axios request options
  */
-async function getSubscribedThreads({ limit, offset }: getSubscribedThreadsParams = {}, options?: AxiosRequestConfig): getSubscribedThreadsResponse {
+async function getSubscribedThreads({ limit, offset }: getSubscribedThreadsParams = {}, options?: AxiosRequestConfig<unknown, NonNullable<getSubscribedThreadsParams>>): getSubscribedThreadsResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/subscribed-threads'), {
 		...options,
 		params: {
 			limit,
 			offset,
-		},
+		} as NonNullable<getSubscribedThreadsParams>,
 	})
 }
 

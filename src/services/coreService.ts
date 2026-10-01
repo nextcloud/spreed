@@ -53,7 +53,7 @@ async function autocompleteQuery({
 	onlyUsers = false,
 	onlyLocal = false,
 	forceTypes = [],
-}: SearchPayload, options?: AxiosRequestConfig): AutocompleteResponse {
+}: SearchPayload, options?: AxiosRequestConfig<unknown, AutocompleteParams>): AutocompleteResponse {
 	const shareTypes: ShareType[] = onlyUsers
 		? [SHARE.TYPE.USER]
 		: [
