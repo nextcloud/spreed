@@ -158,13 +158,14 @@ describe('ReactionsWrapper.vue', () => {
 			// Assert
 			expect(showError).toHaveBeenCalled()
 			expect(emojiPicker).toHaveLength(0)
-			expect(reactionButtons).toHaveLength(3) // "🎄" + "🔥" + "🔒" buttons
+			expect(reactionButtons).toHaveLength(4) // "🎄" + "🔥" + "🔒" + hidden "all reactions" buttons
 			expect(reactionButtons.at(0).text()).toBe('🎄 2')
 			expect(reactionButtons.at(1).text()).toBe('🔥 2')
 			expect(reactionButtons.at(2).text()).toBe('🔒 2')
+			expect(reactionButtons.at(3).classes()).toContain('reaction-controls--hidden')
 		})
 
-		test('doesn\'t mount emoji picker when there are no reactions', () => {
+		test('hides emoji picker when there are no reactions', () => {
 			// Arrange
 			reactionsStore.resetReactions(token, messageId)
 			messageMock = vi.fn().mockReturnValue({
@@ -186,7 +187,7 @@ describe('ReactionsWrapper.vue', () => {
 			const reactionButtons = wrapper.findAllComponents(NcPopover)
 			expect(reactionButtons).toHaveLength(0)
 			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
-			expect(emojiPicker.exists()).toBeFalsy()
+			expect(emojiPicker.classes()).toContain('reaction-controls--hidden')
 		})
 
 		test('dispatches store actions upon picking an emoji from the emojipicker', async () => {
