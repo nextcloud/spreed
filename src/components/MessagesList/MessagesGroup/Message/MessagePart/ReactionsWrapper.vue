@@ -50,19 +50,21 @@
 
 		<!-- all reactions button -->
 		<NcButton
-			v-if="showControls"
+			class="reaction-controls"
+			:class="{ 'reaction-controls--hidden': !showControls }"
 			size="small"
 			:title="t('spreed', 'Show all reactions')"
 			:aria-label="t('spreed', 'Show all reactions')"
 			@click="showAllReactions = true">
 			<IconHeartOutline :size="15" />
 		</NcButton>
-		<span v-else class="reaction-button--thumbnail" />
 
 		<!-- More reactions picker -->
 		<NcEmojiPicker
-			v-if="canReact && showControls"
+			v-if="canReact"
 			:perLine="5"
+			class="reaction-controls"
+			:class="{ 'reaction-controls--hidden': !showControls }"
 			@select="handleReactionClick"
 			@afterShow="emitEmojiPickerStatus"
 			@afterHide="emitEmojiPickerStatus">
@@ -74,7 +76,6 @@
 				<IconEmoticonPlusOutline :size="15" />
 			</NcButton>
 		</NcEmojiPicker>
-		<span v-else-if="canReact" class="reaction-button--thumbnail" />
 
 		<!-- all reactions modal-->
 		<ReactionsList
@@ -326,12 +327,6 @@ export default {
 	.reaction-button--trigger {
 		height: 100%;
 	}
-
-	.reaction-button--thumbnail {
-		height: var(--clickable-area-small);
-		width: var(--minimal-button-width);
-		pointer-events: none;
-	}
 }
 
 .reaction-details {
@@ -354,9 +349,16 @@ export default {
 
 // Split view
 .reactions-wrapper {
-	.reaction-button--trigger,
-	.reaction-button--thumbnail {
+	.reaction-button--trigger {
 		padding-inline: 4px;
+	}
+
+	.reaction-controls {
+		align-self: stretch;
+
+		&--hidden {
+			visibility: hidden;
+		}
 	}
 }
 </style>
