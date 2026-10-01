@@ -896,6 +896,7 @@ export default {
 .message-actions {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: flex-start;
 	gap: var(--default-grid-baseline);
 
 	// Overwrite NcButton styles

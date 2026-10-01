@@ -9,7 +9,6 @@
 		class="reactions-wrapper"
 		:class="{
 			light: isSplitViewEnabled && isSelfActor,
-			compact: isSplitViewEnabled,
 		}">
 		<NcPopover
 			v-for="reaction in reactionsSorted"
@@ -49,23 +48,23 @@
 			</div>
 		</NcPopover>
 
-		<template v-if="!isSplitViewEnabled">
-			<!-- all reactions button -->
-			<NcButton
-				v-if="showControls"
-				size="small"
-				:title="t('spreed', 'Show all reactions')"
-				:aria-label="t('spreed', 'Show all reactions')"
-				@click="showAllReactions = true">
-				<IconHeartOutline :size="15" />
-			</NcButton>
-			<span v-else class="reaction-button--thumbnail" />
-		</template>
+		<!-- all reactions button -->
+		<NcButton
+			class="reaction-controls"
+			:class="{ 'reaction-controls--hidden': !showControls }"
+			size="small"
+			:title="t('spreed', 'Show all reactions')"
+			:aria-label="t('spreed', 'Show all reactions')"
+			@click="showAllReactions = true">
+			<IconHeartOutline :size="15" />
+		</NcButton>
 
 		<!-- More reactions picker -->
 		<NcEmojiPicker
-			v-if="canReact && showControls"
+			v-if="canReact"
 			:perLine="5"
+			class="reaction-controls"
+			:class="{ 'reaction-controls--hidden': !showControls }"
 			@select="handleReactionClick"
 			@afterShow="emitEmojiPickerStatus"
 			@afterHide="emitEmojiPickerStatus">
@@ -77,7 +76,6 @@
 				<IconEmoticonPlusOutline :size="15" />
 			</NcButton>
 		</NcEmojiPicker>
-		<span v-else-if="canReact" class="reaction-button--thumbnail" />
 
 		<!-- all reactions modal-->
 		<ReactionsList
@@ -329,12 +327,6 @@ export default {
 	.reaction-button--trigger {
 		height: 100%;
 	}
-
-	.reaction-button--thumbnail {
-		height: 100%;
-		width: var(--minimal-button-width);
-		pointer-events: none;
-	}
 }
 
 .reaction-details {
@@ -356,10 +348,17 @@ export default {
 }
 
 // Split view
-.reactions-wrapper.compact {
-	.reaction-button--trigger,
-	.reaction-button--thumbnail {
+.reactions-wrapper {
+	.reaction-button--trigger {
 		padding-inline: 4px;
+	}
+
+	.reaction-controls {
+		align-self: stretch;
+
+		&--hidden {
+			visibility: hidden;
+		}
 	}
 }
 </style>
