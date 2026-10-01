@@ -24,6 +24,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
+use OCA\Talk\Recording\SpeakerAttribution;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -77,6 +78,7 @@ class RecordingServiceTest extends TestCase {
 	protected IUserManager&MockObject $userManager;
 	protected IEventDispatcher&MockObject $eventDispatcher;
 	protected ISecureRandom&MockObject $secureRandom;
+	protected SpeakerAttribution $speakerAttribution;
 	protected RecordingService $recordingService;
 
 	public function setUp(): void {
@@ -102,6 +104,7 @@ class RecordingServiceTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
+		$this->speakerAttribution = new SpeakerAttribution();
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -124,6 +127,7 @@ class RecordingServiceTest extends TestCase {
 			$this->userManager,
 			$this->eventDispatcher,
 			$this->secureRandom,
+			$this->speakerAttribution,
 		);
 	}
 
@@ -462,6 +466,133 @@ class RecordingServiceTest extends TestCase {
 			$output,
 			$aiTask,
 		);
+	}
+
+	protected function mockSubtitleStorage(string $owner, string $roomToken, int $recordingFileId, int $subtitleFileId, string $subtitleContent): Folder&MockObject {
+		$userFolder = $this->createMock(IUserFolder::class);
+		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
+		$recordingFolder = $this->createMock(Folder::class);
+		$recordingFolder->method('getName')->willReturn($roomToken);
+		$recording = $this->createMock(File::class);
+		$recording->method('getName')->willReturn('recording.ogg');
+		$recording->method('getParent')->willReturn($recordingFolder);
+		$userFolder->method('getById')->with($recordingFileId)->willReturn([$recording]);
+
+		$subtitleFile = $this->createMock(File::class);
+		$subtitleFile->method('getContent')->willReturn($subtitleContent);
+		$this->rootFolder->method('getFirstNodeById')->with($subtitleFileId)->willReturn($subtitleFile);
+
+		return $recordingFolder;
+	}
+
+	public function testStoreSubtitleAttributesSpeakers(): void {
+		$owner = 'user1';
+		$roomToken = 'token123';
+		$recordingFileId = 42;
+		$subtitleFileId = 43;
+
+		$subtitles = "1\n00:00:02,500 --> 00:00:04,500\nHello world\n";
+		$intervals = '{"recordingStartTimestamp": 1789382338127, "intervals": [{"participantName": "James Bond", "participantUserId": "admin", "startTimestampRelative": 2000, "stopTimestampRelative": 5000}]}';
+		$attributedSrt = "1\n00:00:02,500 --> 00:00:04,500\nJames Bond: Hello world\n";
+		$transcript = 'James Bond: Hello world';
+
+		$recordingFolder = $this->mockSubtitleStorage($owner, $roomToken, $recordingFileId, $subtitleFileId, $subtitles);
+
+		$intervalsFile = $this->createStub(File::class);
+		$intervalsFile->method('getContent')->willReturn($intervals);
+		$recordingFolder->method('get')->with('.recording speaking times.json')->willReturn($intervalsFile);
+
+		$subtitleNode = $this->createStub(File::class);
+		$speakersNode = $this->createStub(File::class);
+		$speakersNode->method('getId')->willReturn(101);
+		$transcriptNode = $this->createStub(File::class);
+		$transcriptNode->method('getId')->willReturn(102);
+		$recordingFolder->method('newFile')->willReturnMap([
+			['.recording subtitles.srt', $subtitles, $subtitleNode],
+			['.recording subtitles speakers.srt', $attributedSrt, $speakersNode],
+			['.recording transcript.md', $transcript, $transcriptNode],
+		]);
+
+		$this->serverConfig->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, string $default = ''): string => match ($key) {
+				'call_recording_transcription' => 'no',
+				'call_recording_summary' => 'yes',
+				default => $default,
+			}
+		);
+		$this->systemTagMapper->expects($this->exactly(2))->method('assignGeneratedByAITag');
+
+		$this->appConfig->method('getAppValueString')->with(Config::CALL_RECORDING_SUMMARY_PROMPT)->willReturn('Summarize this:');
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([TextToText::ID]);
+		$this->taskProcessingManager->expects($this->once())->method('scheduleTask')
+			->with($this->callback(
+				function (Task $task) use ($transcript): bool {
+					return $task->getTaskTypeId() === TextToText::ID
+						&& $task->getInput() === ['input' => 'Summarize this:' . "\n" . $transcript]
+						&& $task->getCustomId() === 'call/summary/token123/42';
+				}
+			));
+
+		$this->recordingService->storeSubtitle($owner, $roomToken, $recordingFileId, $subtitleFileId);
+	}
+
+	public function testStoreSubtitleWithoutIntervalsStoresTranscript(): void {
+		$owner = 'user1';
+		$roomToken = 'token123';
+		$recordingFileId = 42;
+		$subtitleFileId = 43;
+
+		$subtitles = "1\n00:00:02,500 --> 00:00:04,500\nHello world\n";
+
+		$recordingFolder = $this->mockSubtitleStorage($owner, $roomToken, $recordingFileId, $subtitleFileId, $subtitles);
+		$recordingFolder->method('get')->willThrowException(new NotFoundException());
+
+		$subtitleNode = $this->createStub(File::class);
+		$transcriptNode = $this->createStub(File::class);
+		$recordingFolder->method('newFile')->willReturnMap([
+			['.recording subtitles.srt', $subtitles, $subtitleNode],
+			['.recording transcript.md', 'Hello world', $transcriptNode],
+		]);
+
+		$this->serverConfig->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, string $default = ''): string => match ($key) {
+				'call_recording_transcription', 'call_recording_summary' => 'no',
+				default => $default,
+			}
+		);
+		$this->taskProcessingManager->expects($this->never())->method('scheduleTask');
+
+		$this->recordingService->storeSubtitle($owner, $roomToken, $recordingFileId, $subtitleFileId);
+	}
+
+	public function testStoreSubtitleWithUnusableIntervalsFallsBackToTranscript(): void {
+		$owner = 'user1';
+		$roomToken = 'token123';
+		$recordingFileId = 42;
+		$subtitleFileId = 43;
+
+		$subtitles = "1\n00:00:02,500 --> 00:00:04,500\nHello world\n";
+
+		$recordingFolder = $this->mockSubtitleStorage($owner, $roomToken, $recordingFileId, $subtitleFileId, $subtitles);
+
+		$intervalsFile = $this->createStub(File::class);
+		$intervalsFile->method('getContent')->willReturn('{"recordingStartTimestamp": 0, "intervals": []}');
+		$recordingFolder->method('get')->with('.recording speaking times.json')->willReturn($intervalsFile);
+
+		$subtitleNode = $this->createStub(File::class);
+		$transcriptNode = $this->createStub(File::class);
+		$recordingFolder->method('newFile')->willReturnMap([
+			['.recording subtitles.srt', $subtitles, $subtitleNode],
+			['.recording transcript.md', 'Hello world', $transcriptNode],
+		]);
+
+		$this->serverConfig->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, string $default = ''): string => $key === 'call_recording_transcription' ? 'no' : $default
+		);
+		$this->systemTagMapper->expects($this->never())->method('assignGeneratedByAITag');
+		$this->taskProcessingManager->expects($this->never())->method('scheduleTask');
+
+		$this->recordingService->storeSubtitle($owner, $roomToken, $recordingFileId, $subtitleFileId);
 	}
 
 	public function testGetRecordingUploadOwnerReturnsShareOwner(): void {

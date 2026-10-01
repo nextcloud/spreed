@@ -146,23 +146,6 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if (str_starts_with((string)$customId, 'call/speakers/')) {
-			[$roomToken, $fileId] = explode('/', substr((string)$customId, strlen('call/speakers/')));
-			$fileId = (int)$fileId;
-			if ($fileId === 0 || $task->getUserId() === null) {
-				return;
-			}
-			if ($event instanceof TaskSuccessfulEvent) {
-				$this->recordingService->storeSpeakerSubtitles($task->getUserId(), $roomToken, $fileId, $task->getOutput()['output'] ?? '');
-			} elseif ($event instanceof TaskFailedEvent) {
-				$this->logger->error('Speaker attribution failed for call recording in room {roomToken}', [
-					'roomToken' => $roomToken,
-					'exception' => $event->getException(),
-				]);
-			}
-			return;
-		}
-
 		if (str_starts_with((string)$customId, 'call/transcription/')) {
 			$aiType = 'transcript';
 			$roomToken = substr((string)$customId, strlen('call/transcription/'));
