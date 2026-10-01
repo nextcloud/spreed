@@ -6,7 +6,7 @@
 import type { DeepReadonly, Ref } from 'vue'
 
 import { createSharedComposable } from '@vueuse/core'
-import { onUnmounted, readonly, ref } from 'vue'
+import { onScopeDispose, readonly, ref } from 'vue'
 
 /**
  * Composable to get current time (as Date object)
@@ -21,10 +21,7 @@ export function useCurrentTimeComposable(precision: number = 60_000): DeepReadon
 
 	requestUpdate()
 
-	/**
-	 * Called for shared composable when all subscribers are unmounted (onScopeDispose)
-	 */
-	onUnmounted(() => {
+	onScopeDispose(() => {
 		clearTimeout(timeout)
 	})
 

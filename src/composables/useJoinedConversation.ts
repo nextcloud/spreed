@@ -6,7 +6,7 @@
 import type { MaybeRefOrGetter, WatchCallback, WatchStopHandle } from 'vue'
 
 import { createSharedComposable, whenever } from '@vueuse/core'
-import { onBeforeMount, onBeforeUnmount, readonly, ref, toValue } from 'vue'
+import { onScopeDispose, readonly, ref, toValue } from 'vue'
 import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 
@@ -23,12 +23,10 @@ function readJoinedConversation() {
  * Shared composable exposing the currently joined conversation token.
  */
 function useJoinedConversationComposable() {
-	onBeforeMount(() => {
-		EventBus.on('joined-conversation', readJoinedConversation)
-		readJoinedConversation()
-	})
+	EventBus.on('joined-conversation', readJoinedConversation)
+	readJoinedConversation()
 
-	onBeforeUnmount(() => {
+	onScopeDispose(() => {
 		EventBus.off('joined-conversation', readJoinedConversation)
 	})
 
