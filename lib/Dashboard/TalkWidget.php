@@ -292,7 +292,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$subtitle = $this->l10n->t('Call in progress');
 		} elseif (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
 			|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
-			$subtitle = $this->l10n->t('You were mentioned');
+			$subtitle = $room->getLastMentionForAttendee($attendee->getLastMentionMessage())->getMessage();
 		}
 
 		return new WidgetItem(
