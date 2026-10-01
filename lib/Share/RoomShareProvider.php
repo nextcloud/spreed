@@ -284,7 +284,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$share->setNodeId((int)$data['file_source']);
 		$share->setNodeType($data['item_type']);
 
-		if (!empty($data['password'])) {
+		if (!empty($data['password']) && method_exists($share, 'setPasswordHash')) {
 			$share->setPasswordHash($data['password']);
 		}
 
@@ -316,7 +316,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		} catch (RoomNotFoundException) {
 			$passwordHash = '';
 		}
-		if ($passwordHash !== '') {
+		if ($passwordHash !== '' && method_exists($share, 'setPasswordHash')) {
 			$share->setPasswordHash($passwordHash);
 		} else {
 			$share->setPassword(null);
