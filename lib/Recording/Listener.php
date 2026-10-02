@@ -138,9 +138,9 @@ class Listener implements IEventListener {
 				}
 				$this->recordingService->storeSubtitle($task->getUserId(), $roomToken, $fileId, $subtitleFileId);
 			} elseif ($event instanceof TaskFailedEvent) {
-				$this->logger->error('Subtitle generation failed for call recording in room {roomToken}', [
+				$this->logger->error('Subtitle generation failed for call recording in room {roomToken}: {error}', [
 					'roomToken' => $roomToken,
-					'exception' => $event->getException(),
+					'error' => $event->getErrorMessage(),
 				]);
 			}
 			return;
