@@ -1004,14 +1004,12 @@ class RecordingService {
 		$removeNotification = null;
 		if (str_ends_with($file->getName(), ' - summary.md')) {
 			$removeNotification = 'summary_file_stored';
-		} elseif (str_contains($file->getName(), ' transcript ') && str_ends_with($file->getName(), '.md')) {
+		} elseif (str_ends_with($file->getName(), '.md')) {
 			$removeNotification = 'transcript_file_stored';
-		} elseif (str_ends_with($file->getName(), '.srt')) {
-			$removeNotification = null;
-		} elseif (!str_ends_with($file->getName(), '.md')) {
-			$removeNotification = 'record_file_stored';
+		} elseif (str_ends_with($file->getName(), '.srt') || str_ends_with($file->getName(), '.json')) {
+			// Subtitles and speaker intervals have no related notification
 		} else {
-			$removeNotification = 'transcript_file_stored';
+			$removeNotification = 'record_file_stored';
 		}
 
 		$share = $this->shareManager->createShare($share);
