@@ -6,11 +6,17 @@
  */
 namespace OCA\Files_Sharing\Event {
 
+	use OCA\Files_Sharing\SharedMount;
 	use OCP\EventDispatcher\Event;
 	use OCP\IUser;
 
 	class UserShareAccessUpdatedEvent extends Event {
 		public function __construct(IUser $user) {
+		}
+	}
+
+	class ShareMountedEvent extends Event {
+		public function getMount(): SharedMount {
 		}
 	}
 }
