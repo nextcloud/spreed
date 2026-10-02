@@ -121,7 +121,7 @@ class SpeakerAttribution {
 				if ($trimmed === '') {
 					continue;
 				}
-				if ($index === null && $text === [] && preg_match('/^\d+$/', $trimmed) === 1) {
+				if ($index === null && $start === null && $text === [] && preg_match('/^\d+$/', $trimmed) === 1) {
 					$index = (int)$trimmed;
 					continue;
 				}
