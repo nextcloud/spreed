@@ -20,6 +20,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
@@ -63,6 +64,7 @@ class ChatManagerTest extends TestCase {
 	protected Notifier&MockObject $notifier;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected AttachmentService&MockObject $attachmentService;
+	protected ConversationFolderService&MockObject $conversationFolderService;
 	protected IReferenceManager&MockObject $referenceManager;
 	protected ILimiter&MockObject $rateLimiter;
 	protected IRequest&MockObject $request;
@@ -87,6 +89,7 @@ class ChatManagerTest extends TestCase {
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
+		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
 		$this->rateLimiter = $this->createMock(ILimiter::class);
 		$this->jobList = $this->createMock(IJobList::class);
@@ -132,6 +135,7 @@ class ChatManagerTest extends TestCase {
 					$cacheFactory,
 					$this->timeFactory,
 					$this->attachmentService,
+					$this->conversationFolderService,
 					$this->referenceManager,
 					$this->rateLimiter,
 					$this->request,
@@ -158,6 +162,7 @@ class ChatManagerTest extends TestCase {
 			$cacheFactory,
 			$this->timeFactory,
 			$this->attachmentService,
+			$this->conversationFolderService,
 			$this->referenceManager,
 			$this->rateLimiter,
 			$this->request,
@@ -617,6 +622,95 @@ class ChatManagerTest extends TestCase {
 		$this->shareManager->expects($this->once())
 			->method('deleteShare')
 			->with($share);
+
+		$this->commentsManager->expects($this->once())
+			->method('save')
+			->with($comment);
+
+		$systemMessage = $this->createStub(IComment::class);
+
+		$chatManager = $this->getManager(['addSystemMessage']);
+		$chatManager->expects($this->once())
+			->method('addSystemMessage')
+			->with($chat, $participant, Attendee::ACTOR_USERS, 'user', $this->anything(), $this->anything(), false, null, $comment)
+			->willReturn($systemMessage);
+
+		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
+	}
+
+	public function testDeleteMessageConversationFolderFile(): void {
+		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
+		$attendee = $mapper->createAttendeeFromRow([
+			'a_id' => 1,
+			'room_id' => 123,
+			'actor_type' => Attendee::ACTOR_USERS,
+			'actor_id' => 'user',
+			'display_name' => 'user-display',
+			'pin' => '',
+			'participant_type' => Participant::USER,
+			'favorite' => true,
+			'notification_level' => Participant::NOTIFY_MENTION,
+			'notification_calls' => Participant::NOTIFY_CALLS_ON,
+			'last_joined_call' => 0,
+			'last_read_message' => 0,
+			'last_mention_message' => 0,
+			'last_mention_direct' => 0,
+			'read_privacy' => Participant::PRIVACY_PUBLIC,
+			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'access_token' => '',
+			'remote_id' => '',
+			'phone_number' => '',
+			'call_id' => '',
+			'invited_cloud_id' => '',
+			'state' => Invitation::STATE_ACCEPTED,
+			'unread_messages' => 0,
+			'last_attendee_activity' => 0,
+			'archived' => 0,
+			'important' => 0,
+			'sensitive' => 0,
+			'tag_ids' => null,
+			'has_unread_threads' => false,
+			'has_unread_thread_mentions' => false,
+			'has_unread_thread_directs' => false,
+			'hidden_pinned_id' => 0,
+			'has_scheduled_messages' => 0,
+		]);
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn(1234);
+		$chat->expects($this->any())
+			->method('getToken')
+			->willReturn('T0k3N');
+		$participant = new Participant($chat, $attendee, null);
+
+		$date = new \DateTime();
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getId')
+			->willReturn('123456');
+		$comment->method('getVerb')
+			->willReturn('object_shared');
+		$comment->expects($this->once())
+			->method('getMessage')
+			->willReturn(json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => '42']]));
+		$comment->expects($this->once())
+			->method('setMessage');
+		$comment->expects($this->once())
+			->method('setVerb')
+			->with('comment_deleted');
+
+		$comment->method('getActorType')
+			->willReturn(Attendee::ACTOR_USERS);
+		$comment->method('getActorId')
+			->willReturn('user');
+
+		$this->shareManager->expects($this->never())
+			->method('deleteShare');
+
+		$this->conversationFolderService->expects($this->once())
+			->method('moveToDeletedFolder')
+			->with('user', 'T0k3N', 42);
 
 		$this->commentsManager->expects($this->once())
 			->method('save')

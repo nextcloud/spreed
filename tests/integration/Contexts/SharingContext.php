@@ -134,6 +134,19 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * $path is relative to the user's conversation folder (the parent of the Draft folder).
+	 */
+	#[Then('/^user "([^"]*)" gets file "([^"]*)" in conversation folder of room "([^"]*)" with (\d+)$/')]
+	public function userGetsFileInConversationFolder(string $user, string $path, string $room, int $statusCode): void {
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$convFolder = dirname($this->ensureDraftFolderViaProbe($user, $token, false));
+
+		$this->currentUser = $user;
+		$this->sendingToDav('GET', "/$user/$convFolder/$path");
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	/**
 	 * Call the probe endpoint for a room and store the response.
 	 * $fileNames is a comma-separated list of desired filenames.
 	 */
