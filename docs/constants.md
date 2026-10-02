@@ -81,7 +81,7 @@ Required capability: `config => conversations => unarchive`
 * `mention` - Archived conversations are unarchived when the user is mentioned directly or via `@all` or when one of their messages is replied to, or on any new chat message in one-to-one conversations, the same cases that show the mention marker in the conversation list
 * `always` - Archived conversations are unarchived on any new chat message by other participants, the same cases that show the unread marker in the conversation list
 
-Own messages and system messages never unarchive a conversation. Silent messages are treated like normal messages, as they also show the markers.
+Shared files and objects (e.g. polls) are treated like chat messages. Own messages and other system messages never unarchive a conversation. Silent messages are treated like normal messages, as they also show the markers.
 
 ### Conversation attributes
 Required capability: `conversation-presets`

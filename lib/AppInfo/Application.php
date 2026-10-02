@@ -225,6 +225,7 @@ class Application extends App implements IBootstrap {
 
 		// Chat listeners
 		$context->registerEventListener(ChatMessageSentEvent::class, UnarchiveConversationListener::class);
+		$context->registerEventListener(SystemMessageSentEvent::class, UnarchiveConversationListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, ChangelogListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ChatListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);

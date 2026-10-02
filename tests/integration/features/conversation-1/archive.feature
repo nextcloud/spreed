@@ -119,3 +119,17 @@ Feature: conversation-1/archive
     Then user "participant2" is participant of the following unordered rooms (v4)
       | id         | name | isArchived |
       | group room | room | 0          |
+    When user "participant2" archives room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room"
+    Then user "participant2" is participant of the following unordered rooms (v4)
+      | id         | name | isArchived |
+      | group room | room | 0          |
+    When user "participant2" archives room "group room" with 200 (v4)
+    And user "participant1" creates a poll in room "group room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant2" is participant of the following unordered rooms (v4)
+      | id         | name | isArchived |
+      | group room | room | 0          |

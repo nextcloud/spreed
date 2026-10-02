@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OC\Comments\Comment;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
@@ -69,8 +71,11 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	/**
 	 * @param list<array{type: string, id: string}> $mentions
 	 */
-	protected function createComment(array $mentions = []): IComment&MockObject {
+	protected function createComment(array $mentions = [], string $actorId = 'carol'): IComment&MockObject {
 		$comment = $this->createMock(IComment::class);
+		$comment->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
+		$comment->method('getActorId')->willReturn($actorId);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
 		$comment->method('getMentions')->willReturn($mentions);
 		return $comment;
 	}
@@ -90,7 +95,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('unarchiveAttendeesByIds');
 
-		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment(), null, null);
+		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment(), null);
 	}
 
 	public static function dataUnarchiveAfterMessage(): array {
@@ -145,7 +150,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			->method('unarchiveAttendeesByIds')
 			->with($expectedAttendeeIds);
 
-		$this->service->unarchiveAfterMessage($this->createRoom($roomType), $this->createComment($mentions), null, $parent);
+		$this->service->unarchiveAfterMessage($this->createRoom($roomType), $this->createComment($mentions), $parent);
 	}
 
 	public static function dataOwnMessage(): array {
@@ -157,9 +162,8 @@ class ConversationUnarchiveServiceTest extends TestCase {
 
 	#[DataProvider('dataOwnMessage')]
 	public function testOwnMessageKeepsArchived(string $mode): void {
-		$senderAttendee = $this->createAttendee(1, 'alice');
 		$this->attendeeMapper->method('getArchivedActorsByType')
-			->willReturn([$senderAttendee, $this->createAttendee(2, 'bob')]);
+			->willReturn([$this->createAttendee(1, 'alice'), $this->createAttendee(2, 'bob')]);
 		$this->serverConfig->method('getUserValueForUsers')
 			->willReturn(['alice' => $mode, 'bob' => $mode]);
 
@@ -168,8 +172,46 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			->method('unarchiveAttendeesByIds')
 			->with([2]);
 
-		$comment = $this->createComment([['type' => 'call', 'id' => 'localtoken']]);
-		$this->service->unarchiveAfterMessage($this->createRoom(), $comment, $this->createParticipant($senderAttendee), null);
+		$comment = $this->createComment([['type' => 'call', 'id' => 'localtoken']], 'alice');
+		$this->service->unarchiveAfterMessage($this->createRoom(), $comment, null);
+	}
+
+	public static function dataSharedObject(): array {
+		$mention = UserPreference::CONVERSATIONS_UNARCHIVE_MENTION;
+		$always = UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS;
+		$file = ['message' => 'file_shared', 'parameters' => ['share' => '1', 'metaData' => []]];
+		$fileWithCaption = ['message' => 'file_shared', 'parameters' => ['share' => '1', 'metaData' => ['caption' => 'Look @bob']]];
+		$poll = ['message' => 'object_shared', 'parameters' => ['objectType' => 'talk-poll', 'objectId' => '1']];
+
+		return [
+			'always: file unarchives' => [$always, $file, [2]],
+			'always: poll unarchives' => [$always, $poll, [2]],
+			'mention: file keeps archived' => [$mention, $file, []],
+			'mention: poll keeps archived' => [$mention, $poll, []],
+			'mention: file with caption mention unarchives' => [$mention, $fileWithCaption, [2]],
+		];
+	}
+
+	/**
+	 * @param array<string, mixed> $message
+	 * @param list<int> $expectedAttendeeIds
+	 */
+	#[DataProvider('dataSharedObject')]
+	public function testSharedObject(string $mode, array $message, array $expectedAttendeeIds): void {
+		$this->attendeeMapper->method('getArchivedActorsByType')
+			->willReturn([$this->createAttendee(2, 'bob')]);
+		$this->serverConfig->method('getUserValueForUsers')
+			->willReturn(['bob' => $mode]);
+
+		$this->participantService->expects($this->once())
+			->method('unarchiveAttendeesByIds')
+			->with($expectedAttendeeIds);
+
+		$comment = new Comment();
+		$comment->setActor(Attendee::ACTOR_USERS, 'alice');
+		$comment->setVerb(ChatManager::VERB_OBJECT_SHARED);
+		$comment->setMessage(json_encode($message, JSON_THROW_ON_ERROR), ChatManager::MAX_CHAT_LENGTH);
+		$this->service->unarchiveAfterMessage($this->createRoom(), $comment, null);
 	}
 
 	/**
