@@ -542,20 +542,7 @@ class ChatManager {
 	 * @throws ShareNotFound
 	 */
 	public function unshareFileOnMessageDelete(Room $room, Participant $participant, IComment $comment, array $messageData): void {
-		if (isset($messageData['message'], $messageData['parameters']['fileId'])
-			&& $messageData['message'] === 'file_shared'
-			&& $comment->getActorType() === Attendee::ACTOR_USERS) {
-			$attendee = $participant->getAttendee();
-			if (!$participant->hasModeratorPermissions(false)
-				&& !($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $comment->getActorId())) {
-				return;
-			}
-
-			try {
-				$this->conversationFolderService->moveToDeletedFolder($comment->getActorId(), $room->getToken(), (int)$messageData['parameters']['fileId']);
-			} catch (\Exception $e) {
-				$this->logger->error('Failed to move attachment of deleted message', ['exception' => $e]);
-			}
+		if ($this->moveConversationFolderAttachment($comment, $room->getToken(), $messageData)) {
 			return;
 		}
 
@@ -580,6 +567,26 @@ class ChatManager {
 		}
 
 		$this->shareManager->deleteShare($share);
+	}
+
+	/**
+	 * Move an attachment posted from the conversation folder into the non-shared Deleted folder
+	 *
+	 * @return bool Whether the message is a conversation folder attachment
+	 */
+	private function moveConversationFolderAttachment(IComment $comment, string $token, array $messageData): bool {
+		if (!isset($messageData['message'], $messageData['parameters']['fileId'])
+			|| $messageData['message'] !== 'file_shared'
+			|| $comment->getActorType() !== Attendee::ACTOR_USERS) {
+			return false;
+		}
+
+		try {
+			$this->conversationFolderService->moveToDeletedFolder($comment->getActorId(), $token, (int)$messageData['parameters']['fileId']);
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to move attachment of deleted message', ['exception' => $e]);
+		}
+		return true;
 	}
 
 	/**
@@ -1341,6 +1348,10 @@ class ChatManager {
 	}
 
 	public function deleteExpiredMessages(): void {
+		foreach ($this->commentsManager->getExpiredObjectSharedMessages() as ['token' => $token, 'comment' => $comment]) {
+			$this->moveConversationFolderAttachment($comment, $token, json_decode($comment->getMessage(), true) ?? []);
+		}
+
 		$this->commentsManager->deleteCommentsExpiredAtObject('chat', '');
 	}
 
