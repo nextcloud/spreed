@@ -10,6 +10,7 @@ namespace OCA\SpreedCheats\Controller;
 
 use OCA\SpreedCheats\Calendar\EventGenerator;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -233,6 +234,19 @@ class ApiController extends OCSController {
 		}
 
 		return new DataResponse(['access_token' => $accessToken]);
+	}
+
+	/**
+	 * Forge room shares from before userroom shares were created for every recipient
+	 */
+	public function deleteUserRoomShares(string $userId): DataResponse {
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('share')
+			->where($delete->expr()->eq('share_type', $delete->createNamedParameter(RoomShareProvider::SHARE_TYPE_USERROOM, IQueryBuilder::PARAM_INT)))
+			->andWhere($delete->expr()->eq('share_with', $delete->createNamedParameter($userId)));
+		$delete->executeStatement();
+
+		return new DataResponse();
 	}
 
 	public function forgedFederationLeave(string $token, string $actingUser, string $targetUser): DataResponse {

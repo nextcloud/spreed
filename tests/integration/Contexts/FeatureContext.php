@@ -5710,6 +5710,16 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, 200);
 	}
 
+	#[Given('userroom shares of :user are removed')]
+	public function removeUserRoomShares(string $user): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/apps/spreedcheats/forged/userroom-shares', [
+			'userId' => $user,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
 	#[Given('/^user "([^"]*)" creates calendar events for a room "([^"]*)" \((v4)\)$/')]
 	public function createCalendarEntriesWithRoom(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
