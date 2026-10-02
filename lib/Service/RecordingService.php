@@ -144,7 +144,7 @@ class RecordingService {
 		}
 	}
 
-	public function store(Room $room, string $owner, array $file, ?array $intervalsFile = null, ?string $intervalsFileName = null): void {
+	public function store(Room $room, string $owner, array $file, ?array $intervalsFile = null): void {
 		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);

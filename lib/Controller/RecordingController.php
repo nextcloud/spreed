@@ -515,7 +515,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			} else {
 				$file = $this->request->getUploadedFile('file');
 				$intervalsFile = $this->request->getUploadedFile('intervalsFile');
-				$this->recordingService->store($this->getRoom(), $owner, $file, $intervalsFile, $intervalsFile !== null ? $intervalsFile['name'] : null);
+				$this->recordingService->store($this->getRoom(), $owner, $file, $intervalsFile);
 			}
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
