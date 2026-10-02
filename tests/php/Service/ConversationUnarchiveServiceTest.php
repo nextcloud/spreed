@@ -58,10 +58,11 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		return $attendee;
 	}
 
-	protected function createRoom(): Room&MockObject {
+	protected function createRoom(int $type = Room::TYPE_GROUP): Room&MockObject {
 		$room = $this->createMock(Room::class);
 		$room->method('getId')->willReturn(42);
 		$room->method('getToken')->willReturn('localtoken');
+		$room->method('getType')->willReturn($type);
 		return $room;
 	}
 
@@ -98,9 +99,12 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		$always = UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS;
 		$directMention = [['type' => 'user', 'id' => 'bob']];
 		$allMention = [['type' => 'call', 'id' => 'token']];
+		$oneToOne = Room::TYPE_ONE_TO_ONE;
 
 		return [
 			'no setting keeps archived' => [[], [], null, []],
+			'never: one-to-one plain message keeps archived' => [['bob' => $never], [], null, [], $oneToOne],
+			'mention: one-to-one plain message unarchives' => [['bob' => $mention], [], null, [2], $oneToOne],
 			'never keeps archived on mention' => [['bob' => $never], $directMention, null, []],
 			'mention: plain message keeps archived' => [['bob' => $mention], [], null, []],
 			'mention: direct mention unarchives' => [['bob' => $mention], $directMention, null, [2]],
@@ -119,7 +123,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	 * @param list<int> $expectedAttendeeIds
 	 */
 	#[DataProvider('dataUnarchiveAfterMessage')]
-	public function testUnarchiveAfterMessage(array $modes, array $mentions, ?string $replyToUserId, array $expectedAttendeeIds): void {
+	public function testUnarchiveAfterMessage(array $modes, array $mentions, ?string $replyToUserId, array $expectedAttendeeIds, int $roomType = Room::TYPE_GROUP): void {
 		$this->attendeeMapper->method('getArchivedActorsByType')
 			->with(42, Attendee::ACTOR_USERS)
 			->willReturn([
@@ -141,7 +145,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			->method('unarchiveAttendeesByIds')
 			->with($expectedAttendeeIds);
 
-		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment($mentions), null, $parent);
+		$this->service->unarchiveAfterMessage($this->createRoom($roomType), $this->createComment($mentions), null, $parent);
 	}
 
 	public static function dataOwnMessage(): array {

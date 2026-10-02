@@ -78,7 +78,7 @@ Required capability: `config => conversations => group-mode`
 Required capability: `config => conversations => unarchive`
 
 * `never` (default) - Archived conversations stay archived until unarchived manually
-* `mention` - Archived conversations are unarchived when the user is mentioned directly or via `@all` or when one of their messages is replied to, the same cases that show the mention marker in the conversation list
+* `mention` - Archived conversations are unarchived when the user is mentioned directly or via `@all` or when one of their messages is replied to, or on any new chat message in one-to-one conversations, the same cases that show the mention marker in the conversation list
 * `always` - Archived conversations are unarchived on any new chat message by other participants, the same cases that show the unread marker in the conversation list
 
 Own messages and system messages never unarchive a conversation. Silent messages are treated like normal messages, as they also show the markers.

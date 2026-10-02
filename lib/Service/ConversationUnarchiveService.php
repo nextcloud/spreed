@@ -24,7 +24,8 @@ use OCP\IConfig;
  * "conversations_unarchive" user setting when a new chat message is posted.
  *
  * A conversation is unarchived when the conversation list would show a marker
- * for the message: a mention marker with "mention", an unread marker with "always".
+ * for the message: a mention marker with "mention" (any message in one-to-one
+ * conversations), an unread marker with "always".
  * Own messages create no marker and never unarchive.
  */
 class ConversationUnarchiveService {
@@ -48,7 +49,8 @@ class ConversationUnarchiveService {
 
 		$senderAttendeeId = $sender?->getAttendee()->getId();
 		$mentionedUserIds = $this->getMentionedUserIds($comment, $parent);
-		$everyoneMentioned = $this->isEveryoneMentioned($comment);
+		// Any message in a one-to-one conversation shows the mention marker
+		$everyoneMentioned = $room->getType() === Room::TYPE_ONE_TO_ONE || $this->isEveryoneMentioned($comment);
 
 		$attendeeIds = [];
 		foreach ($archivedAttendees as $attendee) {
