@@ -804,3 +804,30 @@ Feature: sharing-1/create
       | file_target            | /welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
+
+  Scenario: mount and repair a room share without userroom share in the attachment folder
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And userroom shares of "participant2" are removed
+    When user "participant2" gets the DAV properties for "/"
+    Then the list of returned files for "participant2" is
+      | / |
+      | /Talk/ |
+      | /welcome.txt |
+    And user "participant2" gets the DAV properties for "/Talk"
+    And the list of returned files for "participant2" is
+      | /Talk/ |
+      | /Talk/welcome.txt |
+    And user "participant2" gets last share
+    And share is returned with
+      | file_target | /{TALK_PLACEHOLDER}/welcome.txt |
+    # The refresh of the share mounts recreates the userroom share
+    When invoking occ with "user:setting participant2 files_sharing user_needs_share_refresh 1"
+    And the command was successful
+    And user "participant2" gets the DAV properties for "/"
+    Then user "participant2" gets last share
+    And share is returned with
+      | file_target | /Talk/welcome.txt |
