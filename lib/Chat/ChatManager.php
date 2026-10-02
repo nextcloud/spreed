@@ -29,6 +29,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
@@ -123,6 +124,7 @@ class ChatManager {
 		ICacheFactory $cacheFactory,
 		private readonly ITimeFactory $timeFactory,
 		private readonly AttachmentService $attachmentService,
+		private readonly ConversationFolderService $conversationFolderService,
 		private readonly IReferenceManager $referenceManager,
 		private readonly ILimiter $rateLimiter,
 		private readonly IRequest $request,
@@ -539,7 +541,24 @@ class ChatManager {
 	 * @param array $messageData
 	 * @throws ShareNotFound
 	 */
-	public function unshareFileOnMessageDelete(Room $room, Participant $participant, array $messageData): void {
+	public function unshareFileOnMessageDelete(Room $room, Participant $participant, IComment $comment, array $messageData): void {
+		if (isset($messageData['message'], $messageData['parameters']['fileId'])
+			&& $messageData['message'] === 'file_shared'
+			&& $comment->getActorType() === Attendee::ACTOR_USERS) {
+			$attendee = $participant->getAttendee();
+			if (!$participant->hasModeratorPermissions(false)
+				&& !($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $comment->getActorId())) {
+				return;
+			}
+
+			try {
+				$this->conversationFolderService->moveToDeletedFolder($comment->getActorId(), $room->getToken(), (int)$messageData['parameters']['fileId']);
+			} catch (\Exception $e) {
+				$this->logger->error('Failed to move attachment of deleted message', ['exception' => $e]);
+			}
+			return;
+		}
+
 		if (!isset($messageData['message'], $messageData['parameters']['share']) || $messageData['message'] !== 'file_shared') {
 			// Not a file share
 			return;
@@ -625,7 +644,7 @@ class ChatManager {
 	public function deleteMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $deletionTime): IComment {
 		if ($comment->getVerb() === self::VERB_OBJECT_SHARED) {
 			$messageData = json_decode($comment->getMessage(), true);
-			$this->unshareFileOnMessageDelete($chat, $participant, $messageData);
+			$this->unshareFileOnMessageDelete($chat, $participant, $comment, $messageData);
 			$this->removePollOnMessageDelete($chat, $participant, $messageData, $deletionTime);
 		}
 
