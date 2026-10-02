@@ -78,7 +78,14 @@ class FederationController extends OCSController {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		}
 		try {
-			$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
+			$invitation = $this->federationManager->getRemoteShareById($id);
+			if (\OCA\Talk\Matrix\Service\InvitationService::isMatrixInvitation($invitation)) {
+				$participant = \OCP\Server::get(\OCA\Talk\Matrix\Service\LifecycleService::class)->acceptInvitation($user, $invitation);
+			} else {
+				$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
+			}
+		} catch (\Nextcloud\Matrix\Exception\MatrixException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_GONE);
 		} catch (CannotReachRemoteException) {
 			return new DataResponse(['error' => 'remote'], Http::STATUS_GONE);
 		} catch (UnauthorizedException) {
@@ -119,7 +126,14 @@ class FederationController extends OCSController {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		}
 		try {
-			$this->federationManager->rejectRemoteRoomShare($user, $id);
+			$invitation = $this->federationManager->getRemoteShareById($id);
+			if (\OCA\Talk\Matrix\Service\InvitationService::isMatrixInvitation($invitation)) {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\LifecycleService::class)->rejectInvitation($user, $invitation);
+			} else {
+				$this->federationManager->rejectRemoteRoomShare($user, $id);
+			}
+		} catch (\Nextcloud\Matrix\Exception\MatrixException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (UnauthorizedException) {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {

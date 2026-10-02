@@ -66,6 +66,13 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
+			v-if="!isGuest && matrixEnabled"
+			id="matrix_account"
+			:name="t('spreed', 'Matrix account')">
+			<MatrixAccountSettings />
+		</NcAppSettingsSection>
+
+		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="privacy"
 			:name="t('spreed', 'Privacy')">
@@ -163,6 +170,7 @@ import IconTune from 'vue-material-design-icons/Tune.vue'
 import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
 import AppearanceSettings from './AppearanceSettings.vue'
 import LiveTranscriptionTargetLanguageSelect from './LiveTranscriptionTargetLanguageSelect.vue'
+import MatrixAccountSettings from './MatrixAccountSettings.vue'
 import { PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -186,6 +194,7 @@ export default {
 		IconMicrophoneOutline,
 		AppearanceSettings,
 		LiveTranscriptionTargetLanguageSelect,
+		MatrixAccountSettings,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
@@ -228,6 +237,10 @@ export default {
 	computed: {
 		attachmentFolder() {
 			return this.settingsStore.attachmentFolder
+		},
+
+		matrixEnabled() {
+			return getTalkConfig('local', 'matrix', 'enabled') === true
 		},
 
 		isGuest() {

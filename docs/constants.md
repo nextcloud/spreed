@@ -21,6 +21,7 @@
 | `sample`                | No             | Room is a sample conversation                                                | User ID the sample                                                                |
 | `event`                 | Yes            | Event conversation created via the calendar                                  | Start and end unix timestamp of the event concatenated by pound sign: `start#end` |
 | `extended_conversation` | Yes            | Room is created from another conversation (e.g. adding a participant to 1-1) | Token of previous conversation                                                    |
+| `matrix`                | No             | Conversation mirrors a Matrix room (`matrix-rooms` capability)                | Matrix room id                                                                    |
 | `external_call`         | Yes            | Room whose calls are handled by an external video service (see [External Call Service](external-call-service.md)) | Meeting/room identifier on the external service side |
 | `classified`            | No             | Classified conversation queued for automatic deletion after a call (retention `retention_classified_rooms`) | Unix timestamp of the call that queued the deletion                               |
 | `classified_persist`    | No             | Classified conversation a moderator kept (unbound), so it is no longer auto-deleted | Unix timestamp of when it was kept                                                |
@@ -122,6 +123,7 @@ Required capability: `conversation-presets`
 ### Attendee types
 * `users` - Logged-in users
 * `federated_users` - Federated users invited by their CloudID
+* `matrix` - Matrix users without a Nextcloud account, the actor id is the Matrix user id (`matrix-rooms` capability)
 * `groups` - Groups
 * `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `guests` - Guest without a login
@@ -151,6 +153,7 @@ Required capability: `conversation-presets`
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 * `deleted_users` - Former logged-in users that got deleted (actor id is hardcoded to `deleted_users` and the display name is empty)
 * `federated_users` - Federated users
+* `matrix` - Matrix users without a Nextcloud account (`matrix-rooms` capability)
 
 ### Session states
 * `0` - Inactive (Notifications should still be sent, even though the user has this session in the room)
