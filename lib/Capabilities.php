@@ -196,6 +196,7 @@ class Capabilities implements IPublicCapability {
 			'grid-limit',
 			'grid-limit-enforced',
 			'external-call-service',
+			'ai-modified-label',
 		],
 		'chat' => [
 			'read-privacy',
@@ -299,6 +300,7 @@ class Capabilities implements IPublicCapability {
 					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
 					'grid-limit' => $this->talkConfig->getGridVideosLimit(),
 					'grid-limit-enforced' => $this->talkConfig->getGridVideosLimitEnforced(),
+					'ai-modified-label' => $this->talkConfig->isCallAiModifiedLabelEnabled(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,

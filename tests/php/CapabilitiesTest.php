@@ -193,6 +193,7 @@ class CapabilitiesTest extends TestCase {
 						'play-sounds' => false,
 						'grid-limit' => 0,
 						'grid-limit-enforced' => false,
+						'ai-modified-label' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -422,6 +423,7 @@ class CapabilitiesTest extends TestCase {
 						'play-sounds' => false,
 						'grid-limit' => 0,
 						'grid-limit-enforced' => false,
+						'ai-modified-label' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',

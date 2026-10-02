@@ -813,6 +813,8 @@ namespace OCA\Talk;
  *             grid-limit: int,
  *             // Whether the grid limit is enforced by the server
  *             grid-limit-enforced: bool,
+ *             // Whether videos modified by AI show a label
+ *             ai-modified-label: bool,
  *             // URL of an external call service if one is used
  *             external-call-service?: string,
  *         },

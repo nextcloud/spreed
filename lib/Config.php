@@ -68,6 +68,7 @@ class Config {
 	public const string EXPERIMENTS_USERS = 'experiments_users';
 	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
 	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
+	public const string CALL_AI_MODIFIED_LABEL = 'call_ai_modified_label';
 	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
 	public const string FORCE_PASSWORDS = 'force_passwords';
 	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
@@ -1057,6 +1058,10 @@ class Config {
 
 		// TODO Default value will be set to true, once all mobile clients support it.
 		return $this->appConfig->getAppValueBool(self::CALL_END_TO_END_ENCRYPTION);
+	}
+
+	public function isCallAiModifiedLabelEnabled(): bool {
+		return $this->appConfig->getAppValueBool(self::CALL_AI_MODIFIED_LABEL);
 	}
 
 	public function getPlaySoundsForUser(?IUser $user): bool {

@@ -237,3 +237,6 @@
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
 * `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant
+
+## 26
+* `config => call => ai-modified-label` (local) - Whether clients show a label on videos that are modified by AI (background blur or virtual background)
