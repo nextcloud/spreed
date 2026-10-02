@@ -28,6 +28,20 @@
 				</NcButton>
 			</li>
 		</ul>
+
+		<h3>{{ t('spreed', 'AI-modified videos') }}</h3>
+
+		<NcCheckboxRadioSwitch
+			v-model="isAiModifiedLabelEnabled"
+			type="switch"
+			:disabled="loadingAiModifiedLabel"
+			@update:modelValue="saveAiModifiedLabel">
+			{{ t('spreed', 'Show a label on videos with a background blur or a virtual background') }}
+		</NcCheckboxRadioSwitch>
+
+		<NcNoteCard
+			type="warning"
+			:text="t('spreed', 'Background blur and virtual backgrounds modify videos with AI. Depending on the applicable law, for example the EU AI Act, such videos have to be marked as AI-modified. Other participants still receive this information when the label is hidden.')" />
 	</div>
 </template>
 
@@ -35,11 +49,13 @@
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import VideoStreamBackgroundEffect from '../../utils/media/effects/virtual-background/VideoStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
@@ -50,6 +66,7 @@ export default {
 		NcLoadingIcon,
 		IconAlertCircleOutline,
 		NcButton,
+		NcCheckboxRadioSwitch,
 		NcNoteCard,
 		IconCheck,
 	},
@@ -58,6 +75,8 @@ export default {
 		return {
 			virtualBackgroundLoaded: undefined,
 			apachePHPConfiguration: '',
+			isAiModifiedLabelEnabled: getTalkConfig('local', 'call', 'ai-modified-label') !== false,
+			loadingAiModifiedLabel: false,
 		}
 	},
 
@@ -149,11 +168,25 @@ export default {
 				this.virtualBackgroundLoaded = false
 			})
 		},
+
+		saveAiModifiedLabel(value) {
+			this.loadingAiModifiedLabel = true
+			OCP.AppConfig.setValue('spreed', 'call_ai_modified_label', value ? '1' : '0', {
+				success: () => {
+					this.loadingAiModifiedLabel = false
+				},
+			})
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+h3 {
+	margin-top: 24px;
+	font-weight: 600;
+}
+
 .vue-button-inline {
 	display: inline-block !important;
 }

@@ -201,6 +201,7 @@
 
 						<template #tab-panel:backgrounds>
 							<NcNoteCard
+								v-if="showAiModifiedLabel"
 								type="info"
 								:text="t('spreed', 'When a background effect is on, your video is marked as modified by AI for other participants.')" />
 							<VideoBackgroundEditor
@@ -308,6 +309,7 @@ import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
+const showAiModifiedLabel = getTalkConfig('local', 'call', 'ai-modified-label') !== false
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
@@ -426,6 +428,7 @@ export default {
 			dialogHeaderId,
 			supportStartWithoutMedia,
 			supportDefaultBlurVirtualBackground,
+			showAiModifiedLabel,
 			actorStore: useActorStore(),
 			token: useGetToken(),
 			isMobile: useIsMobile(),

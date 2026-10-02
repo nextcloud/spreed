@@ -7,6 +7,7 @@
 import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 import { computed } from 'vue'
+import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 
 const { effect, aspectRatio = null, compact = false, alignStart = false } = defineProps<{
 	effect: string
@@ -17,11 +18,13 @@ const { effect, aspectRatio = null, compact = false, alignStart = false } = defi
 	alignStart?: boolean
 }>()
 
+const isLabelShown = getTalkConfig('local', 'call', 'ai-modified-label') !== false
 const labelUrl = computed(() => imagePath('spreed', compact ? 'label-ai.svg' : 'label-ai-modified.svg'))
 </script>
 
 <template>
 	<div
+		v-if="isLabelShown"
 		class="ai-modified-label"
 		:class="{ 'ai-modified-label--fit': aspectRatio, 'ai-modified-label--start': alignStart }">
 		<img

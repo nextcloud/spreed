@@ -171,6 +171,7 @@ export const mockedCapabilities: Capabilities = {
 				'play-sounds': true,
 				'grid-limit': 0,
 				'grid-limit-enforced': false,
+				'ai-modified-label': true,
 			},
 			chat: {
 				'max-length': 32000,
