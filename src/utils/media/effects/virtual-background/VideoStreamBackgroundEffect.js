@@ -17,6 +17,53 @@ import WebGLCompositor from './WebGLCompositor.js'
 let _WasmFileset = null
 
 /**
+ * Get the MediaPipe Vision fileset (paths to binaries), SIMD variant if supported.
+ *
+ * @return {Promise<{wasmLoaderPath: string, wasmBinaryPath: string}>}
+ */
+export async function getWasmFileset() {
+	if (!_WasmFileset) {
+		if (await FilesetResolver.isSimdSupported()) {
+			_WasmFileset = {
+				wasmLoaderPath: new URL(
+					'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.js',
+					import.meta.url,
+				).pathname,
+				wasmBinaryPath: new URL(
+					'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.wasm',
+					import.meta.url,
+				).pathname,
+			}
+		} else {
+			_WasmFileset = {
+				wasmLoaderPath: new URL(
+					'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.js',
+					import.meta.url,
+				).pathname,
+				wasmBinaryPath: new URL(
+					'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.wasm',
+					import.meta.url,
+				).pathname,
+			}
+		}
+	}
+
+	return _WasmFileset
+}
+
+/**
+ * Get the path to the segmentation model.
+ *
+ * @return {string}
+ */
+export function getModelAssetPath() {
+	return new URL(
+		'./vendor/models/selfie_segmenter.tflite',
+		import.meta.url,
+	).pathname
+}
+
+/**
  * Represents a modified MediaStream that applies virtual background effects
  * (blur, image, video, or video stream) using MediaPipe segmentation.
  *
@@ -92,44 +139,11 @@ export default class VideoStreamBackgroundEffect {
 	async _initMediaPipe() {
 		try {
 			/**
-			 * Creates a fileset for the MediaPipe Vision tasks (object with paths to binaries)
-			 * Checks inside, if SIMD is supported to load the appropriate fileset
-			 */
-			if (!_WasmFileset) {
-				if (await FilesetResolver.isSimdSupported()) {
-					_WasmFileset = {
-						wasmLoaderPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.js',
-							import.meta.url,
-						).pathname,
-						wasmBinaryPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.wasm',
-							import.meta.url,
-						).pathname,
-					}
-				} else {
-					_WasmFileset = {
-						wasmLoaderPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.js',
-							import.meta.url,
-						).pathname,
-						wasmBinaryPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.wasm',
-							import.meta.url,
-						).pathname,
-					}
-				}
-			}
-
-			/**
 			 * Loads binaries and create an image segmentation TaskRunner
 			 */
-			this._imageSegmenter = await ImageSegmenter.createFromOptions(_WasmFileset, {
+			this._imageSegmenter = await ImageSegmenter.createFromOptions(await getWasmFileset(), {
 				baseOptions: {
-					modelAssetPath: new URL(
-						'./vendor/models/selfie_segmenter.tflite',
-						import.meta.url,
-					).pathname,
+					modelAssetPath: getModelAssetPath(),
 					delegate: 'GPU',
 				},
 				runningMode: 'VIDEO',
