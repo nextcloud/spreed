@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Share;
 
 use OC\Files\Filesystem;
+use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
@@ -51,6 +52,25 @@ class Listener implements IEventListener {
 		$target = RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/' . $share->getNode()->getName();
 		$target = Filesystem::normalizePath($target);
 		$share->setTarget($target);
+	}
+
+	/**
+	 * Shares without userroom share keep the placeholder in their target, so
+	 * the mount point validation can still resolve it, but must not be mounted there.
+	 */
+	protected function resolveMountPoint(ShareMountedEvent $event): void {
+		$mount = $event->getMount();
+		$share = $mount->getShare();
+		if ($share->getShareType() !== IShare::TYPE_ROOM
+			|| !str_starts_with($share->getTarget(), RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/')) {
+			return;
+		}
+
+		$uid = $mount->getUser()->getUID();
+		$target = str_replace(RoomShareProvider::TALK_FOLDER_PLACEHOLDER, $this->config->getAttachmentFolder($uid), $share->getTarget());
+		// The share storage uses the target of the share as its mount point
+		$share->setTarget($target);
+		$mount->setMountPoint('/' . $uid . '/files' . $target . '/');
 	}
 
 	protected function overwriteMountPoint(VerifyMountPointEvent $event): void {
