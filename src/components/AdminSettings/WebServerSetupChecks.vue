@@ -11,41 +11,41 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconAlertOutline from 'vue-material-design-icons/AlertOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
-import { VIRTUAL_BACKGROUND } from '../../constants.ts'
-import VideoStreamBackgroundEffect from '../../utils/media/effects/virtual-background/VideoStreamBackgroundEffect.js'
-import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
+import IconReload from 'vue-material-design-icons/Reload.vue'
+import { getModelAssetPath, getWasmFileset } from '../../utils/media/effects/virtual-background/VideoStreamBackgroundEffect.js'
+
+type CheckStatus = 'checking' | 'ok' | 'warning' | 'error'
+type CheckResult = { status: CheckStatus, detail: string }
+type CheckId = 'wasm' | 'tflite'
+
+const CHECKING: CheckResult = { status: 'checking', detail: t('spreed', 'Checking …') }
+const ERROR: CheckResult = { status: 'error', detail: t('spreed', 'Error') }
+const FILES_FAILED_TEXT = t('spreed', 'Failed: ".wasm" and ".tflite" files were not properly returned by the web server. Please check "System requirements" section in Talk documentation.')
+
+const CHECKS: { id: CheckId, label: string }[] = [
+	{ id: 'wasm', label: '.wasm' },
+	{ id: 'tflite', label: '.tflite' },
+]
 
 const apachePHPConfiguration = loadState<string>('spreed', 'valid_apache_php_configuration')
 
-const virtualBackgroundAvailable = ref<boolean | undefined>(undefined)
+const results = ref<Record<CheckId, CheckResult>>({ wasm: CHECKING, tflite: CHECKING })
 
-const virtualBackgroundAvailableAriaLabel = computed(() => {
-	if (virtualBackgroundAvailable.value === false) {
-		return t('spreed', 'Failed')
+const checks = computed(() => CHECKS.map((check) => ({ ...check, ...results.value[check.id] })))
+
+const isChecking = computed(() => checks.value.some((check) => check.status === 'checking'))
+
+const noteType = computed(() => {
+	const statuses = checks.value.map((check) => check.status)
+	if (statuses.includes('error')) {
+		return 'error'
 	}
-
-	if (virtualBackgroundAvailable.value === true) {
-		return t('spreed', 'OK')
+	if (statuses.includes('warning')) {
+		return 'warning'
 	}
-
-	return t('spreed', 'Checking …')
-})
-
-const virtualBackgroundAvailableTitle = computed(() => {
-	if (virtualBackgroundAvailable.value === false && !VirtualBackground.isWasmSupported()) {
-		return t('spreed', 'Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check.')
-	}
-
-	if (virtualBackgroundAvailable.value === false) {
-		return t('spreed', 'Failed: ".wasm" and ".tflite" files were not properly returned by the web server. Please check "System requirements" section in Talk documentation.')
-	}
-
-	if (virtualBackgroundAvailable.value === true) {
-		return t('spreed', 'OK: ".wasm" and ".tflite" files were properly returned by the web server.')
-	}
-
-	return t('spreed', 'Checking …')
+	return null
 })
 
 const apacheWarning = computed(() => {
@@ -66,70 +66,129 @@ const apacheWarningType = computed(() => {
 	return 'warning'
 })
 
-checkVirtualBackground()
+runChecks()
 
 /**
- * Check if the files required for virtual background can be loaded
+ * Check that the web server returns the file
+ *
+ * @param url file URL
+ * @param expectedType expected MIME type (mismatch is a warning with the actual type)
  */
-function checkVirtualBackground() {
-	if (!VirtualBackground.isWasmSupported()) {
-		virtualBackgroundAvailable.value = false
-
-		return
+async function checkFile(url: string | Promise<string>, expectedType?: string): Promise<CheckResult> {
+	try {
+		// Bypass the HTTP cache to check the current server state
+		const response = await fetch(await url, { cache: 'no-store' })
+		// Only headers are needed, do not fetch the full file
+		response.body?.cancel()
+		if (!response.ok) {
+			console.error(`Failed to load ${response.url}: HTTP status ${response.status}`)
+			return ERROR
+		}
+		const contentType = response.headers.get('Content-Type') ?? ''
+		if (expectedType && !contentType.startsWith(expectedType)) {
+			return { status: 'warning', detail: contentType || '—' }
+		}
+		return { status: 'ok', detail: t('spreed', 'OK') }
+	} catch (error) {
+		console.error('Failed to load file:', error)
+		return ERROR
 	}
+}
 
-	virtualBackgroundAvailable.value = undefined
+/**
+ * Run all virtual background file checks
+ */
+async function runChecks() {
+	results.value = { wasm: CHECKING, tflite: CHECKING }
 
-	// Pass only the essential options to check if the files can be
-	// loaded.
-	const options = {
-		virtualBackground: {
-			type: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
-		},
-
-		webGL: VirtualBackground.isWebGLSupported(),
-	}
-
-	// Width and height are not needed to only load the files
-	const videoStreamBackgroundEffect = new VideoStreamBackgroundEffect(options as ConstructorParameters<typeof VideoStreamBackgroundEffect>[0])
-	videoStreamBackgroundEffect.load().then(() => {
-		virtualBackgroundAvailable.value = true
-	}).catch(() => {
-		virtualBackgroundAvailable.value = false
-	})
+	// .wasm variant depends on SIMD support
+	const [wasm, tflite] = await Promise.all([
+		checkFile(getWasmFileset().then((fileset) => fileset.wasmBinaryPath), 'application/wasm'),
+		checkFile(getModelAssetPath()),
+	])
+	results.value = { wasm, tflite }
 }
 </script>
 
 <template>
-	<div id="web_server_setup_checks" class="section">
+	<section id="web_server_setup_checks" class="web-server-setup-checks section">
 		<h2>
 			{{ t('spreed', 'Web server setup checks') }}
 		</h2>
 
 		<NcNoteCard v-if="apacheWarning" :type="apacheWarningType" :text="apacheWarning" />
 
-		<ul class="web-server-setup-checks">
-			<li class="virtual-background">
-				{{ t('spreed', 'Files required for virtual background can be loaded') }}
-				<NcButton
-					variant="tertiary"
-					class="vue-button-inline"
-					:title="virtualBackgroundAvailableTitle"
-					:aria-label="virtualBackgroundAvailableAriaLabel"
-					@click="checkVirtualBackground">
-					<template #icon>
-						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" fillColor="var(--color-border-error)" />
-						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" fillColor="var(--color-border-success)" />
-						<NcLoadingIcon v-else :size="20" />
-					</template>
-				</NcButton>
+		<span class="web-server-setup-checks__group-label">
+			{{ t('spreed', 'Files required for virtual background can be loaded') }}
+			<NcButton
+				variant="tertiary"
+				:disabled="isChecking"
+				:aria-label="t('spreed', 'Reload checks')"
+				:title="t('spreed', 'Reload checks')"
+				@click="runChecks">
+				<template #icon>
+					<NcLoadingIcon v-if="isChecking" :size="20" />
+					<IconReload v-else :size="20" />
+				</template>
+			</NcButton>
+		</span>
+		<ul class="web-server-setup-checks__items">
+			<li
+				v-for="check in checks"
+				:key="check.id"
+				class="web-server-setup-checks__item">
+				<span class="web-server-setup-checks__label">{{ check.label }}</span>
+				<NcLoadingIcon v-if="check.status === 'checking'" :size="20" />
+				<IconCheck v-else-if="check.status === 'ok'" :size="20" fillColor="var(--color-border-success)" />
+				<IconAlertOutline v-else-if="check.status === 'warning'" :size="20" fillColor="var(--color-border-warning)" />
+				<IconAlertCircleOutline v-else :size="20" fillColor="var(--color-border-error)" />
+				<span class="web-server-setup-checks__detail">{{ check.detail }}</span>
 			</li>
 		</ul>
-	</div>
+
+		<NcNoteCard
+			v-if="noteType"
+			:type="noteType"
+			:text="FILES_FAILED_TEXT" />
+	</section>
 </template>
 
 <style lang="scss" scoped>
-.vue-button-inline {
-	display: inline-block !important;
+.web-server-setup-checks {
+	& > * {
+		max-width: 600px;
+	}
+
+	& > h2,
+	& > &__group-label,
+	& > &__items {
+		// Extra alignment offset on top of .section's own padding, same as in NcFormGroup (not defined globally)
+		padding-inline: calc(var(--border-radius-element) + var(--default-grid-baseline));
+	}
+
+	&__group-label {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+	}
+
+	&__items {
+		margin: 0;
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+	}
+
+	&__label {
+		font-weight: bold;
+		width: 7ch;
+	}
+
+	&__detail {
+		color: var(--color-text-maxcontrast);
+	}
 }
 </style>
