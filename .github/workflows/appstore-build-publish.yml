@@ -88,7 +88,7 @@ jobs:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
 
       - name: Set up php ${{ steps.php-versions.outputs.php-min }}
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        uses: shivammathur/setup-php@bc12f5cef4c73a871331e196ff380d38232ba293 # 2.40.0-beta
         with:
           php-version: ${{ steps.php-versions.outputs.php-min }}
           coverage: none
