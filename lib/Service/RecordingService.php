@@ -29,6 +29,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
+use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -162,32 +163,56 @@ class RecordingService {
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
 			$fileNode = $recordingFolder->newFile($fileName, $resource);
-
-			$intervalsFileNode = null;
-			if ($intervalsFile !== null && isset($intervalsFile['tmp_name']) && is_string($intervalsFile['name']) && $intervalsFile['name'] !== '') {
-				$intervalsResource = fopen($intervalsFile['tmp_name'], 'r');
-				if ($intervalsResource === false) {
-					$this->logger->warning('Could not open intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
-				} else {
-					$intervalsContent = stream_get_contents($intervalsResource);
-					fclose($intervalsResource);
-					if ($intervalsContent === false) {
-						$this->logger->warning('Could not read intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
-					} elseif ($this->hasUsableIntervals($intervalsContent)) {
-						$intervalsFileName = basename($intervalsFile['name']);
-						$intervalsFileNode = $recordingFolder->newFile($intervalsFileName, $intervalsContent);
-					} else {
-						$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFile['name']]);
-					}
-				}
-			}
 		} catch (NoUserException) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException) {
 			throw new InvalidArgumentException('owner_permission');
 		}
 
+		$intervalsFileNode = $this->storeIntervalsFile($recordingFolder, $intervalsFile);
+
 		$this->finalizeRecording($room, $participant, $fileNode, $owner, $intervalsFileNode !== null);
+	}
+
+	/**
+	 * Store the speaker intervals sidecar sent alongside a directly uploaded
+	 * recording. Any problem with it is logged and ignored: the recording is
+	 * complete, so post-processing just falls back to the plain transcription.
+	 */
+	private function storeIntervalsFile(Folder $recordingFolder, ?array $intervalsFile): ?File {
+		if ($intervalsFile === null
+			|| ($intervalsFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK
+			|| !is_string($intervalsFile['tmp_name'] ?? null)
+			|| !is_string($intervalsFile['name'] ?? null)
+			|| $intervalsFile['name'] === ''
+		) {
+			return null;
+		}
+
+		$intervalsResource = fopen($intervalsFile['tmp_name'], 'r');
+		if ($intervalsResource === false) {
+			$this->logger->warning('Could not open intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
+
+		$intervalsContent = stream_get_contents($intervalsResource);
+		fclose($intervalsResource);
+		if ($intervalsContent === false) {
+			$this->logger->warning('Could not read intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
+
+		if (!$this->hasUsableIntervals($intervalsContent)) {
+			$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
+
+		try {
+			return $recordingFolder->newFile(basename($intervalsFile['name']), $intervalsContent);
+		} catch (NoUserException|NotPermittedException|InvalidPathException) {
+			$this->logger->warning('Could not store intervals file {name} alongside the recording, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
 	}
 
 	/**
