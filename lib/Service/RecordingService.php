@@ -15,6 +15,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RecordingNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
@@ -28,6 +29,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
+use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -143,7 +145,7 @@ class RecordingService {
 		}
 	}
 
-	public function store(Room $room, string $owner, array $file, ?array $intervalsFile = null, ?string $intervalsFileName = null): void {
+	public function store(Room $room, string $owner, array $file, ?array $intervalsFile = null): void {
 		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);
@@ -161,32 +163,56 @@ class RecordingService {
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
 			$fileNode = $recordingFolder->newFile($fileName, $resource);
-
-			$intervalsFileNode = null;
-			if ($intervalsFile !== null && isset($intervalsFile['tmp_name']) && is_string($intervalsFile['name']) && $intervalsFile['name'] !== '') {
-				$intervalsResource = fopen($intervalsFile['tmp_name'], 'r');
-				if ($intervalsResource === false) {
-					$this->logger->warning('Could not open intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
-				} else {
-					$intervalsContent = stream_get_contents($intervalsResource);
-					fclose($intervalsResource);
-					if ($intervalsContent === false) {
-						$this->logger->warning('Could not read intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
-					} elseif ($this->hasUsableIntervals($intervalsContent)) {
-						$intervalsFileName = basename($intervalsFile['name']);
-						$intervalsFileNode = $recordingFolder->newFile($intervalsFileName, $intervalsContent);
-					} else {
-						$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFile['name']]);
-					}
-				}
-			}
 		} catch (NoUserException) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException) {
 			throw new InvalidArgumentException('owner_permission');
 		}
 
+		$intervalsFileNode = $this->storeIntervalsFile($recordingFolder, $intervalsFile);
+
 		$this->finalizeRecording($room, $participant, $fileNode, $owner, $intervalsFileNode !== null);
+	}
+
+	/**
+	 * Store the speaker intervals sidecar sent alongside a directly uploaded
+	 * recording. Any problem with it is logged and ignored: the recording is
+	 * complete, so post-processing just falls back to the plain transcription.
+	 */
+	private function storeIntervalsFile(Folder $recordingFolder, ?array $intervalsFile): ?File {
+		if ($intervalsFile === null
+			|| ($intervalsFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK
+			|| !is_string($intervalsFile['tmp_name'] ?? null)
+			|| !is_string($intervalsFile['name'] ?? null)
+			|| $intervalsFile['name'] === ''
+		) {
+			return null;
+		}
+
+		$intervalsResource = fopen($intervalsFile['tmp_name'], 'r');
+		if ($intervalsResource === false) {
+			$this->logger->warning('Could not open intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
+
+		$intervalsContent = stream_get_contents($intervalsResource);
+		fclose($intervalsResource);
+		if ($intervalsContent === false) {
+			$this->logger->warning('Could not read intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
+
+		if (!$this->hasUsableIntervals($intervalsContent)) {
+			$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
+
+		try {
+			return $recordingFolder->newFile(basename($intervalsFile['name']), $intervalsContent);
+		} catch (NoUserException|NotPermittedException|InvalidPathException) {
+			$this->logger->warning('Could not store intervals file {name} alongside the recording, ignoring', ['name' => $intervalsFile['name']]);
+			return null;
+		}
 	}
 
 	/**
@@ -316,19 +342,26 @@ class RecordingService {
 		$intervalsFileAvailable = false;
 		if ($intervalsFileName !== null) {
 			$intervalsFileName = basename($intervalsFileName);
-			try {
-				$intervalsFileNode = $recordingFolder->get($intervalsFileName);
-				if ($intervalsFileNode instanceof File) {
-					$intervalsContent = $intervalsFileNode->getContent();
-					if ($this->hasUsableIntervals($intervalsContent)) {
-						$intervalsFileAvailable = true;
-					} else {
-						$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFileName]);
-						$intervalsFileNode->delete();
+			// Never look at (or delete) files that are not the sidecar expected
+			// for this recording, even when reported by the recording backend
+			$expectedIntervalsFileName = $this->getIntervalsFileName(pathinfo($fileName, PATHINFO_FILENAME));
+			if ($intervalsFileName !== $expectedIntervalsFileName) {
+				$this->logger->warning('Intervals file {name} does not match the recording, ignoring', ['name' => $intervalsFileName]);
+			} else {
+				try {
+					$intervalsFileNode = $recordingFolder->get($intervalsFileName);
+					if ($intervalsFileNode instanceof File) {
+						$intervalsContent = $intervalsFileNode->getContent();
+						if ($this->hasUsableIntervals($intervalsContent)) {
+							$intervalsFileAvailable = true;
+						} else {
+							$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFileName]);
+							$intervalsFileNode->delete();
+						}
 					}
+				} catch (NotFoundException) {
+					$this->logger->warning('Intervals file {name} not found in recording folder, ignoring', ['name' => $intervalsFileName]);
 				}
-			} catch (NotFoundException) {
-				$this->logger->warning('Intervals file {name} not found in recording folder, ignoring', ['name' => $intervalsFileName]);
 			}
 		}
 
@@ -521,7 +554,11 @@ class RecordingService {
 					$output . "\n\n$warning\n",
 				);
 				$this->systemTagMapper->assignGeneratedByAITag((string)$fileNode->getId(), 'files');
-				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
+				if ($aiTask === 'summary' || $shouldTranscribe) {
+					// Hidden transcripts are an internal artifact of the summary,
+					// so they are not announced to the user
+					$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
+				}
 			} catch (NoUserException) {
 				throw new InvalidArgumentException('owner_invalid');
 			} catch (NotPermittedException) {
@@ -577,13 +614,14 @@ class RecordingService {
 
 		$subtitleFileName = '.' . $baseName . ' subtitles.srt';
 		try {
-			$recordingFolder->newFile($subtitleFileName, $subtitleContent);
+			$subtitleFileNode = $recordingFolder->newFile($subtitleFileName, $subtitleContent);
+			$this->systemTagMapper->assignGeneratedByAITag((string)$subtitleFileNode->getId(), 'files');
 		} catch (NoUserException|NotPermittedException $e) {
 			$this->logger->error('Could not store subtitle file', ['exception' => $e]);
 			return;
 		}
 
-		$intervalsFileName = '.' . $baseName . ' speaking times.json';
+		$intervalsFileName = $this->getIntervalsFileName($baseName);
 		try {
 			$intervalsFileNode = $recordingFolder->get($intervalsFileName);
 		} catch (NotFoundException) {
@@ -608,31 +646,58 @@ class RecordingService {
 		}
 
 		$transcript = $this->speakerAttribution->srtToPlainText($subtitleContent);
-		$transcriptFileName = $this->getTranscriptFileName($baseName);
-		try {
-			$recordingFolder->newFile($transcriptFileName, $transcript);
-		} catch (NoUserException|NotPermittedException $e) {
-			$this->logger->error('Could not store transcript file', ['exception' => $e]);
-			return;
-		}
-		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $transcript);
+		$this->saveTranscriptFile($owner, $roomToken, $recordingFileId, $recordingFolder, $baseName, $transcript);
 	}
 
 	private function storeAttributedSubtitles(string $owner, string $roomToken, int $recordingFileId, Folder $recordingFolder, string $baseName, array $attribution): void {
 		$subtitleFileName = '.' . $baseName . ' subtitles speakers.srt';
-		$transcriptFileName = $this->getTranscriptFileName($baseName);
 
 		try {
 			$subtitleFileNode = $recordingFolder->newFile($subtitleFileName, $attribution['srt']);
 			$this->systemTagMapper->assignGeneratedByAITag((string)$subtitleFileNode->getId(), 'files');
-			$transcriptFileNode = $recordingFolder->newFile($transcriptFileName, $attribution['transcript']);
-			$this->systemTagMapper->assignGeneratedByAITag((string)$transcriptFileNode->getId(), 'files');
 		} catch (NoUserException|NotPermittedException $e) {
-			$this->logger->error('Could not store speaker subtitle or transcript file', ['exception' => $e]);
+			$this->logger->error('Could not store speaker subtitle file', ['exception' => $e]);
 			return;
 		}
 
-		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $attribution['transcript']);
+		$this->saveTranscriptFile($owner, $roomToken, $recordingFileId, $recordingFolder, $baseName, $attribution['transcript']);
+	}
+
+	/**
+	 * Store the plain transcript derived from the recording subtitles: it is
+	 * tagged and announced like the one from the classic transcription, and it
+	 * is the content the summary is generated from.
+	 */
+	private function saveTranscriptFile(string $owner, string $roomToken, int $recordingFileId, Folder $recordingFolder, string $baseName, string $transcript): void {
+		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
+
+		$user = $this->userManager->get($owner);
+		$language = $this->l10nFactory->getUserLanguage($user);
+		$l = $this->l10nFactory->get(Application::APP_ID, $language);
+		$warning = $l->t('Transcript is AI generated and may contain mistakes');
+
+		$transcriptFileName = ($shouldTranscribe ? '' : '.') . $baseName . ' transcript.md';
+		try {
+			$transcriptFileNode = $recordingFolder->newFile($transcriptFileName, $transcript . "\n\n$warning\n");
+			$this->systemTagMapper->assignGeneratedByAITag((string)$transcriptFileNode->getId(), 'files');
+		} catch (NoUserException|NotPermittedException $e) {
+			$this->logger->error('Could not store transcript file', ['exception' => $e]);
+			return;
+		}
+
+		if ($shouldTranscribe) {
+			try {
+				$room = $this->roomManager->getRoomForUserByToken($roomToken, $owner);
+				$participant = $this->participantService->getParticipant($room, $owner);
+				$this->notifyStoredTranscript($room, $participant, $transcriptFileNode, 'transcript');
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
+				$this->logger->warning('Could not notify about the stored transcript of call recording in room {roomToken}', [
+					'roomToken' => $roomToken,
+				]);
+			}
+		}
+
+		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $transcript);
 	}
 
 	private function hasUsableIntervals(string $intervalsContent): bool {
@@ -643,9 +708,11 @@ class RecordingService {
 		}
 	}
 
-	private function getTranscriptFileName(string $baseName): string {
-		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		return ($shouldTranscribe ? '' : '.') . $baseName . ' transcript.md';
+	/**
+	 * Name of the speaker intervals sidecar file associated with a recording.
+	 */
+	private function getIntervalsFileName(string $recordingBaseName): string {
+		return '.' . $recordingBaseName . ' speaking times.json';
 	}
 
 	private function scheduleSummary(string $owner, string $roomToken, int $recordingFileId, string $transcriptContent): void {
@@ -937,14 +1004,12 @@ class RecordingService {
 		$removeNotification = null;
 		if (str_ends_with($file->getName(), ' - summary.md')) {
 			$removeNotification = 'summary_file_stored';
-		} elseif (str_contains($file->getName(), ' transcript ') && str_ends_with($file->getName(), '.md')) {
+		} elseif (str_ends_with($file->getName(), '.md')) {
 			$removeNotification = 'transcript_file_stored';
-		} elseif (str_ends_with($file->getName(), '.srt')) {
-			$removeNotification = null;
-		} elseif (!str_ends_with($file->getName(), '.md')) {
-			$removeNotification = 'record_file_stored';
+		} elseif (str_ends_with($file->getName(), '.srt') || str_ends_with($file->getName(), '.json')) {
+			// Subtitles and speaker intervals have no related notification
 		} else {
-			$removeNotification = 'transcript_file_stored';
+			$removeNotification = 'record_file_stored';
 		}
 
 		$share = $this->shareManager->createShare($share);

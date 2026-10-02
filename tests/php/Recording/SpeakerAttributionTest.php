@@ -152,6 +152,12 @@ class SpeakerAttributionTest extends TestCase {
 					['index' => 1, 'start' => 1000, 'end' => 2000, 'text' => ['Page 42']],
 				],
 			],
+			'numeric text after the timing line is kept as text' => [
+				"00:00:01,000 --> 00:00:02,000\n42\n",
+				[
+					['index' => 1, 'start' => 1000, 'end' => 2000, 'text' => ['42']],
+				],
+			],
 			'timing line with trailing settings' => [
 				"1\n00:00:01,000 --> 00:00:02,000 line:2\nHello\n",
 				[
