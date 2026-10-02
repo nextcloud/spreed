@@ -521,7 +521,11 @@ class RecordingService {
 					$output . "\n\n$warning\n",
 				);
 				$this->systemTagMapper->assignGeneratedByAITag((string)$fileNode->getId(), 'files');
-				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
+				if ($aiTask === 'summary' || $shouldTranscribe) {
+					// Hidden transcripts are an internal artifact of the summary,
+					// so they are not announced to the user
+					$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
+				}
 			} catch (NoUserException) {
 				throw new InvalidArgumentException('owner_invalid');
 			} catch (NotPermittedException) {
