@@ -15,6 +15,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RecordingNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
@@ -581,7 +582,8 @@ class RecordingService {
 
 		$subtitleFileName = '.' . $baseName . ' subtitles.srt';
 		try {
-			$recordingFolder->newFile($subtitleFileName, $subtitleContent);
+			$subtitleFileNode = $recordingFolder->newFile($subtitleFileName, $subtitleContent);
+			$this->systemTagMapper->assignGeneratedByAITag((string)$subtitleFileNode->getId(), 'files');
 		} catch (NoUserException|NotPermittedException $e) {
 			$this->logger->error('Could not store subtitle file', ['exception' => $e]);
 			return;
@@ -612,31 +614,58 @@ class RecordingService {
 		}
 
 		$transcript = $this->speakerAttribution->srtToPlainText($subtitleContent);
-		$transcriptFileName = $this->getTranscriptFileName($baseName);
-		try {
-			$recordingFolder->newFile($transcriptFileName, $transcript);
-		} catch (NoUserException|NotPermittedException $e) {
-			$this->logger->error('Could not store transcript file', ['exception' => $e]);
-			return;
-		}
-		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $transcript);
+		$this->saveTranscriptFile($owner, $roomToken, $recordingFileId, $recordingFolder, $baseName, $transcript);
 	}
 
 	private function storeAttributedSubtitles(string $owner, string $roomToken, int $recordingFileId, Folder $recordingFolder, string $baseName, array $attribution): void {
 		$subtitleFileName = '.' . $baseName . ' subtitles speakers.srt';
-		$transcriptFileName = $this->getTranscriptFileName($baseName);
 
 		try {
 			$subtitleFileNode = $recordingFolder->newFile($subtitleFileName, $attribution['srt']);
 			$this->systemTagMapper->assignGeneratedByAITag((string)$subtitleFileNode->getId(), 'files');
-			$transcriptFileNode = $recordingFolder->newFile($transcriptFileName, $attribution['transcript']);
-			$this->systemTagMapper->assignGeneratedByAITag((string)$transcriptFileNode->getId(), 'files');
 		} catch (NoUserException|NotPermittedException $e) {
-			$this->logger->error('Could not store speaker subtitle or transcript file', ['exception' => $e]);
+			$this->logger->error('Could not store speaker subtitle file', ['exception' => $e]);
 			return;
 		}
 
-		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $attribution['transcript']);
+		$this->saveTranscriptFile($owner, $roomToken, $recordingFileId, $recordingFolder, $baseName, $attribution['transcript']);
+	}
+
+	/**
+	 * Store the plain transcript derived from the recording subtitles: it is
+	 * tagged and announced like the one from the classic transcription, and it
+	 * is the content the summary is generated from.
+	 */
+	private function saveTranscriptFile(string $owner, string $roomToken, int $recordingFileId, Folder $recordingFolder, string $baseName, string $transcript): void {
+		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
+
+		$user = $this->userManager->get($owner);
+		$language = $this->l10nFactory->getUserLanguage($user);
+		$l = $this->l10nFactory->get(Application::APP_ID, $language);
+		$warning = $l->t('Transcript is AI generated and may contain mistakes');
+
+		$transcriptFileName = ($shouldTranscribe ? '' : '.') . $baseName . ' transcript.md';
+		try {
+			$transcriptFileNode = $recordingFolder->newFile($transcriptFileName, $transcript . "\n\n$warning\n");
+			$this->systemTagMapper->assignGeneratedByAITag((string)$transcriptFileNode->getId(), 'files');
+		} catch (NoUserException|NotPermittedException $e) {
+			$this->logger->error('Could not store transcript file', ['exception' => $e]);
+			return;
+		}
+
+		if ($shouldTranscribe) {
+			try {
+				$room = $this->roomManager->getRoomForUserByToken($roomToken, $owner);
+				$participant = $this->participantService->getParticipant($room, $owner);
+				$this->notifyStoredTranscript($room, $participant, $transcriptFileNode, 'transcript');
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
+				$this->logger->warning('Could not notify about the stored transcript of call recording in room {roomToken}', [
+					'roomToken' => $roomToken,
+				]);
+			}
+		}
+
+		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $transcript);
 	}
 
 	private function hasUsableIntervals(string $intervalsContent): bool {
@@ -645,11 +674,6 @@ class RecordingService {
 		} catch (\JsonException) {
 			return false;
 		}
-	}
-
-	private function getTranscriptFileName(string $baseName): string {
-		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		return ($shouldTranscribe ? '' : '.') . $baseName . ' transcript.md';
 	}
 
 	private function scheduleSummary(string $owner, string $roomToken, int $recordingFileId, string $transcriptContent): void {

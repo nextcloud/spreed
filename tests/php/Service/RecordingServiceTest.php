@@ -40,6 +40,7 @@ use OCP\Files\IRootFolder;
 use OCP\Files\IUserFolder;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
@@ -105,6 +106,10 @@ class RecordingServiceTest extends TestCase {
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
 		$this->speakerAttribution = new SpeakerAttribution();
+
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnArgument(0);
+		$this->l10nFactory->method('get')->willReturn($l10n);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -495,6 +500,7 @@ class RecordingServiceTest extends TestCase {
 		$intervals = '{"recordingStartTimestamp": 1789382338127, "intervals": [{"participantName": "James Bond", "participantUserId": "admin", "startTimestampRelative": 2000, "stopTimestampRelative": 5000}]}';
 		$attributedSrt = "1\n00:00:02,500 --> 00:00:04,500\nJames Bond: Hello world\n";
 		$transcript = 'James Bond: Hello world';
+		$storedTranscript = "James Bond: Hello world\n\nTranscript is AI generated and may contain mistakes\n";
 
 		$recordingFolder = $this->mockSubtitleStorage($owner, $roomToken, $recordingFileId, $subtitleFileId, $subtitles);
 
@@ -503,6 +509,7 @@ class RecordingServiceTest extends TestCase {
 		$recordingFolder->method('get')->with('.recording speaking times.json')->willReturn($intervalsFile);
 
 		$subtitleNode = $this->createStub(File::class);
+		$subtitleNode->method('getId')->willReturn(100);
 		$speakersNode = $this->createStub(File::class);
 		$speakersNode->method('getId')->willReturn(101);
 		$transcriptNode = $this->createStub(File::class);
@@ -510,7 +517,7 @@ class RecordingServiceTest extends TestCase {
 		$recordingFolder->method('newFile')->willReturnMap([
 			['.recording subtitles.srt', $subtitles, $subtitleNode],
 			['.recording subtitles speakers.srt', $attributedSrt, $speakersNode],
-			['.recording transcript.md', $transcript, $transcriptNode],
+			['.recording transcript.md', $storedTranscript, $transcriptNode],
 		]);
 
 		$this->serverConfig->method('getAppValue')->willReturnCallback(
@@ -520,7 +527,7 @@ class RecordingServiceTest extends TestCase {
 				default => $default,
 			}
 		);
-		$this->systemTagMapper->expects($this->exactly(2))->method('assignGeneratedByAITag');
+		$this->systemTagMapper->expects($this->exactly(3))->method('assignGeneratedByAITag');
 
 		$this->appConfig->method('getAppValueString')->with(Config::CALL_RECORDING_SUMMARY_PROMPT)->willReturn('Summarize this:');
 		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([TextToText::ID]);
@@ -551,7 +558,7 @@ class RecordingServiceTest extends TestCase {
 		$transcriptNode = $this->createStub(File::class);
 		$recordingFolder->method('newFile')->willReturnMap([
 			['.recording subtitles.srt', $subtitles, $subtitleNode],
-			['.recording transcript.md', 'Hello world', $transcriptNode],
+			['.recording transcript.md', "Hello world\n\nTranscript is AI generated and may contain mistakes\n", $transcriptNode],
 		]);
 
 		$this->serverConfig->method('getAppValue')->willReturnCallback(
@@ -583,13 +590,13 @@ class RecordingServiceTest extends TestCase {
 		$transcriptNode = $this->createStub(File::class);
 		$recordingFolder->method('newFile')->willReturnMap([
 			['.recording subtitles.srt', $subtitles, $subtitleNode],
-			['.recording transcript.md', 'Hello world', $transcriptNode],
+			['.recording transcript.md', "Hello world\n\nTranscript is AI generated and may contain mistakes\n", $transcriptNode],
 		]);
 
 		$this->serverConfig->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, string $default = ''): string => $key === 'call_recording_transcription' ? 'no' : $default
 		);
-		$this->systemTagMapper->expects($this->never())->method('assignGeneratedByAITag');
+		$this->systemTagMapper->expects($this->exactly(2))->method('assignGeneratedByAITag');
 		$this->taskProcessingManager->expects($this->never())->method('scheduleTask');
 
 		$this->recordingService->storeSubtitle($owner, $roomToken, $recordingFileId, $subtitleFileId);
