@@ -342,19 +342,26 @@ class RecordingService {
 		$intervalsFileAvailable = false;
 		if ($intervalsFileName !== null) {
 			$intervalsFileName = basename($intervalsFileName);
-			try {
-				$intervalsFileNode = $recordingFolder->get($intervalsFileName);
-				if ($intervalsFileNode instanceof File) {
-					$intervalsContent = $intervalsFileNode->getContent();
-					if ($this->hasUsableIntervals($intervalsContent)) {
-						$intervalsFileAvailable = true;
-					} else {
-						$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFileName]);
-						$intervalsFileNode->delete();
+			// Never look at (or delete) files that are not the sidecar expected
+			// for this recording, even when reported by the recording backend
+			$expectedIntervalsFileName = $this->getIntervalsFileName(pathinfo($fileName, PATHINFO_FILENAME));
+			if ($intervalsFileName !== $expectedIntervalsFileName) {
+				$this->logger->warning('Intervals file {name} does not match the recording, ignoring', ['name' => $intervalsFileName]);
+			} else {
+				try {
+					$intervalsFileNode = $recordingFolder->get($intervalsFileName);
+					if ($intervalsFileNode instanceof File) {
+						$intervalsContent = $intervalsFileNode->getContent();
+						if ($this->hasUsableIntervals($intervalsContent)) {
+							$intervalsFileAvailable = true;
+						} else {
+							$this->logger->warning('Intervals file {name} does not contain usable intervals, ignoring', ['name' => $intervalsFileName]);
+							$intervalsFileNode->delete();
+						}
 					}
+				} catch (NotFoundException) {
+					$this->logger->warning('Intervals file {name} not found in recording folder, ignoring', ['name' => $intervalsFileName]);
 				}
-			} catch (NotFoundException) {
-				$this->logger->warning('Intervals file {name} not found in recording folder, ignoring', ['name' => $intervalsFileName]);
 			}
 		}
 
@@ -614,7 +621,7 @@ class RecordingService {
 			return;
 		}
 
-		$intervalsFileName = '.' . $baseName . ' speaking times.json';
+		$intervalsFileName = $this->getIntervalsFileName($baseName);
 		try {
 			$intervalsFileNode = $recordingFolder->get($intervalsFileName);
 		} catch (NotFoundException) {
@@ -699,6 +706,13 @@ class RecordingService {
 		} catch (\JsonException) {
 			return false;
 		}
+	}
+
+	/**
+	 * Name of the speaker intervals sidecar file associated with a recording.
+	 */
+	private function getIntervalsFileName(string $recordingBaseName): string {
+		return '.' . $recordingBaseName . ' speaking times.json';
 	}
 
 	private function scheduleSummary(string $owner, string $roomToken, int $recordingFileId, string $transcriptContent): void {
