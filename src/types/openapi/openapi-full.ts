@@ -2845,6 +2845,8 @@ export type components = {
                     "grid-limit": number;
                     /** @description Whether the grid limit is enforced by the server */
                     "grid-limit-enforced": boolean;
+                    /** @description Whether videos modified by AI show a label */
+                    "ai-modified-label": boolean;
                     /** @description URL of an external call service if one is used */
                     "external-call-service"?: string;
                 };

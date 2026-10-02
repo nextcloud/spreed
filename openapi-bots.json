@@ -119,7 +119,8 @@
                                     "live-transcription-target-language-id",
                                     "play-sounds",
                                     "grid-limit",
-                                    "grid-limit-enforced"
+                                    "grid-limit-enforced",
+                                    "ai-modified-label"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -221,6 +222,10 @@
                                     "grid-limit-enforced": {
                                         "type": "boolean",
                                         "description": "Whether the grid limit is enforced by the server"
+                                    },
+                                    "ai-modified-label": {
+                                        "type": "boolean",
+                                        "description": "Whether videos modified by AI show a label"
                                     },
                                     "external-call-service": {
                                         "type": "string",
