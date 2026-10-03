@@ -6,6 +6,6 @@
 		"sort-packages": true
 	},
 	"require-dev": {
-		"vimeo/psalm": "^6.18.0"
+		"vimeo/psalm": "^6.18.1"
 	}
 }
