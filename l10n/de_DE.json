@@ -2087,7 +2087,7 @@
     "Channel ID (prefixed with \"ID:\") or name" : "Kanal-ID (mit vorangestelltem \"ID:\") oder Name",
     "Login" : "Anmeldename",
     "Chat ID" : "Chat-ID",
-    "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC Server-URL (z.B. chat.freenode.net:6667)",
+    "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC Server-URL (Z. B. chat.freenode.net:6667)",
     "Nickname" : "Name",
     "Connection password" : "Verbindungs-Passwort",
     "IRC channel" : "IRC-Kanal",
