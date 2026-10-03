@@ -776,6 +776,9 @@ class RecordingService {
 		$this->notificationManager->notify($notification);
 	}
 
+	/**
+	 * @param 'transcript'|'summary'|'subtitles' $aiType
+	 */
 	public function notifyAboutFailedTranscript(string $owner, string $roomToken, int $recordingFileId, string $aiType): void {
 		$userFolder = $this->rootFolder->getUserFolder($owner);
 		$recordingNodes = $userFolder->getById($recordingFileId);
@@ -813,10 +816,48 @@ class RecordingService {
 			->setDateTime($this->timeFactory->getDateTime())
 			->setObject('recording', $room->getToken())
 			->setUser($attendee->getActorId())
-			->setSubject($aiType === 'transcript' ? 'transcript_failed' : 'summary_failed', [
+			->setSubject(match ($aiType) {
+				'transcript' => 'transcript_failed',
+				'subtitles' => 'subtitles_failed',
+				default => 'summary_failed',
+			}, [
 				'objectId' => $recording->getId(),
 			]);
 		$this->notificationManager->notify($notification);
+	}
+
+	/**
+	 * The speaker-attributed subtitle generation failed: tell the user and
+	 * fall back to the classic transcription workflow so the recording still
+	 * gets a transcript (and summary), or notify that neither will come when
+	 * no plain transcription provider is available.
+	 */
+	public function handleFailedSubtitles(string $owner, string $roomToken, int $recordingFileId): void {
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (!in_array(AudioToText::ID, $supportedTaskTypeIds, true)) {
+			$this->logger->error('Can not fall back to transcribing call recording as no AudioToText task provider is available');
+			$this->notifyAboutFailedTranscript($owner, $roomToken, $recordingFileId, 'transcript');
+			return;
+		}
+
+		$task = new Task(
+			AudioToText::ID,
+			['input' => $recordingFileId],
+			Application::APP_ID,
+			$owner,
+			'call/transcription/' . $roomToken,
+		);
+
+		try {
+			$this->taskProcessingManager->scheduleTask($task);
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to fall back to transcribe the call recording', ['exception' => $e]);
+			$this->notifyAboutFailedTranscript($owner, $roomToken, $recordingFileId, 'transcript');
+			return;
+		}
+
+		$this->logger->debug('Scheduled call recording transcript as fallback for the failed subtitle generation');
+		$this->notifyAboutFailedTranscript($owner, $roomToken, $recordingFileId, 'subtitles');
 	}
 
 	/**

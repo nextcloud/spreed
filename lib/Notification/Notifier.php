@@ -250,7 +250,7 @@ class Notifier implements INotifier {
 		}
 
 		$subject = $notification->getSubject();
-		if ($subject === 'record_file_stored' || $subject === 'transcript_file_stored' || $subject === 'transcript_failed' || $subject === 'summary_file_stored' || $subject === 'summary_failed') {
+		if ($subject === 'record_file_stored' || $subject === 'transcript_file_stored' || $subject === 'transcript_failed' || $subject === 'subtitles_failed' || $subject === 'summary_file_stored' || $subject === 'summary_failed') {
 			return $this->parseStoredRecording($notification, $room, $participant, $l);
 		}
 		if ($subject === 'record_file_store_fail') {
@@ -368,6 +368,9 @@ class Notifier implements INotifier {
 		} elseif ($notification->getSubject() === 'transcript_failed') {
 			$subject = $l->t('Failed to transcript call recording');
 			$message = $l->t('The server failed to transcript the recording at {file} for the call in {call}. Please reach out to the administration.');
+		} elseif ($notification->getSubject() === 'subtitles_failed') {
+			$subject = $l->t('Failed to subtitle call recording');
+			$message = $l->t('The server failed to subtitle the recording at {file} for the call in {call}. The recording will be transcribed without speaker identification instead.');
 		} elseif ($notification->getSubject() === 'summary_file_stored') {
 			$subject = $l->t('Call summary now available');
 			$message = $l->t('The summary for the call in {call} was uploaded to {file}.');
@@ -397,7 +400,7 @@ class Notifier implements INotifier {
 					],
 				]);
 
-		if ($notification->getSubject() !== 'transcript_failed' && $notification->getSubject() !== 'summary_failed') {
+		if ($notification->getSubject() !== 'transcript_failed' && $notification->getSubject() !== 'subtitles_failed' && $notification->getSubject() !== 'summary_failed') {
 			$notification->addParsedAction($shareAction);
 			$notification->addParsedAction($dismissAction);
 		}
