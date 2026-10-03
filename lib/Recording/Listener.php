@@ -142,6 +142,7 @@ class Listener implements IEventListener {
 					'roomToken' => $roomToken,
 					'error' => $event->getErrorMessage(),
 				]);
+				$this->recordingService->handleFailedSubtitles($task->getUserId(), $roomToken, $fileId);
 			}
 			return;
 		}

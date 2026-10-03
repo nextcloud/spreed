@@ -52,6 +52,7 @@ use OCP\Share\IShare;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
+use OCP\TaskProcessing\TaskTypes\AudioToText;
 use OCP\TaskProcessing\TaskTypes\TextToText;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -600,6 +601,73 @@ class RecordingServiceTest extends TestCase {
 		$this->taskProcessingManager->expects($this->never())->method('scheduleTask');
 
 		$this->recordingService->storeSubtitle($owner, $roomToken, $recordingFileId, $subtitleFileId);
+	}
+
+	public function testHandleFailedSubtitlesFallsBackToTranscription(): void {
+		$owner = 'user1';
+		$roomToken = 'token123';
+		$recordingFileId = 42;
+
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([AudioToText::ID]);
+		$this->taskProcessingManager->expects($this->once())->method('scheduleTask')
+			->with($this->callback(
+				function (Task $task) use ($owner, $roomToken, $recordingFileId): bool {
+					return $task->getTaskTypeId() === AudioToText::ID
+						&& $task->getInput() === ['input' => $recordingFileId]
+						&& $task->getUserId() === $owner
+						&& $task->getCustomId() === 'call/transcription/' . $roomToken;
+				}
+			));
+
+		$notification = $this->mockFailedSubtitleNotification($owner, $roomToken, $recordingFileId);
+		$notification->expects($this->once())->method('setSubject')
+			->with('subtitles_failed', ['objectId' => $recordingFileId])
+			->willReturnSelf();
+		$this->notificationManager->expects($this->once())->method('notify')->with($notification);
+
+		$this->recordingService->handleFailedSubtitles($owner, $roomToken, $recordingFileId);
+	}
+
+	public function testHandleFailedSubtitlesWithoutProviderNotifiesMissingTranscript(): void {
+		$owner = 'user1';
+		$roomToken = 'token123';
+		$recordingFileId = 42;
+
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([]);
+		$this->taskProcessingManager->expects($this->never())->method('scheduleTask');
+
+		$notification = $this->mockFailedSubtitleNotification($owner, $roomToken, $recordingFileId);
+		$notification->expects($this->once())->method('setSubject')
+			->with('transcript_failed', ['objectId' => $recordingFileId])
+			->willReturnSelf();
+
+		$this->recordingService->handleFailedSubtitles($owner, $roomToken, $recordingFileId);
+	}
+
+	protected function mockFailedSubtitleNotification(string $owner, string $roomToken, int $recordingFileId): INotification&MockObject {
+		$userFolder = $this->createMock(IUserFolder::class);
+		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
+		$recordingFolder = $this->createStub(Folder::class);
+		$recordingFolder->method('getName')->willReturn($roomToken);
+		$recording = $this->createStub(File::class);
+		$recording->method('getId')->willReturn($recordingFileId);
+		$recording->method('getParent')->willReturn($recordingFolder);
+		$userFolder->method('getById')->with($recordingFileId)->willReturn([$recording]);
+
+		$room = $this->createRoom($roomToken);
+		$participant = $this->createParticipant($room, $owner);
+		$this->roomManager->method('getRoomForUserByToken')->with($roomToken, $owner)->willReturn($room);
+		$this->participantService->method('getParticipant')->with($room, $owner)->willReturn($participant);
+
+		$notification = $this->createMock(INotification::class);
+		$notification->method('setApp')->willReturnSelf();
+		$notification->method('setDateTime')->willReturnSelf();
+		$notification->method('setObject')->willReturnSelf();
+		$notification->method('setUser')->willReturnSelf();
+		$this->notificationManager->method('createNotification')->willReturn($notification);
+		$this->timeFactory->method('getDateTime')->willReturnCallback(fn () => new \DateTime());
+
+		return $notification;
 	}
 
 	public function testGetRecordingUploadOwnerReturnsShareOwner(): void {
