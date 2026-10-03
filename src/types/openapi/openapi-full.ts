@@ -2926,6 +2926,11 @@ export type components = {
                      * @enum {string}
                      */
                     "group-mode": "none" | "group-first" | "private-first";
+                    /**
+                     * @description User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))
+                     * @enum {string}
+                     */
+                    unarchive: "never" | "mention" | "always";
                 };
                 federation: {
                     /** @description Whether federation is enabled */
