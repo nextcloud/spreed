@@ -1002,6 +1002,7 @@ OC.L10N.register(
     "This conversation has been locked" : "Tämä keskustelu on lukittu",
     "No permission to post messages in this conversation" : "Ei oikeutta lähettää viestejä tässä keskustelussa",
     "Joining conversation …" : "Liitytään keskusteluun…",
+    "Send message" : "Lähetä viesti",
     "Send without notification" : "Lähetä ilman ilmoitusta",
     "File to share" : "Jaettava tiedosto",
     "Add emoji" : "Lisää emoji",
