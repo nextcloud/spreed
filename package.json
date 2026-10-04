@@ -107,7 +107,7 @@
     "jsdom": "^30.1.1",
     "openapi-typescript": "^7.13.0",
     "regenerator-runtime": "^0.14.1",
-    "sass": "^1.104.1",
+    "sass": "^1.105.0",
     "sass-loader": "^17.0.1",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0",
