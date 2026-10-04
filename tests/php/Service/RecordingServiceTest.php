@@ -437,6 +437,16 @@ class RecordingServiceTest extends TestCase {
 		$recording->method('getParent')->willReturn($recordingFolder);
 		$userFolder->method('getById')->with($recordingFileId)->willReturn([$recording]);
 
+		$transcriptNode = $this->createStub(File::class);
+		$transcriptNode->method('getId')->willReturn(123);
+		// The transcript is stored even when the setting is disabled, as a hidden file
+		$recordingFolder->expects($this->once())->method('newFile')
+			->with(
+				'.recording transcript.md',
+				$output . "\n\nTranscript is AI generated and may contain mistakes\n",
+			)
+			->willReturn($transcriptNode);
+
 		$room = $this->createRoom($roomToken);
 		$participant = $this->createParticipant($room, $owner);
 		$this->roomManager->method('getRoomForUserByToken')->with($roomToken, $owner)->willReturn($room);
