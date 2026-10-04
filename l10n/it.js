@@ -1454,6 +1454,7 @@ OC.L10N.register(
     "30 days" : "30 giorni",
     "Clear reminder – {timeLocale}" : "Cancella promemoria – {timeLocale}",
     "Edited by {actor}" : "Modificato da {actor}",
+    "Until {absoluteDate}" : "Fino a {absoluteDate}",
     "Message text copied to clipboard" : "Testo del messaggio copiato negli appunti",
     "Message text could not be copied" : "Impossibile copiare il testo del messaggio",
     "Message forwarded to \"Note to self\"" : "Messaggio inoltrato a \"Nota a me stesso\"",
