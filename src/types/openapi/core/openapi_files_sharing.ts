@@ -336,6 +336,8 @@ export type components = {
                         enabled: boolean;
                         /** Format: int64 */
                         days?: number;
+                        /** Format: int64 */
+                        default_days?: number;
                         enforced?: boolean;
                     };
                     expire_date_internal?: {
