@@ -2299,7 +2299,7 @@ OC.L10N.register(
     "Please move your setup to HTTPS" : "Bitte auf HTTPS umstellen",
     "Access to microphone & camera was denied" : "Zugriff auf Mikrofon & Kamera wurde verweigert",
     "WebRTC is not supported in your browser" : "WebRTC wird von Ihrem Browser nicht unterstützt",
-    "Please use a different browser like Firefox or Chrome" : "Bitte benutzen Sie einen anderen Browser, wie z.B. Firefox oder Chrome",
+    "Please use a different browser like Firefox or Chrome" : "Bitte benutzen Sie einen anderen Browser, wie z. B. Firefox oder Chrome",
     "Error while accessing microphone & camera" : "Fehler beim Zugriff auf Mikrofon & Kamera",
     "%s Talk on your mobile devices" : "%s Talk auf Ihren mobilen Geräten",
     "Join conversations at any time, anywhere, on any device." : "Immer, überall und auf allen Geräten einer Unterhaltung beitreten.",
