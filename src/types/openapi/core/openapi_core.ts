@@ -1071,6 +1071,9 @@ export type components = {
                 "reference-api": boolean;
                 "reference-regex": string;
                 "mod-rewrite-working": boolean;
+                previews: {
+                    enabled_providers: string[];
+                };
                 user?: {
                     language: string;
                     locale: string;
