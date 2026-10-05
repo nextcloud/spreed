@@ -103,7 +103,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		$mention = UserPreference::CONVERSATIONS_UNARCHIVE_MENTION;
 		$always = UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS;
 		$directMention = [['type' => 'user', 'id' => 'bob']];
-		$allMention = [['type' => 'call', 'id' => 'token']];
+		$allMention = [['type' => 'user', 'id' => 'all']];
 		$oneToOne = Room::TYPE_ONE_TO_ONE;
 
 		return [
@@ -172,7 +172,39 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			->method('unarchiveAttendeesByIds')
 			->with([2]);
 
-		$comment = $this->createComment([['type' => 'call', 'id' => 'localtoken']], 'alice');
+		$comment = $this->createComment([['type' => 'user', 'id' => 'all']], 'alice');
+		$this->service->unarchiveAfterMessage($this->createRoom(), $comment, null);
+	}
+
+	public static function dataParsedMentions(): array {
+		return [
+			'plain message keeps archived' => ['Hello', []],
+			'direct mention unarchives' => ['Hello @bob', [2]],
+			'@all unarchives' => ['Hello @all', [2]],
+			'mention of someone else keeps archived' => ['Hello @carol', []],
+		];
+	}
+
+	/**
+	 * Mentions are parsed from a real comment to cover their actual shape
+	 *
+	 * @param list<int> $expectedAttendeeIds
+	 */
+	#[DataProvider('dataParsedMentions')]
+	public function testParsedMentions(string $message, array $expectedAttendeeIds): void {
+		$this->attendeeMapper->method('getArchivedActorsByType')
+			->willReturn([$this->createAttendee(2, 'bob')]);
+		$this->serverConfig->method('getUserValueForUsers')
+			->willReturn(['bob' => UserPreference::CONVERSATIONS_UNARCHIVE_MENTION]);
+
+		$this->participantService->expects($this->once())
+			->method('unarchiveAttendeesByIds')
+			->with($expectedAttendeeIds);
+
+		$comment = new Comment();
+		$comment->setActor(Attendee::ACTOR_USERS, 'alice');
+		$comment->setVerb(ChatManager::VERB_MESSAGE);
+		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
 		$this->service->unarchiveAfterMessage($this->createRoom(), $comment, null);
 	}
 
