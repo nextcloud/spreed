@@ -249,6 +249,50 @@ class ApiController extends OCSController {
 		return new DataResponse();
 	}
 
+	/**
+	 * Forge share mounts that were cached with the placeholder in their mount point
+	 */
+	public function moveShareMountsToPlaceholder(string $userId): DataResponse {
+		$prefix = '/' . $userId . '/files' . RoomShareProvider::TALK_FOLDER . '/';
+		foreach ($this->getShareMounts($userId) as $id => $mountPoint) {
+			if (str_starts_with($mountPoint, $prefix)) {
+				$placeholderMountPoint = '/' . $userId . '/files' . RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/' . substr($mountPoint, strlen($prefix));
+				$update = $this->db->getQueryBuilder();
+				$update->update('mounts')
+					->set('mount_point', $update->createNamedParameter($placeholderMountPoint))
+					->set('mount_point_hash', $update->createNamedParameter(hash('xxh128', $placeholderMountPoint)))
+					->where($update->expr()->eq('id', $update->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+				$update->executeStatement();
+			}
+		}
+
+		return new DataResponse();
+	}
+
+	public function listShareMounts(string $userId): DataResponse {
+		return new DataResponse(array_values($this->getShareMounts($userId)));
+	}
+
+	/**
+	 * @return array<int, string> mount points indexed by id
+	 */
+	protected function getShareMounts(string $userId): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('id', 'mount_point')
+			->from('mounts')
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('mount_provider_class', $query->createNamedParameter('OCA\Files_Sharing\MountProvider')));
+
+		$result = $query->executeQuery();
+		$mounts = [];
+		while ($row = $result->fetchAssociative()) {
+			$mounts[(int)$row['id']] = $row['mount_point'];
+		}
+		$result->closeCursor();
+
+		return $mounts;
+	}
+
 	public function forgedFederationLeave(string $token, string $actingUser, string $targetUser): DataResponse {
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')

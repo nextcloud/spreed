@@ -17,6 +17,12 @@ namespace OCA\Files_Sharing {
 
 		public function getUser(): IUser {
 		}
+
+		/**
+		 * @return IShare[]
+		 */
+		public function getGroupedShares(): array {
+		}
 	}
 }
 
