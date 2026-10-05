@@ -147,6 +147,15 @@ class MatterbridgeManager {
 		$currentBridge = $this->getBridgeOfRoom($room);
 		$currentBridge['enabled'] = false;
 		$this->checkBridgeProcess($room, $currentBridge);
+		// remove database entry
+		$query = $this->db->getQueryBuilder();
+		$query->delete()
+			->from('talk_bridges')
+			->where($query->expr()->eq(
+				'pid',
+				$query->createNamedParameter($currentBridge['pid'], IQueryBuilder::PARAM_INT)));
+		$result = $query->executeQuery();
+		$result->closeCursor();
 		return true;
 	}
 
