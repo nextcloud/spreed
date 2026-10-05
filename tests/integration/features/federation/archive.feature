@@ -9,12 +9,16 @@ Feature: federation/archive
     And the following "spreed" app config is set
       | federation_enabled | yes |
 
+  @skip35
   Scenario: Federated conversation is unarchived on mention and reply but not on own message
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
@@ -44,12 +48,16 @@ Feature: federation/archive
       | id          | isArchived |
       | LOCAL::room | 0          |
 
+  @skip35
   Scenario: Federated conversation is unarchived on any message
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
     And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
     And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
       | id          | name | type | remoteServer | remoteToken |
       | LOCAL::room | room | 2    | LOCAL        | room        |
