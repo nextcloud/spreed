@@ -1454,6 +1454,7 @@ OC.L10N.register(
     "7 days" : "7 ημέρες",
     "Clear reminder – {timeLocale}" : "Εκκαθάριση υπενθύμισης – {timeLocale}",
     "Edited by {actor}" : "Επεξεργάστηκε από {actor}",
+    "Until {absoluteDate}" : "Έως {absoluteDate}",
     "Message text copied to clipboard" : "Το κείμενο του μηνύματος αντιγράφηκε στο πρόχειρο",
     "Message text could not be copied" : "Το κείμενο του μηνύματος δεν μπορούσε να αντιγραφεί",
     "Message forwarded to \"Note to self\"" : "Το μήνυμα προωθήθηκε στο \"Σημείωση προς εμένα\"",
