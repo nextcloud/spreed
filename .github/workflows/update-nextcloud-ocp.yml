@@ -116,11 +116,7 @@ jobs:
           signoff: true
           branch: 'automated/noid/${{ matrix.branches }}-update-nextcloud-ocp'
           title: '[${{ matrix.branches }}] Update nextcloud/ocp dependency'
-          add-paths: |
-            composer.json
-            composer.lock
-            vendor-bin/nextcloud-ocp/composer.json
-            vendor-bin/nextcloud-ocp/composer.lock
+          add-paths: ${{ steps.check_composer_bin.outputs.files_exists == 'true' && 'vendor-bin/nextcloud-ocp/composer.json,vendor-bin/nextcloud-ocp/composer.lock' || 'composer.json,composer.lock' }}
           body: |
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
