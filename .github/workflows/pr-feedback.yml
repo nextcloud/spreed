@@ -12,7 +12,6 @@
 
 name: 'Ask for feedback on PRs'
 on:
-  workflow_dispatch:
   schedule:
     - cron: '30 1 * * *'
 
