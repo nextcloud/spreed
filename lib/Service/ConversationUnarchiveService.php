@@ -143,7 +143,8 @@ class ConversationUnarchiveService {
 	 */
 	protected function isEveryoneMentioned(array $mentions): bool {
 		foreach ($mentions as $mention) {
-			if ($mention['type'] === 'call') {
+			// "@all" is a user mention with the id "all" in unparsed comments
+			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
 				return true;
 			}
 		}
