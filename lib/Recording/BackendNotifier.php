@@ -106,6 +106,7 @@ class BackendNotifier {
 		$params = [
 			'headers' => $headers,
 			'body' => $body,
+			'connect_timeout' => 5,
 			'nextcloud' => [
 				'allow_local_address' => true,
 			],
