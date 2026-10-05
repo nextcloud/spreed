@@ -71,9 +71,10 @@ Feature: conversation-1/archive
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    And user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     And user "participant2" sets setting "conversations_unarchive" to "mention" with 200 (v1)
     And user "participant2" archives room "one-to-one room" with 200 (v4)
-    When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
+    When user "participant1" sends message "Message 2" to room "one-to-one room" with 201
     Then user "participant2" is participant of the following unordered rooms (v4)
       | id              | name         | isArchived |
       | one-to-one room | participant1 | 0          |
