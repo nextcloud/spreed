@@ -12,7 +12,7 @@ import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import MentionChip from './MessagePart/MentionChip.vue'
 import PollCard from './MessagePart/PollCard.vue'
-import { MENTION, MESSAGE, SHARED_ITEM } from '../../../../constants.ts'
+import { MENTION, SHARED_ITEM } from '../../../../constants.ts'
 import { isFilePreviewParameter } from '../../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('./MessagePart/LocationCard.vue'))
@@ -54,7 +54,7 @@ function getRichParameter(message: ChatMessage, key: string, parameter: MessageP
 	if (parameter.type === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
 		return { component: LocationCard, props: parameter }
 	}
-	if (parameter.type === SHARED_ITEM.OBJECT_TYPE.POLL && message.systemMessage !== MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
+	if (parameter.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 		return { component: PollCard, props: { ...parameter, token: message.token } }
 	}
 	if (parameter.mimetype === 'text/vcard') {
