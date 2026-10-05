@@ -154,8 +154,7 @@ class MatterbridgeManager {
 			->where($query->expr()->eq(
 				'pid',
 				$query->createNamedParameter($currentBridge['pid'], IQueryBuilder::PARAM_INT)));
-		$result = $query->executeQuery();
-		$result->closeCursor();
+		$query->executeQuery();
 		return true;
 	}
 
