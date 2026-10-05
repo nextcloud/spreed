@@ -95,6 +95,8 @@ class Config {
 	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
 	public const string CHANGELOG = 'changelog';
+	public const string SESSION_PING_LIMIT = 'session_ping_limit';
+
 	/**
 	 * 1. Call recording, …
 	 */
