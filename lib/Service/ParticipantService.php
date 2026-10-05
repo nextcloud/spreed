@@ -428,6 +428,26 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param list<int> $attendeeIds
+	 */
+	public function unarchiveAttendeesByIds(array $attendeeIds): void {
+		if (empty($attendeeIds)) {
+			return;
+		}
+
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_attendees')
+			->set('archived', $update->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
+			->set('last_attendee_activity', $update->createNamedParameter($this->timeFactory->getTime(), IQueryBuilder::PARAM_INT))
+			->where($update->expr()->in('id', $update->createParameter('ids')));
+
+		foreach (array_chunk($attendeeIds, IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$update->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$update->executeStatement();
+		}
+	}
+
+	/**
 	 * @param Participant $participant
 	 * @param list<string> $tagIds
 	 */
