@@ -18,7 +18,7 @@ d35c01a3f110e52eed0e0c422747a417 lint-stylelint.yml
 f89c18551d6a29af9bca63a0fd30a039 phpunit-oci.yml
 12a43f55ac6aedc321b62e00f9d864f0 phpunit-pgsql.yml
 ba5a538fea1a9e53dfcbeb53b83ea6fa phpunit-sqlite.yml
-aaa395a26591445ccf4c8196d7f01ee7 pr-feedback.yml
+2639f2b96989a4fcbb441ca8f1fecb2f pr-feedback.yml
 4f1080b33778a956a08efc7a41a11994 psalm.yml
 2dbec18233063b42f4d8e03bbb43671c reuse.yml
 abcb8206c3f6c5a9dc86cccf57846bfc update-nextcloud-ocp-approve-merge.yml
