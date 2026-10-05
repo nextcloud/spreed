@@ -561,9 +561,13 @@ export type getRoomDataByShareTokenResponse = ApiResponse<operations['files_inte
 export type createVideoVerificationRoomParams = Required<operations['public_share_auth-create-room']>['requestBody']['content']['application/json']
 export type createVideoVerificationRoomResponse = ApiResponse<operations['public_share_auth-create-room']['responses'][201]['content']['application/json']>
 
-// AI Summary
+// Task Processing API
 export type {
 	TaskProcessingResponse,
+	TaskProcessingScheduleParams,
+	TaskProcessingScheduleResponse,
+	TaskProcessingTaskType,
+	TaskProcessingTaskTypesResponse,
 } from './core.ts'
 
 // Teams (circles)
@@ -655,13 +659,6 @@ export type {
 	UnifiedSearchResponse,
 	UnifiedSearchResultEntry,
 	UnifiedSearchResultEntryWithRouterLink,
-} from './core.ts'
-
-// Translation API
-export type {
-	TranslationGetLanguagesResponse,
-	TranslationTranslateParams,
-	TranslationTranslateResponse,
 } from './core.ts'
 
 // Files API

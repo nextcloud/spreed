@@ -22,10 +22,7 @@ import {
 	getReactionsDetails,
 	removeReactionFromMessage,
 } from '../reactionsService.ts'
-import {
-	getTranslationLanguages,
-	translateText,
-} from '../translationService.ts'
+import { scheduleTranslateTask } from '../translationService.ts'
 
 vi.mock('@nextcloud/axios', () => ({
 	default: {
@@ -279,26 +276,19 @@ describe('messagesService', () => {
 		)
 	})
 
-	test('getTranslationLanguages calls the translation API endpoint', () => {
-		getTranslationLanguages({ dummyOption: true })
-
-		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('translation/languages'),
-			{
-				dummyOption: true,
-			},
-		)
-	})
-
-	test('translateText calls the translation API endpoint', () => {
-		translateText('text to translate', 'en', 'de', { dummyOption: true })
+	test('scheduleTranslateTask calls the task processing API endpoint', () => {
+		scheduleTranslateTask('text to translate', 'en', 'de', { dummyOption: true })
 
 		expect(axios.post).toHaveBeenCalledWith(
-			generateOcsUrl('translation/translate'),
+			generateOcsUrl('taskprocessing/schedule'),
 			{
-				text: 'text to translate',
-				fromLanguage: 'en',
-				toLanguage: 'de',
+				type: 'core:text2text:translate',
+				appId: 'spreed',
+				input: {
+					input: 'text to translate',
+					origin_language: 'en',
+					target_language: 'de',
+				},
 			},
 			{
 				dummyOption: true,

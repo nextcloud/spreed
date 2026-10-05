@@ -521,4 +521,7 @@ export const TASK_PROCESSING = {
 		SCHEDULED: 'STATUS_SCHEDULED',
 		UNKNOWN: 'STATUS_UNKNOWN',
 	},
+	TYPE: {
+		TRANSLATE: 'core:text2text:translate',
+	},
 }
