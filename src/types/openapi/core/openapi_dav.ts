@@ -857,9 +857,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "text/calendar; charset=UTF-8": unknown;
-                    "application/calendar+json; charset=UTF-8": unknown;
-                    "application/calendar+xml; charset=UTF-8": unknown;
+                    "text/calendar; charset=UTF-8": string;
+                    "application/calendar+json; charset=UTF-8": string;
+                    "application/calendar+xml; charset=UTF-8": string;
                 };
             };
             /** @description invalid parameters */
@@ -954,7 +954,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/x-ndjson": unknown;
+                    "application/x-ndjson": string;
                 };
             };
             /** @description invalid parameters */
@@ -1045,7 +1045,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/x-ndjson": unknown;
+                    "application/x-ndjson": string;
                 };
             };
             /** @description invalid parameters */
