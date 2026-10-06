@@ -53,7 +53,7 @@ jobs:
               - '**.vue'
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     needs: changes
     if: needs.changes.outputs.src != 'false'

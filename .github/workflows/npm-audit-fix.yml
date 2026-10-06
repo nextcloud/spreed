@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     env:
       # env variable for maintainers: 'false' disables auto-merge for these pull requests
