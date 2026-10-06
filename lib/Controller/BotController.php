@@ -497,7 +497,7 @@ class BotController extends AEnvironmentAwareOCSController {
 
 		$alreadyInstalled = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $this->botConversationMapper->findForToken($this->room->getToken()));
 
-		if (in_array($botId, $alreadyInstalled)) {
+		if (in_array($botId, $alreadyInstalled, true)) {
 			return new DataResponse($this->formatBot($bot, true), Http::STATUS_OK);
 		}
 
