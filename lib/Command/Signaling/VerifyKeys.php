@@ -47,7 +47,7 @@ class VerifyKeys extends Base {
 		$output->writeln('Derived public key:');
 		$output->writeln($publicKeyDerived);
 
-		if ($publicKey != $publicKeyDerived) {
+		if ($publicKey !== $publicKeyDerived) {
 			if ($update) {
 				$output->writeln('<comment>Stored public key for algorithm ' . strtolower($alg) . ' did not match stored private key.</comment>');
 				$output->writeln('<info>A new public key was created and stored.</info>');
