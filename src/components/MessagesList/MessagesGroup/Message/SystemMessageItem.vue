@@ -47,10 +47,8 @@ import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
 import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
-import DefaultParameter from './MessagePart/DefaultParameter.vue'
-import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
-import { MENTION } from '../../../../constants.ts'
+import { getRichParameters } from './getRichParameters.ts'
 
 export default {
 	name: 'MessageItem',
@@ -116,25 +114,7 @@ export default {
 		},
 
 		richParameters() {
-			const richParameters = {}
-			Object.keys(this.message.messageParameters).forEach(function(p) {
-				const type = this.message.messageParameters[p].type
-				if (Object.values(MENTION.TYPE).includes(type)) {
-					richParameters[p] = {
-						component: MentionChip,
-						props: {
-							...this.message.messageParameters[p],
-							token: this.message.token,
-						},
-					}
-				} else {
-					richParameters[p] = {
-						component: DefaultParameter,
-						props: this.message.messageParameters[p],
-					}
-				}
-			}.bind(this))
-			return richParameters
+			return getRichParameters(this.message, { mentionOnly: true })
 		},
 	},
 

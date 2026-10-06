@@ -95,27 +95,21 @@
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { computed, defineAsyncComponent, inject, provide } from 'vue'
+import { computed, inject, provide } from 'vue'
 import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions.vue'
-import ContactCard from './MessagePart/ContactCard.vue'
-import DeckCard from './MessagePart/DeckCard.vue'
-import DefaultParameter from './MessagePart/DefaultParameter.vue'
-import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
-import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
-import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT, SHARED_ITEM } from '../../../../constants.ts'
+import { CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
-import { isFilePreviewParameter, isTemporaryId, isTemporaryMessage } from '../../../../utils/message.ts'
-
-const LocationCard = defineAsyncComponent(() => import('./MessagePart/LocationCard.vue'))
+import { isTemporaryId, isTemporaryMessage } from '../../../../utils/message.ts'
+import { getRichParameters } from './getRichParameters.ts'
 
 export default {
 	name: 'MessageItem',
@@ -218,52 +212,7 @@ export default {
 		},
 
 		richParameters() {
-			const richParameters = {}
-			Object.keys(this.message.messageParameters).forEach(function(p) {
-				const type = this.message.messageParameters[p].type
-				const mimetype = this.message.messageParameters[p].mimetype
-				if (Object.values(MENTION.TYPE).includes(type)) {
-					richParameters[p] = {
-						component: MentionChip,
-						props: {
-							...this.message.messageParameters[p],
-							token: this.message.token,
-						},
-					}
-				} else if (isFilePreviewParameter(p, this.message.messageParameters[p])) {
-					// File previews are rendered by FilePreviewsWrapper, skip from richParameters
-					return
-				} else if (type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
-					richParameters[p] = {
-						component: DeckCard,
-						props: this.message.messageParameters[p],
-					}
-				} else if (type === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
-					richParameters[p] = {
-						component: LocationCard,
-						props: this.message.messageParameters[p],
-					}
-				} else if (type === SHARED_ITEM.OBJECT_TYPE.POLL && this.message.systemMessage !== MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
-					const props = { ...this.message.messageParameters[p] }
-					// Add the token to the component props
-					props.token = this.message.token
-					richParameters[p] = {
-						component: PollCard,
-						props,
-					}
-				} else if (mimetype === 'text/vcard') {
-					richParameters[p] = {
-						component: ContactCard,
-						props: this.message.messageParameters[p],
-					}
-				} else {
-					richParameters[p] = {
-						component: DefaultParameter,
-						props: this.message.messageParameters[p],
-					}
-				}
-			}.bind(this))
-			return richParameters
+			return getRichParameters(this.message)
 		},
 
 		showMessageButtonsBar() {
