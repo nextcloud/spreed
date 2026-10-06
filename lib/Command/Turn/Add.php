@@ -63,11 +63,11 @@ class Add extends Base {
 		$secret = $input->getOption('secret');
 		$generate = $input->getOption('generate-secret');
 
-		if (!in_array($schemes, ['turn', 'turns', 'turn,turns'])) {
+		if (!in_array($schemes, ['turn', 'turns', 'turn,turns'], true)) {
 			$output->writeln('<error>Not allowed schemes, must be turn or turns or turn,turns.</error>');
 			return 1;
 		}
-		if (!in_array($protocols, ['tcp', 'udp', 'udp,tcp'])) {
+		if (!in_array($protocols, ['tcp', 'udp', 'udp,tcp'], true)) {
 			$output->writeln('<error>Not allowed protocols, must be udp or tcp or udp,tcp.</error>');
 			return 1;
 		}
