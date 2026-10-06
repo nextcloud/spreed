@@ -5,7 +5,14 @@
 		},
 		"sort-packages": true
 	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/nextcloud-libraries/psalm"
+		}
+	],
 	"require-dev": {
-		"vimeo/psalm": "^6.18.1"
+		"vimeo/psalm": "^6.18.1",
+		"nextcloud/psalm-plugin": "dev-expensive as 1.0.x-dev"
 	}
 }
