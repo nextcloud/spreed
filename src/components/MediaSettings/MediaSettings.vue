@@ -198,6 +198,9 @@
 								:token="token"
 								:skipBlurVirtualBackground="skipBlurVirtualBackground"
 								@updateBackground="handleUpdateVirtualBackground" />
+							<div class="media-settings__background-checks">
+								<VirtualBackgroundChecks />
+							</div>
 						</template>
 					</MediaSettingsTabs>
 
@@ -278,6 +281,7 @@ import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
+import VirtualBackgroundChecks from './VirtualBackgroundChecks.vue'
 import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 import IconBackground from '../../../img/material-icons/replace-background.svg?raw'
 import { useDevices } from '../../composables/useDevices.js'
@@ -319,6 +323,7 @@ export default {
 		NcNoteCard,
 		VideoBackground,
 		VideoBackgroundEditor,
+		VirtualBackgroundChecks,
 		VolumeIndicator,
 		SetGuestUsername,
 		// Icons
@@ -1065,6 +1070,10 @@ export default {
 	}
 
 	&__guest {
+		margin-top: var(--default-grid-baseline);
+	}
+
+	&__background-checks {
 		margin-top: var(--default-grid-baseline);
 	}
 
