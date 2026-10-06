@@ -339,6 +339,7 @@ class HostedSignalingServerService {
 			throw new HostedSignalingServerAPIException($message, Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
+		$accountStatus = $data['status'] ?? null;
 		if (!isset($data['status'])
 			|| !isset($data['created'])
 			|| ($data['status'] === 'active' && (
@@ -360,8 +361,8 @@ class HostedSignalingServerService {
 				)
 			)
 			*/
-			|| (in_array($data['status'], ['error', 'blocked']) && !isset($data['reason']))
-			|| !in_array($data['status'], ['error', 'blocked', 'pending', 'active', 'expired'])
+			|| (in_array($accountStatus, ['error', 'blocked'], true) && !isset($data['reason']))
+			|| !in_array($accountStatus, ['error', 'blocked', 'pending', 'active', 'expired'], true)
 		) {
 			$this->logger->error('Getting the account information failed: response is missing mandatory field - data: ' . json_encode($data));
 
