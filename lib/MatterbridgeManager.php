@@ -996,7 +996,7 @@ class MatterbridgeManager {
 		// * have o+x perm
 		$execPerm = $aExec
 			|| ($user['name'] === $fileOwner['name'] && $uExec)
-			|| ($user['name'] !== $fileOwner['name'] && in_array($fileGid, $myGids) && $gExec);
+			|| ($user['name'] !== $fileOwner['name'] && in_array($fileGid, $myGids, true) && $gExec);
 
 		if (!$execPerm) {
 			throw new WrongPermissionsException();
