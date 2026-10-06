@@ -58,7 +58,7 @@ class PublicShareAuthController extends OCSController {
 	 */
 	#[PublicPage]
 	#[OpenAPI(tags: ['files_integration'])]
-	#[AnonRateLimit(12, 3600)]
+	#[AnonRateLimit(limit: 12, period: 3600)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/publicshareauth', requirements: [
 		'apiVersion' => '(v1)',
 	])]

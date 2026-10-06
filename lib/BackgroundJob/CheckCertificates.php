@@ -89,7 +89,7 @@ class CheckCertificates extends TimedJob {
 	private function checkServerCertificate(string $host): void {
 		$expirationInDays = $this->certService->getCertificateExpirationInDays($host);
 
-		if ($expirationInDays == null) {
+		if ($expirationInDays === null) {
 			return;
 		}
 

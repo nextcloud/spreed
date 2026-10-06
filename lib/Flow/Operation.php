@@ -177,7 +177,7 @@ class Operation implements IOperation {
 	}
 
 	protected function validateOperationConfig(int $mode, string $token, string $uid): void {
-		if (!in_array($mode, self::MESSAGE_MODES)) {
+		if (!in_array($mode, self::MESSAGE_MODES, true)) {
 			throw new UnexpectedValueException('Invalid mode');
 		}
 
