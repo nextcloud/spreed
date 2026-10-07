@@ -35,6 +35,7 @@ Instead, the server API `POST /ocs/v2.php/apps/provisioning_api/api/v1/config/us
 | `conversations_list_style`  | `config => conversations => list-style`     | `''` falling back to app config with the same name | One of the constants from the [constants list](constants.md#conversation-list-style)                     |
 | `chat_style`                | `config => chat => chat-style`              | `''` falling back to app config with the same name | One of the constants from the [constants list](constants.md#chat-style)                                  |
 | `conversations_unarchive`   | `config => conversations => unarchive`      | `'never'`                                          | One of the constants from the [constants list](constants.md#conversations-unarchive-mode)                |
+| `conversations_tags_show_unread` | `config => conversations => tags-show-unread` | `'always'`                                         | One of the constants from the [constants list](constants.md#conversation-tags-show-unread-mode)             |
 
 ## Set SIP settings
 

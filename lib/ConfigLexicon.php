@@ -219,6 +219,7 @@ PROMPT;
 			new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true),
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER),
+			new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS),
 		];
 	}
 }

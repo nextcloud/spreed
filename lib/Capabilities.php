@@ -212,6 +212,7 @@ class Capabilities implements IPublicCapability {
 			'sort-order',
 			'group-mode',
 			'unarchive',
+			'tags-show-unread',
 			'description-length',
 		],
 		'federation' => [
@@ -318,6 +319,7 @@ class Capabilities implements IPublicCapability {
 					'sort-order' => $this->talkConfig->getConversationsSortOrder($user?->getUID()),
 					'group-mode' => $this->talkConfig->getConversationsGroupMode($user?->getUID()),
 					'unarchive' => $this->talkConfig->getConversationsUnarchive($user?->getUID()),
+					'tags-show-unread' => $this->talkConfig->getConversationsTagsShowUnread($user?->getUID()),
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
 					'retention-event' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_EVENT_ROOMS)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_PHONE_ROOMS)),
