@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
@@ -611,6 +612,59 @@ describe('MessageItem.vue', () => {
 
 			expect(wrapper.vm.isDeleting).toBe(false)
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
+
+			vi.useRealTimers()
+		})
+
+		test('deletes all messages of a combined file message', async () => {
+			const deleteMessage = vi.fn().mockResolvedValue(200)
+			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
+			store = createStore(testStoreConfig)
+
+			vi.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
+
+			messageProps.message.combinedMessageIds = [121, 122, 123]
+			const wrapper = mountMessage(messageProps)
+
+			await wrapper.find('.message').trigger('mouseover')
+			wrapper.findComponent(MessageButtonsBar).vm.$emit('delete')
+			await flushPromises()
+
+			expect(deleteMessage).toHaveBeenCalledTimes(3)
+			for (const id of [121, 122, 123]) {
+				expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
+					token: TOKEN,
+					id,
+					placeholder: expect.anything(),
+				})
+			}
+			expect(wrapper.vm.isDeleting).toBe(false)
+			expect(showSuccess).toHaveBeenCalled()
+
+			vi.useRealTimers()
+		})
+
+		test('shows an error when one message of a combined file message fails to delete', async () => {
+			const deleteMessage = vi.fn()
+				.mockResolvedValueOnce(200)
+				.mockRejectedValueOnce({ response: { status: 400 } })
+				.mockResolvedValueOnce(200)
+			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
+			store = createStore(testStoreConfig)
+
+			vi.useFakeTimers().setSystemTime(new Date('2020-05-07T10:00:00'))
+
+			messageProps.message.combinedMessageIds = [121, 122, 123]
+			const wrapper = mountMessage(messageProps)
+
+			await wrapper.find('.message').trigger('mouseover')
+			wrapper.findComponent(MessageButtonsBar).vm.$emit('delete')
+			await flushPromises()
+
+			expect(deleteMessage).toHaveBeenCalledTimes(3)
+			expect(showError).toHaveBeenCalledWith('Message could not be deleted because it is too old')
+			expect(showSuccess).not.toHaveBeenCalled()
+			expect(wrapper.vm.isDeleting).toBe(false)
 
 			vi.useRealTimers()
 		})

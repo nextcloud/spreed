@@ -320,21 +320,17 @@ export default {
 
 		async handleDelete() {
 			this.isDeleting = true
-			try {
-				const statusCode = await this.$store.dispatch('deleteMessage', {
-					token: this.message.token,
-					id: this.message.id,
-					placeholder: t('spreed', 'Deleting message'),
-				})
+			const ids = this.message.combinedMessageIds ?? [this.message.id]
+			const results = await Promise.allSettled(ids.map((id) => this.$store.dispatch('deleteMessage', {
+				token: this.message.token,
+				id,
+				placeholder: t('spreed', 'Deleting message'),
+			})))
+			this.isDeleting = false
 
-				if (statusCode === 202) {
-					showWarning(t('spreed', 'Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services'), {
-						timeout: TOAST_DEFAULT_TIMEOUT * 2,
-					})
-				} else if (statusCode === 200) {
-					showSuccess(t('spreed', 'Message deleted successfully'))
-				}
-			} catch (e) {
+			const failure = results.find((result) => result.status === 'rejected')
+			if (failure) {
+				const e = failure.reason
 				if (e?.response?.status === 400) {
 					showError(t('spreed', 'Message could not be deleted because it is too old'))
 				} else if (e?.response?.status === 405) {
@@ -343,11 +339,13 @@ export default {
 					showError(t('spreed', 'An error occurred while deleting the message'))
 					console.error(e)
 				}
-				this.isDeleting = false
-				return
+			} else if (results.some((result) => result.value === 202)) {
+				showWarning(t('spreed', 'Message deleted successfully, but a bot or Matterbridge is configured and the message might already be distributed to other services'), {
+					timeout: TOAST_DEFAULT_TIMEOUT * 2,
+				})
+			} else if (results.every((result) => result.value === 200)) {
+				showSuccess(t('spreed', 'Message deleted successfully'))
 			}
-
-			this.isDeleting = false
 		},
 
 		toggleFollowUpEmojiPicker() {
