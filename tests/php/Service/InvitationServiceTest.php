@@ -14,6 +14,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
@@ -35,6 +36,7 @@ class InvitationServiceTest extends TestCase {
 	protected ParticipantService&MockObject $participantService;
 	protected IConfig&MockObject $serverConfig;
 	protected Config&MockObject $talkConfig;
+	protected IAppConfig&MockObject $appConfig;
 	protected IEmailValidator&MockObject $emailValidator;
 	protected InvitationService $service;
 
@@ -50,6 +52,7 @@ class InvitationServiceTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->emailValidator = $this->createMock(IEmailValidator::class);
 
 		$this->service = new InvitationService(
@@ -62,6 +65,7 @@ class InvitationServiceTest extends TestCase {
 			$this->participantService,
 			$this->serverConfig,
 			$this->talkConfig,
+			$this->appConfig,
 			$this->emailValidator,
 		);
 	}
@@ -69,7 +73,8 @@ class InvitationServiceTest extends TestCase {
 	public function testPhoneInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
 		$currentUser = $this->createStub(IUser::class);
 		// SIP is fully available, only the classified flag must reject the number
-		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
+		$isSIPConfigured = !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET));
+		$this->assertTrue($isSIPConfigured);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
 		$this->phoneNumberUtil->expects(self::never())
 			->method('convertToStandardFormat');
@@ -89,7 +94,8 @@ class InvitationServiceTest extends TestCase {
 		$currentUser = $this->createStub(IUser::class);
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')->willReturn(true);
-		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
+		$isSIPConfigured = !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET));
+		$this->assertTrue($isSIPConfigured);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
 		$this->phoneNumberUtil->expects(self::never())
 			->method('convertToStandardFormat');
@@ -207,7 +213,8 @@ class InvitationServiceTest extends TestCase {
 
 	public function testPhoneInvitationsAreAcceptedForRegularConversation(): void {
 		$currentUser = $this->createStub(IUser::class);
-		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
+		$isSIPconfigured = !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET));
+		$this->assertTrue($isSIPconfigured);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
 		$this->serverConfig->method('getSystemValueString')->willReturn('DE');
 		$this->phoneNumberUtil->method('convertToStandardFormat')

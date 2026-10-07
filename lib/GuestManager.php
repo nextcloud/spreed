@@ -20,6 +20,7 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDateTimeZone;
@@ -35,6 +36,7 @@ use Psr\Log\LoggerInterface;
 class GuestManager {
 	public function __construct(
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly IEmailValidator $emailValidator,
 		private readonly IMailer $mailer,
 		private readonly Defaults $defaults,
@@ -284,7 +286,7 @@ class GuestManager {
 			$template->addBodyText($this->l->t('You can also dial-in via phone with the following details'));
 
 			$template->addBodyListItem(
-				$this->talkConfig->getDialInInfo(),
+				$this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO),
 				$this->l->t('Dial-in information'),
 				$this->url->getAbsoluteURL($this->url->imagePath('spreed', 'phone.png'))
 			);
