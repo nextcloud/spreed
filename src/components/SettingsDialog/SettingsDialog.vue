@@ -87,7 +87,7 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
-			v-if="!isGuest && supportUnarchive"
+			v-if="!isGuest && (supportUnarchive || supportTagsShowUnread)"
 			id="conversations"
 			:name="t('spreed', 'Conversations')">
 			<ConversationsSettings />
@@ -185,6 +185,7 @@ const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-m
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 const supportUnarchive = getTalkConfig('local', 'conversations', 'unarchive') !== undefined
+const supportTagsShowUnread = getTalkConfig('local', 'conversations', 'tags-show-unread') !== undefined
 
 export default {
 	name: 'SettingsDialog',
@@ -223,6 +224,7 @@ export default {
 			supportDefaultBlurVirtualBackground,
 			supportLiveTranslation,
 			supportUnarchive,
+			supportTagsShowUnread,
 			actorStore,
 		}
 	},
