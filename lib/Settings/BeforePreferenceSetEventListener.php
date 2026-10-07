@@ -103,6 +103,14 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			], true);
 		}
 
+		if ($key === UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD) {
+			return in_array($value, [
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
+			], true);
+		}
+
 		if ($key === UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID) {
 			// Accept any value, as it will be used for both local and federated
 			// instances and therefore the valid values might change depending
