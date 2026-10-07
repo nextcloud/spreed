@@ -96,6 +96,9 @@ class Config {
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
 	public const string CHANGELOG = 'changelog';
 	public const string SESSION_PING_LIMIT = 'session_ping_limit';
+	public const string HOSTED_SIGNALING_SERVER_ACCOUNT = 'hosted_signaling_server_account';
+	public const string HOSTED_SIGNALING_SERVER_NONCE = 'hosted_signaling_server_nonce';
+	public const string HOSTED_SIGNALING_SERVER_ACCOUNT_ID = 'hosted_signaling_server_account_id';
 
 	/**
 	 * 1. Call recording, …

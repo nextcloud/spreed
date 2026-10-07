@@ -210,6 +210,9 @@ PROMPT;
 			new Entry(Config::HIDE_SIGNALING_WARNING, ValueType::BOOL, false, definition: 'Flag that allows to suppress the warning that an HPB should be configured'),
 			new Entry(Config::CHANGELOG, ValueType::BOOL, true, definition: 'Whether the changelog conversation is updated with new features on major releases'),
 			new Entry(Config::SESSION_PING_LIMIT, ValueType::INT, 200, definition: 'Number of sessions the HPB can ping in a single request', rename: 'session-ping-limit'),
+			new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT, ValueType::ARRAY, [], definition: 'Account information of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account'),
+			new Entry(Config::HOSTED_SIGNALING_SERVER_NONCE, ValueType::STRING, '', definition: 'Temporary nonce while configuring the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-nonce'),
+			new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID, ValueType::STRING, '', definition: 'Account identifier of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account-id'),
 		];
 	}
 
