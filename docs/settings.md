@@ -1,4 +1,4 @@
-# Settings API
+﻿# Settings API
 
 * Base endpoint: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 19
 

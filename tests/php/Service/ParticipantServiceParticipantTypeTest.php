@@ -22,6 +22,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\MembershipService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
@@ -56,6 +57,7 @@ class ParticipantServiceParticipantTypeTest extends TestCase {
 	protected function getConstructorArgs(): array {
 		return [
 			$this->createMock(Config::class),
+			$this->createMock(IAppConfig::class),
 			$this->attendeeMapper,
 			$this->createMock(SessionMapper::class),
 			$this->createMock(SessionService::class),
