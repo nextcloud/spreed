@@ -21,11 +21,11 @@ const supportTagsShowUnread = getTalkConfig('local', 'conversations', 'tags-show
 
 const UNARCHIVE_LABELS = {
 	// TRANSLATORS Unarchive option - never unarchive conversations automatically
-	[CONVERSATION.UNARCHIVE.NEVER]: t('spreed', 'Never'),
+	[CONVERSATION.UNARCHIVE.NEVER]: t('spreed', 'Off'),
 	// TRANSLATORS Unarchive option - unarchive conversations when the user is mentioned or replied to
-	[CONVERSATION.UNARCHIVE.MENTION]: t('spreed', 'On mention or reply'),
+	[CONVERSATION.UNARCHIVE.MENTION]: t('spreed', '@-mentions only'),
 	// TRANSLATORS Unarchive option - unarchive conversations on any new message
-	[CONVERSATION.UNARCHIVE.ALWAYS]: t('spreed', 'On any message'),
+	[CONVERSATION.UNARCHIVE.ALWAYS]: t('spreed', 'All messages'),
 }
 
 const TAGS_SHOW_UNREAD_LABELS = {
@@ -89,8 +89,7 @@ async function setTagsShowUnread(value: string) {
 
 	<NcRadioGroup
 		v-if="supportUnarchive"
-		:label="t('spreed', 'Unarchive conversations automatically')"
-		:description="t('spreed', 'Choose which messages move a conversation back from the archived list')"
+		:label="t('spreed', 'Unarchive conversation when new messages are received')"
 		:modelValue="settingsStore.unarchive"
 		@update:modelValue="setUnarchive">
 		<NcRadioGroupButton
