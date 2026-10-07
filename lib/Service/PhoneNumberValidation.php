@@ -23,13 +23,10 @@ class PhoneNumberValidation {
 	 * Validate input as a phone number
 	 *
 	 * - Local number: allow
-	 * - International number
-	 *      a. If valid, strip + and allow
-	 *      b. If invalid, throw
+	 * - International number: If invalid, throw
 	 * @throws \InvalidArgumentException When the number is invalid
 	 */
-	public function validateNumber(string $phoneNumber): string {
-
+	public function validateNumber(string $phoneNumber) {
 		if (
 			// Not an internation number
 			!str_starts_with($phoneNumber, '0')
@@ -45,11 +42,14 @@ class PhoneNumberValidation {
 		if ($standardPhoneNumber === null) {
 			throw new \InvalidArgumentException();
 		}
+	}
 
-		if (str_starts_with($standardPhoneNumber, '+')) {
-			return substr($standardPhoneNumber, 1);
-		}
-
-		throw new \InvalidArgumentException();
+	/**
+	 * Removes any character that is not a number or "+"
+	 *
+	 * @param string $phoneNumber Phonenumber to clean
+	 */
+	public function cleanNumber(string $phoneNumber): string {
+		return preg_replace('/[^0-9+]/', '', $phoneNumber) ?? '';
 	}
 }
