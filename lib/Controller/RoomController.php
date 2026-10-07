@@ -206,8 +206,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'federation_enabled'),
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
 			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
-			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
-			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
+			$this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO),
+			$this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET),
 			$this->appConfig->getAppValueInt(Config::RECORDING_CONSENT),
 			$this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION),
 			$this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY),
@@ -586,7 +586,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	private function validateSIPBridgeRequest(string $token): bool {
 		$random = $this->request->getHeader('talk-sipbridge-random');
 		$checksum = $this->request->getHeader('talk-sipbridge-checksum');
-		$secret = $this->talkConfig->getSIPSharedSecret();
+		$secret = $this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET);
 		return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $token);
 	}
 
@@ -831,6 +831,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		$isClassified = $preset === Classified::getIdentifier();
+		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
 
 		// Enabling SIP dial-in is restricted to the configured groups, so requesting
 		// it at creation time requires the same permission as toggling it later on.
@@ -840,8 +841,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$sipEnabled = Webinary::SIP_DISABLED;
 		} elseif ($sipEnabled !== Webinary::SIP_DISABLED
 			&& $this->forcedParameters->getForcedParameter(Parameter::SIP_ENABLED) === null
-			&& (!$this->talkConfig->isSIPConfigured()
-				|| !$this->talkConfig->canUserEnableSIP($user))) {
+			&& (!$isSIPConfigured || !$this->talkConfig->canUserEnableSIP($user))) {
 			if ($sipEnabled === $this->defaultParameters->getParameters()[Parameter::SIP_ENABLED->value]) {
 				// Clients send the administrator configured default value also when the
 				// user did not request SIP themselves, so it is silently disabled instead.
@@ -1429,7 +1429,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				'phoneNumber' => '',
 				'callId' => '',
 			];
-			if ($this->talkConfig->isSIPConfigured()
+			if (!empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET))
 				&& $this->room->getSIPEnabled() !== Webinary::SIP_DISABLED
 				&& ($this->participant->hasModeratorPermissions(false)
 					|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
@@ -1509,7 +1509,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
-				if ($this->talkConfig->isSIPConfigured()
+				if (!empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET))
 					&& $this->participant->hasModeratorPermissions(false)) {
 					$result['phoneNumber'] = $participant->getAttendee()->getPhoneNumber();
 
@@ -1678,9 +1678,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
 			}
 
+			$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
 			if (
 				!$addedBy instanceof IUser
-				|| !$this->talkConfig->isSIPConfigured()
+				|| !$isSIPConfigured
 				|| !$this->talkConfig->canUserDialOutSIP($addedBy)
 				|| preg_match(Room::SIP_INCOMPATIBLE_REGEX, $this->room->getToken())
 				|| ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_PUBLIC)) {
@@ -2595,7 +2596,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function verifyDialInPin(string $pin): DataResponse {
-		if (!$this->talkConfig->isSIPConfigured()) {
+		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
+		if (!$isSIPConfigured) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
@@ -2644,7 +2646,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 	])]
 	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
-		if (!$this->talkConfig->isSIPConfigured()) {
+		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
+		if (!$isSIPConfigured) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
@@ -2712,7 +2715,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
+		if (!$isSIPConfigured) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
@@ -2810,7 +2814,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
+		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
+		if (!$isSIPConfigured) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
@@ -3281,7 +3286,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'config'], Http::STATUS_FORBIDDEN);
 		}
 
-		if (!$this->talkConfig->isSIPConfigured()) {
+		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
+		if (!$isSIPConfigured) {
 			return new DataResponse(['error' => 'config'], Http::STATUS_PRECONDITION_FAILED);
 		}
 

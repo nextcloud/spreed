@@ -99,7 +99,7 @@ Feature: conversation-1/create
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |
       | sip_bridge_groups | ["group1"] |
-      | default_sip_enabled | 1 |
+      | sip_bridge_dialout | true |
     # The default value is sent by clients without the user requesting SIP,
     # so it is disabled instead of failing the creation
     When user "participant1" creates room "room" (v4)

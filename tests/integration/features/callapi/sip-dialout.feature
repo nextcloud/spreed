@@ -11,7 +11,7 @@ Feature: callapi/sip-dialout
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |
       | sip_bridge_groups | ["group1"] |
-      | sip_dialout | yes |
+      | sip_bridge_dialout | true |
     And user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
