@@ -17,6 +17,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDateTimeZone;
@@ -32,6 +33,7 @@ use Test\TestCase;
 
 class GuestManagerTest extends TestCase {
 	protected Config&MockObject $talkConfig;
+	protected IAppConfig&MockObject $appConfig;
 	protected IEmailValidator&MockObject $emailValidator;
 	protected IMailer&MockObject $mailer;
 	protected Defaults&MockObject $defaults;
@@ -48,6 +50,7 @@ class GuestManagerTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->emailValidator = $this->createMock(IEmailValidator::class);
 		$this->mailer = $this->createMock(IMailer::class);
 		$this->defaults = $this->createMock(Defaults::class);
@@ -67,6 +70,7 @@ class GuestManagerTest extends TestCase {
 			return $this->getMockBuilder(GuestManager::class)
 				->setConstructorArgs([
 					$this->talkConfig,
+					$this->appConfig,
 					$this->emailValidator,
 					$this->mailer,
 					$this->defaults,
@@ -86,6 +90,7 @@ class GuestManagerTest extends TestCase {
 
 		return new GuestManager(
 			$this->talkConfig,
+			$this->appConfig,
 			$this->emailValidator,
 			$this->mailer,
 			$this->defaults,

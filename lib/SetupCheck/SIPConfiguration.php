@@ -68,8 +68,8 @@ class SIPConfiguration implements ISetupCheck {
 			return SetupResult::error($message, 'https://portal.nextcloud.com/article/Nextcloud-Talk/Nextcloud-Talk-Phone/Direct-Dial-in#content-provisioning');
 		}
 
-		if ($this->talkConfig->getSIPSharedSecret() === ''
-			&& $this->talkConfig->getDialInInfo() === ''
+		if ($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET) === ''
+			&& $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO) === ''
 			&& $this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN) < 34) {
 			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}

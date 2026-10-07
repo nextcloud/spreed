@@ -138,6 +138,7 @@ class SignalingControllerTest extends TestCase {
 			'spreed',
 			$this->request,
 			$this->config,
+			$this->appConfig,
 			$this->signalingManager,
 			$this->serverSession,
 			$this->session,
@@ -1375,7 +1376,7 @@ class SignalingControllerTest extends TestCase {
 			$dbConnection,
 			\OCP\Server::get(IConfig::class),
 			$this->createMock(Config::class),
-			$this->appConfig,
+			$this->createMock(IAppConfig::class),
 			\OCP\Server::get(IAppManager::class),
 			\OCP\Server::get(AttendeeMapper::class),
 			\OCP\Server::get(SessionMapper::class),
@@ -1461,8 +1462,8 @@ class SignalingControllerTest extends TestCase {
 	}
 
 	private function setUpSIPBridgeConfig(): void {
-		$this->config = $this->createMock(Config::class);
-		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET)->willReturn(self::SIP_BRIDGE_SECRET);
 		$this->userId = null;
 		$this->recreateSignalingController();
 	}
@@ -1510,12 +1511,14 @@ class SignalingControllerTest extends TestCase {
 
 	public function testGetSettingsSIPBridgeValidNoToken(): void {
 		$this->config = $this->createMock(Config::class);
-		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET)->willReturn(self::SIP_BRIDGE_SECRET);
 		$this->config->method('getStunServers')->willReturn([]);
 		$this->config->method('getTurnSettings')->willReturn([]);
 		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
 		$this->config->method('getHideSignalingWarning')->willReturn(false);
-		$this->config->method('isSIPConfigured')->willReturn(false);
+		$isSIPConfigured = !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET));
+		$this->assertFalse($isSIPConfigured);
 		$this->userId = null;
 		$this->recreateSignalingController();
 
