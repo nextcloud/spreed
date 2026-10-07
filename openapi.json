@@ -471,7 +471,8 @@
                                     "retention-classified",
                                     "sort-order",
                                     "group-mode",
-                                    "unarchive"
+                                    "unarchive",
+                                    "tags-show-unread"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -545,6 +546,15 @@
                                             "always"
                                         ],
                                         "description": "User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))"
+                                    },
+                                    "tags-show-unread": {
+                                        "type": "string",
+                                        "enum": [
+                                            "never",
+                                            "mention",
+                                            "always"
+                                        ],
+                                        "description": "User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))"
                                     }
                                 }
                             },
