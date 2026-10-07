@@ -140,6 +140,13 @@ async function setConversationsUnarchive(value: string) {
 }
 
 /**
+ * @param value - tags show unread mode ('never', 'mention', 'always')
+ */
+async function setConversationsTagsShowUnread(value: string) {
+	return setUserConfig('spreed', 'conversations_tags_show_unread', value)
+}
+
+/**
  * @param hasUserAccount
  * @param value
  */
@@ -177,6 +184,7 @@ export {
 	setConversationsGroupMode,
 	setConversationsListStyle,
 	setConversationsSortOrder,
+	setConversationsTagsShowUnread,
 	setConversationsUnarchive,
 	setLiveTranscriptionTargetLanguageId,
 	setPlaySounds,

@@ -186,6 +186,12 @@ export const CONVERSATION = {
 		ALWAYS: 'always',
 	},
 
+	TAGS_SHOW_UNREAD: {
+		NEVER: 'never',
+		MENTION: 'mention',
+		ALWAYS: 'always',
+	},
+
 	MAX_NAME_LENGTH: 255,
 } as const
 
