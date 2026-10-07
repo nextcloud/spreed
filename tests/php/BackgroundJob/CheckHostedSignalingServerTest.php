@@ -95,7 +95,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 			->willReturn(['status' => 'pending']);
 
 		$expectedCallsArray = [
-			['signaling_servers', ['servers' => ['server' => 'signaling-url','verify' => true,'secret' => 'signaling-secret']], false, false],
+			['signaling_servers', ['servers' => [['server' => 'signaling-url', 'verify' => true]], 'secret' => 'signaling-secret'], false, false],
 			[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $newStatus, false, false],
 		];
 
@@ -164,14 +164,17 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->appConfig
 			->method('getAppValueArray')
-			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
-			->willReturn(['status' => 'pending']);
+			->willReturnMap([
+				[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, [], false, ['status' => 'pending']],
+				[Config::STUN_SERVERS, [], false, []],
+				[Config::TURN_SERVERS, [], false, []],
+			]);
 
 		$expectedCallsArray = [
-			['signaling_servers', ['servers' => ['server' => 'signaling-url', 'verify' => true], 'secret' => 'signaling-secret'], false, false],
-			[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $newStatus, false, false],
+			['signaling_servers', ['servers' => [['server' => 'signaling-url', 'verify' => true]], 'secret' => 'signaling-secret'], false, false],
 			['stun_servers', ['stun.domain.invalid:443','stun.domain.invalid:3478'], false, false],
 			['turn_servers', [['server' => 'turn1.domain.invalid:443','secret' => 'turn-secret','schemes' => 'turn,turns','protocols' => 'udp,tcp'],['server' => 'turn2.domain.invalid:443','secret' => 'other-turn-secret','schemes' => 'turns','protocols' => 'tcp']], false, false],
+			[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $newStatus, false, false],
 		];
 
 		$i = 0;

@@ -68,7 +68,7 @@ class CheckHostedSignalingServer extends TimedJob {
 
 	private function updateStunTurnSettings(array $oldAccountInfo, array $accountInfo) {
 		if (!empty($accountInfo['stun']['servers'])) {
-			if ($this->appConfig->getAppValueArray('stun_servers') !== $accountInfo['stun']['servers']) {
+			if ($this->appConfig->getAppValueArray(Config::STUN_SERVERS) !== $accountInfo['stun']['servers']) {
 				// STUN servers were added / changed
 				$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $accountInfo['stun']['servers']);
 			}
@@ -88,7 +88,7 @@ class CheckHostedSignalingServer extends TimedJob {
 				];
 			}
 
-			if ($this->appConfig->getAppValueArray('turn_servers') !== $newTurnServers) {
+			if ($this->appConfig->getAppValueArray(Config::TURN_SERVERS) !== $newTurnServers) {
 				// TURN servers were added / changed
 				$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $newTurnServers);
 			}
