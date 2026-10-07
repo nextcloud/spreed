@@ -290,3 +290,22 @@ Feature: sharing-1/move
     Then the list of returned files for "participant3" is
       | /Talk/test/ |
       | /Talk/test/renamed.txt |
+
+  Scenario: download a received file with the target of a received file moved into a folder of the recipient
+    Given user "participant1" creates folder "/shared"
+    And user "participant1" shares "shared" with user "participant2" with OCS 100
+    And user "participant2" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant2" adds user "participant1" to room "group room" with 200 (v4)
+    And user "participant2" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" moves file "welcome.txt" to "shared/welcome.txt" with 201
+    And user "participant1" gets the DAV properties for "/"
+    When user "participant3" shares "welcome.txt" with room "group room" with OCS 100
+    Then user "participant1" gets the DAV properties for "/Talk"
+    And the list of returned files for "participant1" is
+      | /Talk/ |
+      | /Talk/welcome.txt |
+    And user "participant1" downloads file "Talk/welcome.txt" reusing the session with 200
+    And user "participant1" downloads file "Talk/welcome.txt" reusing the session with 200
