@@ -50,6 +50,15 @@ function isCombinableFileMessage(message: ChatMessage): boolean {
 }
 
 /**
+ * Check whether the message is a deleted message
+ *
+ * @param message message to check
+ */
+function isDeletedMessage(message: ChatMessage): boolean {
+	return message.messageType === MESSAGE.TYPE.COMMENT_DELETED
+}
+
+/**
  * Checks whether file share message referenceId follows the group pattern
  * (see prepareTemporaryMessage.ts for the format)
  *
@@ -73,7 +82,8 @@ function getUploadHashFromReferenceId(id: string): string {
  * @param message2 the previous message
  */
 function canBeCombinedWith(message1: ChatMessage, message2: ChatMessage): boolean {
-	return message1.parent?.id === message2.parent?.id
+	return isDeletedMessage(message1) === isDeletedMessage(message2)
+		&& message1.parent?.id === message2.parent?.id
 		&& !!message1.referenceId && !!message2.referenceId
 		&& getUploadHashFromReferenceId(message1.referenceId) === getUploadHashFromReferenceId(message2.referenceId)
 }
@@ -86,11 +96,19 @@ function canBeCombinedWith(message1: ChatMessage, message2: ChatMessage): boolea
  * If any of the combined ids is still temporary, the combined message is treated as
  * temporary too (see isTemporaryMessage) and its actions stay disabled until every
  * file in the group has been sent.
+ * Deleted file shares are combined into a copy of the last deleted message.
  *
  * @param messages array of grouped file share messages, in chronological order
  */
 export function createCombinedFileMessage(messages: ChatMessage[]): CombinedFileMessage {
 	const lastMessage = messages.at(-1)!
+	const combinedMessageIds = messages.map((message) => message.id)
+
+	// Deleted file shares have no file parameters, keep the deleted message as is
+	if (messages.every(isDeletedMessage)) {
+		return { ...lastMessage, combinedMessageIds }
+	}
+
 	const combinedMessage = { ...lastMessage } as CombinedFileMessage
 
 	// Keep parameters of the caption (mentions, for example), but re-index the files
@@ -109,7 +127,7 @@ export function createCombinedFileMessage(messages: ChatMessage[]): CombinedFile
 	const filePlaceholdersString = getFileKeys(combinedMessage).map((key) => `{${key}}`).join(' ')
 	combinedMessage.message = hasOnlyFilePlaceholders(lastMessage.message) ? filePlaceholdersString : lastMessage.message.trim()
 
-	combinedMessage.combinedMessageIds = messages.map((message) => message.id)
+	combinedMessage.combinedMessageIds = combinedMessageIds
 
 	return combinedMessage
 }
@@ -117,7 +135,8 @@ export function createCombinedFileMessage(messages: ChatMessage[]): CombinedFile
 /**
  * Replace consecutive file shares in the list of messages of one author with combined messages.
  * A message, which is not a plain file share, a reply to another message or a part of another
- * upload, interrupts the combination. A file share with a caption ends it (and provides the caption)
+ * upload, interrupts the combination. A file share with a caption ends it (and provides the caption).
+ * Deleted file shares of the same upload are combined into a single deleted message.
  *
  * @param messages array of messages of one author, in chronological order
  */
@@ -135,7 +154,7 @@ export function combineFileMessages(messages: ChatMessage[]): (ChatMessage | Com
 	}
 
 	for (const message of messages) {
-		if (!isCombinableFileMessage(message)) {
+		if (!isDeletedMessage(message) && !isCombinableFileMessage(message)) {
 			flushGroup()
 			results.push(message)
 			continue
@@ -148,7 +167,7 @@ export function combineFileMessages(messages: ChatMessage[]): (ChatMessage | Com
 
 		group.push(message)
 
-		if (!hasOnlyFilePlaceholders(message.message)) {
+		if (!isDeletedMessage(message) && !hasOnlyFilePlaceholders(message.message)) {
 			flushGroup()
 		}
 	}
