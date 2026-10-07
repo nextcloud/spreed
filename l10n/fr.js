@@ -1946,6 +1946,7 @@ OC.L10N.register(
     "Currently not available on iPhone and iPad due to technical restrictions by the manufacturer" : "Actuellement non disponible sur iPhone et iPad en raison de restrictions techniques par le fabricant",
     "Notification settings" : "Paramètres de notification",
     "Sounds for chat and call notifications" : "Sons pour les notifications d'appel et de conversation",
+    "Unarchive conversations automatically" : "Désarchiver automatiquement les conversations",
     "Invalid language ({languageId})" : "Langue invalide ({languageId})",
     "Default language" : "Langue par défaut",
     "Default language ({languageName})" : "Langue par défaut ({languageName})",
