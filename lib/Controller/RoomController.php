@@ -199,9 +199,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
 			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
 			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
-			$this->config->getAppValue('spreed', 'federation_enabled'),
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
 			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_ENABLED),
 			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
 			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
 			$this->config->getAppValue('spreed', 'recording_consent'),
@@ -209,11 +209,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'call_recording_summary'),
 			$this->config->getAppValue('theming', 'cachebuster', '1'),
 			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
-			$this->config->getAppValue('spreed', 'federation_incoming_enabled'),
-			$this->config->getAppValue('spreed', 'federation_outgoing_enabled'),
-			$this->config->getAppValue('spreed', 'federation_only_trusted_servers'),
-			$this->config->getAppValue('spreed', 'federation_allowed_groups', '[]'),
 			$this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN),
+			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION)),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS),
 		];
 
 		if ($this->userId !== null) {
@@ -1701,8 +1701,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		// add the remaining users in batch
 		try {
 			$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
-		} catch (CannotReachRemoteException) {
-			return new DataResponse(['error' => 'reach-remote'], Http::STATUS_NOT_FOUND);
+		} catch (CannotReachRemoteException $e) {
+			return new DataResponse(['error' => $e], Http::STATUS_NOT_FOUND);
 		}
 
 		return new DataResponse([]);

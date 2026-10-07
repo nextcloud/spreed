@@ -53,7 +53,7 @@ class RestrictionValidator {
 			throw new FederationRestrictionException(FederationRestrictionException::REASON_CLOUD_ID);
 		}
 
-		if (!$this->appConfig->getAppValueBool('federation_outgoing_enabled', true)) {
+		if (!$this->appConfig->getAppValueBool('federation_outgoing_enabled')) {
 			$this->logger->debug('Could not share conversation as outgoing federation is disabled');
 			throw new FederationRestrictionException(FederationRestrictionException::REASON_OUTGOING);
 		}
@@ -63,7 +63,7 @@ class RestrictionValidator {
 			throw new FederationRestrictionException(FederationRestrictionException::REASON_FEDERATION);
 		}
 
-		if ($this->appConfig->getAppValueBool('federation_only_trusted_servers')) {
+		if ($this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS)) {
 			if (!$this->appManager->isEnabledForUser('federation')) {
 				$this->logger->error('Federation is limited to trusted servers but the "federation" app is disabled');
 				throw new FederationRestrictionException(FederationRestrictionException::REASON_TRUSTED_SERVERS);

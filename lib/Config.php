@@ -46,6 +46,11 @@ class Config {
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
 	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
+	public const string ALLOWED_GROUPS_FEDERATION = 'federation_allowed_groups';
+	public const string FEDERATION_ENABLED = 'federation_enabled';
+	public const string FEDERATION_INCOMING_ENABLED = 'federation_incoming_enabled';
+	public const string FEDERATION_OUTGOING_ENABLED = 'federation_outgoing_enabled';
+	public const string FEDERATION_ONLY_TRUSTED_SERVERS = 'federation_only_trusted_servers';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string CONVERSATIONS_FILES = 'conversations_files';
@@ -71,7 +76,7 @@ class Config {
 	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
 	public const string FORCE_PASSWORDS = 'force_passwords';
 	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
-	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_useres';
+	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_users';
 	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
 	public const string CREATE_SAMPLES = 'create_samples';
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
@@ -176,11 +181,11 @@ class Config {
 	 */
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::FEDERATION_ENABLED);
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
-		$allowedGroups = $this->appConfig->getAppValueArray('federation_allowed_groups', lazy: true);
+		$allowedGroups = $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_FEDERATION, lazy: true);
 		if (empty($allowedGroups)) {
 			return true;
 		}

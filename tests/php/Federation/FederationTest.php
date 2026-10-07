@@ -234,7 +234,8 @@ class FederationTest extends TestCase {
 
 		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
-				['federation_outgoing_enabled', true, false, true],
+				['federation_incoming_enabled', true, false, false],
+				['federation_outgoing_enabled', true, false, false],
 				['federation_only_trusted_servers', false, false, false],
 			]);
 

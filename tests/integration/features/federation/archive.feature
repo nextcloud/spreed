@@ -3,11 +3,11 @@ Feature: federation/archive
     Given using server "REMOTE"
     And user "participant2" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
     And using server "LOCAL"
     Given user "participant1" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
 
   @skip35
   Scenario: Federated conversation is unarchived on mention and reply but not on own message

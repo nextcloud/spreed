@@ -836,7 +836,7 @@ class ParticipantService {
 					$response = $this->backendNotifier->sendRemoteShare((string)$attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
 					if (!$response) {
 						$this->attendeeMapper->delete($attendee);
-						throw new CannotReachRemoteException();
+						throw new CannotReachRemoteException(print_r($attendee, true));
 					}
 
 					// Update the display name and the cloud ID based on the server's response

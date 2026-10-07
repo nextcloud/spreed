@@ -79,8 +79,8 @@ class RestrictionValidatorTest extends TestCase {
 		$room->method('isClassified')->willReturn(false);
 
 		$this->appConfig->method('getAppValueBool')->willReturnMap([
-			['federation_outgoing_enabled', true, false, true],
-			['federation_only_trusted_servers', false, false, false],
+			['federation_outgoing_enabled', true],
+			['federation_only_trusted_servers', false],
 		]);
 		$this->talkConfig->method('isFederationEnabledForUserId')->willReturn(true);
 
@@ -96,8 +96,8 @@ class RestrictionValidatorTest extends TestCase {
 
 	public function testIsAllowedToInviteWithoutRoomIsUnaffected(): void {
 		$this->appConfig->method('getAppValueBool')->willReturnMap([
-			['federation_outgoing_enabled', true, false, true],
-			['federation_only_trusted_servers', false, false, false],
+			['federation_outgoing_enabled', true],
+			['federation_only_trusted_servers', false],
 		]);
 		$this->talkConfig->method('isFederationEnabledForUserId')->willReturn(true);
 
