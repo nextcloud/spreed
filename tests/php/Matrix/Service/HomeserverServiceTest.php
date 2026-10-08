@@ -129,21 +129,21 @@ class HomeserverServiceTest extends TestCase {
 		$homeserver->setBaseUrl('https://hs.example.org');
 		$this->mapper->method('getById')->willReturn($homeserver);
 
-		$this->service->update(1, ['name' => ' New ', 'enabled' => false, 'baseUrl' => 'https://hs.example.org/']);
+		$this->service->update('1', ['name' => ' New ', 'enabled' => false, 'baseUrl' => 'https://hs.example.org/']);
 		self::assertSame('New', $homeserver->getName());
 		self::assertFalse($homeserver->getEnabled());
 		self::assertSame([], $this->requested, 'unchanged base URL is not revalidated');
 
 		$this->responses['https://new.example.org/_matrix/client/versions'] = $this->json(['versions' => ['v1.12']]);
-		$this->service->update(1, ['baseUrl' => 'https://new.example.org']);
+		$this->service->update('1', ['baseUrl' => 'https://new.example.org']);
 		self::assertSame('https://new.example.org', $homeserver->getBaseUrl());
 	}
 
 	public function testRemove(): void {
 		$homeserver = new Homeserver();
-		$this->mapper->method('getById')->with(42)->willReturn($homeserver);
+		$this->mapper->method('getById')->with('42')->willReturn($homeserver);
 		$this->mapper->expects(self::once())->method('delete')->with($homeserver);
 
-		$this->service->remove(42);
+		$this->service->remove('42');
 	}
 }

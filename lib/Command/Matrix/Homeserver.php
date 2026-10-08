@@ -49,12 +49,12 @@ class Homeserver extends Base {
 					return 0;
 				case 'remove':
 					$homeserver = $this->find($serverName);
-					$this->homeserverService->remove($homeserver->getId());
+					$this->homeserverService->remove((string)$homeserver->getId());
 					$output->writeln('<info>Removed ' . $serverName . '</info>');
 					return 0;
 				case 'test':
 					$homeserver = $this->find($serverName);
-					$homeserver = $this->homeserverService->refreshVersions($homeserver->getId());
+					$homeserver = $this->homeserverService->refreshVersions((string)$homeserver->getId());
 					$output->writeln('<info>' . $homeserver->getBaseUrl() . ' speaks Matrix ' . implode(', ', $homeserver->jsonSerialize()['specVersions']) . '</info>');
 					return 0;
 				default:

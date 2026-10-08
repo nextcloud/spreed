@@ -34,7 +34,7 @@ class HomeserverService {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function get(int $id): Homeserver {
+	public function get(string $id): Homeserver {
 		return $this->mapper->getById($id);
 	}
 
@@ -83,7 +83,7 @@ class HomeserverService {
 	 * @throws DoesNotExistException
 	 * @throws MatrixException when a new base URL is not a homeserver
 	 */
-	public function update(int $id, array $changes): Homeserver {
+	public function update(string $id, array $changes): Homeserver {
 		$homeserver = $this->mapper->getById($id);
 		if (isset($changes['name']) && trim($changes['name']) !== '') {
 			$homeserver->setName(mb_substr(trim($changes['name']), 0, 64));
@@ -106,7 +106,7 @@ class HomeserverService {
 	 * @throws DoesNotExistException
 	 * @throws MatrixException
 	 */
-	public function refreshVersions(int $id): Homeserver {
+	public function refreshVersions(string $id): Homeserver {
 		$homeserver = $this->mapper->getById($id);
 		$versions = $this->clientFactory->discovery()->validate($homeserver->getBaseUrl());
 		$homeserver->setVersionsJson(json_encode($versions, JSON_THROW_ON_ERROR));
@@ -117,7 +117,7 @@ class HomeserverService {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function remove(int $id): void {
+	public function remove(string $id): void {
 		$homeserver = $this->mapper->getById($id);
 		$this->mapper->delete($homeserver);
 	}

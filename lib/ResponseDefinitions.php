@@ -303,7 +303,8 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkMatrixHomeserver = array{
- *     id: int,
+ *     // SnowflakeID
+ *     id: numeric-string,
  *     name: string,
  *     serverName: string,
  *     baseUrl: string,

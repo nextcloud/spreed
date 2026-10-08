@@ -74,7 +74,7 @@ class MatrixAdminController extends OCSController {
 	/**
 	 * Update a homeserver
 	 *
-	 * @param int $id Homeserver id
+	 * @param string $id Homeserver id
 	 * @param ?string $name New label
 	 * @param ?bool $enabled Whether users may link accounts on it
 	 * @param ?string $baseUrl New client API base URL
@@ -85,8 +85,8 @@ class MatrixAdminController extends OCSController {
 	 * 502: New base URL is not a Matrix homeserver
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
-	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/matrix/admin/homeserver/{id}', requirements: ['apiVersion' => '(v1)', 'id' => '[0-9]+'])]
-	public function updateHomeserver(int $id, ?string $name = null, ?bool $enabled = null, ?string $baseUrl = null): DataResponse {
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/matrix/admin/homeserver/{id}', requirements: ['apiVersion' => '(v1)', 'id' => '\d+'])]
+	public function updateHomeserver(string $id, ?string $name = null, ?bool $enabled = null, ?string $baseUrl = null): DataResponse {
 		try {
 			$homeserver = $this->homeserverService->update($id, array_filter([
 				'name' => $name,
@@ -104,7 +104,7 @@ class MatrixAdminController extends OCSController {
 	/**
 	 * Test the connection to a homeserver (re-fetches /versions)
 	 *
-	 * @param int $id Homeserver id
+	 * @param string $id Homeserver id
 	 * @return DataResponse<Http::STATUS_OK, TalkMatrixHomeserver, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
 	 *
 	 * 200: Connection works
@@ -112,8 +112,8 @@ class MatrixAdminController extends OCSController {
 	 * 502: Server unreachable
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
-	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/matrix/admin/homeserver/{id}/test', requirements: ['apiVersion' => '(v1)', 'id' => '[0-9]+'])]
-	public function testHomeserver(int $id): DataResponse {
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/matrix/admin/homeserver/{id}/test', requirements: ['apiVersion' => '(v1)', 'id' => '\d+'])]
+	public function testHomeserver(string $id): DataResponse {
 		try {
 			$homeserver = $this->homeserverService->refreshVersions($id);
 		} catch (DoesNotExistException) {
@@ -127,15 +127,15 @@ class MatrixAdminController extends OCSController {
 	/**
 	 * Remove a homeserver
 	 *
-	 * @param int $id Homeserver id
+	 * @param string $id Homeserver id
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
 	 *
 	 * 200: Homeserver removed
 	 * 404: Homeserver not found
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
-	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/matrix/admin/homeserver/{id}', requirements: ['apiVersion' => '(v1)', 'id' => '[0-9]+'])]
-	public function removeHomeserver(int $id): DataResponse {
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/matrix/admin/homeserver/{id}', requirements: ['apiVersion' => '(v1)', 'id' => '\d+'])]
+	public function removeHomeserver(string $id): DataResponse {
 		try {
 			$this->homeserverService->remove($id);
 		} catch (DoesNotExistException) {

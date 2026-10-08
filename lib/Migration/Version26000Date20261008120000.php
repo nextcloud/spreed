@@ -35,7 +35,7 @@ class Version26000Date20261008120000 extends SimpleMigrationStep {
 		}
 
 		$table = $schema->createTable('talk_matrix_homeservers');
-		$table->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true, 'length' => 20]);
+		$table->addColumn('id', Types::BIGINT, ['notnull' => true, 'unsigned' => true, 'length' => 20]);
 		$table->addColumn('name', Types::STRING, ['notnull' => true, 'length' => 64]);
 		$table->addColumn('server_name', Types::STRING, ['notnull' => true, 'length' => 255]);
 		$table->addColumn('base_url', Types::STRING, ['notnull' => true, 'length' => 255]);

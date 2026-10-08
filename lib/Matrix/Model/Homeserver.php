@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Model;
 
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\SnowflakeAwareEntity;
 use OCP\DB\Types;
 
 /**
@@ -25,7 +25,7 @@ use OCP\DB\Types;
  * @method void setVersionsFetched(?\DateTime $versionsFetched)
  * @method ?\DateTime getVersionsFetched()
  */
-class Homeserver extends Entity implements \JsonSerializable {
+class Homeserver extends SnowflakeAwareEntity implements \JsonSerializable {
 	protected string $name = '';
 	protected string $serverName = '';
 	protected string $baseUrl = '';
@@ -52,13 +52,13 @@ class Homeserver extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return array{id: int, name: string, serverName: string, baseUrl: string, enabled: bool, specVersions: list<string>}
+	 * @return array{id: numeric-string, name: string, serverName: string, baseUrl: string, enabled: bool, specVersions: list<string>}
 	 */
 	#[\Override]
 	public function jsonSerialize(): array {
 		$versions = $this->getVersions()['versions'] ?? [];
 		return [
-			'id' => $this->getId(),
+			'id' => (string)$this->getId(),
 			'name' => $this->getName(),
 			'serverName' => $this->getServerName(),
 			'baseUrl' => $this->getBaseUrl(),
