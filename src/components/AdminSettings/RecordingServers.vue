@@ -236,7 +236,7 @@ export default {
 
 		setRecordingTranscription(value) {
 			this.loading = true
-			OCP.AppConfig.setValue('spreed', 'call_recording_transcription', value ? 'yes' : 'no', {
+			OCP.AppConfig.setValue('spreed', 'call_recording_transcription', value, {
 				success: () => {
 					this.loading = false
 				},
@@ -245,7 +245,7 @@ export default {
 
 		setRecordingSummary(value) {
 			this.loading = true
-			OCP.AppConfig.setValue('spreed', 'call_recording_summary', value ? 'yes' : 'no', {
+			OCP.AppConfig.setValue('spreed', 'call_recording_summary', value, {
 				success: () => {
 					this.loading = false
 				},
