@@ -138,6 +138,7 @@ export default {
 			type: Number,
 			default: AVATAR.SIZE.DEFAULT,
 		},
+
 	},
 
 	setup() {
