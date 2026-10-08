@@ -11,13 +11,12 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
-/**
- * Matrix homeservers users may link accounts on
- */
+#[CreateTable(table: 'talk_matrix_homeservers', columns: ['id', 'name', 'server_name', 'base_url', 'enabled', 'versions_json', 'versions_fetched'], description: 'Matrix homeservers users may link accounts on')]
 class Version26000Date20261008120000 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
