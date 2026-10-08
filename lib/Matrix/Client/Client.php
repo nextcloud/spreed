@@ -10,11 +10,12 @@ namespace OCA\Talk\Matrix\Client;
 
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Model\LoginResult;
+use OCA\Talk\Matrix\Client\Model\SyncBatch;
 
 /**
  * Matrix Client-Server API façade. One instance per (homeserver, access token).
  */
-final class Client {
+class Client {
 	public const PREFIX = '/_matrix/client/v3';
 
 	public function __construct(
@@ -62,5 +63,30 @@ final class Client {
 	 */
 	public function logout(): void {
 		$this->transport->post(self::PREFIX . '/logout');
+	}
+
+	/**
+	 * Upload a filter definition for /sync
+	 *
+	 * @param array<string, mixed> $filter
+	 * @return string Filter id
+	 * @throws MatrixException
+	 */
+	public function createFilter(string $userId, array $filter): string {
+		return (string)($this->transport->post(self::PREFIX . '/user/' . rawurlencode($userId) . '/filter', $filter)['filter_id'] ?? '');
+	}
+
+	/**
+	 * @param string $since Position of the previous sync, empty for an initial sync
+	 * @param int $timeoutMs How long the homeserver may wait for new events
+	 * @throws MatrixException
+	 */
+	public function sync(string $since, string $filterId, int $timeoutMs = 0): SyncBatch {
+		return SyncBatch::fromArray($this->transport->get(self::PREFIX . '/sync', [
+			'since' => $since !== '' ? $since : null,
+			'filter' => $filterId !== '' ? $filterId : null,
+			'timeout' => $timeoutMs,
+			'set_presence' => 'offline',
+		]));
 	}
 }

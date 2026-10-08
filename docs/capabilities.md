@@ -242,3 +242,4 @@
 
 ## 26
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
+* `matrix-rooms` (local) - Whether Matrix rooms of linked Matrix accounts are mirrored as read-only conversations with object type `matrix` and Matrix users without a Nextcloud account as attendees of type `matrix`

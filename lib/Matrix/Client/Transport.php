@@ -43,10 +43,15 @@ final class Transport {
 	}
 
 	/**
+	 * @param array<string, string|int|null> $query Parameters with null values are skipped
 	 * @return array<string, mixed>
 	 * @throws MatrixException
 	 */
-	public function get(string $path): array {
+	public function get(string $path, array $query = []): array {
+		$query = array_filter($query, static fn (string|int|null $value): bool => $value !== null);
+		if ($query !== []) {
+			$path .= '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+		}
 		return $this->request('GET', $path, null);
 	}
 

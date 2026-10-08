@@ -24,6 +24,7 @@
 | `external_call`         | Yes            | Room whose calls are handled by an external video service (see [External Call Service](external-call-service.md)) | Meeting/room identifier on the external service side |
 | `classified`            | No             | Classified conversation queued for automatic deletion after a call (retention `retention_classified_rooms`) | Unix timestamp of the call that queued the deletion                               |
 | `classified_persist`    | No             | Classified conversation a moderator kept (unbound), so it is no longer auto-deleted | Unix timestamp of when it was kept                                                |
+| `matrix`                | No             | Read-only conversation mirroring a Matrix room of a linked Matrix account    | Internal id of the mirrored Matrix room                                           |
 
 ### Read-only states
 * `0` Read-write
@@ -144,6 +145,7 @@ Required capability: `conversation-presets`
 * `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `guests` - Guest without a login
 * `emails` - A guest invited by email address
+* `matrix` - Matrix users without a linked Nextcloud account, the actor id is the Matrix user id
 
 ### Attendee permissions
 * `0` Default permissions (will pick the one from the next level of: user, call, conversation)

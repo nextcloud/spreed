@@ -193,6 +193,7 @@ export default {
 				case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
 					return (this.token && !this.failed) ? '' : 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
+				case ATTENDEE.ACTOR_TYPE.MATRIX:
 					return 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.PHONES:
 					return 'icon-phone'

@@ -23,6 +23,7 @@ use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCA\Talk\Matrix\Service\AccountService;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
@@ -43,6 +44,7 @@ class AccountServiceTest extends TestCase {
 	private AccountMapper&MockObject $mapper;
 	private HomeserverMapper&MockObject $homeserverMapper;
 	private Config&MockObject $config;
+	private RoomSyncService&MockObject $roomSyncService;
 	private INotificationManager&MockObject $notificationManager;
 	private INotification&MockObject $notification;
 	private IUser&MockObject $user;
@@ -59,6 +61,7 @@ class AccountServiceTest extends TestCase {
 		$this->mapper->method('update')->willReturnArgument(0);
 		$this->homeserverMapper = $this->createMock(HomeserverMapper::class);
 		$this->config = $this->createMock(Config::class);
+		$this->roomSyncService = $this->createMock(RoomSyncService::class);
 		$this->user = $this->createMock(IUser::class);
 		$this->user->method('getUID')->willReturn('alice');
 
@@ -98,6 +101,7 @@ class AccountServiceTest extends TestCase {
 			$this->mapper,
 			$this->homeserverMapper,
 			$clientFactory,
+			$this->roomSyncService,
 			$this->config,
 			$crypto,
 			$defaults,
@@ -383,6 +387,8 @@ class AccountServiceTest extends TestCase {
 		$account = $this->account();
 		$this->responses['POST /_matrix/client/v3/logout'] = $this->json(200, []);
 		$this->mapper->expects(self::once())->method('delete')->with($account);
+
+		$this->roomSyncService->expects(self::once())->method('removeAccount')->with($account);
 
 		$this->service->unlink($account);
 
