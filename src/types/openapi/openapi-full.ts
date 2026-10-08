@@ -3505,8 +3505,13 @@ export type components = {
              * @enum {integer}
              */
             status: 0 | 1;
-            /** @description Error reported by the homeserver when it rejected the access token */
+            /** @description Error reported by the homeserver when it rejected the access token or the last sync failed */
             lastError: string | null;
+            /**
+             * Format: int64
+             * @description Unix timestamp of the last sync, `0` if it never synced
+             */
+            lastSync: number;
         };
         MatrixHomeserver: {
             /** @description SnowflakeID */
