@@ -18,7 +18,7 @@
 * 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
 ]]></description>
 
-	<version>26.0.0-dev.2</version>
+	<version>26.0.0-dev.3</version>
 	<licence>AGPL-3.0-or-later</licence>
 
 	<author>Christian Lorang</author>
@@ -105,6 +105,11 @@
 		<command>OCA\Talk\Command\Developer\AgeChatMessages</command>
 		<command>OCA\Talk\Command\Developer\GenerateChats</command>
 		<command>OCA\Talk\Command\Developer\UpdateDocs</command>
+
+		<command>OCA\Talk\Command\MatrixHomeserver\Add</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\ListHomeservers</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\Remove</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\Test</command>
 
 		<command>OCA\Talk\Command\Monitor\Calls</command>
 		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>

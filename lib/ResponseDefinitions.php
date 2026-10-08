@@ -302,6 +302,16 @@ namespace OCA\Talk;
  *     roomToken: string,
  * }
  *
+ * @psalm-type TalkMatrixHomeserver = array{
+ *     // SnowflakeID
+ *     id: numeric-string,
+ *     name: string,
+ *     serverName: string,
+ *     baseUrl: string,
+ *     enabled: bool,
+ *     specVersions: list<string>,
+ * }
+ *
  * @psalm-type TalkFederationInvite = array{
  *     // Identifier of the invitation
  *     id: int,

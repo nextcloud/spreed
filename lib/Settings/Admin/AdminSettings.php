@@ -53,6 +53,7 @@ class AdminSettings implements ISettings {
 		$this->initGeneralSettings();
 		$this->initAllowedGroups();
 		$this->initFederation();
+		$this->initMatrix();
 		$this->initMatterbridge();
 		$this->initStunServers();
 		$this->initTurnServers();
@@ -85,6 +86,11 @@ class AdminSettings implements ISettings {
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds(), 'allowed_groups');
 		$this->initialState->provideInitialState('allowed_groups', $groups);
+	}
+
+	protected function initMatrix(): void {
+		$this->initialState->provideInitialState('matrix_enabled', $this->appConfig->getAppValueBool(Config::MATRIX_ENABLED));
+		$this->initialState->provideInitialState('matrix_allowed_groups', $this->getGroupDetailsArray($this->appConfig->getAppValueArray(Config::MATRIX_ALLOWED_GROUPS), 'matrix_allowed_groups'));
 	}
 
 	protected function initFederation(): void {

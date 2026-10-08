@@ -189,6 +189,8 @@ PROMPT;
 			new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files'),
 			new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)'),
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
+			new Entry(Config::MATRIX_ENABLED, ValueType::BOOL, false, definition: 'Whether users can link a Matrix account and use their Matrix rooms as conversations'),
+			new Entry(Config::MATRIX_ALLOWED_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to link a Matrix account (empty means everyone)'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
 			new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)'),

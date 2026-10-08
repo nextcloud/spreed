@@ -75,6 +75,8 @@ class Config {
 	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
 	public const string CREATE_SAMPLES = 'create_samples';
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
+	public const string MATRIX_ENABLED = 'matrix_enabled';
+	public const string MATRIX_ALLOWED_GROUPS = 'matrix_allowed_groups';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 	public const string MAX_GIF_SIZE = 'max_gif_size';
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
