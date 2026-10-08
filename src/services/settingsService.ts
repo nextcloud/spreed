@@ -133,6 +133,13 @@ async function setConversationsGroupMode(value: string) {
 }
 
 /**
+ * @param value - unarchive mode ('never', 'mention', 'always')
+ */
+async function setConversationsUnarchive(value: string) {
+	return setUserConfig('spreed', 'conversations_unarchive', value)
+}
+
+/**
  * @param hasUserAccount
  * @param value
  */
@@ -170,6 +177,7 @@ export {
 	setConversationsGroupMode,
 	setConversationsListStyle,
 	setConversationsSortOrder,
+	setConversationsUnarchive,
 	setLiveTranscriptionTargetLanguageId,
 	setPlaySounds,
 	setReadStatusPrivacy,
