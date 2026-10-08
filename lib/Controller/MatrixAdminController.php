@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
-use OCA\Talk\Matrix\MatrixConfig;
 use OCA\Talk\Matrix\Service\HomeserverService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -17,6 +17,7 @@ use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IRequest;
 
 /**
@@ -27,7 +28,7 @@ class MatrixAdminController extends OCSController {
 		string $appName,
 		IRequest $request,
 		private readonly HomeserverService $homeserverService,
-		private readonly MatrixConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -156,14 +157,14 @@ class MatrixAdminController extends OCSController {
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/matrix/admin/settings', requirements: ['apiVersion' => '(v1)'])]
 	public function updateSettings(?bool $enabled = null, ?array $allowedGroups = null): DataResponse {
 		if ($enabled !== null) {
-			$this->config->setEnabled($enabled);
+			$this->appConfig->setAppValueBool(Config::MATRIX_ENABLED, $enabled);
 		}
 		if ($allowedGroups !== null) {
-			$this->config->setAllowedGroupIds(array_values(array_filter($allowedGroups, 'is_string')));
+			$this->appConfig->setAppValueArray(Config::MATRIX_ALLOWED_GROUPS, array_values(array_filter($allowedGroups, 'is_string')));
 		}
 		return new DataResponse([
-			'enabled' => $this->config->isEnabled(),
-			'allowedGroups' => $this->config->getAllowedGroupIds(),
+			'enabled' => $this->appConfig->getAppValueBool(Config::MATRIX_ENABLED),
+			'allowedGroups' => $this->appConfig->getAppValueArray(Config::MATRIX_ALLOWED_GROUPS),
 		]);
 	}
 }

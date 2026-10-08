@@ -10,7 +10,6 @@ namespace OCA\Talk\Settings\Admin;
 
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\WrongPermissionsException;
-use OCA\Talk\Matrix\MatrixConfig;
 use OCA\Talk\Matrix\Service\HomeserverService;
 use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -42,7 +41,6 @@ class AdminSettings implements ISettings {
 		private readonly IRegistry $subscription,
 		private readonly IL10N $l10n,
 		private readonly IFactory $l10nFactory,
-		private readonly MatrixConfig $matrixConfig,
 		private readonly HomeserverService $homeserverService,
 		IUserSession $userSession,
 	) {
@@ -93,8 +91,8 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initMatrix(): void {
-		$this->initialState->provideInitialState('matrix_enabled', $this->matrixConfig->isEnabled());
-		$this->initialState->provideInitialState('matrix_allowed_groups', $this->getGroupDetailsArray($this->matrixConfig->getAllowedGroupIds(), 'matrix_allowed_groups'));
+		$this->initialState->provideInitialState('matrix_enabled', $this->appConfig->getAppValueBool(Config::MATRIX_ENABLED));
+		$this->initialState->provideInitialState('matrix_allowed_groups', $this->getGroupDetailsArray($this->appConfig->getAppValueArray(Config::MATRIX_ALLOWED_GROUPS), 'matrix_allowed_groups'));
 		$this->initialState->provideInitialState('matrix_homeservers', array_map(static fn ($homeserver) => $homeserver->jsonSerialize(), $this->homeserverService->getAll()));
 	}
 
