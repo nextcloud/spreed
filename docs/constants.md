@@ -238,3 +238,9 @@ Required capability: `conversation-presets`
 ## Signaling modes
 * `internal` - No external signaling server is used
 * `external` - A single external signaling server is used
+
+## Matrix
+
+### Matrix account status
+* `0` Active
+* `1` Token invalid - The homeserver rejected the access token, the user has to log in again

@@ -45,6 +45,8 @@ class MatrixAccountController extends OCSController {
 	/**
 	 * Get the linked Matrix account and the homeservers an account can be linked on
 	 *
+	 * The access token of the linked account is checked with the homeserver.
+	 *
 	 * @return DataResponse<Http::STATUS_OK, array{canLink: bool, account: ?TalkMatrixAccount, homeservers: list<TalkMatrixHomeserver>}, array{}>
 	 *
 	 * 200: Account information returned
@@ -63,9 +65,14 @@ class MatrixAccountController extends OCSController {
 			));
 		}
 
+		$account = $this->accountService->getForUser($user->getUID());
+		if ($account !== null) {
+			$account = $this->accountService->checkToken($account);
+		}
+
 		return new DataResponse([
 			'canLink' => $canLink,
-			'account' => $this->accountService->getForUser($user->getUID())?->jsonSerialize(),
+			'account' => $account?->jsonSerialize(),
 			'homeservers' => $homeservers,
 		]);
 	}
@@ -96,17 +103,48 @@ class MatrixAccountController extends OCSController {
 		} catch (\InvalidArgumentException $e) {
 			$status = $e->getMessage() === 'not-allowed' ? Http::STATUS_FORBIDDEN : Http::STATUS_BAD_REQUEST;
 			return new DataResponse(['error' => $e->getMessage()], $status);
-		} catch (ForbiddenException) {
-			$response = new DataResponse(['error' => 'credentials'], Http::STATUS_UNAUTHORIZED);
-			$response->throttle(['action' => 'matrixLink']);
-			return $response;
-		} catch (TransportException) {
-			return new DataResponse(['error' => 'unreachable'], Http::STATUS_BAD_GATEWAY);
 		} catch (MatrixException $e) {
-			return new DataResponse(['error' => $e->getErrcode() !== '' ? $e->getErrcode() : 'matrix'], Http::STATUS_BAD_REQUEST);
+			return $this->loginErrorResponse($e);
 		}
 
 		return new DataResponse($account->jsonSerialize(), Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Log in again after the homeserver rejected the access token
+	 *
+	 * @param string $password Matrix password
+	 * @return DataResponse<Http::STATUS_OK, TalkMatrixAccount, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
+	 *
+	 * 200: Logged in again
+	 * 400: Homeserver is not available anymore, the login belongs to another Matrix user or was rejected by the homeserver
+	 * 401: Wrong credentials
+	 * 403: User is not allowed to link an account
+	 * 404: No linked account
+	 * 502: Homeserver unreachable
+	 */
+	#[NoAdminRequired]
+	#[BruteForceProtection(action: 'matrixLink')]
+	#[UserRateLimit(limit: 10, period: 300)]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/matrix/account', requirements: ['apiVersion' => '(v1)'])]
+	public function reloginAccount(#[\SensitiveParameter] string $password): DataResponse {
+		/** @var IUser $user */
+		$user = $this->userSession->getUser();
+		$account = $this->accountService->getForUser($user->getUID());
+		if ($account === null) {
+			return new DataResponse(['error' => 'account'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$account = $this->accountService->relogin($user, $account, $password);
+		} catch (\InvalidArgumentException $e) {
+			$status = $e->getMessage() === 'not-allowed' ? Http::STATUS_FORBIDDEN : Http::STATUS_BAD_REQUEST;
+			return new DataResponse(['error' => $e->getMessage()], $status);
+		} catch (MatrixException $e) {
+			return $this->loginErrorResponse($e);
+		}
+
+		return new DataResponse($account->jsonSerialize());
 	}
 
 	/**
@@ -128,5 +166,20 @@ class MatrixAccountController extends OCSController {
 		}
 		$this->accountService->unlink($account);
 		return new DataResponse(null);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
+	 */
+	private function loginErrorResponse(MatrixException $e): DataResponse {
+		if ($e instanceof ForbiddenException) {
+			$response = new DataResponse(['error' => 'credentials'], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'matrixLink']);
+			return $response;
+		}
+		if ($e instanceof TransportException) {
+			return new DataResponse(['error' => 'unreachable'], Http::STATUS_BAD_GATEWAY);
+		}
+		return new DataResponse(['error' => $e->getErrcode() !== '' ? $e->getErrcode() : 'matrix'], Http::STATUS_BAD_REQUEST);
 	}
 }

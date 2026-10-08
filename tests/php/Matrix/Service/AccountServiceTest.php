@@ -23,8 +23,11 @@ use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCA\Talk\Matrix\Service\AccountService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
 use OCP\IUser;
+use OCP\Notification\IManager as INotificationManager;
+use OCP\Notification\INotification;
 use OCP\Security\ICrypto;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,6 +41,8 @@ class AccountServiceTest extends TestCase {
 	private AccountMapper&MockObject $mapper;
 	private HomeserverMapper&MockObject $homeserverMapper;
 	private Config&MockObject $config;
+	private INotificationManager&MockObject $notificationManager;
+	private INotification&MockObject $notification;
 	private IUser&MockObject $user;
 	/** @var array<string, ResponseInterface|\Throwable> "METHOD path" => response */
 	private array $responses = [];
@@ -49,6 +54,7 @@ class AccountServiceTest extends TestCase {
 		parent::setUp();
 		$this->mapper = $this->createMock(AccountMapper::class);
 		$this->mapper->method('insert')->willReturnArgument(0);
+		$this->mapper->method('update')->willReturnArgument(0);
 		$this->homeserverMapper = $this->createMock(HomeserverMapper::class);
 		$this->config = $this->createMock(Config::class);
 		$this->user = $this->createMock(IUser::class);
@@ -75,6 +81,14 @@ class AccountServiceTest extends TestCase {
 		$crypto->method('decrypt')->willReturnCallback(static fn (string $cipher): string => substr($cipher, strlen('encrypted:')));
 		$defaults = $this->createMock(Defaults::class);
 		$defaults->method('getName')->willReturn('Cloud');
+		$this->notification = $this->createMock(INotification::class);
+		foreach (['setApp', 'setUser', 'setObject', 'setSubject', 'setDateTime'] as $setter) {
+			$this->notification->method($setter)->willReturnSelf();
+		}
+		$this->notificationManager = $this->createMock(INotificationManager::class);
+		$this->notificationManager->method('createNotification')->willReturn($this->notification);
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-10-08 12:00:00'));
 
 		$this->service = new AccountService(
 			$this->mapper,
@@ -83,6 +97,8 @@ class AccountServiceTest extends TestCase {
 			$this->config,
 			$crypto,
 			$defaults,
+			$this->notificationManager,
+			$timeFactory,
 			$this->createMock(LoggerInterface::class),
 		);
 	}
@@ -225,15 +241,120 @@ class AccountServiceTest extends TestCase {
 		$this->service->link($this->user, '42', 'bob', 'secret');
 	}
 
-	private function account(): Account {
+	private function account(int $status = Account::STATUS_ACTIVE): Account {
 		return Account::fromRow([
 			'id' => '7',
 			'user_id' => 'alice',
 			'homeserver_id' => '42',
 			'mxid' => '@bob:example.org',
-			'access_token' => 'encrypted:syt_token',
+			'access_token' => $status === Account::STATUS_ACTIVE ? 'encrypted:syt_token' : '',
+			'device_id' => 'DEVICE',
+			'status' => $status,
+			'last_error' => $status === Account::STATUS_ACTIVE ? null : 'Token expired',
+		]);
+	}
+
+	public function testRelogin(): void {
+		$this->config->method('canLinkMatrixAccount')->with($this->user)->willReturn(true);
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'user_id' => '@bob:example.org',
+			'access_token' => 'syt_new',
 			'device_id' => 'DEVICE',
 		]);
+		$this->notification->expects(self::once())->method('setObject')->with('matrix_account', '7')->willReturnSelf();
+		$this->notificationManager->expects(self::once())->method('markProcessed')->with($this->notification);
+
+		$account = $this->service->relogin($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'secret');
+
+		self::assertSame(Account::STATUS_ACTIVE, $account->getStatus());
+		self::assertNull($account->getLastError());
+		self::assertSame('encrypted:syt_new', $account->getAccessToken());
+		self::assertSame([
+			'type' => 'm.login.password',
+			'identifier' => ['type' => 'm.id.user', 'user' => 'bob'],
+			'password' => 'secret',
+			'initial_device_display_name' => 'Nextcloud Talk (Cloud)',
+			'device_id' => 'DEVICE',
+		], json_decode((string)$this->requests[0]->getBody(), true));
+	}
+
+	public function testReloginAsOtherUser(): void {
+		$this->config->method('canLinkMatrixAccount')->willReturn(true);
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'user_id' => '@mallory:example.org',
+			'access_token' => 'syt_other',
+			'device_id' => 'OTHER',
+		]);
+		$this->responses['POST /_matrix/client/v3/logout'] = $this->json(200, []);
+		$this->mapper->expects(self::never())->method('update');
+
+		try {
+			$this->service->relogin($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'secret');
+			self::fail('Expected exception');
+		} catch (\InvalidArgumentException $e) {
+			self::assertSame('user', $e->getMessage());
+		}
+		self::assertCount(2, $this->requests);
+		self::assertSame('/_matrix/client/v3/logout', $this->requests[1]->getUri()->getPath());
+		self::assertSame('Bearer syt_other', $this->requests[1]->getHeaderLine('Authorization'));
+	}
+
+	public function testReloginNotAllowed(): void {
+		$this->config->method('canLinkMatrixAccount')->willReturn(false);
+
+		$this->expectExceptionObject(new \InvalidArgumentException('not-allowed'));
+		$this->service->relogin($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'secret');
+	}
+
+	public function testCheckTokenValid(): void {
+		$this->homeserver();
+		$this->responses['GET /_matrix/client/v3/account/whoami'] = $this->json(200, ['user_id' => '@bob:example.org']);
+		$this->mapper->expects(self::never())->method('update');
+
+		$account = $this->service->checkToken($this->account());
+
+		self::assertSame(Account::STATUS_ACTIVE, $account->getStatus());
+		self::assertSame('Bearer syt_token', $this->requests[0]->getHeaderLine('Authorization'));
+	}
+
+	public function testCheckTokenRejected(): void {
+		$this->homeserver();
+		$this->responses['GET /_matrix/client/v3/account/whoami'] = $this->json(401, ['errcode' => 'M_UNKNOWN_TOKEN', 'error' => 'Access token has expired']);
+		$this->notification->expects(self::once())->method('setSubject')->with('matrix_relogin', ['mxid' => '@bob:example.org'])->willReturnSelf();
+		$this->notificationManager->expects(self::once())->method('notify')->with($this->notification);
+
+		$account = $this->service->checkToken($this->account());
+
+		self::assertSame(Account::STATUS_TOKEN_INVALID, $account->getStatus());
+		self::assertSame('Access token has expired', $account->getLastError());
+		self::assertSame('', $account->getAccessToken());
+	}
+
+	public function testCheckTokenIgnoresOtherErrors(): void {
+		$this->homeserver();
+		$this->responses['GET /_matrix/client/v3/account/whoami'] = new NetworkException($this->createMock(RequestInterface::class), 'Connection refused');
+		$this->mapper->expects(self::never())->method('update');
+		$this->notificationManager->expects(self::never())->method('notify');
+
+		self::assertSame(Account::STATUS_ACTIVE, $this->service->checkToken($this->account())->getStatus());
+	}
+
+	public function testCheckTokenSkipsInvalidAccount(): void {
+		$this->service->checkToken($this->account(Account::STATUS_TOKEN_INVALID));
+
+		self::assertSame([], $this->requests);
+	}
+
+	public function testUnlinkInvalidAccountSkipsLogout(): void {
+		$account = $this->account(Account::STATUS_TOKEN_INVALID);
+		$this->notificationManager->expects(self::once())->method('markProcessed')->with($this->notification);
+		$this->mapper->expects(self::once())->method('delete')->with($account);
+
+		$this->service->unlink($account);
+
+		self::assertSame([], $this->requests);
 	}
 
 	public function testUnlinkLogsOut(): void {

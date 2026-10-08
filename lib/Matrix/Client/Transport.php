@@ -11,6 +11,7 @@ namespace OCA\Talk\Matrix\Client;
 use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\TransportException;
+use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -39,6 +40,14 @@ final class Transport {
 		$clone = clone $this;
 		$clone->accessToken = $token;
 		return $clone;
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 * @throws MatrixException
+	 */
+	public function get(string $path): array {
+		return $this->request('GET', $path, null);
 	}
 
 	/**
@@ -109,9 +118,10 @@ final class Transport {
 
 		$errcode = (string)($body['errcode'] ?? '');
 		$message = (string)($body['error'] ?? ('HTTP ' . $status));
-		if ($errcode === 'M_FORBIDDEN') {
-			return new ForbiddenException($message, $status, $errcode, $body);
-		}
-		return new MatrixException($message, $status, $errcode, $body);
+		return match ($errcode) {
+			'M_FORBIDDEN' => new ForbiddenException($message, $status, $errcode, $body),
+			'M_UNKNOWN_TOKEN', 'M_MISSING_TOKEN' => new UnknownTokenException($message, $status, $errcode, $body),
+			default => new MatrixException($message, $status, $errcode, $body),
+		};
 	}
 }
