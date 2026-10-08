@@ -240,6 +240,10 @@ export type components = {
                     /** @description Whether only trusted servers are allowed for federation */
                     "only-trusted-servers": boolean;
                 };
+                matrix: {
+                    /** @description Whether Matrix accounts can be linked */
+                    enabled: boolean;
+                };
                 previews: {
                     /**
                      * Format: int64

@@ -67,6 +67,7 @@
                             "chat",
                             "conversations",
                             "federation",
+                            "matrix",
                             "previews",
                             "signaling",
                             "experiments",
@@ -408,6 +409,18 @@
                                     "only-trusted-servers": {
                                         "type": "boolean",
                                         "description": "Whether only trusted servers are allowed for federation"
+                                    }
+                                }
+                            },
+                            "matrix": {
+                                "type": "object",
+                                "required": [
+                                    "enabled"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether Matrix accounts can be linked"
                                     }
                                 }
                             },
