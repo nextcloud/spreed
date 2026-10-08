@@ -127,6 +127,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import {
 	addMatrixHomeserver,
+	getMatrixHomeservers,
 	removeMatrixHomeserver,
 	testMatrixHomeserver,
 	updateMatrixHomeserver,
@@ -153,7 +154,7 @@ export default {
 			loading: false,
 			loadingGroups: false,
 			enabled: loadState('spreed', 'matrix_enabled', false),
-			homeservers: loadState('spreed', 'matrix_homeservers', []),
+			homeservers: [],
 			allowedGroups: loadState('spreed', 'matrix_allowed_groups', []),
 			groups: [],
 			newServerName: '',
@@ -162,10 +163,11 @@ export default {
 		}
 	},
 
-	mounted() {
+	async mounted() {
 		this.groups = [...this.allowedGroups]
 		this.debounceSearchGroup = debounce(this.searchGroup, 500)
 		this.debounceSearchGroup('')
+		await this.loadHomeservers()
 	},
 
 	beforeUnmount() {
@@ -209,6 +211,19 @@ export default {
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'Could not save the groups'))
+			} finally {
+				this.loading = false
+			}
+		},
+
+		async loadHomeservers() {
+			this.loading = true
+			try {
+				const response = await getMatrixHomeservers()
+				this.homeservers = response.data.ocs.data
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Could not load the homeservers'))
 			} finally {
 				this.loading = false
 			}

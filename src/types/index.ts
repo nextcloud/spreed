@@ -488,6 +488,7 @@ export type MatrixHomeserver = componentsAdmin['schemas']['MatrixHomeserver']
 export type addMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-add-homeserver']>['requestBody']['content']['application/json']
 export type updateMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-update-homeserver']>['requestBody']['content']['application/json']
 export type updateMatrixSettingsParams = Required<operationsAdmin['matrix_admin-update-settings']>['requestBody']['content']['application/json']
+export type getMatrixHomeserversResponse = ApiResponse<operationsAdmin['matrix_admin-list-homeservers']['responses'][200]['content']['application/json']>
 export type addMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-add-homeserver']['responses'][201]['content']['application/json']>
 export type updateMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-update-homeserver']['responses'][200]['content']['application/json']>
 export type testMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-test-homeserver']['responses'][200]['content']['application/json']>

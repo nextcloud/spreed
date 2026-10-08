@@ -6,6 +6,7 @@
 import type {
 	addMatrixHomeserverParams,
 	addMatrixHomeserverResponse,
+	getMatrixHomeserversResponse,
 	MatrixHomeserver,
 	removeMatrixHomeserverResponse,
 	testMatrixHomeserverResponse,
@@ -17,6 +18,13 @@ import type {
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+
+/**
+ * List the configured homeservers
+ */
+async function getMatrixHomeservers(): getMatrixHomeserversResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/matrix/admin/homeserver'))
+}
 
 /**
  * Add a homeserver
@@ -66,6 +74,7 @@ async function updateMatrixSettings(payload: updateMatrixSettingsParams): update
 
 export {
 	addMatrixHomeserver,
+	getMatrixHomeservers,
 	removeMatrixHomeserver,
 	testMatrixHomeserver,
 	updateMatrixHomeserver,
