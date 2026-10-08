@@ -148,6 +148,59 @@ Seed-based generator for demo conversations with mixed users, groups, replies an
 | `--group-pool-size` | Cap on distinct groups used across all rooms | yes | yes | no | *Required* |
 | `--main-user` | User added to every room as owner and used as the partner in every one-to-one | yes | yes | no | *Required* |
 
+## talk:matrix-homeserver:add
+
+Add a Matrix homeserver users may link accounts on
+
+### Usage
+
+* `talk:matrix-homeserver:add [--name NAME] [--base-url BASE-URL] [--] <server-name>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `server-name` | Matrix server name, e.g. example.org | yes | no | *Required* |
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--name` | Label shown to users, defaults to the server name | yes | yes | no | *Required* |
+| `--base-url` | Client API base URL, skips .well-known discovery | yes | yes | no | *Required* |
+
+## talk:matrix-homeserver:list
+
+List the Matrix homeservers users may link accounts on
+
+### Usage
+
+* `talk:matrix-homeserver:list [--output [OUTPUT]]`
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
+
+## talk:matrix-homeserver:remove
+
+Remove a Matrix homeserver
+
+### Usage
+
+* `talk:matrix-homeserver:remove <server-name>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `server-name` | Matrix server name, e.g. example.org | yes | no | *Required* |
+
+## talk:matrix-homeserver:test
+
+Test the connection to a Matrix homeserver and refresh its supported spec versions
+
+### Usage
+
+* `talk:matrix-homeserver:test <server-name>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `server-name` | Matrix server name, e.g. example.org | yes | no | *Required* |
+
 ## talk:monitor:calls
 
 Prints a list with conversations that have an active call as well as their participant count

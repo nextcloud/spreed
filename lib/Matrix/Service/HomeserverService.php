@@ -39,6 +39,13 @@ class HomeserverService {
 	}
 
 	/**
+	 * @throws DoesNotExistException
+	 */
+	public function getByServerName(string $serverName): Homeserver {
+		return $this->mapper->getByServerName(strtolower(trim($serverName)));
+	}
+
+	/**
 	 * Resolve + validate the server and store it.
 	 *
 	 * @param string $serverName e.g. `matrix.org`

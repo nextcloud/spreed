@@ -106,7 +106,10 @@
 		<command>OCA\Talk\Command\Developer\GenerateChats</command>
 		<command>OCA\Talk\Command\Developer\UpdateDocs</command>
 
-		<command>OCA\Talk\Command\Matrix\Homeserver</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\Add</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\ListHomeservers</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\Remove</command>
+		<command>OCA\Talk\Command\MatrixHomeserver\Test</command>
 
 		<command>OCA\Talk\Command\Monitor\Calls</command>
 		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>
