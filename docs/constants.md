@@ -83,6 +83,15 @@ Required capability: `config => conversations => unarchive`
 
 Shared files and objects (e.g. polls) are treated like chat messages. Own messages and other system messages never unarchive a conversation. Silent messages are treated like normal messages, as they also show the markers.
 
+### Conversation tags show unread mode
+Required capability: `config => conversations => tags-show-unread`
+
+Collapsed tag sections always show the active conversation and conversations with an ongoing call.
+
+* `never` - Unread conversations are hidden in collapsed tag sections, the tag header shows a counter of unread conversations instead
+* `mention` - Unread conversations are shown in collapsed tag sections when the user is mentioned directly or via `@all` or when one of their messages is replied to, or on any new chat message in one-to-one conversations, the same cases that show the mention marker in the conversation list. The tag header shows a counter of unread conversations
+* `always` (default) - All unread conversations are shown in collapsed tag sections
+
 ### Conversation attributes
 Required capability: `conversation-presets`
 

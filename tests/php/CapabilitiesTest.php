@@ -113,6 +113,9 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->method('getConversationsUnarchive')
 			->willReturn('never');
 
+		$this->talkConfig->method('getConversationsTagsShowUnread')
+			->willReturn('always');
+
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
 			->willReturn(false);
@@ -235,6 +238,7 @@ class CapabilitiesTest extends TestCase {
 						'sort-order' => 'activity',
 						'group-mode' => 'none',
 						'unarchive' => 'never',
+						'tags-show-unread' => 'always',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
@@ -342,6 +346,9 @@ class CapabilitiesTest extends TestCase {
 
 		$this->talkConfig->method('getConversationsUnarchive')
 			->willReturn('never');
+
+		$this->talkConfig->method('getConversationsTagsShowUnread')
+			->willReturn('always');
 
 		$this->talkConfig->expects($this->any())
 			->method('getSignalingMode')
@@ -468,6 +475,7 @@ class CapabilitiesTest extends TestCase {
 						'sort-order' => 'activity',
 						'group-mode' => 'none',
 						'unarchive' => 'never',
+						'tags-show-unread' => 'always',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
