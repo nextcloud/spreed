@@ -14,10 +14,12 @@ use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
+use OCA\Talk\Matrix\Model\EventMapMapper;
 use OCA\Talk\Matrix\Model\MatrixMember;
 use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
+use OCA\Talk\Matrix\Sync\MessageSyncService;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
@@ -37,6 +39,8 @@ class RoomSyncServiceTest extends TestCase {
 	private MatrixRoomMapper&MockObject $roomMapper;
 	private MatrixMemberMapper&MockObject $memberMapper;
 	private AccountMapper&MockObject $accountMapper;
+	private EventMapMapper&MockObject $eventMapMapper;
+	private MessageSyncService&MockObject $messageSyncService;
 	private Room&MockObject $room;
 	/** @var array<string, MatrixMember> */
 	private array $insertedMembers = [];
@@ -66,6 +70,8 @@ class RoomSyncServiceTest extends TestCase {
 			['@alice:example.org' => $this->account()],
 			array_flip($mxids),
 		));
+		$this->eventMapMapper = $this->createMock(EventMapMapper::class);
+		$this->messageSyncService = $this->createMock(MessageSyncService::class);
 		$this->room = $this->createMock(Room::class);
 		$this->room->method('getId')->willReturn(23);
 
@@ -79,6 +85,8 @@ class RoomSyncServiceTest extends TestCase {
 			$this->roomMapper,
 			$this->memberMapper,
 			$this->accountMapper,
+			$this->eventMapMapper,
+			$this->messageSyncService,
 			$l,
 			$this->createMock(LoggerInterface::class),
 		);
@@ -168,15 +176,20 @@ class RoomSyncServiceTest extends TestCase {
 				['actorType' => Attendee::ACTOR_MATRIX, 'actorId' => '@bob:example.org', 'displayName' => 'Bob', 'participantType' => Participant::USER],
 			]);
 
+		$this->messageSyncService->expects(self::once())
+			->method('apply')
+			->with($this->room, self::anything(), [], self::anything(), self::anything(), true)
+			->willReturn(0);
+
 		$stats = $this->service->process($this->account(), self::batch([
 			'state' => ['events' => [
 				self::memberEvent('@alice:example.org', 'join', 'Alice'),
 				self::memberEvent('@bob:example.org', 'join', 'Bob'),
 				self::memberEvent('@carol:example.org', 'invite', 'Carol'),
 			]],
-		]));
+		]), false);
 
-		self::assertSame(['rooms' => 1, 'failed' => 0], $stats);
+		self::assertSame(['rooms' => 1, 'messages' => 0, 'failed' => 0], $stats);
 		self::assertSame('7', $this->insertedMembers['@alice:example.org']->getAccountId());
 		self::assertNull($this->insertedMembers['@bob:example.org']->getAccountId());
 		self::assertSame('invite', $this->insertedMembers['@carol:example.org']->getMembership());
@@ -209,6 +222,11 @@ class RoomSyncServiceTest extends TestCase {
 				['actorType' => Attendee::ACTOR_MATRIX, 'actorId' => '@carol:example.org', 'displayName' => '@carol:example.org', 'participantType' => Participant::USER],
 			]);
 
+		$this->messageSyncService->expects(self::once())
+			->method('apply')
+			->with($this->room, self::anything(), self::countOf(0), self::anything(), self::callback(static fn (array $accounts): bool => array_keys($accounts) === ['@alice:example.org']), false)
+			->willReturn(0);
+
 		$stats = $this->service->process($this->account(), self::batch([
 			'state' => ['events' => [
 				['type' => 'm.room.topic', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['topic' => 'About us']],
@@ -217,9 +235,9 @@ class RoomSyncServiceTest extends TestCase {
 				self::memberEvent('@bob:example.org', 'join', 'Robert'),
 				self::memberEvent('@carol:example.org', 'join'),
 			]],
-		]));
+		]), false);
 
-		self::assertSame(['rooms' => 1, 'failed' => 0], $stats);
+		self::assertSame(['rooms' => 1, 'messages' => 0, 'failed' => 0], $stats);
 	}
 
 	public function testSpaceIsSkipped(): void {
@@ -232,9 +250,9 @@ class RoomSyncServiceTest extends TestCase {
 				['type' => 'm.room.create', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['type' => 'm.space']],
 				self::memberEvent('@alice:example.org', 'join', 'Alice'),
 			]],
-		]));
+		]), false);
 
-		self::assertSame(['rooms' => 1, 'failed' => 0], $stats);
+		self::assertSame(['rooms' => 1, 'messages' => 0, 'failed' => 0], $stats);
 	}
 
 	public function testFailingRoomIsCounted(): void {
@@ -242,9 +260,9 @@ class RoomSyncServiceTest extends TestCase {
 
 		$stats = $this->service->process($this->account(), self::batch([
 			'state' => ['events' => [self::memberEvent('@alice:example.org', 'join')]],
-		]));
+		]), false);
 
-		self::assertSame(['rooms' => 0, 'failed' => 1], $stats);
+		self::assertSame(['rooms' => 0, 'messages' => 0, 'failed' => 1], $stats);
 	}
 
 	public function testLeaveDeletesConversationWithoutLinkedMembers(): void {
@@ -262,9 +280,10 @@ class RoomSyncServiceTest extends TestCase {
 		$this->participantService->expects(self::once())->method('removeAttendee')->with($this->room, $alice, AAttendeeRemovedEvent::REASON_LEFT);
 		$this->memberMapper->expects(self::once())->method('deleteForRoom')->with('100');
 		$this->roomMapper->expects(self::once())->method('delete')->with($matrixRoom);
+		$this->eventMapMapper->expects(self::once())->method('deleteForRoom')->with('100');
 		$this->roomService->expects(self::once())->method('deleteRoom')->with($this->room);
 
-		$this->service->process($this->account(), self::batch([], ['!room:example.org']));
+		$this->service->process($this->account(), self::batch([], ['!room:example.org']), false);
 
 		self::assertSame('leave', $member->getMembership());
 	}

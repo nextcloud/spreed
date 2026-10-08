@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Matrix\Client;
 
+use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\Member;
 use OCA\Talk\Matrix\Client\Model\RoomState;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
@@ -44,6 +45,8 @@ class SyncBatchTest extends TestCase {
 		self::assertSame(['@bob:example.org'], $joined->heroes);
 		self::assertSame(2, $joined->joinedMemberCount);
 		self::assertSame(['m.room.name', 'm.room.member'], array_map(static fn ($event) => $event->type, $joined->stateEvents));
+		self::assertSame(['m.room.message'], array_map(static fn ($event) => $event->type, $joined->timeline));
+		self::assertSame('Hello', $joined->timeline[0]->getBody());
 
 		$state = new RoomState('!room:example.org');
 		$state->applyAll($joined->stateEvents);
@@ -54,5 +57,18 @@ class SyncBatchTest extends TestCase {
 
 	public function testEmpty(): void {
 		self::assertTrue(SyncBatch::fromArray(['next_batch' => 'next'])->isEmpty());
+	}
+
+	public function testRedacts(): void {
+		self::assertSame('$old', Event::fromArray(['type' => 'm.room.redaction', 'redacts' => '$old'])->redacts);
+		self::assertSame('$new', Event::fromArray(['type' => 'm.room.redaction', 'content' => ['redacts' => '$new']])->redacts);
+		self::assertNull(Event::fromArray(['type' => 'm.room.message'])->redacts);
+	}
+
+	public function testRelations(): void {
+		$event = Event::fromArray(['type' => 'm.room.message', 'content' => ['m.relates_to' => ['rel_type' => 'm.replace', 'event_id' => '$original', 'm.in_reply_to' => ['event_id' => '$parent']]]]);
+		self::assertSame('m.replace', $event->getRelationType());
+		self::assertSame('$original', $event->getRelatedEventId());
+		self::assertSame('$parent', $event->getInReplyTo());
 	}
 }

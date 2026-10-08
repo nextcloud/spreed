@@ -53,7 +53,7 @@ class Sync {
 			return ExitCode::Failure;
 		}
 
-		$output->writeln('<info>Synced ' . $stats['rooms'] . ' rooms in ' . $stats['batches'] . ' batches</info>');
+		$output->writeln('<info>Synced ' . $stats['messages'] . ' new messages in ' . $stats['rooms'] . ' rooms in ' . $stats['batches'] . ' batches</info>');
 		if ($account->getLastError() !== null) {
 			$output->writeln('<error>' . $account->getLastError() . '</error>');
 			return ExitCode::Failure;

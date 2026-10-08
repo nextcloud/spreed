@@ -28,8 +28,8 @@ class SyncService {
 	public const LOCK_SECONDS = 60;
 
 	/**
-	 * Only state is mirrored for now, so the members are lazy-loaded and the
-	 * timeline is kept short
+	 * Members are lazy-loaded and an initial sync only brings the latest
+	 * messages of each room
 	 */
 	public const FILTER = [
 		'presence' => ['types' => []],
@@ -60,7 +60,7 @@ class SyncService {
 	 * Sync until the budget is used up or the homeserver has nothing new
 	 *
 	 * @param int $budget Seconds to spend at most, a running request is not interrupted
-	 * @return array{batches: int, rooms: int, failed: int}|null null when the account is not active or another process syncs it
+	 * @return array{batches: int, rooms: int, messages: int, failed: int}|null null when the account is not active or another process syncs it
 	 */
 	public function syncAccount(Account $account, int $budget): ?array {
 		if ($account->getStatus() !== Account::STATUS_ACTIVE) {
@@ -71,7 +71,7 @@ class SyncService {
 			return null;
 		}
 
-		$stats = ['batches' => 0, 'rooms' => 0, 'failed' => 0];
+		$stats = ['batches' => 0, 'rooms' => 0, 'messages' => 0, 'failed' => 0];
 		try {
 			$client = $this->accountService->getClient($account, 60);
 			if ($account->getFilterId() === null) {
@@ -82,9 +82,10 @@ class SyncService {
 			do {
 				$since = $account->getNextBatch() ?? '';
 				$batch = $client->sync($since, (string)$account->getFilterId());
-				$result = $this->roomSyncService->process($account, $batch);
+				$result = $this->roomSyncService->process($account, $batch, $since === '');
 				$stats['batches']++;
 				$stats['rooms'] += $result['rooms'];
+				$stats['messages'] += $result['messages'];
 				$stats['failed'] += $result['failed'];
 
 				if ($since === '' && $result['failed'] > 0) {

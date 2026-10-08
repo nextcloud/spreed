@@ -14,11 +14,13 @@ namespace OCA\Talk\Matrix\Client\Model;
 final class JoinedRoom {
 	/**
 	 * @param list<Event> $stateEvents State block followed by the state events of the timeline
+	 * @param list<Event> $timeline Events of the timeline that are not state events
 	 * @param list<string> $heroes
 	 */
 	public function __construct(
 		public readonly string $roomId,
 		public readonly array $stateEvents,
+		public readonly array $timeline = [],
 		public readonly array $heroes = [],
 		public readonly ?int $joinedMemberCount = null,
 		public readonly ?int $invitedMemberCount = null,
@@ -27,13 +29,15 @@ final class JoinedRoom {
 
 	/** @param array<string, mixed> $raw */
 	public static function fromArray(string $roomId, array $raw): self {
-		$stateEvents = [];
+		$stateEvents = $timeline = [];
 		foreach ([$raw['state']['events'] ?? null, $raw['timeline']['events'] ?? null] as $events) {
 			foreach (is_array($events) ? $events : [] as $event) {
 				if (is_array($event)) {
 					$event = Event::fromArray($event);
 					if ($event->isState()) {
 						$stateEvents[] = $event;
+					} else {
+						$timeline[] = $event;
 					}
 				}
 			}
@@ -50,6 +54,7 @@ final class JoinedRoom {
 		return new self(
 			$roomId,
 			$stateEvents,
+			$timeline,
 			$heroes,
 			isset($summary['m.joined_member_count']) ? (int)$summary['m.joined_member_count'] : null,
 			isset($summary['m.invited_member_count']) ? (int)$summary['m.invited_member_count'] : null,
