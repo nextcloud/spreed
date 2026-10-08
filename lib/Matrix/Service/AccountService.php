@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Service;
 
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
@@ -20,6 +21,8 @@ use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
@@ -31,6 +34,11 @@ use Psr\Log\LoggerInterface;
  * the user's Matrix account, the password is used once and never stored.
  */
 class AccountService {
+	/** Seconds the result of a connection check is reused */
+	public const CONNECTION_CHECK_TTL = 300;
+
+	private ICache $connectionCache;
+
 	public function __construct(
 		private readonly AccountMapper $mapper,
 		private readonly HomeserverMapper $homeserverMapper,
@@ -41,7 +49,9 @@ class AccountService {
 		private readonly INotificationManager $notificationManager,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->connectionCache = $cacheFactory->createDistributed(CachePrefix::MATRIX_CONNECTION);
 	}
 
 	public function getForUser(string $userId): ?Account {
@@ -125,27 +135,44 @@ class AccountService {
 		$account->setLastError(null);
 		$account = $this->mapper->update($account);
 		$this->notificationManager->markProcessed($this->getReloginNotification($account));
+		$this->connectionCache->set((string)$account->getId(), 1, self::CONNECTION_CHECK_TTL);
 		return $account;
 	}
 
 	/**
 	 * Ask the homeserver whether the access token is still valid and mark the
-	 * account when it is not, other errors are ignored
+	 * account when it is not. The result is reused for CONNECTION_CHECK_TTL
+	 * seconds unless $force is set.
+	 *
+	 * @return bool Whether the homeserver accepted the access token
 	 */
-	public function checkToken(Account $account): Account {
+	public function checkConnection(Account $account, bool $force = false): bool {
 		if ($account->getStatus() !== Account::STATUS_ACTIVE) {
-			return $account;
+			return false;
+		}
+
+		$cacheKey = (string)$account->getId();
+		if (!$force) {
+			$cached = $this->connectionCache->get($cacheKey);
+			if ($cached !== null) {
+				return (bool)$cached;
+			}
 		}
 
 		try {
 			$homeserver = $this->homeserverMapper->getById($account->getHomeserverId());
 			$this->clientFactory->forHomeserver($homeserver, $this->crypto->decrypt($account->getAccessToken()), 10)->whoami();
+			$connected = true;
 		} catch (UnknownTokenException $e) {
-			return $this->markTokenInvalid($account, $e->getMessage());
+			$this->markTokenInvalid($account, $e->getMessage());
+			return false;
 		} catch (\Exception $e) {
 			$this->logger->info('Could not check the Matrix access token of ' . $account->getMxid(), ['exception' => $e]);
+			$connected = false;
 		}
-		return $account;
+
+		$this->connectionCache->set($cacheKey, $connected ? 1 : 0, self::CONNECTION_CHECK_TTL);
+		return $connected;
 	}
 
 	/**
@@ -156,6 +183,7 @@ class AccountService {
 		$account->setLastError($reason);
 		$account->setAccessToken('');
 		$account = $this->mapper->update($account);
+		$this->connectionCache->remove((string)$account->getId());
 
 		$notification = $this->getReloginNotification($account);
 		$notification->setDateTime($this->timeFactory->getDateTime());

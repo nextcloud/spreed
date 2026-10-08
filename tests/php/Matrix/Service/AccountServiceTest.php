@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Matrix\Service;
 
 use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
+use OC\Memcache\ArrayCache;
 use OCA\Talk\Config;
 use OCA\Talk\Matrix\Adapter\NetworkException;
 use OCA\Talk\Matrix\Client\Client;
@@ -25,6 +26,7 @@ use OCA\Talk\Matrix\Service\AccountService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
+use OCP\ICacheFactory;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
@@ -89,6 +91,8 @@ class AccountServiceTest extends TestCase {
 		$this->notificationManager->method('createNotification')->willReturn($this->notification);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-10-08 12:00:00'));
+		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn(new ArrayCache(''));
 
 		$this->service = new AccountService(
 			$this->mapper,
@@ -100,6 +104,7 @@ class AccountServiceTest extends TestCase {
 			$this->notificationManager,
 			$timeFactory,
 			$this->createMock(LoggerInterface::class),
+			$cacheFactory,
 		);
 	}
 
@@ -308,42 +313,58 @@ class AccountServiceTest extends TestCase {
 		$this->service->relogin($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'secret');
 	}
 
-	public function testCheckTokenValid(): void {
+	public function testCheckConnectionValid(): void {
 		$this->homeserver();
 		$this->responses['GET /_matrix/client/v3/account/whoami'] = $this->json(200, ['user_id' => '@bob:example.org']);
 		$this->mapper->expects(self::never())->method('update');
+		$account = $this->account();
 
-		$account = $this->service->checkToken($this->account());
-
+		self::assertTrue($this->service->checkConnection($account));
 		self::assertSame(Account::STATUS_ACTIVE, $account->getStatus());
 		self::assertSame('Bearer syt_token', $this->requests[0]->getHeaderLine('Authorization'));
 	}
 
-	public function testCheckTokenRejected(): void {
+	public function testCheckConnectionIsCachedUnlessForced(): void {
+		$this->homeserver();
+		$this->responses['GET /_matrix/client/v3/account/whoami'] = $this->json(200, ['user_id' => '@bob:example.org']);
+		$account = $this->account();
+
+		self::assertTrue($this->service->checkConnection($account));
+		self::assertTrue($this->service->checkConnection($account));
+		self::assertCount(1, $this->requests);
+
+		$this->responses['GET /_matrix/client/v3/account/whoami'] = new NetworkException($this->createMock(RequestInterface::class), 'Connection refused');
+		self::assertFalse($this->service->checkConnection($account, true));
+		self::assertFalse($this->service->checkConnection($account));
+		self::assertCount(2, $this->requests);
+	}
+
+	public function testCheckConnectionRejected(): void {
 		$this->homeserver();
 		$this->responses['GET /_matrix/client/v3/account/whoami'] = $this->json(401, ['errcode' => 'M_UNKNOWN_TOKEN', 'error' => 'Access token has expired']);
 		$this->notification->expects(self::once())->method('setSubject')->with('matrix_relogin', ['mxid' => '@bob:example.org'])->willReturnSelf();
 		$this->notificationManager->expects(self::once())->method('notify')->with($this->notification);
+		$account = $this->account();
 
-		$account = $this->service->checkToken($this->account());
-
+		self::assertFalse($this->service->checkConnection($account));
 		self::assertSame(Account::STATUS_TOKEN_INVALID, $account->getStatus());
 		self::assertSame('Access token has expired', $account->getLastError());
 		self::assertSame('', $account->getAccessToken());
 	}
 
-	public function testCheckTokenIgnoresOtherErrors(): void {
+	public function testCheckConnectionUnreachable(): void {
 		$this->homeserver();
 		$this->responses['GET /_matrix/client/v3/account/whoami'] = new NetworkException($this->createMock(RequestInterface::class), 'Connection refused');
 		$this->mapper->expects(self::never())->method('update');
 		$this->notificationManager->expects(self::never())->method('notify');
+		$account = $this->account();
 
-		self::assertSame(Account::STATUS_ACTIVE, $this->service->checkToken($this->account())->getStatus());
+		self::assertFalse($this->service->checkConnection($account));
+		self::assertSame(Account::STATUS_ACTIVE, $account->getStatus());
 	}
 
-	public function testCheckTokenSkipsInvalidAccount(): void {
-		$this->service->checkToken($this->account(Account::STATUS_TOKEN_INVALID));
-
+	public function testCheckConnectionSkipsInvalidAccount(): void {
+		self::assertFalse($this->service->checkConnection($this->account(Account::STATUS_TOKEN_INVALID), true));
 		self::assertSame([], $this->requests);
 	}
 

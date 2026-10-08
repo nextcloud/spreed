@@ -45,9 +45,10 @@ class MatrixAccountController extends OCSController {
 	/**
 	 * Get the linked Matrix account and the homeservers an account can be linked on
 	 *
-	 * The access token of the linked account is checked with the homeserver.
+	 * The access token of the linked account is checked with the homeserver,
+	 * the result is reused for 5 minutes.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{canLink: bool, account: ?TalkMatrixAccount, homeservers: list<TalkMatrixHomeserver>}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{canLink: bool, account: ?TalkMatrixAccount, connected: bool, homeservers: list<TalkMatrixHomeserver>}, array{}>
 	 *
 	 * 200: Account information returned
 	 */
@@ -66,13 +67,12 @@ class MatrixAccountController extends OCSController {
 		}
 
 		$account = $this->accountService->getForUser($user->getUID());
-		if ($account !== null) {
-			$account = $this->accountService->checkToken($account);
-		}
+		$connected = $account !== null && $this->accountService->checkConnection($account);
 
 		return new DataResponse([
 			'canLink' => $canLink,
 			'account' => $account?->jsonSerialize(),
+			'connected' => $connected,
 			'homeservers' => $homeservers,
 		]);
 	}
@@ -108,6 +108,32 @@ class MatrixAccountController extends OCSController {
 		}
 
 		return new DataResponse($account->jsonSerialize(), Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Check the connection to the homeserver again
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{account: TalkMatrixAccount, connected: bool}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'account'}, array{}>
+	 *
+	 * 200: Connection checked
+	 * 404: No linked account
+	 */
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 10, period: 60)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/matrix/account/check', requirements: ['apiVersion' => '(v1)'])]
+	public function checkConnection(): DataResponse {
+		/** @var IUser $user */
+		$user = $this->userSession->getUser();
+		$account = $this->accountService->getForUser($user->getUID());
+		if ($account === null) {
+			return new DataResponse(['error' => 'account'], Http::STATUS_NOT_FOUND);
+		}
+
+		$connected = $this->accountService->checkConnection($account, true);
+		return new DataResponse([
+			'account' => $account->jsonSerialize(),
+			'connected' => $connected,
+		]);
 	}
 
 	/**

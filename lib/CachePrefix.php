@@ -13,4 +13,5 @@ class CachePrefix {
 	public const CHAT_LAST_MESSAGE_ID = 'talk/lastmsgid';
 	public const CHAT_UNREAD_COUNT = 'talk/unreadcount';
 	public const SIGNALING_ASSIGNED_SERVER = 'hpb_servers';
+	public const MATRIX_CONNECTION = 'talk/matrixconnection';
 }
