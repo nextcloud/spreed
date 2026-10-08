@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Matrix\Client\Discovery;
 use OCA\Talk\Matrix\Client\Exception\TransportException;
 use OCA\Talk\Matrix\ClientFactory;
+use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCA\Talk\Matrix\Service\HomeserverService;
@@ -26,6 +27,7 @@ use Test\TestCase;
 
 class HomeserverServiceTest extends TestCase {
 	private HomeserverMapper&MockObject $mapper;
+	private AccountMapper&MockObject $accountMapper;
 	private ClientFactory&MockObject $clientFactory;
 	private ITimeFactory&MockObject $timeFactory;
 	/** @var array<string, ResponseInterface> URL => response, missing URLs answer 404 */
@@ -39,6 +41,7 @@ class HomeserverServiceTest extends TestCase {
 		$this->mapper = $this->createMock(HomeserverMapper::class);
 		$this->mapper->method('insert')->willReturnArgument(0);
 		$this->mapper->method('update')->willReturnArgument(0);
+		$this->accountMapper = $this->createMock(AccountMapper::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-10-08 12:00:00'));
 
@@ -55,7 +58,7 @@ class HomeserverServiceTest extends TestCase {
 		$this->clientFactory = $this->createMock(ClientFactory::class);
 		$this->clientFactory->method('discovery')->willReturn(new Discovery($http, new HttpFactory()));
 
-		$this->service = new HomeserverService($this->mapper, $this->clientFactory, $this->timeFactory);
+		$this->service = new HomeserverService($this->mapper, $this->accountMapper, $this->clientFactory, $this->timeFactory);
 	}
 
 	public function respond(string $url): ResponseInterface {
@@ -142,8 +145,19 @@ class HomeserverServiceTest extends TestCase {
 	public function testRemove(): void {
 		$homeserver = new Homeserver();
 		$this->mapper->method('getById')->with('42')->willReturn($homeserver);
+		$this->accountMapper->method('hasAccountsOnHomeserver')->with('42')->willReturn(false);
 		$this->mapper->expects(self::once())->method('delete')->with($homeserver);
 
+		$this->service->remove('42');
+	}
+
+	public function testRemoveRejectsHomeserverWithLinkedAccounts(): void {
+		$this->mapper->method('getById')->with('42')->willReturn(new Homeserver());
+		$this->accountMapper->method('hasAccountsOnHomeserver')->with('42')->willReturn(true);
+		$this->mapper->expects(self::never())->method('delete');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('accounts');
 		$this->service->remove('42');
 	}
 }

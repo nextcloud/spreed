@@ -221,6 +221,9 @@ class Capabilities implements IPublicCapability {
 			'outgoing-enabled',
 			'only-trusted-servers',
 		],
+		'matrix' => [
+			'enabled',
+		],
 		'previews' => [
 			'max-gif-size',
 		],
@@ -331,6 +334,9 @@ class Capabilities implements IPublicCapability {
 					'incoming-enabled' => false,
 					'outgoing-enabled' => false,
 					'only-trusted-servers' => true,
+				],
+				'matrix' => [
+					'enabled' => $user instanceof IUser && $this->talkConfig->isMatrixEnabled(),
 				],
 				'previews' => [
 					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE, 3145728),

@@ -36,6 +36,9 @@ class Remove {
 		} catch (DoesNotExistException) {
 			$output->writeln('<error>Homeserver ' . $serverName . ' not found</error>');
 			return ExitCode::Invalid;
+		} catch (\InvalidArgumentException) {
+			$output->writeln('<error>Users still have Matrix accounts linked on ' . $serverName . ', unlink them first</error>');
+			return ExitCode::Failure;
 		}
 
 		$output->writeln('<info>Removed ' . $homeserver->getServerName() . '</info>');

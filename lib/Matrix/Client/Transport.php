@@ -1,0 +1,117 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Talk\Matrix\Client;
+
+use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Exception\TransportException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+
+/**
+ * Thin JSON transport over PSR-18. Knows the homeserver base URL, the access
+ * token and how to turn Matrix error responses into exceptions. Only ever
+ * contacts the configured base URL.
+ */
+final class Transport {
+	private string $baseUrl;
+	private ?string $accessToken = null;
+
+	public function __construct(
+		string $baseUrl,
+		private readonly ClientInterface $http,
+		private readonly RequestFactoryInterface $requestFactory,
+		private readonly StreamFactoryInterface $streamFactory,
+	) {
+		$this->baseUrl = rtrim($baseUrl, '/');
+	}
+
+	public function withAccessToken(#[\SensitiveParameter] ?string $token): self {
+		$clone = clone $this;
+		$clone->accessToken = $token;
+		return $clone;
+	}
+
+	/**
+	 * @param array<string, mixed> $body
+	 * @return array<string, mixed>
+	 * @throws MatrixException
+	 */
+	public function post(string $path, array $body = []): array {
+		return $this->request('POST', $path, $body);
+	}
+
+	/**
+	 * @param array<string, mixed>|null $body
+	 * @return array<string, mixed>
+	 * @throws MatrixException
+	 */
+	private function request(string $method, string $path, ?array $body): array {
+		$request = $this->requestFactory->createRequest($method, $this->baseUrl . $path)
+			->withHeader('Accept', 'application/json');
+		if ($this->accessToken !== null) {
+			$request = $request->withHeader('Authorization', 'Bearer ' . $this->accessToken);
+		}
+		if ($body !== null) {
+			$json = json_encode($body === [] ? new \stdClass() : $body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+			$request = $request->withHeader('Content-Type', 'application/json')
+				->withBody($this->streamFactory->createStream($json));
+		}
+
+		try {
+			$response = $this->http->sendRequest($request);
+		} catch (ClientExceptionInterface $e) {
+			throw new TransportException('Homeserver unreachable: ' . $e->getMessage(), 0, '', [], $e);
+		}
+
+		if ($response->getStatusCode() >= 400) {
+			throw $this->toException($response);
+		}
+		return $this->decode($response);
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 * @throws TransportException
+	 */
+	private function decode(ResponseInterface $response): array {
+		$content = (string)$response->getBody();
+		if ($content === '') {
+			return [];
+		}
+		try {
+			$decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+		} catch (\JsonException $e) {
+			throw new TransportException('Homeserver returned invalid JSON', $response->getStatusCode(), '', [], $e);
+		}
+		return is_array($decoded) ? $decoded : [];
+	}
+
+	private function toException(ResponseInterface $response): MatrixException {
+		$status = $response->getStatusCode();
+		try {
+			$body = $this->decode($response);
+		} catch (TransportException) {
+			$body = [];
+		}
+		if (!isset($body['errcode']) && !isset($body['error'])) {
+			return new TransportException('Unexpected response from homeserver: HTTP ' . $status, $status, '', $body);
+		}
+
+		$errcode = (string)($body['errcode'] ?? '');
+		$message = (string)($body['error'] ?? ('HTTP ' . $status));
+		if ($errcode === 'M_FORBIDDEN') {
+			return new ForbiddenException($message, $status, $errcode, $body);
+		}
+		return new MatrixException($message, $status, $errcode, $body);
+	}
+}

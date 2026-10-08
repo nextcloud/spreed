@@ -228,7 +228,11 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 		homeservers.value = homeservers.value.filter((entry) => entry.id !== homeserver.id)
 	} catch (error) {
 		console.error(error)
-		showError(t('spreed', 'Could not remove the homeserver'))
+		if (isAxiosErrorResponse<{ error: string }>(error) && error.response?.data?.ocs?.data?.error === 'accounts') {
+			showError(t('spreed', 'The homeserver can not be removed while users have accounts linked on it'))
+		} else {
+			showError(t('spreed', 'Could not remove the homeserver'))
+		}
 	} finally {
 		loading.value = false
 	}

@@ -10,6 +10,7 @@ namespace OCA\Talk\Listener;
 
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Service\AccountService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\ConversationTagService;
@@ -35,6 +36,7 @@ class UserDeletedListener implements IEventListener {
 		private readonly PhoneService $phoneService,
 		private readonly ReminderService $reminderService,
 		private readonly FederationManager $federationManager,
+		private readonly AccountService $matrixAccountService,
 	) {
 	}
 
@@ -55,5 +57,6 @@ class UserDeletedListener implements IEventListener {
 		$this->phoneService->deleteByUser($user->getUID());
 		$this->reminderService->deleteAllRemindersForUser($user->getUID());
 		$this->federationManager->deleteInvitationsForUser($user->getUID());
+		$this->matrixAccountService->unlinkUser($user->getUID());
 	}
 }

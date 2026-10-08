@@ -128,9 +128,10 @@ class MatrixAdminController extends OCSController {
 	 * Remove a homeserver
 	 *
 	 * @param string $id Homeserver id
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'accounts'|'homeserver'}, array{}>
 	 *
 	 * 200: Homeserver removed
+	 * 400: Users still have accounts linked on the homeserver
 	 * 404: Homeserver not found
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
@@ -140,6 +141,8 @@ class MatrixAdminController extends OCSController {
 			$this->homeserverService->remove($id);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'homeserver'], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'accounts'], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse(null);
 	}

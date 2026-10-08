@@ -302,6 +302,17 @@ namespace OCA\Talk;
  *     roomToken: string,
  * }
  *
+ * @psalm-type TalkMatrixAccount = array{
+ *     // SnowflakeID
+ *     id: numeric-string,
+ *     // SnowflakeID of the homeserver
+ *     homeserverId: numeric-string,
+ *     // Full Matrix user id, e.g. `@alice:example.org`
+ *     mxid: string,
+ *     // Matrix device id of Talk
+ *     deviceId: string,
+ * }
+ *
  * @psalm-type TalkMatrixHomeserver = array{
  *     // SnowflakeID
  *     id: numeric-string,
@@ -879,6 +890,10 @@ namespace OCA\Talk;
  *             outgoing-enabled: bool,
  *             // Whether only trusted servers are allowed for federation
  *             only-trusted-servers: bool,
+ *         },
+ *         matrix: array{
+ *             // Whether Matrix accounts can be linked
+ *             enabled: bool,
  *         },
  *         previews: array{
  *             // Maximum GIF file size in bytes for previews
