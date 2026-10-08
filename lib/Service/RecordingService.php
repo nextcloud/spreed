@@ -372,7 +372,7 @@ class RecordingService {
 		$this->notifyStoredRecording($room, $participant, $fileNode);
 
 		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
-		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
+		$shouldSummarize = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY);
 		if (!$shouldTranscribe && !$shouldSummarize) {
 			$this->logger->debug('Skipping transcription and summary of call recording, as both are disabled');
 			return;
@@ -432,7 +432,7 @@ class RecordingService {
 		}
 
 		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
-		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
+		$shouldSummarize = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY);
 
 		if ($aiTask === 'transcript') {
 			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
