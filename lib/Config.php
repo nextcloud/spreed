@@ -1036,6 +1036,32 @@ class Config {
 	}
 
 	/**
+	 * User setting when unread conversations are shown in collapsed conversation tags
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_*
+	 */
+	public function getConversationsTagsShowUnread(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD,
+			);
+
+			if (in_array($userSetting, [
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
+			], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS;
+	}
+
+	/**
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {
