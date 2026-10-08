@@ -1,0 +1,60 @@
+{
+  "next_batch": "s1",
+  "account_data": {
+    "events": [
+      {"type": "m.direct", "content": {"@bob:hs": ["!room:hs"]}}
+    ]
+  },
+  "rooms": {
+    "join": {
+      "!room:hs": {
+        "summary": {"m.heroes": ["@bob:hs"], "m.joined_member_count": 2, "m.invited_member_count": 0},
+        "state": {
+          "events": [
+            {"type": "m.room.create", "state_key": "", "sender": "@alice:hs", "event_id": "$c", "origin_server_ts": 1000, "content": {"creator": "@alice:hs", "room_version": "10"}},
+            {"type": "m.room.member", "state_key": "@alice:hs", "sender": "@alice:hs", "event_id": "$m1", "origin_server_ts": 1001, "content": {"membership": "join", "displayname": "Alice"}},
+            {"type": "m.room.member", "state_key": "@bob:hs", "sender": "@bob:hs", "event_id": "$m2", "origin_server_ts": 1002, "content": {"membership": "join", "displayname": "Bob", "avatar_url": "mxc://hs/bobavatar"}},
+            {"type": "m.room.power_levels", "state_key": "", "sender": "@alice:hs", "event_id": "$pl", "origin_server_ts": 1003, "content": {"users": {"@alice:hs": 100}, "users_default": 0, "events": {"m.room.name": 50}, "kick": 50, "redact": 50, "invite": 0}}
+          ]
+        },
+        "timeline": {
+          "limited": true,
+          "prev_batch": "p1",
+          "events": [
+            {"type": "m.room.message", "sender": "@bob:hs", "event_id": "$msg1", "origin_server_ts": 2000, "content": {"msgtype": "m.text", "body": "Hello **world**", "format": "org.matrix.custom.html", "formatted_body": "Hello <strong>world</strong>"}},
+            {"type": "m.room.message", "sender": "@alice:hs", "event_id": "$msg2", "origin_server_ts": 2001, "unsigned": {"transaction_id": "nc-1"}, "content": {"msgtype": "m.text", "body": "> <@bob:hs> Hello\n\nreply", "m.relates_to": {"m.in_reply_to": {"event_id": "$msg1"}}}},
+            {"type": "m.room.topic", "state_key": "", "sender": "@alice:hs", "event_id": "$t", "origin_server_ts": 2002, "content": {"topic": "A topic"}},
+            {"type": "m.reaction", "sender": "@bob:hs", "event_id": "$re", "origin_server_ts": 2003, "content": {"m.relates_to": {"rel_type": "m.annotation", "event_id": "$msg2", "key": "👍"}}},
+            {"type": "m.room.message", "sender": "@bob:hs", "event_id": "$img", "origin_server_ts": 2004, "content": {"msgtype": "m.image", "body": "cat.png", "url": "mxc://hs/cat", "info": {"mimetype": "image/png", "size": 1234, "w": 10, "h": 20}}}
+          ]
+        },
+        "ephemeral": {
+          "events": [
+            {"type": "m.receipt", "content": {"$msg2": {"m.read": {"@bob:hs": {"ts": 3000}}}}},
+            {"type": "m.typing", "content": {"user_ids": ["@bob:hs"]}}
+          ]
+        },
+        "unread_notifications": {"notification_count": 1, "highlight_count": 0}
+      }
+    },
+    "invite": {
+      "!invite:hs": {
+        "invite_state": {
+          "events": [
+            {"type": "m.room.name", "state_key": "", "sender": "@carol:hs", "content": {"name": "Invited room"}},
+            {"type": "m.room.member", "state_key": "@alice:hs", "sender": "@carol:hs", "content": {"membership": "invite", "is_direct": true}}
+          ]
+        }
+      }
+    },
+    "leave": {
+      "!left:hs": {
+        "timeline": {
+          "events": [
+            {"type": "m.room.member", "state_key": "@alice:hs", "sender": "@alice:hs", "event_id": "$lv", "origin_server_ts": 4000, "content": {"membership": "leave"}}
+          ]
+        }
+      }
+    }
+  }
+}
