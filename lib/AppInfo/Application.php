@@ -15,6 +15,7 @@ use OCA\Circles\Events\EditingCircleEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
+use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
@@ -280,6 +281,7 @@ class Application extends App implements IBootstrap {
 		// Sharing listeners
 		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
 		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
+		$context->registerEventListener(ShareMountedEvent::class, ShareListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, ShareListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ShareListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, ShareListener::class);

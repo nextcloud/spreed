@@ -5710,6 +5710,42 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, 200);
 	}
 
+	#[Given('userroom shares of :user are removed')]
+	public function removeUserRoomShares(string $user): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/apps/spreedcheats/forged/userroom-shares', [
+			'userId' => $user,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[Given('share mounts of :user are moved to the placeholder')]
+	public function moveShareMountsToPlaceholder(string $user): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('PUT', '/apps/spreedcheats/forged/share-mounts', [
+			'userId' => $user,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[Then('share mounts of :user are')]
+	public function assertShareMounts(string $user, TableNode $mountPoints): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/apps/spreedcheats/share-mounts?' . http_build_query([
+			'userId' => $user,
+		]));
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+
+		$expected = array_map(fn (array $row): string => $row[0], $mountPoints->getRows());
+		$actual = $this->getDataFromResponse($this->response);
+		sort($expected);
+		sort($actual);
+		Assert::assertSame($expected, $actual);
+	}
+
 	#[Given('/^user "([^"]*)" creates calendar events for a room "([^"]*)" \((v4)\)$/')]
 	public function createCalendarEntriesWithRoom(string $user, string $identifier, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
