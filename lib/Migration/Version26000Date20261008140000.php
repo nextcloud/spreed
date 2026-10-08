@@ -11,6 +11,7 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
@@ -18,6 +19,7 @@ use Override;
 /**
  * Matrix accounts linked by users
  */
+#[CreateTable(table: 'talk_matrix_accounts', columns: ['id', 'user_id', 'homeserver_id', 'mxid', 'access_token', 'device_id'], description: 'Matrix accounts linked by users')]
 class Version26000Date20261008140000 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
