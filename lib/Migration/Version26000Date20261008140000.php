@@ -43,7 +43,7 @@ class Version26000Date20261008140000 extends SimpleMigrationStep {
 		$table->addColumn('device_id', Types::STRING, ['notnull' => true, 'length' => 255]);
 		$table->setPrimaryKey(['id']);
 		$table->addUniqueIndex(['user_id'], 'tma_user_id');
-		$table->addIndex(['homeserver_id'], 'tma_homeserver');
+		$table->addIndex(['homeserver_id', 'user_id'], 'tma_homeserver');
 
 		return $schema;
 	}

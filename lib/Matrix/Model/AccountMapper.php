@@ -33,17 +33,31 @@ class AccountMapper extends QBMapper {
 
 	/**
 	 * @param string $offset Only return accounts of users after this user id
+	 * @param string $homeserverId Only return accounts on this homeserver, empty for all
 	 * @return list<Account>
 	 */
-	public function getAll(string $offset, int $limit): array {
+	public function getAll(string $offset, int $limit, string $homeserverId): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
 			->orderBy('user_id', 'ASC')
 			->setMaxResults($limit);
 		if ($offset !== '') {
-			$qb->where($qb->expr()->gt('user_id', $qb->createNamedParameter($offset)));
+			$qb->andWhere($qb->expr()->gt('user_id', $qb->createNamedParameter($offset)));
 		}
+		if ($homeserverId !== '') {
+			$qb->andWhere($qb->expr()->eq('homeserver_id', $qb->createNamedParameter($homeserverId)));
+		}
+		return $this->findEntities($qb);
+	}
+
+	/** @return list<Account> */
+	public function getByHomeserver(string $homeserverId, int $limit): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('homeserver_id', $qb->createNamedParameter($homeserverId)))
+			->setMaxResults($limit);
 		return $this->findEntities($qb);
 	}
 

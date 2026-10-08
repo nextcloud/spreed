@@ -47,10 +47,11 @@ class AccountService {
 
 	/**
 	 * @param string $offset Only return accounts of users after this user id
+	 * @param string $homeserverId Only return accounts on this homeserver, empty for all
 	 * @return list<Account>
 	 */
-	public function getAll(string $offset = '', int $limit = 1000): array {
-		return $this->mapper->getAll($offset, $limit);
+	public function getAll(string $offset = '', int $limit = 1000, string $homeserverId = ''): array {
+		return $this->mapper->getAll($offset, $limit, $homeserverId);
 	}
 
 	/**
@@ -105,6 +106,20 @@ class AccountService {
 			$this->logger->info('Matrix logout during unlink failed for ' . $account->getMxid(), ['exception' => $e]);
 		}
 		$this->mapper->delete($account);
+	}
+
+	/**
+	 * @return int Number of unlinked accounts
+	 */
+	public function unlinkAllOnHomeserver(string $homeserverId): int {
+		$count = 0;
+		while ($accounts = $this->mapper->getByHomeserver($homeserverId, 1000)) {
+			foreach ($accounts as $account) {
+				$this->unlink($account);
+				$count++;
+			}
+		}
+		return $count;
 	}
 
 	public function unlinkUser(string $userId): void {

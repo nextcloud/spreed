@@ -258,6 +258,27 @@ class AccountServiceTest extends TestCase {
 		$this->service->unlink($account);
 	}
 
+	public function testUnlinkAllOnHomeserver(): void {
+		$this->homeserver();
+		$first = $this->account();
+		$second = $this->account();
+		$this->responses['POST /_matrix/client/v3/logout'] = $this->json(200, []);
+		$this->mapper->method('getByHomeserver')
+			->with('42', 1000)
+			->willReturnOnConsecutiveCalls([$first, $second], []);
+		$deleted = [];
+		$this->mapper->expects(self::exactly(2))
+			->method('delete')
+			->willReturnCallback(static function (Account $account) use (&$deleted): Account {
+				$deleted[] = $account;
+				return $account;
+			});
+
+		self::assertSame(2, $this->service->unlinkAllOnHomeserver('42'));
+		self::assertSame([$first, $second], $deleted);
+		self::assertCount(2, $this->requests);
+	}
+
 	public function testUnlinkUserWithoutAccount(): void {
 		$this->mapper->method('getByUserId')->willThrowException(new DoesNotExistException(''));
 		$this->mapper->expects(self::never())->method('delete');
