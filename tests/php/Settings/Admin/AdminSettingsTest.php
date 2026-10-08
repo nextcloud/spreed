@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Settings\Admin;
 
 use OCA\Talk\Config;
+use OCA\Talk\Matrix\MatrixConfig;
+use OCA\Talk\Matrix\Service\HomeserverService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Room;
 use OCA\Talk\Settings\Admin\AdminSettings;
@@ -37,6 +39,8 @@ class AdminSettingsTest extends TestCase {
 	protected IUserSession&MockObject $userSession;
 	protected IL10N&MockObject $l10n;
 	protected IFactory&MockObject $l10nFactory;
+	protected MatrixConfig&MockObject $matrixConfig;
+	protected HomeserverService&MockObject $homeserverService;
 	protected ?AdminSettings $admin = null;
 
 	public function setUp(): void {
@@ -53,6 +57,8 @@ class AdminSettingsTest extends TestCase {
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
+		$this->matrixConfig = $this->createMock(MatrixConfig::class);
+		$this->homeserverService = $this->createMock(HomeserverService::class);
 
 		$this->admin = $this->getAdminSettings();
 	}
@@ -74,6 +80,8 @@ class AdminSettingsTest extends TestCase {
 				$this->subscription,
 				$this->l10n,
 				$this->l10nFactory,
+				$this->matrixConfig,
+				$this->homeserverService,
 				$this->userSession,
 			);
 		}
@@ -90,6 +98,8 @@ class AdminSettingsTest extends TestCase {
 				$this->subscription,
 				$this->l10n,
 				$this->l10nFactory,
+				$this->matrixConfig,
+				$this->homeserverService,
 				$this->userSession,
 			])
 			->onlyMethods($methods)

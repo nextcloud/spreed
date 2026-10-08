@@ -483,6 +483,17 @@ export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['resp
 export type certificateExpirationParams = operationsAdmin['certificate-get-certificate-expiration']['parameters']['query']
 export type certificateExpirationResponse = ApiResponse<operationsAdmin['certificate-get-certificate-expiration']['responses'][200]['content']['application/json']>
 
+// Matrix
+export type MatrixHomeserver = componentsAdmin['schemas']['MatrixHomeserver']
+export type addMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-add-homeserver']>['requestBody']['content']['application/json']
+export type updateMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-update-homeserver']>['requestBody']['content']['application/json']
+export type updateMatrixSettingsParams = Required<operationsAdmin['matrix_admin-update-settings']>['requestBody']['content']['application/json']
+export type addMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-add-homeserver']['responses'][201]['content']['application/json']>
+export type updateMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-update-homeserver']['responses'][200]['content']['application/json']>
+export type testMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-test-homeserver']['responses'][200]['content']['application/json']>
+export type removeMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-remove-homeserver']['responses'][200]['content']['application/json']>
+export type updateMatrixSettingsResponse = ApiResponse<operationsAdmin['matrix_admin-update-settings']['responses'][200]['content']['application/json']>
+
 // Federations
 export type FederationInvite = componentsFed['schemas']['FederationInvite']
 type FederationInviteRichParameters = {
