@@ -71,7 +71,8 @@ const inputValue = ref(props.inputProps?.value ?? '')
  */
 function onClosing(result: unknown) {
 	if (props.isForm && props.inputProps) {
-		onSubmit(inputValue.value)
+		// Cancel or close return no value
+		emit('close', result ? inputValue.value : undefined)
 	} else {
 		emit('close', result)
 	}
