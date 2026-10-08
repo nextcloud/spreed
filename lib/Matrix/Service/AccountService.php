@@ -45,9 +45,12 @@ class AccountService {
 		}
 	}
 
-	/** @return list<Account> */
-	public function getAll(): array {
-		return $this->mapper->getAll();
+	/**
+	 * @param string $offset Only return accounts of users after this user id
+	 * @return list<Account>
+	 */
+	public function getAll(string $offset = '', int $limit = 1000): array {
+		return $this->mapper->getAll($offset, $limit);
 	}
 
 	/**

@@ -31,12 +31,19 @@ class AccountMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
-	/** @return list<Account> */
-	public function getAll(): array {
+	/**
+	 * @param string $offset Only return accounts of users after this user id
+	 * @return list<Account>
+	 */
+	public function getAll(string $offset, int $limit): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
-			->orderBy('user_id', 'ASC');
+			->orderBy('user_id', 'ASC')
+			->setMaxResults($limit);
+		if ($offset !== '') {
+			$qb->where($qb->expr()->gt('user_id', $qb->createNamedParameter($offset)));
+		}
 		return $this->findEntities($qb);
 	}
 
