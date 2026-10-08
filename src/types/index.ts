@@ -87,6 +87,8 @@ export type InitialState = {
 	spreed: {
 		has_cache_configured: boolean
 		has_valid_subscription: boolean
+		matrix_allowed_groups: { id: string, displayname: string }[]
+		matrix_enabled: boolean
 		signaling_mode: string
 		signaling_servers: {
 			hideWarning: boolean
