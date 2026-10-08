@@ -215,7 +215,7 @@ PROMPT;
 			new Entry(Config::SIP_BRIDGE_DIALOUT_NUMBER, ValueType::STRING, '', definition: 'Fallback phone number that is used as caller for out-going calls when the user has no phone-number configured (has to be E164 `+49123456789` formatted'),
 			new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Prefix stat is added before the first configured phone-number of a user to make it a valid E164 number to be used as a caller for out-going calls'),
 			new Entry(Config::SIP_BRIDGE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret allowing the SIP bridge to authenticate on the Nextcloud server', flags: IAppConfig::FLAG_SENSITIVE),
-			new Entry(Config::SIP_BRIDGE_DIALOUT, ValueType::BOOL, false, definition: 'SIP dial-out is allowed when a SIP bridge is configured', rename: 'sip_dialout'),
+			new Entry(Config::SIP_DIALOUT, ValueType::BOOL, false, definition: 'SIP dial-out is allowed when a SIP bridge is configured'),
 		];
 	}
 

@@ -460,7 +460,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('sip_bridge_groups', $groups);
 		$this->initialState->provideInitialState('sip_bridge_shared_secret', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
 		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO));
-		$this->initialState->provideInitialState('sip_bridge_dialout', $this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT));
+		$this->initialState->provideInitialState('sip_dialout', $this->appConfig->getAppValueBool(Config::SIP_DIALOUT));
 		$this->initialState->provideInitialState('sip_bridge_dialout_anonymous', $this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT_ANONYMOUS));
 		$this->initialState->provideInitialState('sip_bridge_dialout_number', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_NUMBER));
 		$this->initialState->provideInitialState('sip_bridge_dialout_prefix', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_PREFIX));

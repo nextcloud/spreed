@@ -101,7 +101,7 @@ class Config {
 	public const string SIP_BRIDGE_DIALOUT_NUMBER = 'sip_bridge_dialout_number';
 	public const string SIP_BRIDGE_DIALOUT_PREFIX = 'sip_bridge_dialout_prefix';
 	public const string SIP_BRIDGE_SHARED_SECRET = 'sip_bridge_shared_secret';
-	public const string SIP_BRIDGE_DIALOUT = 'sip_bridge_dialout';
+	public const string SIP_DIALOUT = 'sip_dialout';
 
 	/**
 	 * 1. Call recording, …
@@ -222,7 +222,7 @@ class Config {
 	}
 
 	public function canUserDialOutSIP(IUser $user): bool {
-		if (!(!empty($this->appConfig->getAppValueString(self::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(self::SIP_BRIDGE_SHARED_SECRET)))) {
+		if (!$this->appConfig->getAppValueBool(Config::SIP_DIALOUT)) {
 			return false;
 		}
 

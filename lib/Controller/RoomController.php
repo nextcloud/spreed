@@ -2643,7 +2643,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	])]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
 		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
-		if (!$isSIPConfigured) {
+		if (!$isSIPConfigured || !$this->appConfig->getAppValueBool(Config::SIP_DIALOUT)) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
@@ -2742,7 +2742,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	])]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
 		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
-		if (!$isSIPConfigured) {
+		if (!$isSIPConfigured || !$this->appConfig->getAppValueBool(Config::SIP_DIALOUT)) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
