@@ -506,6 +506,7 @@ OC.L10N.register(
     "No" : "Ket",
     "Delete the signaling server account" : "Lemel ar c'hont arhent servijour",
     "_%n user_::_%n users_" : ["%n implijer","%n implijer","%n implijer","%n implijer","%n implijer"],
+    "Saved" : "Enrollet",
     "Status: Checking connection" : "Stad : Ho gwiriañ ar genstagadenn",
     "OK: Running version: {version}" : "OK : o lakaat da dreiñ ar stumm : {version}",
     "Validate SSL certificate" : "Sertifikad SSL gwiriet",

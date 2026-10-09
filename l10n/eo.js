@@ -281,6 +281,7 @@ OC.L10N.register(
     "Created at" : "Kreita je",
     "Yes" : "Jes",
     "No" : "Ne",
+    "Saved" : "Konservita",
     "{option1} and {option2}" : "{option1} kaj {option2}",
     "OK" : "OK",
     "Confirm" : "Konfirmi",
