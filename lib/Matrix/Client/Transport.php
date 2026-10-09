@@ -100,11 +100,28 @@ final class Transport {
 	}
 
 	/**
+	 * Raw response of a GET request, the body is not read
+	 *
+	 * @throws MatrixException
+	 */
+	public function download(string $path): ResponseInterface {
+		return $this->send('GET', $path, null);
+	}
+
+	/**
 	 * @param array<string, mixed>|null $body
 	 * @return array<string, mixed>
 	 * @throws MatrixException
 	 */
 	private function request(string $method, string $path, ?array $body): array {
+		return $this->decode($this->send($method, $path, $body));
+	}
+
+	/**
+	 * @param array<string, mixed>|null $body
+	 * @throws MatrixException
+	 */
+	private function send(string $method, string $path, ?array $body): ResponseInterface {
 		$request = $this->requestFactory->createRequest($method, $this->baseUrl . $path)
 			->withHeader('Accept', 'application/json');
 		if ($this->accessToken !== null) {
@@ -125,7 +142,7 @@ final class Transport {
 		if ($response->getStatusCode() >= 400) {
 			throw $this->toException($response);
 		}
-		return $this->decode($response);
+		return $response;
 	}
 
 	/**
