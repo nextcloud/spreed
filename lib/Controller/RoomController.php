@@ -176,6 +176,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly DefaultPreset $defaultParameters,
 		private readonly Forced $forcedParameters,
 		private readonly ?string $userId,
+		private readonly SendService $matrixSendService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1107,7 +1108,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 			try {
-				\OCP\Server::get(SendService::class)->rename($this->room, $this->participant, $roomName);
+				$this->matrixSendService->rename($this->room, $this->participant, $roomName);
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
@@ -1147,7 +1148,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 			try {
-				\OCP\Server::get(SendService::class)->setDescription($this->room, $this->participant, $description);
+				$this->matrixSendService->setDescription($this->room, $this->participant, $description);
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
@@ -1558,7 +1559,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
 			}
 			try {
-				\OCP\Server::get(SendService::class)->invite($this->room, $this->participant, $newParticipant);
+				$this->matrixSendService->invite($this->room, $this->participant, $newParticipant);
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
@@ -1779,7 +1780,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 			try {
-				\OCP\Server::get(SendService::class)->leave($room, $participant);
+				$this->matrixSendService->leave($room, $participant);
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
@@ -1878,7 +1879,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 			try {
-				\OCP\Server::get(SendService::class)->kick($this->room, $this->participant, $targetParticipant->getAttendee());
+				$this->matrixSendService->kick($this->room, $this->participant, $targetParticipant->getAttendee());
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
@@ -3048,7 +3049,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			// The power levels of the Matrix room decide, the sync applies them as participant types as well
 			$newType = $promote ? ($participantType === Participant::OWNER ? Participant::OWNER : Participant::MODERATOR) : Participant::USER;
 			try {
-				\OCP\Server::get(SendService::class)->setParticipantType($this->room, $this->participant, $attendee, $newType);
+				$this->matrixSendService->setParticipantType($this->room, $this->participant, $attendee, $newType);
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
