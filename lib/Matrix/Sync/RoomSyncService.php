@@ -429,7 +429,7 @@ class RoomSyncService {
 	}
 
 	/**
-	 * Members with power level 100 become owners and with 50 moderators. Users
+	 * Administrators become owners and Matrix moderators become moderators. Users
 	 * who may not send messages or reactions in the Matrix room lose the
 	 * permission in the conversation.
 	 *
@@ -480,8 +480,8 @@ class RoomSyncService {
 
 	public static function getParticipantType(int $powerLevel): int {
 		return match (true) {
-			$powerLevel >= 100 => Participant::OWNER,
-			$powerLevel >= 50 => Participant::MODERATOR,
+			$powerLevel >= PowerLevels::LEVEL_ADMIN => Participant::OWNER,
+			$powerLevel >= PowerLevels::LEVEL_MODERATOR => Participant::MODERATOR,
 			default => Participant::USER,
 		};
 	}

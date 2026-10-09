@@ -15,8 +15,8 @@ class PowerLevelsTest extends TestCase {
 	public function testWithoutPowerLevels(): void {
 		$powerLevels = new PowerLevels([], '@creator:example.org');
 
-		self::assertSame(100, $powerLevels->getUserLevel('@creator:example.org'));
-		self::assertSame(0, $powerLevels->getUserLevel('@alice:example.org'));
+		self::assertSame(PowerLevels::LEVEL_ADMIN, $powerLevels->getUserLevel('@creator:example.org'));
+		self::assertSame(PowerLevels::LEVEL_USER, $powerLevels->getUserLevel('@alice:example.org'));
 		self::assertTrue($powerLevels->canSendEvent('@alice:example.org', 'm.room.message'));
 		self::assertTrue($powerLevels->canSendEvent('@alice:example.org', 'm.room.name', true));
 		self::assertFalse($powerLevels->canRedact('@alice:example.org'));
@@ -33,7 +33,7 @@ class PowerLevelsTest extends TestCase {
 			'redact' => 50,
 		], '@creator:example.org');
 
-		self::assertSame(0, $powerLevels->getUserLevel('@creator:example.org'), 'Only the content counts once power levels exist');
+		self::assertSame(PowerLevels::LEVEL_USER, $powerLevels->getUserLevel('@creator:example.org'), 'Only the content counts once power levels exist');
 		self::assertTrue($powerLevels->canSendEvent('@alice:example.org', 'm.room.message'));
 		self::assertFalse($powerLevels->canSendEvent('@muted:example.org', 'm.room.message'));
 		self::assertFalse($powerLevels->canSendEvent('@alice:example.org', 'm.reaction'));
