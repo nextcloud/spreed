@@ -153,7 +153,8 @@
 							<NcActions
 								v-show="searchText === ''"
 								class="actions"
-								:class="{ 'hidden-visually': isSearching }">
+								:class="{ 'hidden-visually': isSearching }"
+								@open="loadMatrixAccount">
 								<template #icon>
 									<IconChatPlusOutline :size="20" />
 								</template>
@@ -169,6 +170,7 @@
 
 								<NcActionButton
 									v-if="isMatrixEnabled"
+									:disabled="!actorStore.hasActiveMatrixAccount"
 									closeAfterClick
 									@click="showMatrixRoomDialog = true">
 									<template #icon>
@@ -518,6 +520,7 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportThreads = hasTalkFeature('local', 'threads')
 const supportSortOrder = getTalkConfig('local', 'conversations', 'sort-order') !== undefined
 const supportTags = hasTalkFeature('local', 'conversation-tags')
+const isMatrixEnabled = getTalkConfig('local', 'matrix', 'enabled') === true
 
 // TRANSLATORS The main home view
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
@@ -645,6 +648,7 @@ export default {
 			supportThreads,
 			supportSortOrder,
 			supportTags,
+			isMatrixEnabled,
 			showArchived,
 			showThreadsList,
 			settingsStore,
@@ -675,7 +679,6 @@ export default {
 		return {
 			searchText: '',
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
-			isMatrixEnabled: getTalkConfig('local', 'matrix', 'enabled') === true,
 			showMatrixRoomDialog: false,
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
@@ -910,6 +913,12 @@ export default {
 	},
 
 	methods: {
+		loadMatrixAccount() {
+			if (isMatrixEnabled) {
+				this.actorStore.loadMatrixAccount()
+			}
+		},
+
 		loadMoreFollowedThreads() {
 			this.chatExtrasStore.fetchFollowedThreadsList(this.followedThreads.length)
 		},
