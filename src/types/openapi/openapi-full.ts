@@ -1034,6 +1034,40 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/room": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a Matrix room or a direct chat with a Matrix user */
+        post: operations["matrix_room-create-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/room/join": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Join a Matrix room by its address */
+        post: operations["matrix_room-join-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/{token}": {
         parameters: {
             query?: never;
@@ -9808,6 +9842,232 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "account" | "invitation" | "matrix";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_room-create-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Name of the room, ignored for direct chats
+                     * @default
+                     */
+                    name?: string;
+                    /**
+                     * @description Topic of the room
+                     * @default
+                     */
+                    topic?: string;
+                    /**
+                     * @description Matrix user ids to invite
+                     * @default []
+                     */
+                    invites?: string[];
+                    /**
+                     * @description Create a direct chat with the only invited user
+                     * @default false
+                     */
+                    direct?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Room created, the token is null when the conversation is still created by another sync */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                token: string | null;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Name or invited users are invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invite" | "matrix" | "name";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Matrix account not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invite" | "matrix" | "name";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the room or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invite" | "matrix" | "name";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_room-join-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Room alias like `#room:example.org`, room id or a matrix.to link */
+                    reference: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Room joined, the token is null when the conversation is still created by another sync */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                token: string | null;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The reference is not a Matrix room */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "reference" | "room";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Matrix account not found, or the room does not exist or can not be joined */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "reference" | "room";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "reference" | "room";
                             };
                         };
                     };
