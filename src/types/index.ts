@@ -500,6 +500,9 @@ export type MatrixAccount = components['schemas']['MatrixAccount']
 export type linkMatrixAccountParams = Required<operations['matrix_account-link-account']>['requestBody']['content']['application/json']
 export type getMatrixAccountResponse = ApiResponse<operations['matrix_account-get-account']['responses'][200]['content']['application/json']>
 export type linkMatrixAccountResponse = ApiResponse<operations['matrix_account-link-account']['responses'][201]['content']['application/json']>
+export type checkMatrixConnectionResponse = ApiResponse<operations['matrix_account-check-connection']['responses'][200]['content']['application/json']>
+export type reloginMatrixAccountParams = Required<operations['matrix_account-relogin-account']>['requestBody']['content']['application/json']
+export type reloginMatrixAccountResponse = ApiResponse<operations['matrix_account-relogin-account']['responses'][200]['content']['application/json']>
 export type unlinkMatrixAccountResponse = ApiResponse<operations['matrix_account-unlink-account']['responses'][200]['content']['application/json']>
 
 // Federations

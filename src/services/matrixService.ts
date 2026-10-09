@@ -6,11 +6,14 @@
 import type {
 	addMatrixHomeserverParams,
 	addMatrixHomeserverResponse,
+	checkMatrixConnectionResponse,
 	getMatrixAccountResponse,
 	getMatrixHomeserversResponse,
 	linkMatrixAccountParams,
 	linkMatrixAccountResponse,
 	MatrixHomeserver,
+	reloginMatrixAccountParams,
+	reloginMatrixAccountResponse,
 	removeMatrixHomeserverResponse,
 	testMatrixHomeserverResponse,
 	unlinkMatrixAccountResponse,
@@ -93,6 +96,22 @@ async function linkMatrixAccount(payload: linkMatrixAccountParams): linkMatrixAc
 }
 
 /**
+ * Check the connection to the homeserver again
+ */
+async function checkMatrixConnection(): checkMatrixConnectionResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/matrix/account/check'))
+}
+
+/**
+ * Log in again after the homeserver rejected the access token
+ *
+ * @param payload The Matrix password
+ */
+async function reloginMatrixAccount(payload: reloginMatrixAccountParams): reloginMatrixAccountResponse {
+	return axios.put(generateOcsUrl('apps/spreed/api/v1/matrix/account'), payload)
+}
+
+/**
  * Unlink the Matrix account
  */
 async function unlinkMatrixAccount(): unlinkMatrixAccountResponse {
@@ -101,9 +120,11 @@ async function unlinkMatrixAccount(): unlinkMatrixAccountResponse {
 
 export {
 	addMatrixHomeserver,
+	checkMatrixConnection,
 	getMatrixAccount,
 	getMatrixHomeservers,
 	linkMatrixAccount,
+	reloginMatrixAccount,
 	removeMatrixHomeserver,
 	testMatrixHomeserver,
 	unlinkMatrixAccount,
