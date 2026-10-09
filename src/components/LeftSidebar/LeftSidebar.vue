@@ -168,6 +168,16 @@
 								</NcActionButton>
 
 								<NcActionButton
+									v-if="isMatrixEnabled"
+									closeAfterClick
+									@click="showMatrixRoomDialog = true">
+									<template #icon>
+										<IconPlus :size="20" />
+									</template>
+									{{ t('spreed', 'Create or join a Matrix room') }}
+								</NcActionButton>
+
+								<NcActionButton
 									v-if="canNoteToSelf && !hasNoteToSelf"
 									closeAfterClick
 									@click="restoreNoteToSelfConversation">
@@ -209,6 +219,8 @@
 
 						<!-- All open conversations list -->
 						<OpenConversationsList ref="openConversationsList" />
+
+						<MatrixRoomDialog v-if="showMatrixRoomDialog" @close="showMatrixRoomDialog = false" />
 
 						<!-- New Conversation dialog -->
 						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
@@ -460,6 +472,7 @@ import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
 import LeftSidebarButton from './LeftSidebarButton.vue'
+import MatrixRoomDialog from './MatrixRoomDialog.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -550,6 +563,7 @@ export default {
 		NcChip,
 		SearchBox,
 		NewConversationDialog,
+		MatrixRoomDialog,
 		OpenConversationsList,
 		NcActions,
 		NcActionButton,
@@ -661,6 +675,8 @@ export default {
 		return {
 			searchText: '',
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
+			isMatrixEnabled: getTalkConfig('local', 'matrix', 'enabled') === true,
+			showMatrixRoomDialog: false,
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
