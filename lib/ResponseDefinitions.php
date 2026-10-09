@@ -313,8 +313,10 @@ namespace OCA\Talk;
  *     deviceId: string,
  *     // 0 = active, 1 = the homeserver rejected the access token and the user has to log in again
  *     status: 0|1,
- *     // Error reported by the homeserver when it rejected the access token
+ *     // Error reported by the homeserver when it rejected the access token or the last sync failed
  *     lastError: ?string,
+ *     // Unix timestamp of the last sync, `0` if it never synced
+ *     lastSync: int,
  * }
  *
  * @psalm-type TalkMatrixHomeserver = array{

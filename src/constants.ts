@@ -207,6 +207,8 @@ export const ATTENDEE = {
 		BRIDGED: 'bridged',
 		FEDERATED_USERS: 'federated_users',
 		PHONES: 'phones',
+		/** Matrix user without a linked Nextcloud account, actorId is the Matrix user id */
+		MATRIX: 'matrix',
 		DELETED_USERS: 'deleted_users',
 		/* @internal Only use with server APIs (like /core/autocomplete/get) and never with Talk APIs */
 		REMOTES: 'remotes',

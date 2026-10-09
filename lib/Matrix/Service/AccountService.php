@@ -10,6 +10,7 @@ namespace OCA\Talk\Matrix\Service;
 
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
+use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use OCA\Talk\Matrix\Client\Util\Identifier;
@@ -18,6 +19,7 @@ use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
@@ -43,6 +45,7 @@ class AccountService {
 		private readonly AccountMapper $mapper,
 		private readonly HomeserverMapper $homeserverMapper,
 		private readonly ClientFactory $clientFactory,
+		private readonly RoomSyncService $roomSyncService,
 		private readonly Config $config,
 		private readonly ICrypto $crypto,
 		private readonly Defaults $defaults,
@@ -160,8 +163,7 @@ class AccountService {
 		}
 
 		try {
-			$homeserver = $this->homeserverMapper->getById($account->getHomeserverId());
-			$this->clientFactory->forHomeserver($homeserver, $this->crypto->decrypt($account->getAccessToken()), 10)->whoami();
+			$this->getClient($account, 10)->whoami();
 			$connected = true;
 		} catch (UnknownTokenException $e) {
 			$this->markTokenInvalid($account, $e->getMessage());
@@ -192,18 +194,19 @@ class AccountService {
 	}
 
 	/**
-	 * Log the device out on the homeserver (best effort) and forget the account
+	 * Log the device out on the homeserver (best effort), remove the user from
+	 * the mirrored Matrix rooms and forget the account
 	 */
 	public function unlink(Account $account): void {
 		if ($account->getAccessToken() !== '') {
 			try {
-				$homeserver = $this->homeserverMapper->getById($account->getHomeserverId());
-				$this->clientFactory->forHomeserver($homeserver, $this->crypto->decrypt($account->getAccessToken()), 10)->logout();
+				$this->getClient($account, 10)->logout();
 			} catch (\Exception $e) {
 				$this->logger->info('Matrix logout during unlink failed for ' . $account->getMxid(), ['exception' => $e]);
 			}
 		}
 		$this->notificationManager->markProcessed($this->getReloginNotification($account));
+		$this->roomSyncService->removeAccount($account);
 		$this->mapper->delete($account);
 	}
 
@@ -226,6 +229,16 @@ class AccountService {
 		if ($account !== null) {
 			$this->unlink($account);
 		}
+	}
+
+	/**
+	 * Client authenticated with the access token of the account
+	 *
+	 * @throws DoesNotExistException when the homeserver was removed
+	 */
+	public function getClient(Account $account, int $timeout = 30): Client {
+		$homeserver = $this->homeserverMapper->getById($account->getHomeserverId());
+		return $this->clientFactory->forHomeserver($homeserver, $this->crypto->decrypt($account->getAccessToken()), $timeout);
 	}
 
 	/**

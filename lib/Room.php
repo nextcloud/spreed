@@ -38,6 +38,7 @@ class Room {
 	public const OBJECT_TYPE_EXTERNAL_CALL = 'external_call';
 	public const OBJECT_TYPE_FILE = 'file';
 	public const OBJECT_TYPE_INSTANT_MEETING = 'instant_meeting';
+	public const OBJECT_TYPE_MATRIX = 'matrix';
 	public const OBJECT_TYPE_NOTE_TO_SELF = 'note_to_self';
 	/**
 	 * @deprecated No longer used for new conversations

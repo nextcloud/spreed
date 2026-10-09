@@ -162,6 +162,23 @@ List the Matrix accounts linked by users, 1000 per run
 | `--offset` | Continue after this user id, use the last user id of the previous run | yes | yes | no | *Required* |
 | `--homeserver` | Only list accounts on the homeserver with this server name, e.g. example.org | yes | yes | no | *Required* |
 
+## talk:matrix-account:sync
+
+Sync the Matrix rooms of a user now
+
+### Usage
+
+* `talk:matrix-account:sync [--reset] [--budget BUDGET] [--] <user-id>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `user-id` | Nextcloud user id | yes | no | *Required* |
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--reset` | Forget the sync position and sync all rooms again | no | no | no | `false` |
+| `--budget` | Seconds to spend syncing at most | yes | yes | no | *Required* |
+
 ## talk:matrix-account:unlink
 
 Unlink the Matrix account of a user and log Talk out on the homeserver

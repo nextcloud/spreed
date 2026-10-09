@@ -28,6 +28,14 @@ use OCP\DB\Types;
  * @method int getStatus()
  * @method void setLastError(?string $lastError)
  * @method ?string getLastError()
+ * @method void setNextBatch(?string $nextBatch)
+ * @method ?string getNextBatch()
+ * @method void setFilterId(?string $filterId)
+ * @method ?string getFilterId()
+ * @method void setLastSync(int $lastSync)
+ * @method int getLastSync()
+ * @method void setLockUntil(int $lockUntil)
+ * @method int getLockUntil()
  */
 class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	public const STATUS_ACTIVE = 0;
@@ -42,6 +50,11 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	protected string $deviceId = '';
 	protected int $status = self::STATUS_ACTIVE;
 	protected ?string $lastError = null;
+	/** Position of the last sync, null when the next sync is an initial sync */
+	protected ?string $nextBatch = null;
+	protected ?string $filterId = null;
+	protected int $lastSync = 0;
+	protected int $lockUntil = 0;
 
 	public function __construct() {
 		$this->addType('userId', Types::STRING);
@@ -51,10 +64,14 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 		$this->addType('deviceId', Types::STRING);
 		$this->addType('status', Types::SMALLINT);
 		$this->addType('lastError', Types::STRING);
+		$this->addType('nextBatch', Types::STRING);
+		$this->addType('filterId', Types::STRING);
+		$this->addType('lastSync', Types::BIGINT);
+		$this->addType('lockUntil', Types::BIGINT);
 	}
 
 	/**
-	 * @return array{id: numeric-string, homeserverId: numeric-string, mxid: string, deviceId: string, status: Account::STATUS_*, lastError: ?string}
+	 * @return array{id: numeric-string, homeserverId: numeric-string, mxid: string, deviceId: string, status: Account::STATUS_*, lastError: ?string, lastSync: int}
 	 */
 	#[\Override]
 	public function jsonSerialize(): array {
@@ -67,6 +84,7 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 			'deviceId' => $this->getDeviceId(),
 			'status' => $this->getStatus() === self::STATUS_TOKEN_INVALID ? self::STATUS_TOKEN_INVALID : self::STATUS_ACTIVE,
 			'lastError' => $this->getLastError(),
+			'lastSync' => $this->getLastSync(),
 		];
 	}
 }
