@@ -11,14 +11,20 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Model\Account;
+use OCA\Talk\Matrix\Model\MatrixMemberMapper;
+use OCA\Talk\Matrix\Service\AccountService;
 use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversation;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -30,6 +36,7 @@ use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\Federation\ICloudIdManager;
+use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -50,6 +57,8 @@ class AvatarController extends AEnvironmentAwareOCSController {
 		private readonly LoggerInterface $logger,
 		private readonly ICloudIdManager $cloudIdManager,
 		private readonly IAvatarManager $avatarManager,
+		private readonly AccountService $matrixAccountService,
+		private readonly MatrixMemberMapper $matrixMemberMapper,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -325,6 +334,53 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	])]
 	public function getUserProxyAvatarDark(int $size, string $cloudId): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, true);
+	}
+
+	/**
+	 * Get the avatar of a Matrix user in a Matrix conversation, loaded with the Matrix account of the current user
+	 *
+	 * @param int $size Avatar size
+	 * @psalm-param 64|512 $size
+	 * @param string $mxid Matrix user id
+	 * @param bool $darkTheme Theme used for the placeholder
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>
+	 *
+	 * 200: User avatar returned, or a placeholder when it is not available
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/matrix-avatar/{size}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'size' => '(64|512)',
+	])]
+	public function getMatrixUserAvatar(int $size, string $mxid, bool $darkTheme = false): FileDisplayResponse {
+		$member = $this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX
+			? $this->matrixMemberMapper->getForRoom($this->room->getObjectId())[$mxid] ?? null
+			: null;
+		$account = $this->matrixAccountService->getForUser($this->participant->getAttendee()->getActorId());
+		if ($member?->getAvatarUrl() === null || $account?->getStatus() !== Account::STATUS_ACTIVE) {
+			return $this->getPlaceholderResponse($darkTheme);
+		}
+
+		try {
+			$thumbnail = $this->matrixAccountService->getClient($account, 10)->downloadThumbnail($member->getAvatarUrl(), $size);
+		} catch (MatrixException|DoesNotExistException|\InvalidArgumentException) {
+			return $this->getPlaceholderResponse($darkTheme);
+		}
+		$contentType = strtolower(trim(explode(';', $thumbnail->getHeaderLine('Content-Type'))[0]));
+		if (!in_array($contentType, MatrixMediaController::INLINE_TYPES, true)) {
+			return $this->getPlaceholderResponse($darkTheme);
+		}
+
+		$response = new FileDisplayResponse(
+			new InMemoryFile('avatar', (string)$thumbnail->getBody()),
+			Http::STATUS_OK,
+			['Content-Type' => $contentType],
+		);
+		$response->cacheFor(60 * 60 * 24, false, true);
+		return $response;
 	}
 
 	/**
