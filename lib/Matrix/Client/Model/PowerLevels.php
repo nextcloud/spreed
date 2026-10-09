@@ -56,4 +56,43 @@ final class PowerLevels {
 	public function canRedact(string $userId): bool {
 		return $this->getUserLevel($userId) >= (int)($this->content['redact'] ?? 50);
 	}
+
+	public function canInvite(string $userId): bool {
+		return $this->getUserLevel($userId) >= (int)($this->content['invite'] ?? 0);
+	}
+
+	/**
+	 * Whether the user may remove the target, which needs a lower level
+	 */
+	public function canKick(string $userId, string $targetId): bool {
+		$level = $this->getUserLevel($userId);
+		return $level >= (int)($this->content['kick'] ?? 50) && $level > $this->getUserLevel($targetId);
+	}
+
+	/**
+	 * Whether the user may give the target the level, which needs a lower
+	 * level for the target and at most the own level for the new one
+	 */
+	public function canChangeUserLevel(string $userId, string $targetId, int $newLevel): bool {
+		$level = $this->getUserLevel($userId);
+		return $this->canSendEvent($userId, 'm.room.power_levels', true)
+			&& $level > $this->getUserLevel($targetId)
+			&& $newLevel <= $level;
+	}
+
+	/**
+	 * Content with the level of the user changed
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function withUserLevel(string $userId, int $level): array {
+		$content = $this->content;
+		$users = is_array($content['users'] ?? null) ? $content['users'] : [];
+		if ($content === [] && $this->creator !== '') {
+			$users[$this->creator] = 100;
+		}
+		$users[$userId] = $level;
+		$content['users'] = $users;
+		return $content;
+	}
 }

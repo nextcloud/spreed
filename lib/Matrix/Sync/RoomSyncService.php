@@ -32,7 +32,10 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
+use OCP\Notification\IManager as INotificationManager;
+use OCP\Notification\INotification;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -54,6 +57,8 @@ class RoomSyncService {
 		private readonly AccountMapper $accountMapper,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly MessageSyncService $messageSyncService,
+		private readonly INotificationManager $notificationManager,
+		private readonly ITimeFactory $timeFactory,
 		private readonly IL10N $l,
 		private readonly LoggerInterface $logger,
 	) {
@@ -75,6 +80,15 @@ class RoomSyncService {
 			}
 		}
 
+		foreach ($batch->invited as $roomId => $strippedState) {
+			try {
+				$this->applyInvite($account, $roomId, $strippedState);
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Matrix invite to ' . $roomId . ' could not be handled for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+
 		foreach ($batch->left as $roomId) {
 			try {
 				$this->leaveRoom($account, $roomId);
@@ -92,6 +106,9 @@ class RoomSyncService {
 	 */
 	public function removeAccount(Account $account): void {
 		foreach ($this->memberMapper->getForAccount((string)$account->getId()) as $member) {
+			if ($member->getMembership() === Member::INVITE) {
+				$this->notificationManager->markProcessed($this->getInviteNotification($account, $member->getMatrixRoomId()));
+			}
 			$member->setAccountId(null);
 			$this->memberMapper->update($member);
 			$this->removeUserFromRoom($account, $member->getMatrixRoomId());
@@ -128,7 +145,11 @@ class RoomSyncService {
 		$matrixRoom->setEncrypted($state->encrypted);
 		$matrixRoom->setPowerLevels($state->powerLevels !== [] ? json_encode($state->powerLevels, JSON_THROW_ON_ERROR) : null);
 
+		$wasInvited = ($members[$account->getMxid()] ?? null)?->getMembership() === Member::INVITE;
 		$members = $this->updateMembers($matrixRoom, $state, $members);
+		if ($wasInvited) {
+			$this->notificationManager->markProcessed($this->getInviteNotification($account, (string)$matrixRoom->getId()));
+		}
 		$accounts = $this->accountMapper->getByMxids(array_values(array_filter(array_map(
 			static fn (MatrixMember $member): ?string => $member->getAccountId() !== null ? $member->getMxid() : null,
 			$members,
@@ -161,13 +182,17 @@ class RoomSyncService {
 		}
 		$this->roomMapper->update($matrixRoom);
 
-		$this->updateAttendees($room, $members, $accounts);
-		$this->updatePermissions($room, $state->getPowerLevels(), $accounts);
+		$powerLevels = $state->getPowerLevels();
+		$this->updateAttendees($room, $members, $accounts, $powerLevels);
+		$this->updateRoles($room, $powerLevels, $accounts);
 
 		return $this->messageSyncService->apply($room, $matrixRoom, $joined->timeline, $members, $accounts, $initial || $created);
 	}
 
-	protected function leaveRoom(Account $account, string $matrixRoomId): void {
+	/**
+	 * The account left the room, was removed or declined the invite
+	 */
+	public function leaveRoom(Account $account, string $matrixRoomId): void {
 		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
 		if ($matrixRoom === null) {
 			return;
@@ -178,7 +203,71 @@ class RoomSyncService {
 			$member->setMembership(Member::LEAVE);
 			$this->memberMapper->update($member);
 		}
+		$this->notificationManager->markProcessed($this->getInviteNotification($account, (string)$matrixRoom->getId()));
 		$this->removeUserFromRoom($account, (string)$matrixRoom->getId());
+	}
+
+	/**
+	 * Remember the invite and notify the user, the conversation is created once they joined
+	 *
+	 * @param list<Event> $strippedState
+	 */
+	protected function applyInvite(Account $account, string $matrixRoomId, array $strippedState): void {
+		$state = new RoomState($matrixRoomId);
+		$state->applyAll($strippedState);
+		$invite = $state->getMembers()[$account->getMxid()] ?? null;
+		if ($state->isSpace() || $invite === null || !$invite->isInvited()) {
+			return;
+		}
+
+		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
+		if ($matrixRoom === null) {
+			$matrixRoom = new MatrixRoom();
+			$matrixRoom->setMatrixRoomId($matrixRoomId);
+			$matrixRoom->setName($state->name !== null ? mb_substr($state->name, 0, 255) : null);
+			$matrixRoom->setCanonicalAlias($state->canonicalAlias !== null ? mb_substr($state->canonicalAlias, 0, 255) : null);
+			$matrixRoom = $this->roomMapper->insert($matrixRoom);
+		}
+
+		$member = $this->memberMapper->getForRoom((string)$matrixRoom->getId())[$account->getMxid()] ?? null;
+		if ($member?->getMembership() === Member::INVITE || $member?->getMembership() === Member::JOIN) {
+			return;
+		}
+		if ($member === null) {
+			$member = new MatrixMember();
+			$member->setMatrixRoomId((string)$matrixRoom->getId());
+			$member->setMxid($account->getMxid());
+		}
+		$member->setMembership(Member::INVITE);
+		$member->setAccountId((string)$account->getId());
+		$member->getId() === null ? $this->memberMapper->insert($member) : $this->memberMapper->update($member);
+
+		$inviter = '';
+		foreach ($strippedState as $event) {
+			if ($event->type === 'm.room.member' && $event->stateKey === $account->getMxid()) {
+				$inviter = $event->sender;
+			}
+		}
+		$inviterName = ($state->getMembers()[$inviter] ?? null)?->getName() ?? $inviter;
+
+		$notification = $this->getInviteNotification($account, (string)$matrixRoom->getId());
+		$notification->setDateTime($this->timeFactory->getDateTime())
+			->setSubject('matrix_invite', [
+				'inviter' => $inviter,
+				'inviterName' => $inviterName,
+				'roomName' => $state->name ?? $state->canonicalAlias ?? $inviterName,
+			]);
+		$this->notificationManager->notify($notification);
+	}
+
+	/**
+	 * @param string $matrixRoomId Id of the MatrixRoom entity
+	 */
+	protected function getInviteNotification(Account $account, string $matrixRoomId): INotification {
+		return $this->notificationManager->createNotification()
+			->setApp('spreed')
+			->setUser($account->getUserId())
+			->setObject('matrix_invite', $matrixRoomId);
 	}
 
 	protected function removeUserFromRoom(Account $account, string $matrixRoomId): void {
@@ -306,7 +395,7 @@ class RoomSyncService {
 	 * @param array<string, MatrixMember> $members
 	 * @param array<string, Account> $accounts
 	 */
-	protected function updateAttendees(Room $room, array $members, array $accounts): void {
+	protected function updateAttendees(Room $room, array $members, array $accounts, PowerLevels $powerLevels): void {
 		$expected = [];
 		foreach ($members as $mxid => $member) {
 			if ($member->getMembership() !== Member::JOIN) {
@@ -335,16 +424,18 @@ class RoomSyncService {
 			'actorType' => $entry[0],
 			'actorId' => $entry[1],
 			'displayName' => self::getMemberName($entry[2]),
-			'participantType' => Participant::USER,
+			'participantType' => self::getParticipantType($powerLevels->getUserLevel($entry[2]->getMxid())),
 		], $expected)));
 	}
 
 	/**
-	 * Users who may not send messages or reactions in the Matrix room lose the permission in the conversation
+	 * Members with power level 100 become owners and with 50 moderators. Users
+	 * who may not send messages or reactions in the Matrix room lose the
+	 * permission in the conversation.
 	 *
 	 * @param array<string, Account> $accounts
 	 */
-	protected function updatePermissions(Room $room, PowerLevels $powerLevels, array $accounts): void {
+	protected function updateRoles(Room $room, PowerLevels $powerLevels, array $accounts): void {
 		$mxids = [];
 		foreach ($accounts as $mxid => $account) {
 			$mxids[$account->getUserId()] = (string)$mxid;
@@ -352,11 +443,24 @@ class RoomSyncService {
 
 		foreach ($this->participantService->getParticipantsForRoom($room) as $participant) {
 			$attendee = $participant->getAttendee();
-			if ($attendee->getActorType() !== Attendee::ACTOR_USERS || !isset($mxids[$attendee->getActorId()])) {
+			$mxid = match ($attendee->getActorType()) {
+				Attendee::ACTOR_USERS => $mxids[$attendee->getActorId()] ?? null,
+				Attendee::ACTOR_MATRIX => $attendee->getActorId(),
+				default => null,
+			};
+			if ($mxid === null) {
 				continue;
 			}
 
-			$mxid = $mxids[$attendee->getActorId()];
+			$participantType = self::getParticipantType($powerLevels->getUserLevel($mxid));
+			if ($attendee->getParticipantType() !== $participantType) {
+				$this->participantService->updateParticipantType($room, $participant, $participantType);
+			}
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS || $participantType !== Participant::USER) {
+				// Moderators always have all permissions in conversations
+				continue;
+			}
+
 			$permissions = Attendee::PERMISSIONS_CUSTOM;
 			if ($powerLevels->canSendEvent($mxid, 'm.room.message')) {
 				$permissions |= Attendee::PERMISSIONS_CHAT;
@@ -372,6 +476,14 @@ class RoomSyncService {
 				$this->participantService->updatePermissions($room, $participant, Attendee::PERMISSIONS_MODIFY_SET, $permissions);
 			}
 		}
+	}
+
+	public static function getParticipantType(int $powerLevel): int {
+		return match (true) {
+			$powerLevel >= 100 => Participant::OWNER,
+			$powerLevel >= 50 => Participant::MODERATOR,
+			default => Participant::USER,
+		};
 	}
 
 	protected function updateDisplayName(Attendee $attendee, MatrixMember $member): void {
