@@ -42,4 +42,32 @@ class PowerLevelsTest extends TestCase {
 		self::assertTrue($powerLevels->canRedact('@mod:example.org'));
 		self::assertFalse($powerLevels->canRedact('@alice:example.org'));
 	}
+
+	public function testModeration(): void {
+		$powerLevels = new PowerLevels([
+			'users' => ['@admin:example.org' => 100, '@mod:example.org' => 50],
+			'invite' => 50,
+		]);
+
+		self::assertTrue($powerLevels->canInvite('@mod:example.org'));
+		self::assertFalse($powerLevels->canInvite('@alice:example.org'));
+		self::assertTrue($powerLevels->canKick('@mod:example.org', '@alice:example.org'));
+		self::assertFalse($powerLevels->canKick('@mod:example.org', '@admin:example.org'));
+		self::assertTrue($powerLevels->canChangeUserLevel('@admin:example.org', '@alice:example.org', 100));
+		self::assertFalse($powerLevels->canChangeUserLevel('@mod:example.org', '@alice:example.org', 100), 'Not above the own level');
+		self::assertTrue($powerLevels->canChangeUserLevel('@mod:example.org', '@alice:example.org', 50));
+		self::assertFalse($powerLevels->canChangeUserLevel('@mod:example.org', '@admin:example.org', 0), 'Not for higher levels');
+	}
+
+	public function testWithUserLevel(): void {
+		self::assertSame(
+			['users' => ['@creator:example.org' => 100, '@alice:example.org' => 50]],
+			(new PowerLevels([], '@creator:example.org'))->withUserLevel('@alice:example.org', 50),
+			'The creator keeps their implicit level',
+		);
+		self::assertSame(
+			['users' => ['@admin:example.org' => 100, '@alice:example.org' => 0], 'ban' => 50],
+			(new PowerLevels(['users' => ['@admin:example.org' => 100, '@alice:example.org' => 50], 'ban' => 50]))->withUserLevel('@alice:example.org', 0),
+		);
+	}
 }

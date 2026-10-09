@@ -18,6 +18,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
+use OCA\Talk\Middleware\Attribute\MatrixSupported;
 use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireFederatedParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
@@ -31,6 +32,7 @@ use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Middleware\Exceptions\FederationUnsupportedFeatureException;
 use OCA\Talk\Middleware\Exceptions\LobbyException;
+use OCA\Talk\Middleware\Exceptions\MatrixUnsupportedFeatureException;
 use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
 use OCA\Talk\Model\Attendee;
@@ -142,6 +144,13 @@ class InjectionMiddleware extends Middleware {
 		if (empty($reflectionMethod->getAttributes(FederationSupported::class))) {
 			// When federation is not supported, the room needs to be local
 			$this->checkFederationSupport($controller);
+		}
+
+		if (empty($reflectionMethod->getAttributes(MatrixSupported::class))
+			&& (!empty($reflectionMethod->getAttributes(RequireModeratorParticipant::class))
+				|| !empty($reflectionMethod->getAttributes(RequireLoggedInModeratorParticipant::class)))) {
+			// Moderation that is not applied to the Matrix room would only change the conversation
+			$this->checkMatrixSupport($controller);
 		}
 
 		if (!empty($reflectionMethod->getAttributes(RequireReadWriteConversation::class))) {
@@ -349,6 +358,16 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
+	 * @throws MatrixUnsupportedFeatureException
+	 */
+	protected function checkMatrixSupport(AEnvironmentAwareOCSController $controller): void {
+		$room = $controller->getRoom();
+		if ($room instanceof Room && $room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			throw new MatrixUnsupportedFeatureException();
+		}
+	}
+
+	/**
 	 * @param AEnvironmentAwareOCSController $controller
 	 * @throws ReadOnlyException
 	 */
@@ -464,6 +483,14 @@ class InjectionMiddleware extends Middleware {
 		if ($exception instanceof CannotReachRemoteException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_UNPROCESSABLE_ENTITY);
+			}
+
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
+		}
+
+		if ($exception instanceof MatrixUnsupportedFeatureException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_NOT_ACCEPTABLE);
 			}
 
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());

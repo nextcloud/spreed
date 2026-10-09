@@ -15,11 +15,13 @@ final class SyncBatch {
 	/**
 	 * @param array<string, JoinedRoom> $joined
 	 * @param list<string> $left Ids of rooms the user left or was removed from
+	 * @param array<string, list<Event>> $invited Stripped state of the rooms the user is invited to, indexed by room id
 	 */
 	public function __construct(
 		public readonly string $nextBatch,
 		public readonly array $joined = [],
 		public readonly array $left = [],
+		public readonly array $invited = [],
 	) {
 	}
 
@@ -32,11 +34,20 @@ final class SyncBatch {
 			}
 		}
 		$left = is_array($raw['rooms']['leave'] ?? null) ? array_map('strval', array_keys($raw['rooms']['leave'])) : [];
+		$invited = [];
+		foreach ((is_array($raw['rooms']['invite'] ?? null) ? $raw['rooms']['invite'] : []) as $roomId => $room) {
+			$invited[(string)$roomId] = [];
+			foreach (is_array($room['invite_state']['events'] ?? null) ? $room['invite_state']['events'] : [] as $event) {
+				if (is_array($event)) {
+					$invited[(string)$roomId][] = Event::fromArray($event);
+				}
+			}
+		}
 
-		return new self((string)($raw['next_batch'] ?? ''), $joined, $left);
+		return new self((string)($raw['next_batch'] ?? ''), $joined, $left, $invited);
 	}
 
 	public function isEmpty(): bool {
-		return $this->joined === [] && $this->left === [];
+		return $this->joined === [] && $this->left === [] && $this->invited === [];
 	}
 }
