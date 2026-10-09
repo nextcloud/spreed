@@ -171,7 +171,10 @@ class MessageSyncService {
 
 	protected function applyRedaction(Room $room, MatrixRoom $matrixRoom, Event $event, string $actorType, string $actorId): ?IComment {
 		$target = $this->getEventMap($matrixRoom, $event->redacts);
-		if ($target === null || $target->getSender() !== $event->sender) {
+		if ($target === null) {
+			return null;
+		}
+		if ($target->getSender() !== $event->sender && !$matrixRoom->getPowerLevelsModel()->canRedact($event->sender)) {
 			// The homeserver also delivers redactions of other users' events that clients must not apply without the redact power level
 			return null;
 		}

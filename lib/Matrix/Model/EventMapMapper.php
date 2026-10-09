@@ -11,6 +11,7 @@ namespace OCA\Talk\Matrix\Model;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -31,6 +32,20 @@ class EventMapMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($qb->expr()->eq('event_id', $qb->createNamedParameter($eventId)))
 			->andWhere($qb->expr()->eq('matrix_room_id', $qb->createNamedParameter($matrixRoomId)));
+		try {
+			return $this->findEntity($qb);
+		} catch (DoesNotExistException) {
+			return null;
+		}
+	}
+
+	public function findByCommentId(string $matrixRoomId, int $commentId): ?EventMap {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('comment_id', $qb->createNamedParameter($commentId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('matrix_room_id', $qb->createNamedParameter($matrixRoomId)))
+			->setMaxResults(1);
 		try {
 			return $this->findEntity($qb);
 		} catch (DoesNotExistException) {

@@ -6285,7 +6285,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description When trying to cross reference wrongly on a reply-private */
+            /** @description When trying to cross reference wrongly on a reply-private, or the Matrix account of the user can not send to the Matrix room */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -6335,6 +6335,22 @@ export interface operations {
             };
             /** @description Mention rate limit exceeded (guests only) */
             429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the message or could not be reached */
+            502: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7250,6 +7266,22 @@ export interface operations {
                     };
                 };
             };
+            /** @description The Matrix homeserver rejected the edit or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
         };
     };
     "chat-delete-message": {
@@ -7351,6 +7383,22 @@ export interface operations {
             };
             /** @description Deleting this message type is not allowed */
             405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the deletion or could not be reached */
+            502: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10589,8 +10637,36 @@ export interface operations {
                     };
                 };
             };
+            /** @description The Matrix account of the user can not react in the Matrix room */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
             /** @description Message not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the reaction or could not be reached */
+            502: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10657,8 +10733,36 @@ export interface operations {
                     };
                 };
             };
+            /** @description The Matrix account of the user can not remove the reaction in the Matrix room */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
             /** @description Message not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the removal or could not be reached */
+            502: {
                 headers: {
                     [name: string]: unknown;
                 };

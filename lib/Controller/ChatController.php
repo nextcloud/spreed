@@ -22,6 +22,8 @@ use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Service\SendException;
+use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
@@ -147,6 +149,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		private readonly ScheduledMessageService $scheduledMessageManager,
 		private readonly ConversationFolderService $conversationFolderService,
 		private readonly Config $talkConfig,
+		private readonly SendService $matrixSendService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -364,14 +367,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
-	 * 403: When trying to cross reference wrongly on a reply-private
+	 * 403: When trying to cross reference wrongly on a reply-private, or the Matrix account of the user can not send to the Matrix room
 	 * 404: Actor not found
 	 * 413: Message too long
 	 * 429: Mention rate limit exceeded (guests only)
+	 * 502: The Matrix homeserver rejected the message or could not be reached
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -417,6 +421,21 @@ class ChatController extends AEnvironmentAwareOCSController {
 			if (!$this->threadService->validateThread($this->room->getId(), $threadId)) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 			}
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			if ($threadTitle !== '' || ($replyTo === 0 && $threadId !== Thread::THREAD_NONE)) {
+				// Threads are not mirrored to Matrix
+				return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+			}
+			try {
+				$comment = $this->matrixSendService->sendMessage($this->room, $this->participant, $message, $parent, $referenceId, $silent);
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			} catch (MessageTooLongException) {
+				return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+			}
+			return $this->parseCommentToResponse($comment, $parentMessage);
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
@@ -1375,7 +1394,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
 	 *
 	 * 200: Message deleted successfully
 	 * 202: Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere
@@ -1383,6 +1402,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 403: Missing permissions to delete message
 	 * 404: Message not found
 	 * 405: Deleting this message type is not allowed
+	 * 502: The Matrix homeserver rejected the deletion or could not be reached
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -1419,7 +1439,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		// Special case for if the message is a bridged message, then the message is the bridge bot's message.
 		$isOwnMessage = $isOwnMessage || ($message->getActorType() === Attendee::ACTOR_BRIDGED && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID);
-		if (!$isOwnMessage
+		$isMatrixConversation = $this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX;
+		// In Matrix conversations the power levels of the Matrix room decide
+		if (!$isMatrixConversation
+			&& !$isOwnMessage
 			&& (!$this->participant->hasModeratorPermissions(false)
 				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE
 				|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
@@ -1433,14 +1456,20 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$systemMessageComment = $this->chatManager->deleteMessage(
-				$this->room,
-				$message,
-				$this->participant,
-				$this->timeFactory->getDateTime()
-			);
+			if ($isMatrixConversation) {
+				$systemMessageComment = $this->matrixSendService->deleteMessage($this->room, $this->participant, $message);
+			} else {
+				$systemMessageComment = $this->chatManager->deleteMessage(
+					$this->room,
+					$message,
+					$this->participant,
+					$this->timeFactory->getDateTime()
+				);
+			}
 		} catch (ShareNotFound) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		} catch (SendException $e) {
+			return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 		}
 
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
@@ -1479,7 +1508,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param int $messageId ID of the message
 	 * @param string $message the message to send
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
 	 *
 	 * 200: Message edited successfully
 	 * 202: Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services
@@ -1488,6 +1517,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 404: Message not found
 	 * 405: Editing this message type is not allowed
 	 * 413: Message too long
+	 * 502: The Matrix homeserver rejected the edit or could not be reached
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -1551,13 +1581,19 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 		try {
-			$systemMessageComment = $this->chatManager->editMessage(
-				$this->room,
-				$comment,
-				$this->participant,
-				$this->timeFactory->getDateTime(),
-				$message
-			);
+			if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+				$systemMessageComment = $this->matrixSendService->editMessage($this->room, $this->participant, $comment, $message);
+			} else {
+				$systemMessageComment = $this->chatManager->editMessage(
+					$this->room,
+					$comment,
+					$this->participant,
+					$this->timeFactory->getDateTime(),
+					$message
+				);
+			}
+		} catch (SendException $e) {
+			return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\InvalidArgumentException $e) {
@@ -1934,6 +1970,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$this->participantService->updateLastReadMessage($this->participant, $setToMessage);
 		$attendee = $this->participant->getAttendee();
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			$this->matrixSendService->sendReadMarker($this->room, $this->participant, $setToMessage);
+		}
 
 		$headers = $lastCommonRead = [];
 		if ($attendee->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

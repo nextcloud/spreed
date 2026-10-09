@@ -15,6 +15,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\JoinedRoom;
 use OCA\Talk\Matrix\Client\Model\Member;
+use OCA\Talk\Matrix\Client\Model\PowerLevels;
 use OCA\Talk\Matrix\Client\Model\RoomState;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Client\Room\NameCalculator;
@@ -41,6 +42,9 @@ use Psr\Log\LoggerInterface;
  * users, everyone else as Matrix actor.
  */
 class RoomSyncService {
+	/** Chat and reactions are mirrored, calls are not supported */
+	public const DEFAULT_PERMISSIONS = Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_CHAT | Attendee::PERMISSIONS_REACT;
+
 	public function __construct(
 		private readonly Manager $manager,
 		private readonly RoomService $roomService,
@@ -120,6 +124,9 @@ class RoomSyncService {
 		$matrixRoom->setName($state->name !== null ? mb_substr($state->name, 0, 255) : null);
 		$matrixRoom->setTopic($state->topic);
 		$matrixRoom->setCanonicalAlias($state->canonicalAlias !== null ? mb_substr($state->canonicalAlias, 0, 255) : null);
+		$matrixRoom->setCreator($state->creator !== '' ? mb_substr($state->creator, 0, 255) : null);
+		$matrixRoom->setEncrypted($state->encrypted);
+		$matrixRoom->setPowerLevels($state->powerLevels !== [] ? json_encode($state->powerLevels, JSON_THROW_ON_ERROR) : null);
 
 		$members = $this->updateMembers($matrixRoom, $state, $members);
 		$accounts = $this->accountMapper->getByMxids(array_values(array_filter(array_map(
@@ -129,6 +136,8 @@ class RoomSyncService {
 
 		$name = $this->getName($state, $joined, $account, $members);
 		$description = mb_substr($state->topic ?? '', 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
+		// Messages can not be sent to encrypted rooms yet
+		$readOnly = $state->encrypted ? Room::READ_ONLY : Room::READ_WRITE;
 		$room = $this->findTalkRoom($matrixRoom);
 		$created = $room === null;
 		if ($room === null) {
@@ -137,17 +146,23 @@ class RoomSyncService {
 				$name,
 				objectType: Room::OBJECT_TYPE_MATRIX,
 				objectId: (string)$matrixRoom->getId(),
-				readOnly: Room::READ_ONLY,
+				readOnly: $readOnly,
+				permissions: self::DEFAULT_PERMISSIONS,
 				description: $description,
 			);
 			$matrixRoom->setRoomId($room->getId());
 		} else {
 			$this->roomService->setName($room, $name);
 			$this->roomService->setDescription($room, $description);
+			$this->roomService->setReadOnly($room, $readOnly);
+			if ($room->getDefaultPermissions() !== self::DEFAULT_PERMISSIONS) {
+				$this->roomService->setDefaultPermissions($room, self::DEFAULT_PERMISSIONS);
+			}
 		}
 		$this->roomMapper->update($matrixRoom);
 
 		$this->updateAttendees($room, $members, $accounts);
+		$this->updatePermissions($room, $state->getPowerLevels(), $accounts);
 
 		return $this->messageSyncService->apply($room, $matrixRoom, $joined->timeline, $members, $accounts, $initial || $created);
 	}
@@ -208,6 +223,15 @@ class RoomSyncService {
 		}
 		if ($matrixRoom->getCanonicalAlias() !== null) {
 			$events[] = new Event('', 'm.room.canonical_alias', '', ['alias' => $matrixRoom->getCanonicalAlias()], '');
+		}
+		if ($matrixRoom->getCreator() !== null) {
+			$events[] = new Event('', 'm.room.create', $matrixRoom->getCreator(), ['creator' => $matrixRoom->getCreator()], '');
+		}
+		if ($matrixRoom->getEncrypted()) {
+			$events[] = new Event('', 'm.room.encryption', '', [], '');
+		}
+		if ($matrixRoom->getPowerLevels() !== null) {
+			$events[] = new Event('', 'm.room.power_levels', '', $matrixRoom->getPowerLevelsArray(), '');
 		}
 		foreach ($members as $member) {
 			$events[] = new Event('', 'm.room.member', '', array_filter([
@@ -313,6 +337,41 @@ class RoomSyncService {
 			'displayName' => self::getMemberName($entry[2]),
 			'participantType' => Participant::USER,
 		], $expected)));
+	}
+
+	/**
+	 * Users who may not send messages or reactions in the Matrix room lose the permission in the conversation
+	 *
+	 * @param array<string, Account> $accounts
+	 */
+	protected function updatePermissions(Room $room, PowerLevels $powerLevels, array $accounts): void {
+		$mxids = [];
+		foreach ($accounts as $mxid => $account) {
+			$mxids[$account->getUserId()] = (string)$mxid;
+		}
+
+		foreach ($this->participantService->getParticipantsForRoom($room) as $participant) {
+			$attendee = $participant->getAttendee();
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS || !isset($mxids[$attendee->getActorId()])) {
+				continue;
+			}
+
+			$mxid = $mxids[$attendee->getActorId()];
+			$permissions = Attendee::PERMISSIONS_CUSTOM;
+			if ($powerLevels->canSendEvent($mxid, 'm.room.message')) {
+				$permissions |= Attendee::PERMISSIONS_CHAT;
+			}
+			if ($powerLevels->canSendEvent($mxid, 'm.reaction')) {
+				$permissions |= Attendee::PERMISSIONS_REACT;
+			}
+			if ($permissions === self::DEFAULT_PERMISSIONS) {
+				$permissions = Attendee::PERMISSIONS_DEFAULT;
+			}
+
+			if ($attendee->getPermissions() !== $permissions) {
+				$this->participantService->updatePermissions($room, $participant, Attendee::PERMISSIONS_MODIFY_SET, $permissions);
+			}
+		}
 	}
 
 	protected function updateDisplayName(Attendee $attendee, MatrixMember $member): void {
