@@ -93,8 +93,10 @@ class PollController extends AEnvironmentAwareOCSController {
 			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft);
 		}
 
-		if ($this->room->getType() !== Room::TYPE_GROUP
-			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
+		if (($this->room->getType() !== Room::TYPE_GROUP
+			&& $this->room->getType() !== Room::TYPE_PUBLIC)
+			// Polls are not mirrored to Matrix rooms
+			|| $this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 			return new DataResponse(['error' => PollPropertyException::REASON_ROOM], Http::STATUS_BAD_REQUEST);
 		}
 

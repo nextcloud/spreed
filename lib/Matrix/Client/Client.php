@@ -12,6 +12,7 @@ use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Model\LoginResult;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Matrix Client-Server API façade. One instance per (homeserver, access token).
@@ -200,5 +201,13 @@ class Client {
 			}
 		}
 		return $this->transport->download('/_matrix/media/v3/download/' . $media);
+	}
+
+	/**
+	 * @return string Content URI
+	 * @throws MatrixException
+	 */
+	public function uploadMedia(StreamInterface $content, string $contentType, string $fileName): string {
+		return $this->transport->upload($content, $contentType, $fileName);
 	}
 }
