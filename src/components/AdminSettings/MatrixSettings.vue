@@ -122,7 +122,7 @@ async function saveAllowedGroups() {
 		await runAction('allowedGroups', () => updateMatrixSettings({ allowedGroups: allowedGroups.value.map((group) => group.id) }))
 	} catch (error) {
 		console.error(error)
-		showError(t('spreed', 'Could not save the groups'))
+		showError(t('spreed', 'Could not save allowed groups'))
 	} finally {
 		loading.value = false
 	}
@@ -138,7 +138,7 @@ async function loadHomeservers() {
 		homeservers.value = response.data.ocs.data
 	} catch (error) {
 		console.error(error)
-		showError(t('spreed', 'Could not load the homeservers'))
+		showError(t('spreed', 'Could not load homeservers'))
 	} finally {
 		loading.value = false
 	}
@@ -254,7 +254,7 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 	} catch (error) {
 		console.error(error)
 		if (isAxiosErrorResponse<{ error: string }>(error) && error.response?.data?.ocs?.data?.error === 'accounts') {
-			showError(t('spreed', 'The homeserver can not be removed while users have accounts linked on it'))
+			showError(t('spreed', 'The homeserver cannot be removed while people have accounts linked to it'))
 		} else {
 			showError(t('spreed', 'Could not remove the homeserver'))
 		}
@@ -287,8 +287,8 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 
 			<template v-if="enabled">
 				<NcFormGroup
-					:label="t('spreed', 'Limit to groups (optional)')"
-					:description="t('spreed', 'By default everyone can link a Matrix account. When at least one group is selected, only members of the listed groups can.')">
+					:label="t('spreed', 'Limit to groups')"
+					:description="t('spreed', 'By default, everyone can link a Matrix account. When at least one group is selected, only members of the selected groups can.')">
 					<NcFormBox>
 						<NcSelect
 							v-model="allowedGroups"
@@ -310,7 +310,7 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 							@open="searchGroup('')"
 							@search="debounceSearchGroup($event)" />
 						<NcFormBoxButton
-							:label="getActionStatus('allowedGroups') === 'success' ? t('spreed', 'Saved') : t('spreed', 'Save changes')"
+							:label="getActionStatus('allowedGroups') === 'success' ? t('spreed', 'Saved!') : t('spreed', 'Save changes')"
 							:disabled="loading"
 							@click="saveAllowedGroups">
 							<template #icon>

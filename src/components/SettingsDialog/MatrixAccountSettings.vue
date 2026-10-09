@@ -178,7 +178,7 @@ async function unlinkAccount() {
 	const confirmUnlinkAccount = await spawnDialog(ConfirmDialog, {
 		// TRANSLATORS: Dialog title and button to unlink the Matrix account from this client
 		name: t('spreed', 'Unlink account'),
-		message: t('spreed', 'Do you really want to unlink "{mxid}"? This client will be logged out from your Matrix account.', {
+		message: t('spreed', 'Do you really want to unlink "{mxid}"? This client will be logged out of your Matrix account.', {
 			mxid: account.value!.mxid,
 		}, { escape: false, sanitize: false }),
 		buttons: [
@@ -212,7 +212,7 @@ async function unlinkAccount() {
 			:description="accountDescription">
 			<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
 				<p class="matrix-account__warning">
-					{{ t('spreed', 'The homeserver rejected the session of Talk. Enter your Matrix password to log in again.') }}
+					{{ t('spreed', 'The homeserver ended the session of this client. Enter your Matrix password to log in again.') }}
 				</p>
 				<p v-if="account.lastError" class="matrix-account__hint">
 					{{ account.lastError }}
@@ -230,7 +230,7 @@ async function unlinkAccount() {
 						:disabled="loading || !form.password"
 						@click="reloginAccount">
 						<!-- TRANSLATORS: Button to log in to Matrix again with the password -->
-						{{ t('spreed', 'Log in again') }}
+						{{ t('spreed', 'Log in') }}
 						<template #icon>
 							<NcLoadingIcon v-if="loading" :size="20" />
 							<IconLogin v-else :size="20" />
@@ -263,7 +263,7 @@ async function unlinkAccount() {
 		</NcFormGroup>
 
 		<p v-else-if="!canLink || homeservers.length === 0" class="matrix-account__hint">
-			{{ t('spreed', 'Linking a Matrix account is not available for you.') }}
+			{{ t('spreed', 'Linking a Matrix account is not available to you.') }}
 		</p>
 
 		<NcFormGroup
