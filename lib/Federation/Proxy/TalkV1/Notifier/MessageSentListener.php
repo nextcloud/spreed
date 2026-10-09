@@ -48,10 +48,9 @@ class MessageSentListener implements IEventListener {
 			return;
 		}
 
-		// FIXME once we store/cache the info skip this if the room has no federation participant
-		// if (!$event->getRoom()->hasFederatedParticipants()) {
-		// return;
-		// }
+		if (!$event->getRoom()->hasFederatedParticipants()) {
+		  return;
+		}
 
 		// Try to have as neutral as possible messages
 		$l = $this->l10nFactory->get('spreed', 'en', 'en');
