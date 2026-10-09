@@ -1177,8 +1177,29 @@ class SystemMessage implements IEventListener {
 		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			return $this->getRemoteUser($room, $actorId);
 		}
+		if ($actorType === Attendee::ACTOR_MATRIX) {
+			return $this->getMatrixUser($room, $actorId);
+		}
 
 		return $this->getUser($actorId);
+	}
+
+	protected function getMatrixUser(Room $room, string $mxid): array {
+		$key = $room->getId() . '/' . Attendee::ACTOR_MATRIX . '/' . $mxid;
+		if (!isset($this->guestNames[$key])) {
+			try {
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_MATRIX, $mxid);
+				$this->guestNames[$key] = $participant->getAttendee()->getDisplayName() ?: $mxid;
+			} catch (ParticipantNotFoundException) {
+				$this->guestNames[$key] = $mxid;
+			}
+		}
+
+		return [
+			'type' => 'highlight',
+			'id' => Attendee::ACTOR_MATRIX . '/' . $mxid,
+			'name' => $this->guestNames[$key],
+		];
 	}
 
 	protected function getUser(string $uid): array {

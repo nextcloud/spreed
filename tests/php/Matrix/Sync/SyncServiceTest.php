@@ -92,10 +92,15 @@ class SyncServiceTest extends TestCase {
 				'' => self::batch('first'),
 				'first' => self::batch('second', true),
 			});
-		$this->roomSyncService->method('process')->willReturn(['rooms' => 2, 'failed' => 0]);
+		$this->roomSyncService->expects(self::exactly(2))
+			->method('process')
+			->willReturnCallback(static function (Account $account, SyncBatch $batch, bool $initial): array {
+				self::assertSame($batch->nextBatch === 'first', $initial, 'Only the first batch is from the initial sync');
+				return ['rooms' => 2, 'messages' => $initial ? 5 : 1, 'failed' => 0];
+			});
 		$this->accountMapper->expects(self::once())->method('releaseLock')->with($account);
 
-		self::assertSame(['batches' => 2, 'rooms' => 4, 'failed' => 0], $this->service->syncAccount($account, 10));
+		self::assertSame(['batches' => 2, 'rooms' => 4, 'messages' => 6, 'failed' => 0], $this->service->syncAccount($account, 10));
 		self::assertSame('second', $account->getNextBatch());
 		self::assertSame('filter', $account->getFilterId());
 		self::assertSame(1000, $account->getLastSync());
@@ -107,7 +112,7 @@ class SyncServiceTest extends TestCase {
 		$this->accountMapper->method('acquireLock')->willReturn(true);
 		$this->client->method('createFilter')->willReturn('filter');
 		$this->client->expects(self::once())->method('sync')->willReturn(self::batch('first'));
-		$this->roomSyncService->method('process')->willReturn(['rooms' => 1, 'failed' => 1]);
+		$this->roomSyncService->method('process')->willReturn(['rooms' => 1, 'messages' => 0, 'failed' => 1]);
 
 		$this->service->syncAccount($account, 10);
 
@@ -120,7 +125,7 @@ class SyncServiceTest extends TestCase {
 		$this->accountMapper->method('acquireLock')->willReturn(true);
 		$this->client->expects(self::never())->method('createFilter');
 		$this->client->method('sync')->with('first', 'filter')->willReturn(self::batch('second', true));
-		$this->roomSyncService->method('process')->willReturn(['rooms' => 0, 'failed' => 1]);
+		$this->roomSyncService->method('process')->willReturn(['rooms' => 0, 'messages' => 0, 'failed' => 1]);
 
 		$this->service->syncAccount($account, 10);
 

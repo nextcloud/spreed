@@ -191,6 +191,18 @@ class MessageParser {
 					$displayName = $botName . ' (Bot)';
 				}
 			}
+		} elseif ($actorType === Attendee::ACTOR_MATRIX) {
+			$cacheKey = $actorType . '/' . $actorId;
+			if (!isset($this->guestNames[$cacheKey])) {
+				$displayName = $actorId;
+				try {
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), $actorType, $actorId);
+					$displayName = $participant->getAttendee()->getDisplayName() ?: $actorId;
+				} catch (ParticipantNotFoundException) {
+				}
+				$this->guestNames[$cacheKey] = $displayName;
+			}
+			$displayName = $this->guestNames[$cacheKey];
 		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			if (isset($this->federatedUsersNames[$actorId])) {
 				$displayName = $this->federatedUsersNames[$actorId];

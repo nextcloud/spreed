@@ -20,6 +20,7 @@ use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Client\Room\NameCalculator;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
+use OCA\Talk\Matrix\Model\EventMapMapper;
 use OCA\Talk\Matrix\Model\MatrixMember;
 use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
@@ -35,9 +36,9 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Mirrors the joined Matrix rooms of linked accounts as read-only
- * conversations: name, description and the joined members as attendees.
- * Members with a linked account are added as users, everyone else as
- * Matrix actor.
+ * conversations: name, description, the joined members as attendees and the
+ * timeline as chat messages. Members with a linked account are added as
+ * users, everyone else as Matrix actor.
  */
 class RoomSyncService {
 	public function __construct(
@@ -47,19 +48,22 @@ class RoomSyncService {
 		private readonly MatrixRoomMapper $roomMapper,
 		private readonly MatrixMemberMapper $memberMapper,
 		private readonly AccountMapper $accountMapper,
+		private readonly EventMapMapper $eventMapMapper,
+		private readonly MessageSyncService $messageSyncService,
 		private readonly IL10N $l,
 		private readonly LoggerInterface $logger,
 	) {
 	}
 
 	/**
-	 * @return array{rooms: int, failed: int}
+	 * @param bool $initial Whether the batch is from an initial sync, so the messages are history
+	 * @return array{rooms: int, messages: int, failed: int}
 	 */
-	public function process(Account $account, SyncBatch $batch): array {
-		$stats = ['rooms' => 0, 'failed' => 0];
+	public function process(Account $account, SyncBatch $batch, bool $initial): array {
+		$stats = ['rooms' => 0, 'messages' => 0, 'failed' => 0];
 		foreach ($batch->joined as $roomId => $joined) {
 			try {
-				$this->applyJoinedRoom($account, $joined);
+				$stats['messages'] += $this->applyJoinedRoom($account, $joined, $initial);
 				$stats['rooms']++;
 			} catch (\Throwable $e) {
 				$stats['failed']++;
@@ -90,7 +94,10 @@ class RoomSyncService {
 		}
 	}
 
-	protected function applyJoinedRoom(Account $account, JoinedRoom $joined): void {
+	/**
+	 * @return int Number of new messages
+	 */
+	protected function applyJoinedRoom(Account $account, JoinedRoom $joined, bool $initial): int {
 		$matrixRoom = $this->findMatrixRoom($joined->roomId);
 		$state = new RoomState($joined->roomId);
 		$members = [];
@@ -101,7 +108,7 @@ class RoomSyncService {
 		$state->applyAll($joined->stateEvents);
 
 		if ($state->isSpace()) {
-			return;
+			return 0;
 		}
 
 		if ($matrixRoom === null) {
@@ -123,6 +130,7 @@ class RoomSyncService {
 		$name = $this->getName($state, $joined, $account, $members);
 		$description = mb_substr($state->topic ?? '', 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
 		$room = $this->findTalkRoom($matrixRoom);
+		$created = $room === null;
 		if ($room === null) {
 			$room = $this->roomService->createConversation(
 				Room::TYPE_GROUP,
@@ -140,6 +148,8 @@ class RoomSyncService {
 		$this->roomMapper->update($matrixRoom);
 
 		$this->updateAttendees($room, $members, $accounts);
+
+		return $this->messageSyncService->apply($room, $matrixRoom, $joined->timeline, $members, $accounts, $initial || $created);
 	}
 
 	protected function leaveRoom(Account $account, string $matrixRoomId): void {
@@ -174,6 +184,7 @@ class RoomSyncService {
 
 		if (!$this->memberMapper->hasLinkedMembers($matrixRoomId)) {
 			$this->memberMapper->deleteForRoom($matrixRoomId);
+			$this->eventMapMapper->deleteForRoom($matrixRoomId);
 			$this->roomMapper->delete($matrixRoom);
 			if ($room !== null) {
 				$this->roomService->deleteRoom($room);
