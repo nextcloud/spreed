@@ -523,6 +523,11 @@ export interface operations {
                      * @default null
                      */
                     fileName?: string | null;
+                    /**
+                     * @description The file name of the speaker intervals sidecar JSON file uploaded via the same share. Only used with chunked uploads.
+                     * @default null
+                     */
+                    intervalsFileName?: string | null;
                 };
             };
         };
