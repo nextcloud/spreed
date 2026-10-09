@@ -18,6 +18,8 @@ use OCA\Talk\Config;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Service\SendException;
+use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -96,6 +98,7 @@ class ChatControllerTest extends TestCase {
 	private LoggerInterface&MockObject $logger;
 	private ConversationFolderService&MockObject $conversationFolderService;
 	private Config&MockObject $talkConfig;
+	protected SendService&MockObject $sendService;
 
 	protected Room&MockObject $room;
 
@@ -144,6 +147,7 @@ class ChatControllerTest extends TestCase {
 		$this->scheduledMessageService = $this->createMock(ScheduledMessageService::class);
 		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->sendService = $this->createMock(SendService::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -199,6 +203,7 @@ class ChatControllerTest extends TestCase {
 			$this->scheduledMessageService,
 			$this->conversationFolderService,
 			$this->talkConfig,
+			$this->sendService,
 		);
 	}
 
@@ -283,6 +288,85 @@ class ChatControllerTest extends TestCase {
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
+	}
+
+	public function testSendMessageToMatrixConversation(): void {
+		$participant = $this->createStub(Participant::class);
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+
+		$date = new \DateTime();
+		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
+		$this->sendService->expects($this->once())
+			->method('sendMessage')
+			->with($this->room, $participant, 'testMessage', null, 'ref', true)
+			->willReturn($comment);
+		$this->chatManager->expects($this->never())
+			->method('sendMessage');
+
+		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->method('getVisibility')
+			->willReturn(true);
+		$chatMessage->method('toArray')
+			->willReturn(['id' => 42]);
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($this->room, $participant, $comment, $this->l)
+			->willReturn($chatMessage);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage', '', 'ref', 0, '', true);
+
+		$this->assertEquals(new DataResponse(['id' => 42], Http::STATUS_CREATED), $response);
+	}
+
+	public static function dataSendMessageToMatrixConversationFails(): array {
+		return [
+			'thread title' => ['testThread', 0, null, new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST)],
+			'thread reply' => ['', 23, null, new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST)],
+			'homeserver' => ['', 0, new SendException('matrix', Http::STATUS_BAD_GATEWAY), new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY)],
+		];
+	}
+
+	#[DataProvider('dataSendMessageToMatrixConversationFails')]
+	public function testSendMessageToMatrixConversationFails(string $threadTitle, int $threadId, ?SendException $exception, DataResponse $expected): void {
+		$participant = $this->createStub(Participant::class);
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->threadService->method('validateThread')->willReturn(true);
+
+		$this->sendService->expects($exception !== null ? $this->once() : $this->never())
+			->method('sendMessage')
+			->willThrowException($exception ?? new SendException('unused', Http::STATUS_BAD_REQUEST));
+		$this->chatManager->expects($this->never())
+			->method('sendMessage');
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage', '', '', 0, '', false, $threadTitle, $threadId);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testDeleteMessageOfOtherUserInMatrixConversation(): void {
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn(Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => $this->userId]));
+		$participant->expects($this->never())->method('hasModeratorPermissions');
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+
+		$comment = $this->newComment(42, Attendee::ACTOR_MATRIX, '@bob:example.org', new \DateTime(), 'testMessage');
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
+		$this->chatManager->method('getComment')->with($this->room, '42')->willReturn($comment);
+		$this->sendService->expects($this->once())
+			->method('deleteMessage')
+			->with($this->room, $participant, $comment)
+			->willThrowException(new SendException('permission', Http::STATUS_FORBIDDEN));
+		$this->chatManager->expects($this->never())
+			->method('deleteMessage');
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+
+		$this->assertEquals(new DataResponse(['error' => 'permission'], Http::STATUS_FORBIDDEN), $this->controller->deleteMessage(42));
 	}
 
 	public function testSendMessageByUserWithReferenceId(): void {

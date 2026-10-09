@@ -24,8 +24,15 @@ use Psr\Http\Message\StreamFactoryInterface;
  * contacts the configured base URL.
  */
 final class Transport {
+	/** Retries of PUT requests, which are idempotent through their transaction id */
+	public const MAX_RETRIES = 2;
+	/** Milliseconds to wait at most before a retry */
+	public const MAX_RETRY_DELAY = 2000;
+
 	private string $baseUrl;
 	private ?string $accessToken = null;
+	/** @var \Closure(int): void */
+	private \Closure $sleep;
 
 	public function __construct(
 		string $baseUrl,
@@ -34,6 +41,12 @@ final class Transport {
 		private readonly StreamFactoryInterface $streamFactory,
 	) {
 		$this->baseUrl = rtrim($baseUrl, '/');
+		$this->sleep = static fn (int $milliseconds) => usleep($milliseconds * 1000);
+	}
+
+	/** @param \Closure(int): void $sleep Called with the milliseconds to wait before a retry */
+	public function setSleep(\Closure $sleep): void {
+		$this->sleep = $sleep;
 	}
 
 	public function withAccessToken(#[\SensitiveParameter] ?string $token): self {
@@ -62,6 +75,28 @@ final class Transport {
 	 */
 	public function post(string $path, array $body = []): array {
 		return $this->request('POST', $path, $body);
+	}
+
+	/**
+	 * Retried when rate limited or on server errors
+	 *
+	 * @param array<string, mixed> $body
+	 * @return array<string, mixed>
+	 * @throws MatrixException
+	 */
+	public function put(string $path, array $body = []): array {
+		for ($attempt = 0; ; $attempt++) {
+			try {
+				return $this->request('PUT', $path, $body);
+			} catch (MatrixException $e) {
+				$retryable = $e->getHttpStatus() === 429 || $e->getHttpStatus() >= 500;
+				if (!$retryable || $attempt >= self::MAX_RETRIES) {
+					throw $e;
+				}
+				$delay = is_int($e->getBody()['retry_after_ms'] ?? null) ? $e->getBody()['retry_after_ms'] : 500;
+				($this->sleep)(min(self::MAX_RETRY_DELAY, $delay));
+			}
+		}
 	}
 
 	/**

@@ -18,6 +18,10 @@ final class RoomState {
 	public ?string $topic = null;
 	public ?string $canonicalAlias = null;
 	public ?string $roomType = null;
+	public string $creator = '';
+	public bool $encrypted = false;
+	/** @var array<string, mixed> */
+	public array $powerLevels = [];
 	/** @var array<string, Member> */
 	private array $members = [];
 
@@ -42,6 +46,13 @@ final class RoomState {
 		switch ($event->type) {
 			case 'm.room.create':
 				$this->roomType = is_string($content['type'] ?? null) ? $content['type'] : null;
+				$this->creator = is_string($content['creator'] ?? null) ? $content['creator'] : $event->sender;
+				break;
+			case 'm.room.encryption':
+				$this->encrypted = true;
+				break;
+			case 'm.room.power_levels':
+				$this->powerLevels = $content;
 				break;
 			case 'm.room.name':
 				$name = is_string($content['name'] ?? null) ? trim($content['name']) : '';
@@ -62,6 +73,10 @@ final class RoomState {
 				$this->members[$member->userId] = $member;
 				break;
 		}
+	}
+
+	public function getPowerLevels(): PowerLevels {
+		return new PowerLevels($this->powerLevels, $this->creator);
 	}
 
 	public function isSpace(): bool {

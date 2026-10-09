@@ -21,6 +21,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
         + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
         + `403 Forbidden` When the participant does not have the required permission to react (see attendee permission `256`)
         + `404 Not Found` When the conversation or message to react could not be found for the participant
+        + `502 Bad Gateway` When the Matrix homeserver rejected the change or could not be reached (`matrix-rooms` capability)
 
     - Data:
         Array with data of reactions:
@@ -50,6 +51,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
         + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
         + `403 Forbidden` When the participant does not have the required permission to react (see attendee permission `256`)
         + `404 Not Found` When the conversation or message to react or reaction could not be found for the participant
+        + `502 Bad Gateway` When the Matrix homeserver rejected the change or could not be reached (`matrix-rooms` capability)
 
     - Data:
         Array with data of reactions:

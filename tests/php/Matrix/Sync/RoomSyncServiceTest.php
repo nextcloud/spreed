@@ -26,6 +26,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IL10N;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -162,7 +163,7 @@ class RoomSyncServiceTest extends TestCase {
 			]));
 		$this->roomService->expects(self::once())
 			->method('createConversation')
-			->with(Room::TYPE_GROUP, 'Bob and Carol', null, Room::OBJECT_TYPE_MATRIX, '100', '', Room::READ_ONLY)
+			->with(Room::TYPE_GROUP, 'Bob and Carol', null, Room::OBJECT_TYPE_MATRIX, '100', '', Room::READ_WRITE, Room::LISTABLE_NONE, 0, Webinary::LOBBY_NONE, null, Webinary::SIP_DISABLED, RoomSyncService::DEFAULT_PERMISSIONS)
 			->willReturn($this->room);
 		$this->roomMapper->expects(self::once())
 			->method('update')
@@ -238,6 +239,30 @@ class RoomSyncServiceTest extends TestCase {
 		]), false);
 
 		self::assertSame(['rooms' => 1, 'messages' => 0, 'failed' => 0], $stats);
+	}
+
+	public function testEncryptedRoomAndPowerLevels(): void {
+		$this->roomMapper->method('getByMatrixRoomId')->willReturn($this->matrixRoom());
+		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);
+		$this->room->method('getDefaultPermissions')->willReturn(Attendee::PERMISSIONS_DEFAULT);
+		$this->memberMapper->method('getForRoom')->with('100')->willReturn([
+			'@alice:example.org' => $this->member('@alice:example.org', 'join', '7', 'Alice'),
+		]);
+		$this->roomService->expects(self::once())->method('setReadOnly')->with($this->room, Room::READ_ONLY);
+		$this->roomService->expects(self::once())->method('setDefaultPermissions')->with($this->room, RoomSyncService::DEFAULT_PERMISSIONS);
+
+		$alice = $this->participant(Attendee::ACTOR_USERS, 'alice');
+		$this->participantService->method('getParticipantsForRoom')->willReturn([$alice]);
+		$this->participantService->expects(self::once())
+			->method('updatePermissions')
+			->with($this->room, $alice, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_REACT);
+
+		$this->service->process($this->account(), self::batch([
+			'state' => ['events' => [
+				['type' => 'm.room.encryption', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['algorithm' => 'm.megolm.v1.aes-sha2']],
+				['type' => 'm.room.power_levels', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['users' => ['@bob:example.org' => 100], 'events' => ['m.room.message' => 50]]],
+			]],
+		]), false);
 	}
 
 	public function testSpaceIsSkipped(): void {

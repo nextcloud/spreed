@@ -89,4 +89,36 @@ class Client {
 			'set_presence' => 'offline',
 		]));
 	}
+
+	/**
+	 * @param array<string, mixed> $content
+	 * @param string $transactionId Unique per access token, a retry with the same id is not sent twice
+	 * @return string Event id
+	 * @throws MatrixException
+	 */
+	public function sendEvent(string $roomId, string $type, array $content, string $transactionId): string {
+		$path = self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/send/' . rawurlencode($type) . '/' . rawurlencode($transactionId);
+		return (string)($this->transport->put($path, $content)['event_id'] ?? '');
+	}
+
+	/**
+	 * @return string Event id of the redaction
+	 * @throws MatrixException
+	 */
+	public function redact(string $roomId, string $eventId, string $transactionId): string {
+		$path = self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/redact/' . rawurlencode($eventId) . '/' . rawurlencode($transactionId);
+		return (string)($this->transport->put($path)['event_id'] ?? '');
+	}
+
+	/**
+	 * Mark the event as read and as the fully read marker
+	 *
+	 * @throws MatrixException
+	 */
+	public function setReadMarker(string $roomId, string $eventId): void {
+		$this->transport->post(self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/read_markers', [
+			'm.read' => $eventId,
+			'm.fully_read' => $eventId,
+		]);
+	}
 }

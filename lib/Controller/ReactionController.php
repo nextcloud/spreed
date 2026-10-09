@@ -12,12 +12,15 @@ use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
 use OCA\Talk\Exceptions\ReactionOutOfContextException;
+use OCA\Talk\Matrix\Service\SendException;
+use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Room;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -35,6 +38,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		string $appName,
 		IRequest $request,
 		private readonly ReactionManager $reactionManager,
+		private readonly SendService $matrixSendService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -45,12 +49,14 @@ class ReactionController extends AEnvironmentAwareOCSController {
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
 	 * @param string $reaction Emoji to add
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, null, array{}>
 	 *
 	 * 200: Reaction already existed
 	 * 201: Reaction added successfully
 	 * 400: Adding reaction is not possible
+	 * 403: The Matrix account of the user can not react in the Matrix room
 	 * 404: Message not found
+	 * 502: The Matrix homeserver rejected the reaction or could not be reached
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -72,19 +78,25 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->reactionManager->addReactionMessage(
-				$this->getRoom(),
-				$this->getParticipant()->getAttendee()->getActorType(),
-				$this->getParticipant()->getAttendee()->getActorId(),
-				$this->getParticipant()->getAttendee()->getDisplayName(),
-				$messageId,
-				$reaction
-			);
+			if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+				$this->matrixSendService->addReaction($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
+			} else {
+				$this->reactionManager->addReactionMessage(
+					$this->getRoom(),
+					$this->getParticipant()->getAttendee()->getActorType(),
+					$this->getParticipant()->getAttendee()->getActorId(),
+					$this->getParticipant()->getAttendee()->getDisplayName(),
+					$messageId,
+					$reaction
+				);
+			}
 			$status = Http::STATUS_CREATED;
 		} catch (NotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		} catch (ReactionAlreadyExistsException) {
 			$status = Http::STATUS_OK;
+		} catch (SendException $e) {
+			return new DataResponse(null, $e->getStatus());
 		} catch (ReactionNotSupportedException|ReactionOutOfContextException|\Exception) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
@@ -98,11 +110,13 @@ class ReactionController extends AEnvironmentAwareOCSController {
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
 	 * @param string $reaction Emoji to remove
-	 * @return DataResponse<Http::STATUS_OK, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, list<TalkReaction>>|\stdClass, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, null, array{}>
 	 *
 	 * 200: Reaction deleted successfully
 	 * 400: Deleting reaction is not possible
+	 * 403: The Matrix account of the user can not remove the reaction in the Matrix room
 	 * 404: Message not found
+	 * 502: The Matrix homeserver rejected the removal or could not be reached
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -124,17 +138,23 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->reactionManager->deleteReactionMessage(
-				$this->getRoom(),
-				$this->getParticipant()->getAttendee()->getActorType(),
-				$this->getParticipant()->getAttendee()->getActorId(),
-				$this->getParticipant()->getAttendee()->getDisplayName(),
-				$messageId,
-				$reaction
-			);
+			if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+				$this->matrixSendService->removeReaction($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
+			} else {
+				$this->reactionManager->deleteReactionMessage(
+					$this->getRoom(),
+					$this->getParticipant()->getAttendee()->getActorType(),
+					$this->getParticipant()->getAttendee()->getActorId(),
+					$this->getParticipant()->getAttendee()->getDisplayName(),
+					$messageId,
+					$reaction
+				);
+			}
 			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
 		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		} catch (SendException $e) {
+			return new DataResponse(null, $e->getStatus());
 		} catch (\Exception) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}

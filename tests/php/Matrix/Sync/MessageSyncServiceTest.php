@@ -286,6 +286,18 @@ class MessageSyncServiceTest extends TestCase {
 		$this->apply([self::event('$redaction', 'm.room.redaction', [], '@bob:example.org', '$original')]);
 	}
 
+	public function testRedactionByModerator(): void {
+		$this->matrixRoom = MatrixRoom::fromRow(['id' => '100', 'room_id' => 23, 'matrix_room_id' => '!room:example.org', 'power_levels' => json_encode(['users' => ['@bob:example.org' => 50]])]);
+		$original = $this->comment(11, ChatManager::VERB_MESSAGE, Attendee::ACTOR_USERS, 'alice');
+		$this->mapped('$original', 11, '@alice:example.org');
+		$this->chatManager->expects(self::once())
+			->method('deleteMessage')
+			->with($this->room, $original, self::anything(), self::anything())
+			->willReturn($this->comment(12, ChatManager::VERB_SYSTEM));
+
+		$this->apply([self::event('$redaction', 'm.room.redaction', [], '@bob:example.org', '$original')]);
+	}
+
 	public function testEventsOfOtherRoomsAreNotReferenced(): void {
 		$this->comment(11);
 		$this->mapped('$other', 11, '@bob:example.org', 'm.room.message', '200');
