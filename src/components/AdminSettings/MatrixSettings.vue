@@ -27,6 +27,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
 import IconDeleteOutline from 'vue-material-design-icons/DeleteOutline.vue'
 import IconLanConnect from 'vue-material-design-icons/LanConnect.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import { useActionStatus } from '../../composables/useActionStatus.ts'
@@ -183,6 +184,30 @@ async function updateHomeserver(homeserver: MatrixHomeserver, changes: updateMat
 }
 
 /**
+ * Ask for a new name and rename a homeserver
+ *
+ * @param homeserver - homeserver to rename
+ */
+async function renameHomeserver(homeserver: MatrixHomeserver) {
+	const name = await spawnDialog(ConfirmDialog, {
+		// TRANSLATORS: Dialog title and button to change the name of a Matrix homeserver that people see
+		name: t('spreed', 'Edit label'),
+		isForm: true,
+		inputProps: { label: t('spreed', 'Label shown to people (optional)'), value: homeserver.name },
+		buttons: [
+			{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
+			{ label: t('spreed', 'Save'), variant: 'primary', type: 'submit', callback: () => true },
+		],
+	})
+
+	if (typeof name !== 'string' || name === homeserver.name) {
+		return
+	}
+
+	await updateHomeserver(homeserver, { name })
+}
+
+/**
  * Test the connection to a homeserver
  *
  * @param homeserver - homeserver to test
@@ -228,7 +253,11 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 		homeservers.value = homeservers.value.filter((entry) => entry.id !== homeserver.id)
 	} catch (error) {
 		console.error(error)
-		showError(t('spreed', 'Could not remove the homeserver'))
+		if (isAxiosErrorResponse<{ error: string }>(error) && error.response?.data?.ocs?.data?.error === 'accounts') {
+			showError(t('spreed', 'The homeserver can not be removed while users have accounts linked on it'))
+		} else {
+			showError(t('spreed', 'Could not remove the homeserver'))
+		}
 	} finally {
 		loading.value = false
 	}
@@ -315,6 +344,15 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 							<!-- TRANSLATORS: Switch to allow people to link accounts on this Matrix homeserver -->
 							{{ t('spreed', 'Enabled') }}
 						</NcFormBoxSwitch>
+						<NcFormBoxButton
+							:disabled="loading"
+							@click="renameHomeserver(homeserver)">
+							<!-- TRANSLATORS: Dialog title and button to change the name of a Matrix homeserver that people see -->
+							{{ t('spreed', 'Edit label') }}
+							<template #icon>
+								<IconPencilOutline :size="20" />
+							</template>
+						</NcFormBoxButton>
 						<NcFormBoxButton
 							:label="t('spreed', 'Test connection')"
 							:disabled="loading"

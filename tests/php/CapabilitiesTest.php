@@ -251,6 +251,9 @@ class CapabilitiesTest extends TestCase {
 						'outgoing-enabled' => false,
 						'only-trusted-servers' => true,
 					],
+					'matrix' => [
+						'enabled' => false,
+					],
 					'previews' => [
 						'max-gif-size' => 200000,
 					],
@@ -301,6 +304,9 @@ class CapabilitiesTest extends TestCase {
 			->method('isDisabledForUser')
 			->with($user)
 			->willReturn(false);
+
+		$this->talkConfig->method('isMatrixEnabled')
+			->willReturn($canCreate);
 
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
@@ -487,6 +493,9 @@ class CapabilitiesTest extends TestCase {
 						'incoming-enabled' => false,
 						'outgoing-enabled' => false,
 						'only-trusted-servers' => true,
+					],
+					'matrix' => [
+						'enabled' => $canCreate,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,

@@ -202,6 +202,9 @@ export const mockedCapabilities: Capabilities = {
 				'outgoing-enabled': false,
 				'only-trusted-servers': true,
 			},
+			matrix: {
+				enabled: false,
+			},
 			previews: {
 				'max-gif-size': 3145728,
 			},
@@ -257,6 +260,9 @@ export const mockedCapabilities: Capabilities = {
 				'incoming-enabled',
 				'outgoing-enabled',
 				'only-trusted-servers',
+			],
+			matrix: [
+				'enabled',
 			],
 			previews: [
 				'max-gif-size',

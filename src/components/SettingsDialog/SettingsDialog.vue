@@ -66,6 +66,13 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
+			v-if="!isGuest && matrixEnabled"
+			id="matrix_account"
+			:name="t('spreed', 'Matrix account')">
+			<MatrixAccountSettings />
+		</NcAppSettingsSection>
+
+		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="privacy"
 			:name="t('spreed', 'Privacy')">
@@ -171,6 +178,7 @@ import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
 import AppearanceSettings from './AppearanceSettings.vue'
 import ConversationsSettings from './ConversationsSettings.vue'
 import LiveTranscriptionTargetLanguageSelect from './LiveTranscriptionTargetLanguageSelect.vue'
+import MatrixAccountSettings from './MatrixAccountSettings.vue'
 import { PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -197,6 +205,7 @@ export default {
 		AppearanceSettings,
 		ConversationsSettings,
 		LiveTranscriptionTargetLanguageSelect,
+		MatrixAccountSettings,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
@@ -245,6 +254,10 @@ export default {
 
 		isGuest() {
 			return !this.actorStore.userId
+		},
+
+		matrixEnabled() {
+			return getTalkConfig('local', 'matrix', 'enabled') === true
 		},
 
 		readStatusPrivacyIsPublic() {

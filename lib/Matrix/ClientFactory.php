@@ -10,7 +10,10 @@ namespace OCA\Talk\Matrix;
 
 use GuzzleHttp\Psr7\HttpFactory;
 use OCA\Talk\Matrix\Adapter\HttpClient;
+use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Discovery;
+use OCA\Talk\Matrix\Client\Transport;
+use OCA\Talk\Matrix\Model\Homeserver;
 use OCP\Http\Client\IClientService;
 
 /**
@@ -24,5 +27,11 @@ class ClientFactory {
 
 	public function discovery(): Discovery {
 		return new Discovery(new HttpClient($this->clientService, 15), new HttpFactory());
+	}
+
+	public function forHomeserver(Homeserver $homeserver, #[\SensitiveParameter] ?string $accessToken = null, int $timeout = 30): Client {
+		$factory = new HttpFactory();
+		$transport = new Transport($homeserver->getBaseUrl(), new HttpClient($this->clientService, $timeout), $factory, $factory);
+		return (new Client($transport))->withAccessToken($accessToken);
 	}
 }

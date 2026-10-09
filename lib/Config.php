@@ -339,6 +339,24 @@ class Config {
 		return empty(array_intersect($allowedGroups, $userGroups));
 	}
 
+	public function isMatrixEnabled(): bool {
+		return $this->appConfig->getAppValueBool(self::MATRIX_ENABLED);
+	}
+
+	public function canLinkMatrixAccount(IUser $user): bool {
+		if (!$this->isMatrixEnabled()) {
+			return false;
+		}
+
+		$allowedGroups = $this->appConfig->getAppValueArray(self::MATRIX_ALLOWED_GROUPS);
+		if (empty($allowedGroups)) {
+			return true;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return !empty(array_intersect($allowedGroups, $userGroups));
+	}
+
 	/**
 	 * @return int<0, 511>
 	 * @psalm-return int-mask-of<Attendee::PERMISSIONS_*>

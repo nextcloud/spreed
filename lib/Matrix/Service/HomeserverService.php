@@ -10,6 +10,7 @@ namespace OCA\Talk\Matrix\Service;
 
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\ClientFactory;
+use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -21,6 +22,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 class HomeserverService {
 	public function __construct(
 		private readonly HomeserverMapper $mapper,
+		private readonly AccountMapper $accountMapper,
 		private readonly ClientFactory $clientFactory,
 		private readonly ITimeFactory $timeFactory,
 	) {
@@ -123,9 +125,13 @@ class HomeserverService {
 
 	/**
 	 * @throws DoesNotExistException
+	 * @throws \InvalidArgumentException 'accounts' when accounts are still linked on it
 	 */
 	public function remove(string $id): void {
 		$homeserver = $this->mapper->getById($id);
+		if ($this->accountMapper->hasAccountsOnHomeserver($id)) {
+			throw new \InvalidArgumentException('accounts');
+		}
 		$this->mapper->delete($homeserver);
 	}
 }

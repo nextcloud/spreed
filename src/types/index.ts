@@ -496,6 +496,11 @@ export type updateMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix
 export type testMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-test-homeserver']['responses'][200]['content']['application/json']>
 export type removeMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-remove-homeserver']['responses'][200]['content']['application/json']>
 export type updateMatrixSettingsResponse = ApiResponse<operationsAdmin['matrix_admin-update-settings']['responses'][200]['content']['application/json']>
+export type MatrixAccount = components['schemas']['MatrixAccount']
+export type linkMatrixAccountParams = Required<operations['matrix_account-link-account']>['requestBody']['content']['application/json']
+export type getMatrixAccountResponse = ApiResponse<operations['matrix_account-get-account']['responses'][200]['content']['application/json']>
+export type linkMatrixAccountResponse = ApiResponse<operations['matrix_account-link-account']['responses'][201]['content']['application/json']>
+export type unlinkMatrixAccountResponse = ApiResponse<operations['matrix_account-unlink-account']['responses'][200]['content']['application/json']>
 
 // Federations
 export type FederationInvite = componentsFed['schemas']['FederationInvite']
