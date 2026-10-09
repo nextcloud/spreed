@@ -28,6 +28,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -42,6 +43,7 @@ class MessageSyncService {
 		private readonly ParticipantService $participantService,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly ITimeFactory $timeFactory,
+		private readonly IURLGenerator $urlGenerator,
 		private readonly IL10N $l,
 		private readonly LoggerInterface $logger,
 	) {
@@ -78,7 +80,7 @@ class MessageSyncService {
 					$event->type === 'm.reaction' => $this->applyReaction($room, $matrixRoom, $event, $actorType, $actorId),
 					$event->type === 'm.room.redaction' => $this->applyRedaction($room, $matrixRoom, $event, $actorType, $actorId),
 					$event->getRelationType() === 'm.replace' => $this->applyEdit($room, $matrixRoom, $event, $actorType, $actorId),
-					default => $this->postMessage($room, $matrixRoom, $event, $members, $accounts, $actorType, $actorId, $silent),
+					default => $this->postMessage($room, $matrixRoom, $eventMap, $event, $members, $accounts, $actorType, $actorId, $silent),
 				};
 			} catch (\Throwable $e) {
 				$this->logger->warning('Matrix event ' . $event->eventId . ' could not be mirrored', ['exception' => $e]);
@@ -88,7 +90,7 @@ class MessageSyncService {
 			if ($comment !== null) {
 				$eventMap->setCommentId((int)$comment->getId());
 				$this->eventMapMapper->update($eventMap);
-				if ($comment->getVerb() === ChatManager::VERB_MESSAGE) {
+				if (in_array($comment->getVerb(), [ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED], true)) {
 					$messages++;
 				}
 			}
@@ -100,7 +102,28 @@ class MessageSyncService {
 	 * @param array<string, MatrixMember> $members
 	 * @param array<string, Account> $accounts
 	 */
-	protected function postMessage(Room $room, MatrixRoom $matrixRoom, Event $event, array $members, array $accounts, string $actorType, string $actorId, bool $silent): ?IComment {
+	protected function postMessage(Room $room, MatrixRoom $matrixRoom, EventMap $eventMap, Event $event, array $members, array $accounts, string $actorType, string $actorId, bool $silent): ?IComment {
+		$replyTo = null;
+		$parentEventId = $event->getInReplyTo();
+		if ($parentEventId !== null) {
+			$replyTo = $this->getComment($this->getEventMap($matrixRoom, $parentEventId));
+		}
+
+		$object = $this->getSharedObject($eventMap, $event);
+		if ($object !== null) {
+			return $this->chatManager->addSystemMessage(
+				$room,
+				null,
+				$actorType,
+				$actorId,
+				json_encode(['message' => 'object_shared', 'parameters' => ['objectType' => $object['type'], 'objectId' => $object['id'], 'metaData' => $object]], JSON_THROW_ON_ERROR),
+				$this->getDateTime($event),
+				!$silent,
+				replyTo: $replyTo,
+				silent: $silent,
+			);
+		}
+
 		if ($event->type === 'm.room.encrypted') {
 			$message = $this->l->t('Encrypted message, end-to-end encrypted Matrix rooms are not supported yet');
 		} else {
@@ -111,12 +134,6 @@ class MessageSyncService {
 		}
 		if (mb_strlen($message) > ChatManager::MAX_CHAT_LENGTH) {
 			$message = mb_substr($message, 0, ChatManager::MAX_CHAT_LENGTH - 1) . '…';
-		}
-
-		$replyTo = null;
-		$parentEventId = $event->getInReplyTo();
-		if ($parentEventId !== null) {
-			$replyTo = $this->getComment($this->getEventMap($matrixRoom, $parentEventId));
 		}
 
 		return $this->chatManager->sendMessage(
@@ -130,6 +147,43 @@ class MessageSyncService {
 			silent: $silent,
 			rateLimitGuestMentions: false,
 		);
+	}
+
+	/**
+	 * Attachments become a link to download them through the homeserver of
+	 * the viewer, locations a location object
+	 *
+	 * @return array{type: string, id: string, name: string, link?: string, latitude?: string, longitude?: string, mxc?: string}|null
+	 */
+	protected function getSharedObject(EventMap $eventMap, Event $event): ?array {
+		$msgtype = $event->type === 'm.sticker' ? 'm.image' : ($event->content['msgtype'] ?? null);
+		$name = trim($event->getBody());
+
+		if ($msgtype === 'm.location') {
+			$geoUri = is_string($event->content['geo_uri'] ?? null) ? $event->content['geo_uri'] : '';
+			if (!preg_match(ChatManager::GEO_LOCATION_VALIDATOR, $geoUri) || !preg_match('/^geo:(-?[\d.]+),(-?[\d.]+)/i', $geoUri, $matches)) {
+				return null;
+			}
+			return [
+				'type' => 'geo-location',
+				'id' => $geoUri,
+				'name' => $name !== '' ? mb_substr($name, 0, 255) : $this->l->t('Location'),
+				'latitude' => $matches[1],
+				'longitude' => $matches[2],
+			];
+		}
+
+		$mxc = is_string($event->content['url'] ?? null) ? $event->content['url'] : '';
+		if (!in_array($msgtype, ['m.image', 'm.file', 'm.video', 'm.audio'], true) || !str_starts_with($mxc, 'mxc://')) {
+			return null;
+		}
+		return [
+			'type' => 'highlight',
+			'id' => 'matrix-media/' . $eventMap->getId(),
+			'name' => $name !== '' ? mb_substr($name, 0, 255) : $this->l->t('Attachment'),
+			'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.MatrixMedia.download', ['id' => (string)$eventMap->getId()]),
+			'mxc' => $mxc,
+		];
 	}
 
 	protected function applyEdit(Room $room, MatrixRoom $matrixRoom, Event $event, string $actorType, string $actorId): ?IComment {
