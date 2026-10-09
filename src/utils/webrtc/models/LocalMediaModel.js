@@ -196,6 +196,28 @@ LocalMediaModel.prototype = {
 		this._updateMediaAvailability(localStream)
 	},
 
+	/**
+	 * Returns whether the video track is currently absent because the camera
+	 * was intentionally released while the video is disabled (see spreed#4008),
+	 * as opposed to the camera being missing or unusable.
+	 *
+	 * In that case the camera is still available (a camera input device is
+	 * selected and it was released on purpose while the video is disabled), so
+	 * it can be enabled again. This keeps the video controls usable and matches
+	 * the model state of a regular disabled ("muted") video, even when the call
+	 * was joined with the video already disabled.
+	 *
+	 * @return {boolean} true if the camera was released while the video is
+	 *         disabled, false otherwise
+	 */
+	_isVideoReleasedWhileDisabled() {
+		return Boolean(this._webRtc)
+			&& Boolean(this._webRtc.webrtc)
+			&& typeof this._webRtc.webrtc.isVideoActive === 'function'
+			&& !this._webRtc.webrtc.isVideoActive()
+			&& this._webRtc.webrtc.isVideoInputAvailable()
+	},
+
 	_updateMediaAvailability(localStream) {
 		if (localStream && localStream.getAudioTracks().length > 0) {
 			this.set('audioAvailable', true)
@@ -214,6 +236,15 @@ LocalMediaModel.prototype = {
 		if (localStream && localStream.getVideoTracks().length > 0) {
 			this.set('videoAvailable', true)
 			this.set('videoEnabled', localStream.getVideoTracks()[0].enabled)
+		} else if (this._isVideoReleasedWhileDisabled()) {
+			// The video track is not present because the camera was
+			// intentionally released while the video is disabled, so the camera
+			// hardware light turns off (see spreed#4008). The camera is still
+			// available and can be enabled again, so "videoAvailable" is kept
+			// true and only the disabled state is reflected. This matches the
+			// model state of a regular disabled ("muted") video.
+			this.set('videoAvailable', true)
+			this.set('videoEnabled', false)
 		} else {
 			this.disableVideo()
 			// "videoEnabled" needs to be explicitly set to false, as there is
