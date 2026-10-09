@@ -347,6 +347,16 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
+	public function testShareObjectToMatrixConversation(): void {
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->chatManager->expects($this->never())->method('addSystemMessage');
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($this->createStub(Participant::class));
+
+		$this->assertEquals(new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST), $this->controller->shareObjectToChat('geo-location', 'geo:52.52,13.405'));
+	}
+
 	public function testDeleteMessageOfOtherUserInMatrixConversation(): void {
 		$participant = $this->createMock(Participant::class);
 		$participant->method('getAttendee')->willReturn(Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => $this->userId]));

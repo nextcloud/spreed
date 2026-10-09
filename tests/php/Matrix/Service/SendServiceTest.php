@@ -34,6 +34,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\Files\File;
 use OCP\ICacheFactory;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
@@ -479,5 +480,57 @@ class SendServiceTest extends TestCase {
 
 		$this->expectExceptionObject(new SendException('matrix', 502));
 		$this->service->leave($this->room, $this->participant);
+	}
+
+	private function file(): File&MockObject {
+		$stream = fopen('php://memory', 'r+');
+		fwrite($stream, 'cat');
+		rewind($stream);
+		$file = $this->createMock(File::class);
+		$file->method('getName')->willReturn('cat.png');
+		$file->method('getMimeType')->willReturn('image/png');
+		$file->method('getSize')->willReturn(3);
+		$file->method('fopen')->with('rb')->willReturn($stream);
+		return $file;
+	}
+
+	private function shareComment(string $actorId = 'alice'): IComment&MockObject {
+		$comment = $this->comment(12);
+		$comment->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
+		$comment->method('getActorId')->willReturn($actorId);
+		return $comment;
+	}
+
+	public function testSendFile(): void {
+		$this->responses[] = $this->json(200, ['content_uri' => 'mxc://example.org/abc']);
+		$this->responses[] = $this->json(200, ['event_id' => '$file']);
+
+		$this->service->sendFile($this->room, $this->shareComment(), $this->file(), 'Look');
+
+		self::assertSame('POST', $this->requests[0]->getMethod());
+		self::assertSame('/_matrix/media/v3/upload', $this->requests[0]->getUri()->getPath());
+		self::assertSame('filename=cat.png', $this->requests[0]->getUri()->getQuery());
+		self::assertSame('image/png', $this->requests[0]->getHeaderLine('Content-Type'));
+		self::assertSame('cat', (string)$this->requests[0]->getBody());
+		self::assertSame([
+			'msgtype' => 'm.image',
+			'body' => 'Look',
+			'filename' => 'cat.png',
+			'url' => 'mxc://example.org/abc',
+			'info' => ['mimetype' => 'image/png', 'size' => 3],
+		], $this->requestBody(1));
+		self::assertSame(12, $this->eventMaps['$file']->getCommentId());
+	}
+
+	public function testSendFileOfUserWithoutAccount(): void {
+		$this->expectExceptionObject(new SendException('account', 403));
+		$this->service->sendFile($this->room, $this->shareComment('carol'), $this->file(), '');
+	}
+
+	public function testSendFileToEncryptedRoom(): void {
+		$this->encrypted = true;
+
+		$this->expectExceptionObject(new SendException('encrypted', 400));
+		$this->service->sendFile($this->room, $this->shareComment(), $this->file(), '');
 	}
 }
