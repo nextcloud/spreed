@@ -52,6 +52,14 @@ let chatRelaySupported: boolean | null = null
 let fallbackPollInterval: ReturnType<typeof setInterval> | undefined
 
 /**
+ * How long to wait for the conversation context before polling gives up,
+ * when a room is opened faster than its context request resolves
+ */
+const CONTEXT_WAIT_INTERVAL = 500
+const CONTEXT_WAIT_MAX_ATTEMPTS = 20
+let contextWaitAttempts = 0
+
+/**
  * Composable to provide control logic for fetching messages list
  */
 export function useGetMessagesProvider() {
@@ -518,6 +526,27 @@ export function useGetMessagesProvider() {
 		// start polling from last received by server message id
 		const lastKnownMessageId = chatStore.getLastServerResponseId(token) ?? chatStore.getLastKnownId(token)
 
+		if (!lastKnownMessageId) {
+			// The conversation context has not arrived yet, which happens when the room
+			// is switched faster than its "get context" request resolves. Polling now
+			// would dispatch a request without the required parameter: the store action
+			// bails out and resolves to undefined, and reading its response below throws,
+			// leaving the conversation permanently without messages. Wait for the
+			// context instead, but do not wait forever.
+			if (contextWaitAttempts >= CONTEXT_WAIT_MAX_ATTEMPTS) {
+				contextWaitAttempts = 0
+				console.warn(`Conversation context for ${token} did not arrive, stopped waiting for it`)
+				return
+			}
+			contextWaitAttempts++
+			clearTimeout(pollingTimeout)
+			pollingTimeout = setTimeout(() => {
+				pollNewMessages(token)
+			}, CONTEXT_WAIT_INTERVAL)
+			return
+		}
+		contextWaitAttempts = 0
+
 		// Make the request
 		try {
 			debugTimer.start(`${token} | long polling`)
@@ -528,6 +557,13 @@ export function useGetMessagesProvider() {
 				requestId: token,
 				timeout: chatRelaySupported ? 0 : undefined,
 			})
+
+			if (!response) {
+				// The store action refused the request instead of performing it.
+				// Treat it as "nothing to do" rather than dereferencing undefined.
+				debugTimer.end(`${token} | long polling`, 'no response')
+				return
+			}
 
 			chatStore.setLastServerResponseId(token, response.data.ocs.data
 				.reduce((acc: number, message: ChatMessage) => {
