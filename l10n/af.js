@@ -258,6 +258,7 @@ OC.L10N.register(
     "Active" : "Aktief",
     "Language" : "Taal",
     "Created at" : "Geskep om",
+    "Saved" : "Bewaar",
     "Error code" : "Foutkode",
     "{option1} and {option2}" : "{option1} en {option2}",
     "OK" : "OK",

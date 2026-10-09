@@ -48,6 +48,7 @@ OC.L10N.register(
     "Language" : "Idioma",
     "Created at" : "Creado en",
     "Yes" : "Si",
+    "Saved" : "Guardado",
     "Validate SSL certificate" : "Validar certificado SSL",
     "Shared secret" : "Secreto compartido",
     "STUN servers" : "Servidores STUN",
