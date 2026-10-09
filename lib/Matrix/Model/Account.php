@@ -24,14 +24,24 @@ use OCP\DB\Types;
  * @method string getAccessToken()
  * @method void setDeviceId(string $deviceId)
  * @method string getDeviceId()
+ * @method void setStatus(int $status)
+ * @method int getStatus()
+ * @method void setLastError(?string $lastError)
+ * @method ?string getLastError()
  */
 class Account extends SnowflakeAwareEntity implements \JsonSerializable {
+	public const STATUS_ACTIVE = 0;
+	/** The homeserver rejected the access token, the user has to log in again */
+	public const STATUS_TOKEN_INVALID = 1;
+
 	protected string $userId = '';
 	protected string $homeserverId = '';
 	protected string $mxid = '';
 	/** Encrypted with ICrypto */
 	protected string $accessToken = '';
 	protected string $deviceId = '';
+	protected int $status = self::STATUS_ACTIVE;
+	protected ?string $lastError = null;
 
 	public function __construct() {
 		$this->addType('userId', Types::STRING);
@@ -39,10 +49,12 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 		$this->addType('mxid', Types::STRING);
 		$this->addType('accessToken', Types::STRING);
 		$this->addType('deviceId', Types::STRING);
+		$this->addType('status', Types::SMALLINT);
+		$this->addType('lastError', Types::STRING);
 	}
 
 	/**
-	 * @return array{id: numeric-string, homeserverId: numeric-string, mxid: string, deviceId: string}
+	 * @return array{id: numeric-string, homeserverId: numeric-string, mxid: string, deviceId: string, status: Account::STATUS_*, lastError: ?string}
 	 */
 	#[\Override]
 	public function jsonSerialize(): array {
@@ -53,6 +65,8 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 			'homeserverId' => $homeserverId,
 			'mxid' => $this->getMxid(),
 			'deviceId' => $this->getDeviceId(),
+			'status' => $this->getStatus() === self::STATUS_TOKEN_INVALID ? self::STATUS_TOKEN_INVALID : self::STATUS_ACTIVE,
+			'lastError' => $this->getLastError(),
 		];
 	}
 }

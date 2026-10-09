@@ -29,15 +29,30 @@ final class Client {
 	/**
 	 * m.login.password
 	 *
+	 * @param string $deviceId Reuse an existing device instead of creating a new one
 	 * @throws MatrixException
 	 */
-	public function loginWithPassword(string $user, #[\SensitiveParameter] string $password, string $initialDeviceDisplayName): LoginResult {
-		return LoginResult::fromArray($this->transport->withAccessToken(null)->post(self::PREFIX . '/login', [
+	public function loginWithPassword(string $user, #[\SensitiveParameter] string $password, string $initialDeviceDisplayName, string $deviceId = ''): LoginResult {
+		$body = [
 			'type' => 'm.login.password',
 			'identifier' => ['type' => 'm.id.user', 'user' => $user],
 			'password' => $password,
 			'initial_device_display_name' => $initialDeviceDisplayName,
-		]));
+		];
+		if ($deviceId !== '') {
+			$body['device_id'] = $deviceId;
+		}
+		return LoginResult::fromArray($this->transport->withAccessToken(null)->post(self::PREFIX . '/login', $body));
+	}
+
+	/**
+	 * Owner of the access token
+	 *
+	 * @return string Matrix user id
+	 * @throws MatrixException UnknownTokenException when the token is no longer valid
+	 */
+	public function whoami(): string {
+		return (string)($this->transport->get(self::PREFIX . '/account/whoami')['user_id'] ?? '');
 	}
 
 	/**

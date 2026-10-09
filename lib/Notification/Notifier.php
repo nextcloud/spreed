@@ -212,6 +212,10 @@ class Notifier implements INotifier {
 			return $this->parseCertificateExpiration($notification, $l);
 		}
 
+		if ($notification->getObjectType() === 'matrix_account') {
+			return $this->parseMatrixRelogin($notification, $l);
+		}
+
 		if ($this->notificationManager->isPreparingPushNotification() && $notification->getSubject() === 'call') {
 			try {
 				$room = $this->manager->getRoomByToken($notification->getObjectId());
@@ -1333,6 +1337,27 @@ class Notifier implements INotifier {
 		);
 
 		$notification->setParsedSubject($subject);
+
+		return $notification;
+	}
+
+	/**
+	 * @throws UnknownNotificationException
+	 */
+	protected function parseMatrixRelogin(INotification $notification, IL10N $l): INotification {
+		if ($notification->getSubject() !== 'matrix_relogin') {
+			throw new UnknownNotificationException('Unknown subject');
+		}
+
+		$notification
+			->setParsedSubject($l->t('Your Matrix account needs a new login'))
+			->setParsedMessage(str_replace(
+				'{mxid}',
+				(string)($notification->getSubjectParameters()['mxid'] ?? ''),
+				$l->t('The Matrix homeserver rejected the session of {mxid}. Log in again in the Talk settings to continue using your Matrix account.'),
+			))
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')))
+			->setLink($this->url->linkToRouteAbsolute('spreed.Page.index'));
 
 		return $notification;
 	}

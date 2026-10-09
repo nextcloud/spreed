@@ -17,10 +17,16 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconLanConnect from 'vue-material-design-icons/LanConnect.vue'
 import IconLinkVariant from 'vue-material-design-icons/LinkVariant.vue'
 import IconLinkVariantOff from 'vue-material-design-icons/LinkVariantOff.vue'
+import IconLogin from 'vue-material-design-icons/Login.vue'
 import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
-import { getMatrixAccount, linkMatrixAccount, unlinkMatrixAccount } from '../../services/matrixService.ts'
+import { useActionStatus } from '../../composables/useActionStatus.ts'
+import { MATRIX } from '../../constants.ts'
+import { checkMatrixConnection, getMatrixAccount, linkMatrixAccount, reloginMatrixAccount, unlinkMatrixAccount } from '../../services/matrixService.ts'
 import { isAxiosErrorResponse } from '../../types/guards.ts'
 
 const LINK_ERRORS: Record<string, string> = {
@@ -32,10 +38,18 @@ const LINK_ERRORS: Record<string, string> = {
 	homeserver: t('spreed', 'The selected homeserver is no longer available'),
 }
 
+const RELOGIN_ERRORS: Record<string, string> = {
+	...LINK_ERRORS,
+	user: t('spreed', 'The login belongs to a different Matrix account'),
+}
+
+const { getActionStatus, runAction } = useActionStatus()
+
 const loaded = ref(false)
 const loading = ref(false)
 const canLink = ref(false)
 const account = ref<MatrixAccount | null>(null)
+const connected = ref(true)
 const homeservers = ref<MatrixHomeserver[]>([])
 const form = reactive<{ homeserver: MatrixHomeserver | null, user: string, password: string }>({
 	homeserver: null,
@@ -66,6 +80,7 @@ async function loadMatrixDetails() {
 		const response = await getMatrixAccount()
 		canLink.value = response.data.ocs.data.canLink
 		account.value = response.data.ocs.data.account
+		connected.value = response.data.ocs.data.connected
 		homeservers.value = response.data.ocs.data.homeservers
 		form.homeserver = homeservers.value[0] ?? null
 	} catch (error) {
@@ -91,6 +106,7 @@ async function linkAccount() {
 			password: form.password,
 		})
 		account.value = response.data.ocs.data
+		connected.value = true
 		form.user = ''
 	} catch (error) {
 		console.error(error)
@@ -103,13 +119,66 @@ async function linkAccount() {
 }
 
 /**
+ * Log in again after the homeserver rejected the access token
+ */
+async function reloginAccount() {
+	if (loading.value || !form.password) {
+		return
+	}
+
+	loading.value = true
+	try {
+		const response = await reloginMatrixAccount({ password: form.password })
+		account.value = response.data.ocs.data
+		connected.value = true
+	} catch (error) {
+		console.error(error)
+		const reason = isAxiosErrorResponse<{ error: string }>(error) ? error.response?.data?.ocs?.data?.error : undefined
+		showError((reason && RELOGIN_ERRORS[reason]) || t('spreed', 'Could not log in to Matrix again'))
+	} finally {
+		form.password = ''
+		loading.value = false
+	}
+}
+
+/**
+ * Check the connection to the homeserver again
+ */
+async function checkConnection() {
+	if (loading.value) {
+		return
+	}
+
+	loading.value = true
+	let checked = false
+	try {
+		await runAction('connection', async () => {
+			const response = await checkMatrixConnection()
+			checked = true
+			account.value = response.data.ocs.data.account
+			connected.value = response.data.ocs.data.connected
+			if (!connected.value) {
+				throw new Error('The homeserver could not be reached')
+			}
+		})
+	} catch (error) {
+		console.error(error)
+		showError(checked
+			? t('spreed', 'The homeserver could not be reached')
+			: t('spreed', 'Could not check the connection to the homeserver'))
+	} finally {
+		loading.value = false
+	}
+}
+
+/**
  * Ask for confirmation, then unlink the account and log this client out
  */
 async function unlinkAccount() {
 	const confirmUnlinkAccount = await spawnDialog(ConfirmDialog, {
 		// TRANSLATORS: Dialog title and button to unlink the Matrix account from this client
 		name: t('spreed', 'Unlink account'),
-		message: t('spreed', 'Do you really want to unlink "{mxid}"? This client will be logged out from your Matrix account.', {
+		message: t('spreed', 'Do you really want to unlink "{mxid}"? This client will be logged out of your Matrix account.', {
 			mxid: account.value!.mxid,
 		}, { escape: false, sanitize: false }),
 		buttons: [
@@ -141,7 +210,45 @@ async function unlinkAccount() {
 			v-if="account"
 			:label="t('spreed', 'Connected Matrix account')"
 			:description="accountDescription">
+			<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
+				<p class="matrix-account__warning">
+					{{ t('spreed', 'The homeserver ended the session of this client. Enter your Matrix password to log in again.') }}
+				</p>
+				<p v-if="account.lastError" class="matrix-account__hint">
+					{{ account.lastError }}
+				</p>
+			</template>
 			<NcFormBox>
+				<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
+					<NcPasswordField
+						v-model="form.password"
+						:label="t('spreed', 'Matrix password')"
+						autocomplete="current-password"
+						:disabled="loading"
+						@keydown.enter="reloginAccount" />
+					<NcFormBoxButton
+						:disabled="loading || !form.password"
+						@click="reloginAccount">
+						<!-- TRANSLATORS: Button to log in to Matrix again with the password -->
+						{{ t('spreed', 'Log in') }}
+						<template #icon>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<IconLogin v-else :size="20" />
+						</template>
+					</NcFormBoxButton>
+				</template>
+				<NcFormBoxButton
+					v-else-if="account.status === MATRIX.ACCOUNT_STATUS.ACTIVE"
+					:label="t('spreed', 'Test connection')"
+					:disabled="loading"
+					@click="checkConnection">
+					<template #icon>
+						<NcLoadingIcon v-if="getActionStatus('connection') === 'pending'" :size="20" />
+						<IconCheck v-else-if="getActionStatus('connection') === 'success'" :size="20" fillColor="var(--color-border-success)" />
+						<IconAlertCircleOutline v-else-if="getActionStatus('connection') === 'error' || !connected" :size="20" fillColor="var(--color-border-error)" />
+						<IconLanConnect v-else :size="20" />
+					</template>
+				</NcFormBoxButton>
 				<NcFormBoxButton
 					:disabled="loading"
 					@click="unlinkAccount">
@@ -156,7 +263,7 @@ async function unlinkAccount() {
 		</NcFormGroup>
 
 		<p v-else-if="!canLink || homeservers.length === 0" class="matrix-account__hint">
-			{{ t('spreed', 'Linking a Matrix account is not available for you.') }}
+			{{ t('spreed', 'Linking a Matrix account is not available to you.') }}
 		</p>
 
 		<NcFormGroup
@@ -208,6 +315,11 @@ async function unlinkAccount() {
 	&__hint {
 		padding-inline: var(--form-element-label-offset);
 		color: var(--color-text-maxcontrast);
+	}
+
+	&__warning {
+		padding-inline: var(--form-element-label-offset);
+		color: var(--color-text-error);
 	}
 }
 </style>

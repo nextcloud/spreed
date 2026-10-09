@@ -311,6 +311,10 @@ namespace OCA\Talk;
  *     mxid: string,
  *     // Matrix device id of Talk
  *     deviceId: string,
+ *     // 0 = active, 1 = the homeserver rejected the access token and the user has to log in again
+ *     status: 0|1,
+ *     // Error reported by the homeserver when it rejected the access token
+ *     lastError: ?string,
  * }
  *
  * @psalm-type TalkMatrixHomeserver = array{

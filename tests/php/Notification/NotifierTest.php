@@ -1092,4 +1092,56 @@ class NotifierTest extends TestCase {
 		}
 		$this->notifier->prepare($n, 'de');
 	}
+
+	public function testPrepareMatrixRelogin(): void {
+		/** @var INotification&MockObject $n */
+		$n = $this->createMock(INotification::class);
+		$n->method('getApp')->willReturn('spreed');
+		$n->method('getUser')->willReturn('recipient');
+		$n->method('getObjectType')->willReturn('matrix_account');
+		$n->method('getSubject')->willReturn('matrix_relogin');
+		$n->method('getSubjectParameters')->willReturn(['mxid' => '@bob:example.org']);
+
+		$this->userManager->method('get')
+			->with('recipient')
+			->willReturn($this->createMock(IUser::class));
+		$this->config->method('isDisabledForUser')
+			->willReturn(false);
+
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')
+			->willReturnCallback(fn (string $text, array $parameters = []): string => vsprintf($text, $parameters));
+		$this->lFactory->method('get')
+			->with('spreed', 'de')
+			->willReturn($l);
+
+		$this->url->method('imagePath')
+			->with('spreed', 'app-dark.svg')
+			->willReturn('/img/app-dark.svg');
+		$this->url->method('getAbsoluteURL')
+			->with('/img/app-dark.svg')
+			->willReturn('https://cloud.example/img/app-dark.svg');
+		$this->url->method('linkToRouteAbsolute')
+			->with('spreed.Page.index')
+			->willReturn('https://cloud.example/apps/spreed');
+
+		$n->expects($this->once())
+			->method('setParsedSubject')
+			->with('Your Matrix account needs a new login')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setParsedMessage')
+			->with('The Matrix homeserver rejected the session of @bob:example.org. Log in again in the Talk settings to continue using your Matrix account.')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setIcon')
+			->with('https://cloud.example/img/app-dark.svg')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setLink')
+			->with('https://cloud.example/apps/spreed')
+			->willReturnSelf();
+
+		$this->assertSame($n, $this->notifier->prepare($n, 'de'));
+	}
 }

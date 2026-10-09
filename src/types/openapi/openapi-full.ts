@@ -983,13 +983,34 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /** Get the linked Matrix account and the homeservers an account can be linked on */
+        /**
+         * Get the linked Matrix account and the homeservers an account can be linked on
+         * @description The access token of the linked account is checked with the homeserver, the result is reused for 5 minutes.
+         */
         get: operations["matrix_account-get-account"];
-        put?: never;
+        /** Log in again after the homeserver rejected the access token */
+        put: operations["matrix_account-relogin-account"];
         /** Link a Matrix account with a password login, the password is not stored */
         post: operations["matrix_account-link-account"];
         /** Unlink the Matrix account and log Talk out on the homeserver */
         delete: operations["matrix_account-unlink-account"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/account/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Check the connection to the homeserver again */
+        post: operations["matrix_account-check-connection"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3478,6 +3499,14 @@ export type components = {
             mxid: string;
             /** @description Matrix device id of Talk */
             deviceId: string;
+            /**
+             * Format: int64
+             * @description 0 = active, 1 = the homeserver rejected the access token and the user has to log in again
+             * @enum {integer}
+             */
+            status: 0 | 1;
+            /** @description Error reported by the homeserver when it rejected the access token */
+            lastError: string | null;
         };
         MatrixHomeserver: {
             /** @description SnowflakeID */
@@ -9173,6 +9202,7 @@ export interface operations {
                             data: {
                                 canLink: boolean;
                                 account: components["schemas"]["MatrixAccount"] | null;
+                                connected: boolean;
                                 homeservers: components["schemas"]["MatrixHomeserver"][];
                             };
                         };
@@ -9189,6 +9219,128 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_account-relogin-account": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Matrix password */
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Logged in again */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["MatrixAccount"];
+                        };
+                    };
+                };
+            };
+            /** @description Homeserver is not available anymore, the login belongs to another Matrix user or was rejected by the homeserver */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Wrong credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description User is not allowed to link an account */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description No linked account */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Homeserver unreachable */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -9329,6 +9481,70 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description No linked account */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_account-check-connection": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Connection checked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                account: components["schemas"]["MatrixAccount"];
+                                connected: boolean;
+                            };
                         };
                     };
                 };
