@@ -12,9 +12,16 @@ namespace OCA\Talk\Matrix\Client\Model;
  * Content of m.room.power_levels with the defaults of the spec applied
  */
 final class PowerLevels {
+	/** Level of users without special rights, the spec default for users and messages */
+	public const LEVEL_USER = 0;
+	/** Level of moderators, the spec default for state events, kicking, banning and redacting */
+	public const LEVEL_MODERATOR = 50;
+	/** Level of administrators and of the room creator while the room has no power levels */
+	public const LEVEL_ADMIN = 100;
+
 	/**
 	 * @param array<string, mixed> $content
-	 * @param string $creator Has level 100 when the room has no power levels yet
+	 * @param string $creator Has the admin level while the room has no power levels
 	 */
 	public function __construct(
 		private readonly array $content,
@@ -33,9 +40,13 @@ final class PowerLevels {
 			return (int)$users[$userId];
 		}
 		if ($this->content === [] && $userId === $this->creator) {
-			return 100;
+			return self::LEVEL_ADMIN;
 		}
-		return (int)($this->content['users_default'] ?? 0);
+		return $this->getDefaultUserLevel();
+	}
+
+	public function getDefaultUserLevel(): int {
+		return (int)($this->content['users_default'] ?? self::LEVEL_USER);
 	}
 
 	public function canSendEvent(string $userId, string $eventType, bool $isState = false): bool {
@@ -43,9 +54,9 @@ final class PowerLevels {
 		if (isset($events[$eventType])) {
 			$required = (int)$events[$eventType];
 		} elseif ($isState) {
-			$required = (int)($this->content['state_default'] ?? ($this->content === [] ? 0 : 50));
+			$required = (int)($this->content['state_default'] ?? ($this->content === [] ? self::LEVEL_USER : self::LEVEL_MODERATOR));
 		} else {
-			$required = (int)($this->content['events_default'] ?? 0);
+			$required = (int)($this->content['events_default'] ?? self::LEVEL_USER);
 		}
 		return $this->getUserLevel($userId) >= $required;
 	}
@@ -54,11 +65,11 @@ final class PowerLevels {
 	 * Whether the user may redact events of other users
 	 */
 	public function canRedact(string $userId): bool {
-		return $this->getUserLevel($userId) >= (int)($this->content['redact'] ?? 50);
+		return $this->getUserLevel($userId) >= (int)($this->content['redact'] ?? self::LEVEL_MODERATOR);
 	}
 
 	public function canInvite(string $userId): bool {
-		return $this->getUserLevel($userId) >= (int)($this->content['invite'] ?? 0);
+		return $this->getUserLevel($userId) >= (int)($this->content['invite'] ?? self::LEVEL_USER);
 	}
 
 	/**
@@ -66,7 +77,7 @@ final class PowerLevels {
 	 */
 	public function canKick(string $userId, string $targetId): bool {
 		$level = $this->getUserLevel($userId);
-		return $level >= (int)($this->content['kick'] ?? 50) && $level > $this->getUserLevel($targetId);
+		return $level >= (int)($this->content['kick'] ?? self::LEVEL_MODERATOR) && $level > $this->getUserLevel($targetId);
 	}
 
 	/**
@@ -89,7 +100,7 @@ final class PowerLevels {
 		$content = $this->content;
 		$users = is_array($content['users'] ?? null) ? $content['users'] : [];
 		if ($content === [] && $this->creator !== '') {
-			$users[$this->creator] = 100;
+			$users[$this->creator] = self::LEVEL_ADMIN;
 		}
 		$users[$userId] = $level;
 		$content['users'] = $users;

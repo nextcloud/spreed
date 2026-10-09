@@ -17,6 +17,7 @@ use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use OCA\Talk\Matrix\Client\Html\MarkdownToHtml;
+use OCA\Talk\Matrix\Client\Model\PowerLevels;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\EventMap;
@@ -260,12 +261,12 @@ class SendService {
 	public function setParticipantType(Room $room, Participant $participant, Attendee $target, int $participantType): void {
 		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
 		$targetId = $this->getMatrixUserId($target);
-		$level = match ($participantType) {
-			Participant::OWNER => 100,
-			Participant::MODERATOR => 50,
-			default => (int)($matrixRoom->getPowerLevelsArray()['users_default'] ?? 0),
-		};
 		$powerLevels = $matrixRoom->getPowerLevelsModel();
+		$level = match ($participantType) {
+			Participant::OWNER => PowerLevels::LEVEL_ADMIN,
+			Participant::MODERATOR => PowerLevels::LEVEL_MODERATOR,
+			default => $powerLevels->getDefaultUserLevel(),
+		};
 		if (!$powerLevels->canChangeUserLevel($account->getMxid(), $targetId, $level)) {
 			throw new SendException('permission', Http::STATUS_FORBIDDEN);
 		}
