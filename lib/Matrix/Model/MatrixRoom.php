@@ -32,6 +32,8 @@ use OCP\DB\Types;
  * @method bool getEncrypted()
  * @method void setPowerLevels(?string $powerLevels)
  * @method ?string getPowerLevels()
+ * @method void setAvatarUrl(?string $avatarUrl)
+ * @method ?string getAvatarUrl()
  */
 class MatrixRoom extends SnowflakeAwareEntity {
 	/** Id of the Talk conversation, 0 until it was created */
@@ -45,6 +47,8 @@ class MatrixRoom extends SnowflakeAwareEntity {
 	protected bool $encrypted = false;
 	/** JSON content of m.room.power_levels */
 	protected ?string $powerLevels = null;
+	/** Content URI of the avatar that was applied to the conversation */
+	protected ?string $avatarUrl = null;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -55,6 +59,7 @@ class MatrixRoom extends SnowflakeAwareEntity {
 		$this->addType('creator', Types::STRING);
 		$this->addType('encrypted', Types::BOOLEAN);
 		$this->addType('powerLevels', Types::STRING);
+		$this->addType('avatarUrl', Types::STRING);
 	}
 
 	/** @return array<string, mixed> */

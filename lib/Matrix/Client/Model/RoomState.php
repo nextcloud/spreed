@@ -17,6 +17,7 @@ final class RoomState {
 	public ?string $name = null;
 	public ?string $topic = null;
 	public ?string $canonicalAlias = null;
+	public ?string $avatarUrl = null;
 	public ?string $roomType = null;
 	public string $creator = '';
 	public bool $encrypted = false;
@@ -61,6 +62,9 @@ final class RoomState {
 			case 'm.room.topic':
 				$topic = is_string($content['topic'] ?? null) ? trim($content['topic']) : '';
 				$this->topic = $topic !== '' ? $topic : null;
+				break;
+			case 'm.room.avatar':
+				$this->avatarUrl = is_string($content['url'] ?? null) && $content['url'] !== '' ? $content['url'] : null;
 				break;
 			case 'm.room.canonical_alias':
 				$this->canonicalAlias = is_string($content['alias'] ?? null) && $content['alias'] !== '' ? $content['alias'] : null;

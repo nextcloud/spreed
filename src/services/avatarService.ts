@@ -35,6 +35,18 @@ function getUserProxyAvatarOcsUrl(token: string, cloudId: string, isDarkTheme: b
 }
 
 /**
+ * Avatar of a Matrix user in a Matrix conversation
+ *
+ * @param token conversation token
+ * @param mxid Matrix user id
+ * @param isDarkTheme whether the placeholder should be dark
+ * @param size avatar size
+ */
+function getMatrixUserAvatarOcsUrl(token: string, mxid: string, isDarkTheme: boolean, size: 64 | 512 = 512): string {
+	return generateOcsUrl('apps/spreed/api/v1/room/{token}/matrix-avatar/{size}?mxid={mxid}' + (isDarkTheme ? '&darkTheme=1' : ''), { token, mxid, size })
+}
+
+/**
  *
  * @param token
  * @param file
@@ -67,6 +79,7 @@ async function deleteConversationAvatar(token: string): deleteAvatarResponse {
 export {
 	deleteConversationAvatar,
 	getConversationAvatarOcsUrl,
+	getMatrixUserAvatarOcsUrl,
 	getUserProxyAvatarOcsUrl,
 	setConversationAvatar,
 	setConversationEmojiAvatar,

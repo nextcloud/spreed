@@ -82,7 +82,7 @@ class SyncService {
 			do {
 				$since = $account->getNextBatch() ?? '';
 				$batch = $client->sync($since, (string)$account->getFilterId());
-				$result = $this->roomSyncService->process($account, $batch, $since === '');
+				$result = $this->roomSyncService->process($account, $client, $batch, $since === '');
 				$stats['batches']++;
 				$stats['rooms'] += $result['rooms'];
 				$stats['messages'] += $result['messages'];

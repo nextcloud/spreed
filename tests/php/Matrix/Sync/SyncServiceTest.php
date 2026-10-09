@@ -94,7 +94,8 @@ class SyncServiceTest extends TestCase {
 			});
 		$this->roomSyncService->expects(self::exactly(2))
 			->method('process')
-			->willReturnCallback(static function (Account $account, SyncBatch $batch, bool $initial): array {
+			->willReturnCallback(function (Account $account, Client $client, SyncBatch $batch, bool $initial): array {
+				self::assertSame($this->client, $client);
 				self::assertSame($batch->nextBatch === 'first', $initial, 'Only the first batch is from the initial sync');
 				return ['rooms' => 2, 'messages' => $initial ? 5 : 1, 'failed' => 0];
 			});
