@@ -54,6 +54,7 @@ OC.L10N.register(
     "Status" : "სტაუტის",
     "Created at" : "შეიქმნა",
     "Yes" : "დიახ",
+    "Saved" : "შენახულია",
     "Validate SSL certificate" : "SSL სერტიფიკატის ვალიდაცია",
     "Shared secret" : "გაზიარებული საიდუმლო",
     "STUN servers" : "STUN სერვერები",
