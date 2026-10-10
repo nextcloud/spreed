@@ -102,6 +102,37 @@ class MatrixMediaControllerTest extends TestCase {
 		self::assertStringStartsWith('attachment;', $response->getHeaders()['Content-Disposition']);
 	}
 
+	public function testPreview(): void {
+		$this->comment->method('getObjectId')->willReturn('23');
+		$this->participantService->method('getParticipantByActor')->willReturn($this->createMock(Participant::class));
+		$this->client->expects(self::never())->method('downloadMedia');
+		$this->client->expects(self::once())
+			->method('downloadThumbnail')
+			->with('mxc://example.org/abc', MatrixMediaController::PREVIEW_SIZE, false)
+			->willReturn(new Psr7Response(200, ['Content-Type' => 'image/jpeg'], 'jpeg'));
+
+		$response = $this->controller->preview('55');
+
+		self::assertInstanceOf(StreamResponse::class, $response);
+		self::assertSame('image/jpeg', $response->getHeaders()['Content-Type']);
+		self::assertStringStartsWith('inline;', $response->getHeaders()['Content-Disposition']);
+	}
+
+	public function testPreviewOfNonImage(): void {
+		$this->comment->method('getObjectId')->willReturn('23');
+		$this->participantService->method('getParticipantByActor')->willReturn($this->createMock(Participant::class));
+		$this->client->method('downloadThumbnail')->willReturn(new Psr7Response(200, ['Content-Type' => 'image/svg+xml'], '<svg/>'));
+
+		self::assertSame(Http::STATUS_NOT_FOUND, $this->controller->preview('55')->getStatus());
+	}
+
+	public function testPreviewNotParticipant(): void {
+		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+		$this->client->expects(self::never())->method('downloadThumbnail');
+
+		self::assertSame(Http::STATUS_NOT_FOUND, $this->controller->preview('55')->getStatus());
+	}
+
 	public function testDownloadNotParticipant(): void {
 		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
 		$this->client->expects(self::never())->method('downloadMedia');

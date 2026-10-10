@@ -340,12 +340,24 @@ class MessageSyncServiceTest extends TestCase {
 					'name' => 'cat.jpg',
 					'link' => 'https://cloud.example/spreed.MatrixMedia.download/55',
 					'mxc' => 'mxc://example.org/abc',
+					'thumb' => 'https://cloud.example/spreed.MatrixMedia.preview/55',
 				];
 				self::assertSame(['message' => 'object_shared', 'parameters' => ['objectType' => 'highlight', 'objectId' => 'matrix-media/55', 'metaData' => $object]], json_decode($message, true));
 				return $this->comment(11, ChatManager::VERB_OBJECT_SHARED);
 			});
 
 		self::assertSame(1, $this->apply([self::event('$image', 'm.room.message', ['msgtype' => 'm.image', 'body' => 'cat.jpg', 'url' => 'mxc://example.org/abc'])], true));
+	}
+
+	public function testFileHasNoPreview(): void {
+		$this->chatManager->expects(self::once())
+			->method('addSystemMessage')
+			->willReturnCallback(function (Room $room, ?Participant $participant, string $actorType, string $actorId, string $message): IComment {
+				self::assertArrayNotHasKey('thumb', json_decode($message, true)['parameters']['metaData']);
+				return $this->comment(11, ChatManager::VERB_OBJECT_SHARED);
+			});
+
+		$this->apply([self::event('$file', 'm.room.message', ['msgtype' => 'm.file', 'body' => 'report.pdf', 'url' => 'mxc://example.org/abc'])]);
 	}
 
 	public function testLocation(): void {

@@ -23,6 +23,8 @@ class ClientTest extends TestCase {
 	private array $responses = [];
 	/** @var list<string> */
 	private array $paths = [];
+	/** @var list<string> */
+	private array $queries = [];
 	private Client $client;
 
 	protected function setUp(): void {
@@ -43,6 +45,7 @@ class ClientTest extends TestCase {
 
 	public function respond(RequestInterface $request): ResponseInterface {
 		$this->paths[] = $request->getUri()->getPath();
+		$this->queries[] = $request->getUri()->getQuery();
 		return array_shift($this->responses) ?? new Response(404);
 	}
 
@@ -59,6 +62,15 @@ class ClientTest extends TestCase {
 
 		self::assertSame('png', (string)$this->client->downloadMedia('mxc://example.org/abc')->getBody());
 		self::assertSame(['/_matrix/client/v1/media/download/example.org/abc', '/_matrix/media/v3/download/example.org/abc'], $this->paths);
+	}
+
+	public function testDownloadThumbnail(): void {
+		$this->responses[] = new Response(404, ['Content-Type' => 'application/json'], '{"errcode":"M_UNRECOGNIZED","error":"Unrecognized request"}');
+		$this->responses[] = new Response(200, ['Content-Type' => 'image/png'], 'png');
+
+		self::assertSame('png', (string)$this->client->downloadThumbnail('mxc://example.org/abc', 640, false)->getBody());
+		self::assertSame(['/_matrix/client/v1/media/thumbnail/example.org/abc', '/_matrix/media/v3/thumbnail/example.org/abc'], $this->paths);
+		self::assertSame(['width=640&height=640&method=scale', 'width=640&height=640&method=scale'], $this->queries);
 	}
 
 	public function testDownloadMissingMedia(): void {
