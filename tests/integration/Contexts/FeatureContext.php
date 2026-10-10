@@ -4799,7 +4799,7 @@ class FeatureContext implements Context {
 		Assert::assertEquals($expected, $actual);
 	}
 
-	#[When('/^wait for ([0-9]+) (second|seconds)$/')]
+	#[When('/^wait for ([0-9]+) seconds?$/')]
 	public function waitForXSecond(int $seconds): void {
 		sleep($seconds);
 	}
