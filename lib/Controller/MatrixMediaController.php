@@ -36,6 +36,7 @@ use OCP\IRequest;
 class MatrixMediaController extends Controller {
 	/** Types the browser may show, everything else is downloaded */
 	public const INLINE_TYPES = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
+	public const PREVIEW_SIZE = 640;
 
 	public function __construct(
 		string $appName,
@@ -59,6 +60,21 @@ class MatrixMediaController extends Controller {
 	#[UserRateLimit(limit: 120, period: 60)]
 	#[FrontpageRoute(verb: 'GET', url: '/matrix/media/{id}', requirements: ['id' => '\d+'])]
 	public function download(string $id): Response {
+		return $this->proxy($id, false);
+	}
+
+	/**
+	 * Scaled down image attachment of a Matrix conversation
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	#[UserRateLimit(limit: 300, period: 60)]
+	#[FrontpageRoute(verb: 'GET', url: '/matrix/media/{id}/preview', requirements: ['id' => '\d+'])]
+	public function preview(string $id): Response {
+		return $this->proxy($id, true);
+	}
+
+	protected function proxy(string $id, bool $preview): Response {
 		$attachment = $this->getAttachment($id);
 		$account = $this->userId !== null ? $this->accountService->getForUser($this->userId) : null;
 		if ($attachment === null || $account?->getStatus() !== Account::STATUS_ACTIVE) {
@@ -66,19 +82,25 @@ class MatrixMediaController extends Controller {
 		}
 
 		try {
-			$upstream = $this->accountService->getClient($account)->downloadMedia($attachment['mxc']);
+			$client = $this->accountService->getClient($account);
+			$upstream = $preview
+				? $client->downloadThumbnail($attachment['mxc'], self::PREVIEW_SIZE, false)
+				: $client->downloadMedia($attachment['mxc']);
 		} catch (MatrixException $e) {
 			return new Response($e->getErrcode() === 'M_NOT_FOUND' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_GATEWAY);
 		} catch (\InvalidArgumentException|DoesNotExistException) {
+			return new Response(Http::STATUS_NOT_FOUND);
+		}
+
+		$contentType = strtolower(trim(explode(';', $upstream->getHeaderLine('Content-Type'))[0]));
+		$inline = in_array($contentType, self::INLINE_TYPES, true);
+		if ($preview && !$inline) {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}
 		$stream = $upstream->getBody()->detach();
 		if (!is_resource($stream)) {
 			return new Response(Http::STATUS_BAD_GATEWAY);
 		}
-
-		$contentType = strtolower(trim(explode(';', $upstream->getHeaderLine('Content-Type'))[0]));
-		$inline = in_array($contentType, self::INLINE_TYPES, true);
 		$fileName = str_replace(['"', '\\', "\r", "\n"], '_', $attachment['name']);
 
 		$response = new StreamResponse($stream);
