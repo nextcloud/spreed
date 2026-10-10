@@ -68,7 +68,12 @@ class Config {
 	public const string EXPERIMENTS_USERS = 'experiments_users';
 	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
 	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
+	public const string CALL_RECORDING = 'call_recording';
+	public const string CALL_RECORDING_SUMMARY = 'call_recording_summary';
 	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
+	public const string CALL_RECORDING_TRANSCRIPTION = 'call_recording_transcription';
+	public const string RECORDING_CONSENT = 'recording_consent';
+	public const string RECORDING_SERVERS = 'recording_servers';
 	public const string FORCE_PASSWORDS = 'force_passwords';
 	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
 	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_useres';
@@ -92,7 +97,6 @@ class Config {
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
-	public const string CALL_RECORDING_TRANSCRIPTION = 'call_recording_transcription';
 	public const string CHAT_STYLE = 'chat_style';
 	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
@@ -238,12 +242,12 @@ class Config {
 	}
 
 	public function getRecordingServers(): array {
-		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		$recording = $this->appConfig->getAppValueArray(self::RECORDING_SERVERS);
 		return $recording['servers'] ?? [];
 	}
 
 	public function getRecordingSecret(): string {
-		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		$recording = $this->appConfig->getAppValueArray(self::RECORDING_SERVERS);
 		return $recording['secret'] ?? '';
 	}
 
@@ -252,7 +256,7 @@ class Config {
 			return false;
 		}
 
-		if ($this->config->getAppValue('spreed', 'call_recording', 'yes') !== 'yes') {
+		if (!$this->appConfig->getAppValueBool(self::CALL_RECORDING)) {
 			return false;
 		}
 
@@ -283,7 +287,7 @@ class Config {
 	 * @return RecordingService::CONSENT_REQUIRED_*
 	 */
 	public function getRecordingConsentConfig(): int {
-		return match ((int)$this->config->getAppValue('spreed', 'recording_consent', (string)RecordingService::CONSENT_REQUIRED_NO)) {
+		return match ($this->appConfig->getAppValueInt(self::RECORDING_CONSENT)) {
 			RecordingService::CONSENT_REQUIRED_YES => RecordingService::CONSENT_REQUIRED_YES,
 			RecordingService::CONSENT_REQUIRED_OPTIONAL => RecordingService::CONSENT_REQUIRED_OPTIONAL,
 			default => RecordingService::CONSENT_REQUIRED_NO,
