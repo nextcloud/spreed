@@ -23,7 +23,7 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 /**
- * Accept or decline invites to Matrix rooms
+ * Join Matrix rooms: accept or decline invites, join by address and create rooms
  */
 class InvitationService {
 	/** Seconds to wait for the room after joining */
@@ -52,10 +52,69 @@ class InvitationService {
 		$matrixRoom = $this->getInvitedRoom($account, $id);
 		$serverName = Identifier::serverName($matrixRoom->getMatrixRoomId());
 		$this->accountService->getClient($account)->join($matrixRoom->getMatrixRoomId(), $serverName !== '' ? [$serverName] : []);
+		return $this->syncAndFindRoom($account, $matrixRoom->getMatrixRoomId());
+	}
+
+	/**
+	 * @param string $reference Room id, alias or link to the room
+	 * @return Room|null The conversation, null when another sync is still creating it
+	 * @throws \InvalidArgumentException 'reference' when the reference is not a Matrix room
+	 * @throws MatrixException
+	 * @throws DoesNotExistException when the homeserver was removed
+	 */
+	public function join(Account $account, string $reference): ?Room {
+		try {
+			[$roomIdOrAlias, $servers] = Identifier::parseRoomReference($reference);
+		} catch (\InvalidArgumentException) {
+			throw new \InvalidArgumentException('reference');
+		}
+		$matrixRoomId = $this->accountService->getClient($account)->join($roomIdOrAlias, $servers);
+		return $this->syncAndFindRoom($account, $matrixRoomId);
+	}
+
+	/**
+	 * Create an unencrypted Matrix room, which is mirrored right away
+	 *
+	 * @param list<string> $invites Matrix user ids to invite
+	 * @param bool $direct Whether it is a direct chat with the only invited user
+	 * @return Room|null The conversation, null when another sync is still creating it
+	 * @throws \InvalidArgumentException 'name' | 'invite'
+	 * @throws MatrixException
+	 * @throws DoesNotExistException when the homeserver was removed
+	 */
+	public function create(Account $account, string $name, string $topic, array $invites, bool $direct): ?Room {
+		$name = trim($name);
+		if ($direct ? count($invites) !== 1 : $name === '') {
+			throw new \InvalidArgumentException($direct ? 'invite' : 'name');
+		}
+		foreach ($invites as $invite) {
+			if (!Identifier::isUserId($invite)) {
+				throw new \InvalidArgumentException('invite');
+			}
+		}
+
+		$options = [
+			'preset' => $direct ? 'trusted_private_chat' : 'private_chat',
+			'visibility' => 'private',
+			'invite' => array_values(array_unique($invites)),
+			'is_direct' => $direct,
+		];
+		if ($name !== '') {
+			$options['name'] = mb_substr($name, 0, 255);
+		}
+		if (trim($topic) !== '') {
+			$options['topic'] = trim($topic);
+		}
+
+		$matrixRoomId = $this->accountService->getClient($account)->createRoom($options);
+		return $this->syncAndFindRoom($account, $matrixRoomId);
+	}
+
+	protected function syncAndFindRoom(Account $account, string $matrixRoomId): ?Room {
 		$this->syncService->syncAccount($account, self::SYNC_BUDGET);
 
 		try {
-			$roomId = $this->roomMapper->getById($id)->getRoomId();
+			$roomId = $this->roomMapper->getByMatrixRoomId($matrixRoomId)->getRoomId();
 			return $roomId !== 0 ? $this->manager->getRoomById($roomId) : null;
 		} catch (DoesNotExistException|RoomNotFoundException) {
 			return null;

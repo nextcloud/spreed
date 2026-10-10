@@ -153,7 +153,8 @@
 							<NcActions
 								v-show="searchText === ''"
 								class="actions"
-								:class="{ 'hidden-visually': isSearching }">
+								:class="{ 'hidden-visually': isSearching }"
+								@open="loadMatrixAccount">
 								<template #icon>
 									<IconChatPlusOutline :size="20" />
 								</template>
@@ -165,6 +166,17 @@
 										<IconPlus :size="20" />
 									</template>
 									{{ t('spreed', 'Create a new conversation') }}
+								</NcActionButton>
+
+								<NcActionButton
+									v-if="isMatrixEnabled"
+									:disabled="!actorStore.hasActiveMatrixAccount"
+									closeAfterClick
+									@click="showMatrixRoomDialog = true">
+									<template #icon>
+										<IconPlus :size="20" />
+									</template>
+									{{ t('spreed', 'Create or join a Matrix room') }}
 								</NcActionButton>
 
 								<NcActionButton
@@ -209,6 +221,8 @@
 
 						<!-- All open conversations list -->
 						<OpenConversationsList ref="openConversationsList" />
+
+						<MatrixRoomDialog v-if="showMatrixRoomDialog" @close="showMatrixRoomDialog = false" />
 
 						<!-- New Conversation dialog -->
 						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
@@ -460,6 +474,7 @@ import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
 import LeftSidebarButton from './LeftSidebarButton.vue'
+import MatrixRoomDialog from './MatrixRoomDialog.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -505,6 +520,7 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportThreads = hasTalkFeature('local', 'threads')
 const supportSortOrder = getTalkConfig('local', 'conversations', 'sort-order') !== undefined
 const supportTags = hasTalkFeature('local', 'conversation-tags')
+const isMatrixEnabled = getTalkConfig('local', 'matrix', 'enabled') === true
 
 // TRANSLATORS The main home view
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
@@ -550,6 +566,7 @@ export default {
 		NcChip,
 		SearchBox,
 		NewConversationDialog,
+		MatrixRoomDialog,
 		OpenConversationsList,
 		NcActions,
 		NcActionButton,
@@ -631,6 +648,7 @@ export default {
 			supportThreads,
 			supportSortOrder,
 			supportTags,
+			isMatrixEnabled,
 			showArchived,
 			showThreadsList,
 			settingsStore,
@@ -661,6 +679,7 @@ export default {
 		return {
 			searchText: '',
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
+			showMatrixRoomDialog: false,
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
@@ -894,6 +913,12 @@ export default {
 	},
 
 	methods: {
+		loadMatrixAccount() {
+			if (isMatrixEnabled) {
+				this.actorStore.loadMatrixAccount()
+			}
+		},
+
 		loadMoreFollowedThreads() {
 			this.chatExtrasStore.fetchFollowedThreadsList(this.followedThreads.length)
 		},

@@ -11,14 +11,15 @@
  */
 
 import type { NextcloudUser } from '@nextcloud/auth'
-import type { Participant } from '../types/index.ts'
+import type { MatrixAccount, Participant } from '../types/index.ts'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, MATRIX, PARTICIPANT } from '../constants.ts'
 import { hasServerAppCapabilities } from '../services/CapabilitiesManager.ts'
+import { getMatrixAccount } from '../services/matrixService.ts'
 import { getTeams } from '../services/teamsService.ts'
 
 export const useActorStore = defineStore('actor', () => {
@@ -30,6 +31,7 @@ export const useActorStore = defineStore('actor', () => {
 	const displayName = ref<string>('')
 	const actorGroups = ref<string[]>(loadState('spreed', 'user_group_ids', []))
 	const actorTeams = ref<string[]>([])
+	const matrixAccount = ref<MatrixAccount | null>(null)
 
 	const isLoggedIn = computed(() => userId.value !== null)
 	// TODO check usage for computed below, migrate to isLoggedIn where appropriate
@@ -41,6 +43,7 @@ export const useActorStore = defineStore('actor', () => {
 		actorId: actorId.value,
 		sessionId: sessionId.value,
 	}))
+	const hasActiveMatrixAccount = computed(() => matrixAccount.value?.status === MATRIX.ACCOUNT_STATUS.ACTIVE)
 
 	// Initialize the store
 	initialize()
@@ -153,6 +156,18 @@ export const useActorStore = defineStore('actor', () => {
 		}
 	}
 
+	/**
+	 * Load the linked Matrix account
+	 */
+	async function loadMatrixAccount() {
+		try {
+			const response = await getMatrixAccount()
+			matrixAccount.value = response.data.ocs.data.account
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
 	return {
 		userId,
 		sessionId,
@@ -162,10 +177,12 @@ export const useActorStore = defineStore('actor', () => {
 		displayName,
 		actorGroups,
 		actorTeams,
+		matrixAccount,
 		isLoggedIn,
 		isActorUser,
 		isActorGuest,
 		participantIdentifier,
+		hasActiveMatrixAccount,
 
 		isActorMemberOfGroup,
 		isActorMemberOfTeam,
@@ -176,5 +193,6 @@ export const useActorStore = defineStore('actor', () => {
 		setCurrentUser,
 		setCurrentParticipant,
 		getCurrentUserTeams,
+		loadMatrixAccount,
 	}
 })

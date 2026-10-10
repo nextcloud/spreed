@@ -7,8 +7,12 @@ import type {
 	addMatrixHomeserverParams,
 	addMatrixHomeserverResponse,
 	checkMatrixConnectionResponse,
+	createMatrixRoomParams,
+	createMatrixRoomResponse,
 	getMatrixAccountResponse,
 	getMatrixHomeserversResponse,
+	joinMatrixRoomParams,
+	joinMatrixRoomResponse,
 	linkMatrixAccountParams,
 	linkMatrixAccountResponse,
 	MatrixHomeserver,
@@ -96,6 +100,24 @@ async function linkMatrixAccount(payload: linkMatrixAccountParams): linkMatrixAc
 }
 
 /**
+ * Create a Matrix room or a direct chat
+ *
+ * @param payload Name, topic, Matrix user ids to invite and whether it is a direct chat
+ */
+async function createMatrixRoom(payload: createMatrixRoomParams): createMatrixRoomResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/matrix/room'), payload)
+}
+
+/**
+ * Join a Matrix room by its address
+ *
+ * @param payload The room alias, id or link
+ */
+async function joinMatrixRoom(payload: joinMatrixRoomParams): joinMatrixRoomResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/matrix/room/join'), payload)
+}
+
+/**
  * Check the connection to the homeserver again
  */
 async function checkMatrixConnection(): checkMatrixConnectionResponse {
@@ -121,8 +143,10 @@ async function unlinkMatrixAccount(): unlinkMatrixAccountResponse {
 export {
 	addMatrixHomeserver,
 	checkMatrixConnection,
+	createMatrixRoom,
 	getMatrixAccount,
 	getMatrixHomeservers,
+	joinMatrixRoom,
 	linkMatrixAccount,
 	reloginMatrixAccount,
 	removeMatrixHomeserver,

@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { MatrixAccount, MatrixHomeserver } from '../../types/index.ts'
+import type { MatrixHomeserver } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
@@ -27,6 +27,7 @@ import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import { useActionStatus } from '../../composables/useActionStatus.ts'
 import { MATRIX } from '../../constants.ts'
 import { checkMatrixConnection, getMatrixAccount, linkMatrixAccount, reloginMatrixAccount, unlinkMatrixAccount } from '../../services/matrixService.ts'
+import { useActorStore } from '../../stores/actor.ts'
 import { isAxiosErrorResponse } from '../../types/guards.ts'
 
 const LINK_ERRORS: Record<string, string> = {
@@ -43,12 +44,12 @@ const RELOGIN_ERRORS: Record<string, string> = {
 	user: t('spreed', 'The login belongs to a different Matrix account'),
 }
 
+const actorStore = useActorStore()
 const { getActionStatus, runAction } = useActionStatus()
 
 const loaded = ref(false)
 const loading = ref(false)
 const canLink = ref(false)
-const account = ref<MatrixAccount | null>(null)
 const connected = ref(true)
 const homeservers = ref<MatrixHomeserver[]>([])
 const form = reactive<{ homeserver: MatrixHomeserver | null, user: string, password: string }>({
@@ -58,15 +59,15 @@ const form = reactive<{ homeserver: MatrixHomeserver | null, user: string, passw
 })
 
 const accountDescription = computed(() => {
-	if (!account.value) {
+	if (!actorStore.matrixAccount) {
 		return ''
 	}
 
 	return [
 		// TRANSLATORS: {mxid} is the Matrix user ID, e.g. @alice:example.org
-		t('spreed', 'Linked as {mxid}', { mxid: account.value.mxid }),
+		t('spreed', 'Linked as {mxid}', { mxid: actorStore.matrixAccount.mxid }),
 		// TRANSLATORS: {deviceId} is the ID of the device this client uses on the Matrix account
-		t('spreed', 'Device {deviceId}', { deviceId: account.value.deviceId }),
+		t('spreed', 'Device {deviceId}', { deviceId: actorStore.matrixAccount.deviceId }),
 	].join(' · ')
 })
 
@@ -79,7 +80,7 @@ async function loadMatrixDetails() {
 	try {
 		const response = await getMatrixAccount()
 		canLink.value = response.data.ocs.data.canLink
-		account.value = response.data.ocs.data.account
+		actorStore.matrixAccount = response.data.ocs.data.account
 		connected.value = response.data.ocs.data.connected
 		homeservers.value = response.data.ocs.data.homeservers
 		form.homeserver = homeservers.value[0] ?? null
@@ -105,7 +106,7 @@ async function linkAccount() {
 			user: form.user,
 			password: form.password,
 		})
-		account.value = response.data.ocs.data
+		actorStore.matrixAccount = response.data.ocs.data
 		connected.value = true
 		form.user = ''
 	} catch (error) {
@@ -129,7 +130,7 @@ async function reloginAccount() {
 	loading.value = true
 	try {
 		const response = await reloginMatrixAccount({ password: form.password })
-		account.value = response.data.ocs.data
+		actorStore.matrixAccount = response.data.ocs.data
 		connected.value = true
 	} catch (error) {
 		console.error(error)
@@ -155,7 +156,7 @@ async function checkConnection() {
 		await runAction('connection', async () => {
 			const response = await checkMatrixConnection()
 			checked = true
-			account.value = response.data.ocs.data.account
+			actorStore.matrixAccount = response.data.ocs.data.account
 			connected.value = response.data.ocs.data.connected
 			if (!connected.value) {
 				throw new Error('The homeserver could not be reached')
@@ -179,7 +180,7 @@ async function unlinkAccount() {
 		// TRANSLATORS: Dialog title and button to unlink the Matrix account from this client
 		name: t('spreed', 'Unlink account'),
 		message: t('spreed', 'Do you really want to unlink "{mxid}"? This client will be logged out of your Matrix account.', {
-			mxid: account.value!.mxid,
+			mxid: actorStore.matrixAccount!.mxid,
 		}, { escape: false, sanitize: false }),
 		buttons: [
 			{ label: t('spreed', 'No'), variant: 'tertiary', callback: () => undefined },
@@ -194,7 +195,7 @@ async function unlinkAccount() {
 	loading.value = true
 	try {
 		await unlinkMatrixAccount()
-		account.value = null
+		actorStore.matrixAccount = null
 	} catch (error) {
 		console.error(error)
 		showError(t('spreed', 'Could not unlink the Matrix account'))
@@ -207,19 +208,19 @@ async function unlinkAccount() {
 <template>
 	<div v-if="loaded" class="matrix-account">
 		<NcFormGroup
-			v-if="account"
+			v-if="actorStore.matrixAccount"
 			:label="t('spreed', 'Connected Matrix account')"
 			:description="accountDescription">
-			<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
+			<template v-if="actorStore.matrixAccount.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
 				<p class="matrix-account__warning">
 					{{ t('spreed', 'The homeserver ended the session of this client. Enter your Matrix password to log in again.') }}
 				</p>
-				<p v-if="account.lastError" class="matrix-account__hint">
-					{{ account.lastError }}
+				<p v-if="actorStore.matrixAccount.lastError" class="matrix-account__hint">
+					{{ actorStore.matrixAccount.lastError }}
 				</p>
 			</template>
 			<NcFormBox>
-				<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
+				<template v-if="actorStore.matrixAccount.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
 					<NcPasswordField
 						v-model="form.password"
 						:label="t('spreed', 'Matrix password')"
@@ -238,7 +239,7 @@ async function unlinkAccount() {
 					</NcFormBoxButton>
 				</template>
 				<NcFormBoxButton
-					v-else-if="account.status === MATRIX.ACCOUNT_STATUS.ACTIVE"
+					v-else-if="actorStore.matrixAccount.status === MATRIX.ACCOUNT_STATUS.ACTIVE"
 					:label="t('spreed', 'Test connection')"
 					:disabled="loading"
 					@click="checkConnection">
