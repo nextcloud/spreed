@@ -28,6 +28,8 @@ use OCP\DB\Types;
  * @method ?string getCanonicalAlias()
  * @method void setCreator(?string $creator)
  * @method ?string getCreator()
+ * @method void setCreators(?string $creators)
+ * @method ?string getCreators()
  * @method void setEncrypted(bool $encrypted)
  * @method bool getEncrypted()
  * @method void setPowerLevels(?string $powerLevels)
@@ -42,6 +44,8 @@ class MatrixRoom extends SnowflakeAwareEntity {
 	protected ?string $topic = null;
 	protected ?string $canonicalAlias = null;
 	protected ?string $creator = null;
+	/** JSON list of the creators with the creator level, since room version 12 */
+	protected ?string $creators = null;
 	protected bool $encrypted = false;
 	/** JSON content of m.room.power_levels */
 	protected ?string $powerLevels = null;
@@ -53,6 +57,7 @@ class MatrixRoom extends SnowflakeAwareEntity {
 		$this->addType('topic', Types::STRING);
 		$this->addType('canonicalAlias', Types::STRING);
 		$this->addType('creator', Types::STRING);
+		$this->addType('creators', Types::STRING);
 		$this->addType('encrypted', Types::BOOLEAN);
 		$this->addType('powerLevels', Types::STRING);
 	}
@@ -63,7 +68,13 @@ class MatrixRoom extends SnowflakeAwareEntity {
 		return is_array($decoded) ? $decoded : [];
 	}
 
+	/** @return list<string> */
+	public function getCreatorsArray(): array {
+		$decoded = $this->creators !== null ? json_decode($this->creators, true) : null;
+		return is_array($decoded) ? array_values(array_filter($decoded, 'is_string')) : [];
+	}
+
 	public function getPowerLevelsModel(): PowerLevels {
-		return new PowerLevels($this->getPowerLevelsArray(), (string)$this->creator);
+		return new PowerLevels($this->getPowerLevelsArray(), (string)$this->creator, $this->getCreatorsArray());
 	}
 }

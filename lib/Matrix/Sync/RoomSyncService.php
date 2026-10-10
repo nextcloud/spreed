@@ -142,6 +142,7 @@ class RoomSyncService {
 		$matrixRoom->setTopic($state->topic);
 		$matrixRoom->setCanonicalAlias($state->canonicalAlias !== null ? mb_substr($state->canonicalAlias, 0, 255) : null);
 		$matrixRoom->setCreator($state->creator !== '' ? mb_substr($state->creator, 0, 255) : null);
+		$matrixRoom->setCreators($state->creators !== [] ? json_encode($state->creators, JSON_THROW_ON_ERROR) : null);
 		$matrixRoom->setEncrypted($state->encrypted);
 		$matrixRoom->setPowerLevels($state->powerLevels !== [] ? json_encode($state->powerLevels, JSON_THROW_ON_ERROR) : null);
 
@@ -314,7 +315,10 @@ class RoomSyncService {
 			$events[] = new Event('', 'm.room.canonical_alias', '', ['alias' => $matrixRoom->getCanonicalAlias()], '');
 		}
 		if ($matrixRoom->getCreator() !== null) {
-			$events[] = new Event('', 'm.room.create', $matrixRoom->getCreator(), ['creator' => $matrixRoom->getCreator()], '');
+			$creators = $matrixRoom->getCreatorsArray();
+			$events[] = new Event('', 'm.room.create', $creators[0] ?? $matrixRoom->getCreator(), $creators !== []
+				? ['room_version' => '12', 'additional_creators' => array_slice($creators, 1)]
+				: ['creator' => $matrixRoom->getCreator()], '');
 		}
 		if ($matrixRoom->getEncrypted()) {
 			$events[] = new Event('', 'm.room.encryption', '', [], '');

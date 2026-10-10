@@ -18,14 +18,18 @@ final class PowerLevels {
 	public const LEVEL_MODERATOR = 50;
 	/** Level of administrators and of the room creator while the room has no power levels */
 	public const LEVEL_ADMIN = 100;
+	/** Level of the room creators since room version 12, above every other level */
+	public const LEVEL_CREATOR = PHP_INT_MAX;
 
 	/**
 	 * @param array<string, mixed> $content
 	 * @param string $creator Has the admin level while the room has no power levels
+	 * @param list<string> $creators Creators since room version 12, which have the creator level and are not part of the content
 	 */
 	public function __construct(
 		private readonly array $content,
 		private readonly string $creator = '',
+		private readonly array $creators = [],
 	) {
 	}
 
@@ -35,6 +39,9 @@ final class PowerLevels {
 	}
 
 	public function getUserLevel(string $userId): int {
+		if (in_array($userId, $this->creators, true)) {
+			return self::LEVEL_CREATOR;
+		}
 		$users = is_array($this->content['users'] ?? null) ? $this->content['users'] : [];
 		if (isset($users[$userId])) {
 			return (int)$users[$userId];
@@ -99,7 +106,7 @@ final class PowerLevels {
 	public function withUserLevel(string $userId, int $level): array {
 		$content = $this->content;
 		$users = is_array($content['users'] ?? null) ? $content['users'] : [];
-		if ($content === [] && $this->creator !== '') {
+		if ($content === [] && $this->creator !== '' && $this->creators === []) {
 			$users[$this->creator] = self::LEVEL_ADMIN;
 		}
 		$users[$userId] = $level;
