@@ -18,7 +18,8 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * PSR-18 client on top of Nextcloud's IClientService so the Matrix library
  * inherits the instance's proxy, certificate bundle and local-address policy.
- * Only used with admin-configured homeserver base URLs.
+ * Only used with admin-configured homeserver base URLs. Request and response
+ * bodies are streamed, so media is never held in memory completely.
  */
 class HttpClient implements ClientInterface {
 	public function __construct(
@@ -39,9 +40,10 @@ class HttpClient implements ClientInterface {
 			'timeout' => $this->timeout,
 			'http_errors' => false,
 			'verify' => true,
+			'stream' => true,
 		];
-		$body = (string)$request->getBody();
-		if ($body !== '' || in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
+		$body = $request->getBody();
+		if ($body->getSize() !== 0 || in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'], true)) {
 			$options['body'] = $body;
 		}
 
