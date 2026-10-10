@@ -8,9 +8,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Matrix\Sync;
 
+use GuzzleHttp\Psr7\Response as Psr7Response;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
@@ -24,6 +26,7 @@ use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
@@ -45,6 +48,8 @@ class RoomSyncServiceTest extends TestCase {
 	private AccountMapper&MockObject $accountMapper;
 	private EventMapMapper&MockObject $eventMapMapper;
 	private MessageSyncService&MockObject $messageSyncService;
+	private AvatarService&MockObject $avatarService;
+	private Client&MockObject $client;
 	private INotificationManager&MockObject $notificationManager;
 	private INotification&MockObject $notification;
 	private Room&MockObject $room;
@@ -78,6 +83,8 @@ class RoomSyncServiceTest extends TestCase {
 		));
 		$this->eventMapMapper = $this->createMock(EventMapMapper::class);
 		$this->messageSyncService = $this->createMock(MessageSyncService::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
+		$this->client = $this->createMock(Client::class);
 		$this->notification = $this->createMock(INotification::class);
 		foreach (['setApp', 'setUser', 'setObject', 'setSubject', 'setDateTime'] as $setter) {
 			$this->notification->method($setter)->willReturnSelf();
@@ -101,6 +108,7 @@ class RoomSyncServiceTest extends TestCase {
 			$this->accountMapper,
 			$this->eventMapMapper,
 			$this->messageSyncService,
+			$this->avatarService,
 			$this->notificationManager,
 			$timeFactory,
 			$l,
@@ -197,7 +205,7 @@ class RoomSyncServiceTest extends TestCase {
 			->with($this->room, self::anything(), [], self::anything(), self::anything(), true)
 			->willReturn(0);
 
-		$stats = $this->service->process($this->account(), self::batch([
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
 			'state' => ['events' => [
 				self::memberEvent('@alice:example.org', 'join', 'Alice'),
 				self::memberEvent('@bob:example.org', 'join', 'Bob'),
@@ -243,7 +251,7 @@ class RoomSyncServiceTest extends TestCase {
 			->with($this->room, self::anything(), self::countOf(0), self::anything(), self::callback(static fn (array $accounts): bool => array_keys($accounts) === ['@alice:example.org']), false)
 			->willReturn(0);
 
-		$stats = $this->service->process($this->account(), self::batch([
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
 			'state' => ['events' => [
 				['type' => 'm.room.topic', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['topic' => 'About us']],
 			]],
@@ -272,7 +280,7 @@ class RoomSyncServiceTest extends TestCase {
 			->method('updatePermissions')
 			->with($this->room, $alice, Attendee::PERMISSIONS_MODIFY_SET, Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_REACT);
 
-		$this->service->process($this->account(), self::batch([
+		$this->service->process($this->account(), $this->client, self::batch([
 			'state' => ['events' => [
 				['type' => 'm.room.encryption', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['algorithm' => 'm.megolm.v1.aes-sha2']],
 				['type' => 'm.room.power_levels', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['users' => ['@bob:example.org' => 100], 'events' => ['m.room.message' => 50]]],
@@ -308,7 +316,7 @@ class RoomSyncServiceTest extends TestCase {
 			->willReturnSelf();
 		$this->notificationManager->expects(self::once())->method('notify')->with($this->notification);
 
-		self::assertSame(['rooms' => 0, 'messages' => 0, 'failed' => 0], $this->service->process($this->account(), self::inviteBatch(), false));
+		self::assertSame(['rooms' => 0, 'messages' => 0, 'failed' => 0], $this->service->process($this->account(), $this->client, self::inviteBatch(), false));
 		self::assertSame('invite', $this->insertedMembers['@alice:example.org']->getMembership());
 		self::assertSame('7', $this->insertedMembers['@alice:example.org']->getAccountId());
 	}
@@ -321,7 +329,7 @@ class RoomSyncServiceTest extends TestCase {
 		$this->memberMapper->expects(self::never())->method('insert');
 		$this->notificationManager->expects(self::never())->method('notify');
 
-		$this->service->process($this->account(), self::inviteBatch(), false);
+		$this->service->process($this->account(), $this->client, self::inviteBatch(), false);
 	}
 
 	public function testJoinAfterInviteAndRoles(): void {
@@ -350,7 +358,7 @@ class RoomSyncServiceTest extends TestCase {
 			});
 		$this->participantService->expects(self::never())->method('updatePermissions');
 
-		$this->service->process($this->account(), self::batch([
+		$this->service->process($this->account(), $this->client, self::batch([
 			'state' => ['events' => [
 				self::memberEvent('@alice:example.org', 'join', 'Alice'),
 				['type' => 'm.room.power_levels', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['users' => ['@bob:example.org' => 100, '@alice:example.org' => 50]]],
@@ -358,12 +366,86 @@ class RoomSyncServiceTest extends TestCase {
 		]), false);
 	}
 
+	/**
+	 * @param array<string, MatrixMember> $members
+	 */
+	private function existingRoom(?string $avatarUrl, array $members): MatrixRoom {
+		$matrixRoom = MatrixRoom::fromRow(['id' => '100', 'room_id' => 23, 'matrix_room_id' => '!room:example.org', 'avatar_url' => $avatarUrl]);
+		$this->roomMapper->method('getByMatrixRoomId')->willReturn($matrixRoom);
+		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);
+		$this->memberMapper->method('getForRoom')->with('100')->willReturn($members);
+		$this->participantService->method('getParticipantsForRoom')->willReturn([]);
+		return $matrixRoom;
+	}
+
+	public function testRoomAvatar(): void {
+		$matrixRoom = $this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->client->expects(self::once())
+			->method('downloadThumbnail')
+			->with('mxc://example.org/avatar', RoomSyncService::AVATAR_SIZE)
+			->willReturn(new Psr7Response(200, ['Content-Type' => 'image/png'], 'png'));
+		$this->avatarService->expects(self::once())->method('setAvatarFromData')->with($this->room, 'png');
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'state' => ['events' => [['type' => 'm.room.avatar', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['url' => 'mxc://example.org/avatar']]]],
+		]), false);
+
+		self::assertSame('mxc://example.org/avatar', $matrixRoom->getAvatarUrl());
+	}
+
+	public function testDirectChatShowsAvatarOfOtherMember(): void {
+		$this->existingRoom(null, [
+			'@alice:example.org' => $this->member('@alice:example.org', 'join', '7'),
+			'@bob:example.org' => MatrixMember::fromRow(['id' => '2', 'matrix_room_id' => '100', 'mxid' => '@bob:example.org', 'membership' => 'join', 'avatar_url' => 'mxc://example.org/bob']),
+		]);
+		$this->client->expects(self::once())
+			->method('downloadThumbnail')
+			->with('mxc://example.org/bob')
+			->willReturn(new Psr7Response(200, [], 'png'));
+		$this->avatarService->expects(self::once())->method('setAvatarFromData');
+
+		$this->service->process($this->account(), $this->client, self::batch(['state' => ['events' => []]]), false);
+	}
+
+	public function testUnchangedAvatarIsNotDownloaded(): void {
+		$this->existingRoom('mxc://example.org/avatar', ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->client->expects(self::never())->method('downloadThumbnail');
+		$this->avatarService->expects(self::never())->method('setAvatarFromData');
+		$this->avatarService->expects(self::never())->method('deleteAvatar');
+
+		$this->service->process($this->account(), $this->client, self::batch(['state' => ['events' => []]]), false);
+	}
+
+	public function testRemovedAvatar(): void {
+		$matrixRoom = $this->existingRoom('mxc://example.org/avatar', ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->avatarService->expects(self::once())->method('deleteAvatar')->with($this->room);
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'state' => ['events' => [['type' => 'm.room.avatar', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => []]]],
+		]), false);
+
+		self::assertNull($matrixRoom->getAvatarUrl());
+	}
+
+	public function testBrokenAvatarIsRetried(): void {
+		$matrixRoom = $this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->client->method('downloadThumbnail')->willReturn(new Psr7Response(200, [], 'not an image'));
+		$this->avatarService->method('setAvatarFromData')->willThrowException(new \InvalidArgumentException('Invalid image'));
+
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
+			'state' => ['events' => [['type' => 'm.room.avatar', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['url' => 'mxc://example.org/avatar']]]],
+		]), false);
+
+		self::assertSame(1, $stats['rooms'], 'The room is synced without the avatar');
+		self::assertNull($matrixRoom->getAvatarUrl());
+	}
+
 	public function testSpaceIsSkipped(): void {
 		$this->roomMapper->method('getByMatrixRoomId')->willThrowException(new DoesNotExistException(''));
 		$this->roomMapper->expects(self::never())->method('insert');
 		$this->roomService->expects(self::never())->method('createConversation');
 
-		$stats = $this->service->process($this->account(), self::batch([
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
 			'state' => ['events' => [
 				['type' => 'm.room.create', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['type' => 'm.space']],
 				self::memberEvent('@alice:example.org', 'join', 'Alice'),
@@ -376,7 +458,7 @@ class RoomSyncServiceTest extends TestCase {
 	public function testFailingRoomIsCounted(): void {
 		$this->roomMapper->method('getByMatrixRoomId')->willThrowException(new \RuntimeException('Database is gone'));
 
-		$stats = $this->service->process($this->account(), self::batch([
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
 			'state' => ['events' => [self::memberEvent('@alice:example.org', 'join')]],
 		]), false);
 
@@ -401,7 +483,7 @@ class RoomSyncServiceTest extends TestCase {
 		$this->eventMapMapper->expects(self::once())->method('deleteForRoom')->with('100');
 		$this->roomService->expects(self::once())->method('deleteRoom')->with($this->room);
 
-		$this->service->process($this->account(), self::batch([], ['!room:example.org']), false);
+		$this->service->process($this->account(), $this->client, self::batch([], ['!room:example.org']), false);
 
 		self::assertSame('leave', $member->getMembership());
 	}

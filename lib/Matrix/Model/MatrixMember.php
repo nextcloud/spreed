@@ -24,6 +24,8 @@ use OCP\DB\Types;
  * @method ?string getDisplayName()
  * @method void setAccountId(?string $accountId)
  * @method ?string getAccountId()
+ * @method void setAvatarUrl(?string $avatarUrl)
+ * @method ?string getAvatarUrl()
  */
 class MatrixMember extends SnowflakeAwareEntity {
 	/** Id of the MatrixRoom entity */
@@ -33,6 +35,7 @@ class MatrixMember extends SnowflakeAwareEntity {
 	protected ?string $displayName = null;
 	/** Linked account of the member, null for Matrix users without a Nextcloud account */
 	protected ?string $accountId = null;
+	protected ?string $avatarUrl = null;
 
 	public function __construct() {
 		$this->addType('matrixRoomId', Types::STRING);
@@ -40,5 +43,6 @@ class MatrixMember extends SnowflakeAwareEntity {
 		$this->addType('membership', Types::STRING);
 		$this->addType('displayName', Types::STRING);
 		$this->addType('accountId', Types::STRING);
+		$this->addType('avatarUrl', Types::STRING);
 	}
 }
