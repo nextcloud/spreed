@@ -38,6 +38,8 @@ use Psr\Log\LoggerInterface;
 class AccountService {
 	/** Seconds the result of a connection check is reused */
 	public const CONNECTION_CHECK_TTL = 300;
+	/** Seconds an upload or download of media may take */
+	public const MEDIA_TIMEOUT = 600;
 
 	private ICache $connectionCache;
 

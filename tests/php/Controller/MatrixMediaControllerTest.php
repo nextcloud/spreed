@@ -36,13 +36,17 @@ class MatrixMediaControllerTest extends TestCase {
 	private Client&MockObject $client;
 	private IComment&MockObject $comment;
 	private MatrixMediaController $controller;
+	private ?int $timeout = null;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->client = $this->createMock(Client::class);
 		$accountService = $this->createMock(AccountService::class);
 		$accountService->method('getForUser')->with('alice')->willReturn(Account::fromRow(['id' => '7', 'user_id' => 'alice', 'status' => Account::STATUS_ACTIVE]));
-		$accountService->method('getClient')->willReturn($this->client);
+		$accountService->method('getClient')->willReturnCallback(function (Account $account, int $timeout = 30): Client {
+			$this->timeout = $timeout;
+			return $this->client;
+		});
 		$eventMapMapper = $this->createMock(EventMapMapper::class);
 		$eventMapMapper->method('getById')->with('55')->willReturn(EventMap::fromRow(['id' => '55', 'matrix_room_id' => '100', 'comment_id' => 11]));
 		$roomMapper = $this->createMock(MatrixRoomMapper::class);
@@ -81,11 +85,13 @@ class MatrixMediaControllerTest extends TestCase {
 		$this->client->expects(self::once())
 			->method('downloadMedia')
 			->with('mxc://example.org/abc')
-			->willReturn(new Psr7Response(200, ['Content-Type' => 'image/png; charset=binary'], 'png'));
+			->willReturn(new Psr7Response(200, ['Content-Type' => 'image/png; charset=binary', 'Content-Length' => '3'], 'png'));
 
 		$response = $this->controller->download('55');
 
+		self::assertSame(AccountService::MEDIA_TIMEOUT, $this->timeout);
 		self::assertInstanceOf(StreamResponse::class, $response);
+		self::assertSame('3', $response->getHeaders()['Content-Length']);
 		self::assertSame('image/png', $response->getHeaders()['Content-Type']);
 		self::assertSame('inline; filename="cat _1_.png"', $response->getHeaders()['Content-Disposition']);
 		self::assertSame("default-src 'none'; sandbox", $response->getHeaders()['Content-Security-Policy']);

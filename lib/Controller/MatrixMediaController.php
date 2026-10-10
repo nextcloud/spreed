@@ -82,10 +82,9 @@ class MatrixMediaController extends Controller {
 		}
 
 		try {
-			$client = $this->accountService->getClient($account);
 			$upstream = $preview
-				? $client->downloadThumbnail($attachment['mxc'], self::PREVIEW_SIZE, false)
-				: $client->downloadMedia($attachment['mxc']);
+				? $this->accountService->getClient($account)->downloadThumbnail($attachment['mxc'], self::PREVIEW_SIZE, false)
+				: $this->accountService->getClient($account, AccountService::MEDIA_TIMEOUT)->downloadMedia($attachment['mxc']);
 		} catch (MatrixException $e) {
 			return new Response($e->getErrcode() === 'M_NOT_FOUND' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_GATEWAY);
 		} catch (\InvalidArgumentException|DoesNotExistException) {
@@ -108,6 +107,9 @@ class MatrixMediaController extends Controller {
 		$response->addHeader('Content-Disposition', ($inline ? 'inline' : 'attachment') . '; filename="' . $fileName . '"');
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
 		$response->addHeader('Content-Security-Policy', "default-src 'none'; sandbox");
+		if (ctype_digit($upstream->getHeaderLine('Content-Length'))) {
+			$response->addHeader('Content-Length', $upstream->getHeaderLine('Content-Length'));
+		}
 		$response->cacheFor(86400, false);
 		return $response;
 	}

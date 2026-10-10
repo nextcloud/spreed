@@ -65,6 +65,8 @@ class SendServiceTest extends TestCase {
 	private array $requests = [];
 	/** @var list<int> */
 	private array $sleeps = [];
+	/** @var list<int> */
+	private array $timeouts = [];
 	private SendService $service;
 
 	protected function setUp(): void {
@@ -87,7 +89,8 @@ class SendServiceTest extends TestCase {
 				return $this->test->respond($request);
 			}
 		};
-		$this->accountService->method('getClient')->willReturnCallback(function () use ($http): Client {
+		$this->accountService->method('getClient')->willReturnCallback(function (Account $account, int $timeout = 30) use ($http): Client {
+			$this->timeouts[] = $timeout;
 			$factory = new HttpFactory();
 			$transport = new Transport('https://matrix.example.org', $http, $factory, $factory);
 			$transport->setSleep(function (int $milliseconds): void {
@@ -512,6 +515,8 @@ class SendServiceTest extends TestCase {
 		self::assertSame('filename=cat.png', $this->requests[0]->getUri()->getQuery());
 		self::assertSame('image/png', $this->requests[0]->getHeaderLine('Content-Type'));
 		self::assertSame('cat', (string)$this->requests[0]->getBody());
+		self::assertSame(3, $this->requests[0]->getBody()->getSize());
+		self::assertSame([AccountService::MEDIA_TIMEOUT, 20], $this->timeouts);
 		self::assertSame([
 			'msgtype' => 'm.image',
 			'body' => 'Look',
