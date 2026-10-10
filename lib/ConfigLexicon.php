@@ -212,6 +212,12 @@ PROMPT;
 			new Entry(Config::HIDE_SIGNALING_WARNING, ValueType::BOOL, false, definition: 'Flag that allows to suppress the warning that an HPB should be configured'),
 			new Entry(Config::CHANGELOG, ValueType::BOOL, true, definition: 'Whether the changelog conversation is updated with new features on major releases'),
 			new Entry(Config::SESSION_PING_LIMIT, ValueType::INT, 200, definition: 'Number of sessions the HPB can ping in a single request', rename: 'session-ping-limit'),
+			new Entry(Config::SIP_BRIDGE_DIALIN_INFO, ValueType::STRING, '', definition: 'Additional information added in the SIP dial-in invitation mail and sidebar', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::SIP_BRIDGE_DIALOUT_ANONYMOUS, ValueType::BOOL, false, definition: 'When set to true, all out-going SIP calls will be anonymous calls (CLIR)'),
+			new Entry(Config::SIP_BRIDGE_DIALOUT_NUMBER, ValueType::STRING, '', definition: 'Fallback phone number that is used as caller for out-going calls when the user has no phone-number configured (has to be E164 `+49123456789` formatted'),
+			new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Prefix stat is added before the first configured phone-number of a user to make it a valid E164 number to be used as a caller for out-going calls'),
+			new Entry(Config::SIP_BRIDGE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret allowing the SIP bridge to authenticate on the Nextcloud server', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::SIP_DIALOUT, ValueType::BOOL, false, definition: 'SIP dial-out is allowed when a SIP bridge is configured'),
 		];
 	}
 

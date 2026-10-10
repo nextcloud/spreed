@@ -155,7 +155,7 @@ Feature: conversation-4/classified
       | sip_bridge_dialin_info   | +49-1234-567890  |
       | sip_bridge_shared_secret | 1234567890abcdef |
       | sip_bridge_groups        | ["group1"]       |
-      | sip_dialout              | yes              |
+      | sip_bridge_dialout              | true              |
     And user "participant1" creates room "classified" (v4)
       | roomType | 2 |
       | roomName | classified |

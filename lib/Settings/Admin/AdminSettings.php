@@ -461,15 +461,15 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initSIPBridge(): void {
-		$groups = $this->getGroupDetailsArray($this->talkConfig->getSIPGroups(), 'sip_bridge_groups');
+		$groups = $this->getGroupDetailsArray($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP), Config::ALLOWED_GROUPS_SIP);
 
 		$this->initialState->provideInitialState('sip_bridge_groups', $groups);
-		$this->initialState->provideInitialState('sip_bridge_shared_secret', $this->talkConfig->getSIPSharedSecret());
-		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->talkConfig->getDialInInfo());
-		$this->initialState->provideInitialState('sip_bridge_dialout', $this->talkConfig->isSIPDialOutEnabled());
-		$this->initialState->provideInitialState('sip_bridge_dialout_anonymous', $this->appConfig->getAppValueBool('sip_bridge_dialout_anonymous'));
-		$this->initialState->provideInitialState('sip_bridge_dialout_number', $this->serverConfig->getAppValue('spreed', 'sip_bridge_dialout_number', ''));
-		$this->initialState->provideInitialState('sip_bridge_dialout_prefix', $this->serverConfig->getAppValue('spreed', 'sip_bridge_dialout_prefix', '+'));
+		$this->initialState->provideInitialState('sip_bridge_shared_secret', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
+		$this->initialState->provideInitialState('sip_bridge_dialin_info', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO));
+		$this->initialState->provideInitialState('sip_dialout', $this->appConfig->getAppValueBool(Config::SIP_DIALOUT));
+		$this->initialState->provideInitialState('sip_bridge_dialout_anonymous', $this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT_ANONYMOUS));
+		$this->initialState->provideInitialState('sip_bridge_dialout_number', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_NUMBER));
+		$this->initialState->provideInitialState('sip_bridge_dialout_prefix', $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_PREFIX));
 	}
 
 	protected function getGroupDetailsArray(array $gids, string $configKey): array {

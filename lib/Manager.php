@@ -1460,7 +1460,7 @@ class Manager {
 	 */
 	protected function getNewToken(): string {
 		$entropy = max(8, $this->appConfig->getAppValueInt(Config::TOKEN_ENTROPY)); // For update cases
-		$digitsOnly = $this->talkConfig->isSIPConfigured();
+		$digitsOnly = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
 		if ($digitsOnly) {
 			// Increase default token length as we only use numbers
 			$entropy = max(10, $entropy);

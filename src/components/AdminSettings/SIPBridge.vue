@@ -204,7 +204,7 @@ export default {
 		})
 		this.sipGroups = this.groups
 		this.dialInInfo = loadState('spreed', 'sip_bridge_dialin_info')
-		this.dialOutEnabled = loadState('spreed', 'sip_bridge_dialout')
+		this.dialOutEnabled = loadState('spreed', 'sip_dialout')
 		this.dialOutAnonymous = loadState('spreed', 'sip_bridge_dialout_anonymous')
 		this.dialOutNumber = loadState('spreed', 'sip_bridge_dialout_number')
 		this.dialOutPrefix = loadState('spreed', 'sip_bridge_dialout_prefix')
@@ -266,7 +266,7 @@ export default {
 				dialInInfo: this.dialInInfo,
 			})
 			if (this.currentSetup.dialOutEnabled !== this.dialOutEnabled) {
-				await OCP.AppConfig.setValue('spreed', 'sip_dialout', this.dialOutEnabled ? 'yes' : 'no')
+				await OCP.AppConfig.setValue('spreed', 'sip_dialout', this.dialOutEnabled)
 			}
 			if (this.currentSetup.dialOutAnonymous !== this.dialOutAnonymous) {
 				await OCP.AppConfig.setValue('spreed', 'sip_bridge_dialout_anonymous', String(this.dialOutAnonymous))
