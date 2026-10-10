@@ -27,6 +27,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -62,6 +63,7 @@ class MessageSyncServiceTest extends TestCase {
 			if (isset($this->eventMaps[$eventMap->getEventId()])) {
 				return false;
 			}
+			self::invokePrivate($eventMap, 'id', ['55']);
 			$this->eventMaps[$eventMap->getEventId()] = $eventMap;
 			return true;
 		});
@@ -72,6 +74,8 @@ class MessageSyncServiceTest extends TestCase {
 
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$timeFactory->method('getDateTime')->willReturnCallback(static fn (string $time): \DateTime => new \DateTime($time));
+		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator->method('linkToRouteAbsolute')->willReturnCallback(static fn (string $route, array $parameters): string => 'https://cloud.example/' . $route . '/' . $parameters['id']);
 		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
@@ -85,6 +89,7 @@ class MessageSyncServiceTest extends TestCase {
 			$this->participantService,
 			$eventMapMapper,
 			$timeFactory,
+			$urlGenerator,
 			$l,
 			$this->createMock(LoggerInterface::class),
 		);
@@ -320,5 +325,55 @@ class MessageSyncServiceTest extends TestCase {
 			]),
 			self::event('$redaction', 'm.room.redaction', [], '@bob:example.org', '$other'),
 		]);
+	}
+
+	public function testAttachment(): void {
+		$this->chatManager->expects(self::never())->method('sendMessage');
+		$this->chatManager->expects(self::once())
+			->method('addSystemMessage')
+			->willReturnCallback(function (Room $room, ?Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
+				self::assertSame(Attendee::ACTOR_MATRIX, $actorType);
+				self::assertFalse($sendNotifications);
+				$object = [
+					'type' => 'highlight',
+					'id' => 'matrix-media/55',
+					'name' => 'cat.jpg',
+					'link' => 'https://cloud.example/spreed.MatrixMedia.download/55',
+					'mxc' => 'mxc://example.org/abc',
+				];
+				self::assertSame(['message' => 'object_shared', 'parameters' => ['objectType' => 'highlight', 'objectId' => 'matrix-media/55', 'metaData' => $object]], json_decode($message, true));
+				return $this->comment(11, ChatManager::VERB_OBJECT_SHARED);
+			});
+
+		self::assertSame(1, $this->apply([self::event('$image', 'm.room.message', ['msgtype' => 'm.image', 'body' => 'cat.jpg', 'url' => 'mxc://example.org/abc'])], true));
+	}
+
+	public function testLocation(): void {
+		$this->chatManager->expects(self::once())
+			->method('addSystemMessage')
+			->willReturnCallback(function (Room $room, ?Participant $participant, string $actorType, string $actorId, string $message): IComment {
+				self::assertSame([
+					'type' => 'geo-location',
+					'id' => 'geo:52.52,13.405',
+					'name' => 'Berlin',
+					'latitude' => '52.52',
+					'longitude' => '13.405',
+				], json_decode($message, true)['parameters']['metaData']);
+				return $this->comment(11, ChatManager::VERB_OBJECT_SHARED);
+			});
+
+		$this->apply([self::event('$location', 'm.room.message', ['msgtype' => 'm.location', 'body' => 'Berlin', 'geo_uri' => 'geo:52.52,13.405'])]);
+	}
+
+	public function testAttachmentWithoutContentUriIsText(): void {
+		$this->chatManager->expects(self::never())->method('addSystemMessage');
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->willReturnCallback(function (Room $room, ?Participant $participant, string $actorType, string $actorId, string $message): IComment {
+				self::assertSame('secret.pdf', $message);
+				return $this->comment(11);
+			});
+
+		$this->apply([self::event('$file', 'm.room.message', ['msgtype' => 'm.file', 'body' => 'secret.pdf', 'file' => ['url' => 'mxc://example.org/encrypted']])]);
 	}
 }
