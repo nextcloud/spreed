@@ -10,6 +10,7 @@ namespace OCA\Talk\Matrix\Model;
 
 use OCA\Talk\Matrix\Client\Model\Member;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -44,7 +45,7 @@ class MatrixMemberMapper extends QBMapper {
 	}
 
 	/**
-	 * Whether a member with a linked account is still in the room
+	 * Whether a member with a linked account is still in the room or invited to it
 	 */
 	public function hasLinkedMembers(string $matrixRoomId): bool {
 		$qb = $this->db->getQueryBuilder();
@@ -52,7 +53,7 @@ class MatrixMemberMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($qb->expr()->eq('matrix_room_id', $qb->createNamedParameter($matrixRoomId)))
 			->andWhere($qb->expr()->isNotNull('account_id'))
-			->andWhere($qb->expr()->eq('membership', $qb->createNamedParameter(Member::JOIN)))
+			->andWhere($qb->expr()->in('membership', $qb->createNamedParameter([Member::JOIN, Member::INVITE], IQueryBuilder::PARAM_STR_ARRAY)))
 			->setMaxResults(1);
 		$result = $qb->executeQuery();
 		$found = $result->fetchOne() !== false;

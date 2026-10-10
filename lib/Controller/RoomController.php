@@ -43,8 +43,11 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Service\SendException;
+use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
+use OCA\Talk\Middleware\Attribute\MatrixSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -173,6 +176,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly DefaultPreset $defaultParameters,
 		private readonly Forced $forcedParameters,
 		private readonly ?string $userId,
+		private readonly SendService $matrixSendService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1082,11 +1086,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Rename a room
 	 *
 	 * @param string $roomName New name
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
+	 * 403: The Matrix account of the user can not rename the Matrix room
+	 * 404: The Matrix room or the linked Matrix account of the user was not found
+	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
+	#[MatrixSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}', requirements: [
@@ -1096,6 +1104,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function renameRoom(string $roomName): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			try {
+				$this->matrixSendService->rename($this->room, $this->participant, $roomName);
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			}
 		}
 
 		try {
@@ -1110,11 +1126,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Update the description of a room
 	 *
 	 * @param string $description New description for the conversation (limited to 2.000 characters, was 500 before Talk 21)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Description updated successfully
 	 * 400: Updating description is not possible
+	 * 403: The Matrix account of the user can not change the topic of the Matrix room
+	 * 404: The Matrix room or the linked Matrix account of the user was not found
+	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
+	#[MatrixSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/description', requirements: [
@@ -1124,6 +1144,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function setDescription(string $description): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			try {
+				$this->matrixSendService->setDescription($this->room, $this->participant, $description);
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			}
 		}
 
 		try {
@@ -1497,13 +1525,16 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $newParticipant New participant
 	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones'|'teams' $source Source of the participant
-	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
-	 * 200: Participant successfully added
+	 * 200: Participant successfully added, in Matrix conversations the user is invited and added once they accepted
 	 * 400: Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key)
+	 * 403: The Matrix account of the user can not invite to the Matrix room
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
+	 * 502: The Matrix homeserver rejected the invite or could not be reached
 	 */
+	#[MatrixSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/participants', requirements: [
@@ -1521,6 +1552,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($source !== 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Can only add users to breakout rooms
 			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			if ($source !== 'users') {
+				return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+			}
+			try {
+				$this->matrixSendService->invite($this->room, $this->participant, $newParticipant);
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			}
+			return new DataResponse([]);
 		}
 
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
@@ -1711,11 +1754,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Remove the current user from a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Participant removed successfully
 	 * 400: Removing participant is not possible
+	 * 403: The Matrix account of the user is not active anymore
 	 * 404: Participant not found
+	 * 502: The Matrix homeserver rejected leaving the Matrix room or could not be reached
 	 */
 	#[FederationSupported]
 	#[NoAdminRequired]
@@ -1730,9 +1775,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
+		if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			try {
+				$this->matrixSendService->leave($room, $participant);
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			}
+			return new DataResponse(null);
+		}
+
 		if ($room->isFederatedConversation()) {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
 		}
@@ -1784,13 +1838,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee removed successfully
 	 * 400: Removing attendee is not possible
 	 * 403: Removing attendee is not allowed
 	 * 404: Attendee not found
+	 * 502: The Matrix homeserver rejected the removal or could not be reached
 	 */
+	#[MatrixSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/attendees', requirements: [
@@ -1819,6 +1875,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($targetParticipant->isOwner()) {
 			return new DataResponse(['error' => 'owner'], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			try {
+				$this->matrixSendService->kick($this->room, $this->participant, $targetParticipant->getAttendee());
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			}
 		}
 
 		$this->participantService->removeAttendee($this->room, $targetParticipant, AAttendeeRemovedEvent::REASON_REMOVED);
@@ -2911,13 +2975,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param int $participantType Level to promote the attendee to: owner (`1`) or moderator (`2`), `0` to only grant moderator permissions. Guests are promoted to guest moderator (`6`) and can never become owners.
 	 * @psalm-param 0|Participant::OWNER|Participant::MODERATOR $participantType
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee promoted successfully
 	 * 400: Promoting attendee is not possible
 	 * 403: Promoting attendee is not allowed
 	 * 404: Attendee not found
+	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
+	#[MatrixSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/moderators', requirements: [
@@ -2937,13 +3003,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param int $participantType Level to demote the attendee to: moderator (`2`) or user (`3`), `0` to only revoke moderator permissions. Guest moderators are demoted to guest (`4`).
 	 * @psalm-param 0|Participant::MODERATOR|Participant::USER $participantType
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee demoted successfully
 	 * 400: Demoting attendee is not possible
 	 * 403: Demoting attendee is not allowed
 	 * 404: Attendee not found
+	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
+	#[MatrixSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/moderators', requirements: [
@@ -2961,7 +3029,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param bool $promote Shall the attendee be promoted or demoted
 	 * @param int $participantType Level to change the attendee to, 0 to only toggle the moderator permissions
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 */
 	protected function changeParticipantType(int $attendeeId, bool $promote, int $participantType = 0): DataResponse {
 		try {
@@ -2975,6 +3043,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS
 			&& $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID) {
 			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			// The power levels of the Matrix room decide, the sync applies them as participant types as well
+			$newType = $promote ? ($participantType === Participant::OWNER ? Participant::OWNER : Participant::MODERATOR) : Participant::USER;
+			try {
+				$this->matrixSendService->setParticipantType($this->room, $this->participant, $attendee, $newType);
+			} catch (SendException $e) {
+				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
+			}
+			$this->participantService->updateParticipantType($this->room, $targetParticipant, $newType);
+			return new DataResponse(null);
 		}
 
 		try {

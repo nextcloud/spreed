@@ -25,6 +25,7 @@ use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Matrix\Service\AccountService;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -47,6 +48,7 @@ class SendServiceTest extends TestCase {
 	private AccountService&MockObject $accountService;
 	private MatrixRoomMapper&MockObject $roomMapper;
 	private ChatManager&MockObject $chatManager;
+	private RoomSyncService&MockObject $roomSyncService;
 	private ReactionManager&MockObject $reactionManager;
 	private ICommentsManager&MockObject $commentsManager;
 	private Room&MockObject $room;
@@ -68,7 +70,11 @@ class SendServiceTest extends TestCase {
 		parent::setUp();
 		$this->account = Account::fromRow(['id' => '7', 'user_id' => 'alice', 'mxid' => '@alice:example.org', 'status' => Account::STATUS_ACTIVE]);
 		$this->accountService = $this->createMock(AccountService::class);
-		$this->accountService->method('getForUser')->willReturnCallback(fn (string $userId): ?Account => $userId === 'alice' ? $this->account : null);
+		$this->accountService->method('getForUser')->willReturnCallback(fn (string $userId): ?Account => match ($userId) {
+			'alice' => $this->account,
+			'bob' => Account::fromRow(['id' => '8', 'user_id' => 'bob', 'mxid' => '@bob:example.org', 'status' => Account::STATUS_ACTIVE]),
+			default => null,
+		});
 
 		$http = new class($this) implements ClientInterface {
 			public function __construct(
@@ -124,6 +130,7 @@ class SendServiceTest extends TestCase {
 		});
 
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->roomSyncService = $this->createMock(RoomSyncService::class);
 		$this->reactionManager = $this->createMock(ReactionManager::class);
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$userManager = $this->createMock(IUserManager::class);
@@ -149,6 +156,7 @@ class SendServiceTest extends TestCase {
 			$accountMapper,
 			$this->roomMapper,
 			$eventMapMapper,
+			$this->roomSyncService,
 			$this->chatManager,
 			$this->reactionManager,
 			$this->commentsManager,
@@ -380,5 +388,96 @@ class SendServiceTest extends TestCase {
 		self::assertCount(1, $this->requests);
 		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/read_markers', $this->requests[0]->getUri()->getPath());
 		self::assertSame(['m.read' => '$message', 'm.fully_read' => '$message'], $this->requestBody(0));
+	}
+
+	public function testRenameRequiresPowerLevel(): void {
+		$this->powerLevels = ['users' => ['@carol:example.org' => 100]];
+
+		$this->expectExceptionObject(new SendException('permission', 403));
+		$this->service->rename($this->room, $this->participant, 'Team');
+	}
+
+	public function testRenameInEncryptedRoom(): void {
+		$this->encrypted = true;
+		$this->powerLevels = ['users' => ['@alice:example.org' => 50]];
+		$this->responses[] = $this->json(200, ['event_id' => '$name']);
+
+		$this->service->rename($this->room, $this->participant, 'Team');
+
+		self::assertSame('PUT', $this->requests[0]->getMethod());
+		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/state/m.room.name/', $this->requests[0]->getUri()->getPath());
+		self::assertSame(['name' => 'Team'], $this->requestBody(0));
+	}
+
+	public function testSetDescription(): void {
+		$this->responses[] = $this->json(200, ['event_id' => '$topic']);
+
+		$this->service->setDescription($this->room, $this->participant, 'About us');
+
+		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/state/m.room.topic/', $this->requests[0]->getUri()->getPath());
+		self::assertSame(['topic' => 'About us'], $this->requestBody(0));
+	}
+
+	public function testInvite(): void {
+		$this->responses[] = $this->json(200, []);
+
+		$this->service->invite($this->room, $this->participant, 'bob');
+
+		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/invite', $this->requests[0]->getUri()->getPath());
+		self::assertSame(['user_id' => '@bob:example.org'], $this->requestBody(0));
+	}
+
+	public function testInviteUserWithoutAccount(): void {
+		$this->expectExceptionObject(new SendException('account', 404));
+		$this->service->invite($this->room, $this->participant, 'carol');
+	}
+
+	public function testKickRequiresHigherLevel(): void {
+		$this->powerLevels = ['users' => ['@alice:example.org' => 50, '@bob:example.org' => 50]];
+
+		$this->expectExceptionObject(new SendException('permission', 403));
+		$this->service->kick($this->room, $this->participant, Attendee::fromRow(['actor_type' => Attendee::ACTOR_MATRIX, 'actor_id' => '@bob:example.org']));
+	}
+
+	public function testKick(): void {
+		$this->powerLevels = ['users' => ['@alice:example.org' => 100]];
+		$this->responses[] = $this->json(200, []);
+
+		$this->service->kick($this->room, $this->participant, Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'bob']));
+
+		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/kick', $this->requests[0]->getUri()->getPath());
+		self::assertSame(['user_id' => '@bob:example.org'], $this->requestBody(0));
+	}
+
+	public function testSetParticipantType(): void {
+		$this->powerLevels = ['users' => ['@alice:example.org' => 100], 'users_default' => 0];
+		$this->responses[] = $this->json(200, ['event_id' => '$powerLevels']);
+
+		$this->service->setParticipantType($this->room, $this->participant, Attendee::fromRow(['actor_type' => Attendee::ACTOR_MATRIX, 'actor_id' => '@bob:example.org']), Participant::MODERATOR);
+
+		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/state/m.room.power_levels/', $this->requests[0]->getUri()->getPath());
+		self::assertSame(['users' => ['@alice:example.org' => 100, '@bob:example.org' => 50], 'users_default' => 0], $this->requestBody(0));
+	}
+
+	public function testSetParticipantTypeAboveOwnLevel(): void {
+		$this->powerLevels = ['users' => ['@alice:example.org' => 50]];
+
+		$this->expectExceptionObject(new SendException('permission', 403));
+		$this->service->setParticipantType($this->room, $this->participant, Attendee::fromRow(['actor_type' => Attendee::ACTOR_MATRIX, 'actor_id' => '@bob:example.org']), Participant::OWNER);
+	}
+
+	public function testLeaveWhenAlreadyLeft(): void {
+		$this->responses[] = $this->json(403, ['errcode' => 'M_FORBIDDEN', 'error' => 'User not in room']);
+		$this->roomSyncService->expects(self::once())->method('leaveRoom')->with($this->account, '!room:example.org');
+
+		$this->service->leave($this->room, $this->participant);
+	}
+
+	public function testLeaveFails(): void {
+		$this->responses[] = $this->json(500, ['errcode' => 'M_UNKNOWN', 'error' => 'Oops']);
+		$this->roomSyncService->expects(self::never())->method('leaveRoom');
+
+		$this->expectExceptionObject(new SendException('matrix', 502));
+		$this->service->leave($this->room, $this->participant);
 	}
 }

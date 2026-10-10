@@ -242,4 +242,4 @@
 
 ## 26
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
-* `matrix-rooms` (local) - Whether Matrix rooms of linked Matrix accounts are mirrored as conversations with object type `matrix` and Matrix users without a Nextcloud account as attendees of type `matrix`. Messages, edits, deletions, reactions and read markers are sent to the Matrix room, end-to-end encrypted Matrix rooms are read-only
+* `matrix-rooms` (local) - Whether Matrix rooms of linked Matrix accounts are mirrored as conversations with object type `matrix` and Matrix users without a Nextcloud account as attendees of type `matrix`. Messages, edits, deletions, reactions, read markers, renaming, the description, inviting and removing users, promoting and demoting moderators and leaving are applied to the Matrix room, other moderation is refused with `406 Not Acceptable`. Invites to Matrix rooms are notifications that can be accepted or declined. End-to-end encrypted Matrix rooms are read-only

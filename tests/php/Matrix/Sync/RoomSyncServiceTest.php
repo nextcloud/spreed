@@ -28,7 +28,10 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
+use OCP\Notification\IManager as INotificationManager;
+use OCP\Notification\INotification;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -42,6 +45,8 @@ class RoomSyncServiceTest extends TestCase {
 	private AccountMapper&MockObject $accountMapper;
 	private EventMapMapper&MockObject $eventMapMapper;
 	private MessageSyncService&MockObject $messageSyncService;
+	private INotificationManager&MockObject $notificationManager;
+	private INotification&MockObject $notification;
 	private Room&MockObject $room;
 	/** @var array<string, MatrixMember> */
 	private array $insertedMembers = [];
@@ -73,6 +78,14 @@ class RoomSyncServiceTest extends TestCase {
 		));
 		$this->eventMapMapper = $this->createMock(EventMapMapper::class);
 		$this->messageSyncService = $this->createMock(MessageSyncService::class);
+		$this->notification = $this->createMock(INotification::class);
+		foreach (['setApp', 'setUser', 'setObject', 'setSubject', 'setDateTime'] as $setter) {
+			$this->notification->method($setter)->willReturnSelf();
+		}
+		$this->notificationManager = $this->createMock(INotificationManager::class);
+		$this->notificationManager->method('createNotification')->willReturn($this->notification);
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-10-09 12:00:00'));
 		$this->room = $this->createMock(Room::class);
 		$this->room->method('getId')->willReturn(23);
 
@@ -88,6 +101,8 @@ class RoomSyncServiceTest extends TestCase {
 			$this->accountMapper,
 			$this->eventMapMapper,
 			$this->messageSyncService,
+			$this->notificationManager,
+			$timeFactory,
 			$l,
 			$this->createMock(LoggerInterface::class),
 		);
@@ -261,6 +276,84 @@ class RoomSyncServiceTest extends TestCase {
 			'state' => ['events' => [
 				['type' => 'm.room.encryption', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['algorithm' => 'm.megolm.v1.aes-sha2']],
 				['type' => 'm.room.power_levels', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['users' => ['@bob:example.org' => 100], 'events' => ['m.room.message' => 50]]],
+			]],
+		]), false);
+	}
+
+	private static function inviteBatch(): SyncBatch {
+		return SyncBatch::fromArray([
+			'next_batch' => 'next',
+			'rooms' => ['invite' => ['!room:example.org' => ['invite_state' => ['events' => [
+				['type' => 'm.room.name', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['name' => 'Team']],
+				['type' => 'm.room.member', 'state_key' => '@bob:example.org', 'sender' => '@bob:example.org', 'content' => ['membership' => 'join', 'displayname' => 'Bob']],
+				['type' => 'm.room.member', 'state_key' => '@alice:example.org', 'sender' => '@bob:example.org', 'content' => ['membership' => 'invite']],
+			]]]]],
+		]);
+	}
+
+	public function testInvite(): void {
+		$this->roomMapper->method('getByMatrixRoomId')->willThrowException(new DoesNotExistException(''));
+		$this->roomMapper->expects(self::once())
+			->method('insert')
+			->willReturnCallback(static function (MatrixRoom $matrixRoom): MatrixRoom {
+				self::assertSame('Team', $matrixRoom->getName());
+				return MatrixRoom::fromRow(['id' => '100', 'room_id' => 0, 'matrix_room_id' => $matrixRoom->getMatrixRoomId(), 'name' => 'Team']);
+			});
+		$this->memberMapper->method('getForRoom')->with('100')->willReturn([]);
+		$this->roomService->expects(self::never())->method('createConversation');
+		$this->notification->expects(self::once())->method('setObject')->with('matrix_invite', '100')->willReturnSelf();
+		$this->notification->expects(self::once())
+			->method('setSubject')
+			->with('matrix_invite', ['inviter' => '@bob:example.org', 'inviterName' => 'Bob', 'roomName' => 'Team'])
+			->willReturnSelf();
+		$this->notificationManager->expects(self::once())->method('notify')->with($this->notification);
+
+		self::assertSame(['rooms' => 0, 'messages' => 0, 'failed' => 0], $this->service->process($this->account(), self::inviteBatch(), false));
+		self::assertSame('invite', $this->insertedMembers['@alice:example.org']->getMembership());
+		self::assertSame('7', $this->insertedMembers['@alice:example.org']->getAccountId());
+	}
+
+	public function testRepeatedInviteIsNotNotified(): void {
+		$this->roomMapper->method('getByMatrixRoomId')->willReturn($this->matrixRoom(0));
+		$this->memberMapper->method('getForRoom')->with('100')->willReturn([
+			'@alice:example.org' => $this->member('@alice:example.org', 'invite', '7'),
+		]);
+		$this->memberMapper->expects(self::never())->method('insert');
+		$this->notificationManager->expects(self::never())->method('notify');
+
+		$this->service->process($this->account(), self::inviteBatch(), false);
+	}
+
+	public function testJoinAfterInviteAndRoles(): void {
+		$this->roomMapper->method('getByMatrixRoomId')->willReturn($this->matrixRoom());
+		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);
+		$this->memberMapper->method('getForRoom')->with('100')->willReturn([
+			'@alice:example.org' => $this->member('@alice:example.org', 'invite', '7', 'Alice'),
+			'@bob:example.org' => $this->member('@bob:example.org', 'join', null, 'Bob'),
+		]);
+		$this->notification->expects(self::once())->method('setObject')->with('matrix_invite', '100')->willReturnSelf();
+		$this->notificationManager->expects(self::once())->method('markProcessed')->with($this->notification);
+
+		$alice = $this->participant(Attendee::ACTOR_USERS, 'alice', 'Alice');
+		$bob = $this->participant(Attendee::ACTOR_MATRIX, '@bob:example.org', 'Bob');
+		$this->participantService->method('getParticipantsForRoom')->willReturnOnConsecutiveCalls([$bob], [$alice, $bob]);
+		$this->participantService->expects(self::once())
+			->method('addUsers')
+			->with($this->room, [
+				['actorType' => Attendee::ACTOR_USERS, 'actorId' => 'alice', 'displayName' => 'Alice', 'participantType' => Participant::MODERATOR],
+			]);
+		$this->participantService->expects(self::exactly(2))
+			->method('updateParticipantType')
+			->willReturnCallback(function (Room $room, Participant $participant, int $participantType) use ($alice, $bob): void {
+				// Alice was added as a mock with the default type, Bob has power level 100
+				self::assertSame($participant === $alice ? Participant::MODERATOR : Participant::OWNER, $participantType);
+			});
+		$this->participantService->expects(self::never())->method('updatePermissions');
+
+		$this->service->process($this->account(), self::batch([
+			'state' => ['events' => [
+				self::memberEvent('@alice:example.org', 'join', 'Alice'),
+				['type' => 'm.room.power_levels', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['users' => ['@bob:example.org' => 100, '@alice:example.org' => 50]]],
 			]],
 		]), false);
 	}

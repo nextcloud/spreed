@@ -216,6 +216,10 @@ class Notifier implements INotifier {
 			return $this->parseMatrixRelogin($notification, $l);
 		}
 
+		if ($notification->getObjectType() === 'matrix_invite') {
+			return $this->parseMatrixInvite($notification, $l);
+		}
+
 		if ($this->notificationManager->isPreparingPushNotification() && $notification->getSubject() === 'call') {
 			try {
 				$room = $this->manager->getRoomByToken($notification->getObjectId());
@@ -1359,6 +1363,52 @@ class Notifier implements INotifier {
 			->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')))
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.index'));
 
+		return $notification;
+	}
+
+	/**
+	 * @throws UnknownNotificationException
+	 */
+	protected function parseMatrixInvite(INotification $notification, IL10N $l): INotification {
+		if ($notification->getSubject() !== 'matrix_invite') {
+			throw new UnknownNotificationException('Unknown subject');
+		}
+
+		$parameters = $notification->getSubjectParameters();
+		$inviter = (string)($parameters['inviter'] ?? '');
+		$richParameters = [
+			'user' => [
+				'type' => 'highlight',
+				'id' => 'matrix/' . $inviter,
+				'name' => (string)($parameters['inviterName'] ?? $inviter),
+			],
+			'roomName' => [
+				'type' => 'highlight',
+				'id' => 'matrix-room/' . $notification->getObjectId(),
+				'name' => (string)($parameters['roomName'] ?? ''),
+			],
+		];
+
+		$acceptAction = $notification->createAction();
+		$acceptAction->setParsedLabel($l->t('Accept'));
+		$acceptAction->setLink($this->url->linkToOCSRouteAbsolute(
+			'spreed.MatrixRoom.acceptInvite',
+			['apiVersion' => 'v1', 'id' => $notification->getObjectId()]
+		), IAction::TYPE_POST);
+		$acceptAction->setPrimary(true);
+		$notification->addParsedAction($acceptAction);
+
+		$declineAction = $notification->createAction();
+		$declineAction->setParsedLabel($l->t('Decline'));
+		$declineAction->setLink($this->url->linkToOCSRouteAbsolute(
+			'spreed.MatrixRoom.declineInvite',
+			['apiVersion' => 'v1', 'id' => $notification->getObjectId()]
+		), IAction::TYPE_DELETE);
+		$notification->addParsedAction($declineAction);
+
+		$notification
+			->setRichSubject($l->t('{user} invited you to the Matrix room {roomName}'), $richParameters)
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
 		return $notification;
 	}
 

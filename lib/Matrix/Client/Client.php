@@ -121,4 +121,50 @@ class Client {
 			'm.fully_read' => $eventId,
 		]);
 	}
+
+	/**
+	 * @param list<string> $serverNames Servers to join through when the homeserver is not in the room yet
+	 * @return string Room id
+	 * @throws MatrixException
+	 */
+	public function join(string $roomIdOrAlias, array $serverNames = []): string {
+		$path = self::PREFIX . '/join/' . rawurlencode($roomIdOrAlias);
+		foreach ($serverNames as $i => $serverName) {
+			$path .= ($i === 0 ? '?' : '&') . 'server_name=' . rawurlencode($serverName);
+		}
+		return (string)($this->transport->post($path)['room_id'] ?? '');
+	}
+
+	/**
+	 * Leave a joined room or decline an invite
+	 *
+	 * @throws MatrixException
+	 */
+	public function leave(string $roomId): void {
+		$this->transport->post(self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/leave');
+	}
+
+	/**
+	 * @throws MatrixException
+	 */
+	public function invite(string $roomId, string $userId): void {
+		$this->transport->post(self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/invite', ['user_id' => $userId]);
+	}
+
+	/**
+	 * @throws MatrixException
+	 */
+	public function kick(string $roomId, string $userId): void {
+		$this->transport->post(self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/kick', ['user_id' => $userId]);
+	}
+
+	/**
+	 * @param array<string, mixed> $content
+	 * @return string Event id
+	 * @throws MatrixException
+	 */
+	public function sendStateEvent(string $roomId, string $type, array $content, string $stateKey = ''): string {
+		$path = self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/state/' . rawurlencode($type) . '/' . rawurlencode($stateKey);
+		return (string)($this->transport->put($path, $content)['event_id'] ?? '');
+	}
 }

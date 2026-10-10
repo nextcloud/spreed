@@ -1016,6 +1016,24 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/invite/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept an invite to a Matrix room */
+        post: operations["matrix_room-accept-invite"];
+        /** Decline an invite to a Matrix room */
+        delete: operations["matrix_room-decline-invite"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/{token}": {
         parameters: {
             query?: never;
@@ -8924,6 +8942,168 @@ export interface operations {
             };
         };
     };
+    "matrix_room-accept-invite": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                /** @description ID of the invite */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invite accepted, the token is null when the conversation is still created by another sync */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                token: string | null;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Invite or Matrix account not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invitation" | "matrix";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected joining the room or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invitation" | "matrix";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_room-decline-invite": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                /** @description ID of the invite */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invite declined */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Invite or Matrix account not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invitation" | "matrix";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected declining or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "invitation" | "matrix";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     "matterbridge-get-bridge-of-room": {
         parameters: {
             query?: never;
@@ -10877,6 +11057,65 @@ export interface operations {
                                 error: "event" | "type" | "value";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix account of the user can not rename the Matrix room */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix room or the linked Matrix account of the user was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the change or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11273,6 +11512,65 @@ export interface operations {
                                 error: "event" | "type" | "value";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix account of the user can not change the topic of the Matrix room */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix room or the linked Matrix account of the user was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the change or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11405,7 +11703,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Participant successfully added */
+            /** @description Participant successfully added, in Matrix conversations the user is invited and added once they accepted */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -11436,6 +11734,14 @@ export interface operations {
                                 error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11449,6 +11755,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix account of the user can not invite to the Matrix room */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
                         };
                     };
                 };
@@ -11467,6 +11790,14 @@ export interface operations {
                                 error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11482,6 +11813,23 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the invite or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
                             };
                         };
                     };
@@ -11599,6 +11947,14 @@ export interface operations {
                                 error: "announcement" | "last-moderator" | "participant";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11616,6 +11972,23 @@ export interface operations {
                     };
                 };
             };
+            /** @description The Matrix account of the user is not active anymore */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
             /** @description Participant not found */
             404: {
                 headers: {
@@ -11628,6 +12001,31 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "announcement" | "last-moderator" | "participant";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected leaving the Matrix room or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
                             };
                         };
                     };
@@ -11681,6 +12079,14 @@ export interface operations {
                                 error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11698,6 +12104,14 @@ export interface operations {
                                 error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -11713,6 +12127,31 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the removal or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
                             };
                         };
                     };
@@ -12940,6 +13379,14 @@ export interface operations {
                                 error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -12957,6 +13404,14 @@ export interface operations {
                                 error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -12972,6 +13427,31 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the change or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
                             };
                         };
                     };
@@ -13027,6 +13507,14 @@ export interface operations {
                                 error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -13044,6 +13532,14 @@ export interface operations {
                                 error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
                             };
                         };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
                     };
                 };
             };
@@ -13059,6 +13555,31 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the change or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
                             };
                         };
                     };

@@ -17,12 +17,14 @@ use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use OCA\Talk\Matrix\Client\Html\MarkdownToHtml;
+use OCA\Talk\Matrix\Client\Model\PowerLevels;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\EventMap;
 use OCA\Talk\Matrix\Model\EventMapMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -50,6 +52,7 @@ class SendService {
 		private readonly AccountMapper $accountMapper,
 		private readonly MatrixRoomMapper $roomMapper,
 		private readonly EventMapMapper $eventMapMapper,
+		private readonly RoomSyncService $roomSyncService,
 		private readonly ChatManager $chatManager,
 		private readonly ReactionManager $reactionManager,
 		private readonly ICommentsManager $commentsManager,
@@ -195,6 +198,105 @@ class SendService {
 	}
 
 	/**
+	 * @throws SendException
+	 */
+	public function rename(Room $room, Participant $participant, string $name): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		if (!$matrixRoom->getPowerLevelsModel()->canSendEvent($account->getMxid(), 'm.room.name', true)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, fn (Client $client): string => $client->sendStateEvent($matrixRoom->getMatrixRoomId(), 'm.room.name', ['name' => $name]));
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	public function setDescription(Room $room, Participant $participant, string $description): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		if (!$matrixRoom->getPowerLevelsModel()->canSendEvent($account->getMxid(), 'm.room.topic', true)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, fn (Client $client): string => $client->sendStateEvent($matrixRoom->getMatrixRoomId(), 'm.room.topic', ['topic' => $description]));
+	}
+
+	/**
+	 * Invite the linked Matrix account of a user, they join the conversation by accepting the invite
+	 *
+	 * @throws SendException
+	 */
+	public function invite(Room $room, Participant $participant, string $userId): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$invitee = $this->accountService->getForUser($userId);
+		if ($invitee === null) {
+			throw new SendException('account', Http::STATUS_NOT_FOUND);
+		}
+		if (!$matrixRoom->getPowerLevelsModel()->canInvite($account->getMxid())) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, function (Client $client) use ($matrixRoom, $invitee): string {
+			$client->invite($matrixRoom->getMatrixRoomId(), $invitee->getMxid());
+			return '';
+		});
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	public function kick(Room $room, Participant $participant, Attendee $target): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$targetId = $this->getMatrixUserId($target);
+		if (!$matrixRoom->getPowerLevelsModel()->canKick($account->getMxid(), $targetId)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, function (Client $client) use ($matrixRoom, $targetId): string {
+			$client->kick($matrixRoom->getMatrixRoomId(), $targetId);
+			return '';
+		});
+	}
+
+	/**
+	 * @param int $participantType Participant::OWNER, Participant::MODERATOR or Participant::USER
+	 * @throws SendException
+	 */
+	public function setParticipantType(Room $room, Participant $participant, Attendee $target, int $participantType): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$targetId = $this->getMatrixUserId($target);
+		$powerLevels = $matrixRoom->getPowerLevelsModel();
+		$level = match ($participantType) {
+			Participant::OWNER => PowerLevels::LEVEL_ADMIN,
+			Participant::MODERATOR => PowerLevels::LEVEL_MODERATOR,
+			default => $powerLevels->getDefaultUserLevel(),
+		};
+		if (!$powerLevels->canChangeUserLevel($account->getMxid(), $targetId, $level)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$content = $powerLevels->withUserLevel($targetId, $level);
+		$this->send($account, fn (Client $client): string => $client->sendStateEvent($matrixRoom->getMatrixRoomId(), 'm.room.power_levels', $content));
+	}
+
+	/**
+	 * Leave the Matrix room, the user is removed from the conversation right away
+	 *
+	 * @throws SendException
+	 */
+	public function leave(Room $room, Participant $participant): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		try {
+			$this->send($account, function (Client $client) use ($matrixRoom): string {
+				$client->leave($matrixRoom->getMatrixRoomId());
+				return '';
+			});
+		} catch (SendException $e) {
+			$previous = $e->getPrevious();
+			if (!$previous instanceof MatrixException || !in_array($previous->getErrcode(), ['M_FORBIDDEN', 'M_NOT_FOUND'], true)) {
+				throw $e;
+			}
+			// Not in the Matrix room anymore
+		}
+		$this->roomSyncService->leaveRoom($account, $matrixRoom->getMatrixRoomId());
+	}
+
+	/**
 	 * Mark the message as read in the Matrix room as well, failures are ignored
 	 */
 	public function sendReadMarker(Room $room, Participant $participant, int $messageId): void {
@@ -270,16 +372,17 @@ class SendService {
 	}
 
 	/**
+	 * @param bool $sendsEvents Whether room events are sent, which is not possible in encrypted rooms yet
 	 * @return array{0: MatrixRoom, 1: Account}
 	 * @throws SendException
 	 */
-	protected function prepare(Room $room, Participant $participant): array {
+	protected function prepare(Room $room, Participant $participant, bool $sendsEvents = true): array {
 		try {
 			$matrixRoom = $this->roomMapper->getById($room->getObjectId());
 		} catch (DoesNotExistException) {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
 		}
-		if ($matrixRoom->getEncrypted()) {
+		if ($sendsEvents && $matrixRoom->getEncrypted()) {
 			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -306,6 +409,20 @@ class SendService {
 		} catch (MatrixException|DoesNotExistException $e) {
 			throw new SendException('matrix', Http::STATUS_BAD_GATEWAY, $e);
 		}
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	protected function getMatrixUserId(Attendee $attendee): string {
+		if ($attendee->getActorType() === Attendee::ACTOR_MATRIX) {
+			return $attendee->getActorId();
+		}
+		$account = $attendee->getActorType() === Attendee::ACTOR_USERS ? $this->accountService->getForUser($attendee->getActorId()) : null;
+		if ($account === null) {
+			throw new SendException('account', Http::STATUS_NOT_FOUND);
+		}
+		return $account->getMxid();
 	}
 
 	/**
