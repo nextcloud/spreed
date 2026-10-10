@@ -773,6 +773,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function shareObjectToChat(string $objectType, string $objectId, string $metaData = '', string $actorDisplayName = '', string $referenceId = '', int $threadId = 0): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			// Rich objects are not mirrored to Matrix rooms
+			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
+		}
+
 		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
