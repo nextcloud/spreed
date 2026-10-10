@@ -209,14 +209,15 @@ class Client {
 	}
 
 	/**
-	 * Scaled down and cropped image, with the same fallback as downloadMedia()
+	 * Scaled down image, with the same fallback as downloadMedia()
 	 *
 	 * @param string $mxc Content URI like mxc://example.org/abc
+	 * @param bool $crop Crop to a square instead of keeping the aspect ratio
 	 * @throws \InvalidArgumentException when the content URI is invalid
 	 * @throws MatrixException
 	 */
-	public function downloadThumbnail(string $mxc, int $size): ResponseInterface {
-		$query = '?width=' . $size . '&height=' . $size . '&method=crop';
+	public function downloadThumbnail(string $mxc, int $size, bool $crop = true): ResponseInterface {
+		$query = '?width=' . $size . '&height=' . $size . '&method=' . ($crop ? 'crop' : 'scale');
 		$media = $this->getMediaPath($mxc);
 
 		try {

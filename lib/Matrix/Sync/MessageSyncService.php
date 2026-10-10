@@ -151,9 +151,9 @@ class MessageSyncService {
 
 	/**
 	 * Attachments become a link to download them through the homeserver of
-	 * the viewer, locations a location object
+	 * the viewer (images also a thumbnail), locations a location object
 	 *
-	 * @return array{type: string, id: string, name: string, link?: string, latitude?: string, longitude?: string, mxc?: string}|null
+	 * @return array{type: string, id: string, name: string, link?: string, latitude?: string, longitude?: string, mxc?: string, thumb?: string}|null
 	 */
 	protected function getSharedObject(EventMap $eventMap, Event $event): ?array {
 		$msgtype = $event->type === 'm.sticker' ? 'm.image' : ($event->content['msgtype'] ?? null);
@@ -177,13 +177,17 @@ class MessageSyncService {
 		if (!in_array($msgtype, ['m.image', 'm.file', 'm.video', 'm.audio'], true) || !str_starts_with($mxc, 'mxc://')) {
 			return null;
 		}
-		return [
+		$object = [
 			'type' => 'highlight',
 			'id' => 'matrix-media/' . $eventMap->getId(),
 			'name' => $name !== '' ? mb_substr($name, 0, 255) : $this->l->t('Attachment'),
 			'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.MatrixMedia.download', ['id' => (string)$eventMap->getId()]),
 			'mxc' => $mxc,
 		];
+		if ($msgtype === 'm.image') {
+			$object['thumb'] = $this->urlGenerator->linkToRouteAbsolute('spreed.MatrixMedia.preview', ['id' => (string)$eventMap->getId()]);
+		}
+		return $object;
 	}
 
 	protected function applyEdit(Room $room, MatrixRoom $matrixRoom, Event $event, string $actorType, string $actorId): ?IComment {

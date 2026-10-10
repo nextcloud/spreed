@@ -10,6 +10,7 @@ import { defineAsyncComponent } from 'vue'
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
+import ImagePreview from './MessagePart/ImagePreview.vue'
 import MentionChip from './MessagePart/MentionChip.vue'
 import PollCard from './MessagePart/PollCard.vue'
 import { MENTION, SHARED_ITEM } from '../../../../constants.ts'
@@ -56,6 +57,9 @@ function getRichParameter(message: ChatMessage, key: string, parameter: MessageP
 	}
 	if (parameter.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 		return { component: PollCard, props: { ...parameter, token: message.token } }
+	}
+	if (parameter.type === 'highlight' && parameter.thumb && parameter.link) {
+		return { component: ImagePreview, props: parameter }
 	}
 	if (parameter.mimetype === 'text/vcard') {
 		return { component: ContactCard, props: parameter }
