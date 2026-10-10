@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Matrix\Client;
 
+use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\PowerLevels;
+use OCA\Talk\Matrix\Client\Model\RoomState;
 use Test\TestCase;
 
 class PowerLevelsTest extends TestCase {
@@ -41,6 +43,26 @@ class PowerLevelsTest extends TestCase {
 		self::assertFalse($powerLevels->canSendEvent('@alice:example.org', 'm.room.name', true));
 		self::assertTrue($powerLevels->canRedact('@mod:example.org'));
 		self::assertFalse($powerLevels->canRedact('@alice:example.org'));
+	}
+
+	public function testCreatorsSinceRoomVersion12(): void {
+		$state = new RoomState('!room:example.org');
+		$state->applyAll([
+			new Event('', 'm.room.create', '@creator:example.org', ['room_version' => '12', 'additional_creators' => ['@co:example.org']], ''),
+			new Event('', 'm.room.power_levels', '@creator:example.org', ['users' => ['@admin:example.org' => 100]], ''),
+		]);
+		$powerLevels = $state->getPowerLevels();
+
+		self::assertSame(['@creator:example.org', '@co:example.org'], $state->creators);
+		self::assertSame(PowerLevels::LEVEL_CREATOR, $powerLevels->getUserLevel('@creator:example.org'));
+		self::assertSame(PowerLevels::LEVEL_CREATOR, $powerLevels->getUserLevel('@co:example.org'));
+		self::assertFalse($powerLevels->canKick('@admin:example.org', '@creator:example.org'));
+		self::assertTrue($powerLevels->canChangeUserLevel('@creator:example.org', '@admin:example.org', 50));
+		self::assertSame(['users' => ['@admin:example.org' => 100, '@alice:example.org' => 50]], $powerLevels->withUserLevel('@alice:example.org', 50));
+		self::assertSame(['users' => ['@alice:example.org' => 50]], (new PowerLevels([], '@creator:example.org', ['@creator:example.org']))->withUserLevel('@alice:example.org', 50), 'Creators are not added to the content');
+
+		$state->apply(new Event('', 'm.room.create', '@creator:example.org', ['room_version' => '11'], ''));
+		self::assertSame([], $state->creators, 'Creators only have the creator level since room version 12');
 	}
 
 	public function testModeration(): void {
