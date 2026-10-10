@@ -136,6 +136,7 @@
 				<NcHotkey :label="t('spreed', 'Focus the chat input')" hotkey="C" />
 				<NcHotkey :label="t('spreed', 'Unfocus the chat input to use shortcuts')" hotkey="Escape" />
 				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
+				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Edit your last message')" hotkey="ArrowUp" />
 			</NcHotkeyList>
 
 			<NcHotkeyList
