@@ -19,6 +19,8 @@ final class RoomState {
 	public ?string $canonicalAlias = null;
 	public ?string $roomType = null;
 	public string $creator = '';
+	/** @var list<string> Creators with the creator level, since room version 12 */
+	public array $creators = [];
 	public bool $encrypted = false;
 	/** @var array<string, mixed> */
 	public array $powerLevels = [];
@@ -47,6 +49,12 @@ final class RoomState {
 			case 'm.room.create':
 				$this->roomType = is_string($content['type'] ?? null) ? $content['type'] : null;
 				$this->creator = is_string($content['creator'] ?? null) ? $content['creator'] : $event->sender;
+				$this->creators = [];
+				$version = is_string($content['room_version'] ?? null) ? $content['room_version'] : '1';
+				if (!in_array($version, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'], true)) {
+					$additional = is_array($content['additional_creators'] ?? null) ? $content['additional_creators'] : [];
+					$this->creators = array_values(array_unique([$event->sender, ...array_filter($additional, 'is_string')]));
+				}
 				break;
 			case 'm.room.encryption':
 				$this->encrypted = true;
@@ -76,7 +84,7 @@ final class RoomState {
 	}
 
 	public function getPowerLevels(): PowerLevels {
-		return new PowerLevels($this->powerLevels, $this->creator);
+		return new PowerLevels($this->powerLevels, $this->creator, $this->creators);
 	}
 
 	public function isSpace(): bool {
