@@ -109,5 +109,6 @@
 		<file name="tests/stubs/GuzzleHttp_Exception_ServerException.php" />
 		<file name="tests/stubs/GuzzleHttp_Psr7_HttpFactory.php" />
 		<file name="tests/stubs/GuzzleHttp_Psr7_Response.php" />
+		<file name="tests/stubs/GuzzleHttp_Psr7_Stream.php" />
 	</stubs>
 </psalm>
