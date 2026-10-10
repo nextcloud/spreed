@@ -83,7 +83,7 @@ trait RecordingTrait {
 		throw new \Exception('Impossible to find an open port');
 	}
 
-	#[Given('/^(recording|signaling) server is started$/')]
+	#[Given('/^(?:recording|signaling) server is started$/')]
 	public function recordingServerIsStarted(): void {
 		if ($this->isRunning()) {
 			return;
@@ -124,7 +124,7 @@ trait RecordingTrait {
 		});
 	}
 
-	#[Given('/^(external call) server is started$/')]
+	#[Given('/^external call server is started$/')]
 	public function externalCallServerIsStarted(): void {
 		if ($this->isExternalCallRunning()) {
 			return;
@@ -233,7 +233,7 @@ trait RecordingTrait {
 	}
 
 	#[AfterScenario]
-	#[Given('/^(recording|signaling|external call) server is stopped$/')]
+	#[Given('/^(?:recording|signaling|external call) server is stopped$/')]
 	public function recordingServerIsStopped(): void {
 		if (is_resource($this->recordingServerProcess)) {
 			$this->stop($this->recordingServerProcess);
