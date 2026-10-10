@@ -143,6 +143,7 @@
 					:aria-label="placeholderText"
 					:dir="text ? 'auto' : undefined"
 					@keydown.esc="handleInputEsc"
+					@keydown.up.exact="handleEditLastMessage"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
 					@update:modelValue="handleTyping"
@@ -1379,7 +1380,7 @@ export default {
 		},
 
 		handleEditLastMessage(event) {
-			if (!this.canEditMessage || this.text || this.dialog || this.isRecordingAudio) {
+			if (event.isComposing || !this.canEditMessage || this.text || this.dialog || this.isRecordingAudio) {
 				return
 			}
 
