@@ -887,6 +887,7 @@
     "Delete the signaling server account" : "Διαγραφή του λογαριασμού διακομιστή σηματοδότησης",
     "_%n user_::_%n users_" : ["%n χρήστης","%n χρήστες"],
     "Could not save the setting" : "Δεν ήταν δυνατή η αποθήκευση της ρύθμισης",
+    "Edit label" : "Επεξεργασία ετικέτας",
     "Cancel" : "Ακύρωση",
     "Save" : "Αποθήκευση",
     "Test connection" : "Δοκιμή σύνδεσης",
