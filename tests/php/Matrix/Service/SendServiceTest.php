@@ -27,8 +27,10 @@ use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -67,6 +69,7 @@ class SendServiceTest extends TestCase {
 	private array $sleeps = [];
 	/** @var list<int> */
 	private array $timeouts = [];
+	private ThreadService&MockObject $threadService;
 	private SendService $service;
 
 	protected function setUp(): void {
@@ -137,6 +140,7 @@ class SendServiceTest extends TestCase {
 		$this->roomSyncService = $this->createMock(RoomSyncService::class);
 		$this->reactionManager = $this->createMock(ReactionManager::class);
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
+		$this->threadService = $this->createMock(ThreadService::class);
 		$userManager = $this->createMock(IUserManager::class);
 		$userManager->method('getDisplayName')->willReturnMap([['bob', 'Bob']]);
 		$secureRandom = $this->createMock(ISecureRandom::class);
@@ -164,6 +168,7 @@ class SendServiceTest extends TestCase {
 			$this->chatManager,
 			$this->reactionManager,
 			$this->commentsManager,
+			$this->threadService,
 			$userManager,
 			$secureRandom,
 			$timeFactory,
@@ -191,9 +196,11 @@ class SendServiceTest extends TestCase {
 		]);
 	}
 
-	private function comment(int $id): IComment&MockObject {
+	private function comment(int $id, int $parentId = 0): IComment&MockObject {
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getId')->willReturn((string)$id);
+		$comment->method('getParentId')->willReturn((string)$parentId);
+		$comment->method('getTopmostParentId')->willReturn((string)$parentId);
 		return $comment;
 	}
 
@@ -225,6 +232,46 @@ class SendServiceTest extends TestCase {
 		], $this->requestBody(0));
 		self::assertSame(12, $this->eventMaps['$sent']->getCommentId());
 		self::assertSame('@alice:example.org', $this->eventMaps['$sent']->getSender());
+	}
+
+	public function testSendMessageToThread(): void {
+		$this->mapped('$root', 11, '@bob:example.org');
+		$this->threadService->method('validateThread')->with(23, 11)->willReturn(true);
+		$this->room->method('getId')->willReturn(23);
+		$this->responses[] = $this->json(200, ['event_id' => '$sent']);
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->with(self::anything(), self::anything(), self::anything(), self::anything(), 'Hi', self::anything(), null, '', false, true, 11, '')
+			->willReturn($this->comment(12, 11));
+
+		$this->service->sendMessage($this->room, $this->participant, 'Hi', null, '', false, 11);
+
+		self::assertSame(['rel_type' => 'm.thread', 'event_id' => '$root', 'is_falling_back' => true, 'm.in_reply_to' => ['event_id' => '$root']], $this->requestBody(0)['m.relates_to']);
+	}
+
+	public function testReplyInsideOfThread(): void {
+		$this->mapped('$root', 11, '@bob:example.org');
+		$this->mapped('$parent', 12, '@bob:example.org');
+		$this->threadService->method('validateThread')->willReturn(true);
+		$this->responses[] = $this->json(200, ['event_id' => '$sent']);
+		$this->chatManager->method('sendMessage')->willReturn($this->comment(13, 11));
+
+		$this->service->sendMessage($this->room, $this->participant, 'Hi', $this->comment(12, 11), '', false);
+
+		self::assertSame(['rel_type' => 'm.thread', 'event_id' => '$root', 'is_falling_back' => false, 'm.in_reply_to' => ['event_id' => '$parent']], $this->requestBody(0)['m.relates_to']);
+	}
+
+	public function testStartThread(): void {
+		$this->responses[] = $this->json(200, ['event_id' => '$sent']);
+		$this->threadService->expects(self::never())->method('validateThread');
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->with(self::anything(), self::anything(), self::anything(), self::anything(), 'Hi', self::anything(), null, '', false, true, Thread::THREAD_CREATE, 'Plans')
+			->willReturn($this->comment(12));
+
+		$this->service->sendMessage($this->room, $this->participant, 'Hi', null, '', false, Thread::THREAD_CREATE, 'Plans');
+
+		self::assertArrayNotHasKey('m.relates_to', $this->requestBody(0));
 	}
 
 	public function testSendMessageAlreadyMirroredBySync(): void {
@@ -422,6 +469,38 @@ class SendServiceTest extends TestCase {
 		self::assertSame(['topic' => 'About us'], $this->requestBody(0));
 	}
 
+	public function testMuteConversation(): void {
+		$this->responses[] = $this->json(200, []);
+
+		$this->service->setNotificationLevel($this->room, $this->participant, Participant::NOTIFY_NEVER);
+
+		self::assertSame('/_matrix/client/v3/pushrules/global/override/%21room%3Aexample.org', $this->requests[0]->getUri()->getPath());
+		self::assertSame([
+			'conditions' => [['kind' => 'event_match', 'key' => 'room_id', 'pattern' => '!room:example.org']],
+			'actions' => [],
+		], $this->requestBody(0));
+	}
+
+	public function testNotifyAboutAllMessages(): void {
+		$this->responses[] = $this->json(200, []);
+		$this->responses[] = $this->json(404, ['errcode' => 'M_NOT_FOUND', 'error' => 'Unknown rule']);
+
+		$this->service->setNotificationLevel($this->room, $this->participant, Participant::NOTIFY_ALWAYS);
+
+		self::assertSame('/_matrix/client/v3/pushrules/global/room/%21room%3Aexample.org', $this->requests[0]->getUri()->getPath());
+		self::assertSame(['actions' => ['notify', ['set_tweak' => 'sound', 'value' => 'default']]], $this->requestBody(0));
+		self::assertSame('DELETE', $this->requests[1]->getMethod());
+		self::assertSame('/_matrix/client/v3/pushrules/global/override/%21room%3Aexample.org', $this->requests[1]->getUri()->getPath());
+	}
+
+	public function testNotifyAboutMentionsFails(): void {
+		$this->responses[] = $this->json(200, []);
+		$this->responses[] = $this->json(403, ['errcode' => 'M_FORBIDDEN', 'error' => 'No']);
+
+		$this->expectExceptionObject(new SendException('permission', 403));
+		$this->service->setNotificationLevel($this->room, $this->participant, Participant::NOTIFY_MENTION);
+	}
+
 	public function testInvite(): void {
 		$this->responses[] = $this->json(200, []);
 
@@ -497,8 +576,8 @@ class SendServiceTest extends TestCase {
 		return $file;
 	}
 
-	private function shareComment(string $actorId = 'alice'): IComment&MockObject {
-		$comment = $this->comment(12);
+	private function shareComment(string $actorId = 'alice', int $parentId = 0): IComment&MockObject {
+		$comment = $this->comment(12, $parentId);
 		$comment->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
 		$comment->method('getActorId')->willReturn($actorId);
 		return $comment;
@@ -525,6 +604,20 @@ class SendServiceTest extends TestCase {
 			'info' => ['mimetype' => 'image/png', 'size' => 3],
 		], $this->requestBody(1));
 		self::assertSame(12, $this->eventMaps['$file']->getCommentId());
+	}
+
+	public function testSendFileToThread(): void {
+		$this->mapped('$root', 11, '@bob:example.org');
+		$this->threadService->method('validateThread')->willReturn(true);
+		$root = $this->comment(11);
+		$this->commentsManager->method('get')->with('11')->willReturn($root);
+		$comment = $this->shareComment(parentId: 11);
+		$this->responses[] = $this->json(200, ['content_uri' => 'mxc://example.org/abc']);
+		$this->responses[] = $this->json(200, ['event_id' => '$file']);
+
+		$this->service->sendFile($this->room, $comment, $this->file(), '');
+
+		self::assertSame(['rel_type' => 'm.thread', 'event_id' => '$root', 'is_falling_back' => false, 'm.in_reply_to' => ['event_id' => '$root']], $this->requestBody(1)['m.relates_to']);
 	}
 
 	public function testSendFileOfUserWithoutAccount(): void {

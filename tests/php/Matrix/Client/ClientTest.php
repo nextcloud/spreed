@@ -26,6 +26,8 @@ class ClientTest extends TestCase {
 	private array $paths = [];
 	/** @var list<string> */
 	private array $queries = [];
+	/** @var list<string> */
+	private array $methods = [];
 	private Client $client;
 
 	protected function setUp(): void {
@@ -47,6 +49,7 @@ class ClientTest extends TestCase {
 	public function respond(RequestInterface $request): ResponseInterface {
 		$this->paths[] = $request->getUri()->getPath();
 		$this->queries[] = $request->getUri()->getQuery();
+		$this->methods[] = $request->getMethod();
 		return array_shift($this->responses) ?? new Response(404);
 	}
 
@@ -63,6 +66,20 @@ class ClientTest extends TestCase {
 
 		self::assertSame('png', (string)$this->client->downloadMedia('mxc://example.org/abc')->getBody());
 		self::assertSame(['/_matrix/client/v1/media/download/example.org/abc', '/_matrix/media/v3/download/example.org/abc'], $this->paths);
+	}
+
+	public function testPushRules(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');
+
+		$this->client->setPushRule('room', '!room:example.org', ['actions' => []]);
+		$this->client->deletePushRule('override', '!room:example.org');
+
+		self::assertSame([
+			'/_matrix/client/v3/pushrules/global/room/%21room%3Aexample.org',
+			'/_matrix/client/v3/pushrules/global/override/%21room%3Aexample.org',
+		], $this->paths);
+		self::assertSame(['PUT', 'DELETE'], $this->methods);
 	}
 
 	public function testGetMessages(): void {

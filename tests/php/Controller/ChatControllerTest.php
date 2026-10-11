@@ -24,6 +24,7 @@ use OCA\Talk\Matrix\Sync\SyncService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
@@ -324,10 +325,49 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals(new DataResponse(['id' => 42], Http::STATUS_CREATED), $response);
 	}
 
+	public function testStartThreadInMatrixConversation(): void {
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn(Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => $this->userId]));
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+
+		$comment = $this->newComment(42, 'user', $this->userId, new \DateTime(), 'testMessage');
+		$this->sendService->expects($this->once())
+			->method('sendMessage')
+			->with($this->room, $participant, 'testMessage', null, '', false, Thread::THREAD_CREATE, 'testThread')
+			->willReturn($comment);
+		$thread = new Thread();
+		$thread->setId(42);
+		$thread->setName('testThread');
+		$this->threadService->expects($this->once())->method('createThread')->with($this->room, 42, 'testThread')->willReturn($thread);
+		$this->chatManager->expects($this->once())
+			->method('addSystemMessage')
+			->with($this->room, $participant, Attendee::ACTOR_USERS, $this->userId, json_encode(['message' => 'thread_created', 'parameters' => ['thread' => 42, 'title' => 'testThread']]));
+		$this->messageParser->method('createMessage')->willReturn($this->createMock(Message::class));
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$this->controller->sendMessage('testMessage', '', '', 0, '', false, 'testThread');
+	}
+
+	public function testSendMessageToThreadOfMatrixConversation(): void {
+		$participant = $this->createStub(Participant::class);
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->threadService->method('validateThread')->willReturn(true);
+
+		$this->sendService->expects($this->once())
+			->method('sendMessage')
+			->with($this->room, $participant, 'testMessage', null, '', false, 23, '')
+			->willReturn($this->newComment(42, 'user', $this->userId, new \DateTime(), 'testMessage'));
+		$this->threadService->expects($this->never())->method('createThread');
+		$this->messageParser->method('createMessage')->willReturn($this->createMock(Message::class));
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$this->controller->sendMessage('testMessage', '', '', 0, '', false, '', 23);
+	}
+
 	public static function dataSendMessageToMatrixConversationFails(): array {
 		return [
-			'thread title' => ['testThread', 0, null, new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST)],
-			'thread reply' => ['', 23, null, new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST)],
 			'homeserver' => ['', 0, new SendException('matrix', Http::STATUS_BAD_GATEWAY), new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY)],
 		];
 	}

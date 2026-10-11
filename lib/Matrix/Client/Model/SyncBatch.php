@@ -16,12 +16,14 @@ final class SyncBatch {
 	 * @param array<string, JoinedRoom> $joined
 	 * @param list<string> $left Ids of rooms the user left or was removed from
 	 * @param array<string, list<Event>> $invited Stripped state of the rooms the user is invited to, indexed by room id
+	 * @param array<string, array<string, mixed>> $accountData Content of the changed global account data, indexed by type
 	 */
 	public function __construct(
 		public readonly string $nextBatch,
 		public readonly array $joined = [],
 		public readonly array $left = [],
 		public readonly array $invited = [],
+		public readonly array $accountData = [],
 	) {
 	}
 
@@ -44,10 +46,17 @@ final class SyncBatch {
 			}
 		}
 
-		return new self((string)($raw['next_batch'] ?? ''), $joined, $left, $invited);
+		$accountData = [];
+		foreach (is_array($raw['account_data']['events'] ?? null) ? $raw['account_data']['events'] : [] as $event) {
+			if (is_string($event['type'] ?? null) && is_array($event['content'] ?? null)) {
+				$accountData[$event['type']] = $event['content'];
+			}
+		}
+
+		return new self((string)($raw['next_batch'] ?? ''), $joined, $left, $invited, $accountData);
 	}
 
 	public function isEmpty(): bool {
-		return $this->joined === [] && $this->left === [] && $this->invited === [];
+		return $this->joined === [] && $this->left === [] && $this->invited === [] && $this->accountData === [];
 	}
 }

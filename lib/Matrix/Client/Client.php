@@ -94,6 +94,25 @@ class Client {
 	}
 
 	/**
+	 * Create or replace a push rule of the user
+	 *
+	 * @param 'override'|'room' $kind
+	 * @param array<string, mixed> $rule Actions and, for override rules, conditions
+	 * @throws MatrixException
+	 */
+	public function setPushRule(string $kind, string $ruleId, array $rule): void {
+		$this->transport->put(self::PREFIX . '/pushrules/global/' . $kind . '/' . rawurlencode($ruleId), $rule);
+	}
+
+	/**
+	 * @param 'override'|'room' $kind
+	 * @throws MatrixException M_NOT_FOUND when the rule does not exist
+	 */
+	public function deletePushRule(string $kind, string $ruleId): void {
+		$this->transport->delete(self::PREFIX . '/pushrules/global/' . $kind . '/' . rawurlencode($ruleId));
+	}
+
+	/**
 	 * Older events of a room, newest first
 	 *
 	 * @param string $from Pagination token, e.g. the prev_batch of a sync timeline
