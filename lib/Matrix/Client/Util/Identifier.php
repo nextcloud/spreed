@@ -55,4 +55,35 @@ final class Identifier {
 		}
 		return $input;
 	}
+
+	/**
+	 * Room id or alias from user input: `!id:server`, `#alias:server`,
+	 * `https://matrix.to/#/#alias:server?via=server` or `matrix:r/alias:server`
+	 *
+	 * @return array{0: string, 1: list<string>} Room id or alias, and servers to join through
+	 * @throws \InvalidArgumentException
+	 */
+	public static function parseRoomReference(string $input): array {
+		$input = trim($input);
+		$query = '';
+		if (preg_match('~^https://matrix\.to/#/([^?]+)(?:\?(.*))?$~i', $input, $matches)) {
+			$input = rawurldecode($matches[1]);
+			$query = $matches[2] ?? '';
+		} elseif (preg_match('~^matrix:(r|roomid)/([^?]+)(?:\?(.*))?$~i', $input, $matches)) {
+			$input = (strtolower($matches[1]) === 'r' ? '#' : '!') . rawurldecode($matches[2]);
+			$query = $matches[3] ?? '';
+		}
+
+		if (!preg_match('/^[!#][^:\s]+(:[^\s]+)?$/u', $input) || strlen($input) > 255 || ($input[0] === '#' && !str_contains($input, ':'))) {
+			throw new \InvalidArgumentException('Not a Matrix room: ' . $input);
+		}
+
+		$servers = [];
+		foreach (explode('&', $query) as $parameter) {
+			if (str_starts_with($parameter, 'via=') && strlen($parameter) > 4) {
+				$servers[] = rawurldecode(substr($parameter, 4));
+			}
+		}
+		return [$input, $servers];
+	}
 }

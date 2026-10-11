@@ -167,4 +167,13 @@ class Client {
 		$path = self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/state/' . rawurlencode($type) . '/' . rawurlencode($stateKey);
 		return (string)($this->transport->put($path, $content)['event_id'] ?? '');
 	}
+
+	/**
+	 * @param array<string, mixed> $options Body of the createRoom request
+	 * @return string Room id
+	 * @throws MatrixException
+	 */
+	public function createRoom(array $options): string {
+		return (string)($this->transport->post(self::PREFIX . '/createRoom', $options)['room_id'] ?? '');
+	}
 }
