@@ -13,9 +13,12 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
+use OCA\Talk\Matrix\Model\EventMap;
 use OCA\Talk\Matrix\Model\EventMapMapper;
 use OCA\Talk\Matrix\Model\MatrixMember;
 use OCA\Talk\Matrix\Model\MatrixMemberMapper;
@@ -200,9 +203,13 @@ class RoomSyncServiceTest extends TestCase {
 				['actorType' => Attendee::ACTOR_MATRIX, 'actorId' => '@bob:example.org', 'displayName' => 'Bob', 'participantType' => Participant::USER],
 			]);
 
+		$this->client->expects(self::once())
+			->method('getMessages')
+			->with('!room:example.org', 't1', RoomSyncService::HISTORY_LIMIT)
+			->willReturn(['events' => [self::message('$1')], 'end' => null]);
 		$this->messageSyncService->expects(self::once())
 			->method('apply')
-			->with($this->room, self::anything(), [], self::anything(), self::anything(), true)
+			->with($this->room, self::anything(), self::callback(static fn (array $timeline): bool => self::eventIds($timeline) === ['$1']), self::anything(), self::anything(), true)
 			->willReturn(0);
 
 		$stats = $this->service->process($this->account(), $this->client, self::batch([
@@ -211,6 +218,7 @@ class RoomSyncServiceTest extends TestCase {
 				self::memberEvent('@bob:example.org', 'join', 'Bob'),
 				self::memberEvent('@carol:example.org', 'invite', 'Carol'),
 			]],
+			'timeline' => ['events' => [], 'prev_batch' => 't1'],
 		]), false);
 
 		self::assertSame(['rooms' => 1, 'messages' => 0, 'failed' => 0], $stats);
@@ -503,5 +511,108 @@ class RoomSyncServiceTest extends TestCase {
 		$this->roomService->expects(self::never())->method('deleteRoom');
 
 		$this->service->removeAccount($this->account());
+	}
+
+	private static function message(string $eventId): Event {
+		return Event::fromArray(['event_id' => $eventId, 'type' => 'm.room.message', 'sender' => '@bob:example.org', 'content' => ['msgtype' => 'm.text', 'body' => $eventId]]);
+	}
+
+	/**
+	 * @param list<Event> $timeline
+	 * @return list<string>
+	 */
+	private static function eventIds(array $timeline): array {
+		return array_map(static fn (Event $event): string => $event->eventId, $timeline);
+	}
+
+	public function testGapIsFilledBeforeTimeline(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->client->expects(self::exactly(2))
+			->method('getMessages')
+			->willReturnMap([
+				['!room:example.org', 't3', RoomSyncService::HISTORY_LIMIT, ['events' => [self::message('$3'), Event::fromArray(['event_id' => '$state', 'type' => 'm.room.topic', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => []])], 'end' => 't2']],
+				['!room:example.org', 't2', RoomSyncService::HISTORY_LIMIT, ['events' => [self::message('$2'), self::message('$1')], 'end' => 't0']],
+			]);
+		$this->eventMapMapper->method('findByEventId')->willReturnCallback(static fn (string $matrixRoomId, string $eventId): ?EventMap => $eventId === '$1' ? EventMap::fromRow(['id' => '1']) : null);
+		$this->messageSyncService->expects(self::once())
+			->method('apply')
+			->with($this->room, self::anything(), self::callback(static fn (array $timeline): bool => self::eventIds($timeline) === ['$2', '$3', '$4']), self::anything(), self::anything(), false)
+			->willReturn(3);
+
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
+			'timeline' => [
+				'events' => [['event_id' => '$4', 'type' => 'm.room.message', 'sender' => '@bob:example.org', 'content' => ['body' => 'Four']]],
+				'limited' => true,
+				'prev_batch' => 't3',
+			],
+		]), false);
+
+		self::assertSame(3, $stats['messages']);
+	}
+
+	public function testHistoryIsLimited(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$events = array_map(static fn (int $i): Event => self::message('$' . $i), range(RoomSyncService::HISTORY_LIMIT + 5, 1, -1));
+		$this->client->expects(self::once())->method('getMessages')->willReturn(['events' => $events, 'end' => 'older']);
+		$this->messageSyncService->expects(self::once())
+			->method('apply')
+			->with($this->room, self::anything(), self::callback(static fn (array $timeline): bool => count($timeline) === RoomSyncService::HISTORY_LIMIT && $timeline[0]->eventId === '$6'), self::anything(), self::anything(), false);
+
+		$this->service->process($this->account(), $this->client, self::batch(['timeline' => ['events' => [], 'limited' => true, 'prev_batch' => 't']]), false);
+	}
+
+	public function testNoHistoryWithoutGap(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->client->expects(self::never())->method('getMessages');
+
+		$this->service->process($this->account(), $this->client, self::batch(['timeline' => ['events' => [], 'limited' => false, 'prev_batch' => 't']]), false);
+	}
+
+	public function testFailedHistoryKeepsTimeline(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->client->method('getMessages')->willThrowException(new MatrixException('Forbidden', 403, 'M_FORBIDDEN'));
+		$this->messageSyncService->expects(self::once())
+			->method('apply')
+			->with($this->room, self::anything(), self::callback(static fn (array $timeline): bool => self::eventIds($timeline) === ['$4']));
+
+		$stats = $this->service->process($this->account(), $this->client, self::batch([
+			'timeline' => [
+				'events' => [['event_id' => '$4', 'type' => 'm.room.message', 'sender' => '@bob:example.org', 'content' => ['body' => 'Four']]],
+				'limited' => true,
+				'prev_batch' => 't3',
+			],
+		]), false);
+
+		self::assertSame(0, $stats['failed']);
+	}
+
+	public function testReadReceipts(): void {
+		$this->existingRoom(null, [
+			'@alice:example.org' => $this->member('@alice:example.org', 'join', '7'),
+			'@bob:example.org' => $this->member('@bob:example.org', 'join'),
+		]);
+		$this->eventMapMapper->method('findByEventId')->willReturnCallback(static fn (string $matrixRoomId, string $eventId): ?EventMap => match ($eventId) {
+			'$read' => EventMap::fromRow(['id' => '1', 'comment_id' => 42]),
+			'$state' => EventMap::fromRow(['id' => '2']),
+			default => null,
+		});
+		$alice = $this->participant(Attendee::ACTOR_USERS, 'alice');
+		$alice->getAttendee()->setLastReadMessage(50);
+		$bob = $this->participant(Attendee::ACTOR_MATRIX, '@bob:example.org');
+		$bob->getAttendee()->setLastReadMessage(10);
+		$this->participantService->method('getParticipantByActor')->willReturnCallback(fn (Room $room, string $actorType, string $actorId): Participant => match ($actorId) {
+			'alice' => $alice,
+			'@bob:example.org' => $bob,
+			default => throw new ParticipantNotFoundException(),
+		});
+		$this->participantService->expects(self::once())->method('updateLastReadMessage')->with($bob, 42);
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'ephemeral' => ['events' => [['type' => 'm.receipt', 'content' => [
+				'$read' => ['m.read' => ['@alice:example.org' => ['ts' => 1], '@bob:example.org' => ['ts' => 1], '@dave:example.org' => ['ts' => 1]]],
+				'$state' => ['m.read' => ['@bob:example.org' => ['ts' => 1]]],
+				'$unknown' => ['m.read' => ['@bob:example.org' => ['ts' => 1]]],
+			]]]],
+		]), false);
 	}
 }

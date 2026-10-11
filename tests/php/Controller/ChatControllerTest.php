@@ -20,6 +20,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
+use OCA\Talk\Matrix\Sync\SyncService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -99,6 +100,7 @@ class ChatControllerTest extends TestCase {
 	private ConversationFolderService&MockObject $conversationFolderService;
 	private Config&MockObject $talkConfig;
 	protected SendService&MockObject $sendService;
+	protected SyncService&MockObject $syncService;
 
 	protected Room&MockObject $room;
 
@@ -148,6 +150,7 @@ class ChatControllerTest extends TestCase {
 		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->sendService = $this->createMock(SendService::class);
+		$this->syncService = $this->createMock(SyncService::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -204,6 +207,7 @@ class ChatControllerTest extends TestCase {
 			$this->conversationFolderService,
 			$this->talkConfig,
 			$this->sendService,
+			$this->syncService,
 		);
 	}
 
@@ -1203,6 +1207,50 @@ class ChatControllerTest extends TestCase {
 		$expected = new DataResponse(null, Http::STATUS_NOT_MODIFIED);
 
 		$this->assertEquals($expected, $response);
+	}
+
+	public function testWaitForNewMessagesOfMatrixConversation(): void {
+		$participant = $this->createStub(Participant::class);
+		$testUser = $this->createMock(IUser::class);
+		$this->userManager->method('get')->with('testUser')->willReturn($testUser);
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->talkConfig->method('isMatrixEnabled')->willReturn(true);
+		$this->timeFactory->method('getTime')->willReturnOnConsecutiveCalls(1000, 1012);
+
+		$this->syncService->expects($this->once())
+			->method('foregroundSync')
+			->with('testUser', 25);
+		$this->chatManager->expects($this->exactly(2))
+			->method('waitForNewMessages')
+			->willReturnCallback(function (Room $room, int $offset, int $limit, int $timeout): array {
+				static $calls = 0;
+				$this->assertSame([0, 18][$calls++], $timeout, 'Checks for new messages first, then waits for the rest of the time');
+				return [];
+			});
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(1, 4, 23, 0, 30);
+
+		$this->assertEquals(new DataResponse(null, Http::STATUS_NOT_MODIFIED), $response);
+	}
+
+	public function testNewMessagesOfMatrixConversationAreReturnedWithoutSync(): void {
+		$participant = $this->createStub(Participant::class);
+		$this->userManager->method('get')->willReturn($this->createMock(IUser::class));
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->talkConfig->method('isMatrixEnabled')->willReturn(true);
+
+		$this->syncService->expects($this->never())->method('foregroundSync');
+		$this->chatManager->expects($this->once())
+			->method('waitForNewMessages')
+			->with($this->room, 23, 4, 0)
+			->willReturn([$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1')]);
+		$this->messageParser->method('createMessage')->willReturn($this->createMock(Message::class));
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$this->controller->receiveMessages(1, 4, 23, 0, 30);
 	}
 
 	public static function dataMentions(): array {

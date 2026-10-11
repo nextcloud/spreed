@@ -28,8 +28,8 @@ class SyncService {
 	public const LOCK_SECONDS = 60;
 
 	/**
-	 * Members are lazy-loaded and an initial sync only brings the latest
-	 * messages of each room
+	 * Members are lazy-loaded, an initial sync only brings the latest
+	 * messages of each room and of the ephemeral events only read receipts
 	 */
 	public const FILTER = [
 		'presence' => ['types' => []],
@@ -37,7 +37,7 @@ class SyncService {
 		'room' => [
 			'state' => ['lazy_load_members' => true],
 			'timeline' => ['limit' => 10, 'lazy_load_members' => true],
-			'ephemeral' => ['types' => []],
+			'ephemeral' => ['types' => ['m.receipt']],
 			'account_data' => ['types' => []],
 		],
 	];
@@ -57,12 +57,27 @@ class SyncService {
 	}
 
 	/**
+	 * Wait for news from the homeserver of the user, so Matrix conversations
+	 * are live while the user has one open. The initial sync is left to the
+	 * background job.
+	 *
+	 * @param int $timeout Seconds to wait at most
+	 */
+	public function foregroundSync(string $userId, int $timeout): void {
+		$account = $this->accountService->getForUser($userId);
+		if ($account !== null && $account->getNextBatch() !== null) {
+			$this->syncAccount($account, $timeout, $timeout);
+		}
+	}
+
+	/**
 	 * Sync until the budget is used up or the homeserver has nothing new
 	 *
 	 * @param int $budget Seconds to spend at most, a running request is not interrupted
+	 * @param int $longPoll Seconds the homeserver may wait for new events in the first incremental sync
 	 * @return array{batches: int, rooms: int, messages: int, failed: int}|null null when the account is not active or another process syncs it
 	 */
-	public function syncAccount(Account $account, int $budget): ?array {
+	public function syncAccount(Account $account, int $budget, int $longPoll = 0): ?array {
 		if ($account->getStatus() !== Account::STATUS_ACTIVE) {
 			return null;
 		}
@@ -81,7 +96,8 @@ class SyncService {
 
 			do {
 				$since = $account->getNextBatch() ?? '';
-				$batch = $client->sync($since, (string)$account->getFilterId());
+				$batch = $client->sync($since, (string)$account->getFilterId(), $since !== '' ? $longPoll * 1000 : 0);
+				$longPoll = 0;
 				$result = $this->roomSyncService->process($account, $client, $batch, $since === '');
 				$stats['batches']++;
 				$stats['rooms'] += $result['rooms'];

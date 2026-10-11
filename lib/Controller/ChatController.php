@@ -24,6 +24,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
+use OCA\Talk\Matrix\Sync\SyncService;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireAuthenticatedParticipant;
@@ -150,6 +151,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		private readonly ConversationFolderService $conversationFolderService,
 		private readonly Config $talkConfig,
 		private readonly SendService $matrixSendService,
+		private readonly SyncService $matrixSyncService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -985,6 +987,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
+			if ($this->userId !== null && $this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX && $this->talkConfig->isMatrixEnabled()) {
+				$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, 0, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId);
+				if ($comments !== []) {
+					return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
+				}
+				// Wait for news from the homeserver, leaving some seconds to mirror them
+				$start = $this->timeFactory->getTime();
+				$this->matrixSyncService->foregroundSync($this->userId, max(0, $timeout - 5));
+				$timeout = max(0, $timeout - ($this->timeFactory->getTime() - $start));
+			}
 			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId);
 		} else {
 			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown, $threadId);

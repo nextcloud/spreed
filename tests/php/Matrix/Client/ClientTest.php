@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Transport;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
@@ -62,6 +63,26 @@ class ClientTest extends TestCase {
 
 		self::assertSame('png', (string)$this->client->downloadMedia('mxc://example.org/abc')->getBody());
 		self::assertSame(['/_matrix/client/v1/media/download/example.org/abc', '/_matrix/media/v3/download/example.org/abc'], $this->paths);
+	}
+
+	public function testGetMessages(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], json_encode([
+			'chunk' => [
+				['event_id' => '$2', 'type' => 'm.room.message', 'sender' => '@bob:example.org', 'content' => ['body' => 'Two']],
+				['event_id' => '$1', 'type' => 'm.room.message', 'sender' => '@bob:example.org', 'content' => ['body' => 'One']],
+			],
+			'start' => 't2',
+			'end' => 't1',
+		]));
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"chunk":[],"start":"t1"}');
+
+		$page = $this->client->getMessages('!room:example.org', 't2', 50);
+		self::assertSame(['$2', '$1'], array_map(static fn (Event $event): string => $event->eventId, $page['events']));
+		self::assertSame('t1', $page['end']);
+		self::assertSame(['/_matrix/client/v3/rooms/%21room%3Aexample.org/messages'], $this->paths);
+		self::assertSame(['from=t2&dir=b&limit=50'], $this->queries);
+
+		self::assertSame(['events' => [], 'end' => null], $this->client->getMessages('!room:example.org', 't1', 50));
 	}
 
 	public function testDownloadThumbnail(): void {
