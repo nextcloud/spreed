@@ -39,6 +39,17 @@ class EventMapMapper extends QBMapper {
 		}
 	}
 
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function getById(string $id): EventMap {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
+		return $this->findEntity($qb);
+	}
+
 	public function findByCommentId(string $matrixRoomId, int $commentId): ?EventMap {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
