@@ -124,23 +124,20 @@ jobs:
 
       - name: Read package.json node and npm engines version
         if: steps.check_typescript_openapi.outputs.files_exists == 'true'
-        uses: skjnldsv/read-package-engines-version-actions@06d6db44aa62f4609ba070f556ec24bc99fb85cb # v4
+        uses: nextcloud-libraries/parse-package-engines-action@122ae05d4257008180a514e1ddeb0c1b9d094bdd # v0.1.0
         id: node_versions
         # Continue if no package.json
         continue-on-error: true
-        with:
-          fallbackNode: '^24'
-          fallbackNpm: '^11.3'
 
-      - name: Set up node ${{ steps.node_versions.outputs.nodeVersion }}
-        if: ${{ steps.node_versions.outputs.nodeVersion }}
+      - name: Set up node ${{ steps.node_versions.outputs.node-version }}
+        if: ${{ steps.node_versions.outcome == 'success' }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: ${{ steps.node_versions.outputs.nodeVersion }}
+          node-version: ${{ steps.node_versions.outputs.node-version }}
 
-      - name: Set up npm ${{ steps.node_versions.outputs.npmVersion }}
-        if: ${{ steps.node_versions.outputs.nodeVersion }}
-        run: npm i -g 'npm@${{ steps.node_versions.outputs.npmVersion }}'
+      - name: Set up npm ${{ steps.node_versions.outputs.package-manager-version }}
+        if: ${{ steps.node_versions.outcome == 'success' }}
+        run: npm i -g 'npm@${{ steps.node_versions.outputs.package-manager-version }}'
 
       - name: Rebase to ${{ needs.init.outputs.base_ref }}
         if: ${{ contains(needs.init.outputs.arg1, 'rebase') }}
