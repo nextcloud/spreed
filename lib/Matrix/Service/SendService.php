@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Service;
 
+use GuzzleHttp\Psr7\HttpFactory;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
@@ -34,6 +35,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\Files\File;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IUserManager;
@@ -294,6 +296,53 @@ class SendService {
 			// Not in the Matrix room anymore
 		}
 		$this->roomSyncService->leaveRoom($account, $matrixRoom->getMatrixRoomId());
+	}
+
+	/**
+	 * Upload a file that was shared into the conversation and post it to the Matrix room
+	 *
+	 * @param IComment $comment The message about the shared file
+	 * @throws SendException
+	 */
+	public function sendFile(Room $room, IComment $comment, File $file, string $caption): void {
+		$account = $comment->getActorType() === Attendee::ACTOR_USERS ? $this->accountService->getForUser($comment->getActorId()) : null;
+		if ($account === null || $account->getStatus() !== Account::STATUS_ACTIVE) {
+			throw new SendException('account', Http::STATUS_FORBIDDEN);
+		}
+		try {
+			$matrixRoom = $this->roomMapper->getById($room->getObjectId());
+		} catch (DoesNotExistException) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		if ($matrixRoom->getEncrypted()) {
+			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
+		}
+
+		$mimeType = $file->getMimeType();
+		$stream = $file->fopen('rb');
+		if (!is_resource($stream)) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		$contentUri = $this->send($account, fn (Client $client): string => $client->uploadMedia((new HttpFactory())->createStreamFromResource($stream), $mimeType, $file->getName()));
+
+		$content = [
+			'msgtype' => match (explode('/', $mimeType)[0]) {
+				'image' => 'm.image',
+				'video' => 'm.video',
+				'audio' => 'm.audio',
+				default => 'm.file',
+			},
+			'body' => $caption !== '' ? $caption : $file->getName(),
+			'filename' => $file->getName(),
+			'url' => $contentUri,
+			'info' => ['mimetype' => $mimeType, 'size' => $file->getSize()],
+		];
+		$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->sendEvent($matrixRoom->getMatrixRoomId(), 'm.room.message', $content, $transactionId));
+		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
+		if ($eventMap !== null) {
+			$eventMap->setCommentId((int)$comment->getId());
+			$this->eventMapMapper->update($eventMap);
+		}
 	}
 
 	/**
