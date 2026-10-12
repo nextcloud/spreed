@@ -80,6 +80,18 @@ class ClientTest extends TestCase {
 		self::assertSame(['/_matrix/client/v3/keys/upload', '/_matrix/client/v3/keys/query'], $this->paths);
 	}
 
+	public function testClaimKeys(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], json_encode([
+			'one_time_keys' => ['@bob:hs' => ['BOB' => ['signed_curve25519:AAAAAQ' => ['key' => 'k']], 'INVALID' => 'x']],
+			'failures' => [],
+		]));
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"device_keys":{"@carol:hs":{}}}');
+
+		self::assertSame(['@bob:hs' => ['BOB' => ['signed_curve25519:AAAAAQ' => ['key' => 'k']]]], $this->client->claimKeys(['@bob:hs' => ['BOB' => 'signed_curve25519']]));
+		self::assertSame(['@carol:hs' => []], $this->client->queryKeys(['@carol:hs', '@unreachable:other']), 'Users without devices are returned, users that could not be queried are not');
+		self::assertSame(['/_matrix/client/v3/keys/claim', '/_matrix/client/v3/keys/query'], $this->paths);
+	}
+
 	public function testPushRules(): void {
 		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');
 		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');

@@ -15,6 +15,7 @@ use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
 use OCA\Talk\Matrix\Client\Crypto\Keys;
 use OCA\Talk\Matrix\Client\Crypto\Megolm\InboundSession;
+use OCA\Talk\Matrix\Client\Crypto\Megolm\OutboundSession;
 use OCA\Talk\Matrix\Client\Crypto\MegolmEnvelope;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Account as OlmAccount;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Message;
@@ -32,21 +33,28 @@ use OCA\Talk\Matrix\Model\MatrixDevice;
 use OCA\Talk\Matrix\Model\MatrixDeviceMapper;
 use OCA\Talk\Matrix\Model\OlmSession;
 use OCA\Talk\Matrix\Model\OlmSessionMapper;
+use OCA\Talk\Matrix\Model\OutboundGroupSession;
+use OCA\Talk\Matrix\Model\OutboundGroupSessionMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\Security\ICrypto;
+use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 /**
  * Decrypts end-to-end encrypted Matrix rooms: the server is a device of
  * each linked account, publishes its keys and receives the room keys of the
  * other devices. Keys and sessions are stored encrypted with the instance
- * secret. All changes happen during the sync, under the lock of the account.
+ * secret. Sessions are changed by the sync and when sending, so both run
+ * under a lock of the account.
  */
 class CryptoService {
 	/** One-time keys kept on the homeserver, topped up when half of them were used */
 	public const ONE_TIME_KEYS = 50;
+	/** Messages and seconds after which a new room key is used, the defaults of the specification */
+	public const ROTATION_MESSAGES = 100;
+	public const ROTATION_SECONDS = 7 * 24 * 3600;
 	/** Seconds the result of a verification check is reused */
 	public const VERIFIED_CHECK_TTL = 300;
 
@@ -57,7 +65,10 @@ class CryptoService {
 		private readonly MatrixDeviceMapper $deviceMapper,
 		private readonly OlmSessionMapper $olmSessionMapper,
 		private readonly InboundGroupSessionMapper $inboundGroupSessionMapper,
+		private readonly OutboundGroupSessionMapper $outboundGroupSessionMapper,
 		private readonly VerificationService $verificationService,
+		private readonly ExclusiveLock $lock,
+		private readonly ISecureRandom $secureRandom,
 		private readonly ICrypto $crypto,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
@@ -84,6 +95,14 @@ class CryptoService {
 		if (!$this->isAvailable()) {
 			return [];
 		}
+		return $this->lock->run('crypto/' . $account->getId(), fn (): array => $this->processSyncLocked($account, $client, $batch));
+	}
+
+	/**
+	 * @return list<array{0: string, 1: string}>
+	 * @throws MatrixException
+	 */
+	protected function processSyncLocked(Account $account, Client $client, SyncBatch $batch): array {
 		$isNew = $account->getOlmAccount() === null;
 		$olm = $isNew ? OlmAccount::create() : OlmAccount::unpickle($this->crypto->decrypt((string)$account->getOlmAccount()));
 
@@ -144,6 +163,61 @@ class CryptoService {
 			return null;
 		}
 		return $event->withDecryptedContent($decrypted['type'], $decrypted['content'], (string)$sessionId, $decrypted['index']);
+	}
+
+	/**
+	 * Encrypt an event for a room. The room key is shared with the devices of
+	 * the members that do not have it yet, and replaced regularly and when a
+	 * device that had it is not in the room anymore.
+	 *
+	 * @param list<string> $members Matrix user ids of the joined and invited members
+	 * @param array<string, mixed> $content
+	 * @return array<string, mixed> Content of the m.room.encrypted event
+	 * @throws CryptoException when the device has no keys yet
+	 * @throws MatrixException
+	 */
+	public function encryptRoomEvent(Account $account, Client $client, string $roomId, array $members, string $type, array $content): array {
+		if (!$this->isAvailable() || $account->getOlmAccount() === null) {
+			throw new CryptoException('The device has no keys yet');
+		}
+		return $this->lock->run('crypto/' . $account->getId(), function () use ($account, $client, $roomId, $members, $type, $content): array {
+			$olm = OlmAccount::unpickle($this->crypto->decrypt((string)$account->getOlmAccount()));
+			$recipients = [];
+			foreach ($this->getDevices($account, $client, $members) as $mxid => $devices) {
+				foreach ($devices as $device) {
+					if ($mxid !== $account->getMxid() || $device->getDeviceId() !== $account->getDeviceId()) {
+						$recipients[$mxid . '|' . $device->getDeviceId()] = $device;
+					}
+				}
+			}
+
+			$stored = $this->outboundGroupSessionMapper->find((string)$account->getId(), $roomId);
+			$session = $stored !== null ? OutboundSession::unpickle($this->crypto->decrypt($stored->getPickle())) : null;
+			/** @var list<string> $sharedWith */
+			$sharedWith = $stored !== null ? json_decode($stored->getSharedWith(), true) : [];
+			if ($session === null
+				|| $session->getMessageIndex() >= self::ROTATION_MESSAGES
+				|| $session->getCreatedAt() + self::ROTATION_SECONDS < $this->timeFactory->getTime()
+				|| array_diff($sharedWith, array_keys($recipients)) !== []) {
+				$session = OutboundSession::create($this->timeFactory->getTime());
+				$sharedWith = [];
+				// Our own messages can be decrypted when they come back with the sync
+				$this->storeRoomKey($account, $account->getMxid(), $olm->getIdentityKeyBase64(), MegolmEnvelope::roomKeyContent($session, $roomId));
+			}
+
+			$missing = array_diff_key($recipients, array_flip($sharedWith));
+			$sharedWith = array_merge($sharedWith, $this->shareRoomKey($account, $client, $olm, $roomId, $session, $missing));
+			$encrypted = MegolmEnvelope::encrypt($session, $olm, $account->getDeviceId(), $roomId, $type, $content);
+
+			// Stored before the event is sent, so a message index is never used twice
+			$stored ??= new OutboundGroupSession();
+			$stored->setAccountId((string)$account->getId());
+			$stored->setRoomId($roomId);
+			$stored->setPickle($this->crypto->encrypt($session->pickle()));
+			$stored->setSharedWith(json_encode($sharedWith, JSON_THROW_ON_ERROR));
+			$stored->getId() === null ? $this->outboundGroupSessionMapper->insert($stored) : $this->outboundGroupSessionMapper->update($stored);
+			return $encrypted;
+		});
 	}
 
 	/**
@@ -227,6 +301,7 @@ class CryptoService {
 		$this->deviceMapper->deleteForAccount((string)$account->getId());
 		$this->olmSessionMapper->deleteForAccount((string)$account->getId());
 		$this->inboundGroupSessionMapper->deleteForAccount((string)$account->getId());
+		$this->outboundGroupSessionMapper->deleteForAccount((string)$account->getId());
 		$this->verifiedCache->remove((string)$account->getId());
 		$account->setOlmAccount(null);
 	}
@@ -280,11 +355,11 @@ class CryptoService {
 		}
 		try {
 			$verification = $this->verificationService->handle($account, $client, $type, $content, function (string $deviceId) use ($account, $client): ?string {
-				$devices = $this->deviceMapper->findForUser((string)$account->getId(), $account->getMxid());
-				if (!isset($devices[$deviceId]) || $devices[$deviceId]->getOutdated()) {
-					$devices = $this->queryDevices($account, $client, $account->getMxid(), $devices);
-				}
-				return isset($devices[$deviceId]) ? $devices[$deviceId]->getEd25519() : null;
+				$mxid = $account->getMxid();
+				$device = $this->getDevices($account, $client, [$mxid])[$mxid][$deviceId]
+					?? $this->getDevices($account, $client, [$mxid], true)[$mxid][$deviceId]
+					?? null;
+				return $device?->getEd25519();
 			});
 			if ($verification?->state === SasVerification::STATE_DONE) {
 				// The other device just cross-signed us, the cached verified status is stale
@@ -334,15 +409,11 @@ class CryptoService {
 
 	/**
 	 * Device of a user with the identity key, the devices are queried again
-	 * when they changed or the key is unknown
+	 * when the key is unknown
 	 */
 	protected function findDevice(Account $account, Client $client, string $mxid, string $curve25519): ?MatrixDevice {
-		$devices = $this->deviceMapper->findForUser((string)$account->getId(), $mxid);
-		$device = self::matchDevice($devices, $curve25519);
-		if ($device === null || $device->getOutdated()) {
-			$device = self::matchDevice($this->queryDevices($account, $client, $mxid, $devices), $curve25519);
-		}
-		return $device;
+		return self::matchDevice($this->getDevices($account, $client, [$mxid])[$mxid], $curve25519)
+			?? self::matchDevice($this->getDevices($account, $client, [$mxid], true)[$mxid], $curve25519);
 	}
 
 	/**
@@ -358,17 +429,45 @@ class CryptoService {
 	}
 
 	/**
-	 * @param array<string, MatrixDevice> $known Stored devices of the user
-	 * @return array<string, MatrixDevice> Current devices of the user
+	 * Devices of users, queried from the homeserver when none are known, they
+	 * changed or $refresh is set
+	 *
+	 * @param list<string> $mxids
+	 * @return array<string, array<string, MatrixDevice>> indexed by user id and device id
 	 */
-	protected function queryDevices(Account $account, Client $client, string $mxid, array $known): array {
-		try {
-			$published = $client->queryKeys([$mxid])[$mxid] ?? [];
-		} catch (MatrixException $e) {
-			$this->logger->info('Devices of ' . $mxid . ' could not be queried', ['exception' => $e]);
-			return $known;
+	protected function getDevices(Account $account, Client $client, array $mxids, bool $refresh = false): array {
+		$devices = $outdated = [];
+		foreach (array_unique($mxids) as $mxid) {
+			$devices[$mxid] = $this->deviceMapper->findForUser((string)$account->getId(), $mxid);
+			if ($refresh || $devices[$mxid] === [] || array_filter($devices[$mxid], static fn (MatrixDevice $device): bool => $device->getOutdated()) !== []) {
+				$outdated[] = $mxid;
+			}
+		}
+		if ($outdated === []) {
+			return $devices;
 		}
 
+		try {
+			$published = $client->queryKeys($outdated);
+		} catch (MatrixException $e) {
+			$this->logger->info('Devices of ' . implode(', ', $outdated) . ' could not be queried', ['exception' => $e]);
+			return $devices;
+		}
+		foreach ($outdated as $mxid) {
+			// Users the homeserver could not query keep their known devices
+			if (isset($published[$mxid])) {
+				$devices[$mxid] = $this->updateDevices($account, $mxid, $devices[$mxid], $published[$mxid]);
+			}
+		}
+		return $devices;
+	}
+
+	/**
+	 * @param array<string, MatrixDevice> $known Stored devices of the user
+	 * @param array<string, array<string, mixed>> $published Signed device keys indexed by device id
+	 * @return array<string, MatrixDevice> Current devices of the user
+	 */
+	protected function updateDevices(Account $account, string $mxid, array $known, array $published): array {
 		$devices = [];
 		foreach ($published as $deviceId => $raw) {
 			try {
@@ -402,6 +501,78 @@ class CryptoService {
 			$this->deviceMapper->delete($removed);
 		}
 		return $devices;
+	}
+
+	/**
+	 * Send the room key to devices, over an existing Olm session or a new one
+	 * started with a one-time key of the device
+	 *
+	 * @param array<string, MatrixDevice> $devices indexed by `user id|device id`
+	 * @return list<string> The devices that got the key, as `user id|device id`
+	 * @throws MatrixException
+	 */
+	protected function shareRoomKey(Account $account, Client $client, OlmAccount $olm, string $roomId, OutboundSession $session, array $devices): array {
+		$sessions = $withoutSession = [];
+		foreach ($devices as $key => $device) {
+			$stored = $this->olmSessionMapper->findForDevice((string)$account->getId(), $device->getCurve25519())[0] ?? null;
+			if ($stored === null) {
+				$withoutSession[$key] = $device;
+			} else {
+				$sessions[$key] = $stored;
+			}
+		}
+
+		if ($withoutSession !== []) {
+			$claim = [];
+			foreach ($withoutSession as $device) {
+				$claim[$device->getMxid()][$device->getDeviceId()] = 'signed_curve25519';
+			}
+			$claimed = $client->claimKeys($claim);
+			foreach ($withoutSession as $key => $device) {
+				$oneTimeKey = self::verifiedOneTimeKey($device, $claimed[$device->getMxid()][$device->getDeviceId()] ?? []);
+				if ($oneTimeKey === null) {
+					$this->logger->info('Device ' . $device->getDeviceId() . ' of ' . $device->getMxid() . ' has no valid one-time key, it does not get the room key');
+					continue;
+				}
+				$olmSession = Session::createOutbound($olm, Base64::decode($device->getCurve25519()), Base64::decode($oneTimeKey));
+				$stored = new OlmSession();
+				$stored->setAccountId((string)$account->getId());
+				$stored->setSenderKey($device->getCurve25519());
+				$stored->setSessionId($olmSession->getId());
+				$stored->setPickle($this->crypto->encrypt($olmSession->pickle()));
+				$sessions[$key] = $this->olmSessionMapper->insert($stored);
+			}
+		}
+
+		$roomKey = MegolmEnvelope::roomKeyContent($session, $roomId);
+		$messages = [];
+		foreach ($sessions as $key => $stored) {
+			$device = $devices[$key];
+			$olmSession = Session::unpickle($this->crypto->decrypt($stored->getPickle()));
+			$recipient = new DeviceKeys($device->getMxid(), $device->getDeviceId(), $device->getCurve25519(), $device->getEd25519(), [], []);
+			$messages[$device->getMxid()][$device->getDeviceId()] = OlmEnvelope::encrypt($olm, $account->getMxid(), $account->getDeviceId(), $olmSession, $recipient, 'm.room_key', $roomKey);
+			$stored->setPickle($this->crypto->encrypt($olmSession->pickle()));
+			$stored->setLastUsed($this->timeFactory->getTime());
+			$this->olmSessionMapper->update($stored);
+		}
+		if ($messages !== []) {
+			$client->sendToDevice('m.room.encrypted', $messages, $this->secureRandom->generate(24, ISecureRandom::CHAR_ALPHANUMERIC));
+		}
+		return array_keys($sessions);
+	}
+
+	/**
+	 * @param array<string, mixed> $claimed Claimed keys of the device, indexed by key id
+	 * @return ?string Unpadded base64 one-time key, when the device signed it
+	 */
+	protected static function verifiedOneTimeKey(MatrixDevice $device, array $claimed): ?string {
+		foreach ($claimed as $keyId => $signed) {
+			if (str_starts_with((string)$keyId, 'signed_curve25519:') && is_array($signed) && is_string($signed['key'] ?? null)
+				&& Keys::verifyJson($signed, $device->getMxid(), 'ed25519:' . $device->getDeviceId(), Base64::decode($device->getEd25519()))) {
+				return $signed['key'];
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -190,8 +190,8 @@ class RoomSyncService {
 
 		$name = $this->getName($state, $joined, $account, $members);
 		$description = mb_substr($state->topic ?? '', 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
-		// Messages can not be sent to encrypted rooms yet
-		$readOnly = $state->encrypted ? Room::READ_ONLY : Room::READ_WRITE;
+		// Messages to encrypted rooms need the sodium extension
+		$readOnly = $state->encrypted && !$this->cryptoService->isAvailable() ? Room::READ_ONLY : Room::READ_WRITE;
 		$room = $this->findTalkRoom($matrixRoom);
 		$created = $room === null;
 		if ($room === null) {

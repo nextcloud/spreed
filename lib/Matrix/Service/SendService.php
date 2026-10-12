@@ -14,15 +14,19 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use OCA\Talk\Matrix\Client\Html\MarkdownToHtml;
+use OCA\Talk\Matrix\Client\Model\Member;
 use OCA\Talk\Matrix\Client\Model\PowerLevels;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\EventMap;
 use OCA\Talk\Matrix\Model\EventMapMapper;
+use OCA\Talk\Matrix\Model\MatrixMember;
+use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
@@ -57,6 +61,8 @@ class SendService {
 		private readonly MatrixRoomMapper $roomMapper,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly RoomSyncService $roomSyncService,
+		private readonly CryptoService $cryptoService,
+		private readonly MatrixMemberMapper $memberMapper,
 		private readonly ChatManager $chatManager,
 		private readonly ReactionManager $reactionManager,
 		private readonly ICommentsManager $commentsManager,
@@ -82,7 +88,7 @@ class SendService {
 			$content['m.relates_to'] = $relation;
 		}
 
-		$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->sendEvent($matrixRoom->getMatrixRoomId(), 'm.room.message', $content, $transactionId));
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.room.message', $content);
 		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
 		if ($eventMap === null) {
 			return $this->getSyncedComment($matrixRoom, $eventId);
@@ -129,7 +135,7 @@ class SendService {
 		$content['m.new_content'] = $newContent;
 		$content['m.relates_to'] = ['rel_type' => 'm.replace', 'event_id' => $target->getEventId()];
 
-		$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->sendEvent($matrixRoom->getMatrixRoomId(), 'm.room.message', $content, $transactionId));
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.room.message', $content);
 		$this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
 		return $this->chatManager->editMessage($room, $comment, $participant, $this->timeFactory->getDateTime(), $message);
 	}
@@ -141,7 +147,7 @@ class SendService {
 	 * @throws SendException
 	 */
 	public function deleteMessage(Room $room, Participant $participant, IComment $comment): IComment {
-		[$matrixRoom, $account] = $this->prepare($room, $participant);
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
 		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), (int)$comment->getId());
 		if ($target === null) {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
@@ -173,7 +179,7 @@ class SendService {
 		}
 
 		$content = ['m.relates_to' => ['rel_type' => 'm.annotation', 'event_id' => $target->getEventId(), 'key' => $reaction]];
-		$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->sendEvent($matrixRoom->getMatrixRoomId(), 'm.reaction', $content, $transactionId));
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.reaction', $content);
 		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.reaction');
 		if ($eventMap === null) {
 			return $this->getSyncedComment($matrixRoom, $eventId);
@@ -191,7 +197,7 @@ class SendService {
 	 * @throws NotFoundException
 	 */
 	public function removeReaction(Room $room, Participant $participant, int $messageId, string $reaction): void {
-		[$matrixRoom, $account] = $this->prepare($room, $participant);
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
 		$comment = $this->commentsManager->getReactionComment($messageId, Attendee::ACTOR_USERS, $account->getUserId(), $reaction);
 		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), (int)$comment->getId());
 		if ($target !== null) {
@@ -349,6 +355,7 @@ class SendService {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
 		}
 		if ($matrixRoom->getEncrypted()) {
+			// ponytail: encrypted attachments are not supported yet
 			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -392,7 +399,7 @@ class SendService {
 	 */
 	public function sendReadMarker(Room $room, Participant $participant, int $messageId): void {
 		try {
-			[$matrixRoom, $account] = $this->prepare($room, $participant);
+			[$matrixRoom, $account] = $this->prepare($room, $participant, false);
 		} catch (SendException) {
 			return;
 		}
@@ -463,7 +470,7 @@ class SendService {
 	}
 
 	/**
-	 * @param bool $sendsEvents Whether room events are sent, which is not possible in encrypted rooms yet
+	 * @param bool $sendsEvents Whether room events are sent, which are encrypted in encrypted rooms
 	 * @return array{0: MatrixRoom, 1: Account}
 	 * @throws SendException
 	 */
@@ -473,7 +480,7 @@ class SendService {
 		} catch (DoesNotExistException) {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
 		}
-		if ($sendsEvents && $matrixRoom->getEncrypted()) {
+		if ($sendsEvents && $matrixRoom->getEncrypted() && !$this->cryptoService->isAvailable()) {
 			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -537,7 +544,30 @@ class SendService {
 			throw new SendException('permission', Http::STATUS_FORBIDDEN, $e);
 		} catch (MatrixException|DoesNotExistException $e) {
 			throw new SendException('matrix', Http::STATUS_BAD_GATEWAY, $e);
+		} catch (CryptoException $e) {
+			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST, $e);
 		}
+	}
+
+	/**
+	 * Send an event to the room, encrypted for the devices of the members in encrypted rooms
+	 *
+	 * @param array<string, mixed> $content
+	 * @return string Event id
+	 * @throws SendException
+	 */
+	protected function sendRoomEvent(Account $account, MatrixRoom $matrixRoom, string $type, array $content): string {
+		return $this->send($account, function (Client $client, string $transactionId) use ($account, $matrixRoom, $type, $content): string {
+			if ($matrixRoom->getEncrypted()) {
+				$members = array_keys(array_filter(
+					$this->memberMapper->getForRoom((string)$matrixRoom->getId()),
+					static fn (MatrixMember $member): bool => in_array($member->getMembership(), [Member::JOIN, Member::INVITE], true),
+				));
+				$content = $this->cryptoService->encryptRoomEvent($account, $client, $matrixRoom->getMatrixRoomId(), array_map('strval', $members), $type, $content);
+				$type = 'm.room.encrypted';
+			}
+			return $client->sendEvent($matrixRoom->getMatrixRoomId(), $type, $content, $transactionId);
+		});
 	}
 
 	/**

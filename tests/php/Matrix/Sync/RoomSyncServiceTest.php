@@ -284,6 +284,16 @@ class RoomSyncServiceTest extends TestCase {
 		self::assertSame(['rooms' => 1, 'messages' => 0, 'failed' => 0], $stats);
 	}
 
+	public function testEncryptedRoomIsWritableWithEncryption(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->cryptoService->method('isAvailable')->willReturn(true);
+		$this->roomService->expects(self::once())->method('setReadOnly')->with($this->room, Room::READ_WRITE);
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'state' => ['events' => [['type' => 'm.room.encryption', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['algorithm' => 'm.megolm.v1.aes-sha2']]]],
+		]), false);
+	}
+
 	public function testEncryptedRoomAndPowerLevels(): void {
 		$this->roomMapper->method('getByMatrixRoomId')->willReturn($this->matrixRoom());
 		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);

@@ -11,7 +11,9 @@ namespace OCA\Talk\Tests\php\Matrix\Service;
 use OC\Memcache\ArrayCache;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
+use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
+use OCA\Talk\Matrix\Client\Crypto\Megolm\InboundSession;
 use OCA\Talk\Matrix\Client\Crypto\Megolm\OutboundSession;
 use OCA\Talk\Matrix\Client\Crypto\MegolmEnvelope;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Account as OlmAccount;
@@ -27,11 +29,16 @@ use OCA\Talk\Matrix\Model\MatrixDevice;
 use OCA\Talk\Matrix\Model\MatrixDeviceMapper;
 use OCA\Talk\Matrix\Model\OlmSession;
 use OCA\Talk\Matrix\Model\OlmSessionMapper;
+use OCA\Talk\Matrix\Model\OutboundGroupSession;
+use OCA\Talk\Matrix\Model\OutboundGroupSessionMapper;
 use OCA\Talk\Matrix\Service\CryptoService;
+use OCA\Talk\Matrix\Service\ExclusiveLock;
 use OCA\Talk\Matrix\Service\VerificationService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ICacheFactory;
+use OCP\Lock\ILockingProvider;
 use OCP\Security\ICrypto;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -51,6 +58,12 @@ class CryptoServiceTest extends TestCase {
 	private array $olmSessions = [];
 	/** @var array<string, InboundGroupSession> */
 	private array $groupSessions = [];
+	/** @var array<string, OutboundGroupSession> */
+	private array $outboundSessions = [];
+	/** @var array<string, array<string, array<string, mixed>>> Claimable one-time keys indexed by user and device */
+	private array $oneTimeKeys = [];
+	/** @var list<array{0: string, 1: array}> */
+	private array $toDevice = [];
 	private CryptoService $service;
 
 	protected function setUp(): void {
@@ -107,6 +120,22 @@ class CryptoServiceTest extends TestCase {
 			return $session;
 		});
 
+		$outboundMapper = $this->createMock(OutboundGroupSessionMapper::class);
+		$outboundMapper->method('find')->willReturnCallback(fn (string $accountId, string $roomId): ?OutboundGroupSession => $this->outboundSessions[$roomId] ?? null);
+		$outboundMapper->method('insert')->willReturnCallback(fn (OutboundGroupSession $session): OutboundGroupSession => $this->outboundSessions[$session->getRoomId()] = OutboundGroupSession::fromRow([
+			'id' => (string)(count($this->outboundSessions) + 1),
+			'account_id' => $session->getAccountId(),
+			'room_id' => $session->getRoomId(),
+			'pickle' => $session->getPickle(),
+			'shared_with' => $session->getSharedWith(),
+		]));
+		$olmSessionMapper->method('update')->willReturnArgument(0);
+		$this->client->method('claimKeys')->willReturnCallback(fn (array $devices): array => array_intersect_key($this->oneTimeKeys, $devices));
+		$this->client->method('sendToDevice')->willReturnCallback(function (string $type, array $messages): void {
+			$this->toDevice[] = [$type, $messages];
+		});
+		$secureRandom = $this->createMock(ISecureRandom::class);
+		$secureRandom->method('generate')->willReturn('txn');
 		$this->verificationService = $this->createMock(VerificationService::class);
 		$crypto = $this->createMock(ICrypto::class);
 		$crypto->method('encrypt')->willReturnCallback(static fn (string $plain): string => 'encrypted:' . $plain);
@@ -120,7 +149,10 @@ class CryptoServiceTest extends TestCase {
 			$this->deviceMapper,
 			$olmSessionMapper,
 			$groupSessionMapper,
+			$outboundMapper,
 			$this->verificationService,
+			new ExclusiveLock($this->createMock(ILockingProvider::class)),
+			$secureRandom,
 			$crypto,
 			$this->createMock(ITimeFactory::class),
 			$this->createMock(LoggerInterface::class),
@@ -285,5 +317,78 @@ class CryptoServiceTest extends TestCase {
 		self::assertNull($this->service->getSigningKey($this->account));
 		[$deviceKeys] = $this->bootstrap();
 		self::assertSame($deviceKeys->ed25519, $this->service->getSigningKey($this->account));
+	}
+
+	/**
+	 * A device of another user that publishes its keys and a one-time key
+	 */
+	private function deviceWithOneTimeKey(string $mxid, string $deviceId): OlmAccount {
+		$olm = $this->device($mxid, $deviceId);
+		$olm->generateOneTimeKeys(1);
+		$this->oneTimeKeys[$mxid][$deviceId] = $olm->keysForUpload($mxid, $deviceId)['one_time_keys'];
+		return $olm;
+	}
+
+	/**
+	 * The room key the device got with the last to-device message
+	 */
+	private function receivedRoomKey(OlmAccount $olm, string $mxid, string $deviceId): InboundSession {
+		[$type, $messages] = end($this->toDevice);
+		self::assertSame('m.room.encrypted', $type);
+		$content = $messages[$mxid][$deviceId];
+		$ciphertext = OlmEnvelope::ourCiphertext($content, $olm);
+		['plaintext' => $plaintext] = Session::fromPreKeyMessage($olm, $ciphertext['body'], Base64::decode($content['sender_key']));
+		$payload = OlmEnvelope::validatePayload($plaintext, '@alice:hs', $olm, $mxid);
+		self::assertSame('m.room_key', $payload['type']);
+		return InboundSession::fromSessionKey($payload['content']['session_key']);
+	}
+
+	public function testEncryptRoomEvent(): void {
+		[$ourKeys] = $this->bootstrap();
+		$bob = $this->deviceWithOneTimeKey('@bob:hs', 'BOB');
+
+		$encrypted = $this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@alice:hs', '@bob:hs'], 'm.room.message', ['body' => 'Hello', 'm.relates_to' => ['m.in_reply_to' => ['event_id' => '$parent']]]);
+
+		self::assertSame(['m.in_reply_to' => ['event_id' => '$parent']], $encrypted['m.relates_to'], 'Relations stay readable for the homeserver');
+		self::assertSame($ourKeys->curve25519, $encrypted['sender_key']);
+		$roomKey = $this->receivedRoomKey($bob, '@bob:hs', 'BOB');
+		self::assertSame('Hello', MegolmEnvelope::decrypt($roomKey, $encrypted, '!room:hs')['content']['body']);
+		self::assertSame('@alice:hs', $this->groupSessions['!room:hs/' . $encrypted['session_id']]->getSender(), 'Our own messages can be decrypted');
+		self::assertSame(['@bob:hs|BOB'], json_decode($this->outboundSessions['!room:hs']->getSharedWith(), true));
+
+		$second = $this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@alice:hs', '@bob:hs'], 'm.room.message', ['body' => 'Again']);
+		self::assertCount(1, $this->toDevice, 'The room key is only shared once');
+		self::assertSame($encrypted['session_id'], $second['session_id']);
+		self::assertSame(['type' => 'm.room.message', 'content' => ['body' => 'Again'], 'index' => 1], MegolmEnvelope::decrypt($roomKey, $second, '!room:hs'));
+	}
+
+	public function testNewRoomKeyWhenMemberLeft(): void {
+		$this->bootstrap();
+		$this->deviceWithOneTimeKey('@bob:hs', 'BOB');
+		$first = $this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@alice:hs', '@bob:hs'], 'm.room.message', ['body' => 'Hello']);
+
+		$second = $this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@alice:hs'], 'm.room.message', ['body' => 'Bob left']);
+
+		self::assertNotSame($first['session_id'], $second['session_id']);
+		self::assertSame([], json_decode($this->outboundSessions['!room:hs']->getSharedWith(), true));
+	}
+
+	public function testDeviceWithForgedOneTimeKeyDoesNotGetTheRoomKey(): void {
+		$this->bootstrap();
+		$this->device('@bob:hs', 'BOB');
+		$mallory = OlmAccount::create();
+		$mallory->generateOneTimeKeys(1);
+		// Signed by another device than the one of Bob
+		$this->oneTimeKeys['@bob:hs']['BOB'] = $mallory->keysForUpload('@bob:hs', 'BOB')['one_time_keys'];
+
+		$this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@bob:hs'], 'm.room.message', ['body' => 'Hello']);
+
+		self::assertSame([], $this->toDevice);
+		self::assertSame([], json_decode($this->outboundSessions['!room:hs']->getSharedWith(), true));
+	}
+
+	public function testEncryptWithoutKeys(): void {
+		$this->expectException(CryptoException::class);
+		$this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', [], 'm.room.message', ['body' => 'Hello']);
 	}
 }
