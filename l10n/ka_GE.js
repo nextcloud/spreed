@@ -19,6 +19,7 @@ OC.L10N.register(
     "Unknown filetype" : "ამოუცნობი ფაილის ტიპი",
     "Description" : "აღწერილობა",
     "Talk" : "საუბარი",
+    "Location" : "ადგილმდებარეობა",
     "Accept" : "მიღება",
     "Decline" : "ურაყოფა",
     "New message" : "ახალი წერილი",
