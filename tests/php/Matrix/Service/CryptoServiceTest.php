@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Matrix\Service;
 
+use OC\Memcache\ArrayCache;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
@@ -29,6 +30,7 @@ use OCA\Talk\Matrix\Model\OlmSessionMapper;
 use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Matrix\Service\VerificationService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ICacheFactory;
 use OCP\Security\ICrypto;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -110,6 +112,9 @@ class CryptoServiceTest extends TestCase {
 		$crypto->method('encrypt')->willReturnCallback(static fn (string $plain): string => 'encrypted:' . $plain);
 		$crypto->method('decrypt')->willReturnCallback(static fn (string $cipher): string => substr($cipher, strlen('encrypted:')));
 
+		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn(new ArrayCache(''));
+
 		$this->service = new CryptoService(
 			$this->createMock(AccountMapper::class),
 			$this->deviceMapper,
@@ -119,6 +124,7 @@ class CryptoServiceTest extends TestCase {
 			$crypto,
 			$this->createMock(ITimeFactory::class),
 			$this->createMock(LoggerInterface::class),
+			$cacheFactory,
 		);
 	}
 

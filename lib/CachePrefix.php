@@ -15,4 +15,5 @@ class CachePrefix {
 	public const SIGNALING_ASSIGNED_SERVER = 'hpb_servers';
 	public const MATRIX_CONNECTION = 'talk/matrixconnection';
 	public const MATRIX_READ_MARKER = 'talk/matrixreadmarker';
+	public const MATRIX_VERIFIED = 'talk/matrixverified';
 }

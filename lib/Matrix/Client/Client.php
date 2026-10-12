@@ -146,6 +146,22 @@ class Client {
 	}
 
 	/**
+	 * A device and the self-signing key of its user, to check whether the device is cross-signed
+	 *
+	 * @return array{device: ?array<string, mixed>, selfSigningKey: ?array<string, mixed>}
+	 * @throws MatrixException
+	 */
+	public function getVerificationKeys(string $userId, string $deviceId): array {
+		$response = $this->transport->post(self::PREFIX . '/keys/query', ['device_keys' => [$userId => []]]);
+		$device = $response['device_keys'][$userId][$deviceId] ?? null;
+		$selfSigningKey = $response['self_signing_keys'][$userId] ?? null;
+		return [
+			'device' => is_array($device) ? $device : null,
+			'selfSigningKey' => is_array($selfSigningKey) ? $selfSigningKey : null,
+		];
+	}
+
+	/**
 	 * Create or replace a push rule of the user
 	 *
 	 * @param 'override'|'room' $kind

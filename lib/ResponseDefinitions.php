@@ -317,6 +317,8 @@ namespace OCA\Talk;
  *     lastError: ?string,
  *     // Unix timestamp of the last sync, `0` if it never synced
  *     lastSync: int,
+ *     // Whether another device cross-signed the device of the server, null when encryption is not available on the server
+ *     verified: ?bool,
  * }
  *
  * @psalm-type TalkMatrixVerification = array{

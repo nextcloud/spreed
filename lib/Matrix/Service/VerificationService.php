@@ -106,10 +106,11 @@ class VerificationService {
 	 *
 	 * @param array<string, mixed> $content
 	 * @param \Closure(string): ?string $deviceEd25519 Signing key of a device of the user
+	 * @return ?SasVerification The state after the event was applied, for the caller to react on STATE_DONE
 	 * @throws MatrixException
 	 */
-	public function handle(Account $account, Client $client, string $type, array $content, \Closure $deviceEd25519): void {
-		$this->change($account, function () use ($account, $client, $type, $content, $deviceEd25519): ?SasVerification {
+	public function handle(Account $account, Client $client, string $type, array $content, \Closure $deviceEd25519): ?SasVerification {
+		return $this->change($account, function () use ($account, $client, $type, $content, $deviceEd25519): ?SasVerification {
 			$verification = $this->load($account);
 			if ($verification === null || ($content['transaction_id'] ?? null) !== $verification->transactionId) {
 				return $verification;

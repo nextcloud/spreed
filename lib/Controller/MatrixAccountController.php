@@ -21,6 +21,7 @@ use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Matrix\Service\HomeserverService;
 use OCA\Talk\Matrix\Service\VerificationService;
 use OCA\Talk\Matrix\Sync\SyncService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -86,10 +87,32 @@ class MatrixAccountController extends OCSController {
 
 		return new DataResponse([
 			'canLink' => $canLink,
-			'account' => $account?->jsonSerialize(),
+			'account' => $this->formatAccount($account),
 			'connected' => $connected,
 			'homeservers' => $homeservers,
 		]);
+	}
+
+	/**
+	 * @return ?TalkMatrixAccount
+	 */
+	private function formatAccount(?Account $account, bool $forceVerified = false): ?array {
+		if ($account === null) {
+			return null;
+		}
+		return $account->jsonSerialize() + ['verified' => $this->getVerified($account, $forceVerified)];
+	}
+
+	private function getVerified(Account $account, bool $force): ?bool {
+		if ($account->getStatus() !== Account::STATUS_ACTIVE) {
+			return null;
+		}
+		try {
+			return $this->cryptoService->isVerified($account, $this->accountService->getClient($account), $force);
+		} catch (DoesNotExistException) {
+			// The homeserver was removed
+			return null;
+		}
 	}
 
 	/**
@@ -122,7 +145,7 @@ class MatrixAccountController extends OCSController {
 			return $this->loginErrorResponse($e);
 		}
 
-		return new DataResponse($account->jsonSerialize(), Http::STATUS_CREATED);
+		return new DataResponse($this->formatAccount($account), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -146,7 +169,7 @@ class MatrixAccountController extends OCSController {
 
 		$connected = $this->accountService->checkConnection($account, true);
 		return new DataResponse([
-			'account' => $account->jsonSerialize(),
+			'account' => $this->formatAccount($account, true),
 			'connected' => $connected,
 		]);
 	}
@@ -185,7 +208,7 @@ class MatrixAccountController extends OCSController {
 			return $this->loginErrorResponse($e);
 		}
 
-		return new DataResponse($account->jsonSerialize());
+		return new DataResponse($this->formatAccount($account));
 	}
 
 	/**
@@ -301,6 +324,10 @@ class MatrixAccountController extends OCSController {
 			return new DataResponse(['error' => 'state'], Http::STATUS_BAD_REQUEST);
 		} catch (MatrixException) {
 			return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
+		}
+		if ($verification->state === SasVerification::STATE_DONE) {
+			// Their mac had already arrived, confirming finished the verification right away
+			$this->cryptoService->forgetVerified($account);
 		}
 		return new DataResponse($this->formatVerification($verification));
 	}

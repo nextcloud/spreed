@@ -8,16 +8,19 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Service;
 
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
+use OCA\Talk\Matrix\Client\Crypto\Keys;
 use OCA\Talk\Matrix\Client\Crypto\Megolm\InboundSession;
 use OCA\Talk\Matrix\Client\Crypto\MegolmEnvelope;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Account as OlmAccount;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Message;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Session;
 use OCA\Talk\Matrix\Client\Crypto\OlmEnvelope;
+use OCA\Talk\Matrix\Client\Crypto\Verification\SasVerification;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
@@ -30,6 +33,8 @@ use OCA\Talk\Matrix\Model\MatrixDeviceMapper;
 use OCA\Talk\Matrix\Model\OlmSession;
 use OCA\Talk\Matrix\Model\OlmSessionMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\Security\ICrypto;
 use Psr\Log\LoggerInterface;
 
@@ -42,6 +47,10 @@ use Psr\Log\LoggerInterface;
 class CryptoService {
 	/** One-time keys kept on the homeserver, topped up when half of them were used */
 	public const ONE_TIME_KEYS = 50;
+	/** Seconds the result of a verification check is reused */
+	public const VERIFIED_CHECK_TTL = 300;
+
+	private ICache $verifiedCache;
 
 	public function __construct(
 		private readonly AccountMapper $accountMapper,
@@ -52,7 +61,9 @@ class CryptoService {
 		private readonly ICrypto $crypto,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->verifiedCache = $cacheFactory->createDistributed(CachePrefix::MATRIX_VERIFIED);
 	}
 
 	/**
@@ -144,6 +155,71 @@ class CryptoService {
 	}
 
 	/**
+	 * Whether another device of the user cross-signed the device of the server, so
+	 * MSC4153-compliant clients keep sharing room keys with it. The result is reused
+	 * for VERIFIED_CHECK_TTL seconds unless $force is set.
+	 *
+	 * @return ?bool null when encryption is not available on the server
+	 */
+	public function isVerified(Account $account, Client $client, bool $force = false): ?bool {
+		if (!$this->isAvailable()) {
+			return null;
+		}
+		$cacheKey = (string)$account->getId();
+		if (!$force) {
+			$cached = $this->verifiedCache->get($cacheKey);
+			if ($cached !== null) {
+				return (bool)$cached;
+			}
+		}
+		$verified = $this->checkVerified($account, $client);
+		$this->verifiedCache->set($cacheKey, $verified, self::VERIFIED_CHECK_TTL);
+		return $verified;
+	}
+
+	/**
+	 * Forget the cached verification status, so the next check is live again
+	 */
+	public function forgetVerified(Account $account): void {
+		$this->verifiedCache->remove((string)$account->getId());
+	}
+
+	/**
+	 * Checks only that the device's keys carry a valid signature of the user's
+	 * self-signing key; the self-signing key itself is trusted as published, its
+	 * own signature by the master key is not verified
+	 */
+	protected function checkVerified(Account $account, Client $client): bool {
+		try {
+			$keys = $client->getVerificationKeys($account->getMxid(), $account->getDeviceId());
+		} catch (MatrixException $e) {
+			$this->logger->info('Verification status of ' . $account->getMxid() . ' could not be checked', ['exception' => $e]);
+			return false;
+		}
+		$device = $keys['device'];
+		$selfSigningKey = $keys['selfSigningKey'];
+		if ($device === null || $selfSigningKey === null
+			|| ($selfSigningKey['user_id'] ?? null) !== $account->getMxid()
+			|| !in_array('self_signing', is_array($selfSigningKey['usage'] ?? null) ? $selfSigningKey['usage'] : [], true)) {
+			return false;
+		}
+
+		foreach (is_array($selfSigningKey['keys'] ?? null) ? $selfSigningKey['keys'] : [] as $keyId => $publicKey) {
+			if (!str_starts_with((string)$keyId, 'ed25519:') || !is_string($publicKey)) {
+				continue;
+			}
+			try {
+				if (Keys::verifyJson($device, $account->getMxid(), (string)$keyId, Base64::decode($publicKey))) {
+					return true;
+				}
+			} catch (CryptoException) {
+				// Malformed key, keep looking at the others
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Forget the keys and sessions of the device, for example when the
 	 * account logged in with a new device
 	 */
@@ -151,6 +227,7 @@ class CryptoService {
 		$this->deviceMapper->deleteForAccount((string)$account->getId());
 		$this->olmSessionMapper->deleteForAccount((string)$account->getId());
 		$this->inboundGroupSessionMapper->deleteForAccount((string)$account->getId());
+		$this->verifiedCache->remove((string)$account->getId());
 		$account->setOlmAccount(null);
 	}
 
@@ -202,13 +279,17 @@ class CryptoService {
 			return;
 		}
 		try {
-			$this->verificationService->handle($account, $client, $type, $content, function (string $deviceId) use ($account, $client): ?string {
+			$verification = $this->verificationService->handle($account, $client, $type, $content, function (string $deviceId) use ($account, $client): ?string {
 				$devices = $this->deviceMapper->findForUser((string)$account->getId(), $account->getMxid());
 				if (!isset($devices[$deviceId]) || $devices[$deviceId]->getOutdated()) {
 					$devices = $this->queryDevices($account, $client, $account->getMxid(), $devices);
 				}
 				return isset($devices[$deviceId]) ? $devices[$deviceId]->getEd25519() : null;
 			});
+			if ($verification?->state === SasVerification::STATE_DONE) {
+				// The other device just cross-signed us, the cached verified status is stale
+				$this->forgetVerified($account);
+			}
 		} catch (\Throwable $e) {
 			$this->logger->warning('Matrix verification event ' . $type . ' was ignored for ' . $account->getMxid(), ['exception' => $e]);
 		}
