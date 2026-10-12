@@ -28,6 +28,7 @@ use OCA\Talk\Matrix\Model\MatrixMember;
 use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
+use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
@@ -68,6 +69,7 @@ class RoomSyncService {
 		private readonly AttendeeMapper $attendeeMapper,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly MessageSyncService $messageSyncService,
+		private readonly CryptoService $cryptoService,
 		private readonly AvatarService $avatarService,
 		private readonly INotificationManager $notificationManager,
 		private readonly ITimeFactory $timeFactory,
@@ -82,6 +84,9 @@ class RoomSyncService {
 	 */
 	public function process(Account $account, Client $client, SyncBatch $batch, bool $initial): array {
 		$stats = ['rooms' => 0, 'messages' => 0, 'failed' => 0];
+		// Room keys first, so the messages of the batch can be decrypted
+		$roomKeys = $this->cryptoService->processSync($account, $client, $batch);
+
 		foreach ($batch->joined as $roomId => $joined) {
 			try {
 				$stats['messages'] += $this->applyJoinedRoom($account, $client, $joined, $initial);
@@ -89,6 +94,15 @@ class RoomSyncService {
 			} catch (\Throwable $e) {
 				$stats['failed']++;
 				$this->logger->error('Matrix room ' . $roomId . ' could not be synced for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+
+		foreach ($roomKeys as [$roomId, $sessionId]) {
+			try {
+				$this->decryptWaitingEvents($account, $roomId, $sessionId);
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Waiting events of Matrix room ' . $roomId . ' could not be decrypted for ' . $account->getMxid(), ['exception' => $e]);
 			}
 		}
 
@@ -172,10 +186,7 @@ class RoomSyncService {
 		if ($wasInvited) {
 			$this->notificationManager->markProcessed($this->getInviteNotification($account, (string)$matrixRoom->getId()));
 		}
-		$accounts = $this->accountMapper->getByMxids(array_values(array_filter(array_map(
-			static fn (MatrixMember $member): ?string => $member->getAccountId() !== null ? $member->getMxid() : null,
-			$members,
-		))));
+		$accounts = $this->getLinkedAccounts($members);
 
 		$name = $this->getName($state, $joined, $account, $members);
 		$description = mb_substr($state->topic ?? '', 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
@@ -213,9 +224,48 @@ class RoomSyncService {
 		if (($created || $joined->limited) && $joined->prevBatch !== null) {
 			$timeline = [...$this->getHistory($client, $matrixRoom, $joined->prevBatch), ...$timeline];
 		}
+		$timeline = array_map(fn (Event $event): Event => $event->type === 'm.room.encrypted'
+			? $this->cryptoService->decryptRoomEvent($account, $joined->roomId, $event) ?? $event
+			: $event, $timeline);
 		$messages = $this->messageSyncService->apply($room, $matrixRoom, $timeline, $members, $accounts, $initial || $created);
 		$this->applyReadReceipts($room, $matrixRoom, $joined->readReceipts, $accounts);
 		return $messages;
+	}
+
+	/**
+	 * Replace the placeholders of messages that were encrypted with a room key that arrived now
+	 */
+	protected function decryptWaitingEvents(Account $account, string $matrixRoomId, string $sessionId): void {
+		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
+		$room = $matrixRoom !== null ? $this->findTalkRoom($matrixRoom) : null;
+		if ($matrixRoom === null || $room === null) {
+			return;
+		}
+		$eventMaps = $this->eventMapMapper->findWaitingForKey((string)$matrixRoom->getId(), $sessionId);
+		if ($eventMaps === []) {
+			return;
+		}
+
+		$members = $this->memberMapper->getForRoom((string)$matrixRoom->getId());
+		$accounts = $this->getLinkedAccounts($members);
+		foreach ($eventMaps as $eventMap) {
+			$encrypted = new Event($eventMap->getEventId(), 'm.room.encrypted', $eventMap->getSender(), json_decode((string)$eventMap->getCiphertext(), true) ?: []);
+			$event = $this->cryptoService->decryptRoomEvent($account, $matrixRoomId, $encrypted);
+			if ($event !== null) {
+				$this->messageSyncService->applyDecrypted($room, $matrixRoom, $eventMap, $event, $members, $accounts);
+			}
+		}
+	}
+
+	/**
+	 * @param array<string, MatrixMember> $members
+	 * @return array<string, Account> indexed by Matrix user id
+	 */
+	protected function getLinkedAccounts(array $members): array {
+		return $this->accountMapper->getByMxids(array_values(array_filter(array_map(
+			static fn (MatrixMember $member): ?string => $member->getAccountId() !== null ? $member->getMxid() : null,
+			$members,
+		))));
 	}
 
 	/**

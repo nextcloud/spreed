@@ -24,6 +24,7 @@ use OCA\Talk\Matrix\Model\MatrixMember;
 use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
+use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Matrix\Sync\MessageSyncService;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
@@ -54,6 +55,9 @@ class RoomSyncServiceTest extends TestCase {
 	private AttendeeMapper&MockObject $attendeeMapper;
 	private EventMapMapper&MockObject $eventMapMapper;
 	private MessageSyncService&MockObject $messageSyncService;
+	private CryptoService&MockObject $cryptoService;
+	/** @var list<array{0: string, 1: string}> */
+	private array $roomKeys = [];
 	private AvatarService&MockObject $avatarService;
 	private Client&MockObject $client;
 	private INotificationManager&MockObject $notificationManager;
@@ -90,6 +94,8 @@ class RoomSyncServiceTest extends TestCase {
 		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 		$this->eventMapMapper = $this->createMock(EventMapMapper::class);
 		$this->messageSyncService = $this->createMock(MessageSyncService::class);
+		$this->cryptoService = $this->createMock(CryptoService::class);
+		$this->cryptoService->method('processSync')->willReturnCallback(fn (): array => $this->roomKeys);
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->client = $this->createMock(Client::class);
 		$this->notification = $this->createMock(INotification::class);
@@ -116,6 +122,7 @@ class RoomSyncServiceTest extends TestCase {
 			$this->attendeeMapper,
 			$this->eventMapMapper,
 			$this->messageSyncService,
+			$this->cryptoService,
 			$this->avatarService,
 			$this->notificationManager,
 			$timeFactory,
@@ -660,5 +667,38 @@ class RoomSyncServiceTest extends TestCase {
 			'next_batch' => 'next',
 			'account_data' => ['events' => [['type' => 'm.push_rules', 'content' => ['global' => ['room' => []]]]]],
 		]), false);
+	}
+
+	public function testEncryptedTimelineIsDecrypted(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$decrypted = self::message('$secret');
+		$this->cryptoService->expects(self::once())
+			->method('decryptRoomEvent')
+			->with(self::anything(), '!room:example.org', self::callback(static fn (Event $event): bool => $event->eventId === '$secret'))
+			->willReturn($decrypted);
+		$this->messageSyncService->expects(self::once())
+			->method('apply')
+			->with($this->room, self::anything(), self::callback(static fn (array $timeline): bool => $timeline === [$decrypted]));
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'timeline' => ['events' => [['event_id' => '$secret', 'type' => 'm.room.encrypted', 'sender' => '@bob:example.org', 'content' => ['session_id' => 'session']]]],
+		]), false);
+	}
+
+	public function testWaitingEventsAreDecryptedWithNewRoomKey(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->roomKeys = [['!room:example.org', 'session']];
+		$eventMap = EventMap::fromRow(['id' => '1', 'event_id' => '$secret', 'sender' => '@bob:example.org', 'ciphertext' => '{"session_id":"session"}']);
+		$this->eventMapMapper->method('findWaitingForKey')->with('100', 'session')->willReturn([$eventMap]);
+		$decrypted = self::message('$secret');
+		$this->cryptoService->expects(self::once())
+			->method('decryptRoomEvent')
+			->with(self::anything(), '!room:example.org', self::callback(static fn (Event $event): bool => $event->content === ['session_id' => 'session'] && $event->sender === '@bob:example.org'))
+			->willReturn($decrypted);
+		$this->messageSyncService->expects(self::once())->method('applyDecrypted')->with($this->room, self::anything(), $eventMap, $decrypted);
+
+		$stats = $this->service->process($this->account(), $this->client, self::batch([]), false);
+
+		self::assertSame(0, $stats['failed']);
 	}
 }

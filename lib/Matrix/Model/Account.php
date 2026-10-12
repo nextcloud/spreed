@@ -36,6 +36,8 @@ use OCP\DB\Types;
  * @method int getLastSync()
  * @method void setLockUntil(int $lockUntil)
  * @method int getLockUntil()
+ * @method void setOlmAccount(?string $olmAccount)
+ * @method ?string getOlmAccount()
  */
 class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	public const STATUS_ACTIVE = 0;
@@ -55,6 +57,8 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	protected ?string $filterId = null;
 	protected int $lastSync = 0;
 	protected int $lockUntil = 0;
+	/** Encrypted Olm account with the keys of the device, created on the first sync */
+	protected ?string $olmAccount = null;
 
 	public function __construct() {
 		$this->addType('userId', Types::STRING);
@@ -68,6 +72,7 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 		$this->addType('filterId', Types::STRING);
 		$this->addType('lastSync', Types::BIGINT);
 		$this->addType('lockUntil', Types::BIGINT);
+		$this->addType('olmAccount', Types::TEXT);
 	}
 
 	/**

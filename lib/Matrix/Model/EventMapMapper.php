@@ -65,6 +65,40 @@ class EventMapMapper extends QBMapper {
 	}
 
 	/**
+	 * Whether another event of the room was encrypted with the same Megolm
+	 * message index, which means it is a replay of that event
+	 */
+	public function isMegolmIndexUsed(string $matrixRoomId, string $eventId, string $megolmSession, int $megolmIndex): bool {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('id')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('matrix_room_id', $qb->createNamedParameter($matrixRoomId)))
+			->andWhere($qb->expr()->eq('megolm_session', $qb->createNamedParameter($megolmSession)))
+			->andWhere($qb->expr()->eq('megolm_index', $qb->createNamedParameter($megolmIndex, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->neq('event_id', $qb->createNamedParameter($eventId)))
+			->setMaxResults(1);
+		$result = $qb->executeQuery();
+		$used = $result->fetchOne() !== false;
+		$result->closeCursor();
+		return $used;
+	}
+
+	/**
+	 * Events of a Megolm session that could not be decrypted yet
+	 *
+	 * @return list<EventMap>
+	 */
+	public function findWaitingForKey(string $matrixRoomId, string $megolmSession): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('matrix_room_id', $qb->createNamedParameter($matrixRoomId)))
+			->andWhere($qb->expr()->eq('megolm_session', $qb->createNamedParameter($megolmSession)))
+			->andWhere($qb->expr()->isNotNull('ciphertext'));
+		return $this->findEntities($qb);
+	}
+
+	/**
 	 * Claim the event, fails when it was already applied, for example by the
 	 * sync of another account in the same room
 	 *

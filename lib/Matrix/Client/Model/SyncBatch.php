@@ -17,6 +17,10 @@ final class SyncBatch {
 	 * @param list<string> $left Ids of rooms the user left or was removed from
 	 * @param array<string, list<Event>> $invited Stripped state of the rooms the user is invited to, indexed by room id
 	 * @param array<string, array<string, mixed>> $accountData Content of the changed global account data, indexed by type
+	 * @param list<Event> $toDevice Events sent directly to the device
+	 * @param list<string> $changedDevices Users whose devices changed
+	 * @param ?int $oneTimeKeyCount Unused one-time keys of the device on the homeserver
+	 * @param ?list<string> $unusedFallbackKeyTypes Algorithms with an unused fallback key, null when the homeserver does not tell
 	 */
 	public function __construct(
 		public readonly string $nextBatch,
@@ -24,6 +28,10 @@ final class SyncBatch {
 		public readonly array $left = [],
 		public readonly array $invited = [],
 		public readonly array $accountData = [],
+		public readonly array $toDevice = [],
+		public readonly array $changedDevices = [],
+		public readonly ?int $oneTimeKeyCount = null,
+		public readonly ?array $unusedFallbackKeyTypes = null,
 	) {
 	}
 
@@ -53,10 +61,41 @@ final class SyncBatch {
 			}
 		}
 
-		return new self((string)($raw['next_batch'] ?? ''), $joined, $left, $invited, $accountData);
+		$toDevice = [];
+		foreach (is_array($raw['to_device']['events'] ?? null) ? $raw['to_device']['events'] : [] as $event) {
+			if (is_array($event)) {
+				$toDevice[] = Event::fromArray($event);
+			}
+		}
+		$changedDevices = self::strings($raw['device_lists']['changed'] ?? []);
+		$fallbackKeyTypes = is_array($raw['device_unused_fallback_key_types'] ?? null) ? self::strings($raw['device_unused_fallback_key_types']) : null;
+
+		return new self(
+			(string)($raw['next_batch'] ?? ''),
+			$joined,
+			$left,
+			$invited,
+			$accountData,
+			$toDevice,
+			$changedDevices,
+			isset($raw['device_one_time_keys_count']['signed_curve25519']) ? (int)$raw['device_one_time_keys_count']['signed_curve25519'] : null,
+			$fallbackKeyTypes,
+		);
+	}
+
+	/** @return list<string> */
+	private static function strings(mixed $values): array {
+		$strings = [];
+		foreach (is_array($values) ? $values : [] as $value) {
+			if (is_string($value)) {
+				$strings[] = $value;
+			}
+		}
+		return $strings;
 	}
 
 	public function isEmpty(): bool {
-		return $this->joined === [] && $this->left === [] && $this->invited === [] && $this->accountData === [];
+		return $this->joined === [] && $this->left === [] && $this->invited === [] && $this->accountData === []
+			&& $this->toDevice === [] && $this->changedDevices === [];
 	}
 }

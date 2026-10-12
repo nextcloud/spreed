@@ -84,12 +84,15 @@ final class Account {
 		], $userId, $deviceId);
 	}
 
+	/**
+	 * The oldest keys are dropped when there are too many, they were most
+	 * likely handed out by the homeserver already without being used
+	 */
 	public function generateOneTimeKeys(int $count): void {
-		$count = min($count, self::MAX_ONE_TIME_KEYS - count($this->oneTimeKeys));
-		for ($i = 0; $i < $count; $i++) {
-			$id = $this->newKeyId();
-			$this->oneTimeKeys[$id] = Keys::curve25519KeyPair() + ['published' => false];
+		for ($i = 0; $i < min($count, self::MAX_ONE_TIME_KEYS); $i++) {
+			$this->oneTimeKeys[$this->newKeyId()] = Keys::curve25519KeyPair() + ['published' => false];
 		}
+		$this->oneTimeKeys = array_slice($this->oneTimeKeys, -self::MAX_ONE_TIME_KEYS, null, true);
 	}
 
 	/** @return array<string, string> key id → base64 public key of not-yet-published one-time keys */

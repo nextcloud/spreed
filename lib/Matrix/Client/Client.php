@@ -94,6 +94,47 @@ class Client {
 	}
 
 	/**
+	 * Publish the keys of the device
+	 *
+	 * @param array<string, mixed> $deviceKeys Signed device keys
+	 * @param array<string, mixed> $oneTimeKeys Signed one-time keys indexed by algorithm and key id
+	 * @param array<string, mixed> $fallbackKeys Signed fallback keys indexed by algorithm and key id
+	 * @return array<string, int> Number of one-time keys on the homeserver indexed by algorithm
+	 * @throws MatrixException
+	 */
+	public function uploadKeys(array $deviceKeys, array $oneTimeKeys, array $fallbackKeys): array {
+		$body = ['device_keys' => $deviceKeys];
+		if ($oneTimeKeys !== []) {
+			$body['one_time_keys'] = $oneTimeKeys;
+		}
+		if ($fallbackKeys !== []) {
+			$body['fallback_keys'] = $fallbackKeys;
+		}
+		$counts = $this->transport->post(self::PREFIX . '/keys/upload', $body)['one_time_key_counts'] ?? [];
+		return is_array($counts) ? array_map('intval', $counts) : [];
+	}
+
+	/**
+	 * Device keys of users
+	 *
+	 * @param list<string> $userIds
+	 * @return array<string, array<string, mixed>> Raw signed device keys indexed by user id and device id
+	 * @throws MatrixException
+	 */
+	public function queryKeys(array $userIds): array {
+		$response = $this->transport->post(self::PREFIX . '/keys/query', ['device_keys' => array_fill_keys($userIds, [])]);
+		$devices = [];
+		foreach (is_array($response['device_keys'] ?? null) ? $response['device_keys'] : [] as $userId => $userDevices) {
+			foreach (is_array($userDevices) ? $userDevices : [] as $deviceId => $keys) {
+				if (is_array($keys)) {
+					$devices[(string)$userId][(string)$deviceId] = $keys;
+				}
+			}
+		}
+		return $devices;
+	}
+
+	/**
 	 * Create or replace a push rule of the user
 	 *
 	 * @param 'override'|'room' $kind

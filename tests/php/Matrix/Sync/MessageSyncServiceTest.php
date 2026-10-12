@@ -45,6 +45,7 @@ class MessageSyncServiceTest extends TestCase {
 	/** @var array<string, IComment> */
 	private array $comments = [];
 	private ThreadService&MockObject $threadService;
+	private EventMapMapper&MockObject $eventMapMapper;
 	private MessageSyncService $service;
 
 	protected function setUp(): void {
@@ -61,7 +62,7 @@ class MessageSyncServiceTest extends TestCase {
 		});
 
 		$this->threadService = $this->createMock(ThreadService::class);
-		$eventMapMapper = $this->createMock(EventMapMapper::class);
+		$eventMapMapper = $this->eventMapMapper = $this->createMock(EventMapMapper::class);
 		$eventMapMapper->method('insertIfNew')->willReturnCallback(function (EventMap $eventMap): bool {
 			if (isset($this->eventMaps[$eventMap->getEventId()])) {
 				return false;
@@ -205,9 +206,71 @@ class MessageSyncServiceTest extends TestCase {
 
 		self::assertSame(2, $this->apply([
 			self::event('$emote', 'm.room.message', ['msgtype' => 'm.emote', 'body' => 'waves']),
-			self::event('$encrypted', 'm.room.encrypted', ['algorithm' => 'm.megolm.v1.aes-sha2', 'ciphertext' => 'abc']),
+			self::event('$encrypted', 'm.room.encrypted', ['algorithm' => 'm.megolm.v1.aes-sha2', 'ciphertext' => 'abc', 'session_id' => 'session']),
 		]));
-		self::assertSame(['* Bob waves', 'Encrypted message, end-to-end encrypted Matrix rooms are not supported yet'], $messages);
+		self::assertSame(['* Bob waves', 'Encrypted message, waiting for the key to decrypt it'], $messages);
+		self::assertSame('session', $this->eventMaps['$encrypted']->getMegolmSession());
+		self::assertSame(['algorithm' => 'm.megolm.v1.aes-sha2', 'ciphertext' => 'abc', 'session_id' => 'session'], json_decode((string)$this->eventMaps['$encrypted']->getCiphertext(), true));
+		self::assertNull($this->eventMaps['$emote']->getCiphertext());
+	}
+
+	public function testEncryptedReactionWithoutKeyIsSkipped(): void {
+		$this->chatManager->expects(self::never())->method('sendMessage');
+
+		self::assertSame(0, $this->apply([self::event('$reaction', 'm.room.encrypted', [
+			'algorithm' => 'm.megolm.v1.aes-sha2',
+			'ciphertext' => 'abc',
+			'm.relates_to' => ['rel_type' => 'm.annotation', 'event_id' => '$parent'],
+		])]));
+		self::assertArrayNotHasKey('$reaction', $this->eventMaps);
+	}
+
+	public function testDecryptedMessage(): void {
+		$this->chatManager->expects(self::once())->method('sendMessage')->willReturn($this->comment(11));
+		$event = self::event('$secret', 'm.room.encrypted', [])->withDecryptedContent('m.room.message', ['msgtype' => 'm.text', 'body' => 'Secret'], 'session', 7);
+
+		self::assertSame(1, $this->apply([$event]));
+		self::assertSame('m.room.message', $this->eventMaps['$secret']->getEventType());
+		self::assertSame('session', $this->eventMaps['$secret']->getMegolmSession());
+		self::assertSame(7, $this->eventMaps['$secret']->getMegolmIndex());
+		self::assertNull($this->eventMaps['$secret']->getCiphertext());
+	}
+
+	public function testReplayedMessageIsSkipped(): void {
+		$this->eventMapMapper->method('isMegolmIndexUsed')->with('100', '$replay', 'session', 7)->willReturn(true);
+		$this->chatManager->expects(self::never())->method('sendMessage');
+		$event = self::event('$replay', 'm.room.encrypted', [])->withDecryptedContent('m.room.message', ['msgtype' => 'm.text', 'body' => 'Secret'], 'session', 7);
+
+		self::assertSame(0, $this->apply([$event]));
+	}
+
+	public function testPlaceholderIsReplacedByDecryptedMessage(): void {
+		$placeholder = $this->comment(11);
+		$this->mapped('$secret', 11);
+		$eventMap = $this->eventMaps['$secret'];
+		$eventMap->setCiphertext('{}');
+		$this->eventMapMapper->expects(self::once())->method('update')->with($eventMap);
+		$this->chatManager->expects(self::once())
+			->method('editMessage')
+			->with($this->room, $placeholder, self::isInstanceOf(Participant::class), self::anything(), 'Secret');
+		$event = self::event('$secret', 'm.room.encrypted', [])->withDecryptedContent('m.room.message', ['msgtype' => 'm.text', 'body' => 'Secret'], 'session', 7);
+
+		$this->service->applyDecrypted($this->room, $this->matrixRoom, $eventMap, $event, [], []);
+
+		self::assertNull($eventMap->getCiphertext());
+		self::assertSame(7, $eventMap->getMegolmIndex());
+	}
+
+	public function testPlaceholderIsReplacedByDecryptedAttachment(): void {
+		$placeholder = $this->comment(11);
+		$this->mapped('$secret', 11);
+		$placeholder->expects(self::once())->method('setVerb')->with(ChatManager::VERB_OBJECT_SHARED);
+		$placeholder->expects(self::once())->method('setMessage')->with(self::stringContains('"objectType":"highlight"'));
+		$this->commentsManager->expects(self::once())->method('save')->with($placeholder);
+		$this->chatManager->expects(self::never())->method('editMessage');
+		$event = self::event('$secret', 'm.room.encrypted', [])->withDecryptedContent('m.room.message', ['msgtype' => 'm.image', 'body' => 'cat.jpg', 'url' => 'mxc://example.org/abc'], 'session', 7);
+
+		$this->service->applyDecrypted($this->room, $this->matrixRoom, $this->eventMaps['$secret'], $event, [], []);
 	}
 
 	public function testAlreadyMirroredAndIgnoredEvents(): void {
