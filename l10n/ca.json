@@ -308,6 +308,7 @@
     "Talk" : "Converses",
     "Password request: %s" : "Petició de contrasenya: %s",
     "Deleted user (%s)" : "Usuari (%s) suprimit",
+    "Attachment" : "Adjunt",
     "Failed to upload call recording" : "No s'ha pogut pujar l'enregistrament de la trucada",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "El servidor de gravació no ha pogut pujar l'enregistrament de la trucada {call}. Si us plau, poseu-vos en contacte amb l'administració.",
     "Share to chat" : "Comparteix per xatejar",
