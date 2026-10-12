@@ -16,6 +16,8 @@ use OCA\Talk\Matrix\Client\Crypto\Megolm\InboundSession;
 use OCA\Talk\Matrix\Client\Crypto\Megolm\OutboundSession;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Account;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Session;
+use OCA\Talk\Matrix\Client\Crypto\Verification\Emoji;
+use OCA\Talk\Matrix\Client\Crypto\Verification\Sas;
 
 $stateFile = $argv[1];
 $request = json_decode((string)file_get_contents('php://stdin'), true);
@@ -78,6 +80,25 @@ switch ($request['cmd']) {
 	case 'megolm_export':
 		$session = InboundSession::unpickle($sessions[$request['name']]);
 		$out = ['exported' => $session->export()];
+		break;
+	case 'sas_public':
+		$sas = new Sas();
+		$sessions['sas'] = $sas->pickle();
+		$out = ['public_key' => $sas->getPublicKey()];
+		break;
+	case 'sas_establish':
+		$sas = Sas::unpickle($sessions['sas']);
+		$sas->establish($request['their_public_key']);
+		$sessions['sas'] = $sas->pickle();
+		$out = ['ok' => true];
+		break;
+	case 'sas_emoji':
+		$names = array_column(Emoji::TABLE, 1);
+		$emoji = Emoji::fromSasBytes(Sas::unpickle($sessions['sas'])->rawBytes($request['info']));
+		$out = ['indices' => array_map(static fn (array $e) => array_search($e['name'], $names, true), $emoji)];
+		break;
+	case 'sas_mac':
+		$out = ['mac' => Sas::unpickle($sessions['sas'])->rawMac($request['value'], $request['info'])];
 		break;
 	default:
 		fwrite(STDERR, 'unknown cmd');

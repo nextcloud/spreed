@@ -6,11 +6,14 @@
 import type {
 	addMatrixHomeserverParams,
 	addMatrixHomeserverResponse,
+	cancelMatrixVerificationResponse,
 	checkMatrixConnectionResponse,
+	confirmMatrixVerificationResponse,
 	createMatrixRoomParams,
 	createMatrixRoomResponse,
 	getMatrixAccountResponse,
 	getMatrixHomeserversResponse,
+	getMatrixVerificationResponse,
 	joinMatrixRoomParams,
 	joinMatrixRoomResponse,
 	linkMatrixAccountParams,
@@ -19,6 +22,7 @@ import type {
 	reloginMatrixAccountParams,
 	reloginMatrixAccountResponse,
 	removeMatrixHomeserverResponse,
+	startMatrixVerificationResponse,
 	testMatrixHomeserverResponse,
 	unlinkMatrixAccountResponse,
 	updateMatrixHomeserverParams,
@@ -140,16 +144,48 @@ async function unlinkMatrixAccount(): unlinkMatrixAccountResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/matrix/account'))
 }
 
+/**
+ * Ask the other devices of the user to verify the device of Talk
+ */
+async function startMatrixVerification(): startMatrixVerificationResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/matrix/account/verification'))
+}
+
+/**
+ * Get the state of the verification, the server checks for answers of the other device first
+ */
+async function getMatrixVerification(): getMatrixVerificationResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/matrix/account/verification'))
+}
+
+/**
+ * Confirm that the emoji match the ones of the other device
+ */
+async function confirmMatrixVerification(): confirmMatrixVerificationResponse {
+	return axios.put(generateOcsUrl('apps/spreed/api/v1/matrix/account/verification'))
+}
+
+/**
+ * Cancel the verification
+ */
+async function cancelMatrixVerification(): cancelMatrixVerificationResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/matrix/account/verification'))
+}
+
 export {
 	addMatrixHomeserver,
+	cancelMatrixVerification,
 	checkMatrixConnection,
+	confirmMatrixVerification,
 	createMatrixRoom,
 	getMatrixAccount,
 	getMatrixHomeservers,
+	getMatrixVerification,
 	joinMatrixRoom,
 	linkMatrixAccount,
 	reloginMatrixAccount,
 	removeMatrixHomeserver,
+	startMatrixVerification,
 	testMatrixHomeserver,
 	unlinkMatrixAccount,
 	updateMatrixHomeserver,

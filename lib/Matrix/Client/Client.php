@@ -94,6 +94,17 @@ class Client {
 	}
 
 	/**
+	 * Send an event to devices, without a room
+	 *
+	 * @param array<string, array<string, array<string, mixed>>> $messages Content indexed by user id and device id, `*` for all devices of the user
+	 * @param string $transactionId Unique per access token, a retry with the same id is not sent twice
+	 * @throws MatrixException
+	 */
+	public function sendToDevice(string $type, array $messages, string $transactionId): void {
+		$this->transport->put(self::PREFIX . '/sendToDevice/' . rawurlencode($type) . '/' . rawurlencode($transactionId), ['messages' => $messages]);
+	}
+
+	/**
 	 * Publish the keys of the device
 	 *
 	 * @param array<string, mixed> $deviceKeys Signed device keys
@@ -132,6 +143,22 @@ class Client {
 			}
 		}
 		return $devices;
+	}
+
+	/**
+	 * A device and the self-signing key of its user, to check whether the device is cross-signed
+	 *
+	 * @return array{device: ?array<string, mixed>, selfSigningKey: ?array<string, mixed>}
+	 * @throws MatrixException
+	 */
+	public function getVerificationKeys(string $userId, string $deviceId): array {
+		$response = $this->transport->post(self::PREFIX . '/keys/query', ['device_keys' => [$userId => []]]);
+		$device = $response['device_keys'][$userId][$deviceId] ?? null;
+		$selfSigningKey = $response['self_signing_keys'][$userId] ?? null;
+		return [
+			'device' => is_array($device) ? $device : null,
+			'selfSigningKey' => is_array($selfSigningKey) ? $selfSigningKey : null,
+		];
 	}
 
 	/**

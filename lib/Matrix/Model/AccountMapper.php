@@ -22,6 +22,29 @@ class AccountMapper extends QBMapper {
 	}
 
 	/**
+	 * The verification is read and written on its own, so it is not
+	 * overwritten by a sync that holds an older state of the account
+	 */
+	public function getVerification(string $id): ?string {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('verification')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
+		$result = $qb->executeQuery();
+		$verification = $result->fetchOne();
+		$result->closeCursor();
+		return is_string($verification) ? $verification : null;
+	}
+
+	public function setVerification(string $id, ?string $verification): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('verification', $qb->createNamedParameter($verification))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
+		$qb->executeStatement();
+	}
+
+	/**
 	 * @throws DoesNotExistException
 	 */
 	public function getByUserId(string $userId): Account {

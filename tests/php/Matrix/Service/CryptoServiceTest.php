@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Matrix\Service;
 
+use OC\Memcache\ArrayCache;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
@@ -27,7 +28,9 @@ use OCA\Talk\Matrix\Model\MatrixDeviceMapper;
 use OCA\Talk\Matrix\Model\OlmSession;
 use OCA\Talk\Matrix\Model\OlmSessionMapper;
 use OCA\Talk\Matrix\Service\CryptoService;
+use OCA\Talk\Matrix\Service\VerificationService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ICacheFactory;
 use OCP\Security\ICrypto;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -36,6 +39,7 @@ use Test\TestCase;
 class CryptoServiceTest extends TestCase {
 	private Client&MockObject $client;
 	private MatrixDeviceMapper&MockObject $deviceMapper;
+	private VerificationService&MockObject $verificationService;
 	private Account $account;
 	/** @var array<string, array<string, array<string, mixed>>> Published device keys indexed by user and device */
 	private array $published = [];
@@ -103,18 +107,24 @@ class CryptoServiceTest extends TestCase {
 			return $session;
 		});
 
+		$this->verificationService = $this->createMock(VerificationService::class);
 		$crypto = $this->createMock(ICrypto::class);
 		$crypto->method('encrypt')->willReturnCallback(static fn (string $plain): string => 'encrypted:' . $plain);
 		$crypto->method('decrypt')->willReturnCallback(static fn (string $cipher): string => substr($cipher, strlen('encrypted:')));
+
+		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn(new ArrayCache(''));
 
 		$this->service = new CryptoService(
 			$this->createMock(AccountMapper::class),
 			$this->deviceMapper,
 			$olmSessionMapper,
 			$groupSessionMapper,
+			$this->verificationService,
 			$crypto,
 			$this->createMock(ITimeFactory::class),
 			$this->createMock(LoggerInterface::class),
+			$cacheFactory,
 		);
 	}
 
@@ -242,5 +252,38 @@ class CryptoServiceTest extends TestCase {
 		$this->service->wipe($this->account);
 
 		self::assertNull($this->account->getOlmAccount());
+	}
+
+	public function testVerificationEventsOfOwnDevices(): void {
+		$this->bootstrap();
+		$phone = $this->device('@alice:hs', 'PHONE');
+		$this->verificationService->expects(self::once())
+			->method('handle')
+			->with($this->account, $this->client, 'm.key.verification.ready', ['transaction_id' => 'txn'], self::callback(static fn (\Closure $deviceEd25519): bool => $deviceEd25519('PHONE') === $phone->getSigningKeyBase64() && $deviceEd25519('OTHER') === null));
+
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [
+			['type' => 'm.key.verification.ready', 'sender' => '@alice:hs', 'content' => ['transaction_id' => 'txn']],
+			['type' => 'm.key.verification.ready', 'sender' => '@mallory:hs', 'content' => ['transaction_id' => 'txn']],
+		]]]));
+	}
+
+	public function testFailingVerificationEventDoesNotBlockTheSync(): void {
+		$ourDevice = $this->bootstrap();
+		$bob = $this->device('@bob:hs', 'BOB');
+		$outbound = OutboundSession::create(0);
+		$this->verificationService->method('handle')->willThrowException(new \TypeError('Malformed'));
+
+		$roomKeys = $this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [
+			['type' => 'm.key.verification.ready', 'sender' => '@alice:hs', 'content' => ['transaction_id' => 'txn']],
+			self::roomKeyEvent($bob, '@bob:hs', 'BOB', $ourDevice, $outbound),
+		]]]));
+
+		self::assertSame([['!room:hs', $outbound->getId()]], $roomKeys);
+	}
+
+	public function testSigningKey(): void {
+		self::assertNull($this->service->getSigningKey($this->account));
+		[$deviceKeys] = $this->bootstrap();
+		self::assertSame($deviceKeys->ed25519, $this->service->getSigningKey($this->account));
 	}
 }

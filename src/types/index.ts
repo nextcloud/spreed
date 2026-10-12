@@ -508,6 +508,11 @@ export type checkMatrixConnectionResponse = ApiResponse<operations['matrix_accou
 export type reloginMatrixAccountParams = Required<operations['matrix_account-relogin-account']>['requestBody']['content']['application/json']
 export type reloginMatrixAccountResponse = ApiResponse<operations['matrix_account-relogin-account']['responses'][200]['content']['application/json']>
 export type unlinkMatrixAccountResponse = ApiResponse<operations['matrix_account-unlink-account']['responses'][200]['content']['application/json']>
+export type MatrixVerification = components['schemas']['MatrixVerification']
+export type startMatrixVerificationResponse = ApiResponse<operations['matrix_account-start-verification']['responses'][201]['content']['application/json']>
+export type getMatrixVerificationResponse = ApiResponse<operations['matrix_account-get-verification']['responses'][200]['content']['application/json']>
+export type confirmMatrixVerificationResponse = ApiResponse<operations['matrix_account-confirm-verification']['responses'][200]['content']['application/json']>
+export type cancelMatrixVerificationResponse = ApiResponse<operations['matrix_account-cancel-verification']['responses'][200]['content']['application/json']>
 
 // Federations
 export type FederationInvite = componentsFed['schemas']['FederationInvite']
