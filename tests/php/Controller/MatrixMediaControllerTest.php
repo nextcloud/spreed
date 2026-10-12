@@ -13,6 +13,7 @@ use OCA\Talk\Controller\MatrixMediaController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\Attachment;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\EventMap;
 use OCA\Talk\Matrix\Model\EventMapMapper;
@@ -28,6 +29,7 @@ use OCP\AppFramework\Http\StreamResponse;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IRequest;
+use OCP\Security\ICrypto;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -35,6 +37,7 @@ class MatrixMediaControllerTest extends TestCase {
 	private ParticipantService&MockObject $participantService;
 	private Client&MockObject $client;
 	private IComment&MockObject $comment;
+	private EventMap $eventMap;
 	private MatrixMediaController $controller;
 	private ?int $timeout = null;
 
@@ -48,7 +51,8 @@ class MatrixMediaControllerTest extends TestCase {
 			return $this->client;
 		});
 		$eventMapMapper = $this->createMock(EventMapMapper::class);
-		$eventMapMapper->method('getById')->with('55')->willReturn(EventMap::fromRow(['id' => '55', 'matrix_room_id' => '100', 'comment_id' => 11]));
+		$eventMapMapper->method('getById')->with('55')->willReturnCallback(fn (): EventMap => $this->eventMap);
+		$this->eventMap = EventMap::fromRow(['id' => '55', 'matrix_room_id' => '100', 'comment_id' => 11]);
 		$roomMapper = $this->createMock(MatrixRoomMapper::class);
 		$roomMapper->method('getById')->with('100')->willReturn(MatrixRoom::fromRow(['id' => '100', 'room_id' => 23]));
 		$room = $this->createMock(Room::class);
@@ -62,10 +66,13 @@ class MatrixMediaControllerTest extends TestCase {
 			'id' => 'matrix-media/55',
 			'name' => 'cat "1".png',
 			'mxc' => 'mxc://example.org/abc',
+			'mimetype' => 'image/png',
 		]]]));
 		$commentsManager = $this->createMock(ICommentsManager::class);
 		$commentsManager->method('get')->with('11')->willReturn($this->comment);
 
+		$crypto = $this->createMock(ICrypto::class);
+		$crypto->method('decrypt')->willReturnCallback(static fn (string $cipher): string => substr($cipher, strlen('encrypted:')));
 		$this->controller = new MatrixMediaController(
 			'spreed',
 			$this->createMock(IRequest::class),
@@ -76,6 +83,7 @@ class MatrixMediaControllerTest extends TestCase {
 			$manager,
 			$this->participantService,
 			$commentsManager,
+			$crypto,
 		);
 	}
 
@@ -152,5 +160,59 @@ class MatrixMediaControllerTest extends TestCase {
 		$this->client->expects(self::never())->method('downloadMedia');
 
 		self::assertSame(Http::STATUS_NOT_FOUND, $this->controller->download('55')->getStatus());
+	}
+
+	/**
+	 * The attachment is encrypted, returns the ciphertext the homeserver has
+	 */
+	private function encryptedAttachment(string $plaintext): string {
+		$stream = fopen('php://memory', 'r+b');
+		fwrite($stream, $plaintext);
+		rewind($stream);
+		$encrypted = Attachment::encrypt($stream);
+		$this->eventMap->setMediaKeys('encrypted:' . json_encode(array_map('base64_encode', Attachment::getKeys($encrypted['file']))));
+		$this->comment->method('getObjectId')->willReturn('23');
+		$this->participantService->method('getParticipantByActor')->willReturn($this->createMock(Participant::class));
+		return stream_get_contents($encrypted['stream']);
+	}
+
+	public function testDownloadEncryptedImage(): void {
+		$ciphertext = $this->encryptedAttachment('png');
+		$this->client->expects(self::once())
+			->method('downloadMedia')
+			->with('mxc://example.org/abc')
+			->willReturn(new Psr7Response(200, ['Content-Type' => 'application/octet-stream', 'Content-Length' => '3'], $ciphertext));
+
+		$response = $this->controller->download('55');
+
+		self::assertInstanceOf(StreamResponse::class, $response);
+		self::assertSame('image/png', $response->getHeaders()['Content-Type'], 'The type comes from the event, the homeserver only has encrypted data');
+		self::assertSame('3', $response->getHeaders()['Content-Length']);
+		self::assertSame('png', stream_get_contents(self::invokePrivate($response, 'filePath')));
+	}
+
+	public function testTamperedEncryptedFileIsRefused(): void {
+		$ciphertext = $this->encryptedAttachment('png');
+		$this->client->method('downloadMedia')->willReturn(new Psr7Response(200, [], 'x' . substr($ciphertext, 1)));
+
+		self::assertSame(Http::STATUS_BAD_GATEWAY, $this->controller->download('55')->getStatus());
+	}
+
+	public function testPreviewOfEncryptedImageIsTheImage(): void {
+		$ciphertext = $this->encryptedAttachment('png');
+		$this->client->expects(self::never())->method('downloadThumbnail');
+		$this->client->method('downloadMedia')->willReturn(new Psr7Response(200, ['Content-Length' => '3'], $ciphertext));
+
+		$response = $this->controller->preview('55');
+
+		self::assertInstanceOf(StreamResponse::class, $response);
+		self::assertSame('image/png', $response->getHeaders()['Content-Type']);
+	}
+
+	public function testLargeEncryptedImageHasNoPreview(): void {
+		$this->encryptedAttachment('png');
+		$this->client->method('downloadMedia')->willReturn(new Psr7Response(200, ['Content-Length' => (string)(MatrixMediaController::ENCRYPTED_PREVIEW_MAX_BYTES + 1)], 'x'));
+
+		self::assertSame(Http::STATUS_NOT_FOUND, $this->controller->preview('55')->getStatus());
 	}
 }

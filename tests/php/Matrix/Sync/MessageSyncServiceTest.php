@@ -29,6 +29,7 @@ use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\Security\ICrypto;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -83,6 +84,9 @@ class MessageSyncServiceTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
+		$crypto = $this->createMock(ICrypto::class);
+		$crypto->method('encrypt')->willReturnCallback(static fn (string $plain): string => 'encrypted:' . $plain);
+
 		$this->room = $this->createMock(Room::class);
 		$this->matrixRoom = MatrixRoom::fromRow(['id' => '100', 'room_id' => 23, 'matrix_room_id' => '!room:example.org']);
 
@@ -92,6 +96,7 @@ class MessageSyncServiceTest extends TestCase {
 			$this->commentsManager,
 			$this->participantService,
 			$this->threadService,
+			$crypto,
 			$eventMapMapper,
 			$timeFactory,
 			$urlGenerator,
@@ -415,6 +420,43 @@ class MessageSyncServiceTest extends TestCase {
 			});
 
 		self::assertSame(1, $this->apply([self::event('$image', 'm.room.message', ['msgtype' => 'm.image', 'body' => 'cat.jpg', 'url' => 'mxc://example.org/abc'])], true));
+	}
+
+	public function testEncryptedAttachment(): void {
+		$file = [
+			'url' => 'mxc://example.org/encrypted',
+			'v' => 'v2',
+			'key' => ['kty' => 'oct', 'alg' => 'A256CTR', 'k' => rtrim(strtr(base64_encode(str_repeat('k', 32)), '+/', '-_'), '='), 'ext' => true],
+			'iv' => rtrim(base64_encode(str_repeat('i', 16)), '='),
+			'hashes' => ['sha256' => rtrim(base64_encode(str_repeat('h', 32)), '=')],
+		];
+		$this->chatManager->expects(self::once())
+			->method('addSystemMessage')
+			->willReturnCallback(function (Room $room, ?Participant $participant, string $actorType, string $actorId, string $message): IComment {
+				self::assertSame([
+					'type' => 'highlight',
+					'id' => 'matrix-media/55',
+					'name' => 'cat.jpg',
+					'link' => 'https://cloud.example/spreed.MatrixMedia.download/55',
+					'mxc' => 'mxc://example.org/encrypted',
+					'mimetype' => 'image/jpeg',
+					'thumb' => 'https://cloud.example/spreed.MatrixMedia.preview/55',
+				], json_decode($message, true)['parameters']['metaData'], 'The keys are not part of the message');
+				return $this->comment(11, ChatManager::VERB_OBJECT_SHARED);
+			});
+
+		$this->apply([self::event('$image', 'm.room.message', ['msgtype' => 'm.image', 'body' => 'cat.jpg', 'info' => ['mimetype' => 'image/jpeg'], 'file' => $file])]);
+
+		self::assertSame('encrypted:' . json_encode(['key' => base64_encode(str_repeat('k', 32)), 'iv' => base64_encode(str_repeat('i', 16)), 'sha256' => base64_encode(str_repeat('h', 32))]), $this->eventMaps['$image']->getMediaKeys());
+	}
+
+	public function testUnsupportedEncryptedAttachmentIsText(): void {
+		$this->chatManager->expects(self::never())->method('addSystemMessage');
+		$this->chatManager->expects(self::once())->method('sendMessage')->willReturn($this->comment(11));
+
+		$this->apply([self::event('$image', 'm.room.message', ['msgtype' => 'm.image', 'body' => 'cat.jpg', 'file' => ['url' => 'mxc://example.org/encrypted', 'v' => 'v1']])]);
+
+		self::assertNull($this->eventMaps['$image']->getMediaKeys());
 	}
 
 	public function testFileHasNoPreview(): void {

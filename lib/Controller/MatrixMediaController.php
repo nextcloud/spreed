@@ -11,6 +11,8 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Client\Crypto\Attachment;
+use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\EventMapMapper;
@@ -31,12 +33,15 @@ use OCP\AppFramework\Http\StreamResponse;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IRequest;
+use OCP\Security\ICrypto;
 
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class MatrixMediaController extends Controller {
 	/** Types the browser may show, everything else is downloaded */
 	public const INLINE_TYPES = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
 	public const PREVIEW_SIZE = 640;
+	/** Encrypted images can not be scaled by the homeserver, so larger ones have no preview */
+	public const ENCRYPTED_PREVIEW_MAX_BYTES = 20 * 1024 * 1024;
 
 	public function __construct(
 		string $appName,
@@ -48,6 +53,7 @@ class MatrixMediaController extends Controller {
 		private readonly Manager $manager,
 		private readonly ParticipantService $participantService,
 		private readonly ICommentsManager $commentsManager,
+		private readonly ICrypto $crypto,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -81,8 +87,9 @@ class MatrixMediaController extends Controller {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}
 
+		$encrypted = $attachment['keys'] !== null;
 		try {
-			$upstream = $preview
+			$upstream = $preview && !$encrypted
 				? $this->accountService->getClient($account)->downloadThumbnail($attachment['mxc'], self::PREVIEW_SIZE, false)
 				: $this->accountService->getClient($account, AccountService::MEDIA_TIMEOUT)->downloadMedia($attachment['mxc']);
 		} catch (MatrixException $e) {
@@ -91,14 +98,23 @@ class MatrixMediaController extends Controller {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}
 
-		$contentType = strtolower(trim(explode(';', $upstream->getHeaderLine('Content-Type'))[0]));
+		$contentType = strtolower(trim(explode(';', $encrypted ? $attachment['mimetype'] : $upstream->getHeaderLine('Content-Type'))[0]));
+		$length = $upstream->getHeaderLine('Content-Length');
 		$inline = in_array($contentType, self::INLINE_TYPES, true);
-		if ($preview && !$inline) {
+		if ($preview && (!$inline || ($encrypted && (int)$length > self::ENCRYPTED_PREVIEW_MAX_BYTES))) {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}
 		$stream = $upstream->getBody()->detach();
 		if (!is_resource($stream)) {
 			return new Response(Http::STATUS_BAD_GATEWAY);
+		}
+		if ($attachment['keys'] !== null) {
+			try {
+				['stream' => $stream, 'size' => $size] = Attachment::decrypt($stream, $attachment['keys']);
+			} catch (CryptoException) {
+				return new Response(Http::STATUS_BAD_GATEWAY);
+			}
+			$length = (string)$size;
 		}
 		$fileName = str_replace(['"', '\\', "\r", "\n"], '_', $attachment['name']);
 
@@ -107,17 +123,18 @@ class MatrixMediaController extends Controller {
 		$response->addHeader('Content-Disposition', ($inline ? 'inline' : 'attachment') . '; filename="' . $fileName . '"');
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
 		$response->addHeader('Content-Security-Policy', "default-src 'none'; sandbox");
-		if (ctype_digit($upstream->getHeaderLine('Content-Length'))) {
-			$response->addHeader('Content-Length', $upstream->getHeaderLine('Content-Length'));
+		if (ctype_digit($length)) {
+			$response->addHeader('Content-Length', $length);
 		}
 		$response->cacheFor(86400, false);
 		return $response;
 	}
 
 	/**
-	 * Content URI and name of the attachment when the user is in the conversation
+	 * Content URI and name of the attachment when the user is in the conversation,
+	 * with the type and keys of encrypted attachments
 	 *
-	 * @return array{mxc: string, name: string}|null
+	 * @return array{mxc: string, name: string, mimetype: string, keys: ?array{key: string, iv: string, sha256: string}}|null
 	 */
 	protected function getAttachment(string $id): ?array {
 		if ($this->userId === null) {
@@ -138,6 +155,15 @@ class MatrixMediaController extends Controller {
 		if (!is_array($object) || !is_string($object['mxc'] ?? null) || $comment->getObjectId() !== (string)$room->getId()) {
 			return null;
 		}
-		return ['mxc' => $object['mxc'], 'name' => (string)($object['name'] ?? '')];
+		$keys = null;
+		if ($eventMap->getMediaKeys() !== null) {
+			$keys = array_map('base64_decode', json_decode($this->crypto->decrypt($eventMap->getMediaKeys()), true));
+		}
+		return [
+			'mxc' => $object['mxc'],
+			'name' => (string)($object['name'] ?? ''),
+			'mimetype' => is_string($object['mimetype'] ?? null) ? $object['mimetype'] : 'application/octet-stream',
+			'keys' => $keys,
+		];
 	}
 }

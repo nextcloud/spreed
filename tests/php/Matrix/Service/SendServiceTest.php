@@ -15,6 +15,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\Attachment;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Transport;
 use OCA\Talk\Matrix\Model\Account;
@@ -656,8 +657,8 @@ class SendServiceTest extends TestCase {
 			'msgtype' => 'm.image',
 			'body' => 'Look',
 			'filename' => 'cat.png',
-			'url' => 'mxc://example.org/abc',
 			'info' => ['mimetype' => 'image/png', 'size' => 3],
+			'url' => 'mxc://example.org/abc',
 		], $this->requestBody(1));
 		self::assertSame(12, $this->eventMaps['$file']->getCommentId());
 	}
@@ -676,13 +677,44 @@ class SendServiceTest extends TestCase {
 		self::assertSame(['rel_type' => 'm.thread', 'event_id' => '$root', 'is_falling_back' => false, 'm.in_reply_to' => ['event_id' => '$root']], $this->requestBody(1)['m.relates_to']);
 	}
 
+	public function testSendFileToEncryptedRoom(): void {
+		$this->encrypted = true;
+		$this->cryptoService->method('isAvailable')->willReturn(true);
+		$sentContent = null;
+		$this->cryptoService->expects(self::once())
+			->method('encryptRoomEvent')
+			->willReturnCallback(function (Account $account, Client $client, string $roomId, array $members, string $type, array $content) use (&$sentContent): array {
+				$sentContent = $content;
+				return ['ciphertext' => 'secret'];
+			});
+		$this->responses[] = $this->json(200, ['content_uri' => 'mxc://example.org/encrypted']);
+		$this->responses[] = $this->json(200, ['event_id' => '$file']);
+
+		$this->service->sendFile($this->room, $this->shareComment(), $this->file(), '');
+
+		self::assertSame('/_matrix/media/v3/upload', $this->requests[0]->getUri()->getPath());
+		self::assertSame('', $this->requests[0]->getUri()->getQuery(), 'The name of the file is not sent to the homeserver');
+		self::assertSame('application/octet-stream', $this->requests[0]->getHeaderLine('Content-Type'));
+		self::assertArrayNotHasKey('url', $sentContent);
+		self::assertSame('mxc://example.org/encrypted', $sentContent['file']['url']);
+		self::assertSame(['mimetype' => 'image/png', 'size' => 3], $sentContent['info']);
+
+		$ciphertext = fopen('php://memory', 'r+b');
+		fwrite($ciphertext, (string)$this->requests[0]->getBody());
+		rewind($ciphertext);
+		$plaintext = Attachment::decrypt($ciphertext, Attachment::getKeys($sentContent['file']));
+		self::assertSame('cat', stream_get_contents($plaintext['stream']));
+		self::assertSame('/_matrix/client/v3/rooms/%21room%3Aexample.org/send/m.room.encrypted/nctransaction', $this->requests[1]->getUri()->getPath());
+	}
+
 	public function testSendFileOfUserWithoutAccount(): void {
 		$this->expectExceptionObject(new SendException('account', 403));
 		$this->service->sendFile($this->room, $this->shareComment('carol'), $this->file(), '');
 	}
 
-	public function testSendFileToEncryptedRoom(): void {
+	public function testSendFileToEncryptedRoomWithoutEncryption(): void {
 		$this->encrypted = true;
+		$this->cryptoService->method('isAvailable')->willReturn(false);
 
 		$this->expectExceptionObject(new SendException('encrypted', 400));
 		$this->service->sendFile($this->room, $this->shareComment(), $this->file(), '');
