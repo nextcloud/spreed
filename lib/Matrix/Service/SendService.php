@@ -445,6 +445,11 @@ class SendService {
 				$mentionRoom = true;
 				return ['name' => '@room'];
 			}
+			if (str_starts_with($userId, Attendee::ACTOR_MATRIX . '/')) {
+				$mxid = substr($userId, strlen(Attendee::ACTOR_MATRIX . '/'));
+				$mentions[] = $mxid;
+				return ['mxid' => $mxid, 'name' => $mxid];
+			}
 			try {
 				$account = $this->accountMapper->getByUserId($userId);
 			} catch (DoesNotExistException) {

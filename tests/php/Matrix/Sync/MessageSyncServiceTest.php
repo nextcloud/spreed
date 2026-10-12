@@ -180,6 +180,22 @@ class MessageSyncServiceTest extends TestCase {
 		self::assertSame(11, $this->eventMaps['$message']->getCommentId());
 	}
 
+	public function testPillOfMatrixUserIsMention(): void {
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->willReturnCallback(function (Room $room, ?Participant $participant, string $actorType, string $actorId, string $message): IComment {
+				self::assertSame('Hi @"matrix/@bob:example.org" and Dave', $message, 'Only members become mentions');
+				return $this->comment(11);
+			});
+
+		$this->apply([self::event('$message', 'm.room.message', [
+			'msgtype' => 'm.text',
+			'body' => 'Hi Bob and Dave',
+			'format' => 'org.matrix.custom.html',
+			'formatted_body' => 'Hi <a href="https://matrix.to/#/@bob:example.org">Bob</a> and <a href="https://matrix.to/#/@dave:example.org">Dave</a>',
+		], '@alice:example.org')]);
+	}
+
 	public function testMessageFromLinkedUserReplyingWithFallback(): void {
 		$parent = $this->comment(11);
 		$this->mapped('$parent', 11);

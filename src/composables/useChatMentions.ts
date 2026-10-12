@@ -11,7 +11,7 @@ import { generateAvatarUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref } from 'vue'
 import { ATTENDEE } from '../constants.ts'
-import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../services/avatarService.ts'
+import { getConversationAvatarOcsUrl, getMatrixUserAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../services/avatarService.ts'
 import { searchPossibleMentions } from '../services/mentionsService.ts'
 
 type AutocompleteChatMention = Omit<ChatMention, 'status'> & {
@@ -76,6 +76,10 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 		} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
 			chatMention.icon = 'icon-user-forced-white'
 			chatMention.subline = possibleMention?.details ?? t('spreed', 'Guest')
+		} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.MATRIX) {
+			chatMention.icon = 'icon-user-forced-white'
+			chatMention.iconUrl = getMatrixUserAvatarOcsUrl(token, possibleMention.id, isDarkTheme, 64)
+			chatMention.subline = possibleMention.id
 		} else if (possibleMention.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
 			chatMention.icon = 'icon-user-forced-white'
 			chatMention.iconUrl = getUserProxyAvatarOcsUrl(token, possibleMention.id, isDarkTheme, 64)

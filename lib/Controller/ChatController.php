@@ -2472,6 +2472,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	protected function createMentionString(string $type, string $id): string {
+		if ($type === Attendee::ACTOR_MATRIX) {
+			return Attendee::ACTOR_MATRIX . '/' . $id;
+		}
 		if ($type !== Attendee::ACTOR_FEDERATED_USERS) {
 			return $id;
 		}

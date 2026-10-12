@@ -304,6 +304,7 @@ class SendServiceTest extends TestCase {
 			'plain text' => ['Hello', ['msgtype' => 'm.text', 'body' => 'Hello', 'm.mentions' => []]],
 			'mention all' => ['Hello @all', ['msgtype' => 'm.text', 'body' => 'Hello @room', 'format' => 'org.matrix.custom.html', 'formatted_body' => 'Hello @room', 'm.mentions' => ['room' => true]]],
 			'unknown user' => ['Hello @"carol"', ['msgtype' => 'm.text', 'body' => 'Hello @"carol"', 'm.mentions' => []]],
+			'matrix user' => ['Hello @"matrix/@dave:example.org"', ['msgtype' => 'm.text', 'body' => 'Hello @dave:example.org', 'format' => 'org.matrix.custom.html', 'formatted_body' => 'Hello <a href="https://matrix.to/#/%40dave%3Aexample.org">@dave:example.org</a>', 'm.mentions' => ['user_ids' => ['@dave:example.org']]]],
 		];
 	}
 

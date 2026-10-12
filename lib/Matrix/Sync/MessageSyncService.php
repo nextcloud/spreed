@@ -385,7 +385,11 @@ class MessageSyncService {
 		$message = '';
 		if ($html !== null) {
 			$converter = new HtmlToMarkdown();
-			$converter->setPillResolver(static fn (string $mxid): ?string => isset($accounts[$mxid]) ? '@"' . $accounts[$mxid]->getUserId() . '"' : null);
+			$converter->setPillResolver(static fn (string $mxid): ?string => match (true) {
+				isset($accounts[$mxid]) => '@"' . $accounts[$mxid]->getUserId() . '"',
+				isset($members[$mxid]) => '@"' . Attendee::ACTOR_MATRIX . '/' . $mxid . '"',
+				default => null,
+			});
 			$message = $converter->convert($html);
 		}
 		if ($message === '') {

@@ -1310,12 +1310,16 @@ class ChatControllerTest extends TestCase {
 					],
 					'federated_users' => [
 						['label' => 'Fedi User', 'value' => ['shareWith' => 'foobar@example.tld', 'shareType' => 'federated_user']],
-					]
+					],
+					'matrix' => [
+						['label' => 'Matrix User', 'value' => ['shareWith' => '@foo:example.org', 'shareType' => 'matrix']],
+					],
 				],
 				[
 					['id' => 'foo', 'label' => 'Foo Bar', 'source' => 'users', 'mentionId' => 'foo'],
 					['id' => 'foobar', 'label' => 'FooBar', 'source' => 'users', 'mentionId' => 'foobar'],
 					['id' => 'foobar@example.tld', 'label' => 'Fedi User', 'source' => 'federated_users', 'mentionId' => 'federated_user/foobar@example.tld'],
+					['id' => '@foo:example.org', 'label' => 'Matrix User', 'source' => 'matrix', 'mentionId' => 'matrix/@foo:example.org'],
 				]
 			],
 		];

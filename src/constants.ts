@@ -523,6 +523,7 @@ export const MENTION = {
 		EMAIL: 'email',
 		USERGROUP: 'user-group',
 		CIRCLE: 'circle',
+		MATRIX: 'matrix',
 		// Parsed to another types
 		FEDERATED_USER: 'federated_user',
 		GROUP: 'group',
