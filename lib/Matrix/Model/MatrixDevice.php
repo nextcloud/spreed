@@ -26,6 +26,8 @@ use OCP\DB\Types;
  * @method string getEd25519()
  * @method void setOutdated(bool $outdated)
  * @method bool getOutdated()
+ * @method void setVerified(bool $verified)
+ * @method bool getVerified()
  */
 class MatrixDevice extends SnowflakeAwareEntity {
 	protected string $accountId = '';
@@ -37,6 +39,8 @@ class MatrixDevice extends SnowflakeAwareEntity {
 	protected string $ed25519 = '';
 	/** The user changed their devices, so they are queried again before they are used */
 	protected bool $outdated = false;
+	/** A device of the user that was verified with emoji, room keys it forwards are accepted */
+	protected bool $verified = false;
 
 	public function __construct() {
 		$this->addType('accountId', Types::STRING);
@@ -45,5 +49,6 @@ class MatrixDevice extends SnowflakeAwareEntity {
 		$this->addType('curve25519', Types::STRING);
 		$this->addType('ed25519', Types::STRING);
 		$this->addType('outdated', Types::BOOLEAN);
+		$this->addType('verified', Types::BOOLEAN);
 	}
 }
