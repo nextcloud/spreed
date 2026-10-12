@@ -2203,7 +2203,6 @@ class FeatureContext implements Context {
 			$row
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2231,7 +2230,6 @@ class FeatureContext implements Context {
 		if ($this->response->getStatusCode() !== 202) {
 			return;
 		}
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		self::$textToMessageId[$row['message']] = $response['id'];
@@ -2354,7 +2352,6 @@ class FeatureContext implements Context {
 			$body
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2395,7 +2392,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $newMessage]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		if ($statusCode === 200 || $statusCode === 202) {
 			self::$textToMessageId[$newMessage] = $messageId;
@@ -2491,7 +2487,6 @@ class FeatureContext implements Context {
 			])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2513,7 +2508,6 @@ class FeatureContext implements Context {
 			])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2533,7 +2527,6 @@ class FeatureContext implements Context {
 			['fromMessageId' => $fromMessageId],
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		self::$aiTaskIds[$user . '/summary/' . self::$identifierToToken[$identifier]] = $response['taskId'];
@@ -3001,7 +2994,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $message], ['referenceId', $referenceId]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -3031,7 +3023,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $reply], $replyTo])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -3053,7 +3044,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $reply], ['replyTo', $replyTo], ['replyToToken', self::$identifierToToken[$sourceIdentifier]]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -3496,7 +3486,6 @@ class FeatureContext implements Context {
 			$this->compareThreadsResponse($formData, [$result]);
 		}
 
-		sleep(1);
 	}
 
 	#[Then('/^user "([^"]*)" subscribes to thread "([^"]*)" in room "([^"]*)" with notification level (\d+) with (\d+)(?: \((v1)\))?$/')]
@@ -3894,7 +3883,6 @@ class FeatureContext implements Context {
 		);
 
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	#[Then('/^user "([^"]*)" (starts|stops) breakout rooms in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -5008,7 +4996,6 @@ class FeatureContext implements Context {
 			$options
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	#[When('/^recording server requests recording upload of "([^"]*)" for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -5117,7 +5104,6 @@ class FeatureContext implements Context {
 		);
 		$this->setCurrentUser($currentUser);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	#[Then('/^read bot ids from OCC$/')]

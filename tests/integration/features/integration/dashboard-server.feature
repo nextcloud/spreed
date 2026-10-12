@@ -99,8 +99,10 @@ Feature: integration/dashboard-server
       | group room               | Hello group room           | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
       | participant2-displayname |                            | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |                |
     And user "participant1" marks room "one-to-one room" as insensitive with 200 (v4)
+    And wait for 1 second
     And user "participant2" set the message expiration to 3 of room "one-to-one room" with 200 (v4)
     And user "participant2" sends message "Message 3" to room "one-to-one room" with 201
+    And wait for 1 second
     And user "participant2" set the message expiration to 3 of room "group room" with 200 (v4)
     And user "participant2" sends message "Message 2" to room "group room" with 201
     And user "participant2" set the message expiration to 3 of room "call room" with 200 (v4)
