@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: Matrix crypto interoperability
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/matrix-crypto-interop.yml'
+      - 'lib/Matrix/Client/Crypto/**'
+      - 'lib/Matrix/Client/Util/Canonical.php'
+      - 'tests/interop/matrix/**'
+
+concurrency:
+  group: matrix-crypto-interop-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  vodozemac:
+    runs-on: ubuntu-latest
+
+    name: Olm and Megolm against vodozemac
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up php
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.3'
+          extensions: openssl, sodium
+          coverage: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+        with:
+          composer-options: '--no-dev'
+
+      - name: Install vodozemac
+        run: |
+          python3 -m venv venv
+          venv/bin/pip install vodozemac
+
+      - name: Check interoperability
+        run: venv/bin/python tests/interop/matrix/vodozemac_check.py
