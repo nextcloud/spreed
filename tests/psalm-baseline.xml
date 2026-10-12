@@ -186,6 +186,8 @@
   <file src="lib/Share/Listener.php">
     <UndefinedClass>
       <code><![CDATA[Filesystem]]></code>
+      <code><![CDATA[Filesystem]]></code>
+      <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">

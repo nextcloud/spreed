@@ -804,3 +804,118 @@ Feature: sharing-1/create
       | file_target            | /welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
+
+  Scenario: replace a share mount cached with the placeholder on the next file system setup
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" gets the DAV properties for "/Talk"
+    And userroom shares of "participant2" are removed
+    And share mounts of "participant2" are moved to the placeholder
+    And share mounts of "participant2" are
+      | /participant2/files/{TALK_PLACEHOLDER}/welcome.txt/ |
+    When user "participant2" gets the DAV properties for "/"
+    Then the list of returned files for "participant2" is
+      | / |
+      | /Talk/ |
+      | /welcome.txt |
+    And share mounts of "participant2" are
+      | /participant2/files/Talk/welcome.txt/ |
+
+  Scenario: mount room shares without userroom share next to each other with the same name
+    Given user "participant3" exists
+    And user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant3" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" gets the DAV properties for "/Talk"
+    And the list of returned files for "participant2" is
+      | /Talk/ |
+      | /Talk/welcome%20(2).txt |
+      | /Talk/welcome.txt |
+    And userroom shares of "participant2" are removed
+    And share mounts of "participant2" are moved to the placeholder
+    And share mounts of "participant2" are
+      | /participant2/files/{TALK_PLACEHOLDER}/welcome.txt/ |
+      | /participant2/files/{TALK_PLACEHOLDER}/welcome (2).txt/ |
+    When user "participant2" gets the DAV properties for "/Talk"
+    Then the list of returned files for "participant2" is
+      | /Talk/ |
+      | /Talk/welcome%20(2).txt |
+      | /Talk/welcome.txt |
+
+  Scenario: replace a share mount cached with the placeholder when the share mounts are updated by another user
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" creates room "other room" (v4)
+      | roomType | 2 |
+      | roomName | other room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "other room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant1" creates folder "/other"
+    And user "participant1" shares "other" with room "other room" with OCS 100
+    And user "participant2" gets the DAV properties for "/Talk"
+    And userroom shares of "participant2" are removed
+    And share mounts of "participant2" are moved to the placeholder
+    And share mounts of "participant2" are
+      | /participant2/files/{TALK_PLACEHOLDER}/welcome.txt/ |
+      | /participant2/files/{TALK_PLACEHOLDER}/other/ |
+    # Updates the share mounts of participant2 without setting up their file system
+    When user "participant1" removes user "participant2" from room "other room" with 200 (v4)
+    Then share mounts of "participant2" are
+      | /participant2/files/Talk/welcome.txt/ |
+
+  Scenario: mount a room share without userroom share in the root folder as attachment folder
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And invoking occ with "user:setting participant2 spreed attachment_folder /"
+    And the command was successful
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" gets the DAV properties for "/"
+    And the list of returned files for "participant2" is
+      | / |
+      | /welcome%20(2).txt |
+      | /welcome.txt |
+    And userroom shares of "participant2" are removed
+    When user "participant2" gets the DAV properties for "/"
+    Then the list of returned files for "participant2" is
+      | / |
+      | /welcome%20(2).txt |
+      | /welcome.txt |
+    And user "participant2" gets last share
+    And share is returned with
+      | file_target | /welcome (2).txt |
+
+  Scenario: mount a room share without userroom share in an attachment folder that does not exist
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And userroom shares of "participant2" are removed
+    And invoking occ with "user:setting participant2 spreed attachment_folder /Attachments"
+    And the command was successful
+    # The server creates the missing attachment folder when its parent folder is listed
+    When user "participant2" gets the DAV properties for "/"
+    Then the list of returned files for "participant2" is
+      | / |
+      | /Attachments/ |
+      | /Talk/ |
+      | /welcome.txt |
+    And user "participant2" gets the DAV properties for "/Attachments"
+    And the list of returned files for "participant2" is
+      | /Attachments/ |
+      | /Attachments/welcome.txt |
+    # The resolved target is stored in a userroom share on the first mount
+    And user "participant2" gets last share
+    And share is returned with
+      | file_target | /Attachments/welcome.txt |
