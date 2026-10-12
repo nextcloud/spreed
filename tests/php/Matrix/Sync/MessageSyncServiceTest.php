@@ -22,6 +22,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -43,6 +44,7 @@ class MessageSyncServiceTest extends TestCase {
 	private array $eventMaps = [];
 	/** @var array<string, IComment> */
 	private array $comments = [];
+	private ThreadService&MockObject $threadService;
 	private MessageSyncService $service;
 
 	protected function setUp(): void {
@@ -58,6 +60,7 @@ class MessageSyncServiceTest extends TestCase {
 			default => throw new ParticipantNotFoundException(),
 		});
 
+		$this->threadService = $this->createMock(ThreadService::class);
 		$eventMapMapper = $this->createMock(EventMapMapper::class);
 		$eventMapMapper->method('insertIfNew')->willReturnCallback(function (EventMap $eventMap): bool {
 			if (isset($this->eventMaps[$eventMap->getEventId()])) {
@@ -87,6 +90,7 @@ class MessageSyncServiceTest extends TestCase {
 			$this->reactionManager,
 			$this->commentsManager,
 			$this->participantService,
+			$this->threadService,
 			$eventMapMapper,
 			$timeFactory,
 			$urlGenerator,
@@ -113,6 +117,7 @@ class MessageSyncServiceTest extends TestCase {
 		$comment->method('getActorId')->willReturn($actorId);
 		$comment->method('getMessage')->willReturn($message);
 		$comment->method('getParentId')->willReturn((string)$parentId);
+		$comment->method('getTopmostParentId')->willReturn((string)$parentId);
 		$this->comments[(string)$id] = $comment;
 		return $comment;
 	}
@@ -358,6 +363,54 @@ class MessageSyncServiceTest extends TestCase {
 			});
 
 		$this->apply([self::event('$file', 'm.room.message', ['msgtype' => 'm.file', 'body' => 'report.pdf', 'url' => 'mxc://example.org/abc'])]);
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	private static function threadRelation(string $rootEventId, string $inReplyTo, bool $isFallingBack): array {
+		return ['rel_type' => 'm.thread', 'event_id' => $rootEventId, 'is_falling_back' => $isFallingBack, 'm.in_reply_to' => ['event_id' => $inReplyTo]];
+	}
+
+	public function testFirstMessageInThreadCreatesThread(): void {
+		$this->comment(11, message: 'Plans for Friday');
+		$this->mapped('$root', 11);
+		$this->threadService->method('validateThread')->with(23, 11)->willReturn(false);
+		$this->room->method('getId')->willReturn(23);
+		$this->threadService->expects(self::once())->method('createThread')->with($this->room, 11, 'Plans for Friday');
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->with($this->room, null, Attendee::ACTOR_MATRIX, '@bob:example.org', 'Pizza?', self::anything(), null, self::anything(), self::anything(), false, 11)
+			->willReturn($this->comment(12, parentId: 11));
+
+		$this->apply([self::event('$reply', 'm.room.message', ['msgtype' => 'm.text', 'body' => 'Pizza?', 'm.relates_to' => self::threadRelation('$root', '$root', true)])]);
+	}
+
+	public function testReplyInsideOfThread(): void {
+		$this->comment(11, message: 'Plans for Friday');
+		$this->mapped('$root', 11);
+		$pizza = $this->comment(12, message: 'Pizza?', parentId: 11);
+		$this->mapped('$pizza', 12);
+		$this->threadService->method('validateThread')->willReturn(true);
+		$this->threadService->expects(self::never())->method('createThread');
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->with($this->room, null, Attendee::ACTOR_MATRIX, '@bob:example.org', 'Yes', self::anything(), $pizza, self::anything(), self::anything(), false, 11)
+			->willReturn($this->comment(13, parentId: 11));
+
+		$this->apply([self::event('$yes', 'm.room.message', ['msgtype' => 'm.text', 'body' => 'Yes', 'm.relates_to' => self::threadRelation('$root', '$pizza', false)])]);
+	}
+
+	public function testThreadOfUnknownMessageBecomesReply(): void {
+		$pizza = $this->comment(12, message: 'Pizza?');
+		$this->mapped('$pizza', 12);
+		$this->threadService->expects(self::never())->method('createThread');
+		$this->chatManager->expects(self::once())
+			->method('sendMessage')
+			->with($this->room, null, Attendee::ACTOR_MATRIX, '@bob:example.org', 'Yes', self::anything(), $pizza, self::anything(), self::anything(), false, 0)
+			->willReturn($this->comment(13, parentId: 12));
+
+		$this->apply([self::event('$yes', 'm.room.message', ['msgtype' => 'm.text', 'body' => 'Yes', 'm.relates_to' => self::threadRelation('$old', '$pizza', true)])]);
 	}
 
 	public function testLocation(): void {

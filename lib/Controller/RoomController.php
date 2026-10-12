@@ -1052,6 +1052,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'level'], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			try {
+				$this->matrixSendService->setNotificationLevel($this->room, $this->participant, $level);
+			} catch (SendException $e) {
+				// The level is a personal setting, so it also changes when the homeserver can not be reached
+				$this->logger->info('Notification level could not be stored on the Matrix homeserver', ['exception' => $e]);
+			}
+		}
+
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 

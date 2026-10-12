@@ -101,6 +101,14 @@ final class Transport {
 	}
 
 	/**
+	 * @return array<string, mixed>
+	 * @throws MatrixException
+	 */
+	public function delete(string $path): array {
+		return $this->request('DELETE', $path, null);
+	}
+
+	/**
 	 * Upload a file to the media repository
 	 *
 	 * @return string Content URI

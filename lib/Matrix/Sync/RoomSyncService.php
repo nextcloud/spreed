@@ -29,6 +29,7 @@ use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
@@ -64,6 +65,7 @@ class RoomSyncService {
 		private readonly MatrixRoomMapper $roomMapper,
 		private readonly MatrixMemberMapper $memberMapper,
 		private readonly AccountMapper $accountMapper,
+		private readonly AttendeeMapper $attendeeMapper,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly MessageSyncService $messageSyncService,
 		private readonly AvatarService $avatarService,
@@ -87,6 +89,15 @@ class RoomSyncService {
 			} catch (\Throwable $e) {
 				$stats['failed']++;
 				$this->logger->error('Matrix room ' . $roomId . ' could not be synced for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+
+		if (isset($batch->accountData['m.push_rules'])) {
+			try {
+				$this->applyPushRules($account, $batch->accountData['m.push_rules']);
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Push rules could not be applied for ' . $account->getMxid(), ['exception' => $e]);
 			}
 		}
 
@@ -265,6 +276,60 @@ class RoomSyncService {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Mirror the notification settings of the Matrix rooms to the conversations of the user
+	 *
+	 * @param array<string, mixed> $pushRules
+	 */
+	protected function applyPushRules(Account $account, array $pushRules): void {
+		foreach ($this->memberMapper->getForAccount((string)$account->getId()) as $member) {
+			if ($member->getMembership() !== Member::JOIN) {
+				continue;
+			}
+			$matrixRoom = $this->roomMapper->getById($member->getMatrixRoomId());
+			$room = $this->findTalkRoom($matrixRoom);
+			if ($room === null) {
+				continue;
+			}
+			try {
+				$attendee = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $account->getUserId())->getAttendee();
+			} catch (ParticipantNotFoundException) {
+				continue;
+			}
+			$level = self::getNotificationLevel($pushRules, $matrixRoom->getMatrixRoomId());
+			if ($attendee->getNotificationLevel() !== $level) {
+				// Not through the participant service, which does not allow going back to the default
+				$attendee->setNotificationLevel($level);
+				$this->attendeeMapper->update($attendee);
+			}
+		}
+	}
+
+	/**
+	 * Muted rooms have an override rule, rooms with all or only mentions a
+	 * room rule that notifies or not. The rules are named after the room.
+	 *
+	 * @param array<string, mixed> $pushRules
+	 * @return Participant::NOTIFY_*
+	 */
+	public static function getNotificationLevel(array $pushRules, string $roomId): int {
+		foreach (['override', 'room'] as $kind) {
+			foreach (is_array($pushRules['global'][$kind] ?? null) ? $pushRules['global'][$kind] : [] as $rule) {
+				if (!is_array($rule) || ($rule['rule_id'] ?? null) !== $roomId || ($rule['enabled'] ?? true) === false) {
+					continue;
+				}
+				$notifies = in_array('notify', is_array($rule['actions'] ?? null) ? $rule['actions'] : [], true);
+				if ($kind === 'room') {
+					return $notifies ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
+				}
+				if (!$notifies) {
+					return Participant::NOTIFY_NEVER;
+				}
+			}
+		}
+		return Participant::NOTIFY_DEFAULT;
 	}
 
 	/**

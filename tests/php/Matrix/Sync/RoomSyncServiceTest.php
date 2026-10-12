@@ -27,6 +27,7 @@ use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Matrix\Sync\MessageSyncService;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
@@ -38,6 +39,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -49,6 +51,7 @@ class RoomSyncServiceTest extends TestCase {
 	private MatrixRoomMapper&MockObject $roomMapper;
 	private MatrixMemberMapper&MockObject $memberMapper;
 	private AccountMapper&MockObject $accountMapper;
+	private AttendeeMapper&MockObject $attendeeMapper;
 	private EventMapMapper&MockObject $eventMapMapper;
 	private MessageSyncService&MockObject $messageSyncService;
 	private AvatarService&MockObject $avatarService;
@@ -84,6 +87,7 @@ class RoomSyncServiceTest extends TestCase {
 			['@alice:example.org' => $this->account()],
 			array_flip($mxids),
 		));
+		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 		$this->eventMapMapper = $this->createMock(EventMapMapper::class);
 		$this->messageSyncService = $this->createMock(MessageSyncService::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
@@ -109,6 +113,7 @@ class RoomSyncServiceTest extends TestCase {
 			$this->roomMapper,
 			$this->memberMapper,
 			$this->accountMapper,
+			$this->attendeeMapper,
 			$this->eventMapMapper,
 			$this->messageSyncService,
 			$this->avatarService,
@@ -613,6 +618,47 @@ class RoomSyncServiceTest extends TestCase {
 				'$state' => ['m.read' => ['@bob:example.org' => ['ts' => 1]]],
 				'$unknown' => ['m.read' => ['@bob:example.org' => ['ts' => 1]]],
 			]]]],
+		]), false);
+	}
+
+	public static function dataNotificationLevel(): array {
+		$room = static fn (array $actions, bool $enabled = true): array => ['global' => ['room' => [['rule_id' => '!room:example.org', 'enabled' => $enabled, 'actions' => $actions]]]];
+		return [
+			'no rules' => [[], Participant::NOTIFY_DEFAULT],
+			'all messages' => [$room(['notify', ['set_tweak' => 'sound', 'value' => 'default']]), Participant::NOTIFY_ALWAYS],
+			'mentions' => [$room([]), Participant::NOTIFY_MENTION],
+			'mentions with legacy action' => [$room(['dont_notify']), Participant::NOTIFY_MENTION],
+			'disabled rule' => [$room([], false), Participant::NOTIFY_DEFAULT],
+			'rule of other room' => [['global' => ['room' => [['rule_id' => '!other:example.org', 'actions' => []]]]], Participant::NOTIFY_DEFAULT],
+			'muted' => [['global' => [
+				'override' => [['rule_id' => '!room:example.org', 'actions' => [], 'conditions' => [['kind' => 'event_match', 'key' => 'room_id', 'pattern' => '!room:example.org']]]],
+				'room' => [['rule_id' => '!room:example.org', 'actions' => ['notify']]],
+			]], Participant::NOTIFY_NEVER],
+		];
+	}
+
+	#[DataProvider('dataNotificationLevel')]
+	public function testGetNotificationLevel(array $pushRules, int $expected): void {
+		self::assertSame($expected, RoomSyncService::getNotificationLevel($pushRules, '!room:example.org'));
+	}
+
+	public function testPushRulesAreApplied(): void {
+		$this->memberMapper->method('getForAccount')->with('7')->willReturn([
+			$this->member('@alice:example.org', 'join', '7'),
+			MatrixMember::fromRow(['id' => '2', 'matrix_room_id' => '101', 'mxid' => '@alice:example.org', 'membership' => 'invite', 'account_id' => '7']),
+		]);
+		$this->roomMapper->method('getById')->with('100')->willReturn(MatrixRoom::fromRow(['id' => '100', 'room_id' => 23, 'matrix_room_id' => '!room:example.org']));
+		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);
+		$alice = $this->participant(Attendee::ACTOR_USERS, 'alice');
+		$alice->getAttendee()->setNotificationLevel(Participant::NOTIFY_MENTION);
+		$this->participantService->method('getParticipantByActor')->with($this->room, Attendee::ACTOR_USERS, 'alice')->willReturn($alice);
+		$this->attendeeMapper->expects(self::once())
+			->method('update')
+			->with(self::callback(static fn (Attendee $attendee): bool => $attendee->getNotificationLevel() === Participant::NOTIFY_DEFAULT));
+
+		$this->service->process($this->account(), $this->client, SyncBatch::fromArray([
+			'next_batch' => 'next',
+			'account_data' => ['events' => [['type' => 'm.push_rules', 'content' => ['global' => ['room' => []]]]]],
 		]), false);
 	}
 }

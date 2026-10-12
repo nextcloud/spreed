@@ -425,17 +425,19 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
+		$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+		$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
+
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
-			if ($threadTitle !== '' || ($replyTo === 0 && $threadId !== Thread::THREAD_NONE)) {
-				// Threads are not mirrored to Matrix
-				return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
-			}
 			try {
-				$comment = $this->matrixSendService->sendMessage($this->room, $this->participant, $message, $parent, $referenceId, $silent);
+				$comment = $this->matrixSendService->sendMessage($this->room, $this->participant, $message, $parent, $referenceId, $silent, $threadId, $threadTitle);
 			} catch (SendException $e) {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			} catch (MessageTooLongException) {
 				return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+			}
+			if ($createThread) {
+				$this->startThread($comment, $threadTitle);
 			}
 			return $this->parseCommentToResponse($comment, $parentMessage);
 		}
@@ -443,8 +445,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 
 		try {
-			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
-			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
 			$comment = $this->chatManager->sendMessage(
 				$this->room,
 				$this->participant,
@@ -459,23 +459,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				threadTitle: $threadTitle,
 			);
 			if ($createThread) {
-				$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
-				// Add to subscribed threads list
-				$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
-
-				$this->chatManager->addSystemMessage(
-					$this->room,
-					$this->participant,
-					$this->participant->getAttendee()->getActorType(),
-					$this->participant->getAttendee()->getActorId(),
-					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
-					$this->timeFactory->getDateTime(),
-					false,
-					null,
-					$comment,
-					true,
-					true
-				);
+				$this->startThread($comment, $threadTitle);
 			}
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
@@ -487,6 +471,26 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		return $this->parseCommentToResponse($comment, $parentMessage);
+	}
+
+	protected function startThread(IComment $comment, string $threadTitle): void {
+		$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
+		// Add to subscribed threads list
+		$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
+
+		$this->chatManager->addSystemMessage(
+			$this->room,
+			$this->participant,
+			$this->participant->getAttendee()->getActorType(),
+			$this->participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+			true,
+			true
+		);
 	}
 
 	/**

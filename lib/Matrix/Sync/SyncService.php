@@ -29,11 +29,12 @@ class SyncService {
 
 	/**
 	 * Members are lazy-loaded, an initial sync only brings the latest
-	 * messages of each room and of the ephemeral events only read receipts
+	 * messages of each room, of the ephemeral events only read receipts
+	 * and of the account data only the push rules
 	 */
 	public const FILTER = [
 		'presence' => ['types' => []],
-		'account_data' => ['types' => []],
+		'account_data' => ['types' => ['m.push_rules']],
 		'room' => [
 			'state' => ['lazy_load_members' => true],
 			'timeline' => ['limit' => 10, 'lazy_load_members' => true],

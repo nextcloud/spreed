@@ -20,13 +20,16 @@ use OCA\Talk\Matrix\Model\EventMapMapper;
 use OCA\Talk\Matrix\Model\MatrixMember;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\DB\Exception;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
@@ -41,6 +44,7 @@ class MessageSyncService {
 		private readonly ReactionManager $reactionManager,
 		private readonly ICommentsManager $commentsManager,
 		private readonly ParticipantService $participantService,
+		private readonly ThreadService $threadService,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly ITimeFactory $timeFactory,
 		private readonly IURLGenerator $urlGenerator,
@@ -103,9 +107,12 @@ class MessageSyncService {
 	 * @param array<string, Account> $accounts
 	 */
 	protected function postMessage(Room $room, MatrixRoom $matrixRoom, EventMap $eventMap, Event $event, array $members, array $accounts, string $actorType, string $actorId, bool $silent): ?IComment {
+		$threadId = $event->getRelationType() === 'm.thread' ? $this->getThreadId($room, $matrixRoom, $event) : Thread::THREAD_NONE;
 		$replyTo = null;
 		$parentEventId = $event->getInReplyTo();
-		if ($parentEventId !== null) {
+		// Messages in threads reply to the latest message of the thread for clients without thread support
+		$isFallback = $threadId !== Thread::THREAD_NONE && ($event->content['m.relates_to']['is_falling_back'] ?? false) === true;
+		if ($parentEventId !== null && !$isFallback) {
 			$replyTo = $this->getComment($this->getEventMap($matrixRoom, $parentEventId));
 		}
 
@@ -121,6 +128,7 @@ class MessageSyncService {
 				!$silent,
 				replyTo: $replyTo,
 				silent: $silent,
+				threadId: $threadId,
 			);
 		}
 
@@ -146,6 +154,7 @@ class MessageSyncService {
 			$replyTo,
 			silent: $silent,
 			rateLimitGuestMentions: false,
+			threadId: $threadId,
 		);
 	}
 
@@ -305,6 +314,33 @@ class MessageSyncService {
 			return implode("\n", array_slice($lines, $quoted + 1));
 		}
 		return $body;
+	}
+
+	/**
+	 * Matrix threads have no title and start with the first message in them,
+	 * so the conversation thread is created then
+	 *
+	 * @return int The id of the thread, 0 when the root message is not mirrored or a reply itself
+	 */
+	protected function getThreadId(Room $room, MatrixRoom $matrixRoom, Event $event): int {
+		$root = $this->getComment($this->getEventMap($matrixRoom, $event->getRelatedEventId()));
+		if ($root === null || $root->getTopmostParentId() !== '0') {
+			return Thread::THREAD_NONE;
+		}
+
+		$rootId = (int)$root->getId();
+		if (!$this->threadService->validateThread($room->getId(), $rootId)) {
+			$title = $root->getVerb() === ChatManager::VERB_MESSAGE ? $root->getMessage() : $this->l->t('Thread');
+			try {
+				$this->threadService->createThread($room, $rootId, $title);
+			} catch (Exception $e) {
+				// Created by the sync of another account in the meantime
+				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+					throw $e;
+				}
+			}
+		}
+		return $rootId;
 	}
 
 	protected function getEventMap(MatrixRoom $matrixRoom, ?string $eventId): ?EventMap {

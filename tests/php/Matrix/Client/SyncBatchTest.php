@@ -81,6 +81,19 @@ class SyncBatchTest extends TestCase {
 		self::assertSame([], $joined->readReceipts);
 	}
 
+	public function testAccountData(): void {
+		$batch = SyncBatch::fromArray([
+			'next_batch' => 'next',
+			'account_data' => ['events' => [
+				['type' => 'm.push_rules', 'content' => ['global' => ['room' => []]]],
+				['type' => 'invalid'],
+			]],
+		]);
+
+		self::assertSame(['m.push_rules' => ['global' => ['room' => []]]], $batch->accountData);
+		self::assertFalse($batch->isEmpty());
+	}
+
 	public function testEmpty(): void {
 		self::assertTrue(SyncBatch::fromArray(['next_batch' => 'next'])->isEmpty());
 	}
