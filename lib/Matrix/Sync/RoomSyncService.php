@@ -13,6 +13,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\JoinedRoom;
 use OCA\Talk\Matrix\Client\Model\Member;
@@ -51,6 +52,10 @@ class RoomSyncService {
 	public const DEFAULT_PERMISSIONS = Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_CHAT | Attendee::PERMISSIONS_REACT;
 	/** Pixels of the avatar thumbnails */
 	public const AVATAR_SIZE = 512;
+	/** Events loaded from before the timeline of a new conversation or after a gap */
+	public const HISTORY_LIMIT = 50;
+	/** Pages of history loaded at most, in case they only contain state events */
+	public const HISTORY_PAGES = 3;
 
 	public function __construct(
 		private readonly Manager $manager,
@@ -193,7 +198,73 @@ class RoomSyncService {
 		$this->updateRoles($room, $powerLevels, $accounts);
 		$this->updateAvatar($client, $room, $matrixRoom, $state, $account);
 
-		return $this->messageSyncService->apply($room, $matrixRoom, $joined->timeline, $members, $accounts, $initial || $created);
+		$timeline = $joined->timeline;
+		if (($created || $joined->limited) && $joined->prevBatch !== null) {
+			$timeline = [...$this->getHistory($client, $matrixRoom, $joined->prevBatch), ...$timeline];
+		}
+		$messages = $this->messageSyncService->apply($room, $matrixRoom, $timeline, $members, $accounts, $initial || $created);
+		$this->applyReadReceipts($room, $matrixRoom, $joined->readReceipts, $accounts);
+		return $messages;
+	}
+
+	/**
+	 * Events before the timeline, oldest first, until an already mirrored
+	 * event or the limit is reached. Messages are ordered by their id, so
+	 * history can only be added before the newer events of the timeline.
+	 *
+	 * @return list<Event>
+	 */
+	protected function getHistory(Client $client, MatrixRoom $matrixRoom, string $from): array {
+		$history = [];
+		try {
+			for ($page = 0; $page < self::HISTORY_PAGES; $page++) {
+				$messages = $client->getMessages($matrixRoom->getMatrixRoomId(), $from, self::HISTORY_LIMIT);
+				foreach ($messages['events'] as $event) {
+					if ($event->isState()) {
+						continue;
+					}
+					if (count($history) >= self::HISTORY_LIMIT || $this->eventMapMapper->findByEventId((string)$matrixRoom->getId(), $event->eventId) !== null) {
+						return array_reverse($history);
+					}
+					$history[] = $event;
+				}
+				if ($messages['end'] === null) {
+					break;
+				}
+				$from = $messages['end'];
+			}
+		} catch (MatrixException $e) {
+			$this->logger->info('History of Matrix room ' . $matrixRoom->getMatrixRoomId() . ' could not be loaded', ['exception' => $e]);
+		}
+		return array_reverse($history);
+	}
+
+	/**
+	 * Move the read marker of members forward to the event they read
+	 *
+	 * @param array<string, list<string>> $readReceipts Matrix user ids indexed by event id
+	 * @param array<string, Account> $accounts Linked accounts of the members, indexed by Matrix user id
+	 */
+	protected function applyReadReceipts(Room $room, MatrixRoom $matrixRoom, array $readReceipts, array $accounts): void {
+		foreach ($readReceipts as $eventId => $userIds) {
+			$commentId = $this->eventMapMapper->findByEventId((string)$matrixRoom->getId(), $eventId)?->getCommentId();
+			if ($commentId === null) {
+				continue;
+			}
+			foreach ($userIds as $userId) {
+				[$actorType, $actorId] = isset($accounts[$userId])
+					? [Attendee::ACTOR_USERS, $accounts[$userId]->getUserId()]
+					: [Attendee::ACTOR_MATRIX, $userId];
+				try {
+					$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
+				} catch (ParticipantNotFoundException) {
+					continue;
+				}
+				if ($participant->getAttendee()->getLastReadMessage() < $commentId) {
+					$this->participantService->updateLastReadMessage($participant, $commentId);
+				}
+			}
+		}
 	}
 
 	/**

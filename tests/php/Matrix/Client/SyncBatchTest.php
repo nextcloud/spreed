@@ -55,6 +55,32 @@ class SyncBatchTest extends TestCase {
 		self::assertSame('Bob', $state->getMembers()['@bob:example.org']->getName());
 	}
 
+	public function testTimelineGapAndReadReceipts(): void {
+		$batch = SyncBatch::fromArray([
+			'next_batch' => 'next',
+			'rooms' => ['join' => ['!room:example.org' => [
+				'timeline' => ['events' => [], 'limited' => true, 'prev_batch' => 't42'],
+				'ephemeral' => ['events' => [
+					['type' => 'm.typing', 'content' => ['user_ids' => ['@bob:example.org']]],
+					['type' => 'm.receipt', 'content' => [
+						'$1' => ['m.read' => ['@bob:example.org' => ['ts' => 1], '@carol:example.org' => ['ts' => 2, 'thread_id' => 'main']]],
+						'$2' => ['m.read' => ['@bob:example.org' => ['ts' => 3, 'thread_id' => '$root']], 'm.read.private' => ['@alice:example.org' => ['ts' => 4]]],
+					]],
+				]],
+			]]],
+		]);
+
+		$joined = $batch->joined['!room:example.org'];
+		self::assertTrue($joined->limited);
+		self::assertSame('t42', $joined->prevBatch);
+		self::assertSame(['$1' => ['@bob:example.org', '@carol:example.org']], $joined->readReceipts);
+
+		$joined = SyncBatch::fromArray(['next_batch' => 'next', 'rooms' => ['join' => ['!room:example.org' => []]]])->joined['!room:example.org'];
+		self::assertFalse($joined->limited);
+		self::assertNull($joined->prevBatch);
+		self::assertSame([], $joined->readReceipts);
+	}
+
 	public function testEmpty(): void {
 		self::assertTrue(SyncBatch::fromArray(['next_batch' => 'next'])->isEmpty());
 	}

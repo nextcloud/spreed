@@ -1784,7 +1784,7 @@ class ParticipantService {
 		$query = $this->connection->getQueryBuilder();
 		$query->selectAlias($query->func()->min('last_read_message'), 'last_common_read_message')
 			->from('talk_attendees')
-			->where($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->where($query->expr()->in('actor_type', $query->createNamedParameter([Attendee::ACTOR_USERS, Attendee::ACTOR_MATRIX], IQueryBuilder::PARAM_STR_ARRAY)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)));
 
@@ -1807,7 +1807,7 @@ class ParticipantService {
 		$query->select('room_id')
 			->selectAlias($query->func()->min('last_read_message'), 'last_common_read_message')
 			->from('talk_attendees')
-			->where($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->where($query->expr()->in('actor_type', $query->createNamedParameter([Attendee::ACTOR_USERS, Attendee::ACTOR_MATRIX], IQueryBuilder::PARAM_STR_ARRAY)))
 			->andWhere($query->expr()->in('room_id', $query->createParameter('roomIds')))
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)))
 			->groupBy('room_id');

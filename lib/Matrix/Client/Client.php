@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Matrix\Client;
 
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\LoginResult;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use Psr\Http\Message\ResponseInterface;
@@ -90,6 +91,28 @@ class Client {
 			'timeout' => $timeoutMs,
 			'set_presence' => 'offline',
 		]));
+	}
+
+	/**
+	 * Older events of a room, newest first
+	 *
+	 * @param string $from Pagination token, e.g. the prev_batch of a sync timeline
+	 * @return array{events: list<Event>, end: ?string} end is null when the start of the room was reached
+	 * @throws MatrixException
+	 */
+	public function getMessages(string $roomId, string $from, int $limit): array {
+		$response = $this->transport->get(self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/messages', [
+			'from' => $from,
+			'dir' => 'b',
+			'limit' => $limit,
+		]);
+		$events = [];
+		foreach (is_array($response['chunk'] ?? null) ? $response['chunk'] : [] as $event) {
+			if (is_array($event)) {
+				$events[] = Event::fromArray($event);
+			}
+		}
+		return ['events' => $events, 'end' => is_string($response['end'] ?? null) ? $response['end'] : null];
 	}
 
 	/**
