@@ -120,12 +120,10 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		// Sort by last activity again
+		// Sort by last activity again, ties on the newest message like the query does
 		usort($threads, static function (Thread $a, Thread $b): int {
-			if ($b->getLastActivity() === $a->getLastActivity()) {
-				return $b->getId() <=> $a->getId();
-			}
-			return $b->getLastActivity() <=> $a->getLastActivity();
+			return $b->getLastActivity() <=> $a->getLastActivity()
+				?: max($b->getLastMessageId(), $b->getId()) <=> max($a->getLastMessageId(), $a->getId());
 		});
 
 		return new DataResponse($this->prepareListOfThreads($threads, $threadAttendees, $rooms));
