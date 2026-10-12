@@ -10,10 +10,12 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, onMounted, reactive, ref } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
 import NcFormGroup from '@nextcloud/vue/components/NcFormGroup'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -23,7 +25,9 @@ import IconLanConnect from 'vue-material-design-icons/LanConnect.vue'
 import IconLinkVariant from 'vue-material-design-icons/LinkVariant.vue'
 import IconLinkVariantOff from 'vue-material-design-icons/LinkVariantOff.vue'
 import IconLogin from 'vue-material-design-icons/Login.vue'
+import IconShieldCheckOutline from 'vue-material-design-icons/ShieldCheckOutline.vue'
 import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
+import MatrixDeviceVerification from './MatrixDeviceVerification.vue'
 import { useActionStatus } from '../../composables/useActionStatus.ts'
 import { MATRIX } from '../../constants.ts'
 import { checkMatrixConnection, getMatrixAccount, linkMatrixAccount, reloginMatrixAccount, unlinkMatrixAccount } from '../../services/matrixService.ts'
@@ -57,17 +61,25 @@ const form = reactive<{ homeserver: MatrixHomeserver | null, user: string, passw
 	password: '',
 })
 
-const accountDescription = computed(() => {
-	if (!account.value) {
-		return ''
-	}
+const linkedDescription = computed(() => account.value
+	// TRANSLATORS: {mxid} is the Matrix user ID, e.g. @alice:example.org
+	? t('spreed', 'Linked as {mxid}', { mxid: account.value.mxid })
+	: undefined)
 
-	return [
-		// TRANSLATORS: {mxid} is the Matrix user ID, e.g. @alice:example.org
-		t('spreed', 'Linked as {mxid}', { mxid: account.value.mxid }),
-		// TRANSLATORS: {deviceId} is the ID of the device this client uses on the Matrix account
-		t('spreed', 'Device {deviceId}', { deviceId: account.value.deviceId }),
-	].join(' · ')
+const deviceDescription = computed(() => account.value
+	// TRANSLATORS: {deviceId} is the ID of the device this client uses on the Matrix account
+	? t('spreed', 'Device {deviceId}', { deviceId: account.value.deviceId })
+	: undefined)
+
+const verifiedDescription = computed(() => {
+	if (account.value?.verified === null || account.value?.verified === undefined) {
+		return undefined
+	}
+	return account.value.verified
+		// TRANSLATORS: The device of the server was cross-signed by another Matrix device of the user
+		? t('spreed', 'Verified')
+		// TRANSLATORS: The device of the server was not cross-signed by another Matrix device of the user
+		: t('spreed', 'Not verified')
 })
 
 onMounted(loadMatrixDetails)
@@ -202,14 +214,24 @@ async function unlinkAccount() {
 		loading.value = false
 	}
 }
+
+/**
+ * Open the dialog to verify the server with another device of the user
+ */
+async function verifyDevice() {
+	await spawnDialog(MatrixDeviceVerification)
+	// Pick up the verified status the dialog may have just changed
+	await loadMatrixDetails()
+}
 </script>
 
 <template>
-	<div v-if="loaded" class="matrix-account">
+	<NcLoadingIcon v-if="!loaded" :size="32" class="matrix-account__loading" />
+	<div v-else class="matrix-account">
 		<NcFormGroup
 			v-if="account"
 			:label="t('spreed', 'Connected Matrix account')"
-			:description="accountDescription">
+			hideLabel>
 			<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
 				<p class="matrix-account__warning">
 					{{ t('spreed', 'The homeserver ended the session of this client. Enter your Matrix password to log in again.') }}
@@ -218,6 +240,15 @@ async function unlinkAccount() {
 					{{ account.lastError }}
 				</p>
 			</template>
+			<NcNoteCard v-if="account.status === MATRIX.ACCOUNT_STATUS.ACTIVE && account.verified === false" type="warning">
+				<p>{{ t('spreed', 'This device is not verified. Your other Matrix devices may not share the keys of encrypted rooms with it.') }}</p>
+				<NcButton @click="verifyDevice">
+					<template #icon>
+						<IconShieldCheckOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Verify server') }}
+				</NcButton>
+			</NcNoteCard>
 			<NcFormBox>
 				<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
 					<NcPasswordField
@@ -240,6 +271,7 @@ async function unlinkAccount() {
 				<NcFormBoxButton
 					v-else-if="account.status === MATRIX.ACCOUNT_STATUS.ACTIVE"
 					:label="t('spreed', 'Test connection')"
+					:description="linkedDescription"
 					:disabled="loading"
 					@click="checkConnection">
 					<template #icon>
@@ -250,10 +282,21 @@ async function unlinkAccount() {
 					</template>
 				</NcFormBoxButton>
 				<NcFormBoxButton
+					v-if="account.status === MATRIX.ACCOUNT_STATUS.ACTIVE"
+					:label="t('spreed', 'Verify server')"
+					:description="verifiedDescription"
+					:disabled="loading"
+					@click="verifyDevice">
+					<template #icon>
+						<IconShieldCheckOutline :size="20" />
+					</template>
+				</NcFormBoxButton>
+				<!-- TRANSLATORS: Dialog title and button to unlink the Matrix account from this client -->
+				<NcFormBoxButton
+					:label="t('spreed', 'Unlink account')"
+					:description="deviceDescription"
 					:disabled="loading"
 					@click="unlinkAccount">
-					<!-- TRANSLATORS: Dialog title and button to unlink the Matrix account from this client -->
-					{{ t('spreed', 'Unlink account') }}
 					<template #icon>
 						<NcLoadingIcon v-if="loading" :size="20" />
 						<IconLinkVariantOff v-else :size="20" />
@@ -308,6 +351,12 @@ async function unlinkAccount() {
 </template>
 
 <style lang="scss" scoped>
+.matrix-account__loading {
+	display: flex;
+	justify-content: center;
+	margin-block: calc(var(--default-grid-baseline) * 4);
+}
+
 .matrix-account {
 	// Same as in NcFormGroup, it is not defined globally
 	--form-element-label-offset: calc(var(--border-radius-element) + var(--default-grid-baseline));

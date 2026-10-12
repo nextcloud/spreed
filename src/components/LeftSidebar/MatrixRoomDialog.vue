@@ -21,7 +21,7 @@ const emit = defineEmits<{
 
 const ERRORS: Record<string, string> = {
 	account: t('spreed', 'Link a Matrix account in the Talk settings first'),
-	invite: t('spreed', 'Enter Matrix user ids like @alice:example.org'),
+	invite: t('spreed', 'Enter Matrix user IDs like @alice:example.org'),
 	name: t('spreed', 'Enter a name for the room'),
 	reference: t('spreed', 'Enter a room address like #room:example.org'),
 	room: t('spreed', 'The Matrix room does not exist or can not be joined'),
