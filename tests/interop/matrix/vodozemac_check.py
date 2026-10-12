@@ -146,6 +146,25 @@ vz_exported = vz_in.export_at(0).to_base64()
 php_from_export = php(cmd='megolm_inbound', name='php_reimport', exported=vz_exported)
 check('PHP imports vodozemac-exported session', php_from_export['session_id'] == php_out['session_id'] and php_from_export['first_known_index'] == 0)
 
+# --- SAS verification maths -----------------------------------------------------------
+vz_sas = vz.Sas()
+php_pub = php(cmd='sas_public')['public_key']
+established = vz_sas.diffie_hellman(vz.Curve25519PublicKey.from_base64(php_pub))
+php(cmd='sas_establish', their_public_key=vz_sas.public_key.to_base64())
+info = 'MATRIX_KEY_VERIFICATION_SAS|@a:hs|DEV1|' + vz_sas.public_key.to_base64() + '|@a:hs|DEV2|' + php_pub + '|txn'
+vz_bytes = established.bytes(info)
+php_sas = php(cmd='sas_emoji', info=info)
+check('SAS emoji indices agree with vodozemac', list(vz_bytes.emoji_indices) == php_sas['indices'])
+mac_info = 'MATRIX_KEY_VERIFICATION_MAC@a:hsDEV2@a:hsDEV1txned25519:DEV2'
+php_mac = php(cmd='sas_mac', value='somekey', info=mac_info)['mac']
+vz_mac = established.calculate_mac('somekey', mac_info)
+check('SAS MAC agrees with vodozemac', vz_mac.rstrip('=') == php_mac)
+try:
+    established.verify_mac('somekey', mac_info, php_mac)
+    check('vodozemac verifies PHP SAS MAC', True)
+except Exception as e:  # noqa: BLE001
+    check(f'vodozemac verifies PHP SAS MAC ({e})', False)
+
 os.remove(STATE)
 print(f'\n{failures} failure(s)')
 sys.exit(1 if failures else 0)

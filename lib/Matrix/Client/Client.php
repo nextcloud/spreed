@@ -94,6 +94,17 @@ class Client {
 	}
 
 	/**
+	 * Send an event to devices, without a room
+	 *
+	 * @param array<string, array<string, array<string, mixed>>> $messages Content indexed by user id and device id, `*` for all devices of the user
+	 * @param string $transactionId Unique per access token, a retry with the same id is not sent twice
+	 * @throws MatrixException
+	 */
+	public function sendToDevice(string $type, array $messages, string $transactionId): void {
+		$this->transport->put(self::PREFIX . '/sendToDevice/' . rawurlencode($type) . '/' . rawurlencode($transactionId), ['messages' => $messages]);
+	}
+
+	/**
 	 * Publish the keys of the device
 	 *
 	 * @param array<string, mixed> $deviceKeys Signed device keys

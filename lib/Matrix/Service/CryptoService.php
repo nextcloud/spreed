@@ -48,6 +48,7 @@ class CryptoService {
 		private readonly MatrixDeviceMapper $deviceMapper,
 		private readonly OlmSessionMapper $olmSessionMapper,
 		private readonly InboundGroupSessionMapper $inboundGroupSessionMapper,
+		private readonly VerificationService $verificationService,
 		private readonly ICrypto $crypto,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
@@ -81,6 +82,10 @@ class CryptoService {
 
 		$roomKeys = [];
 		foreach ($batch->toDevice as $event) {
+			if (self::isVerification($event->type)) {
+				$this->handleVerification($account, $client, $event->sender, $event->type, $event->content);
+				continue;
+			}
 			if ($event->type !== 'm.room.encrypted') {
 				continue;
 			}
@@ -131,6 +136,14 @@ class CryptoService {
 	}
 
 	/**
+	 * @return ?string Unpadded base64 signing key of the device of the server, null before the first sync
+	 */
+	public function getSigningKey(Account $account): ?string {
+		$olm = $account->getOlmAccount();
+		return $olm !== null ? OlmAccount::unpickle($this->crypto->decrypt($olm))->getSigningKeyBase64() : null;
+	}
+
+	/**
 	 * Forget the keys and sessions of the device, for example when the
 	 * account logged in with a new device
 	 */
@@ -157,6 +170,10 @@ class CryptoService {
 
 		$plaintext = $this->decryptOlm($account, $olm, $senderKey, $ciphertext['type'], $ciphertext['body']);
 		$payload = OlmEnvelope::validatePayload($plaintext, $event->sender, $olm, $account->getMxid());
+		if (self::isVerification($payload['type'])) {
+			$this->handleVerification($account, $client, $event->sender, $payload['type'], $payload['content']);
+			return null;
+		}
 		if ($payload['type'] !== 'm.room_key') {
 			return null;
 		}
@@ -167,6 +184,34 @@ class CryptoService {
 			throw new CryptoException('Room key from an unknown device');
 		}
 		return $this->storeRoomKey($account, $event->sender, $senderKey, $payload['content']);
+	}
+
+	protected static function isVerification(string $type): bool {
+		return str_starts_with($type, 'm.key.verification.');
+	}
+
+	/**
+	 * Only other devices of the user verify the device of the server
+	 *
+	 * A failing verification event is ignored, so it does not block the sync
+	 *
+	 * @param array<string, mixed> $content
+	 */
+	protected function handleVerification(Account $account, Client $client, string $sender, string $type, array $content): void {
+		if ($sender !== $account->getMxid()) {
+			return;
+		}
+		try {
+			$this->verificationService->handle($account, $client, $type, $content, function (string $deviceId) use ($account, $client): ?string {
+				$devices = $this->deviceMapper->findForUser((string)$account->getId(), $account->getMxid());
+				if (!isset($devices[$deviceId]) || $devices[$deviceId]->getOutdated()) {
+					$devices = $this->queryDevices($account, $client, $account->getMxid(), $devices);
+				}
+				return isset($devices[$deviceId]) ? $devices[$deviceId]->getEd25519() : null;
+			});
+		} catch (\Throwable $e) {
+			$this->logger->warning('Matrix verification event ' . $type . ' was ignored for ' . $account->getMxid(), ['exception' => $e]);
+		}
 	}
 
 	/**

@@ -319,6 +319,15 @@ namespace OCA\Talk;
  *     lastSync: int,
  * }
  *
+ * @psalm-type TalkMatrixVerification = array{
+ *     // One of `requested`, `ready`, `started`, `accepted`, `keys_exchanged`, `mac_sent`, `done` and `cancelled`
+ *     state: string,
+ *     // Emoji to compare with the other device, once the keys were exchanged
+ *     emoji: list<array{emoji: string, name: string}>,
+ *     // Why the verification was cancelled
+ *     reason: ?string,
+ * }
+ *
  * @psalm-type TalkMatrixHomeserver = array{
  *     // SnowflakeID
  *     id: numeric-string,
