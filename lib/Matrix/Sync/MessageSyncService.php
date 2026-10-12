@@ -67,11 +67,29 @@ class MessageSyncService {
 				continue;
 			}
 
+			$isEncrypted = $event->type === 'm.room.encrypted';
+			if ($isEncrypted && in_array($event->getRelationType(), ['m.annotation', 'm.replace'], true)) {
+				// ponytail: reactions and edits are skipped until their key is there, they are not applied later
+				continue;
+			}
+			if ($this->isReplay($matrixRoom, $event)) {
+				continue;
+			}
+
 			$eventMap = new EventMap();
 			$eventMap->setMatrixRoomId((string)$matrixRoom->getId());
 			$eventMap->setEventId($event->eventId);
 			$eventMap->setEventType($event->type);
 			$eventMap->setSender($event->sender);
+			if ($isEncrypted) {
+				// Kept to replace the placeholder once the key arrives
+				$sessionId = $event->content['session_id'] ?? null;
+				$eventMap->setMegolmSession(is_string($sessionId) ? mb_substr($sessionId, 0, 64) : null);
+				$eventMap->setCiphertext(json_encode($event->content, JSON_THROW_ON_ERROR));
+			} else {
+				$eventMap->setMegolmSession($event->megolmSession);
+				$eventMap->setMegolmIndex($event->megolmIndex);
+			}
 			if (!$this->eventMapMapper->insertIfNew($eventMap)) {
 				continue;
 			}
@@ -123,7 +141,7 @@ class MessageSyncService {
 				null,
 				$actorType,
 				$actorId,
-				json_encode(['message' => 'object_shared', 'parameters' => ['objectType' => $object['type'], 'objectId' => $object['id'], 'metaData' => $object]], JSON_THROW_ON_ERROR),
+				self::getSharedObjectMessage($object),
 				$this->getDateTime($event),
 				!$silent,
 				replyTo: $replyTo,
@@ -133,7 +151,7 @@ class MessageSyncService {
 		}
 
 		if ($event->type === 'm.room.encrypted') {
-			$message = $this->l->t('Encrypted message, end-to-end encrypted Matrix rooms are not supported yet');
+			$message = $this->l->t('Encrypted message, waiting for the key to decrypt it');
 		} else {
 			$message = $this->convertMessage($event, $members, $accounts);
 		}
@@ -156,6 +174,71 @@ class MessageSyncService {
 			rateLimitGuestMentions: false,
 			threadId: $threadId,
 		);
+	}
+
+	/**
+	 * Replace the placeholder of an encrypted message once it was decrypted
+	 *
+	 * @param array<string, MatrixMember> $members indexed by Matrix user id
+	 * @param array<string, Account> $accounts Linked accounts of the members, indexed by Matrix user id
+	 */
+	public function applyDecrypted(Room $room, MatrixRoom $matrixRoom, EventMap $eventMap, Event $event, array $members, array $accounts): void {
+		if ($this->isReplay($matrixRoom, $event)) {
+			return;
+		}
+		$eventMap->setEventType($event->type);
+		$eventMap->setMegolmIndex($event->megolmIndex);
+		$eventMap->setCiphertext(null);
+		$this->eventMapMapper->update($eventMap);
+
+		$comment = $this->getComment($eventMap);
+		if ($comment === null || !in_array($event->type, ['m.room.message', 'm.sticker'], true)) {
+			return;
+		}
+
+		$object = $this->getSharedObject($eventMap, $event);
+		if ($object !== null) {
+			// ponytail: the attachment is not added to the shared items of the conversation
+			$comment->setVerb(ChatManager::VERB_OBJECT_SHARED);
+			$comment->setMessage(self::getSharedObjectMessage($object));
+			$this->commentsManager->save($comment);
+			return;
+		}
+
+		$message = mb_substr($this->convertMessage($event, $members, $accounts), 0, ChatManager::MAX_CHAT_LENGTH);
+		if (trim($message) === '') {
+			return;
+		}
+		[$actorType, $actorId] = isset($accounts[$event->sender])
+			? [Attendee::ACTOR_USERS, $accounts[$event->sender]->getUserId()]
+			: [Attendee::ACTOR_MATRIX, $event->sender];
+		$participant = $this->getParticipant($room, $actorType, $actorId);
+		if ($participant === null) {
+			$comment->setMessage($message);
+			$this->commentsManager->save($comment);
+			return;
+		}
+		// An edit, so open chats update the message and mentions notify
+		$this->chatManager->editMessage($room, $comment, $participant, $this->timeFactory->getDateTime(), $message);
+	}
+
+	/**
+	 * Whether another event of the room used the same Megolm message index
+	 */
+	protected function isReplay(MatrixRoom $matrixRoom, Event $event): bool {
+		if ($event->megolmSession === null || $event->megolmIndex === null
+			|| !$this->eventMapMapper->isMegolmIndexUsed((string)$matrixRoom->getId(), $event->eventId, $event->megolmSession, $event->megolmIndex)) {
+			return false;
+		}
+		$this->logger->warning('Matrix event ' . $event->eventId . ' reuses a Megolm message index and was ignored');
+		return true;
+	}
+
+	/**
+	 * @param array{type: string, id: string, ...} $object
+	 */
+	protected static function getSharedObjectMessage(array $object): string {
+		return json_encode(['message' => 'object_shared', 'parameters' => ['objectType' => $object['type'], 'objectId' => $object['id'], 'metaData' => $object]], JSON_THROW_ON_ERROR);
 	}
 
 	/**

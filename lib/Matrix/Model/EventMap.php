@@ -25,6 +25,12 @@ use OCP\DB\Types;
  * @method string getSender()
  * @method void setCommentId(?int $commentId)
  * @method ?int getCommentId()
+ * @method void setMegolmSession(?string $megolmSession)
+ * @method ?string getMegolmSession()
+ * @method void setMegolmIndex(?int $megolmIndex)
+ * @method ?int getMegolmIndex()
+ * @method void setCiphertext(?string $ciphertext)
+ * @method ?string getCiphertext()
  */
 class EventMap extends SnowflakeAwareEntity {
 	/** Id of the MatrixRoom entity */
@@ -34,6 +40,11 @@ class EventMap extends SnowflakeAwareEntity {
 	protected string $sender = '';
 	/** Chat message, reaction or deletion created for the event */
 	protected ?int $commentId = null;
+	/** Megolm session and message index of encrypted events, an index is only used once */
+	protected ?string $megolmSession = null;
+	protected ?int $megolmIndex = null;
+	/** Content of an encrypted event that waits for its key */
+	protected ?string $ciphertext = null;
 
 	public function __construct() {
 		$this->addType('matrixRoomId', Types::STRING);
@@ -41,5 +52,8 @@ class EventMap extends SnowflakeAwareEntity {
 		$this->addType('eventType', Types::STRING);
 		$this->addType('sender', Types::STRING);
 		$this->addType('commentId', Types::BIGINT);
+		$this->addType('megolmSession', Types::STRING);
+		$this->addType('megolmIndex', Types::BIGINT);
+		$this->addType('ciphertext', Types::TEXT);
 	}
 }

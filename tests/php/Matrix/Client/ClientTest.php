@@ -68,6 +68,18 @@ class ClientTest extends TestCase {
 		self::assertSame(['/_matrix/client/v1/media/download/example.org/abc', '/_matrix/media/v3/download/example.org/abc'], $this->paths);
 	}
 
+	public function testUploadAndQueryKeys(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"one_time_key_counts":{"signed_curve25519":50}}');
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], json_encode([
+			'device_keys' => ['@bob:hs' => ['BOB' => ['device_id' => 'BOB'], 'INVALID' => 'x']],
+			'failures' => [],
+		]));
+
+		self::assertSame(['signed_curve25519' => 50], $this->client->uploadKeys(['device_id' => 'DEV'], [], []));
+		self::assertSame(['@bob:hs' => ['BOB' => ['device_id' => 'BOB']]], $this->client->queryKeys(['@bob:hs']));
+		self::assertSame(['/_matrix/client/v3/keys/upload', '/_matrix/client/v3/keys/query'], $this->paths);
+	}
+
 	public function testPushRules(): void {
 		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');
 		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');

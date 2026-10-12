@@ -24,7 +24,19 @@ final class Event {
 		public readonly int $originServerTs = 0,
 		/** Event removed by a redaction event */
 		public readonly ?string $redacts = null,
+		/** Megolm session and message index of a decrypted event */
+		public readonly ?string $megolmSession = null,
+		public readonly ?int $megolmIndex = null,
 	) {
+	}
+
+	/**
+	 * The event with the type and content of its encrypted payload
+	 *
+	 * @param array<string, mixed> $content
+	 */
+	public function withDecryptedContent(string $type, array $content, string $megolmSession, int $megolmIndex): self {
+		return new self($this->eventId, $type, $this->sender, $content, $this->stateKey, $this->originServerTs, $this->redacts, $megolmSession, $megolmIndex);
 	}
 
 	/** @param array<string, mixed> $raw */

@@ -23,6 +23,7 @@ use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCA\Talk\Matrix\Service\AccountService;
+use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -52,6 +53,7 @@ class AccountServiceTest extends TestCase {
 	private array $responses = [];
 	/** @var list<RequestInterface> */
 	private array $requests = [];
+	private CryptoService&MockObject $cryptoService;
 	private AccountService $service;
 
 	protected function setUp(): void {
@@ -97,6 +99,7 @@ class AccountServiceTest extends TestCase {
 		$cacheFactory = $this->createMock(ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn(new ArrayCache(''));
 
+		$this->cryptoService = $this->createMock(CryptoService::class);
 		$this->service = new AccountService(
 			$this->mapper,
 			$this->homeserverMapper,
@@ -104,6 +107,7 @@ class AccountServiceTest extends TestCase {
 			$this->roomSyncService,
 			$this->config,
 			$crypto,
+			$this->cryptoService,
 			$defaults,
 			$this->notificationManager,
 			$timeFactory,
@@ -273,6 +277,7 @@ class AccountServiceTest extends TestCase {
 		]);
 		$this->notification->expects(self::once())->method('setObject')->with('matrix_account', '7')->willReturnSelf();
 		$this->notificationManager->expects(self::once())->method('markProcessed')->with($this->notification);
+		$this->cryptoService->expects(self::never())->method('wipe');
 
 		$account = $this->service->relogin($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'secret');
 
@@ -286,6 +291,20 @@ class AccountServiceTest extends TestCase {
 			'initial_device_display_name' => 'Nextcloud Talk (Cloud)',
 			'device_id' => 'DEVICE',
 		], json_decode((string)$this->requests[0]->getBody(), true));
+	}
+
+	public function testReloginWithNewDeviceForgetsKeys(): void {
+		$this->config->method('canLinkMatrixAccount')->willReturn(true);
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'user_id' => '@bob:example.org',
+			'access_token' => 'syt_new',
+			'device_id' => 'NEWDEVICE',
+		]);
+		$account = $this->account(Account::STATUS_TOKEN_INVALID);
+		$this->cryptoService->expects(self::once())->method('wipe')->with($account);
+
+		self::assertSame('NEWDEVICE', $this->service->relogin($this->user, $account, 'secret')->getDeviceId());
 	}
 
 	public function testReloginAsOtherUser(): void {
