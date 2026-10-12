@@ -117,6 +117,13 @@ class FeatureContext implements Context {
 	/** @var CookieJar[] */
 	private array $cookieJars;
 
+	/**
+	 * The admin is never deleted, so its session is kept across scenarios
+	 * instead of logging in again on every server for each scenario
+	 * @var array<string, CookieJar>
+	 */
+	private static array $adminCookieJars = [];
+
 	protected string $localServerUrl;
 	protected string $remoteServerUrl;
 	protected string $baseUrl;
@@ -5661,6 +5668,9 @@ class FeatureContext implements Context {
 	}
 
 	protected function getUserCookieJar($user): CookieJar {
+		if ($user === 'admin') {
+			return self::$adminCookieJars[$this->currentServer] ??= new CookieJar();
+		}
 		if (!isset($this->cookieJars[$user])) {
 			$this->cookieJars[$user] = new CookieJar();
 		}
