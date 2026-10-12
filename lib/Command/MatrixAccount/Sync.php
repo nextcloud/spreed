@@ -47,9 +47,14 @@ class Sync {
 			$this->syncService->resetSyncPosition($account);
 		}
 
+		if ($account->getStatus() !== Account::STATUS_ACTIVE) {
+			$output->writeln('<error>The account needs a new login: ' . $account->getLastError() . '</error>');
+			return ExitCode::Failure;
+		}
+
 		$stats = $this->syncService->syncAccount($account, $budget);
 		if ($stats === null) {
-			$output->writeln('<error>The account needs a new login or is synced by another process right now</error>');
+			$output->writeln('<error>The account is synced by another process, the lock expires at ' . date('c', $account->getLockUntil()) . '</error>');
 			return ExitCode::Failure;
 		}
 
