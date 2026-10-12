@@ -308,8 +308,7 @@ jobs:
         working-directory: host/
         run: |
           ./occ config:system:set debug --value=true --type=boolean
-          ./occ config:system:set hashing_default_password --value=true --type=boolean
-          ./occ config:system:set hashingCost --value=4 --type=integer
+          ./occ testing:prepare-ci
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
@@ -321,8 +320,7 @@ jobs:
         working-directory: remote/
         run: |
           ./occ config:system:set debug --value=true --type=boolean
-          ./occ config:system:set hashing_default_password --value=true --type=boolean
-          ./occ config:system:set hashingCost --value=4 --type=integer
+          ./occ testing:prepare-ci
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}
