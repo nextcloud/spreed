@@ -148,6 +148,8 @@ Feature: chat-4/unread-messages
     And user "participant1" sends message "Message 1" to room "group room" with 201
     And user "participant1" sends message "Message 2" to room "group room" with 201
     And user "participant1" sends message "Message 3" to room "group room" with 201
+    # modifiedSince has second precision and is inclusive
+    And wait for 1 second
     Then user "participant2" is participant of the following rooms (v4)
       | id         | unreadMessages |
       | group room | 3              |
