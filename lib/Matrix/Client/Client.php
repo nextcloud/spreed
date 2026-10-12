@@ -184,6 +184,49 @@ class Client {
 	}
 
 	/**
+	 * Global account data of the user
+	 *
+	 * @return array<string, mixed>
+	 * @throws MatrixException M_NOT_FOUND when the user has none of the type
+	 */
+	public function getAccountData(string $userId, string $type): array {
+		return $this->transport->get(self::PREFIX . '/user/' . rawurlencode($userId) . '/account_data/' . rawurlencode($type));
+	}
+
+	/**
+	 * The current key backup
+	 *
+	 * @return array<string, mixed> Version, algorithm and auth_data
+	 * @throws MatrixException M_NOT_FOUND when there is no backup
+	 */
+	public function getRoomKeysVersion(): array {
+		return $this->transport->get(self::PREFIX . '/room_keys/version');
+	}
+
+	/**
+	 * Backed up sessions, all of them or the one of a room
+	 *
+	 * @return array<string, array<string, array<string, mixed>>> Session data indexed by room id and session id
+	 * @throws MatrixException
+	 */
+	public function getRoomKeys(string $version, ?string $roomId = null, ?string $sessionId = null): array {
+		if ($roomId !== null && $sessionId !== null) {
+			$session = $this->transport->get(self::PREFIX . '/room_keys/keys/' . rawurlencode($roomId) . '/' . rawurlencode($sessionId), ['version' => $version]);
+			return [$roomId => [$sessionId => $session]];
+		}
+		$response = $this->transport->get(self::PREFIX . '/room_keys/keys', ['version' => $version]);
+		$sessions = [];
+		foreach (is_array($response['rooms'] ?? null) ? $response['rooms'] : [] as $room => $data) {
+			foreach (is_array($data['sessions'] ?? null) ? $data['sessions'] : [] as $session => $sessionData) {
+				if (is_array($sessionData)) {
+					$sessions[(string)$room][(string)$session] = $sessionData;
+				}
+			}
+		}
+		return $sessions;
+	}
+
+	/**
 	 * Create or replace a push rule of the user
 	 *
 	 * @param 'override'|'room' $kind

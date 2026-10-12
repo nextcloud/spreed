@@ -20,6 +20,7 @@ use OCA\Talk\Matrix\Service\AccountService;
 use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Matrix\Service\HomeserverService;
 use OCA\Talk\Matrix\Service\VerificationService;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Matrix\Sync\SyncService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -54,6 +55,7 @@ class MatrixAccountController extends OCSController {
 		private readonly CryptoService $cryptoService,
 		private readonly VerificationService $verificationService,
 		private readonly SyncService $syncService,
+		private readonly RoomSyncService $roomSyncService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -354,6 +356,45 @@ class MatrixAccountController extends OCSController {
 			return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
 		}
 		return new DataResponse(null);
+	}
+
+	/**
+	 * Restore the keys of encrypted messages from the key backup of the Matrix account
+	 *
+	 * The recovery key (security key) unlocks the key backup. The key of the
+	 * backup is kept, so keys that are missing later are looked up in it.
+	 *
+	 * @param string $recoveryKey Recovery key as shown by Matrix clients
+	 * @return DataResponse<Http::STATUS_OK, array{restored: non-negative-int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'backup'|'matrix'|'recovery-key'|'unavailable'}, array{}>
+	 *
+	 * 200: Keys restored
+	 * 400: Encryption is not available on the server or the recovery key is wrong
+	 * 404: No active linked account or no key backup
+	 * 502: The homeserver could not be reached
+	 */
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 10, period: 300)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/matrix/account/backup', requirements: ['apiVersion' => '(v1)'])]
+	public function restoreBackup(#[\SensitiveParameter] string $recoveryKey): DataResponse {
+		$account = $this->getActiveAccount();
+		if ($account === null) {
+			return new DataResponse(['error' => 'account'], Http::STATUS_NOT_FOUND);
+		}
+		$client = $this->accountService->getClient($account, AccountService::MEDIA_TIMEOUT);
+		try {
+			$roomKeys = $this->cryptoService->restoreBackup($account, $client, $recoveryKey);
+		} catch (\InvalidArgumentException $e) {
+			return match ($e->getMessage()) {
+				'backup' => new DataResponse(['error' => 'backup'], Http::STATUS_NOT_FOUND),
+				'unavailable' => new DataResponse(['error' => 'unavailable'], Http::STATUS_BAD_REQUEST),
+				default => new DataResponse(['error' => 'recovery-key'], Http::STATUS_BAD_REQUEST),
+			};
+		} catch (MatrixException) {
+			return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
+		}
+
+		$this->roomSyncService->decryptWaitingEvents($account, $client, $roomKeys);
+		return new DataResponse(['restored' => count($roomKeys)]);
 	}
 
 	private function getActiveAccount(): ?Account {

@@ -16,10 +16,12 @@ use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Service\AccountService;
 use OCA\Talk\Matrix\Service\CryptoService;
 use OCA\Talk\Matrix\Service\VerificationService;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
 use OCA\Talk\Matrix\Sync\SyncService;
 use OCP\AppFramework\Http;
 use OCP\IUser;
 use OCP\IUserSession;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -28,6 +30,7 @@ class MatrixAccountControllerTest extends TestCase {
 	private CryptoService&MockObject $cryptoService;
 	private VerificationService&MockObject $verificationService;
 	private SyncService&MockObject $syncService;
+	private RoomSyncService&MockObject $roomSyncService;
 	private Account $account;
 	private MatrixAccountController $controller;
 
@@ -44,6 +47,7 @@ class MatrixAccountControllerTest extends TestCase {
 		$this->cryptoService = $this->createMock(CryptoService::class);
 		$this->verificationService = $this->createMock(VerificationService::class);
 		$this->syncService = $this->createMock(SyncService::class);
+		$this->roomSyncService = $this->createMock(RoomSyncService::class);
 
 		$arguments = [];
 		foreach ((new \ReflectionClass(MatrixAccountController::class))->getConstructor()->getParameters() as $parameter) {
@@ -54,6 +58,7 @@ class MatrixAccountControllerTest extends TestCase {
 				CryptoService::class => $this->cryptoService,
 				VerificationService::class => $this->verificationService,
 				SyncService::class => $this->syncService,
+				RoomSyncService::class => $this->roomSyncService,
 				default => $this->createMock((string)$parameter->getType()),
 			};
 		}
@@ -134,5 +139,30 @@ class MatrixAccountControllerTest extends TestCase {
 		$this->verificationService->method('confirm')->willThrowException(new CryptoException('Nothing to confirm'));
 
 		self::assertSame(Http::STATUS_BAD_REQUEST, $this->controller->confirmVerification()->getStatus());
+	}
+
+	public static function dataRestoreBackupErrors(): array {
+		return [
+			'wrong key' => ['recovery-key', Http::STATUS_BAD_REQUEST],
+			'no backup' => ['backup', Http::STATUS_NOT_FOUND],
+			'no sodium' => ['unavailable', Http::STATUS_BAD_REQUEST],
+		];
+	}
+
+	#[DataProvider('dataRestoreBackupErrors')]
+	public function testRestoreBackupErrors(string $error, int $status): void {
+		$this->cryptoService->method('restoreBackup')->willThrowException(new \InvalidArgumentException($error));
+
+		$response = $this->controller->restoreBackup('key');
+
+		self::assertSame($status, $response->getStatus());
+		self::assertSame(['error' => $error], $response->getData());
+	}
+
+	public function testRestoreBackup(): void {
+		$this->cryptoService->method('restoreBackup')->with($this->account, self::anything(), 'key')->willReturn([['!room:hs', 'S1'], ['!room:hs', 'S2']]);
+		$this->roomSyncService->expects(self::once())->method('decryptWaitingEvents')->with($this->account, self::anything(), [['!room:hs', 'S1'], ['!room:hs', 'S2']]);
+
+		self::assertSame(['restored' => 2], $this->controller->restoreBackup('key')->getData());
 	}
 }

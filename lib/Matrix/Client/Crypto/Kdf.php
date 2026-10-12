@@ -37,6 +37,15 @@ final class Kdf {
 		return $out;
 	}
 
+	/** AES-256-CTR, used by secret storage */
+	public static function aesCtr(string $key, string $iv, string $data): string {
+		$out = openssl_encrypt($data, 'aes-256-ctr', $key, OPENSSL_RAW_DATA, $iv);
+		if ($out === false) {
+			throw new CryptoException('AES-CTR failed');
+		}
+		return $out;
+	}
+
 	/**
 	 * Derive AES key (32), HMAC key (32) and IV (16) from a message key.
 	 * @return array{0: string, 1: string, 2: string}

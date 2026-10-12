@@ -10,6 +10,7 @@ namespace OCA\Talk\Matrix\Service;
 
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\Backup;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
@@ -311,6 +312,7 @@ class CryptoService {
 		$this->outboundGroupSessionMapper->deleteForAccount((string)$account->getId());
 		$this->verifiedCache->remove((string)$account->getId());
 		$account->setOlmAccount(null);
+		$account->setBackupKey(null);
 	}
 
 	/**
@@ -349,18 +351,18 @@ class CryptoService {
 		if ($event->sender !== $account->getMxid() || !$device->getVerified()) {
 			throw new CryptoException('Forwarded room key from a device that is not verified');
 		}
-		return $this->storeForwardedRoomKey($account, $payload['content']);
+		return $this->importRoomKey($account, $payload['content']);
 	}
 
 	/**
-	 * A room key that another device of the user had, the user that shared
-	 * it originally is only known by the identity key of their device
+	 * A room key that another device of the user or the key backup had, the
+	 * user that shared it originally is only known by the identity key of their device
 	 *
 	 * @param array<string, mixed> $content m.forwarded_room_key content
 	 * @return ?array{0: string, 1: string} Matrix room id and session id when the key is new or goes back further
 	 * @throws CryptoException
 	 */
-	protected function storeForwardedRoomKey(Account $account, array $content): ?array {
+	protected function importRoomKey(Account $account, array $content): ?array {
 		$roomId = $content['room_id'] ?? null;
 		$sessionId = $content['session_id'] ?? null;
 		$sessionKey = $content['session_key'] ?? null;
@@ -397,12 +399,15 @@ class CryptoService {
 	 * Ask the other devices of the user for the room keys of events that could not be decrypted
 	 *
 	 * @param list<Event> $events Encrypted events
+	 * @return list<array{0: string, 1: string}> Matrix room id and session id of room keys found in the key backup
 	 * @throws MatrixException
 	 */
-	public function requestRoomKeys(Account $account, Client $client, string $roomId, array $events): void {
+	public function requestRoomKeys(Account $account, Client $client, string $roomId, array $events): array {
 		if (!$this->isAvailable() || $account->getOlmAccount() === null) {
-			return;
+			return [];
 		}
+		$backup = $account->getBackupKey() !== null ? json_decode($this->crypto->decrypt($account->getBackupKey()), true) : null;
+		$roomKeys = [];
 		$requested = [];
 		foreach ($events as $event) {
 			$sessionId = $event->content['session_id'] ?? null;
@@ -412,6 +417,13 @@ class CryptoService {
 				continue;
 			}
 			$requested[$sessionId] = true;
+			if (is_array($backup)) {
+				$roomKey = $this->getFromBackup($account, $client, Base64::decode($backup['key']), $backup['version'], $roomId, $sessionId);
+				if ($roomKey !== null) {
+					$roomKeys[] = $roomKey;
+					continue;
+				}
+			}
 			$requestId = $this->secureRandom->generate(24, ISecureRandom::CHAR_ALPHANUMERIC);
 			$body = ['algorithm' => MegolmEnvelope::ALGORITHM, 'room_id' => $roomId, 'session_id' => $sessionId];
 			if (is_string($senderKey)) {
@@ -423,6 +435,104 @@ class CryptoService {
 				'request_id' => $requestId,
 				'requesting_device_id' => $account->getDeviceId(),
 			]]], $requestId);
+		}
+		return $roomKeys;
+	}
+
+	/**
+	 * Restore the room keys of the key backup with the recovery key of the
+	 * user. The key of the backup is kept, missing room keys are looked up in
+	 * the backup later on.
+	 *
+	 * @return list<array{0: string, 1: string}> Matrix room id and session id of new room keys
+	 * @throws \InvalidArgumentException `unavailable`, `recovery-key` when the key is wrong, `backup` when there is no backup
+	 * @throws MatrixException
+	 */
+	public function restoreBackup(Account $account, Client $client, #[\SensitiveParameter] string $recoveryKey): array {
+		if (!$this->isAvailable()) {
+			throw new \InvalidArgumentException('unavailable');
+		}
+		try {
+			$key = Backup::decodeRecoveryKey($recoveryKey);
+		} catch (CryptoException) {
+			throw new \InvalidArgumentException('recovery-key');
+		}
+
+		try {
+			$keyId = $client->getAccountData($account->getMxid(), 'm.secret_storage.default_key')['key'] ?? null;
+			if (!is_string($keyId)) {
+				throw new \InvalidArgumentException('backup');
+			}
+			$description = $client->getAccountData($account->getMxid(), 'm.secret_storage.key.' . $keyId);
+			$secret = $client->getAccountData($account->getMxid(), Backup::SECRET_NAME)['encrypted'][$keyId] ?? null;
+			$version = $client->getRoomKeysVersion();
+		} catch (MatrixException $e) {
+			if ($e->getErrcode() === 'M_NOT_FOUND') {
+				throw new \InvalidArgumentException('backup');
+			}
+			throw $e;
+		}
+		if (!is_array($secret) || ($version['algorithm'] ?? null) !== Backup::ALGORITHM || !is_string($version['version'] ?? null)) {
+			throw new \InvalidArgumentException('backup');
+		}
+		if (!Backup::matchesKeyDescription($key, $description)) {
+			throw new \InvalidArgumentException('recovery-key');
+		}
+		try {
+			$backupKey = Base64::decode(Backup::decryptSecret($key, Backup::SECRET_NAME, $secret));
+		} catch (CryptoException) {
+			throw new \InvalidArgumentException('recovery-key');
+		}
+		if (strlen($backupKey) !== 32 || !hash_equals((string)($version['auth_data']['public_key'] ?? ''), Base64::encode(Keys::curve25519PublicKey($backupKey)))) {
+			// The backup was made with another key
+			throw new \InvalidArgumentException('backup');
+		}
+
+		$account->setBackupKey($this->crypto->encrypt(json_encode(['key' => Base64::encode($backupKey), 'version' => $version['version']], JSON_THROW_ON_ERROR)));
+		$this->accountMapper->update($account);
+
+		$sessions = $client->getRoomKeys($version['version']);
+		return $this->lock->run('crypto/' . $account->getId(), function () use ($account, $backupKey, $sessions): array {
+			$roomKeys = [];
+			foreach ($sessions as $roomId => $roomSessions) {
+				foreach ($roomSessions as $sessionId => $data) {
+					$roomKey = $this->importBackupSession($account, $backupKey, $roomId, $sessionId, $data);
+					if ($roomKey !== null) {
+						$roomKeys[] = $roomKey;
+					}
+				}
+			}
+			return $roomKeys;
+		});
+	}
+
+	/**
+	 * @return ?array{0: string, 1: string} Matrix room id and session id when the backup has the room key
+	 * @throws MatrixException
+	 */
+	protected function getFromBackup(Account $account, Client $client, string $backupKey, string $version, string $roomId, string $sessionId): ?array {
+		try {
+			$data = $client->getRoomKeys($version, $roomId, $sessionId)[$roomId][$sessionId] ?? [];
+		} catch (MatrixException $e) {
+			if ($e->getErrcode() === 'M_NOT_FOUND') {
+				return null;
+			}
+			throw $e;
+		}
+		return $this->lock->run('crypto/' . $account->getId(), fn (): ?array => $this->importBackupSession($account, $backupKey, $roomId, $sessionId, $data));
+	}
+
+	/**
+	 * @param array<string, mixed> $data Session of the backup
+	 * @return ?array{0: string, 1: string} Matrix room id and session id when the room key is new
+	 */
+	protected function importBackupSession(Account $account, string $backupKey, string $roomId, string $sessionId, array $data): ?array {
+		try {
+			$content = Backup::decryptSession($backupKey, is_array($data['session_data'] ?? null) ? $data['session_data'] : []);
+			return $this->importRoomKey($account, ['room_id' => $roomId, 'session_id' => $sessionId] + $content);
+		} catch (CryptoException $e) {
+			$this->logger->info('Session ' . $sessionId . ' of the key backup could not be restored: ' . $e->getMessage());
+			return null;
 		}
 	}
 

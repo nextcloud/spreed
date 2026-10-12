@@ -22,6 +22,8 @@ import type {
 	reloginMatrixAccountParams,
 	reloginMatrixAccountResponse,
 	removeMatrixHomeserverResponse,
+	restoreMatrixBackupParams,
+	restoreMatrixBackupResponse,
 	startMatrixVerificationResponse,
 	testMatrixHomeserverResponse,
 	unlinkMatrixAccountResponse,
@@ -172,6 +174,15 @@ async function cancelMatrixVerification(): cancelMatrixVerificationResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/matrix/account/verification'))
 }
 
+/**
+ * Restore the keys of encrypted messages from the key backup
+ *
+ * @param payload The recovery key of the Matrix account
+ */
+async function restoreMatrixBackup(payload: restoreMatrixBackupParams): restoreMatrixBackupResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/matrix/account/backup'), payload)
+}
+
 export {
 	addMatrixHomeserver,
 	cancelMatrixVerification,
@@ -185,6 +196,7 @@ export {
 	linkMatrixAccount,
 	reloginMatrixAccount,
 	removeMatrixHomeserver,
+	restoreMatrixBackup,
 	startMatrixVerification,
 	testMatrixHomeserver,
 	unlinkMatrixAccount,

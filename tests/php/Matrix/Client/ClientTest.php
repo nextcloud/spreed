@@ -92,6 +92,22 @@ class ClientTest extends TestCase {
 		self::assertSame(['/_matrix/client/v3/keys/claim', '/_matrix/client/v3/keys/query'], $this->paths);
 	}
 
+	public function testKeyBackup(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"key":"KEY"}');
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"rooms":{"!room:hs":{"sessions":{"S1":{"first_message_index":0},"S2":"invalid"}}}}');
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"first_message_index":3}');
+
+		self::assertSame(['key' => 'KEY'], $this->client->getAccountData('@alice:hs', 'm.secret_storage.default_key'));
+		self::assertSame(['!room:hs' => ['S1' => ['first_message_index' => 0]]], $this->client->getRoomKeys('1'));
+		self::assertSame(['!room:hs' => ['S2' => ['first_message_index' => 3]]], $this->client->getRoomKeys('1', '!room:hs', 'S2'));
+		self::assertSame([
+			'/_matrix/client/v3/user/%40alice%3Ahs/account_data/m.secret_storage.default_key',
+			'/_matrix/client/v3/room_keys/keys',
+			'/_matrix/client/v3/room_keys/keys/%21room%3Ahs/S2',
+		], $this->paths);
+		self::assertSame(['', 'version=1', 'version=1'], $this->queries);
+	}
+
 	public function testPushRules(): void {
 		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');
 		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');

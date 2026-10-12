@@ -24,6 +24,10 @@ final class Keys {
 		return ['public' => sodium_crypto_sign_publickey($pair), 'secret' => sodium_crypto_sign_secretkey($pair)];
 	}
 
+	public static function curve25519PublicKey(string $secret): string {
+		return sodium_crypto_scalarmult_base($secret);
+	}
+
 	public static function ecdh(string $ourSecret, string $theirPublic): string {
 		if (strlen($theirPublic) !== SODIUM_CRYPTO_SCALARMULT_BYTES) {
 			throw new CryptoException('Invalid Curve25519 key');

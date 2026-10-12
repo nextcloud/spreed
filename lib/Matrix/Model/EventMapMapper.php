@@ -84,16 +84,15 @@ class EventMapMapper extends QBMapper {
 	}
 
 	/**
-	 * Events of a Megolm session that could not be decrypted yet
+	 * Events of the room that could not be decrypted yet
 	 *
 	 * @return list<EventMap>
 	 */
-	public function findWaitingForKey(string $matrixRoomId, string $megolmSession): array {
+	public function findWaitingForKey(string $matrixRoomId): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
 			->where($qb->expr()->eq('matrix_room_id', $qb->createNamedParameter($matrixRoomId)))
-			->andWhere($qb->expr()->eq('megolm_session', $qb->createNamedParameter($megolmSession)))
 			->andWhere($qb->expr()->isNotNull('ciphertext'));
 		return $this->findEntities($qb);
 	}

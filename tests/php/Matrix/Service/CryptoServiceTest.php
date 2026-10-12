@@ -10,9 +10,12 @@ namespace OCA\Talk\Tests\php\Matrix\Service;
 
 use OC\Memcache\ArrayCache;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\Backup;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\DeviceKeys;
+use OCA\Talk\Matrix\Client\Crypto\Kdf;
+use OCA\Talk\Matrix\Client\Crypto\Keys;
 use OCA\Talk\Matrix\Client\Crypto\Megolm\InboundSession;
 use OCA\Talk\Matrix\Client\Crypto\Megolm\OutboundSession;
 use OCA\Talk\Matrix\Client\Crypto\MegolmEnvelope;
@@ -20,6 +23,7 @@ use OCA\Talk\Matrix\Client\Crypto\Olm\Account as OlmAccount;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Session;
 use OCA\Talk\Matrix\Client\Crypto\OlmEnvelope;
 use OCA\Talk\Matrix\Client\Crypto\Verification\SasVerification;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Model\Account;
@@ -45,6 +49,9 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class CryptoServiceTest extends TestCase {
+	/** See BackupTest for the known answers */
+	private const RECOVERY_KEY = 'EsSz ykH7 LCZx 7Cae cmKD wcmY JRXi Ybtu 8iQ3 t8Ez nRwK pUY1';
+	private const BACKUP_PUBLIC_KEY = 'E75P6uryBMf9M1j8nAByGIHRdCeBKCJ+xnTzf3/pe20';
 	private Client&MockObject $client;
 	private MatrixDeviceMapper&MockObject $deviceMapper;
 	private VerificationService&MockObject $verificationService;
@@ -65,6 +72,11 @@ class CryptoServiceTest extends TestCase {
 	private array $oneTimeKeys = [];
 	/** @var list<array{0: string, 1: array}> */
 	private array $toDevice = [];
+	/** @var array<string, array<string, mixed>> Account data of the user indexed by type */
+	private array $accountData = [];
+	private string $backupPublicKey = self::BACKUP_PUBLIC_KEY;
+	/** @var array<string, array<string, array<string, mixed>>> Sessions of the key backup indexed by room and session */
+	private array $backupSessions = [];
 	private CryptoService $service;
 
 	protected function setUp(): void {
@@ -78,6 +90,14 @@ class CryptoServiceTest extends TestCase {
 		$this->client->method('uploadKeys')->willReturnCallback(function (array $deviceKeys, array $oneTimeKeys, array $fallbackKeys): array {
 			$this->uploads[] = [$deviceKeys, $oneTimeKeys, $fallbackKeys];
 			return [];
+		});
+		$this->client->method('getAccountData')->willReturnCallback(fn (string $userId, string $type): array => $this->accountData[$type] ?? throw new MatrixException('Not found', 404, 'M_NOT_FOUND'));
+		$this->client->method('getRoomKeysVersion')->willReturnCallback(fn (): array => ['algorithm' => Backup::ALGORITHM, 'version' => '1', 'auth_data' => ['public_key' => $this->backupPublicKey]]);
+		$this->client->method('getRoomKeys')->willReturnCallback(function (string $version, ?string $roomId = null, ?string $sessionId = null): array {
+			if ($roomId === null) {
+				return $this->backupSessions;
+			}
+			return isset($this->backupSessions[$roomId][$sessionId]) ? [$roomId => [$sessionId => $this->backupSessions[$roomId][$sessionId]]] : throw new MatrixException('Not found', 404, 'M_NOT_FOUND');
 		});
 		$this->client->method('queryKeys')->willReturnCallback(fn (array $userIds): array => array_intersect_key($this->published, array_flip($userIds)));
 
@@ -520,5 +540,96 @@ class CryptoServiceTest extends TestCase {
 			'request_id' => 'txn',
 			'requesting_device_id' => 'ALICE',
 		], $messages['@alice:hs']['*']);
+	}
+
+	/**
+	 * The secret storage with the backup key, as Matrix clients set it up
+	 */
+	private function setUpSecretStorage(): void {
+		$this->accountData = [
+			'm.secret_storage.default_key' => ['key' => 'KEY'],
+			'm.secret_storage.key.KEY' => ['algorithm' => 'm.secret_storage.v1.aes-hmac-sha2', 'iv' => 'AQEBAQEBAQEBAQEBAQEBAQ', 'mac' => 'DQxMLgRRGfFSF1v8MOMW5FrveBi7tbHSXrY+0DXIbww'],
+			Backup::SECRET_NAME => ['encrypted' => ['KEY' => ['iv' => 'AgICAgICAgICAgICAgICAg', 'ciphertext' => '1ZfN3I7AOgiA3CtATI0ZymC5eOHbZfhM0Px5k6YpM6+utzs1x5Fsj5f32w', 'mac' => 'IpsrK8i8oMxE7r5gCcKf9gRFad05TUbYb0M3JaRMKtI']]],
+		];
+	}
+
+	/**
+	 * Back up the room key of a session of Bob, encrypted to the backup key like Matrix clients do
+	 */
+	private function backUp(OlmAccount $bob, OutboundSession $outbound): void {
+		$ephemeral = Keys::curve25519KeyPair();
+		$derived = Kdf::hkdf(Keys::ecdh($ephemeral['secret'], Base64::decode(self::BACKUP_PUBLIC_KEY)), 80, '');
+		$session = json_encode([
+			'algorithm' => MegolmEnvelope::ALGORITHM,
+			'sender_key' => $bob->getIdentityKeyBase64(),
+			'session_key' => InboundSession::fromSessionKey($outbound->sessionKey())->export(),
+			'sender_claimed_keys' => ['ed25519' => $bob->getSigningKeyBase64()],
+			'forwarding_curve25519_key_chain' => [],
+		]);
+		$this->backupSessions['!room:hs'][$outbound->getId()] = ['session_data' => [
+			'ephemeral' => Base64::encode($ephemeral['public']),
+			'ciphertext' => Base64::encode(Kdf::aesCbcEncrypt(substr($derived, 0, 32), substr($derived, 64, 16), $session)),
+			'mac' => Base64::encode(substr(Kdf::hmac(substr($derived, 32, 32), ''), 0, 8)),
+		]];
+	}
+
+	public function testRestoreBackup(): void {
+		$this->bootstrap();
+		$this->setUpSecretStorage();
+		$bob = $this->device('@bob:hs', 'BOB');
+		$outbound = OutboundSession::create(0);
+		$this->backUp($bob, $outbound);
+		$this->backupSessions['!room:hs']['broken'] = ['session_data' => ['ephemeral' => 'x']];
+
+		$roomKeys = $this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY);
+
+		self::assertSame([['!room:hs', $outbound->getId()]], $roomKeys);
+		self::assertSame('', $this->groupSessions['!room:hs/' . $outbound->getId()]->getSender(), 'The sender is only known once a message is decrypted');
+		self::assertSame('Hello', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'))?->getBody());
+		self::assertSame(['key' => Base64::encode(str_repeat("\x07", 32)), 'version' => '1'], json_decode(substr((string)$this->account->getBackupKey(), strlen('encrypted:')), true));
+	}
+
+	public function testRestoreBackupWithWrongRecoveryKey(): void {
+		$this->bootstrap();
+		$this->setUpSecretStorage();
+		// A valid recovery key of another key
+		$this->accountData['m.secret_storage.key.KEY']['mac'] = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+
+		$this->expectExceptionObject(new \InvalidArgumentException('recovery-key'));
+		$this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY);
+	}
+
+	public function testBackupOfAnotherKeyIsNotRestored(): void {
+		$this->bootstrap();
+		$this->setUpSecretStorage();
+		$this->backupPublicKey = Base64::encode(Keys::curve25519KeyPair()['public']);
+
+		$this->expectExceptionObject(new \InvalidArgumentException('backup'));
+		$this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY);
+	}
+
+	public function testRestoreWithoutSecretStorage(): void {
+		$this->bootstrap();
+
+		$this->expectExceptionObject(new \InvalidArgumentException('backup'));
+		$this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY);
+	}
+
+	public function testMissingRoomKeyIsTakenFromBackup(): void {
+		$this->bootstrap();
+		$this->setUpSecretStorage();
+		$this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY);
+		$bob = $this->device('@bob:hs', 'BOB');
+		$outbound = OutboundSession::create(0);
+		$this->backUp($bob, $outbound);
+
+		$roomKeys = $this->service->requestRoomKeys($this->account, $this->client, '!room:hs', [
+			self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'),
+			new Event('$2', 'm.room.encrypted', '@bob:hs', ['session_id' => 'not backed up']),
+		]);
+
+		self::assertSame([['!room:hs', $outbound->getId()]], $roomKeys);
+		self::assertCount(1, $this->toDevice, 'Only the key that is not in the backup is requested');
+		self::assertSame('not backed up', $this->toDevice[0][1]['@alice:hs']['*']['body']['session_id']);
 	}
 }
