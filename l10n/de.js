@@ -492,6 +492,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Das Zertifikat von {host} ist abgelaufen",
     "Your Matrix account needs a new login" : "Dein Matrix-Konto benötigt eine neue Anmeldung",
     "The Matrix homeserver rejected the session of {mxid}. Log in again in the Talk settings to continue using your Matrix account." : "Der Matrix-Homeserver lehnte die Sitzung von {mxid} ab. Bitte in den Talk-Einstellungen erneut anmelden, um das Matrix-Konto weiterhin zu verwenden.",
+    "{user} invited you to the Matrix room {roomName}" : "{user} hat dich in den Matrix-Raum {roomName} eingeladen",
     "Contact via Talk" : "Über Talk kontaktieren",
     "Open Talk" : "Talk öffnen",
     "Call via Talk" : "Anruf über Talk",

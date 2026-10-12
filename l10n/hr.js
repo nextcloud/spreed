@@ -1408,6 +1408,7 @@ OC.L10N.register(
     "Clear filter" : "Ukloni filtar",
     "Show more threads" : "Prikaži više niti",
     "App settings" : "Postavke aplikacije",
+    "Create" : "Stvori",
     "Users" : "Korisnici",
     "Groups" : "Grupe",
     "Teams" : "Timovi",
