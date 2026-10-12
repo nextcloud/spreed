@@ -105,6 +105,8 @@ class ThreadMapper extends QBMapper {
 				IQueryBuilder::PARAM_INT,
 			))
 			->orderBy('last_activity', 'DESC')
+			// last_activity has second precision, so tie on the newest message (last_message_id is 0 until the first reply)
+			->addOrderBy($query->func()->greatest('last_message_id', 'id'), 'DESC')
 			->setMaxResults($limit);
 
 		return $this->findEntities($query);
