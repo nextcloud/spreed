@@ -19,6 +19,7 @@ OC.L10N.register(
     "Unknown filetype" : "Tipo de archivo desconocido",
     "Description" : "Descripción",
     "Talk" : "Hablar",
+    "Location" : "Ubicación",
     "Dismiss notification" : "Descartar notificación",
     "Accept" : "Aceptar",
     "Decline" : "Declinar",

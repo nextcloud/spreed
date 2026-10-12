@@ -93,6 +93,7 @@ OC.L10N.register(
     "Meeting" : "Tikšanās",
     "Talk" : "Runāt",
     "Password request: %s" : "Paroles pieprasījums: %s",
+    "Location" : "Atrašanās vieta",
     "Dismiss notification" : "Noraidīt paziņojumu",
     "Accept" : "Pieņemt",
     "Decline" : "Noraidīt",
