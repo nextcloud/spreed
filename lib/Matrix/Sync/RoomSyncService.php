@@ -12,6 +12,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\JoinedRoom;
 use OCA\Talk\Matrix\Client\Model\Member;
@@ -29,6 +30,7 @@ use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -47,6 +49,8 @@ use Psr\Log\LoggerInterface;
 class RoomSyncService {
 	/** Chat and reactions are mirrored, calls are not supported */
 	public const DEFAULT_PERMISSIONS = Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_CHAT | Attendee::PERMISSIONS_REACT;
+	/** Pixels of the avatar thumbnails */
+	public const AVATAR_SIZE = 512;
 
 	public function __construct(
 		private readonly Manager $manager,
@@ -57,6 +61,7 @@ class RoomSyncService {
 		private readonly AccountMapper $accountMapper,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly MessageSyncService $messageSyncService,
+		private readonly AvatarService $avatarService,
 		private readonly INotificationManager $notificationManager,
 		private readonly ITimeFactory $timeFactory,
 		private readonly IL10N $l,
@@ -68,11 +73,11 @@ class RoomSyncService {
 	 * @param bool $initial Whether the batch is from an initial sync, so the messages are history
 	 * @return array{rooms: int, messages: int, failed: int}
 	 */
-	public function process(Account $account, SyncBatch $batch, bool $initial): array {
+	public function process(Account $account, Client $client, SyncBatch $batch, bool $initial): array {
 		$stats = ['rooms' => 0, 'messages' => 0, 'failed' => 0];
 		foreach ($batch->joined as $roomId => $joined) {
 			try {
-				$stats['messages'] += $this->applyJoinedRoom($account, $joined, $initial);
+				$stats['messages'] += $this->applyJoinedRoom($account, $client, $joined, $initial);
 				$stats['rooms']++;
 			} catch (\Throwable $e) {
 				$stats['failed']++;
@@ -118,7 +123,7 @@ class RoomSyncService {
 	/**
 	 * @return int Number of new messages
 	 */
-	protected function applyJoinedRoom(Account $account, JoinedRoom $joined, bool $initial): int {
+	protected function applyJoinedRoom(Account $account, Client $client, JoinedRoom $joined, bool $initial): int {
 		$matrixRoom = $this->findMatrixRoom($joined->roomId);
 		$state = new RoomState($joined->roomId);
 		$members = [];
@@ -186,6 +191,7 @@ class RoomSyncService {
 		$powerLevels = $state->getPowerLevels();
 		$this->updateAttendees($room, $members, $accounts, $powerLevels);
 		$this->updateRoles($room, $powerLevels, $accounts);
+		$this->updateAvatar($client, $room, $matrixRoom, $state, $account);
 
 		return $this->messageSyncService->apply($room, $matrixRoom, $joined->timeline, $members, $accounts, $initial || $created);
 	}
@@ -326,10 +332,14 @@ class RoomSyncService {
 		if ($matrixRoom->getPowerLevels() !== null) {
 			$events[] = new Event('', 'm.room.power_levels', '', $matrixRoom->getPowerLevelsArray(), '');
 		}
+		if ($matrixRoom->getAvatarUrl() !== null) {
+			$events[] = new Event('', 'm.room.avatar', '', ['url' => $matrixRoom->getAvatarUrl()], '');
+		}
 		foreach ($members as $member) {
 			$events[] = new Event('', 'm.room.member', '', array_filter([
 				'membership' => $member->getMembership(),
 				'displayname' => $member->getDisplayName(),
+				'avatar_url' => $member->getAvatarUrl(),
 			], static fn (?string $value): bool => $value !== null), $member->getMxid());
 		}
 		$state->applyAll($events);
@@ -353,6 +363,7 @@ class RoomSyncService {
 			}
 			$member->setMembership($stateMember->membership);
 			$member->setDisplayName($stateMember->displayName !== null ? mb_substr($stateMember->displayName, 0, 255) : null);
+			$member->setAvatarUrl($stateMember->avatarUrl !== null ? mb_substr($stateMember->avatarUrl, 0, 255) : null);
 			$member->setAccountId(isset($accounts[$mxid]) ? (string)$accounts[$mxid]->getId() : null);
 
 			if ($member->getId() === null) {
@@ -488,6 +499,33 @@ class RoomSyncService {
 			$powerLevel >= PowerLevels::LEVEL_MODERATOR => Participant::MODERATOR,
 			default => Participant::USER,
 		};
+	}
+
+	/**
+	 * Apply the room avatar, direct chats without one show the avatar of the other member
+	 */
+	protected function updateAvatar(Client $client, Room $room, MatrixRoom $matrixRoom, RoomState $state, Account $account): void {
+		$avatarUrl = $state->avatarUrl;
+		if ($avatarUrl === null) {
+			$others = array_filter($state->getMembers(), static fn (Member $member): bool => $member->userId !== $account->getMxid() && ($member->isJoined() || $member->isInvited()));
+			$avatarUrl = count($others) === 1 ? reset($others)->avatarUrl : null;
+		}
+		if ($avatarUrl === $matrixRoom->getAvatarUrl()) {
+			return;
+		}
+
+		try {
+			if ($avatarUrl === null) {
+				$this->avatarService->deleteAvatar($room);
+			} else {
+				$this->avatarService->setAvatarFromData($room, (string)$client->downloadThumbnail($avatarUrl, self::AVATAR_SIZE)->getBody());
+			}
+		} catch (\Exception $e) {
+			$this->logger->info('Avatar of Matrix room ' . $matrixRoom->getMatrixRoomId() . ' could not be applied', ['exception' => $e]);
+			return;
+		}
+		$matrixRoom->setAvatarUrl($avatarUrl !== null ? mb_substr($avatarUrl, 0, 255) : null);
+		$this->roomMapper->update($matrixRoom);
 	}
 
 	protected function updateDisplayName(Attendee $attendee, MatrixMember $member): void {

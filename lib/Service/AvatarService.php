@@ -59,6 +59,13 @@ class AvatarService {
 
 		$content = file_get_contents($file['tmp_name']);
 		unlink($file['tmp_name']);
+		$this->setAvatarFromData($room, $content);
+	}
+
+	/**
+	 * @throws InvalidArgumentException
+	 */
+	public function setAvatarFromData(Room $room, string $content): void {
 		$image = new \OCP\Image();
 		$image->loadFromData($content);
 		$image->readExif($content);

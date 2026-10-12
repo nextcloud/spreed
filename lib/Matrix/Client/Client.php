@@ -188,10 +188,7 @@ class Client {
 	 * @throws MatrixException
 	 */
 	public function downloadMedia(string $mxc): ResponseInterface {
-		if (!preg_match('~^mxc://([A-Za-z0-9.\-:\[\]]+)/([A-Za-z0-9_\-]+)$~', $mxc, $matches)) {
-			throw new \InvalidArgumentException('Invalid content URI');
-		}
-		$media = rawurlencode($matches[1]) . '/' . rawurlencode($matches[2]);
+		$media = $this->getMediaPath($mxc);
 
 		try {
 			return $this->transport->download('/_matrix/client/v1/media/download/' . $media);
@@ -209,5 +206,36 @@ class Client {
 	 */
 	public function uploadMedia(StreamInterface $content, string $contentType, string $fileName): string {
 		return $this->transport->upload($content, $contentType, $fileName);
+	}
+
+	/**
+	 * Scaled down and cropped image, with the same fallback as downloadMedia()
+	 *
+	 * @param string $mxc Content URI like mxc://example.org/abc
+	 * @throws \InvalidArgumentException when the content URI is invalid
+	 * @throws MatrixException
+	 */
+	public function downloadThumbnail(string $mxc, int $size): ResponseInterface {
+		$query = '?width=' . $size . '&height=' . $size . '&method=crop';
+		$media = $this->getMediaPath($mxc);
+
+		try {
+			return $this->transport->download('/_matrix/client/v1/media/thumbnail/' . $media . $query);
+		} catch (MatrixException $e) {
+			if ($e->getHttpStatus() !== 404 || $e->getErrcode() === 'M_NOT_FOUND') {
+				throw $e;
+			}
+		}
+		return $this->transport->download('/_matrix/media/v3/thumbnail/' . $media . $query);
+	}
+
+	/**
+	 * @throws \InvalidArgumentException when the content URI is invalid
+	 */
+	protected function getMediaPath(string $mxc): string {
+		if (!preg_match('~^mxc://([A-Za-z0-9.\-:\[\]]+)/([A-Za-z0-9_\-]+)$~', $mxc, $matches)) {
+			throw new \InvalidArgumentException('Invalid content URI');
+		}
+		return rawurlencode($matches[1]) . '/' . rawurlencode($matches[2]);
 	}
 }

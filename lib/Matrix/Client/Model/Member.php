@@ -19,6 +19,7 @@ final class Member {
 		public readonly string $userId,
 		public readonly string $membership,
 		public readonly ?string $displayName = null,
+		public readonly ?string $avatarUrl = null,
 	) {
 	}
 
@@ -27,6 +28,7 @@ final class Member {
 			(string)$event->stateKey,
 			is_string($event->content['membership'] ?? null) ? $event->content['membership'] : self::LEAVE,
 			is_string($event->content['displayname'] ?? null) ? $event->content['displayname'] : null,
+			is_string($event->content['avatar_url'] ?? null) && $event->content['avatar_url'] !== '' ? $event->content['avatar_url'] : null,
 		);
 	}
 
