@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Service;
 
-use GuzzleHttp\Psr7\HttpFactory;
+use GuzzleHttp\Psr7\Stream;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
@@ -323,7 +323,11 @@ class SendService {
 		if (!is_resource($stream)) {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
 		}
-		$contentUri = $this->send($account, fn (Client $client): string => $client->uploadMedia((new HttpFactory())->createStreamFromResource($stream), $mimeType, $file->getName()));
+		$contentUri = $this->send(
+			$account,
+			fn (Client $client): string => $client->uploadMedia(new Stream($stream, ['size' => (int)$file->getSize()]), $mimeType, $file->getName()),
+			AccountService::MEDIA_TIMEOUT,
+		);
 
 		$content = [
 			'msgtype' => match (explode('/', $mimeType)[0]) {
@@ -447,9 +451,9 @@ class SendService {
 	 * @param \Closure(Client, string): string $request Gets the client and a new transaction id, returns the event id
 	 * @throws SendException
 	 */
-	protected function send(Account $account, \Closure $request): string {
+	protected function send(Account $account, \Closure $request, int $timeout = 20): string {
 		try {
-			return $request($this->accountService->getClient($account, 20), 'nc' . $this->secureRandom->generate(24, ISecureRandom::CHAR_ALPHANUMERIC));
+			return $request($this->accountService->getClient($account, $timeout), 'nc' . $this->secureRandom->generate(24, ISecureRandom::CHAR_ALPHANUMERIC));
 		} catch (UnknownTokenException $e) {
 			$this->accountService->markTokenInvalid($account, $e->getMessage());
 			throw new SendException('account', Http::STATUS_FORBIDDEN, $e);
