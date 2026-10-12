@@ -162,7 +162,7 @@ class ApiController extends OCSController {
 			->set('last_activity', $update->createNamedParameter($lastActivity, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($roomId)));
 
-		$eventConversationObjectId = explode('#', $room['object_id']);
+		$eventConversationObjectId = explode('#', (string)$room['object_id']);
 		if (count($eventConversationObjectId) === 2) {
 			$eventConversationObjectId[0] -= $hours * 3600;
 			$eventConversationObjectId[1] -= $hours * 3600;
