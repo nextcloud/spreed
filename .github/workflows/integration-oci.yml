@@ -136,7 +136,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
-          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, oci8, sqlite, pdo_sqlite
+          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, oci8, sqlite, pdo_sqlite, :imagick
           coverage: none
           ini-file: development
           # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
@@ -163,7 +163,11 @@ jobs:
           mkdir data
           ./occ maintenance:install --verbose --database=oci --database-name=FREE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=system --database-pass=oracle --admin-user admin --admin-pass admin
           ./occ config:system:set debug --value=true --type=boolean
-          ./occ config:system:set hashing_default_password --value=true --type=boolean
+          # Fall back for servers without testing:prepare-ci
+          ./occ testing:prepare-ci || {
+            ./occ config:system:set hashing_default_password --value=true --type=boolean
+            ./occ config:system:set hashingCost --value=4 --type=integer
+          }
           ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
           ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
           ./occ app:enable --force ${{ env.APP_NAME }}

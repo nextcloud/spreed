@@ -178,8 +178,12 @@ for OCC in occ_host occ_remote; do
 	${OCC} config:system:set allow_local_remote_servers --value true --type bool
 	# Enable debug mode as it is required to enable developer commands
 	${OCC} config:system:set debug --value true --type bool
-	# Use faster password hashing
-	${OCC} config:system:set hashing_default_password --value=true --type=bool
+	# Use faster password hashing, with a fallback for servers without testing:prepare-ci
+	${OCC} testing:prepare-ci || {
+		${OCC} config:system:set hashing_default_password --value=true --type=bool
+		# Minimum bcrypt cost, PHP 8.4+ defaults to 12 which costs ~160ms per hash
+		${OCC} config:system:set hashingCost --value=4 --type=integer
+	}
 	# Change the default group notification level for more variate in default tests
 	${OCC} config:app:set spreed default_group_notification --value=2 --type=integer
 	# Claim that the HPB has the newest feature
