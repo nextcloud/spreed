@@ -372,6 +372,25 @@ class CryptoServiceTest extends TestCase {
 		return InboundSession::fromSessionKey($payload['content']['session_key']);
 	}
 
+	public function testUndecryptableMessageStartsNewSession(): void {
+		[$ourKeys] = $this->bootstrap();
+		$bob = $this->deviceWithOneTimeKey('@bob:hs', 'BOB');
+		// Encrypted with a one-time key the device does not have (anymore)
+		$event = self::roomKeyEvent($bob, '@bob:hs', 'BOB', [$ourKeys, Base64::encode(Keys::curve25519KeyPair()['public'])], OutboundSession::create(0));
+
+		self::assertSame([], $this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [$event]]])));
+
+		self::assertCount(1, $this->toDevice);
+		[$type, $messages] = $this->toDevice[0];
+		self::assertSame('m.room.encrypted', $type);
+		$content = $messages['@bob:hs']['BOB'];
+		['plaintext' => $plaintext] = Session::fromPreKeyMessage($bob, OlmEnvelope::ourCiphertext($content, $bob)['body'], Base64::decode($content['sender_key']));
+		self::assertSame('m.dummy', OlmEnvelope::validatePayload($plaintext, '@alice:hs', $bob, '@bob:hs')['type']);
+
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [$event]]]));
+		self::assertCount(1, $this->toDevice, 'A new session is started at most once per interval');
+	}
+
 	public function testEncryptRoomEvent(): void {
 		[$ourKeys] = $this->bootstrap();
 		$bob = $this->deviceWithOneTimeKey('@bob:hs', 'BOB');

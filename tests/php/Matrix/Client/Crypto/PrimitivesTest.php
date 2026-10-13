@@ -182,6 +182,21 @@ class PrimitivesTest extends TestCase {
 		self::assertSame('two', $inbound->decrypt(Message::TYPE_NORMAL, Base64::encode($raw)));
 	}
 
+	public function testOlmMessageGap(): void {
+		[, $bob, $outbound] = self::olmPair();
+		['session' => $inbound] = Session::fromPreKeyMessage($bob, $outbound->encrypt('first')['body']);
+		for ($i = 0; $i < 100; $i++) {
+			$outbound->encrypt('lost');
+		}
+		self::assertSame('after the gap', $inbound->decrypt(...array_values($outbound->encrypt('after the gap'))));
+
+		for ($i = 0; $i < 2001; $i++) {
+			$outbound->encrypt('lost');
+		}
+		$this->expectExceptionObject(new CryptoException('Too many skipped messages'));
+		$inbound->decrypt(...array_values($outbound->encrypt('too late')));
+	}
+
 	public function testRatchetAdvanceToMatchesStepping(): void {
 		$a = Ratchet::fromBytes(str_repeat("\x01", 128), 0);
 		$b = Ratchet::fromBytes(str_repeat("\x01", 128), 0);
