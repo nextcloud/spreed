@@ -515,6 +515,7 @@ OC.L10N.register(
     "Link to a conversation" : "Saite uz sarunu",
     "Select conversation" : "Atlasīt sarunu",
     "Notification settings" : "Paziņojumu iestatījumi",
+    "Close" : "Aizvērt",
     "Error while setting read status privacy" : "Kļūda lasīšanas stāvokļa privātuma iestatīšanas laikā",
     "Error while setting typing status privacy" : "Kļūda rakstīšanas stāvokļa privātuma iestatīšanas laikā",
     "Privacy" : "Privātums",

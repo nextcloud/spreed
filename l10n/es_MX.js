@@ -480,6 +480,8 @@ OC.L10N.register(
     "Projects" : "Proyectos",
     "Edit display name" : "Editar el nombre para mostrar",
     "Default language" : "Idioma predeterminado",
+    "Close" : "Cerrar",
+    "Try again" : "Reintentar",
     "Privacy" : "Privacidad",
     "Screensharing options" : "Opciones de compartir pantalla",
     "Enable screensharing" : "Habilitar compartir pantalla",

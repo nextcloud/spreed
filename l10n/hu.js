@@ -1934,6 +1934,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Hiba történt az elérhető élő fordítási nyelvek betöltése során",
     "Error when trying to set live translation language" : "Hiba történt az élő fordítás nyelvének beállítása során",
     "Set language used to show the transcriptions" : "A leiratozás megjelenítéséhez használt nyelv beállítása",
+    "Close" : "Bezárás",
+    "Try again" : "Próbálja újra",
     "Select location for attachments" : "Válassza ki a mellékletek helyét",
     "Error while setting attachment folder" : "Hiba a mellékletek mappa beállításakor",
     "Error while setting read status privacy" : "Hiba történt az olvasási állapot adatvédelmi beállításakor",

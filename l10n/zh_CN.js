@@ -1916,6 +1916,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "尝试加载可用的实时翻译语言时出错",
     "Error when trying to set live translation language" : "尝试设置实时翻译语言时出错",
     "Set language used to show the transcriptions" : "设置用于显示转录的语言",
+    "Close" : "关闭",
+    "Try again" : "重试",
     "Select location for attachments" : "选择附件的位置 ",
     "Error while setting attachment folder" : "设置附件文件夹时出错",
     "Error while setting read status privacy" : "设置阅读状态隐私时出错",

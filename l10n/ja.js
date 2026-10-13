@@ -1527,6 +1527,8 @@ OC.L10N.register(
     "Notification settings" : "通知設定",
     "Sounds for chat and call notifications" : "チャットや着信時の通知",
     "Default language" : "デフォルトの言語",
+    "Close" : "閉じる",
+    "Try again" : "もう一度試してください",
     "Select location for attachments" : "添付ファイルの場所を選択します",
     "Error while setting attachment folder" : "添付ファイル用フォルダー設定中のエラー",
     "Error while setting read status privacy" : "読み取りステータスのプライバシー設定中にエラーが発生しました",
