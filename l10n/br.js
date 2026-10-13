@@ -120,6 +120,7 @@ OC.L10N.register(
     "Talk" : "Komz",
     "Password request: %s" : "Ger-tremen goulennet : %s",
     "Deleted user (%s)" : "Implijour dilamet (%s)",
+    "Location" : "Lec'hiadur",
     "Dismiss notification" : "Disteurel ar gemennadenn",
     "Accept" : "Asantiñ",
     "Notification" : "Kemennadenn",

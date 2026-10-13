@@ -1893,6 +1893,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "خطا در بارگذاری زبان‌های ترجمه زنده موجود",
     "Error when trying to set live translation language" : "خطا در تنظیم زبان ترجمه زنده",
     "Set language used to show the transcriptions" : "تنظیم زبان مورد استفاده برای نمایش رونوشت‌ها",
+    "Close" : "بستن",
+    "Try again" : "تلاش مجدد",
     "Select location for attachments" : "انتخاب مکان برای پیوست‌ها",
     "Error while setting attachment folder" : "خطا در تنظیم پوشه پیوست",
     "Error while setting read status privacy" : "خطا در تنظیم حریم خصوصی وضعیت خواندن",

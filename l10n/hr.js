@@ -1825,6 +1825,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Pogreška pri učitavanju dostupnih jezika za prijevod uživo",
     "Error when trying to set live translation language" : "Pogreška pri postavljanju jezika prijevoda uživo",
     "Set language used to show the transcriptions" : "Postavi jezik za prikaz pretvorenih tekstova",
+    "Close" : "Zatvori",
+    "Try again" : "Pokušajte ponovno",
     "Select location for attachments" : "Odaberite lokaciju privitaka",
     "Error while setting attachment folder" : "Pogreška pri postavljanju mape za privitke",
     "Error while setting read status privacy" : "Pogreška pri postavljanju privatnosti statusa čitanja",

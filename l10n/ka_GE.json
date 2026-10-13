@@ -118,6 +118,8 @@
     "Promote to moderator" : "დაწინაურება მოდერატორზე",
     "Participants" : "მონაწილეები",
     "Details" : "დეტალები",
+    "Close" : "დახურვა",
+    "Try again" : "სცადეთ ახლიდან",
     "Screensharing options" : "ეკრანების გაზიარების პარამეტრები",
     "Enable screensharing" : "ეკრანების გაზიარების ნების დართვა",
     "Screensharing requires the page to be loaded through HTTPS." : "ეკრანების გაზიარება საჭიროებს გვერდის HTTPS პროტოკოლით ჩატვირთვას.",

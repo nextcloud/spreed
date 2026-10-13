@@ -1363,6 +1363,7 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Play sounds when participants join or leave a call",
     "Notification settings" : "Notification settings",
     "Default language" : "Default language",
+    "Close" : "Close",
     "Select location for attachments" : "Select location for attachments",
     "Error while setting attachment folder" : "Error while setting attachment folder",
     "Error while setting read status privacy" : "Error while setting read status privacy",

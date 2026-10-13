@@ -1957,6 +1957,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Ошибка при попытке загрузить доступные языки для онлайн-перевода",
     "Error when trying to set live translation language" : "Ошибка при попытке установить язык для онлайн-перевода",
     "Set language used to show the transcriptions" : "Установить язык для отображения транскрипции",
+    "Close" : "Закрыть",
+    "Try again" : "Попытаться снова",
     "Select location for attachments" : "Выберите путь для сохранения вложений",
     "Error while setting attachment folder" : "Не удалось задать папку для вложений",
     "Error while setting read status privacy" : "Не удалось сохранить параметр состояния прочтения",

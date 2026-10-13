@@ -1950,6 +1950,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Galat saat mencoba memuat bahasa terjemahan langsung yang tersedia",
     "Error when trying to set live translation language" : "Galat saat mencoba mengatur bahasa terjemahan langsung",
     "Set language used to show the transcriptions" : "Atur bahasa yang digunakan untuk menampilkan transkripsi",
+    "Close" : "Tutup",
+    "Try again" : "Coba lagi",
     "Select location for attachments" : "Pilih lokasi untuk lampiran",
     "Error while setting attachment folder" : "Galat saat mengatur folder lampiran",
     "Error while setting read status privacy" : "Galat saat mengatur privasi status dibaca",

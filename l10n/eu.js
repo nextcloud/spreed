@@ -1349,6 +1349,8 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Soinuak egin parte-hartzaileak deira etortzean edo joatean",
     "Notification settings" : "Jakinarazpen-ezarpenak",
     "Default language" : "Hizkuntza lehenetsia",
+    "Close" : "Itxi",
+    "Try again" : "Saiatu berriz",
     "Select location for attachments" : "Hautatu kokalekua eranskinentzat",
     "Error while setting attachment folder" : "Errorea eranskinen karpeta ezartzean",
     "Error while setting read status privacy" : "Errorea irakurtze-egoera pribatutasun ezarpenak konfiguratzean",

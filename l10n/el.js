@@ -1769,6 +1769,8 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Αναπαραγωγή ήχων όταν οι συμμετέχοντες εισέρχονται ή αποχωρούν από μια κλήση",
     "Notification settings" : "Ρυθμίσεις ειδοποιήσεων",
     "Default language" : "Προεπιλεγμένη γλώσσα",
+    "Close" : "Κλείσιμο",
+    "Try again" : "Δοκιμάστε ξανά",
     "Select location for attachments" : "Επιλέξτε τοποθεσία για τα συνημμένα",
     "Error while setting attachment folder" : "Σφάλμα κατά την ρύθμιση φακέλου συνημμένων",
     "Error while setting read status privacy" : "Σφάλμα κατά τον ορισμό απορρήτου κατάστασης ανάγνωσης",
