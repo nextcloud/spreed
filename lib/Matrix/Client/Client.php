@@ -11,6 +11,7 @@ namespace OCA\Talk\Matrix\Client;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\LoginResult;
+use OCA\Talk\Matrix\Client\Model\Member;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -243,6 +244,24 @@ class Client {
 	 */
 	public function deletePushRule(string $kind, string $ruleId): void {
 		$this->transport->delete(self::PREFIX . '/pushrules/global/' . $kind . '/' . rawurlencode($ruleId));
+	}
+
+	/**
+	 * Joined and invited members of a room, also those a lazy-loading sync did not mention yet
+	 *
+	 * @return list<string> Matrix user ids
+	 * @throws MatrixException
+	 */
+	public function getRoomMembers(string $roomId): array {
+		$response = $this->transport->get(self::PREFIX . '/rooms/' . rawurlencode($roomId) . '/members', ['not_membership' => Member::LEAVE]);
+		$members = [];
+		foreach (is_array($response['chunk'] ?? null) ? $response['chunk'] : [] as $event) {
+			$membership = $event['content']['membership'] ?? null;
+			if (is_string($event['state_key'] ?? null) && ($membership === Member::JOIN || $membership === Member::INVITE)) {
+				$members[] = $event['state_key'];
+			}
+		}
+		return $members;
 	}
 
 	/**
