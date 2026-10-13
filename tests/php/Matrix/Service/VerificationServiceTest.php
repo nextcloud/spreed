@@ -14,6 +14,7 @@ use OCA\Talk\Matrix\Client\Crypto\Keys;
 use OCA\Talk\Matrix\Client\Crypto\Verification\SasVerification;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
+use OCA\Talk\Matrix\Service\ExclusiveLock;
 use OCA\Talk\Matrix\Service\VerificationService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Lock\ILockingProvider;
@@ -62,7 +63,7 @@ class VerificationServiceTest extends TestCase {
 		$this->service = new VerificationService(
 			$accountMapper,
 			$crypto,
-			$this->createMock(ILockingProvider::class),
+			new ExclusiveLock($this->createMock(ILockingProvider::class)),
 			$this->timeFactory,
 			$secureRandom,
 		);

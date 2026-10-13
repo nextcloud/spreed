@@ -15,8 +15,6 @@ use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Lock\ILockingProvider;
-use OCP\Lock\LockedException;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 
@@ -32,7 +30,7 @@ class VerificationService {
 	public function __construct(
 		private readonly AccountMapper $accountMapper,
 		private readonly ICrypto $crypto,
-		private readonly ILockingProvider $lockingProvider,
+		private readonly ExclusiveLock $lock,
 		private readonly ITimeFactory $timeFactory,
 		private readonly ISecureRandom $secureRandom,
 	) {
@@ -158,27 +156,12 @@ class VerificationService {
 	 * @return T
 	 */
 	protected function change(Account $account, \Closure $change): ?SasVerification {
-		$lock = 'talk/matrix/verification/' . $account->getId();
-		for ($attempt = 0; ; $attempt++) {
-			try {
-				$this->lockingProvider->acquireLock($lock, ILockingProvider::LOCK_EXCLUSIVE);
-				break;
-			} catch (LockedException $e) {
-				if ($attempt >= 20) {
-					throw $e;
-				}
-				usleep(100000);
-			}
-		}
-
-		try {
+		return $this->lock->run('verification/' . $account->getId(), function () use ($account, $change): ?SasVerification {
 			$verification = $change();
 			if ($verification !== null) {
 				$this->accountMapper->setVerification((string)$account->getId(), $this->crypto->encrypt($verification->pickle()));
 			}
 			return $verification;
-		} finally {
-			$this->lockingProvider->releaseLock($lock, ILockingProvider::LOCK_EXCLUSIVE);
-		}
+		});
 	}
 }

@@ -126,16 +126,38 @@ class Client {
 	}
 
 	/**
+	 * Take one-time keys of devices to start Olm sessions with them
+	 *
+	 * @param array<string, array<string, string>> $devices Key algorithm indexed by user id and device id
+	 * @return array<string, array<string, array<string, mixed>>> Signed keys indexed by user id, device id and key id
+	 * @throws MatrixException
+	 */
+	public function claimKeys(array $devices): array {
+		$response = $this->transport->post(self::PREFIX . '/keys/claim', ['one_time_keys' => $devices]);
+		$claimed = [];
+		foreach (is_array($response['one_time_keys'] ?? null) ? $response['one_time_keys'] : [] as $userId => $userDevices) {
+			foreach (is_array($userDevices) ? $userDevices : [] as $deviceId => $keys) {
+				if (is_array($keys)) {
+					$claimed[(string)$userId][(string)$deviceId] = $keys;
+				}
+			}
+		}
+		return $claimed;
+	}
+
+	/**
 	 * Device keys of users
 	 *
 	 * @param list<string> $userIds
-	 * @return array<string, array<string, mixed>> Raw signed device keys indexed by user id and device id
+	 * @return array<string, array<string, array<string, mixed>>> Raw signed device keys indexed by user id and device id
 	 * @throws MatrixException
 	 */
 	public function queryKeys(array $userIds): array {
 		$response = $this->transport->post(self::PREFIX . '/keys/query', ['device_keys' => array_fill_keys($userIds, [])]);
 		$devices = [];
 		foreach (is_array($response['device_keys'] ?? null) ? $response['device_keys'] : [] as $userId => $userDevices) {
+			// Users without devices are included, users the homeserver could not query are not
+			$devices[(string)$userId] ??= [];
 			foreach (is_array($userDevices) ? $userDevices : [] as $deviceId => $keys) {
 				if (is_array($keys)) {
 					$devices[(string)$userId][(string)$deviceId] = $keys;
