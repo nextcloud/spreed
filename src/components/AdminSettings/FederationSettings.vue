@@ -3,147 +3,147 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<script>
+<script setup lang="ts">
+import type { InitialState } from '../../types/index.ts'
+
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import debounce from 'debounce'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 
-const FEDERATION_ENABLED = loadState('spreed', 'federation_enabled', false)
-const FEDERATION_INCOMING_ENABLED = loadState('spreed', 'federation_incoming_enabled', true)
-const FEDERATION_OUTGOING_ENABLED = loadState('spreed', 'federation_outgoing_enabled', true)
-const FEDERATION_ONLY_TRUSTED_SERVERS = loadState('spreed', 'federation_only_trusted_servers', false)
-const FEDERATION_ALLOWED_GROUPS = loadState('spreed', 'federation_allowed_groups', [])
+type Group = InitialState['spreed']['federation_allowed_groups'][number]
 
-export default {
-	name: 'FederationSettings',
+const trustedServersLink = t('spreed', 'Trusted servers can be configured at {linkstart}Sharing settings page{linkend}.')
+	.replace('{linkstart}', `<a target="_blank" rel="noreferrer nofollow" class="external" href="${generateUrl('/settings/admin/sharing#ocFederationSettings')}">`)
+	.replaceAll('{linkend}', ' ↗</a>')
 
-	components: {
-		NcButton,
-		NcCheckboxRadioSwitch,
-		NcSelect,
-	},
+const loading = ref(false)
+const isFederationEnabled = ref(loadState<InitialState['spreed']['federation_enabled']>('spreed', 'federation_enabled', false))
+const isFederationIncomingEnabled = ref(loadState<InitialState['spreed']['federation_incoming_enabled']>('spreed', 'federation_incoming_enabled', true))
+const isFederationOutgoingEnabled = ref(loadState<InitialState['spreed']['federation_outgoing_enabled']>('spreed', 'federation_outgoing_enabled', true))
+const isFederationOnlyTrustedServersEnabled = ref(loadState<InitialState['spreed']['federation_only_trusted_servers']>('spreed', 'federation_only_trusted_servers', false))
+const loadingGroups = ref(false)
+const allowedGroups = ref<Group[]>(loadState<InitialState['spreed']['federation_allowed_groups']>('spreed', 'federation_allowed_groups', []))
+const groups = ref<Group[]>([...allowedGroups.value])
 
-	data() {
-		return {
-			loading: false,
-			isFederationEnabled: FEDERATION_ENABLED,
-			isFederationIncomingEnabled: FEDERATION_INCOMING_ENABLED,
-			isFederationOutgoingEnabled: FEDERATION_OUTGOING_ENABLED,
-			isFederationOnlyTrustedServersEnabled: FEDERATION_ONLY_TRUSTED_SERVERS,
-			loadingGroups: false,
-			groups: [...FEDERATION_ALLOWED_GROUPS],
-			allowedGroups: FEDERATION_ALLOWED_GROUPS,
-			saveLabelAllowedGroups: t('spreed', 'Save changes'),
-			debounceSearchGroup: () => {},
-		}
-	},
+const saveLabelAllowedGroups = ref(t('spreed', 'Save changes'))
 
-	computed: {
-		trustedServersLink() {
-			const href = generateUrl('/settings/admin/sharing#ocFederationSettings')
-			return t('spreed', 'Trusted servers can be configured at {linkstart}Sharing settings page{linkend}.')
-				.replace('{linkstart}', `<a target="_blank" rel="noreferrer nofollow" class="external" href="${href}">`)
-				.replaceAll('{linkend}', ' ↗</a>')
+const debounceSearchGroup = debounce(searchGroup, 500)
+
+onMounted(() => {
+	debounceSearchGroup('')
+})
+
+onBeforeUnmount(() => {
+	debounceSearchGroup.clear()
+})
+
+/**
+ * Enable or disable federation
+ *
+ * @param value - new value
+ */
+function saveFederationEnabled(value: boolean) {
+	loading.value = true
+
+	OCP.AppConfig.setValue('spreed', 'federation_enabled', value ? 'yes' : 'no', {
+		success: () => {
+			loading.value = false
+			isFederationEnabled.value = value
 		},
-	},
+	})
+}
 
-	mounted() {
-		this.debounceSearchGroup = debounce(this.searchGroup, 500)
-		this.debounceSearchGroup('')
-	},
+/**
+ * Allow or disallow users to be invited to federated conversations
+ *
+ * @param value - new value
+ */
+function saveFederationIncomingEnabled(value: boolean) {
+	loading.value = true
 
-	beforeUnmount() {
-		this.debounceSearchGroup.clear?.()
-	},
-
-	methods: {
-		t,
-		saveFederationEnabled(value) {
-			this.loading = true
-
-			OCP.AppConfig.setValue('spreed', 'federation_enabled', value ? 'yes' : 'no', {
-				success: () => {
-					this.loading = false
-					this.isFederationEnabled = value
-				},
-			})
+	OCP.AppConfig.setValue('spreed', 'federation_incoming_enabled', value ? '1' : '0', {
+		success: () => {
+			loading.value = false
+			isFederationIncomingEnabled.value = value
 		},
+	})
+}
 
-		saveFederationIncomingEnabled(value) {
-			this.loading = true
+/**
+ * Allow or disallow users to invite federated users
+ *
+ * @param value - new value
+ */
+function saveFederationOutgoingEnabled(value: boolean) {
+	loading.value = true
 
-			OCP.AppConfig.setValue('spreed', 'federation_incoming_enabled', value ? '1' : '0', {
-				success: () => {
-					this.loading = false
-					this.isFederationIncomingEnabled = value
-				},
-			})
+	OCP.AppConfig.setValue('spreed', 'federation_outgoing_enabled', value ? '1' : '0', {
+		success: () => {
+			loading.value = false
+			isFederationOutgoingEnabled.value = value
 		},
+	})
+}
 
-		saveFederationOutgoingEnabled(value) {
-			this.loading = true
+/**
+ * Allow or disallow federation with untrusted servers
+ *
+ * @param value - new value
+ */
+function saveFederationOnlyTrustedServersEnabled(value: boolean) {
+	loading.value = true
 
-			OCP.AppConfig.setValue('spreed', 'federation_outgoing_enabled', value ? '1' : '0', {
-				success: () => {
-					this.loading = false
-					this.isFederationOutgoingEnabled = value
-				},
-			})
+	OCP.AppConfig.setValue('spreed', 'federation_only_trusted_servers', value ? '1' : '0', {
+		success: () => {
+			loading.value = false
+			isFederationOnlyTrustedServersEnabled.value = value
 		},
+	})
+}
 
-		saveFederationOnlyTrustedServersEnabled(value) {
-			this.loading = true
+/**
+ * Search groups to show as options
+ *
+ * @param query - search query
+ */
+async function searchGroup(query: string) {
+	loadingGroups.value = true
+	try {
+		const response = await axios.get(generateOcsUrl('cloud/groups/details'), { params: { search: query, limit: 20, offset: 0 } })
+		// Keep selected groups as options, even if they are not in the search results
+		const options = new Map([...allowedGroups.value, ...response.data.ocs.data.groups as Group[]].map((group) => [group.id, group]))
+		groups.value = [...options.values()].sort((a, b) => a.displayname.localeCompare(b.displayname))
+	} catch (error) {
+		console.error('Could not fetch groups', error)
+	} finally {
+		loadingGroups.value = false
+	}
+}
 
-			OCP.AppConfig.setValue('spreed', 'federation_only_trusted_servers', value ? '1' : '0', {
-				success: () => {
-					this.loading = false
-					this.isFederationOnlyTrustedServersEnabled = value
-				},
-			})
+/**
+ * Save the groups allowed to invite federated users
+ */
+function saveAllowedGroups() {
+	loading.value = true
+	loadingGroups.value = true
+	saveLabelAllowedGroups.value = t('spreed', 'Saving …')
+
+	OCP.AppConfig.setValue('spreed', 'federation_allowed_groups', JSON.stringify(allowedGroups.value.map((group) => group.id)), {
+		success: () => {
+			loading.value = false
+			loadingGroups.value = false
+			saveLabelAllowedGroups.value = t('spreed', 'Saved!')
+			setTimeout(() => {
+				saveLabelAllowedGroups.value = t('spreed', 'Save changes')
+			}, 5000)
 		},
-
-		async searchGroup(query) {
-			this.loadingGroups = true
-			try {
-				const response = await axios.get(generateOcsUrl('cloud/groups/details'), {
-					search: query,
-					limit: 20,
-					offset: 0,
-				})
-				// Keep selected groups as options, even if they are not in the search results
-				const options = new Map([...this.allowedGroups, ...response.data.ocs.data.groups].map((group) => [group.id, group]))
-				this.groups = [...options.values()].sort((a, b) => a.displayname.localeCompare(b.displayname))
-			} catch (err) {
-				console.error('Could not fetch groups', err)
-			} finally {
-				this.loadingGroups = false
-			}
-		},
-
-		saveAllowedGroups() {
-			this.loading = true
-			this.loadingGroups = true
-			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
-
-			const groups = this.allowedGroups.map((group) => group.id)
-
-			OCP.AppConfig.setValue('spreed', 'federation_allowed_groups', JSON.stringify(groups), {
-				success: () => {
-					this.loading = false
-					this.loadingGroups = false
-					this.saveLabelAllowedGroups = t('spreed', 'Saved!')
-					setTimeout(() => {
-						this.saveLabelAllowedGroups = t('spreed', 'Save changes')
-					}, 5000)
-				},
-			})
-		},
-	},
+	})
 }
 </script>
 
