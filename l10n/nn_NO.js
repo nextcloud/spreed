@@ -130,6 +130,7 @@ OC.L10N.register(
     "Search in {name}" : "Søk i {name}",
     "Load more results" : "Last fleire resultat",
     "Notification settings" : "Varsel innstillingar",
+    "Close" : "Lukk",
     "Privacy" : "Personvern",
     "Search" : "Søk",
     "Join a conversation or start a new one" : "Delta i ein samtale eller start ein ny ein",

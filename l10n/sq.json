@@ -251,6 +251,8 @@
     "Moderator" : "Moderator",
     "Details" : "Detajet",
     "Search in {name}" : "Kërkoni në {name}",
+    "Close" : "Mbylleni",
+    "Try again" : "Provo përsëri",
     "Privacy" : "Privatësi",
     "Screensharing requires the page to be loaded through HTTPS." : "Ndarja e ekranit kërkon faqen të ngarkohet përmes HTTPS.",
     "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",

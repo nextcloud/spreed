@@ -116,6 +116,8 @@ OC.L10N.register(
     "Search in {name}" : "Buscar en {name}",
     "Load more results" : "Cargar más resultados",
     "Notification settings" : "Configuración de las notificaciones",
+    "Close" : "Cerrar",
+    "Try again" : "Inténtalo de nuevo",
     "Screensharing requires the page to be loaded through HTTPS." : "Compartir pantalla requiere que la página se cargue a través de HTTPS.",
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
     "Show your screen" : "Mostrar su pantalla",

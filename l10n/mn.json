@@ -1786,6 +1786,8 @@
     "Error when trying to load the available live translation languages" : "Шууд орчуулгын боломжит хэлүүдийг ачаалахад алдаа гарлаа",
     "Error when trying to set live translation language" : "Шууд орчуулгын хэлийг тохируулахад алдаа гарлаа",
     "Set language used to show the transcriptions" : "Хуулбар текстийг харуулах хэлийг тохируулах",
+    "Close" : "‚Äì‚Ä¢‚Äì‚àû‚Äì‚àû‚Äî√ñ",
+    "Try again" : "Дахин оролдох",
     "Select location for attachments" : "Хавсралтуудын байршил сонгох",
     "Error while setting attachment folder" : "Хавсралтын хавтас тохируулахад алдаа гарлаа",
     "Error while setting read status privacy" : "Унших төлөвийн нууцлалыг тохируулахад алдаа гарлаа",

@@ -1776,6 +1776,8 @@ OC.L10N.register(
     "Notification settings" : "Налаштування сповіщень",
     "Default language" : "Типова мова",
     "Default language ({languageName})" : "Типова мова ({languageName})",
+    "Close" : "Закрити",
+    "Try again" : "Спробуйте ще раз",
     "Select location for attachments" : "Виберіть місце для вкладень",
     "Error while setting attachment folder" : "Помилка під час встановлення каталогу для вкладень",
     "Error while setting read status privacy" : "Помилка під час встановлення конфіденційності статусу читання",

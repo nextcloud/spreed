@@ -1263,6 +1263,8 @@ OC.L10N.register(
     "Notification settings" : "Параметри за известување",
     "Sounds for chat and call notifications" : "Звуци за известувања за разговор и повици",
     "Default language" : "Стандарден јазик",
+    "Close" : "Затвори",
+    "Try again" : "Обиди се повторно",
     "Select location for attachments" : "Избери локација за прилози",
     "Error while setting attachment folder" : "Грешка при поставување на папка за прилози",
     "Error while setting read status privacy" : "Грешка при зачувување на поставките за приватност",

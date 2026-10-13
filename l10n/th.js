@@ -109,6 +109,7 @@ OC.L10N.register(
     "Search in {name}" : "ค้นหาใน {name}",
     "Load more results" : "โหลดผลลัพธ์เพิ่มเติม",
     "Default language" : "ภาษาค่าเริ่มต้น",
+    "Close" : "ปิด",
     "Privacy" : "ความเป็นส่วนตัว",
     "Keep" : "เก็บ",
     "Search" : "ค้นหา",

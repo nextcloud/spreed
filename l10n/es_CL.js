@@ -123,6 +123,8 @@ OC.L10N.register(
     "Moderator" : "Moderador",
     "Participants" : "Participantes",
     "Search in {name}" : "Buscar en {name}",
+    "Close" : "Close",
+    "Try again" : "Reintentar",
     "Screensharing options" : "Opciones de compartir pantalla",
     "Enable screensharing" : "Habilitar compartir pantalla",
     "Screensharing requires the page to be loaded through HTTPS." : "Compartir pantalla requiere que la página se cargue a través de HTTPS.",

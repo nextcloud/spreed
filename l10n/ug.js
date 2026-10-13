@@ -1798,6 +1798,8 @@ OC.L10N.register(
     "Notification settings" : "ئۇقتۇرۇش تەڭشىكى",
     "Sounds for chat and call notifications" : "پاراڭ ھەمدە تېلىفۇن ئۇقتۇرۇشلىرىنىڭ ئاۋازى",
     "Default language" : "كۆڭۈلدىكى تىل",
+    "Close" : "ياپ",
+    "Try again" : "قايتا سىناڭ",
     "Select location for attachments" : "قوشۇمچە ھۆججەتلەرنىڭ ئورنىنى تاللاڭ",
     "Error while setting attachment folder" : "قوشۇمچە ھۆججەت قىسقۇچنى تەڭشەشتە خاتالىق",
     "Error while setting read status privacy" : "ئوقۇش ھالىتىنىڭ مەخپىيەتلىكىنى تەڭشەشتە خاتالىق",
