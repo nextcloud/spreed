@@ -265,6 +265,20 @@ class PrimitivesTest extends TestCase {
 		self::assertSame(3, OutboundSession::unpickle($outbound->pickle())->getMessageIndex());
 	}
 
+	public function testMegolmEarlierState(): void {
+		$outbound = OutboundSession::create(0);
+		$early = InboundSession::fromSessionKey($outbound->sessionKey());
+		$outbound->encrypt('one');
+		$later = InboundSession::fromSessionKey($outbound->sessionKey());
+		$forged = InboundSession::fromExportedKey(Base64::encode("\x01" . pack('N', 0) . random_bytes(128) . Base64::decode($outbound->getId())));
+
+		self::assertTrue($early->isEarlierStateOf($later));
+		self::assertFalse($later->isEarlierStateOf($early));
+		self::assertFalse($early->isEarlierStateOf($early));
+		self::assertFalse($forged->isEarlierStateOf($later), 'The ratchet has to advance to the later state');
+		self::assertFalse(InboundSession::fromSessionKey(OutboundSession::create(0)->sessionKey())->isEarlierStateOf($later), 'Other session');
+	}
+
 	public function testMegolmTamperingDetected(): void {
 		$outbound = OutboundSession::create(0);
 		$inbound = InboundSession::fromSessionKey($outbound->sessionKey());

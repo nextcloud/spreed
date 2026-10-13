@@ -390,7 +390,7 @@ class CryptoService {
 
 		$stored = $this->inboundGroupSessionMapper->find((string)$account->getId(), $roomId, $sessionId);
 		if ($stored !== null) {
-			if ($stored->getSenderKey() !== $senderKey || $stored->getFirstKnownIndex() <= $session->getFirstKnownIndex()) {
+			if ($stored->getSenderKey() !== $senderKey || !$this->isEarlierState($stored, $session)) {
 				return null;
 			}
 		} else {
@@ -862,7 +862,7 @@ class CryptoService {
 		$stored = $this->inboundGroupSessionMapper->find((string)$account->getId(), $roomId, $sessionId);
 		if ($stored !== null) {
 			// Only the same device can share an earlier state of the session
-			if ($stored->getSender() !== $sender || $stored->getSenderKey() !== $senderKey || $stored->getFirstKnownIndex() <= $session->getFirstKnownIndex()) {
+			if ($stored->getSender() !== $sender || $stored->getSenderKey() !== $senderKey || !$this->isEarlierState($stored, $session)) {
 				return null;
 			}
 		} else {
@@ -877,6 +877,21 @@ class CryptoService {
 		$stored->setPickle($this->crypto->encrypt($session->pickle()));
 		$stored->getId() === null ? $this->inboundGroupSessionMapper->insert($stored) : $this->inboundGroupSessionMapper->update($stored);
 		return [$roomId, $sessionId];
+	}
+
+	/**
+	 * Whether the room key goes back further than the stored one and is the
+	 * same session, so replacing the stored key does not break decryption
+	 */
+	protected function isEarlierState(InboundGroupSession $stored, InboundSession $session): bool {
+		if ($stored->getFirstKnownIndex() <= $session->getFirstKnownIndex()) {
+			return false;
+		}
+		if (!$session->isEarlierStateOf(InboundSession::unpickle($this->crypto->decrypt($stored->getPickle())))) {
+			$this->logger->warning('Room key ' . $stored->getSessionId() . ' was ignored, it does not match the stored state of the session');
+			return false;
+		}
+		return true;
 	}
 
 	/**

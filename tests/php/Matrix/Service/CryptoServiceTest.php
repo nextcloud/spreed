@@ -603,13 +603,13 @@ class CryptoServiceTest extends TestCase {
 	/**
 	 * Back up the room key of a session of Bob, encrypted to the backup key like Matrix clients do
 	 */
-	private function backUp(OlmAccount $bob, OutboundSession $outbound): void {
+	private function backUp(OlmAccount $bob, OutboundSession $outbound, ?string $sessionKey = null): void {
 		$ephemeral = Keys::curve25519KeyPair();
 		$derived = Kdf::hkdf(Keys::ecdh($ephemeral['secret'], Base64::decode(self::BACKUP_PUBLIC_KEY)), 80, '');
 		$session = json_encode([
 			'algorithm' => MegolmEnvelope::ALGORITHM,
 			'sender_key' => $bob->getIdentityKeyBase64(),
-			'session_key' => InboundSession::fromSessionKey($outbound->sessionKey())->export(),
+			'session_key' => $sessionKey ?? InboundSession::fromSessionKey($outbound->sessionKey())->export(),
 			'sender_claimed_keys' => ['ed25519' => $bob->getSigningKeyBase64()],
 			'forwarding_curve25519_key_chain' => [],
 		]);
@@ -634,6 +634,30 @@ class CryptoServiceTest extends TestCase {
 		self::assertSame('', $this->groupSessions['!room:hs/' . $outbound->getId()]->getSender(), 'The sender is only known once a message is decrypted');
 		self::assertSame('Hello', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'))?->getBody());
 		self::assertSame(['key' => Base64::encode(str_repeat("\x07", 32)), 'version' => '1'], json_decode(substr((string)$this->account->getBackupKey(), strlen('encrypted:')), true));
+	}
+
+	public function testRoomKeyIsOnlyReplacedByAnEarlierStateOfTheSession(): void {
+		$ourDevice = $this->bootstrap();
+		$this->setUpSecretStorage();
+		$bob = $this->device('@bob:hs', 'BOB');
+		$outbound = OutboundSession::create(0);
+		$atStart = InboundSession::fromSessionKey($outbound->sessionKey())->export();
+		$outbound->encrypt('');
+		$outbound->encrypt('');
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [self::roomKeyEvent($bob, '@bob:hs', 'BOB', $ourDevice, $outbound)]]]));
+		$stored = $this->groupSessions['!room:hs/' . $outbound->getId()];
+		self::assertSame(2, $stored->getFirstKnownIndex());
+
+		// Same session id, but a ratchet that does not lead to the stored one
+		$this->backUp($bob, $outbound, Base64::encode("\x01" . pack('N', 0) . random_bytes(128) . Base64::decode($outbound->getId())));
+		self::assertSame([], $this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY));
+		self::assertSame(2, $stored->getFirstKnownIndex());
+		self::assertSame('Hello', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'))?->getBody());
+
+		$this->backUp($bob, $outbound, $atStart);
+		self::assertSame([['!room:hs', $outbound->getId()]], $this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY));
+		self::assertSame(0, $stored->getFirstKnownIndex());
+		self::assertSame('Again', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Again'))?->getBody());
 	}
 
 	public function testRestoreBackupWithWrongRecoveryKey(): void {
