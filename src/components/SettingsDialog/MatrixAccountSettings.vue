@@ -21,6 +21,7 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconKeyOutline from 'vue-material-design-icons/KeyOutline.vue'
 import IconLanConnect from 'vue-material-design-icons/LanConnect.vue'
 import IconLinkVariant from 'vue-material-design-icons/LinkVariant.vue'
 import IconLinkVariantOff from 'vue-material-design-icons/LinkVariantOff.vue'
@@ -28,6 +29,7 @@ import IconLogin from 'vue-material-design-icons/Login.vue'
 import IconShieldCheckOutline from 'vue-material-design-icons/ShieldCheckOutline.vue'
 import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import MatrixDeviceVerification from './MatrixDeviceVerification.vue'
+import MatrixKeyBackup from './MatrixKeyBackup.vue'
 import { useActionStatus } from '../../composables/useActionStatus.ts'
 import { MATRIX } from '../../constants.ts'
 import { checkMatrixConnection, getMatrixAccount, linkMatrixAccount, reloginMatrixAccount, unlinkMatrixAccount } from '../../services/matrixService.ts'
@@ -223,6 +225,13 @@ async function verifyDevice() {
 	// Pick up the verified status the dialog may have just changed
 	await loadMatrixDetails()
 }
+
+/**
+ * Open the dialog to restore the keys of encrypted messages from the key backup
+ */
+async function restoreBackup() {
+	await spawnDialog(MatrixKeyBackup)
+}
 </script>
 
 <template>
@@ -289,6 +298,16 @@ async function verifyDevice() {
 					@click="verifyDevice">
 					<template #icon>
 						<IconShieldCheckOutline :size="20" />
+					</template>
+				</NcFormBoxButton>
+				<NcFormBoxButton
+					v-if="account.status === MATRIX.ACCOUNT_STATUS.ACTIVE"
+					:label="t('spreed', 'Restore encrypted history')"
+					:description="t('spreed', 'With the recovery key of your key backup')"
+					:disabled="loading"
+					@click="restoreBackup">
+					<template #icon>
+						<IconKeyOutline :size="20" />
 					</template>
 				</NcFormBoxButton>
 				<!-- TRANSLATORS: Dialog title and button to unlink the Matrix account from this client -->

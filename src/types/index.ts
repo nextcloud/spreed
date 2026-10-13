@@ -513,6 +513,8 @@ export type startMatrixVerificationResponse = ApiResponse<operations['matrix_acc
 export type getMatrixVerificationResponse = ApiResponse<operations['matrix_account-get-verification']['responses'][200]['content']['application/json']>
 export type confirmMatrixVerificationResponse = ApiResponse<operations['matrix_account-confirm-verification']['responses'][200]['content']['application/json']>
 export type cancelMatrixVerificationResponse = ApiResponse<operations['matrix_account-cancel-verification']['responses'][200]['content']['application/json']>
+export type restoreMatrixBackupParams = Required<operations['matrix_account-restore-backup']>['requestBody']['content']['application/json']
+export type restoreMatrixBackupResponse = ApiResponse<operations['matrix_account-restore-backup']['responses'][200]['content']['application/json']>
 
 // Federations
 export type FederationInvite = componentsFed['schemas']['FederationInvite']

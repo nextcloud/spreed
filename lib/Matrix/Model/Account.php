@@ -40,6 +40,8 @@ use OCP\DB\Types;
  * @method ?string getOlmAccount()
  * @method void setVerification(?string $verification)
  * @method ?string getVerification()
+ * @method void setBackupKey(?string $backupKey)
+ * @method ?string getBackupKey()
  */
 class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	public const STATUS_ACTIVE = 0;
@@ -63,6 +65,8 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	protected ?string $olmAccount = null;
 	/** Encrypted state of a running device verification, changed with AccountMapper::setVerification() */
 	protected ?string $verification = null;
+	/** Encrypted key and version of the key backup, to get missing room keys from it */
+	protected ?string $backupKey = null;
 
 	public function __construct() {
 		$this->addType('userId', Types::STRING);
@@ -78,6 +82,7 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 		$this->addType('lockUntil', Types::BIGINT);
 		$this->addType('olmAccount', Types::TEXT);
 		$this->addType('verification', Types::TEXT);
+		$this->addType('backupKey', Types::TEXT);
 	}
 
 	/**
