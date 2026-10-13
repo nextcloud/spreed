@@ -57,6 +57,8 @@ class CryptoService {
 	public const ROTATION_SECONDS = 7 * 24 * 3600;
 	/** Seconds the result of a verification check is reused */
 	public const VERIFIED_CHECK_TTL = 300;
+	/** Room keys requested at most per room and sync */
+	public const KEY_REQUESTS = 10;
 
 	private ICache $verifiedCache;
 
@@ -140,7 +142,7 @@ class CryptoService {
 	/**
 	 * @return ?Event The event with the decrypted type and content, null when the key is missing or the event is invalid
 	 */
-	public function decryptRoomEvent(Account $account, string $roomId, Event $event): ?Event {
+	public function decryptRoomEvent(Account $account, Client $client, string $roomId, Event $event): ?Event {
 		if (!$this->isAvailable()) {
 			return null;
 		}
@@ -148,6 +150,11 @@ class CryptoService {
 		$stored = is_string($sessionId) ? $this->inboundGroupSessionMapper->find((string)$account->getId(), $roomId, $sessionId) : null;
 		if ($stored === null) {
 			return null;
+		}
+		if ($stored->getSender() === '' && $this->findDevice($account, $client, $event->sender, $stored->getSenderKey()) !== null) {
+			// A forwarded room key belongs to the user that owns the device it was created on
+			$stored->setSender($event->sender);
+			$this->inboundGroupSessionMapper->update($stored);
 		}
 		if ($stored->getSender() !== $event->sender) {
 			// The room key was shared by a device of another user
@@ -326,7 +333,7 @@ class CryptoService {
 			$this->handleVerification($account, $client, $event->sender, $payload['type'], $payload['content']);
 			return null;
 		}
-		if ($payload['type'] !== 'm.room_key') {
+		if ($payload['type'] !== 'm.room_key' && $payload['type'] !== 'm.forwarded_room_key') {
 			return null;
 		}
 
@@ -335,7 +342,88 @@ class CryptoService {
 		if ($device === null || !hash_equals($device->getEd25519(), $payload['claimedEd25519'])) {
 			throw new CryptoException('Room key from an unknown device');
 		}
-		return $this->storeRoomKey($account, $event->sender, $senderKey, $payload['content']);
+		if ($payload['type'] === 'm.room_key') {
+			return $this->storeRoomKey($account, $event->sender, $senderKey, $payload['content']);
+		}
+		// Other devices of the user answer key requests, the device has to be verified with emoji
+		if ($event->sender !== $account->getMxid() || !$device->getVerified()) {
+			throw new CryptoException('Forwarded room key from a device that is not verified');
+		}
+		return $this->storeForwardedRoomKey($account, $payload['content']);
+	}
+
+	/**
+	 * A room key that another device of the user had, the user that shared
+	 * it originally is only known by the identity key of their device
+	 *
+	 * @param array<string, mixed> $content m.forwarded_room_key content
+	 * @return ?array{0: string, 1: string} Matrix room id and session id when the key is new or goes back further
+	 * @throws CryptoException
+	 */
+	protected function storeForwardedRoomKey(Account $account, array $content): ?array {
+		$roomId = $content['room_id'] ?? null;
+		$sessionId = $content['session_id'] ?? null;
+		$sessionKey = $content['session_key'] ?? null;
+		$senderKey = $content['sender_key'] ?? null;
+		if (($content['algorithm'] ?? null) !== MegolmEnvelope::ALGORITHM || !is_string($roomId) || !is_string($sessionId) || !is_string($sessionKey) || !is_string($senderKey)) {
+			return null;
+		}
+		$session = InboundSession::fromExportedKey($sessionKey);
+		if ($session->getId() !== $sessionId) {
+			throw new CryptoException('Forwarded room key does not match the session id');
+		}
+
+		$stored = $this->inboundGroupSessionMapper->find((string)$account->getId(), $roomId, $sessionId);
+		if ($stored !== null) {
+			if ($stored->getSenderKey() !== $senderKey || $stored->getFirstKnownIndex() <= $session->getFirstKnownIndex()) {
+				return null;
+			}
+		} else {
+			$stored = new InboundGroupSession();
+			$stored->setAccountId((string)$account->getId());
+			$stored->setRoomId($roomId);
+			$stored->setSessionId($sessionId);
+			// Set when the first message is decrypted, see decryptRoomEvent()
+			$stored->setSender('');
+			$stored->setSenderKey($senderKey);
+		}
+		$stored->setFirstKnownIndex($session->getFirstKnownIndex());
+		$stored->setPickle($this->crypto->encrypt($session->pickle()));
+		$stored->getId() === null ? $this->inboundGroupSessionMapper->insert($stored) : $this->inboundGroupSessionMapper->update($stored);
+		return [$roomId, $sessionId];
+	}
+
+	/**
+	 * Ask the other devices of the user for the room keys of events that could not be decrypted
+	 *
+	 * @param list<Event> $events Encrypted events
+	 * @throws MatrixException
+	 */
+	public function requestRoomKeys(Account $account, Client $client, string $roomId, array $events): void {
+		if (!$this->isAvailable() || $account->getOlmAccount() === null) {
+			return;
+		}
+		$requested = [];
+		foreach ($events as $event) {
+			$sessionId = $event->content['session_id'] ?? null;
+			$senderKey = $event->content['sender_key'] ?? null;
+			if (!is_string($sessionId) || isset($requested[$sessionId]) || count($requested) >= self::KEY_REQUESTS
+				|| $this->inboundGroupSessionMapper->find((string)$account->getId(), $roomId, $sessionId) !== null) {
+				continue;
+			}
+			$requested[$sessionId] = true;
+			$requestId = $this->secureRandom->generate(24, ISecureRandom::CHAR_ALPHANUMERIC);
+			$body = ['algorithm' => MegolmEnvelope::ALGORITHM, 'room_id' => $roomId, 'session_id' => $sessionId];
+			if (is_string($senderKey)) {
+				$body['sender_key'] = $senderKey;
+			}
+			$client->sendToDevice('m.room_key_request', [$account->getMxid() => ['*' => [
+				'action' => 'request',
+				'body' => $body,
+				'request_id' => $requestId,
+				'requesting_device_id' => $account->getDeviceId(),
+			]]], $requestId);
+		}
 	}
 
 	protected static function isVerification(string $type): bool {
@@ -353,17 +441,25 @@ class CryptoService {
 		if ($sender !== $account->getMxid()) {
 			return;
 		}
+		$findDevice = function (string $deviceId) use ($account, $client): ?MatrixDevice {
+			$mxid = $account->getMxid();
+			return $this->getDevices($account, $client, [$mxid])[$mxid][$deviceId]
+				?? $this->getDevices($account, $client, [$mxid], true)[$mxid][$deviceId]
+				?? null;
+		};
 		try {
-			$verification = $this->verificationService->handle($account, $client, $type, $content, function (string $deviceId) use ($account, $client): ?string {
-				$mxid = $account->getMxid();
-				$device = $this->getDevices($account, $client, [$mxid])[$mxid][$deviceId]
-					?? $this->getDevices($account, $client, [$mxid], true)[$mxid][$deviceId]
-					?? null;
-				return $device?->getEd25519();
-			});
-			if ($verification?->state === SasVerification::STATE_DONE) {
-				// The other device just cross-signed us, the cached verified status is stale
-				$this->forgetVerified($account);
+			$verification = $this->verificationService->handle($account, $client, $type, $content, fn (string $deviceId): ?string => $findDevice($deviceId)?->getEd25519());
+			if ($verification?->state !== SasVerification::STATE_DONE) {
+				return;
+			}
+			// The other device just cross-signed us, the cached verified status is stale
+			$this->forgetVerified($account);
+
+			// The other device proved it has the key, so the room keys it forwards are trusted
+			$device = $verification->theirDeviceId !== null ? $findDevice($verification->theirDeviceId) : null;
+			if ($device !== null && !$device->getVerified() && hash_equals($device->getEd25519(), (string)$verification->getTheirEd25519())) {
+				$device->setVerified(true);
+				$this->deviceMapper->update($device);
 			}
 		} catch (\Throwable $e) {
 			$this->logger->warning('Matrix verification event ' . $type . ' was ignored for ' . $account->getMxid(), ['exception' => $e]);

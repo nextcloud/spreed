@@ -99,7 +99,7 @@ class RoomSyncService {
 
 		foreach ($roomKeys as [$roomId, $sessionId]) {
 			try {
-				$this->decryptWaitingEvents($account, $roomId, $sessionId);
+				$this->decryptWaitingEvents($account, $client, $roomId, $sessionId);
 			} catch (\Throwable $e) {
 				$stats['failed']++;
 				$this->logger->error('Waiting events of Matrix room ' . $roomId . ' could not be decrypted for ' . $account->getMxid(), ['exception' => $e]);
@@ -225,9 +225,10 @@ class RoomSyncService {
 			$timeline = [...$this->getHistory($client, $matrixRoom, $joined->prevBatch), ...$timeline];
 		}
 		$timeline = array_map(fn (Event $event): Event => $event->type === 'm.room.encrypted'
-			? $this->cryptoService->decryptRoomEvent($account, $joined->roomId, $event) ?? $event
+			? $this->cryptoService->decryptRoomEvent($account, $client, $joined->roomId, $event) ?? $event
 			: $event, $timeline);
 		$messages = $this->messageSyncService->apply($room, $matrixRoom, $timeline, $members, $accounts, $initial || $created);
+		$this->cryptoService->requestRoomKeys($account, $client, $joined->roomId, array_values(array_filter($timeline, static fn (Event $event): bool => $event->type === 'm.room.encrypted')));
 		$this->applyReadReceipts($room, $matrixRoom, $joined->readReceipts, $accounts);
 		return $messages;
 	}
@@ -235,7 +236,7 @@ class RoomSyncService {
 	/**
 	 * Replace the placeholders of messages that were encrypted with a room key that arrived now
 	 */
-	protected function decryptWaitingEvents(Account $account, string $matrixRoomId, string $sessionId): void {
+	protected function decryptWaitingEvents(Account $account, Client $client, string $matrixRoomId, string $sessionId): void {
 		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
 		$room = $matrixRoom !== null ? $this->findTalkRoom($matrixRoom) : null;
 		if ($matrixRoom === null || $room === null) {
@@ -250,7 +251,7 @@ class RoomSyncService {
 		$accounts = $this->getLinkedAccounts($members);
 		foreach ($eventMaps as $eventMap) {
 			$encrypted = new Event($eventMap->getEventId(), 'm.room.encrypted', $eventMap->getSender(), json_decode((string)$eventMap->getCiphertext(), true) ?: []);
-			$event = $this->cryptoService->decryptRoomEvent($account, $matrixRoomId, $encrypted);
+			$event = $this->cryptoService->decryptRoomEvent($account, $client, $matrixRoomId, $encrypted);
 			if ($event !== null) {
 				$this->messageSyncService->applyDecrypted($room, $matrixRoom, $eventMap, $event, $members, $accounts);
 			}

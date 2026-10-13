@@ -684,7 +684,7 @@ class RoomSyncServiceTest extends TestCase {
 		$decrypted = self::message('$secret');
 		$this->cryptoService->expects(self::once())
 			->method('decryptRoomEvent')
-			->with(self::anything(), '!room:example.org', self::callback(static fn (Event $event): bool => $event->eventId === '$secret'))
+			->with(self::anything(), self::anything(), '!room:example.org', self::callback(static fn (Event $event): bool => $event->eventId === '$secret'))
 			->willReturn($decrypted);
 		$this->messageSyncService->expects(self::once())
 			->method('apply')
@@ -692,6 +692,21 @@ class RoomSyncServiceTest extends TestCase {
 
 		$this->service->process($this->account(), $this->client, self::batch([
 			'timeline' => ['events' => [['event_id' => '$secret', 'type' => 'm.room.encrypted', 'sender' => '@bob:example.org', 'content' => ['session_id' => 'session']]]],
+		]), false);
+	}
+
+	public function testKeysOfUndecryptableEventsAreRequested(): void {
+		$this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->cryptoService->method('decryptRoomEvent')->willReturnCallback(static fn ($account, $client, string $roomId, Event $event): ?Event => $event->eventId === '$known' ? self::message('$known') : null);
+		$this->cryptoService->expects(self::once())
+			->method('requestRoomKeys')
+			->with(self::anything(), $this->client, '!room:example.org', self::callback(static fn (array $events): bool => self::eventIds($events) === ['$unknown']));
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'timeline' => ['events' => [
+				['event_id' => '$known', 'type' => 'm.room.encrypted', 'sender' => '@bob:example.org', 'content' => ['session_id' => 'known']],
+				['event_id' => '$unknown', 'type' => 'm.room.encrypted', 'sender' => '@bob:example.org', 'content' => ['session_id' => 'unknown']],
+			]],
 		]), false);
 	}
 
@@ -703,7 +718,7 @@ class RoomSyncServiceTest extends TestCase {
 		$decrypted = self::message('$secret');
 		$this->cryptoService->expects(self::once())
 			->method('decryptRoomEvent')
-			->with(self::anything(), '!room:example.org', self::callback(static fn (Event $event): bool => $event->content === ['session_id' => 'session'] && $event->sender === '@bob:example.org'))
+			->with(self::anything(), self::anything(), '!room:example.org', self::callback(static fn (Event $event): bool => $event->content === ['session_id' => 'session'] && $event->sender === '@bob:example.org'))
 			->willReturn($decrypted);
 		$this->messageSyncService->expects(self::once())->method('applyDecrypted')->with($this->room, self::anything(), $eventMap, $decrypted);
 

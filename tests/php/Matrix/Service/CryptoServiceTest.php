@@ -19,6 +19,7 @@ use OCA\Talk\Matrix\Client\Crypto\MegolmEnvelope;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Account as OlmAccount;
 use OCA\Talk\Matrix\Client\Crypto\Olm\Session;
 use OCA\Talk\Matrix\Client\Crypto\OlmEnvelope;
+use OCA\Talk\Matrix\Client\Crypto\Verification\SasVerification;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Model\SyncBatch;
 use OCA\Talk\Matrix\Model\Account;
@@ -94,6 +95,7 @@ class CryptoServiceTest extends TestCase {
 			$this->devices[$device->getMxid() . '/' . $device->getDeviceId()] = $device;
 			return $device;
 		});
+		$this->deviceMapper->method('update')->willReturnArgument(0);
 		$this->deviceMapper->method('delete')->willReturnCallback(function (MatrixDevice $device): MatrixDevice {
 			unset($this->devices[$device->getMxid() . '/' . $device->getDeviceId()]);
 			return $device;
@@ -188,12 +190,19 @@ class CryptoServiceTest extends TestCase {
 	 * To-device event with the room key of the outbound session, Olm encrypted for our device
 	 */
 	private static function roomKeyEvent(OlmAccount $from, string $sender, string $deviceId, array $ourDevice, OutboundSession $outbound): array {
+		return self::toDeviceEvent($from, $sender, $deviceId, $ourDevice, 'm.room_key', MegolmEnvelope::roomKeyContent($outbound, '!room:hs'));
+	}
+
+	/**
+	 * Olm encrypted to-device event for our device
+	 */
+	private static function toDeviceEvent(OlmAccount $from, string $sender, string $deviceId, array $ourDevice, string $type, array $content): array {
 		[$ourKeys, $ourOneTimeKey] = $ourDevice;
 		$session = Session::createOutbound($from, Base64::decode($ourKeys->curve25519), Base64::decode($ourOneTimeKey));
 		return [
 			'type' => 'm.room.encrypted',
 			'sender' => $sender,
-			'content' => OlmEnvelope::encrypt($from, $sender, $deviceId, $session, $ourKeys, 'm.room_key', MegolmEnvelope::roomKeyContent($outbound, '!room:hs')),
+			'content' => OlmEnvelope::encrypt($from, $sender, $deviceId, $session, $ourKeys, $type, $content),
 		];
 	}
 
@@ -237,14 +246,14 @@ class CryptoServiceTest extends TestCase {
 		self::assertSame('@bob:hs', $this->groupSessions['!room:hs/' . $outbound->getId()]->getSender());
 		self::assertCount(1, $this->olmSessions);
 
-		$decrypted = $this->service->decryptRoomEvent($this->account, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'));
+		$decrypted = $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'));
 		self::assertSame('m.room.message', $decrypted?->type);
 		self::assertSame('Hello', $decrypted->getBody());
 		self::assertSame($outbound->getId(), $decrypted->megolmSession);
 		self::assertSame(0, $decrypted->megolmIndex);
 
-		self::assertNull($this->service->decryptRoomEvent($this->account, '!room:hs', self::roomEvent($bob, $outbound, '@carol:hs', 'Not from Bob')), 'Only messages of the user that shared the key are decrypted');
-		self::assertNull($this->service->decryptRoomEvent($this->account, '!other:hs', self::roomEvent($bob, OutboundSession::create(0), '@bob:hs', 'Unknown key')));
+		self::assertNull($this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@carol:hs', 'Not from Bob')), 'Only messages of the user that shared the key are decrypted');
+		self::assertNull($this->service->decryptRoomEvent($this->account, $this->client, '!other:hs', self::roomEvent($bob, OutboundSession::create(0), '@bob:hs', 'Unknown key')));
 	}
 
 	public function testRoomKeyFromDeviceOfAnotherUserIsIgnored(): void {
@@ -390,5 +399,126 @@ class CryptoServiceTest extends TestCase {
 	public function testEncryptWithoutKeys(): void {
 		$this->expectException(CryptoException::class);
 		$this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', [], 'm.room.message', ['body' => 'Hello']);
+	}
+
+	/**
+	 * A verification with the device that finished
+	 */
+	private static function finishedVerification(string $theirDeviceId, string $theirEd25519): SasVerification {
+		$pickle = json_decode(SasVerification::request('txn', '@alice:hs', 'ALICE', 'key', 1000)->pickle(), true);
+		return SasVerification::unpickle(json_encode(['state' => SasVerification::STATE_DONE, 'their' => $theirDeviceId, 'theirEd' => $theirEd25519] + $pickle));
+	}
+
+	public function testVerifiedDeviceIsMarked(): void {
+		$this->bootstrap();
+		$phone = $this->device('@alice:hs', 'PHONE');
+		$this->verificationService->method('handle')->willReturn(self::finishedVerification('PHONE', $phone->getSigningKeyBase64()));
+
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [['type' => 'm.key.verification.mac', 'sender' => '@alice:hs', 'content' => []]]]]));
+
+		self::assertTrue($this->devices['@alice:hs/PHONE']->getVerified());
+	}
+
+	public function testDeviceWithOtherKeyIsNotMarkedVerified(): void {
+		$this->bootstrap();
+		$this->device('@alice:hs', 'PHONE');
+		$this->verificationService->method('handle')->willReturn(self::finishedVerification('PHONE', OlmAccount::create()->getSigningKeyBase64()));
+
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [['type' => 'm.key.verification.mac', 'sender' => '@alice:hs', 'content' => []]]]]));
+
+		self::assertFalse($this->devices['@alice:hs/PHONE']->getVerified());
+	}
+
+	/**
+	 * A room key of Bob, as another device of the user forwards it
+	 *
+	 * @return array{0: OlmAccount, 1: OutboundSession, 2: array<string, mixed>} The account of Bob, his session and the content
+	 */
+	private function forwardedRoomKeyOfBob(): array {
+		$bob = $this->device('@bob:hs', 'BOB');
+		$outbound = OutboundSession::create(0);
+		return [$bob, $outbound, [
+			'algorithm' => MegolmEnvelope::ALGORITHM,
+			'room_id' => '!room:hs',
+			'sender_key' => $bob->getIdentityKeyBase64(),
+			'sender_claimed_ed25519_key' => $bob->getSigningKeyBase64(),
+			'session_id' => $outbound->getId(),
+			'session_key' => InboundSession::fromSessionKey($outbound->sessionKey())->export(),
+			'forwarding_curve25519_key_chain' => [],
+		]];
+	}
+
+	public function testForwardedRoomKeyFromVerifiedDevice(): void {
+		$ourDevice = $this->bootstrap();
+		$phone = $this->device('@alice:hs', 'PHONE');
+		[$bob, $outbound, $content] = $this->forwardedRoomKeyOfBob();
+		$this->verificationService->method('handle')->willReturn(self::finishedVerification('PHONE', $phone->getSigningKeyBase64()));
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [['type' => 'm.key.verification.mac', 'sender' => '@alice:hs', 'content' => []]]]]));
+
+		$roomKeys = $this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [self::toDeviceEvent($phone, '@alice:hs', 'PHONE', $ourDevice, 'm.forwarded_room_key', $content)]]]));
+
+		self::assertSame([['!room:hs', $outbound->getId()]], $roomKeys);
+		self::assertSame('', $this->groupSessions['!room:hs/' . $outbound->getId()]->getSender());
+		self::assertNull($this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@carol:hs', 'Not from Bob')), 'Carol has no device with the key of the session');
+		self::assertSame('Hello', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'))?->getBody());
+		self::assertSame('@bob:hs', $this->groupSessions['!room:hs/' . $outbound->getId()]->getSender());
+	}
+
+	public function testForwardedRoomKeyFromDeviceThatIsNotVerified(): void {
+		$ourDevice = $this->bootstrap();
+		$phone = $this->device('@alice:hs', 'PHONE');
+		[, , $content] = $this->forwardedRoomKeyOfBob();
+
+		$roomKeys = $this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [self::toDeviceEvent($phone, '@alice:hs', 'PHONE', $ourDevice, 'm.forwarded_room_key', $content)]]]));
+
+		self::assertSame([], $roomKeys);
+		self::assertSame([], $this->groupSessions);
+	}
+
+	public function testForwardedRoomKeyFromOtherUser(): void {
+		$ourDevice = $this->bootstrap();
+		[$bob, , $content] = $this->forwardedRoomKeyOfBob();
+		$this->devices['@bob:hs/BOB'] = $this->getDevicesOfBob()['BOB'];
+		$this->devices['@bob:hs/BOB']->setVerified(true);
+
+		$roomKeys = $this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [self::toDeviceEvent($bob, '@bob:hs', 'BOB', $ourDevice, 'm.forwarded_room_key', $content)]]]));
+
+		self::assertSame([], $roomKeys);
+	}
+
+	/**
+	 * @return array<string, MatrixDevice>
+	 */
+	private function getDevicesOfBob(): array {
+		$keys = $this->published['@bob:hs']['BOB'];
+		$device = new MatrixDevice();
+		$device->setMxid('@bob:hs');
+		$device->setDeviceId('BOB');
+		$device->setCurve25519($keys['keys']['curve25519:BOB']);
+		$device->setEd25519($keys['keys']['ed25519:BOB']);
+		return ['BOB' => $device];
+	}
+
+	public function testRequestRoomKeys(): void {
+		$ourDevice = $this->bootstrap();
+		$bob = $this->device('@bob:hs', 'BOB');
+		$known = OutboundSession::create(0);
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [self::roomKeyEvent($bob, '@bob:hs', 'BOB', $ourDevice, $known)]]]));
+
+		$this->service->requestRoomKeys($this->account, $this->client, '!room:hs', [
+			new Event('$1', 'm.room.encrypted', '@bob:hs', ['session_id' => 'missing', 'sender_key' => 'bobkey']),
+			new Event('$2', 'm.room.encrypted', '@bob:hs', ['session_id' => 'missing', 'sender_key' => 'bobkey']),
+			new Event('$3', 'm.room.encrypted', '@bob:hs', ['session_id' => $known->getId(), 'sender_key' => 'bobkey']),
+		]);
+
+		self::assertCount(1, $this->toDevice, 'One request per missing session');
+		[$type, $messages] = $this->toDevice[0];
+		self::assertSame('m.room_key_request', $type);
+		self::assertSame([
+			'action' => 'request',
+			'body' => ['algorithm' => MegolmEnvelope::ALGORITHM, 'room_id' => '!room:hs', 'session_id' => 'missing', 'sender_key' => 'bobkey'],
+			'request_id' => 'txn',
+			'requesting_device_id' => 'ALICE',
+		], $messages['@alice:hs']['*']);
 	}
 }
