@@ -489,13 +489,11 @@ export type certificateExpirationResponse = ApiResponse<operationsAdmin['certifi
 export type MatrixHomeserver = componentsAdmin['schemas']['MatrixHomeserver']
 export type addMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-add-homeserver']>['requestBody']['content']['application/json']
 export type updateMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-update-homeserver']>['requestBody']['content']['application/json']
-export type updateMatrixSettingsParams = Required<operationsAdmin['matrix_admin-update-settings']>['requestBody']['content']['application/json']
 export type getMatrixHomeserversResponse = ApiResponse<operationsAdmin['matrix_admin-list-homeservers']['responses'][200]['content']['application/json']>
 export type addMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-add-homeserver']['responses'][201]['content']['application/json']>
 export type updateMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-update-homeserver']['responses'][200]['content']['application/json']>
 export type testMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-test-homeserver']['responses'][200]['content']['application/json']>
 export type removeMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-remove-homeserver']['responses'][200]['content']['application/json']>
-export type updateMatrixSettingsResponse = ApiResponse<operationsAdmin['matrix_admin-update-settings']['responses'][200]['content']['application/json']>
 export type MatrixAccount = components['schemas']['MatrixAccount']
 export type linkMatrixAccountParams = Required<operations['matrix_account-link-account']>['requestBody']['content']['application/json']
 export type getMatrixAccountResponse = ApiResponse<operations['matrix_account-get-account']['responses'][200]['content']['application/json']>
@@ -643,6 +641,12 @@ export type {
 	UserPreferencesResponse,
 	UserProfileData,
 	UserProfileResponse,
+} from './core.ts'
+
+// App config (provisioning API)
+export type {
+	AppConfigSetValueParams,
+	AppConfigSetValueResponse,
 } from './core.ts'
 
 // Presets

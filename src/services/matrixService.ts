@@ -29,8 +29,6 @@ import type {
 	unlinkMatrixAccountResponse,
 	updateMatrixHomeserverParams,
 	updateMatrixHomeserverResponse,
-	updateMatrixSettingsParams,
-	updateMatrixSettingsResponse,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
@@ -78,15 +76,6 @@ async function testMatrixHomeserver(id: MatrixHomeserver['id']): testMatrixHomes
  */
 async function removeMatrixHomeserver(id: MatrixHomeserver['id']): removeMatrixHomeserverResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/matrix/admin/homeserver/{id}', { id }))
-}
-
-/**
- * Update the feature toggle and group restriction
- *
- * @param payload The settings to change
- */
-async function updateMatrixSettings(payload: updateMatrixSettingsParams): updateMatrixSettingsResponse {
-	return axios.put(generateOcsUrl('apps/spreed/api/v1/matrix/admin/settings'), payload)
 }
 
 /**
@@ -201,5 +190,4 @@ export {
 	testMatrixHomeserver,
 	unlinkMatrixAccount,
 	updateMatrixHomeserver,
-	updateMatrixSettings,
 }
