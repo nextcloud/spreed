@@ -122,8 +122,8 @@ export default {
 			isFederationOutgoingEnabled: FEDERATION_OUTGOING_ENABLED,
 			isFederationOnlyTrustedServersEnabled: FEDERATION_ONLY_TRUSTED_SERVERS,
 			loadingGroups: false,
-			groups: [],
-			allowedGroups: [],
+			groups: [...FEDERATION_ALLOWED_GROUPS],
+			allowedGroups: FEDERATION_ALLOWED_GROUPS,
 			saveLabelAllowedGroups: t('spreed', 'Save changes'),
 			debounceSearchGroup: () => {},
 		}
@@ -139,8 +139,6 @@ export default {
 	},
 
 	mounted() {
-		// allowed groups come as an array of string ids here
-		this.allowedGroups = FEDERATION_ALLOWED_GROUPS.sort((a, b) => a.localeCompare(b))
 		this.debounceSearchGroup = debounce(this.searchGroup, 500)
 		this.debounceSearchGroup('')
 	},
@@ -203,13 +201,9 @@ export default {
 					limit: 20,
 					offset: 0,
 				})
-				this.groups = response.data.ocs.data.groups.sort(function(a, b) {
-					return a.displayname.localeCompare(b.displayname)
-				})
-
-				// repopulate allowed groups with full group objects to show display name
-				const allowedGroupIds = this.allowedGroups.map((group) => typeof group === 'object' ? group.id : group)
-				this.allowedGroups = this.groups.filter((group) => allowedGroupIds.includes(group.id))
+				// Keep selected groups as options, even if they are not in the search results
+				const options = new Map([...this.allowedGroups, ...response.data.ocs.data.groups].map((group) => [group.id, group]))
+				this.groups = [...options.values()].sort((a, b) => a.displayname.localeCompare(b.displayname))
 			} catch (err) {
 				console.error('Could not fetch groups', err)
 			} finally {
@@ -222,7 +216,7 @@ export default {
 			this.loadingGroups = true
 			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
 
-			const groups = this.allowedGroups.map((group) => typeof group === 'object' ? group.id : group)
+			const groups = this.allowedGroups.map((group) => group.id)
 
 			OCP.AppConfig.setValue('spreed', 'federation_allowed_groups', JSON.stringify(groups), {
 				success: () => {
