@@ -124,7 +124,8 @@ class UserMention implements IEventListener {
 				// || $mention['type'] === 'federated_group'
 				 || $mention['type'] === 'team'
 				// || $mention['type'] === 'federated_team'
-				|| $mention['type'] === 'federated_user') {
+				|| $mention['type'] === 'federated_user'
+				|| $mention['type'] === Attendee::ACTOR_MATRIX) {
 				$search = $mention['type'] . '/' . $mention['id'];
 			}
 
@@ -142,7 +143,8 @@ class UserMention implements IEventListener {
 				// && !str_starts_with($search, 'federated_group/')
 				 && !str_starts_with($search, 'team/')
 				// && !str_starts_with($search, 'federated_team/')
-				&& !str_starts_with($search, 'federated_user/')) {
+				&& !str_starts_with($search, 'federated_user/')
+				&& !str_starts_with($search, Attendee::ACTOR_MATRIX . '/')) {
 				$message = $this->replaceOutsideCode($message, '@' . $search, '{' . $mentionParameterId . '}');
 			}
 
@@ -207,6 +209,20 @@ class UserMention implements IEventListener {
 					'id' => $cloudId->getUser(),
 					'name' => $displayName,
 					'server' => $cloudId->getRemote(),
+					'mention-id' => $search,
+				];
+			} elseif ($mention['type'] === Attendee::ACTOR_MATRIX) {
+				try {
+					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_MATRIX, $mention['id']);
+					$displayName = $participant->getAttendee()->getDisplayName() ?: $mention['id'];
+				} catch (ParticipantNotFoundException) {
+					$displayName = $mention['id'];
+				}
+
+				$messageParameters[$mentionParameterId] = [
+					'type' => Attendee::ACTOR_MATRIX,
+					'id' => $mention['id'],
+					'name' => $displayName,
 					'mention-id' => $search,
 				];
 			} elseif ($mention['type'] === 'group') {

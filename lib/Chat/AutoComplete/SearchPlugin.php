@@ -72,6 +72,8 @@ class SearchPlugin implements ISearchPlugin {
 		$guestAttendees = [];
 		/** @var array<string, string> $teamIds */
 		$teamIds = [];
+		/** @var array<string, string> $matrixIds */
+		$matrixIds = [];
 
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
@@ -95,6 +97,8 @@ class SearchPlugin implements ISearchPlugin {
 					$groupIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 					$teamIds[$attendee->getActorId()] = $attendee->getDisplayName();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_MATRIX) {
+					$matrixIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				}
 			}
 		}
@@ -104,6 +108,7 @@ class SearchPlugin implements ISearchPlugin {
 		$this->searchGuests($search, $guestAttendees, $searchResult);
 		$this->searchEmails($search, $emailAttendees, $searchResult);
 		$this->searchFederatedUsers($search, $cloudIds, $searchResult);
+		$this->searchFederatedUsers($search, $matrixIds, $searchResult, Attendee::ACTOR_MATRIX, Attendee::ACTOR_MATRIX);
 		$this->searchTeams($search, $teamIds, $searchResult);
 
 		return false;
@@ -158,12 +163,14 @@ class SearchPlugin implements ISearchPlugin {
 	}
 
 	/**
+	 * Federated users, or with other types Matrix users, by their id or display name
+	 *
 	 * @param array<string, string> $cloudIds
 	 */
-	protected function searchFederatedUsers(string $search, array $cloudIds, ISearchResult $searchResult): void {
+	protected function searchFederatedUsers(string $search, array $cloudIds, ISearchResult $searchResult, string $resultType = 'federated_users', string $shareType = 'federated_user'): void {
 		$search = mb_strtolower($search);
 
-		$type = new SearchResultType('federated_users');
+		$type = new SearchResultType($resultType);
 
 		$matches = $exactMatches = [];
 		foreach ($cloudIds as $cloudId => $displayName) {
@@ -172,17 +179,17 @@ class SearchPlugin implements ISearchPlugin {
 			}
 
 			if ($search === '') {
-				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				$matches[] = $this->createResult($shareType, $cloudId, $displayName);
 				continue;
 			}
 
 			if (mb_strtolower($cloudId) === $search) {
-				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				$exactMatches[] = $this->createResult($shareType, $cloudId, $displayName);
 				continue;
 			}
 
 			if (stripos($cloudId, $search) !== false) {
-				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				$matches[] = $this->createResult($shareType, $cloudId, $displayName);
 				continue;
 			}
 
@@ -191,12 +198,12 @@ class SearchPlugin implements ISearchPlugin {
 			}
 
 			if (mb_strtolower($displayName) === $search) {
-				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				$exactMatches[] = $this->createResult($shareType, $cloudId, $displayName);
 				continue;
 			}
 
 			if (mb_stripos($displayName, $search) !== false) {
-				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
+				$matches[] = $this->createResult($shareType, $cloudId, $displayName);
 				continue;
 			}
 		}
