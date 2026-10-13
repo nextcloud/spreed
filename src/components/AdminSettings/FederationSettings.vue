@@ -3,92 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<section id="federation_settings" class="federation section">
-		<h2>
-			{{ t('spreed', 'Federation') }}
-			<small>{{ t('spreed', 'Beta') }}</small>
-		</h2>
-
-		<p class="settings-hint additional-top-margin">
-			{{ t('spreed', 'Federated chats and calls work already. Attachment handling is coming in a future version.') }}
-		</p>
-
-		<NcCheckboxRadioSwitch
-			:modelValue="isFederationEnabled"
-			:disabled="loading"
-			type="switch"
-			@update:modelValue="saveFederationEnabled">
-			{{ t('spreed', 'Enable Federation in Talk app') }}
-		</NcCheckboxRadioSwitch>
-
-		<template v-if="isFederationEnabled">
-			<h3>{{ t('spreed', 'Permissions') }}</h3>
-
-			<NcCheckboxRadioSwitch
-				:modelValue="isFederationIncomingEnabled"
-				:disabled="loading"
-				type="switch"
-				@update:modelValue="saveFederationIncomingEnabled">
-				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
-			</NcCheckboxRadioSwitch>
-
-			<NcCheckboxRadioSwitch
-				:modelValue="isFederationOutgoingEnabled"
-				:disabled="loading"
-				type="switch"
-				@update:modelValue="saveFederationOutgoingEnabled">
-				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
-			</NcCheckboxRadioSwitch>
-
-			<NcCheckboxRadioSwitch
-				:modelValue="isFederationOnlyTrustedServersEnabled"
-				:disabled="loading"
-				type="switch"
-				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
-				{{ t('spreed', 'Only allow to federate with trusted servers') }}
-			</NcCheckboxRadioSwitch>
-			<!-- eslint-disable-next-line vue/no-v-html -->
-			<p class="settings-hint additional-top-margin" v-html="trustedServersLink" />
-
-			<h3>{{ t('spreed', 'Limit to groups') }}</h3>
-
-			<p class="settings-hint additional-top-margin">
-				{{ t('spreed', 'When at least one group is selected, only people of the listed groups can invite federated users to conversations.') }}
-			</p>
-
-			<div class="form">
-				<NcSelect
-					v-model="allowedGroups"
-					inputId="allow_groups_invite_federated"
-					:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
-					name="allow_groups_invite_federated"
-					class="form__select"
-					:options="groups"
-					:placeholder="t('spreed', 'Select groups …')"
-					:disabled="loading"
-					multiple
-					searchable
-					:tagWidth="60"
-					:loading="loadingGroups"
-					:showNoOptions="false"
-					keepOpen
-					trackBy="id"
-					label="displayname"
-					noWrap
-					@search="debounceSearchGroup($event)" />
-
-				<NcButton
-					variant="primary"
-					:disabled="loading"
-					@click="saveAllowedGroups">
-					{{ saveLabelAllowedGroups }}
-				</NcButton>
-			</div>
-		</template>
-	</section>
-</template>
-
 <script>
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
@@ -232,6 +146,92 @@ export default {
 	},
 }
 </script>
+
+<template>
+	<section id="federation_settings" class="federation section">
+		<h2>
+			{{ t('spreed', 'Federation') }}
+			<small>{{ t('spreed', 'Beta') }}</small>
+		</h2>
+
+		<p class="settings-hint additional-top-margin">
+			{{ t('spreed', 'Federated chats and calls work already. Attachment handling is coming in a future version.') }}
+		</p>
+
+		<NcCheckboxRadioSwitch
+			:modelValue="isFederationEnabled"
+			:disabled="loading"
+			type="switch"
+			@update:modelValue="saveFederationEnabled">
+			{{ t('spreed', 'Enable Federation in Talk app') }}
+		</NcCheckboxRadioSwitch>
+
+		<template v-if="isFederationEnabled">
+			<h3>{{ t('spreed', 'Permissions') }}</h3>
+
+			<NcCheckboxRadioSwitch
+				:modelValue="isFederationIncomingEnabled"
+				:disabled="loading"
+				type="switch"
+				@update:modelValue="saveFederationIncomingEnabled">
+				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
+			</NcCheckboxRadioSwitch>
+
+			<NcCheckboxRadioSwitch
+				:modelValue="isFederationOutgoingEnabled"
+				:disabled="loading"
+				type="switch"
+				@update:modelValue="saveFederationOutgoingEnabled">
+				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
+			</NcCheckboxRadioSwitch>
+
+			<NcCheckboxRadioSwitch
+				:modelValue="isFederationOnlyTrustedServersEnabled"
+				:disabled="loading"
+				type="switch"
+				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
+				{{ t('spreed', 'Only allow to federate with trusted servers') }}
+			</NcCheckboxRadioSwitch>
+			<!-- eslint-disable-next-line vue/no-v-html -->
+			<p class="settings-hint additional-top-margin" v-html="trustedServersLink" />
+
+			<h3>{{ t('spreed', 'Limit to groups') }}</h3>
+
+			<p class="settings-hint additional-top-margin">
+				{{ t('spreed', 'When at least one group is selected, only people of the listed groups can invite federated users to conversations.') }}
+			</p>
+
+			<div class="form">
+				<NcSelect
+					v-model="allowedGroups"
+					inputId="allow_groups_invite_federated"
+					:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
+					name="allow_groups_invite_federated"
+					class="form__select"
+					:options="groups"
+					:placeholder="t('spreed', 'Select groups …')"
+					:disabled="loading"
+					multiple
+					searchable
+					:tagWidth="60"
+					:loading="loadingGroups"
+					:showNoOptions="false"
+					keepOpen
+					trackBy="id"
+					label="displayname"
+					noWrap
+					@search="debounceSearchGroup($event)" />
+
+				<NcButton
+					variant="primary"
+					:disabled="loading"
+					@click="saveAllowedGroups">
+					{{ saveLabelAllowedGroups }}
+				</NcButton>
+			</div>
+		</template>
+	</section>
+</template>
 
 <style scoped lang="scss">
 small {
