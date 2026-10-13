@@ -414,6 +414,8 @@ OC.L10N.register(
     "Edit display name" : "Ẓreg isem n uskan",
     "Notification settings" : "Iɣewwaren n usezmel",
     "Default language" : "Tutlayt s yinner",
+    "Close" : "Mdel",
+    "Try again" : "Ɛreḍ tikkelt nniḍen.",
     "Privacy" : "Vie privée",
     "Start call" : "Bdu asiwel",
     "Recording" : "Asekles",

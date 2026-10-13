@@ -579,6 +579,8 @@ OC.L10N.register(
     "Edit display name" : "Breyta birtingarnafni",
     "Notification settings" : "Stillingar á tilkynningum",
     "Default language" : "Sjálfgefið tungumál",
+    "Close" : "Loka",
+    "Try again" : "Reyndu aftur",
     "Privacy" : "Meðferð persónuupplýsinga",
     "Attachments folder" : "Viðhengjamappa",
     "Start call" : "Hefja samtal",

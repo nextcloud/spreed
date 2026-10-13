@@ -1488,6 +1488,8 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Spille av lyder når deltakere blir med i eller forlater en samtale",
     "Notification settings" : "Innstillinger for notifiseringer",
     "Default language" : "Standard språk",
+    "Close" : "Lukk",
+    "Try again" : "Prøv igjen",
     "Select location for attachments" : "Velg plassering for vedlegg",
     "Error while setting attachment folder" : "Feil under angivelse av vedleggsmappe",
     "Error while setting read status privacy" : "Feil under angivelse av personvern for lesestatus",
