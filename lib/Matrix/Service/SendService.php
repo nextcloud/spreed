@@ -14,6 +14,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\Attachment;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
@@ -354,8 +355,7 @@ class SendService {
 		} catch (DoesNotExistException) {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
 		}
-		if ($matrixRoom->getEncrypted()) {
-			// ponytail: encrypted attachments are not supported yet
+		if ($matrixRoom->getEncrypted() && !$this->cryptoService->isAvailable()) {
 			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -364,11 +364,16 @@ class SendService {
 		if (!is_resource($stream)) {
 			throw new SendException('message', Http::STATUS_NOT_FOUND);
 		}
-		$contentUri = $this->send(
-			$account,
-			fn (Client $client): string => $client->uploadMedia(new Stream($stream, ['size' => (int)$file->getSize()]), $mimeType, $file->getName()),
-			AccountService::MEDIA_TIMEOUT,
-		);
+		if ($matrixRoom->getEncrypted()) {
+			// The homeserver gets neither the content, the type nor the name of the file
+			$encrypted = Attachment::encrypt($stream);
+			$upload = new Stream($encrypted['stream'], ['size' => $encrypted['size']]);
+			$contentUri = $this->send($account, fn (Client $client): string => $client->uploadMedia($upload, 'application/octet-stream', ''), AccountService::MEDIA_TIMEOUT);
+		} else {
+			$encrypted = null;
+			$upload = new Stream($stream, ['size' => (int)$file->getSize()]);
+			$contentUri = $this->send($account, fn (Client $client): string => $client->uploadMedia($upload, $mimeType, $file->getName()), AccountService::MEDIA_TIMEOUT);
+		}
 
 		$content = [
 			'msgtype' => match (explode('/', $mimeType)[0]) {
@@ -379,14 +384,18 @@ class SendService {
 			},
 			'body' => $caption !== '' ? $caption : $file->getName(),
 			'filename' => $file->getName(),
-			'url' => $contentUri,
 			'info' => ['mimetype' => $mimeType, 'size' => $file->getSize()],
 		];
+		if ($encrypted !== null) {
+			$content['file'] = ['url' => $contentUri] + $encrypted['file'];
+		} else {
+			$content['url'] = $contentUri;
+		}
 		$relation = $this->getRelation($room, $matrixRoom, $this->getParentComment($comment), Thread::THREAD_NONE);
 		if ($relation !== null) {
 			$content['m.relates_to'] = $relation;
 		}
-		$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->sendEvent($matrixRoom->getMatrixRoomId(), 'm.room.message', $content, $transactionId));
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.room.message', $content);
 		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
 		if ($eventMap !== null) {
 			$eventMap->setCommentId((int)$comment->getId());

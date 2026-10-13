@@ -23,4 +23,9 @@ final class Base64 {
 		}
 		return $decoded;
 	}
+
+	/** URL-safe variant, used for the keys of encrypted files */
+	public static function encodeUrl(string $bytes): string {
+		return rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+	}
 }

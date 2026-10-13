@@ -12,6 +12,8 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
+use OCA\Talk\Matrix\Client\Crypto\Attachment;
+use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Html\HtmlToMarkdown;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Model\Account;
@@ -32,6 +34,7 @@ use OCP\Comments\NotFoundException;
 use OCP\DB\Exception;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\Security\ICrypto;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -45,6 +48,7 @@ class MessageSyncService {
 		private readonly ICommentsManager $commentsManager,
 		private readonly ParticipantService $participantService,
 		private readonly ThreadService $threadService,
+		private readonly ICrypto $crypto,
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly ITimeFactory $timeFactory,
 		private readonly IURLGenerator $urlGenerator,
@@ -198,6 +202,7 @@ class MessageSyncService {
 
 		$object = $this->getSharedObject($eventMap, $event);
 		if ($object !== null) {
+			$this->eventMapMapper->update($eventMap);
 			// ponytail: the attachment is not added to the shared items of the conversation
 			$comment->setVerb(ChatManager::VERB_OBJECT_SHARED);
 			$comment->setMessage(self::getSharedObjectMessage($object));
@@ -243,9 +248,10 @@ class MessageSyncService {
 
 	/**
 	 * Attachments become a link to download them through the homeserver of
-	 * the viewer (images also a thumbnail), locations a location object
+	 * the viewer (images also a thumbnail), locations a location object. The
+	 * keys of encrypted attachments are set on the event map.
 	 *
-	 * @return array{type: string, id: string, name: string, link?: string, latitude?: string, longitude?: string, mxc?: string, thumb?: string}|null
+	 * @return array{type: string, id: string, name: string, link?: string, latitude?: string, longitude?: string, mxc?: string, thumb?: string, mimetype?: string}|null
 	 */
 	protected function getSharedObject(EventMap $eventMap, Event $event): ?array {
 		$msgtype = $event->type === 'm.sticker' ? 'm.image' : ($event->content['msgtype'] ?? null);
@@ -265,10 +271,21 @@ class MessageSyncService {
 			];
 		}
 
-		$mxc = is_string($event->content['url'] ?? null) ? $event->content['url'] : '';
-		if (!in_array($msgtype, ['m.image', 'm.file', 'm.video', 'm.audio'], true) || !str_starts_with($mxc, 'mxc://')) {
+		// Attachments of encrypted rooms are encrypted with their own key
+		$file = is_array($event->content['file'] ?? null) ? $event->content['file'] : null;
+		$mxc = $file !== null ? ($file['url'] ?? null) : ($event->content['url'] ?? null);
+		if (!in_array($msgtype, ['m.image', 'm.file', 'm.video', 'm.audio'], true) || !is_string($mxc) || !str_starts_with($mxc, 'mxc://')) {
 			return null;
 		}
+		if ($file !== null) {
+			try {
+				$keys = Attachment::getKeys($file);
+			} catch (CryptoException) {
+				return null;
+			}
+			$eventMap->setMediaKeys($this->crypto->encrypt(json_encode(array_map('base64_encode', $keys), JSON_THROW_ON_ERROR)));
+		}
+
 		$object = [
 			'type' => 'highlight',
 			'id' => 'matrix-media/' . $eventMap->getId(),
@@ -276,6 +293,11 @@ class MessageSyncService {
 			'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.MatrixMedia.download', ['id' => (string)$eventMap->getId()]),
 			'mxc' => $mxc,
 		];
+		$mimetype = $event->content['info']['mimetype'] ?? null;
+		if ($file !== null && is_string($mimetype)) {
+			// The homeserver only knows encrypted files as application/octet-stream
+			$object['mimetype'] = mb_substr($mimetype, 0, 255);
+		}
 		if ($msgtype === 'm.image') {
 			$object['thumb'] = $this->urlGenerator->linkToRouteAbsolute('spreed.MatrixMedia.preview', ['id' => (string)$eventMap->getId()]);
 		}

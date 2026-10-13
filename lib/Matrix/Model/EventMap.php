@@ -31,6 +31,8 @@ use OCP\DB\Types;
  * @method ?int getMegolmIndex()
  * @method void setCiphertext(?string $ciphertext)
  * @method ?string getCiphertext()
+ * @method void setMediaKeys(?string $mediaKeys)
+ * @method ?string getMediaKeys()
  */
 class EventMap extends SnowflakeAwareEntity {
 	/** Id of the MatrixRoom entity */
@@ -45,6 +47,8 @@ class EventMap extends SnowflakeAwareEntity {
 	protected ?int $megolmIndex = null;
 	/** Content of an encrypted event that waits for its key */
 	protected ?string $ciphertext = null;
+	/** Encrypted JSON with the key, IV and hash of an encrypted attachment */
+	protected ?string $mediaKeys = null;
 
 	public function __construct() {
 		$this->addType('matrixRoomId', Types::STRING);
@@ -55,5 +59,6 @@ class EventMap extends SnowflakeAwareEntity {
 		$this->addType('megolmSession', Types::STRING);
 		$this->addType('megolmIndex', Types::BIGINT);
 		$this->addType('ciphertext', Types::TEXT);
+		$this->addType('mediaKeys', Types::TEXT);
 	}
 }

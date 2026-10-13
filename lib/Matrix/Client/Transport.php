@@ -115,7 +115,8 @@ final class Transport {
 	 * @throws MatrixException
 	 */
 	public function upload(StreamInterface $content, string $contentType, string $fileName): string {
-		$request = $this->requestFactory->createRequest('POST', $this->baseUrl . '/_matrix/media/v3/upload?filename=' . rawurlencode($fileName))
+		$query = $fileName !== '' ? '?filename=' . rawurlencode($fileName) : '';
+		$request = $this->requestFactory->createRequest('POST', $this->baseUrl . '/_matrix/media/v3/upload' . $query)
 			->withHeader('Accept', 'application/json')
 			->withHeader('Content-Type', $contentType)
 			->withBody($content);

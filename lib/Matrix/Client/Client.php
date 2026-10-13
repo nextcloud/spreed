@@ -333,6 +333,7 @@ class Client {
 	}
 
 	/**
+	 * @param string $fileName Empty to not tell the homeserver
 	 * @return string Content URI
 	 * @throws MatrixException
 	 */
