@@ -1783,6 +1783,8 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Cheza sauti washiriki wanapojiunga au kuacha simu",
     "Notification settings" : "Mipangilio ya arifu",
     "Default language" : "Lugha chaguomsingi",
+    "Close" : "Funga",
+    "Try again" : "Jaribu tena",
     "Select location for attachments" : "Chagua eneo la viambatisho",
     "Error while setting attachment folder" : "Hitilafu wakati wa kuweka folda ya kiambatisho",
     "Error while setting read status privacy" : "Hitilafu wakati wa kuweka faragha ya hali ya kusoma",

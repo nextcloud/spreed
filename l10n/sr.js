@@ -1775,6 +1775,8 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Пусти звукове када учесници приступе позиву или када га напусте",
     "Notification settings" : "Поставке обавештења",
     "Default language" : "Подразумевани језик",
+    "Close" : "Затвори",
+    "Try again" : "Покушајте поново",
     "Select location for attachments" : "Избор локације за прилоге",
     "Error while setting attachment folder" : "Грешка приликом постављања фолдера за прилоге",
     "Error while setting read status privacy" : "Грешка приликом постављања приватности статуса читања",

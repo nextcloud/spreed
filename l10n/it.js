@@ -1756,6 +1756,8 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Riproduci suoni quando i partecipanti entrano o abbandonano una chiamata",
     "Notification settings" : "Impostazioni di notifica",
     "Default language" : "Lingua predefinita",
+    "Close" : "Chiudi",
+    "Try again" : "Riprova",
     "Select location for attachments" : "Seleziona la posizione per gli allegati",
     "Error while setting attachment folder" : "Errore durante l'impostazione della cartella degli allegati",
     "Error while setting read status privacy" : "Errore durante l'impostazione della riservatezza dello stato di lettura",

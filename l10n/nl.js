@@ -1880,6 +1880,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Fout bij laden van beschikbare talen voor live vertaling",
     "Error when trying to set live translation language" : "Fout bij instellen van taal voor live vertaling",
     "Set language used to show the transcriptions" : "Stel de taal in waarin transcripties worden getoond",
+    "Close" : "Sluiten",
+    "Try again" : "Probeer opnieuw",
     "Select location for attachments" : "Selecteer locatie voor bijlagen",
     "Error while setting attachment folder" : "Fout bij instellen map voor bijlagen",
     "Error while setting read status privacy" : "Fout bij instellen lees-status privacy",

@@ -1574,6 +1574,8 @@ OC.L10N.register(
     "Default language ({languageName})" : "Idioma padrão ({languageName})",
     "Error when trying to load the available live translation languages" : "Erro ao tentar carregar os idiomas de tradução em tempo real disponíveis",
     "Set language used to show the transcriptions" : "Definir o idioma usado para mostrar as transcrições",
+    "Close" : "Fechar",
+    "Try again" : "Tentar novamente",
     "Select location for attachments" : "Selecionar localização para os anexos",
     "Error while setting attachment folder" : "Erro ao definir a pasta do anexo",
     "Error while setting typing status privacy" : "Erro ao definir a privacidade do status de digitação",

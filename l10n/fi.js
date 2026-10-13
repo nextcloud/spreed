@@ -1143,6 +1143,8 @@ OC.L10N.register(
     "Notification settings" : "Ilmoitusasetukset",
     "Sounds for chat and call notifications" : "Ääniasetukset keskustelu- ja puheluilmoituksille",
     "Default language" : "Oletuskieli",
+    "Close" : "Sulje",
+    "Try again" : "Yritä uudelleen",
     "Select location for attachments" : "Valitse sijainti liitteille",
     "Error while setting attachment folder" : "Virhe asettaessa liitekansiota",
     "Turn camera and microphone off by default" : "Kamera ja mikrofoni oletuksena pois päältä",

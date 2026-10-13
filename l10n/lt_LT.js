@@ -1943,6 +1943,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Klaida bandant įkelti galimas vertimo realiuoju laiku kalbas",
     "Error when trying to set live translation language" : "Klaida bandant nustatyti vertimo realiuoju laiku kalbą",
     "Set language used to show the transcriptions" : "Nustatyti kalbą, kuria rodomos transkripcijos",
+    "Close" : "Užverti",
+    "Try again" : "Bandyti dar kartą",
     "Select location for attachments" : "Pasirinkti vietą priedams",
     "Error while setting attachment folder" : "Klaida nustatant priedų aplanką",
     "Error while setting read status privacy" : "Klaida nustatant skaitymo būsenos privatumą",

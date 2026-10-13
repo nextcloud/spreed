@@ -1868,6 +1868,8 @@ OC.L10N.register(
     "Error when trying to load the available live translation languages" : "Błąd podczas próby wczytania dostępnych języków tłumaczenia na żywo",
     "Error when trying to set live translation language" : "Błąd podczas próby ustawienia języka tłumaczenia na żywo",
     "Set language used to show the transcriptions" : "Ustaw język używany do wyświetlania transkrypcji",
+    "Close" : "Zamknij",
+    "Try again" : "Spróbuj ponownie",
     "Select location for attachments" : "Wybierz lokalizację dla załączników",
     "Error while setting attachment folder" : "Błąd podczas ustawiania katalogu dla załącznika",
     "Error while setting read status privacy" : "Błąd podczas ustawiania prywatności statusu odczytu",

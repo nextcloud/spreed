@@ -370,6 +370,7 @@ OC.L10N.register(
     "Projects" : "Loyihalar",
     "Select conversation" : "Suhbatni tanlang",
     "Notification settings" : "Bildirishnoma sozlamalari",
+    "Close" : "Yopish",
     "Privacy" : "Maxfiylik",
     "Attachments folder" : "Qo'shimchalar jildi",
     "Select a region" : "Hududni tanlang",

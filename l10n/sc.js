@@ -886,6 +886,7 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Ativa is sonos cando is partetzipantes intrant o lassant una mutida",
     "Notification settings" : "Cunfiguratzione de notìficas",
     "Default language" : "Limba predefinida",
+    "Close" : "Serra",
     "Select location for attachments" : "Seletziona sa positzione pro is alligongiados",
     "Error while setting attachment folder" : "Errore in sa cunfiguratzione de sa cartella de is alligongiados",
     "Error while setting read status privacy" : "Errore in sa cunfiguratzione de sa riservadesa de s'istadu de letura",
