@@ -54,7 +54,8 @@ class ScheduledMessageMapper extends QBMapper {
 			->andWhere($query->expr()->eq('s.actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('s.actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
 			->leftJoin('s', 'talk_threads', 'th', $query->expr()->eq('s.thread_id', 'th.id'))
-			->orderBy('s.send_at', 'ASC');
+			->orderBy('s.send_at', 'ASC')
+			->addOrderBy('s.id', 'ASC');
 
 		$cursor = $query->executeQuery();
 		$result = $cursor->fetchAllAssociative();
@@ -118,7 +119,9 @@ class ScheduledMessageMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->lte('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
+			->where($query->expr()->lte('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)))
+			->orderBy('send_at', 'ASC')
+			->addOrderBy('id', 'ASC');
 
 		return $this->findEntities($query);
 	}
