@@ -1512,13 +1512,19 @@ class SignalingControllerTest extends TestCase {
 	public function testGetSettingsSIPBridgeValidNoToken(): void {
 		$this->config = $this->createMock(Config::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
-		$this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET)->willReturn(self::SIP_BRIDGE_SECRET);
 		$this->config->method('getStunServers')->willReturn([]);
 		$this->config->method('getTurnSettings')->willReturn([]);
 		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
 		$this->config->method('getHideSignalingWarning')->willReturn(false);
-		$isSIPConfigured = !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET));
-		$this->assertFalse($isSIPConfigured);
+
+		// when Config::SIP_BRIDGE_DIALIN_INFO is empty, SIP is not configured
+		$this->appConfig
+			->method('getAppValueString')
+			->willReturnCallback(fn (string $key): string => match ($key) {
+				Config::SIP_BRIDGE_DIALIN_INFO => '',
+				Config::SIP_BRIDGE_SHARED_SECRET => self::SIP_BRIDGE_SECRET,
+			});
+
 		$this->userId = null;
 		$this->recreateSignalingController();
 
