@@ -133,20 +133,25 @@ class AccountMapper extends QBMapper {
 
 	/**
 	 * Take the sync lock of the account unless another process holds an unexpired one
+	 *
+	 * @return ?Account The account as stored once the lock is held, as the previous holder may have changed it, null when another process holds the lock
+	 * @throws DoesNotExistException
 	 */
-	public function acquireLock(Account $account, int $now, int $until): bool {
+	public function acquireLock(Account $account, int $now, int $until): ?Account {
 		$qb = $this->db->getQueryBuilder();
 		$qb->update($this->getTableName())
 			->set('lock_until', $qb->createNamedParameter($until, IQueryBuilder::PARAM_INT))
 			->where($qb->expr()->eq('id', $qb->createNamedParameter((string)$account->getId())))
 			->andWhere($qb->expr()->lt('lock_until', $qb->createNamedParameter($now, IQueryBuilder::PARAM_INT)));
 		if ($qb->executeStatement() !== 1) {
-			return false;
+			return null;
 		}
 
-		$account->setLockUntil($until);
-		$account->resetUpdatedFields();
-		return true;
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id', $qb->createNamedParameter((string)$account->getId())));
+		return $this->findEntity($qb);
 	}
 
 	public function releaseLock(Account $account): void {
