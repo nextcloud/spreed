@@ -152,26 +152,6 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/admin/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Update feature toggle and group restriction
-         * @description This endpoint requires admin access
-         */
-        put: operations["matrix_admin-update-settings"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
         parameters: {
             query?: never;
@@ -1360,82 +1340,6 @@ export interface operations {
                             data: {
                                 error: string;
                             };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "matrix_admin-update-settings": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description Enable Matrix rooms
-                     * @default null
-                     */
-                    enabled?: boolean | null;
-                    /**
-                     * @description Groups allowed to link (empty = everyone)
-                     * @default null
-                     */
-                    allowedGroups?: string[] | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Settings stored */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                enabled: boolean;
-                                allowedGroups: string[];
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Logged in account must be an admin */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
                         };
                     };
                 };
