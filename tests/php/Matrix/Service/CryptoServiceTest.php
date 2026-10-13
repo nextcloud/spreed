@@ -421,6 +421,34 @@ class CryptoServiceTest extends TestCase {
 		self::assertSame([], json_decode($this->outboundSessions['!room:hs']->getSharedWith(), true));
 	}
 
+	public function testRotationOfTheRoom(): void {
+		$this->bootstrap();
+		$encrypt = fn (?int $rotationPeriodMs, ?int $rotationPeriodMsgs): string => $this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@alice:hs'], 'm.room.message', ['body' => 'Hello'], $rotationPeriodMs, $rotationPeriodMsgs)['session_id'];
+
+		$first = $encrypt(null, 2);
+		self::assertSame($first, $encrypt(null, 2));
+		self::assertNotSame($first, $encrypt(null, 2), 'New room key after two messages');
+
+		$fourth = $encrypt(null, 1000);
+		self::assertSame($fourth, $encrypt(null, 1000));
+		$this->outboundSessions['!room:hs']->setPickle('encrypted:' . self::outboundAtIndex(CryptoService::ROTATION_MESSAGES));
+		self::assertNotSame($fourth, $encrypt(null, 1000), 'Longer periods than the default are not used');
+
+		$session = $encrypt(500, null);
+		self::assertNotSame($session, $encrypt(500, null), 'New room key after the time ran out');
+	}
+
+	/**
+	 * Pickle of an outbound session that sent $index messages
+	 */
+	private static function outboundAtIndex(int $index): string {
+		$session = OutboundSession::create(0);
+		for ($i = 0; $i < $index; $i++) {
+			$session->encrypt('');
+		}
+		return $session->pickle();
+	}
+
 	public function testDeviceWithForgedOneTimeKeyDoesNotGetTheRoomKey(): void {
 		$this->bootstrap();
 		$this->device('@bob:hs', 'BOB');

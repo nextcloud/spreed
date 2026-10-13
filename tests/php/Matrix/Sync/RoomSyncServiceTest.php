@@ -294,6 +294,21 @@ class RoomSyncServiceTest extends TestCase {
 		]), false);
 	}
 
+	public function testRoomKeyRotationOfTheRoom(): void {
+		$matrixRoom = $this->existingRoom(null, ['@alice:example.org' => $this->member('@alice:example.org', 'join', '7')]);
+		$this->cryptoService->method('isAvailable')->willReturn(true);
+
+		$this->service->process($this->account(), $this->client, self::batch([
+			'state' => ['events' => [['type' => 'm.room.encryption', 'state_key' => '', 'sender' => '@bob:example.org', 'content' => ['algorithm' => 'm.megolm.v1.aes-sha2', 'rotation_period_ms' => 3600000, 'rotation_period_msgs' => 'many']]]],
+		]), false);
+		self::assertSame(3600000, $matrixRoom->getRotationPeriodMs());
+		self::assertNull($matrixRoom->getRotationPeriodMsgs(), 'Invalid values are ignored');
+
+		$this->service->process($this->account(), $this->client, self::batch(['timeline' => ['events' => []]]), false);
+		self::assertTrue($matrixRoom->getEncrypted());
+		self::assertSame(3600000, $matrixRoom->getRotationPeriodMs(), 'Kept when the state did not change');
+	}
+
 	public function testEncryptedRoomAndPowerLevels(): void {
 		$this->roomMapper->method('getByMatrixRoomId')->willReturn($this->matrixRoom());
 		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);

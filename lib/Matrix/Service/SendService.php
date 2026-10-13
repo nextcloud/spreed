@@ -571,7 +571,7 @@ class SendService {
 			if ($matrixRoom->getEncrypted()) {
 				// ponytail: members are fetched for every encrypted event, cache them when big rooms make sending slow
 				$members = $client->getRoomMembers($matrixRoom->getMatrixRoomId());
-				$content = $this->cryptoService->encryptRoomEvent($account, $client, $matrixRoom->getMatrixRoomId(), $members, $type, $content);
+				$content = $this->cryptoService->encryptRoomEvent($account, $client, $matrixRoom->getMatrixRoomId(), $members, $type, $content, $matrixRoom->getRotationPeriodMs(), $matrixRoom->getRotationPeriodMsgs());
 				$type = 'm.room.encrypted';
 			}
 			return $client->sendEvent($matrixRoom->getMatrixRoomId(), $type, $content, $transactionId);

@@ -23,6 +23,9 @@ final class RoomState {
 	/** @var list<string> Creators with the creator level, since room version 12 */
 	public array $creators = [];
 	public bool $encrypted = false;
+	/** Room key rotation of m.room.encryption, null for the default */
+	public ?int $rotationPeriodMs = null;
+	public ?int $rotationPeriodMsgs = null;
 	/** @var array<string, mixed> */
 	public array $powerLevels = [];
 	/** @var array<string, Member> */
@@ -59,6 +62,8 @@ final class RoomState {
 				break;
 			case 'm.room.encryption':
 				$this->encrypted = true;
+				$this->rotationPeriodMs = is_int($content['rotation_period_ms'] ?? null) && $content['rotation_period_ms'] > 0 ? $content['rotation_period_ms'] : null;
+				$this->rotationPeriodMsgs = is_int($content['rotation_period_msgs'] ?? null) && $content['rotation_period_msgs'] > 0 ? $content['rotation_period_msgs'] : null;
 				break;
 			case 'm.room.power_levels':
 				$this->powerLevels = $content;

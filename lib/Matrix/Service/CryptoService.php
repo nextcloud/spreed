@@ -184,15 +184,19 @@ class CryptoService {
 	 *
 	 * @param list<string> $members Matrix user ids of the joined and invited members
 	 * @param array<string, mixed> $content
+	 * @param ?int $rotationPeriodMs Rotation of the room, only used when shorter than ROTATION_SECONDS
+	 * @param ?int $rotationPeriodMsgs Rotation of the room, only used when shorter than ROTATION_MESSAGES
 	 * @return array<string, mixed> Content of the m.room.encrypted event
 	 * @throws CryptoException when the device has no keys yet
 	 * @throws MatrixException
 	 */
-	public function encryptRoomEvent(Account $account, Client $client, string $roomId, array $members, string $type, array $content): array {
+	public function encryptRoomEvent(Account $account, Client $client, string $roomId, array $members, string $type, array $content, ?int $rotationPeriodMs = null, ?int $rotationPeriodMsgs = null): array {
 		if (!$this->isAvailable() || $account->getOlmAccount() === null) {
 			throw new CryptoException('The device has no keys yet');
 		}
-		return $this->lock->run('crypto/' . $account->getId(), function () use ($account, $client, $roomId, $members, $type, $content): array {
+		$rotationMessages = min(self::ROTATION_MESSAGES, $rotationPeriodMsgs ?? self::ROTATION_MESSAGES);
+		$rotationSeconds = min(self::ROTATION_SECONDS, intdiv($rotationPeriodMs ?? self::ROTATION_SECONDS * 1000, 1000));
+		return $this->lock->run('crypto/' . $account->getId(), function () use ($account, $client, $roomId, $members, $type, $content, $rotationMessages, $rotationSeconds): array {
 			$olm = OlmAccount::unpickle($this->crypto->decrypt((string)$account->getOlmAccount()));
 			$recipients = [];
 			foreach ($this->getDevices($account, $client, $members) as $mxid => $devices) {
@@ -208,8 +212,8 @@ class CryptoService {
 			/** @var list<string> $sharedWith */
 			$sharedWith = $stored !== null ? json_decode($stored->getSharedWith(), true) : [];
 			if ($session === null
-				|| $session->getMessageIndex() >= self::ROTATION_MESSAGES
-				|| $session->getCreatedAt() + self::ROTATION_SECONDS < $this->timeFactory->getTime()
+				|| $session->getMessageIndex() >= $rotationMessages
+				|| $session->getCreatedAt() + $rotationSeconds <= $this->timeFactory->getTime()
 				|| array_diff($sharedWith, array_keys($recipients)) !== []) {
 				$session = OutboundSession::create($this->timeFactory->getTime());
 				$sharedWith = [];

@@ -32,6 +32,10 @@ use OCP\DB\Types;
  * @method ?string getCreators()
  * @method void setEncrypted(bool $encrypted)
  * @method bool getEncrypted()
+ * @method void setRotationPeriodMs(?int $rotationPeriodMs)
+ * @method ?int getRotationPeriodMs()
+ * @method void setRotationPeriodMsgs(?int $rotationPeriodMsgs)
+ * @method ?int getRotationPeriodMsgs()
  * @method void setPowerLevels(?string $powerLevels)
  * @method ?string getPowerLevels()
  * @method void setAvatarUrl(?string $avatarUrl)
@@ -49,6 +53,9 @@ class MatrixRoom extends SnowflakeAwareEntity {
 	/** JSON list of the creators with the creator level, since room version 12 */
 	protected ?string $creators = null;
 	protected bool $encrypted = false;
+	/** Room key rotation of m.room.encryption, null for the default */
+	protected ?int $rotationPeriodMs = null;
+	protected ?int $rotationPeriodMsgs = null;
 	/** JSON content of m.room.power_levels */
 	protected ?string $powerLevels = null;
 	/** Content URI of the avatar that was applied to the conversation */
@@ -63,6 +70,8 @@ class MatrixRoom extends SnowflakeAwareEntity {
 		$this->addType('creator', Types::STRING);
 		$this->addType('creators', Types::STRING);
 		$this->addType('encrypted', Types::BOOLEAN);
+		$this->addType('rotationPeriodMs', Types::BIGINT);
+		$this->addType('rotationPeriodMsgs', Types::BIGINT);
 		$this->addType('powerLevels', Types::STRING);
 		$this->addType('avatarUrl', Types::STRING);
 	}
