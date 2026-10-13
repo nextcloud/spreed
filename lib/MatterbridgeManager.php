@@ -595,6 +595,32 @@ class MatterbridgeManager {
 	private function checkBridgeProcess(Room $room, array $bridge, bool $relaunch = true): int {
 		$pid = 0;
 
+		// check if current $bridge parts (domain) are still valid before doing anything
+		try {
+			$this->validateParts($bridge); // no return needed, validateParts will throw exception
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error($e->getMessage());
+
+			// if the pid is set, kill the process and set it to disabled in the database
+			if (isset($bridge['pid']) && (int)$bridge['pid'] !== 0) {
+				if ($this->isRunning($bridge['pid'])) {
+					$this->killPid($bridge['pid']);
+				}
+
+				$query = $this->db->getQueryBuilder();
+				$query->update('talk_bridges')
+					->set('enabled', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+					->set('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+					->where($query->expr()->eq(
+						'pid',
+						$query->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT)));
+				$result = $query->executeQuery();
+				$result->closeCursor();
+
+			}
+			return $pid; // pid remains unchanged 0, i.e. no process with invalid parts running
+		}
+
 		if (isset($bridge['pid']) && (int)$bridge['pid'] !== 0) {
 			// config : there is a PID stored
 			$isRunning = $this->isRunning($bridge['pid']);
