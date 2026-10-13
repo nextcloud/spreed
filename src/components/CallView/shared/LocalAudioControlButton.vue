@@ -22,7 +22,7 @@
 						'no-audio-available': !isAudioAvailable,
 						'audio-control-button': showDevices,
 					}"
-					:disabled="resumeAudioAfterChange"
+					:disabled="resumeAudioAfterChange || forcedMuteLock"
 					@click.stop="toggleAudio">
 					<template #icon>
 						<VolumeIndicator
@@ -119,7 +119,10 @@ import AdvancedAudioDialog from '../../MediaSettings/AdvancedAudioDialog.vue'
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
+import { localCallParticipantModel } from '../../../utils/webrtc/index.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
+
+const FORCED_MUTE_LOCK_DURATION = 3000
 
 export default {
 	name: 'LocalAudioControlButton',
@@ -209,6 +212,22 @@ export default {
 		/* Flag to smoothly toggle the audio while in call */
 		const resumeAudioAfterChange = ref(false)
 
+		/* Prevent unmuting by accident right after being muted by a moderator */
+		const forcedMuteLock = ref(false)
+		let forcedMuteLockTimeout = null
+		const handleForcedMute = () => {
+			forcedMuteLock.value = true
+			clearTimeout(forcedMuteLockTimeout)
+			forcedMuteLockTimeout = setTimeout(() => {
+				forcedMuteLock.value = false
+			}, FORCED_MUTE_LOCK_DURATION)
+		}
+		localCallParticipantModel.on('forcedMute', handleForcedMute)
+		onBeforeUnmount(() => {
+			localCallParticipantModel.off('forcedMute', handleForcedMute)
+			clearTimeout(forcedMuteLockTimeout)
+		})
+
 		/**
 		 * Check if component is visible and not obstructed by others
 		 *
@@ -238,6 +257,7 @@ export default {
 			unsubscribeFromDevices,
 			updateSubscriptionPermissions,
 			resumeAudioAfterChange,
+			forcedMuteLock,
 		}
 	},
 
@@ -350,6 +370,10 @@ export default {
 			if (this.model.attributes.audioEnabled) {
 				this.model.disableAudio()
 			} else {
+				if (this.forcedMuteLock) {
+					return
+				}
+
 				this.model.enableAudio()
 			}
 		},
