@@ -785,8 +785,8 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(54)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
 		$participant = $this->createStub(Participant::class);
@@ -857,8 +857,8 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(54)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([
 				'width' => 1234,
 				'height' => 4567,
@@ -938,7 +938,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn('absolute-link-owner');
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getImageMetadataForFileId');
+			->method('getImageMetadataForNode');
 
 		$participant = $this->createMock(Participant::class);
 		$attendee = Attendee::fromRow([
@@ -1026,7 +1026,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(false);
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getImageMetadataForFileId');
+			->method('getImageMetadataForNode');
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
@@ -1162,8 +1162,8 @@ class SystemMessageTest extends TestCase {
 			->method('isAvailable');
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(42)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([]);
 
 		$this->url->expects($this->once())
@@ -1280,8 +1280,8 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(42)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([]);
 
 		$this->url->expects($this->once())
@@ -1403,8 +1403,8 @@ class SystemMessageTest extends TestCase {
 			->method('isAvailable');
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(42)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([]);
 
 		$this->url->expects($this->once())
