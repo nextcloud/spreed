@@ -21,11 +21,10 @@
 					hideUserStatus />
 				<div v-else class="icon-loading" />
 			</div>
-			<VueCropper
-				v-show="showCropper"
+			<ConversationAvatarCropper
 				ref="cropper"
 				class="avatar__cropper"
-				v-bind="cropperOptions" />
+				:class="{ 'avatar__cropper--hidden': !showCropper }" />
 			<div v-if="editable" class="avatar__controls">
 				<div class="avatar__buttons">
 					<!-- Set emoji as avatar -->
@@ -114,7 +113,6 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import VueCropper from 'vue-cropperjs'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
@@ -124,10 +122,9 @@ import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Fi
 import IconPaletteOutline from 'vue-material-design-icons/PaletteOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
+import ConversationAvatarCropper from './ConversationAvatarCropper.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { AVATAR } from '../../constants.ts'
-
-import 'cropperjs/dist/cropper.css'
 
 const validMimeTypes = ['image/png', 'image/jpeg']
 
@@ -135,12 +132,12 @@ export default {
 	name: 'ConversationAvatarEditor',
 
 	components: {
+		ConversationAvatarCropper,
 		ConversationIcon,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
 		NcIconSvgWrapper,
-		VueCropper,
 		// Icons
 		IconTrashCanOutline,
 		IconEmoticonOutline,
@@ -189,16 +186,6 @@ export default {
 		return {
 			showCropper: false,
 			loading: false,
-			cropperOptions: {
-				aspectRatio: 1,
-				viewMode: 1,
-				guides: false,
-				center: false,
-				highlight: false,
-				autoCropArea: 1,
-				minContainerWidth: 300,
-				minContainerHeight: 300,
-			},
 
 			backgroundColor: '',
 			emojiAvatar: '',
@@ -255,9 +242,14 @@ export default {
 			}
 
 			const reader = new FileReader()
-			reader.onload = (e) => {
-				this.$refs.cropper.replace(e.target.result)
-				this.showCropper = true
+			reader.onload = async (e) => {
+				try {
+					await this.$refs.cropper.replace(e.target.result)
+					this.showCropper = true
+				} catch (error) {
+					showError(t('spreed', 'Error setting conversation picture'))
+					this.cancel()
+				}
 			}
 			reader.readAsDataURL(file)
 		},
@@ -285,7 +277,7 @@ export default {
 
 			try {
 				const tempAvatar = generateUrl(`/core/preview?fileId=${fileid}&x=512&y=512&a=1`)
-				this.$refs.cropper.replace(tempAvatar)
+				await this.$refs.cropper.replace(tempAvatar)
 				this.showCropper = true
 			} catch (e) {
 				showError(t('spreed', 'Error setting conversation picture'))
@@ -325,14 +317,11 @@ export default {
 		},
 
 		async getPictureFormData() {
-			const canvasData = this.$refs.cropper.getCroppedCanvas()
-			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
-
+			const canvas = await this.$refs.cropper.getCroppedCanvas()
 			const blob = await new Promise((resolve, reject) => {
-				this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas()
-					.toBlob((blob) => blob === null
-						? reject(new Error(t('spreed', 'Error cropping conversation picture')))
-						: resolve(blob))
+				canvas.toBlob((blob) => blob === null
+					? reject(new Error(t('spreed', 'Error cropping conversation picture')))
+					: resolve(blob))
 			})
 			const formData = new FormData()
 			formData.append('file', blob)
@@ -434,8 +423,10 @@ section {
 		height: 300px;
 		overflow: hidden;
 
-		&:deep(.cropper-view-box) {
-			border-radius: 50%;
+		// Keep the layout measurable while hidden, cropperjs needs the size
+		&--hidden {
+			position: absolute;
+			visibility: hidden;
 		}
 	}
 }

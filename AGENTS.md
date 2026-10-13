@@ -123,4 +123,4 @@ Roadmap, not new-code patterns. Don't extend these; extract/repair when touching
 8. EventBus overreach — UI-coordination events (`focus-message`, `scroll-chat-to-bottom`) and store-sync listeners should move to reactivity/provide-inject; signaling fan-out stays.
 9. `:deep()` overrides — ~174 of `@nextcloud/vue` internals; audit on each library bump, upstream what's useful.
 10. `@matrix-org/olm` — deprecated upstream for vodozemac; track for `src/utils/e2ee/`.
-11. Misc — `icon-*` CSS classes (~11 files), `OC.linkTo()` in `src/collections.js`, `cropperjs` v1, `base64-js` in `e2ee/encryption.js`, `vue-material-design-icons` (421 imports — consider `@mdi/js`+`NcIconSvgWrapper`, low priority).
+11. Misc — `icon-*` CSS classes (~11 files), `OC.linkTo()` in `src/collections.js`, `base64-js` in `e2ee/encryption.js`, `vue-material-design-icons` (421 imports — consider `@mdi/js`+`NcIconSvgWrapper`, low priority).
