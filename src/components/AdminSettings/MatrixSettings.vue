@@ -31,13 +31,13 @@ import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import { useActionStatus } from '../../composables/useActionStatus.ts'
+import { setAppConfig } from '../../services/appConfigService.ts'
 import {
 	addMatrixHomeserver,
 	getMatrixHomeservers,
 	removeMatrixHomeserver,
 	testMatrixHomeserver,
 	updateMatrixHomeserver,
-	updateMatrixSettings,
 } from '../../services/matrixService.ts'
 import { isAxiosErrorResponse } from '../../types/guards.ts'
 
@@ -103,7 +103,7 @@ async function searchGroup(query: string) {
 async function saveEnabled(value: boolean) {
 	loading.value = true
 	try {
-		await updateMatrixSettings({ enabled: value })
+		await setAppConfig('spreed', 'matrix_enabled', value ? '1' : '0')
 		enabled.value = value
 	} catch (error) {
 		console.error(error)
@@ -119,7 +119,7 @@ async function saveEnabled(value: boolean) {
 async function saveAllowedGroups() {
 	loading.value = true
 	try {
-		await runAction('allowedGroups', () => updateMatrixSettings({ allowedGroups: allowedGroups.value.map((group) => group.id) }))
+		await runAction('allowedGroups', () => setAppConfig('spreed', 'matrix_allowed_groups', JSON.stringify(allowedGroups.value.map((group) => group.id))))
 	} catch (error) {
 		console.error(error)
 		showError(t('spreed', 'Could not save allowed groups'))
