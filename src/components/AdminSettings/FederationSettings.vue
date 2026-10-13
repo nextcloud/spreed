@@ -7,20 +7,29 @@
 import type { InitialState } from '../../types/index.ts'
 
 import axios from '@nextcloud/axios'
+import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import debounce from 'debounce'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import { onBeforeUnmount, ref } from 'vue'
+import NcFormBox from '@nextcloud/vue/components/NcFormBox'
+import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
+import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
+import NcFormGroup from '@nextcloud/vue/components/NcFormGroup'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
+import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconContentSaveOutline from 'vue-material-design-icons/ContentSaveOutline.vue'
+import { useActionStatus } from '../../composables/useActionStatus.ts'
+import { setAppConfig } from '../../services/appConfigService.ts'
 
 type Group = InitialState['spreed']['federation_allowed_groups'][number]
 
-const trustedServersLink = t('spreed', 'Trusted servers can be configured at {linkstart}Sharing settings page{linkend}.')
-	.replace('{linkstart}', `<a target="_blank" rel="noreferrer nofollow" class="external" href="${generateUrl('/settings/admin/sharing#ocFederationSettings')}">`)
-	.replaceAll('{linkend}', ' ↗</a>')
+const { getActionStatus, runAction } = useActionStatus()
+
+const trustedServersUrl = generateUrl('/settings/admin/sharing#ocFederationSettings')
 
 const loading = ref(false)
 const isFederationEnabled = ref(loadState<InitialState['spreed']['federation_enabled']>('spreed', 'federation_enabled', false))
@@ -31,13 +40,7 @@ const loadingGroups = ref(false)
 const allowedGroups = ref<Group[]>(loadState<InitialState['spreed']['federation_allowed_groups']>('spreed', 'federation_allowed_groups', []))
 const groups = ref<Group[]>([...allowedGroups.value])
 
-const saveLabelAllowedGroups = ref(t('spreed', 'Save changes'))
-
 const debounceSearchGroup = debounce(searchGroup, 500)
-
-onMounted(() => {
-	debounceSearchGroup('')
-})
 
 onBeforeUnmount(() => {
 	debounceSearchGroup.clear()
@@ -48,15 +51,17 @@ onBeforeUnmount(() => {
  *
  * @param value - new value
  */
-function saveFederationEnabled(value: boolean) {
+async function saveFederationEnabled(value: boolean) {
 	loading.value = true
-
-	OCP.AppConfig.setValue('spreed', 'federation_enabled', value ? 'yes' : 'no', {
-		success: () => {
-			loading.value = false
-			isFederationEnabled.value = value
-		},
-	})
+	try {
+		await setAppConfig('spreed', 'federation_enabled', value ? 'yes' : 'no')
+		isFederationEnabled.value = value
+	} catch (error) {
+		console.error(error)
+		showError(t('spreed', 'Could not save the setting'))
+	} finally {
+		loading.value = false
+	}
 }
 
 /**
@@ -64,15 +69,17 @@ function saveFederationEnabled(value: boolean) {
  *
  * @param value - new value
  */
-function saveFederationIncomingEnabled(value: boolean) {
+async function saveFederationIncomingEnabled(value: boolean) {
 	loading.value = true
-
-	OCP.AppConfig.setValue('spreed', 'federation_incoming_enabled', value ? '1' : '0', {
-		success: () => {
-			loading.value = false
-			isFederationIncomingEnabled.value = value
-		},
-	})
+	try {
+		await setAppConfig('spreed', 'federation_incoming_enabled', value ? '1' : '0')
+		isFederationIncomingEnabled.value = value
+	} catch (error) {
+		console.error(error)
+		showError(t('spreed', 'Could not save the setting'))
+	} finally {
+		loading.value = false
+	}
 }
 
 /**
@@ -80,15 +87,17 @@ function saveFederationIncomingEnabled(value: boolean) {
  *
  * @param value - new value
  */
-function saveFederationOutgoingEnabled(value: boolean) {
+async function saveFederationOutgoingEnabled(value: boolean) {
 	loading.value = true
-
-	OCP.AppConfig.setValue('spreed', 'federation_outgoing_enabled', value ? '1' : '0', {
-		success: () => {
-			loading.value = false
-			isFederationOutgoingEnabled.value = value
-		},
-	})
+	try {
+		await setAppConfig('spreed', 'federation_outgoing_enabled', value ? '1' : '0')
+		isFederationOutgoingEnabled.value = value
+	} catch (error) {
+		console.error(error)
+		showError(t('spreed', 'Could not save the setting'))
+	} finally {
+		loading.value = false
+	}
 }
 
 /**
@@ -96,15 +105,17 @@ function saveFederationOutgoingEnabled(value: boolean) {
  *
  * @param value - new value
  */
-function saveFederationOnlyTrustedServersEnabled(value: boolean) {
+async function saveFederationOnlyTrustedServersEnabled(value: boolean) {
 	loading.value = true
-
-	OCP.AppConfig.setValue('spreed', 'federation_only_trusted_servers', value ? '1' : '0', {
-		success: () => {
-			loading.value = false
-			isFederationOnlyTrustedServersEnabled.value = value
-		},
-	})
+	try {
+		await setAppConfig('spreed', 'federation_only_trusted_servers', value ? '1' : '0')
+		isFederationOnlyTrustedServersEnabled.value = value
+	} catch (error) {
+		console.error(error)
+		showError(t('spreed', 'Could not save the setting'))
+	} finally {
+		loading.value = false
+	}
 }
 
 /**
@@ -129,21 +140,16 @@ async function searchGroup(query: string) {
 /**
  * Save the groups allowed to invite federated users
  */
-function saveAllowedGroups() {
+async function saveAllowedGroups() {
 	loading.value = true
-	loadingGroups.value = true
-	saveLabelAllowedGroups.value = t('spreed', 'Saving …')
-
-	OCP.AppConfig.setValue('spreed', 'federation_allowed_groups', JSON.stringify(allowedGroups.value.map((group) => group.id)), {
-		success: () => {
-			loading.value = false
-			loadingGroups.value = false
-			saveLabelAllowedGroups.value = t('spreed', 'Saved!')
-			setTimeout(() => {
-				saveLabelAllowedGroups.value = t('spreed', 'Save changes')
-			}, 5000)
-		},
-	})
+	try {
+		await runAction('allowedGroups', () => setAppConfig('spreed', 'federation_allowed_groups', JSON.stringify(allowedGroups.value.map((group) => group.id))))
+	} catch (error) {
+		console.error(error)
+		showError(t('spreed', 'Could not save allowed groups'))
+	} finally {
+		loading.value = false
+	}
 }
 </script>
 
@@ -154,86 +160,86 @@ function saveAllowedGroups() {
 			<small>{{ t('spreed', 'Beta') }}</small>
 		</h2>
 
-		<p class="settings-hint additional-top-margin">
+		<p class="settings-hint">
 			{{ t('spreed', 'Federated chats and calls work already. Attachment handling is coming in a future version.') }}
 		</p>
 
-		<NcCheckboxRadioSwitch
-			:modelValue="isFederationEnabled"
-			:disabled="loading"
-			type="switch"
-			@update:modelValue="saveFederationEnabled">
-			{{ t('spreed', 'Enable Federation in Talk app') }}
-		</NcCheckboxRadioSwitch>
-
-		<template v-if="isFederationEnabled">
-			<h3>{{ t('spreed', 'Permissions') }}</h3>
-
-			<NcCheckboxRadioSwitch
-				:modelValue="isFederationIncomingEnabled"
-				:disabled="loading"
-				type="switch"
-				@update:modelValue="saveFederationIncomingEnabled">
-				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
-			</NcCheckboxRadioSwitch>
-
-			<NcCheckboxRadioSwitch
-				:modelValue="isFederationOutgoingEnabled"
-				:disabled="loading"
-				type="switch"
-				@update:modelValue="saveFederationOutgoingEnabled">
-				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
-			</NcCheckboxRadioSwitch>
-
-			<NcCheckboxRadioSwitch
-				:modelValue="isFederationOnlyTrustedServersEnabled"
-				:disabled="loading"
-				type="switch"
-				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
-				{{ t('spreed', 'Only allow to federate with trusted servers') }}
-			</NcCheckboxRadioSwitch>
-			<!-- eslint-disable-next-line vue/no-v-html -->
-			<p class="settings-hint additional-top-margin" v-html="trustedServersLink" />
-
-			<h3>{{ t('spreed', 'Limit to groups') }}</h3>
-
-			<p class="settings-hint additional-top-margin">
-				{{ t('spreed', 'When at least one group is selected, only people of the listed groups can invite federated users to conversations.') }}
-			</p>
-
-			<div class="form">
-				<NcSelect
-					v-model="allowedGroups"
-					inputId="allow_groups_invite_federated"
-					:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
-					name="allow_groups_invite_federated"
-					class="form__select"
-					:options="groups"
-					:placeholder="t('spreed', 'Select groups …')"
+		<div class="federation__form">
+			<NcFormBox>
+				<NcFormBoxSwitch
+					:modelValue="isFederationEnabled"
+					:label="t('spreed', 'Enable federation in Talk')"
 					:disabled="loading"
-					multiple
-					searchable
-					:tagWidth="60"
-					:loading="loadingGroups"
-					:showNoOptions="false"
-					keepOpen
-					trackBy="id"
-					label="displayname"
-					noWrap
-					@search="debounceSearchGroup($event)" />
+					@update:modelValue="saveFederationEnabled" />
+			</NcFormBox>
 
-				<NcButton
-					variant="primary"
-					:disabled="loading"
-					@click="saveAllowedGroups">
-					{{ saveLabelAllowedGroups }}
-				</NcButton>
-			</div>
-		</template>
+			<template v-if="isFederationEnabled">
+				<NcFormGroup
+					:label="t('spreed', 'Limit to groups')"
+					:description="t('spreed', 'By default, everyone can invite federated users. When at least one group is selected, only members of the selected groups can.')">
+					<NcFormBox>
+						<NcSelect
+							v-model="allowedGroups"
+							inputId="federation_allowed_groups"
+							:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
+							name="federation_allowed_groups"
+							:options="groups"
+							:placeholder="t('spreed', 'Select groups …')"
+							:disabled="loading"
+							multiple
+							searchable
+							:tagWidth="60"
+							:loading="loadingGroups"
+							:showNoOptions="false"
+							keepOpen
+							trackBy="id"
+							label="displayname"
+							noWrap
+							@open="searchGroup('')"
+							@search="debounceSearchGroup($event)" />
+						<NcFormBoxButton
+							:label="getActionStatus('allowedGroups') === 'success' ? t('spreed', 'Saved!') : t('spreed', 'Save changes')"
+							:disabled="loading"
+							@click="saveAllowedGroups">
+							<template #icon>
+								<NcLoadingIcon v-if="getActionStatus('allowedGroups') === 'pending'" :size="20" />
+								<IconCheck v-else-if="getActionStatus('allowedGroups') === 'success'" :size="20" fillColor="var(--color-border-success)" />
+								<IconAlertCircleOutline v-else-if="getActionStatus('allowedGroups') === 'error'" :size="20" fillColor="var(--color-border-error)" />
+								<IconContentSaveOutline v-else :size="20" />
+							</template>
+						</NcFormBoxButton>
+					</NcFormBox>
+				</NcFormGroup>
+
+				<NcFormGroup :label="t('spreed', 'Permissions')">
+					<NcFormBox>
+						<NcFormBoxSwitch
+							:modelValue="isFederationIncomingEnabled"
+							:label="t('spreed', 'Allow people to be invited to federated conversations')"
+							:disabled="loading"
+							@update:modelValue="saveFederationIncomingEnabled" />
+						<NcFormBoxSwitch
+							:modelValue="isFederationOutgoingEnabled"
+							:label="t('spreed', 'Allow people to invite federated users to conversations')"
+							:disabled="loading"
+							@update:modelValue="saveFederationOutgoingEnabled" />
+						<NcFormBoxSwitch
+							:modelValue="isFederationOnlyTrustedServersEnabled"
+							:label="t('spreed', 'Only federate with trusted servers')"
+							:disabled="loading"
+							@update:modelValue="saveFederationOnlyTrustedServersEnabled" />
+						<NcFormBoxButton
+							:label="t('spreed', 'Configure trusted servers')"
+							:href="trustedServersUrl"
+							target="_blank" />
+					</NcFormBox>
+				</NcFormGroup>
+			</template>
+		</div>
 	</section>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 small {
 	color: var(--color-favorite);
 	border: 1px solid var(--color-favorite);
@@ -241,23 +247,27 @@ small {
 	padding: 0 9px;
 }
 
-h3 {
-	margin-top: 24px;
-	font-weight: bold;
+// Keep the whitespace before the badge, like h3 in GeneralSettings
+.federation h2 {
+	display: block;
 }
 
-.additional-top-margin {
-	margin-top: 10px;
-}
+// TODO apply the 600px width limit to all admin settings sections
+.federation {
+	// Same as in NcFormGroup, it is not defined globally
+	--form-element-label-offset: calc(var(--border-radius-element) + var(--default-grid-baseline));
 
-.form {
-	display: flex;
-	align-items: flex-end;
-	gap: 10px;
-	padding-top: 5px;
-
-	&__select {
-		min-width: 300px !important;
+	h2,
+	.settings-hint {
+		max-width: 600px;
+		padding-inline: var(--form-element-label-offset);
 	}
+}
+
+.federation__form {
+	display: flex;
+	flex-direction: column;
+	gap: calc(2.5 * var(--default-grid-baseline));
+	max-width: 600px;
 }
 </style>
