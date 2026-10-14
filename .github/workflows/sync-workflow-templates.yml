@@ -12,7 +12,7 @@ name: Update workflows
 on:
   workflow_dispatch:
   schedule:
-      - cron: "5 2 * * 0"
+      - cron: "45 22 * * 6"
 
 permissions:
   contents: read
@@ -56,7 +56,32 @@ jobs:
           path: target
           ref: ${{ matrix.branches }}
 
+      - name: Check for active merge freeze
+        id: freeze
+        env:
+          BRANCH_NAME: ${{ matrix.branches }}
+        run: |
+          if [[ ! -f target/.github/workflows/block-merge-freeze.yml ]]; then
+            echo 'No block-merge-freeze workflow, continuing'
+            exit 0
+          fi
+          if [[ "$BRANCH_NAME" == 'main' || "$BRANCH_NAME" == 'master' ]]; then
+            SERVER_REF='master'
+          elif [[ "$BRANCH_NAME" =~ ^stable[0-9]+$ ]]; then
+            SERVER_REF="$BRANCH_NAME"
+          else
+            echo 'Not based on master/main/stable*, so skipping freeze check'
+            exit 0
+          fi
+          curl -sf "https://raw.githubusercontent.com/nextcloud/server/$SERVER_REF/version.php" --output version.php
+          if grep 'OC_VersionString' version.php | grep -q -i -E '(\.0\.0 RC[3-9]|\.[1-9][0-9]* RC)'; then
+            echo "Merge freeze is active for $SERVER_REF, skipping"
+            echo 'active=true' >> $GITHUB_OUTPUT
+          fi
+          rm version.php
+
       - name: Copy all workflow templates
+        if: steps.freeze.outputs.active != 'true'
         run: |
           echo 'SUMMARY<<EOF' >> $GITHUB_ENV
           draft_only=0
@@ -121,6 +146,7 @@ jobs:
           echo "DRAFT_ONLY=${draft_only}" >> $GITHUB_ENV
 
       - name: Create Pull Request
+        if: steps.freeze.outputs.active != 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.COMMAND_BOT_WORKFLOWS }}
