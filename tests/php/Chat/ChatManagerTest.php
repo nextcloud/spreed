@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Chat;
 
+use OC\Memcache\ArrayCache;
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\Notifier;
@@ -28,6 +30,7 @@ use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -64,6 +67,7 @@ class ChatManagerTest extends TestCase {
 	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l;
+	protected ArrayCache $unreadCountCache;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -87,6 +91,7 @@ class ChatManagerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->unreadCountCache = new ArrayCache();
 
 		$this->l->method('n')
 			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
@@ -103,6 +108,10 @@ class ChatManagerTest extends TestCase {
 	 */
 	protected function getManager(array $methods = []): ChatManager {
 		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory->method('createDistributed')
+			->willReturnCallback(fn (string $prefix): ICache => $prefix === CachePrefix::CHAT_UNREAD_COUNT
+				? $this->unreadCountCache
+				: $this->createMock(ICache::class));
 
 		if (!empty($methods)) {
 			return $this->getMockBuilder(ChatManager::class)
@@ -390,6 +399,24 @@ class ChatManagerTest extends TestCase {
 			->with('chat', 23, 42, ['comment', 'object_shared']);
 
 		$this->chatManager->getUnreadCount($chat, 42);
+	}
+
+	public function testGetUnreadCountIsCachedUntilLastMessageChanges(): void {
+		/** @var Room&MockObject $chat */
+		$chat = $this->createMock(Room::class);
+		$chat->method('getId')
+			->willReturn(23);
+		$chat->method('getLastMessageId')
+			->willReturnOnConsecutiveCalls(100, 100, 101);
+
+		$this->commentsManager->expects($this->exactly(2))
+			->method('getNumberOfCommentsWithVerbsForObjectSinceComment')
+			->with('chat', 23, 42, ['comment', 'object_shared'])
+			->willReturnOnConsecutiveCalls(3, 4);
+
+		$this->assertSame(3, $this->chatManager->getUnreadCount($chat, 42));
+		$this->assertSame(3, $this->chatManager->getUnreadCount($chat, 42));
+		$this->assertSame(4, $this->chatManager->getUnreadCount($chat, 42));
 	}
 
 	public function testDeleteMessages(): void {
