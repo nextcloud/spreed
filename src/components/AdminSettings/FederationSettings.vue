@@ -29,7 +29,7 @@ type Group = InitialState['spreed']['federation_allowed_groups'][number]
 
 const { getActionStatus, runAction } = useActionStatus()
 
-const trustedServersUrl = generateUrl('/settings/admin/sharing#ocFederationSettings')
+const trustedServersUrl = generateUrl('/settings/admin/sharing#federation-admin-settings')
 
 const loading = ref(false)
 const isFederationEnabled = ref(loadState<InitialState['spreed']['federation_enabled']>('spreed', 'federation_enabled', false))
