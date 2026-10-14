@@ -48,7 +48,14 @@ class Version24000Date20260918142246 extends SimpleMigrationStep {
 			->where($update->expr()->gte(
 				$update->func()->charLength('phone_number'),
 				$update->createNamedParameter(6, IQueryBuilder::PARAM_INT))
-			);
+			)
+			// Numbers added before the leading + was stripped already have it
+			->andWhere($update->expr()->notLike('phone_number', $update->createNamedParameter(
+				$this->connection->escapeLikeParameter('+') . '%'
+			)))
+			->andWhere($update->expr()->notLike('phone_number', $update->createNamedParameter(
+				$this->connection->escapeLikeParameter($dialoutPrefix) . '%'
+			)));
 
 		$update->executeStatement();
 	}
