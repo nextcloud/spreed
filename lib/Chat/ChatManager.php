@@ -211,7 +211,6 @@ class ChatManager {
 			if (!$shouldSkipLastMessageUpdate) {
 				// Update last_message
 				$this->roomService->setLastMessage($chat, $comment);
-				$this->unreadCountCache->clear($chat->getId() . '-');
 
 				if ($threadId !== 0) {
 					$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, (int)$comment->getId(), $chat->getId());
@@ -317,7 +316,6 @@ class ChatManager {
 
 			// Update last_message
 			$this->roomService->setLastMessage($chat, $comment);
-			$this->unreadCountCache->clear($chat->getId() . '-');
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
@@ -361,7 +359,6 @@ class ChatManager {
 
 			// Update last_message
 			$this->roomService->setLastMessage($chat, $comment);
-			$this->unreadCountCache->clear($chat->getId() . '-');
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
@@ -482,7 +479,6 @@ class ChatManager {
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
 				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
-				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
 				$this->roomService->setLastActivity($chat, $comment->getCreationDateTime());
 			}
@@ -999,7 +995,7 @@ class ChatManager {
 		 * that exist past that message, which happen to also be the number of
 		 * unread messages, because this is expensive to query per room and user repeatedly
 		 */
-		$key = $chat->getId() . '-' . $lastReadMessage;
+		$key = $chat->getId() . '-' . $chat->getLastMessageId() . '-' . $lastReadMessage;
 		$unreadCount = $this->unreadCountCache->get($key);
 		if ($unreadCount === null) {
 			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED]);

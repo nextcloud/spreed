@@ -884,8 +884,6 @@ class ParticipantService {
 
 		$lastMessageCache = $this->cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
 		$lastMessageCache->remove($room->getToken());
-		$unreadCountCache = $this->cacheFactory->createDistributed(CachePrefix::CHAT_UNREAD_COUNT);
-		$unreadCountCache->clear($room->getId() . '-');
 
 		$event = new SystemMessagesMultipleSentEvent($room, $message);
 		$this->dispatcher->dispatchTyped($event);
