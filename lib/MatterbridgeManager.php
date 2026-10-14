@@ -147,8 +147,7 @@ class MatterbridgeManager {
 		$this->checkBridgeProcess($room, $currentBridge);
 		// remove database entry
 		$query = $this->db->getQueryBuilder();
-		$query->delete()
-			->from('talk_bridges')
+		$query->delete('talk_bridges')
 			->where($query->expr()->eq(
 				'pid',
 				$query->createNamedParameter($currentBridge['pid'], IQueryBuilder::PARAM_INT)));
