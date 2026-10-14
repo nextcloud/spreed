@@ -678,7 +678,7 @@ export default {
 				isForm: true,
 				inputProps: { label: t('spreed', 'Tag name') },
 				buttons: [
-					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => false },
+					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
 					{ label: t('spreed', 'Save'), variant: 'primary', type: 'submit', callback: () => true },
 				],
 			})
