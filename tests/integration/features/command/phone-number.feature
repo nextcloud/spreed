@@ -20,6 +20,10 @@ Feature: command/phone-number
     Then the command failed with exit code 0
     And the command output contains the text "Phone number +491601231212 is assigned to participant1"
 
+    Given invoking occ with "talk:phone-number:find --phone +49-160-123-12-12"
+    Then the command failed with exit code 0
+    And the command output contains the text "Phone number +491601231212 is assigned to participant1"
+
     Given invoking occ with "talk:phone-number:find --phone +49160123121234"
     Then the command failed with exit code 1
     And the command output contains the text "Phone number +49160123121234 could not be found"
@@ -65,7 +69,7 @@ Feature: command/phone-number
     Then the command failed with exit code 0
     And the command output contains the text "participant1 has phone number +491601231213 assigned"
 
-    Given invoking occ with "talk:phone-number:remove +491601231213"
+    Given invoking occ with "talk:phone-number:remove +49-160-123-1213"
     Then the command failed with exit code 0
 
     Given invoking occ with "talk:phone-number:find --user participant1"

@@ -10,6 +10,7 @@ namespace OCA\Talk\Command\PhoneNumber;
 
 use OC\Core\Command\Base;
 use OCA\Talk\Model\PhoneNumberMapper;
+use OCA\Talk\Service\PhoneNumberValidation;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +19,7 @@ class RemovePhoneNumber extends Base {
 
 	public function __construct(
 		private readonly PhoneNumberMapper $mapper,
+		private readonly PhoneNumberValidation $phoneNumberValidation,
 	) {
 		parent::__construct();
 	}
@@ -36,7 +38,13 @@ class RemovePhoneNumber extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$phoneNumber = $input->getArgument('phone');
+		$phoneNumber = $this->phoneNumberValidation->cleanNumber($input->getArgument('phone'));
+
+		if ($phoneNumber === '') {
+			$output->writeln('<error>Phone number is invalid.</error>');
+			return self::FAILURE;
+		}
+
 		$this->mapper->deleteByPhoneNumber($phoneNumber);
 		return self::SUCCESS;
 	}
