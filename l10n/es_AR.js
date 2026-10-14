@@ -54,7 +54,6 @@ OC.L10N.register(
     "Remove" : "Eliminar",
     "{option1} and {option2}" : "{option1} y {option2}",
     "TURN server protocols" : "Protocolos del servidor TURN",
-    "Failed" : "Error",
     "OK" : "OK",
     "Confirm" : "Confirmar",
     "Reset" : "Restablecer",
@@ -145,6 +144,7 @@ OC.L10N.register(
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Reportes",
+    "Failed" : "Error",
     "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

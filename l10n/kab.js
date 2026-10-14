@@ -276,7 +276,6 @@ OC.L10N.register(
     "Error code" : "Tangalt n unezri",
     "Error message" : "Tuccḍa deg yizen",
     "{option1} and {option2}" : "{option1} d {option2}",
-    "Failed" : "Ur yeddi ara",
     "OK" : "Ih",
     "Confirm" : "Sergeg",
     "Reset" : "Ɛiwed-d s wadda",
@@ -443,6 +442,7 @@ OC.L10N.register(
     "Reports" : "Assaɣen",
     "Agenda" : "Tasmektit",
     "Talk to %s" : "Mmeslay d %s",
+    "Failed" : "Ur yeddi ara",
     "Send" : "Tuzna",
     "Search …" : "Nadi ..."
 },

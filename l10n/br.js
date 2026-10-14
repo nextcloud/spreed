@@ -527,7 +527,6 @@ OC.L10N.register(
     "TURN server secret" : "Servijour TURN sekret",
     "TURN server protocols" : "Protokoloù servijour TURN",
     "TURN servers" : "Servijour TURN",
-    "Failed" : "C'hwitet",
     "OK" : "OK",
     "Confirm" : "Kadarnaat",
     "Invite {user}" : "Kouviañ {user}",
@@ -636,6 +635,7 @@ OC.L10N.register(
     "Select conversation" : "Choaz un diviz",
     "Notification settings" : "Arventennoù kemennadennoù",
     "Default language" : "Yezh dre ziouer",
+    "Close" : "Serriñ",
     "Select location for attachments" : "Choazit ul lec'h evit stagañ",
     "Error while setting attachment folder" : "Ur fazi a zo bet en ur lakaat an teuliad stagañ",
     "Attachments folder" : "Teuliad stag",
@@ -703,6 +703,7 @@ OC.L10N.register(
     "__language_name__" : "Brezhoneg",
     "Notes" : "Notennoù",
     "Talk to %s" : "Komz da %s",
+    "Failed" : "C'hwitet",
     "Send" : "Kas",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Deuet oc'h en diviz dre ur prenestr pe ardivink all. N'eo ket douget evit ar poent gant Nextcloud Talk neuze eo bet sertet an dalc'h."
 },
