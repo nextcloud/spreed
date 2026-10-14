@@ -143,12 +143,17 @@ class MatterbridgeManager {
 	 * @return bool success
 	 */
 	public function deleteBridgeOfRoom(Room $room): bool {
-		// first potentially kill the process
+		// potentially kill the process
 		$currentBridge = $this->getBridgeOfRoom($room);
 		$currentBridge['enabled'] = false;
 		$this->checkBridgeProcess($room, $currentBridge);
-		// then actually delete the config
-		$this->config->deleteAppValue('spreed', 'bridge_' . $room->getToken());
+		// remove database entry
+		$query = $this->db->getQueryBuilder();
+		$query->delete('talk_bridges')
+			->where($query->expr()->eq(
+				'pid',
+				$query->createNamedParameter($currentBridge['pid'], IQueryBuilder::PARAM_INT)));
+		$query->executeQuery();
 		return true;
 	}
 
