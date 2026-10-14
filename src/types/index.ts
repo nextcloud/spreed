@@ -85,6 +85,11 @@ export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilit
 // Initial state
 export type InitialState = {
 	spreed: {
+		federation_allowed_groups: { id: string, displayname: string }[]
+		federation_enabled: boolean
+		federation_incoming_enabled: boolean
+		federation_only_trusted_servers: boolean
+		federation_outgoing_enabled: boolean
 		has_cache_configured: boolean
 		has_valid_subscription: boolean
 		matrix_allowed_groups: { id: string, displayname: string }[]

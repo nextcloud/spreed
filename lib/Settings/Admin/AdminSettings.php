@@ -98,7 +98,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('federation_incoming_enabled', $this->appConfig->getAppValueBool('federation_incoming_enabled', true));
 		$this->initialState->provideInitialState('federation_outgoing_enabled', $this->appConfig->getAppValueBool('federation_outgoing_enabled', true));
 		$this->initialState->provideInitialState('federation_only_trusted_servers', $this->appConfig->getAppValueBool('federation_only_trusted_servers'));
-		$this->initialState->provideInitialState('federation_allowed_groups', $this->appConfig->getAppValueArray('federation_allowed_groups'));
+		$this->initialState->provideInitialState('federation_allowed_groups', $this->getGroupDetailsArray($this->appConfig->getAppValueArray('federation_allowed_groups'), 'federation_allowed_groups'));
 	}
 
 	protected function initMatterbridge(): void {
