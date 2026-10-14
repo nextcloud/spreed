@@ -10,6 +10,7 @@ namespace OCA\Talk\Command\PhoneNumber;
 
 use OC\Core\Command\Base;
 use OCA\Talk\Model\PhoneNumberMapper;
+use OCA\Talk\Service\PhoneNumberValidation;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,6 +49,8 @@ class FindPhoneNumber extends Base {
 		$userId = (string)$input->getOption('user');
 
 		if ($phoneNumber !== '') {
+			$phoneNumber = $this->phoneNumberValidation->cleanNumber($phoneNumber);
+
 			try {
 				$entry = $this->mapper->findByPhoneNumber($phoneNumber);
 			} catch (DoesNotExistException) {
