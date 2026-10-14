@@ -525,7 +525,6 @@
     "TURN server secret" : "Servijour TURN sekret",
     "TURN server protocols" : "Protokoloù servijour TURN",
     "TURN servers" : "Servijour TURN",
-    "Failed" : "C'hwitet",
     "OK" : "OK",
     "Confirm" : "Kadarnaat",
     "Invite {user}" : "Kouviañ {user}",
@@ -634,6 +633,7 @@
     "Select conversation" : "Choaz un diviz",
     "Notification settings" : "Arventennoù kemennadennoù",
     "Default language" : "Yezh dre ziouer",
+    "Close" : "Serriñ",
     "Select location for attachments" : "Choazit ul lec'h evit stagañ",
     "Error while setting attachment folder" : "Ur fazi a zo bet en ur lakaat an teuliad stagañ",
     "Attachments folder" : "Teuliad stag",
@@ -701,6 +701,7 @@
     "__language_name__" : "Brezhoneg",
     "Notes" : "Notennoù",
     "Talk to %s" : "Komz da %s",
+    "Failed" : "C'hwitet",
     "Send" : "Kas",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Deuet oc'h en diviz dre ur prenestr pe ardivink all. N'eo ket douget evit ar poent gant Nextcloud Talk neuze eo bet sertet an dalc'h."
 },"pluralForm" :"nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);"
