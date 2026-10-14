@@ -19,7 +19,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
-class Version24000Date20260918142246 extends SimpleMigrationStep {
+class Version23001Date20260918142246 extends SimpleMigrationStep {
 
 	public function __construct(
 		private readonly IDBConnection $connection,
