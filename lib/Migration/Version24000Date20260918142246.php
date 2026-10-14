@@ -11,6 +11,7 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\DB\Exception;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -39,24 +40,40 @@ class Version24000Date20260918142246 extends SimpleMigrationStep {
 			return;
 		}
 
+		$query = $this->connection->getQueryBuilder();
+		$query->select('id', 'phone_number')
+			->from('talk_phone_numbers');
+
+		$phoneNumbers = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetchAssociative()) {
+			$phoneNumbers[(int)$row['id']] = (string)$row['phone_number'];
+		}
+		$result->closeCursor();
+
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_phone_numbers')
-			->set('phone_number', $update->func()->concat(
-				$update->createNamedParameter($dialoutPrefix, IQueryBuilder::PARAM_STR),
-				'phone_number',
-			))
-			->where($update->expr()->gte(
-				$update->func()->charLength('phone_number'),
-				$update->createNamedParameter(6, IQueryBuilder::PARAM_INT))
-			)
-			// Numbers added before the leading + was stripped already have it
-			->andWhere($update->expr()->notLike('phone_number', $update->createNamedParameter(
-				$this->connection->escapeLikeParameter('+') . '%'
-			)))
-			->andWhere($update->expr()->notLike('phone_number', $update->createNamedParameter(
-				$this->connection->escapeLikeParameter($dialoutPrefix) . '%'
-			)));
+			->set('phone_number', $update->createParameter('phone_number'))
+			->where($update->expr()->eq('id', $update->createParameter('id')));
 
-		$update->executeStatement();
+		foreach ($phoneNumbers as $id => $phoneNumber) {
+			if (strlen($phoneNumber) < 6
+				// Numbers added before the leading + was stripped already have it
+				|| str_starts_with($phoneNumber, '+')
+				|| str_starts_with($phoneNumber, $dialoutPrefix)) {
+				continue;
+			}
+
+			$update->setParameter('phone_number', $dialoutPrefix . $phoneNumber)
+				->setParameter('id', $id, IQueryBuilder::PARAM_INT);
+			try {
+				$update->executeStatement();
+			} catch (Exception $e) {
+				if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+					throw $e;
+				}
+				$output->warning('Phone number ' . $phoneNumber . ' was not migrated, because ' . $dialoutPrefix . $phoneNumber . ' is already assigned');
+			}
+		}
 	}
 }
