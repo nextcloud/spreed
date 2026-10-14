@@ -411,7 +411,6 @@ OC.L10N.register(
     "TURN server secret" : "TURN servera noslēpums",
     "TURN server protocols" : "TURN servera protokols",
     "TURN servers" : "TURN serveris",
-    "Failed" : "Neizdevās",
     "OK" : "Labi",
     "Confirm" : "Apstiprināt",
     "Reset" : "Atiestatīt",
@@ -579,6 +578,7 @@ OC.L10N.register(
     "Reports" : "Atskaites",
     "Talk to %s" : "Runāt ar %s",
     "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus.",
+    "Failed" : "Neizdevās",
     "Set reminder for later today" : "Iestatīt atgādinājumu vēlākam šodien",
     "Send" : "Sūtīt"
 },
