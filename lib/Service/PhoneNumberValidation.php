@@ -26,14 +26,14 @@ class PhoneNumberValidation {
 	 * - International number: If invalid, throw
 	 * @throws \InvalidArgumentException When the number is invalid
 	 */
-	public function validateNumber(string $phoneNumber) {
+	public function validateNumber(string $phoneNumber): void {
 		if (
 			// Not an internation number
 			!str_starts_with($phoneNumber, '0')
 			// And matches a local number or dial-through
 			&& preg_match('/^[0-9]{1,20}$/', $phoneNumber)
 		) {
-			return $phoneNumber;
+			return;
 		}
 
 		$defaultRegion = $this->config->getSystemValueString('default_phone_region') ?: null;
