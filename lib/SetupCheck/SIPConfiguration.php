@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\SetupCheck\ISetupCheck;
 use OCP\SetupCheck\SetupResult;
@@ -17,7 +16,6 @@ use OCP\SetupCheck\SetupResult;
 class SIPConfiguration implements ISetupCheck {
 	public function __construct(
 		protected readonly Config $talkConfig,
-		protected readonly IDBConnection $connection,
 		protected readonly IL10N $l,
 	) {
 	}
@@ -40,32 +38,6 @@ class SIPConfiguration implements ISetupCheck {
 	public function run(): SetupResult {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return SetupResult::success($this->l->t('Using the SIP functionality requires a High-performance backend.'));
-		}
-
-		$query = $this->connection->getQueryBuilder();
-		$query->select('phone_number')
-			->from('talk_phone_numbers')
-			->where($query->expr()->like('phone_number', $query->createNamedParameter(
-				// TODO: Temporary disabled while we migrate to leading `+` for international numbers
-				// TODO: Either to be deleted later or should complain for numbers without it
-				// 	$this->connection->escapeLikeParameter('+') . '%'
-				// )))
-				// ->orWhere($query->expr()->like('phone_number', $query->createNamedParameter(
-				$this->connection->escapeLikeParameter('0') . '%'
-			)));
-
-		$result = $query->executeQuery();
-		$invalidNumbers = $result->fetchFirstColumn();
-		$result->closeCursor();
-
-		if (!empty($invalidNumbers)) {
-			$message = $this->l->t("Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}");
-			$message = str_replace(
-				'{list}',
-				implode("\n", $invalidNumbers),
-				$message
-			);
-			return SetupResult::error($message, 'https://portal.nextcloud.com/article/Nextcloud-Talk/Nextcloud-Talk-Phone/Direct-Dial-in#content-provisioning');
 		}
 
 		if ($this->talkConfig->getSIPSharedSecret() === '' && $this->talkConfig->getDialInInfo() === '') {
