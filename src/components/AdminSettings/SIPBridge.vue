@@ -63,7 +63,7 @@
 					:disabled="loading"
 					labelOutside />
 				<p class="settings-hint additional-top-margin">
-					{{ t('spreed', 'Prefix to configured user number for outgoing calls (default is `+`)') }}
+					{{ t('spreed', 'Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)') }}
 				</p>
 			</template>
 
