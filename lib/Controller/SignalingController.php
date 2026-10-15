@@ -37,6 +37,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -59,6 +60,7 @@ class SignalingController extends OCSController {
 		string $appName,
 		IRequest $request,
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly \OCA\Talk\Signaling\Manager $signalingManager,
 		private readonly ISession $serverSession,
 		private readonly TalkSession $session,
@@ -118,7 +120,7 @@ class SignalingController extends OCSController {
 	private function validateSIPBridgeRequest(string $data): bool {
 		$random = $this->request->getHeader('talk-sipbridge-random');
 		$checksum = $this->request->getHeader('talk-sipbridge-checksum');
-		$secret = $this->talkConfig->getSIPSharedSecret();
+		$secret = $this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET);
 		try {
 			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $data);
 		} catch (UnauthorizedException) {
@@ -268,7 +270,7 @@ class SignalingController extends OCSController {
 			'federation' => $this->getFederationSettings($room),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
-			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
+			'sipDialinInfo' => !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET)) ? $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO) : '',
 		];
 
 		if ($signalingMode !== Config::SIGNALING_INTERNAL) {
