@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { ViewerSession } from '@nextcloud/viewer'
+import type { File as TalkFile, TemplateFile } from '../types/index.ts'
+
 import { showError } from '@nextcloud/dialogs'
 import { File } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
@@ -13,13 +16,29 @@ import { useCallViewStore } from '../stores/callView.ts'
 import { generatePublicSharePreviewUrl } from '../utils/davUtils.ts'
 import { useIsInCall } from './useIsInCall.js'
 
+type FileAPIMap = {
+	files: TemplateFile
+	talk: TalkFile
+}
+
+type ViewerFileData = {
+	id: number
+	path: string | null | undefined
+	name: string
+	mime: string | undefined
+	size: number | undefined
+	permissions: number | undefined
+	etag: string
+	hasPreview: boolean
+	link: string | undefined
+}
+
 /**
  * Make path absolute
  *
- * @param {string} [path] path to file
- * @return {string}
+ * @param path path to file
  */
-function generateAbsolutePath(path) {
+function generateAbsolutePath(path: string | null | undefined): string {
 	if (!path) {
 		return '/'
 	}
@@ -27,14 +46,23 @@ function generateAbsolutePath(path) {
 }
 
 /**
+ * Whether the file object comes from Files API
+ *
+ * @param fileAPI whether the file object comes from Files or Talk
+ * @param file file object
+ */
+function isFilesAPI(fileAPI: keyof FileAPIMap, file: TemplateFile | TalkFile): file is TemplateFile {
+	return fileAPI === 'files'
+}
+
+/**
  * Read the fields the Viewer needs from a Files or Talk file object
  *
- * @param {'files'|'talk'} fileAPI whether the file object comes from Files or Talk
- * @param {object} file file object
- * @return {object}
+ * @param fileAPI whether the file object comes from Files or Talk
+ * @param file file object
  */
-function getFileData(fileAPI, file) {
-	if (fileAPI === 'files') {
+function getFileData(fileAPI: keyof FileAPIMap, file: TemplateFile | TalkFile): ViewerFileData {
+	if (isFilesAPI(fileAPI, file)) {
 		return {
 			id: file.fileid,
 			path: file.filename,
@@ -64,10 +92,9 @@ function getFileData(fileAPI, file) {
 /**
  * Composable with `@nextcloud/viewer` helpers
  *
- * @param {'files'|'talk'} fileAPI whether to treat file object as it comes from Files or Talk
- * @return {{ openViewer: Function, canOpenInViewer: Function }}
+ * @param fileAPI whether to treat file object as it comes from Files or Talk
  */
-export function useViewer(fileAPI) {
+export function useViewer<T extends keyof FileAPIMap>(fileAPI: T) {
 	const isInCall = useIsInCall()
 	const callViewStore = useCallViewStore()
 	const actorStore = useActorStore()
@@ -75,10 +102,9 @@ export function useViewer(fileAPI) {
 	/**
 	 * Build a Viewer node from a Files or Talk file object
 	 *
-	 * @param {object} file file object from Files or Talk
-	 * @return {File}
+	 * @param file file object from Files or Talk
 	 */
-	function generateViewerObject(file) {
+	function generateViewerObject(file: FileAPIMap[T]): File {
 		const userId = actorStore.userId
 		const { id, path, name, mime, size, permissions, etag, hasPreview, link } = getFileData(fileAPI, file)
 		const absolutePath = generateAbsolutePath(path)
@@ -111,10 +137,9 @@ export function useViewer(fileAPI) {
 	/**
 	 * Check if the Viewer can open the file
 	 *
-	 * @param {object} file file object from Files or Talk
-	 * @return {boolean}
+	 * @param file file object from Files or Talk
 	 */
-	function canOpenInViewer(file) {
+	function canOpenInViewer(file: FileAPIMap[T]): boolean {
 		try {
 			return canView(generateViewerObject(file))
 		} catch (error) {
@@ -126,10 +151,9 @@ export function useViewer(fileAPI) {
 	/**
 	 * Build Viewer objects, skipping the files that fail validation
 	 *
-	 * @param {Array<object>} list file objects from Files or Talk
-	 * @return {Array<File>}
+	 * @param list file objects from Files or Talk
 	 */
-	function generateViewerObjects(list) {
+	function generateViewerObjects(list: FileAPIMap[T][]): File[] {
 		return list.flatMap((file) => {
 			try {
 				return [generateViewerObject(file)]
@@ -143,13 +167,12 @@ export function useViewer(fileAPI) {
 	/**
 	 * Open files in the Viewer taking into account Talk's call view
 	 *
-	 * @param {Array<object>} list the list of the files to be opened
-	 * @param {object} [fileInfo] the file to open first, defaults to the first of the list
-	 * @param {Function} [loadMore] the callback to load additional content
-	 * @return {Promise<void>}
+	 * @param list the list of the files to be opened
+	 * @param fileInfo the file to open first, defaults to the first of the list
+	 * @param loadMore the callback to load additional content
 	 */
-	async function openViewer(list, fileInfo, loadMore) {
-		let session
+	async function openViewer(list: FileAPIMap[T][], fileInfo?: FileAPIMap[T], loadMore?: () => Promise<FileAPIMap[T][]>): Promise<void> {
+		let session: ViewerSession
 		try {
 			const files = generateViewerObjects(list)
 			const file = fileInfo ? generateViewerObject(fileInfo) : files[0]
