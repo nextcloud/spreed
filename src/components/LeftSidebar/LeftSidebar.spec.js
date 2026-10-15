@@ -20,6 +20,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { findNcActionButton, findNcButton, generateOCSResponse } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
+vi.mock('../../utils/requestTabLeadership.js', { spy: true })
 vi.mock('../../services/conversationsService', () => ({
 	searchListedConversations: vi.fn(),
 }))
@@ -215,6 +216,38 @@ describe('LeftSidebar.vue', () => {
 
 			// note: debounce was short-circuited so no delay needed
 			expect(fetchConversationsAction).toHaveBeenCalled()
+		})
+
+		describe('in a tab that is not the leader', () => {
+			let restoreConversationsAction
+
+			beforeEach(() => {
+				vi.mocked(requestTabLeadership).mockReturnValueOnce(new Promise(() => {}))
+				restoreConversationsAction = vi.fn()
+				testStoreConfig.modules.conversationsStore.actions.restoreConversations = restoreConversationsAction
+				store = createStore(testStoreConfig)
+			})
+
+			test('fetches conversations once when nothing was restored from browser storage', async () => {
+				restoreConversationsAction.mockResolvedValueOnce(false)
+
+				mountComponent()
+				await flushPromises()
+
+				expect(fetchConversationsAction).toHaveBeenCalledOnce()
+
+				vi.advanceTimersByTime(35000)
+				expect(fetchConversationsAction).toHaveBeenCalledOnce()
+			})
+
+			test('does not fetch conversations when they were restored from browser storage', async () => {
+				restoreConversationsAction.mockResolvedValueOnce(true)
+
+				mountComponent()
+				await flushPromises()
+
+				expect(fetchConversationsAction).not.toHaveBeenCalled()
+			})
 		})
 	})
 
