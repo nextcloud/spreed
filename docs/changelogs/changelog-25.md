@@ -5,6 +5,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.6 – 2026-10-15
+### Added
+- feat: user option to show unread conversations in collapsed tags
+  [#19745](https://github.com/nextcloud/spreed/pull/19745)
+
+### Changed
+- Update translations
+- Unarchive a conversation automatically on new messages or mentions
+  [#19736](https://github.com/nextcloud/spreed/pull/19736)
+- perf(unread-cache): Improve caching of conversations list
+  [#19729](https://github.com/nextcloud/spreed/pull/19729)
+
+### Fixed
+- fix(sip): Handle direct incoming calls as phone participants
+  [#19849](https://github.com/nextcloud/spreed/pull/19849)
+- fix(ConfirmDialog): do not submit input value on cancel
+  [#19841](https://github.com/nextcloud/spreed/pull/19841)
+- fix(admin): split virtual background checks
+  [#19827](https://github.com/nextcloud/spreed/pull/19827)
+- fix(matterbridge): validate the server domain for Matterbridge
+- fix: Do not show {TALK_PLACEHOLDER} in Files
+  [#19808](https://github.com/nextcloud/spreed/pull/19808)
+- fix(chat): Send delete for all combined files shares
+  [#19735](https://github.com/nextcloud/spreed/pull/19735)
+- fix: Find all room shares for a single path
+  [#19728](https://github.com/nextcloud/spreed/pull/19728)
+- fix(signaling): bound the connect time of backend notifications
+  [#19715](https://github.com/nextcloud/spreed/pull/19715)
+
 ## 25.0.5 – 2026-10-02
 ### Fixed
 - fix: web application does not load due to a regression in the build config
