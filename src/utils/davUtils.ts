@@ -5,6 +5,7 @@
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { defaultRemoteURL } from '@nextcloud/files/dav'
+import { generateUrl } from '@nextcloud/router'
 
 /**
  * Generate a WebDAV url to a user files
@@ -45,4 +46,26 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
  */
 export function generatePublicShareDownloadUrl(shareLink: string) {
 	return shareLink + '/download'
+}
+
+/**
+ * Generate a preview link for a file in a public share
+ *
+ * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH?path=/Media
+ * @param name - The file name, e.g., 20240101-000102.png
+ * @param size - The preview size, both -1 for the largest preview
+ * @param size.x - The preview width, -1 to keep the aspect ratio
+ * @param size.y - The preview height, -1 to keep the aspect ratio
+ * @return The preview link, e.g., https://nextcloud.ltd/index.php/apps/files_sharing/publicpreview/CBeNTiJz5JeT2CH?file=%2FMedia%2F20240101-000102.png&x=-1&y=384&a=1
+ */
+export function generatePublicSharePreviewUrl(shareLink: string, name: string, { x, y }: { x: number, y: number }) {
+	const url = new URL(shareLink)
+	const token = url.pathname.split('/').filter(Boolean).pop()
+	const folder = url.searchParams.get('path') ?? ''
+	return generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x={x}&y={y}&a=1', {
+		token,
+		file: `${folder.replace(/\/$/, '')}/${name}`,
+		x,
+		y,
+	})
 }
