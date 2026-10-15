@@ -70,7 +70,7 @@ jobs:
           - 'sharing-4'
         php-versions: ['8.3']
         server-versions: ['stable32']
-        guests-versions: ['main']
+        guests-versions: ['stable-4.10']
         circles-versions: ['stable32']
         notifications-versions: ['stable32']
 
