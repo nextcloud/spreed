@@ -23,20 +23,17 @@ class PhoneNumberValidation {
 	 * Validate input as a phone number
 	 *
 	 * - Local number: allow
-	 * - International number
-	 *      a. If valid, strip + and allow
-	 *      b. If invalid, throw
+	 * - International number: If invalid, throw
 	 * @throws \InvalidArgumentException When the number is invalid
 	 */
-	public function validateNumber(string $phoneNumber): string {
-
+	public function validateNumber(string $phoneNumber): void {
 		if (
 			// Not an internation number
 			!str_starts_with($phoneNumber, '0')
 			// And matches a local number or dial-through
 			&& preg_match('/^[0-9]{1,20}$/', $phoneNumber)
 		) {
-			return $phoneNumber;
+			return;
 		}
 
 		$defaultRegion = $this->config->getSystemValueString('default_phone_region') ?: null;
@@ -45,11 +42,14 @@ class PhoneNumberValidation {
 		if ($standardPhoneNumber === null) {
 			throw new \InvalidArgumentException();
 		}
+	}
 
-		if (str_starts_with($standardPhoneNumber, '+')) {
-			return substr($standardPhoneNumber, 1);
-		}
-
-		throw new \InvalidArgumentException();
+	/**
+	 * Removes any character that is not a number or "+"
+	 *
+	 * @param string $phoneNumber Phonenumber to clean
+	 */
+	public function cleanNumber(string $phoneNumber): string {
+		return preg_replace('/[^0-9+]/', '', $phoneNumber) ?? '';
 	}
 }
