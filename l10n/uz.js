@@ -283,7 +283,6 @@ OC.L10N.register(
     "Saving …" : "Saqlanmoqda...",
     "Saved!" : "Saqlangan!",
     "Name" : "Nomi",
-    "Enable Federation in Talk app" : "Talk ilovasida Jamg'armani yoqish",
     "Permissions" : "Ruxsatnomalar",
     "Off" : "Oʻchirilgan",
     "Enable encryption" : "Shifrlashni yoqish",
@@ -393,6 +392,7 @@ OC.L10N.register(
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
     "Talk conversation for event" : "Tadbir uchun suhbat",
+    "Enable Federation in Talk app" : "Talk ilovasida Jamg'armani yoqish",
     "Send" : "Yuborish",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi."
 },
