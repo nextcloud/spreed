@@ -121,3 +121,17 @@ Feature: chat-1/file-share
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant2 | participant2-displayname | {file}   | "IGNORE"          |
+
+  Scenario: Room list shows a shared image as last message
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" moves file "welcome.txt" to "photo.png" with 201
+    When user "participant1" shares "photo.png" with room "group room"
+    Then user "participant1" is participant of the following rooms (v4)
+      | id         | type | lastMessage |
+      | group room | 2    | {file}      |
+    And user "participant2" is participant of the following rooms (v4)
+      | id         | type | lastMessage |
+      | group room | 2    | {file}      |
