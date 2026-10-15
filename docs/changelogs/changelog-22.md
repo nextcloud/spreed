@@ -5,6 +5,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.19 – 2026-10-15
+### Changed
+- Update dependencies
+- Update translations
+- perf(unread-cache): Improve caching of conversations list
+  [#19732](https://github.com/nextcloud/spreed/pull/19732)
+
+### Fixed
+- fix(publicshareauth): add rate limiting to public share auth
+  [#19623](https://github.com/nextcloud/spreed/pull/19623)
+- fix(matterbridge): validate the server domain for Matterbridge
+  [#19821](https://github.com/nextcloud/spreed/pull/19821)
+
 ## 22.0.18 – 2026-09-10
 ### Changed
 - Update dependencies
