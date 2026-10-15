@@ -5,6 +5,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.6 – 2026-10-15
+### Changed
+- Update dependencies
+- Update translations
+- perf(unread-cache): Improve caching of conversations list
+  [#19730](https://github.com/nextcloud/spreed/pull/19730)
+- chore: improve wordings for permissions dialog
+  [#19431](https://github.com/nextcloud/spreed/pull/19431)
+
+### Fixed
+- fix(sip): Handle direct incoming calls as phone participants
+  [#19850](https://github.com/nextcloud/spreed/pull/19850)
+- fix(admin): split virtual background checks
+  [#19828](https://github.com/nextcloud/spreed/pull/19828)
+- fix(matterbridge): validate the server domain for Matterbridge
+  [#19823](https://github.com/nextcloud/spreed/pull/19823)
+- fix: Do not show {TALK_PLACEHOLDER} in Files
+  [#19809](https://github.com/nextcloud/spreed/pull/19809)
+- fix: Find all room shares for a single path
+  [#19727](https://github.com/nextcloud/spreed/pull/19727)
+- fix(publicshareauth): add rate limiting to video verification
+  [#19618](https://github.com/nextcloud/spreed/pull/19618)
+- fix(polls): improve wording for 'anonymous' polls
+  [#19529](https://github.com/nextcloud/spreed/pull/19529)
+- fix(notification): Fix notification when fully subscribed
+  [#19519](https://github.com/nextcloud/spreed/pull/19519)
+- fix(integrations): show conversation avatars in Files Sharing tab
+  [#19516](https://github.com/nextcloud/spreed/pull/19516)
+
 ## 24.0.5 – 2026-09-10
 ### Changed
 - Update dependencies
