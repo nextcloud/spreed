@@ -126,7 +126,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
-import { generatePublicShareDownloadUrl } from '../../../../../utils/davUtils.ts'
+import { generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
@@ -463,14 +463,7 @@ export default {
 			// use preview provider URL to render a smaller preview
 			const previewSize = Math.ceil(384 * window.devicePixelRatio)
 			if (this.actorStore.userId === null) {
-				// guest mode: grab token from the link URL
-				// FIXME: use a cleaner way...
-				const token = this.file.link.slice(this.file.link.lastIndexOf('/') + 1)
-				return generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x=-1&y={height}&a=1', {
-					token,
-					file: this.internalAbsolutePath,
-					height: previewSize,
-				})
+				return generatePublicSharePreviewUrl(this.file.link, this.file.path, { x: -1, y: previewSize })
 			} else {
 				return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
 					fileId: this.file.id,
