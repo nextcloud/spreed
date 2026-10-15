@@ -19,6 +19,7 @@ class RemovePhoneNumber extends Base {
 
 	public function __construct(
 		private PhoneNumberMapper $mapper,
+		private PhoneNumberValidation $phoneNumberValidation,
 	) {
 		parent::__construct();
 	}
