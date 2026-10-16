@@ -8,11 +8,18 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Listener;
 
+use OCA\Talk\Events\AAttendeeRemovedEvent;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\AttendeeRemovedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Listener\AuditLogListener;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\EventDispatcher\Event;
@@ -155,6 +162,105 @@ class AuditLogListenerTest extends TestCase {
 
 	public function testLobbyTimerReachedIsIgnored(): void {
 		$this->listener->handle(new LobbyModifiedEvent($this->createRoom(), Webinary::LOBBY_NONE, Webinary::LOBBY_NON_MODERATORS, null, true));
+
+		$this->assertSame([], $this->auditEvents);
+	}
+
+	protected function createAttendee(string $actorType, string $actorId, int $participantType = Participant::USER, int $id = 7): Attendee {
+		$attendee = new Attendee();
+		$attendee->setId($id);
+		$attendee->setActorType($actorType);
+		$attendee->setActorId($actorId);
+		$attendee->setParticipantType($participantType);
+		return $attendee;
+	}
+
+	public function testAttendeesAdded(): void {
+		$this->listener->handle(new AttendeesAddedEvent($this->createRoom(), [
+			$this->createAttendee(Attendee::ACTOR_USERS, 'alice', Participant::MODERATOR, 7),
+			$this->createAttendee(Attendee::ACTOR_GUESTS, 'guest-session', Participant::GUEST, 8),
+			$this->createAttendee(Attendee::ACTOR_EMAILS, 'invite-id', Participant::GUEST, 9),
+		]));
+
+		$this->assertCount(2, $this->auditEvents);
+		$this->assertSame('spreed.participant.added', $this->auditEvents[0]->getOperation());
+		$this->assertSame('Participant "%s" (%s, attendee %s) was added to conversation "%s" as %s', $this->auditEvents[0]->getLogMessage());
+		$this->assertSame([
+			'actorId' => 'alice',
+			'actorType' => 'users',
+			'attendeeId' => 7,
+			'token' => 'abcdef',
+			'participantType' => 'moderator',
+		], $this->auditEvents[0]->getParameters());
+		$this->assertSame([
+			'actorId' => null,
+			'actorType' => 'emails',
+			'attendeeId' => 9,
+			'token' => 'abcdef',
+			'participantType' => 'guest',
+		], $this->auditEvents[1]->getParameters());
+	}
+
+	public function testAttendeesAddedToOneToOneIsIgnored(): void {
+		$this->listener->handle(new AttendeesAddedEvent($this->createRoom(Room::TYPE_ONE_TO_ONE), [
+			$this->createAttendee(Attendee::ACTOR_USERS, 'alice'),
+		]));
+
+		$this->assertSame([], $this->auditEvents);
+	}
+
+	public function testAttendeeRemoved(): void {
+		$this->listener->handle(new AttendeeRemovedEvent($this->createRoom(), $this->createAttendee(Attendee::ACTOR_GROUPS, 'admins'), AAttendeeRemovedEvent::REASON_REMOVED, []));
+
+		$this->assertAuditEvent('spreed.participant.removed', 'Participant "%s" (%s, attendee %s) was removed from conversation "%s" (reason: %s)', [
+			'actorId' => 'admins',
+			'actorType' => 'groups',
+			'attendeeId' => 7,
+			'token' => 'abcdef',
+			'reason' => 'remove',
+		]);
+	}
+
+	public function testGuestRemovedIsIgnored(): void {
+		$this->listener->handle(new AttendeeRemovedEvent($this->createRoom(), $this->createAttendee(Attendee::ACTOR_GUESTS, 'guest-session', Participant::GUEST), AAttendeeRemovedEvent::REASON_LEFT, []));
+
+		$this->assertSame([], $this->auditEvents);
+	}
+
+	public function testParticipantTypeChanged(): void {
+		$room = $this->createRoom();
+		$participant = new Participant($room, $this->createAttendee(Attendee::ACTOR_USERS, 'alice'), null);
+		$this->listener->handle(new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_TYPE, Participant::MODERATOR, Participant::USER));
+
+		$this->assertAuditEvent('spreed.participant_type.changed', 'Participant type of "%s" (%s, attendee %s) in conversation "%s" was changed from %s to %s', [
+			'actorId' => 'alice',
+			'actorType' => 'users',
+			'attendeeId' => 7,
+			'token' => 'abcdef',
+			'oldParticipantType' => 'user',
+			'participantType' => 'moderator',
+		]);
+	}
+
+	public function testParticipantPermissionsChanged(): void {
+		$room = $this->createRoom();
+		$participant = new Participant($room, $this->createAttendee(Attendee::ACTOR_USERS, 'alice'), null);
+		$this->listener->handle(new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, 254, 0));
+
+		$this->assertAuditEvent('spreed.participant_permissions.changed', 'Permissions of "%s" (%s, attendee %s) in conversation "%s" were changed from %s to %s', [
+			'actorId' => 'alice',
+			'actorType' => 'users',
+			'attendeeId' => 7,
+			'token' => 'abcdef',
+			'oldPermissions' => 0,
+			'permissions' => 254,
+		]);
+	}
+
+	public function testParticipantNameChangeIsIgnored(): void {
+		$room = $this->createRoom();
+		$participant = new Participant($room, $this->createAttendee(Attendee::ACTOR_GUESTS, 'guest-session', Participant::GUEST), null);
+		$this->listener->handle(new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_NAME, 'Guest name'));
 
 		$this->assertSame([], $this->auditEvents);
 	}
