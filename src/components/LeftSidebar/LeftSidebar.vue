@@ -817,8 +817,14 @@ export default {
 
 	beforeMount() {
 		// Restore last fetched conversations from browser storage,
-		// before updated ones come from server
-		this.restoreConversations()
+		// before updated ones come from server.
+		// Without a cache (e.g. storage quota exceeded) fetch once directly,
+		// as a non-leader tab would otherwise never receive the full list
+		this.restoreConversations().then((isRestored) => {
+			if (!isRestored && !this.isCurrentTabLeader) {
+				this.fetchConversations()
+			}
+		})
 
 		requestTabLeadership().then(() => {
 			this.isCurrentTabLeader = true
@@ -1123,10 +1129,12 @@ export default {
 			try {
 				if (await this.$store.dispatch('restoreConversations')) {
 					EventBus.emit('conversations-received', { fromBrowserStorage: true })
+					return true
 				}
 			} catch (error) {
 				console.debug('Error while restoring conversations: ', error)
 			}
+			return false
 		},
 
 		handleConversationsReceived() {
