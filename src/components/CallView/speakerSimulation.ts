@@ -18,7 +18,7 @@
  *     OCA.Talk.speakerSimulation.start(2)     // 2x faster, see `start()`
  *     OCA.Talk.speakerSimulation.start(1, 30, 640) // 30fps, 640px wide videos
  *     OCA.Talk.speakerSimulation.stop()
- *     OCA.Talk.speakerSimulation.speak(2, 5)  // make participant 2 speak 5s
+ *     OCA.Talk.speakerSimulation.speak(2, 5)  // participant 2 speaks and is transcribed for 5s
  *     OCA.Talk.speakerSimulation.transcript(2, 'Hello', 'en', false) // one chunk, shows the panel
  */
 
@@ -32,6 +32,18 @@ import { placeholderName } from './Grid/gridPlaceholders.ts'
 export const SIMULATION_TOKEN = 'mmhc6xg4'
 
 const PARTICIPANT_COUNT = 6
+
+/** Words transcribed while a simulated participant speaks, in a loop. */
+const WORDS = 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'.split(' ')
+
+/** Delay between two transcript updates, in seconds. */
+const UPDATE_INTERVAL = 2
+
+/** Words added by each transcript update. */
+const WORDS_PER_UPDATE = 4
+
+/** Words sent as partial updates of one chunk before it is final. */
+const CHUNK_LENGTH = 8
 
 /**
  * One turn of speech: who speaks, when they start (in seconds from the
@@ -234,7 +246,22 @@ function startVideo(model: SimulatedModel, index: number, fps: number, width: nu
 }
 
 /**
- * Make one of the simulated participants speak.
+ * Run a callback once, keeping the timer cancellable by {@link stop}.
+ *
+ * @param callback - function to run
+ * @param delay - delay in seconds
+ */
+function schedule(callback: () => void, delay: number) {
+	const timer = setTimeout(() => {
+		timers.splice(timers.indexOf(timer), 1)
+		callback()
+	}, delay * 1000)
+	timers.push(timer)
+}
+
+/**
+ * Make one of the simulated participants speak, sending a transcript update
+ * every {@link UPDATE_INTERVAL} seconds.
  *
  * @param index - position of the participant in the simulation
  * @param duration - how long they speak, in seconds
@@ -247,17 +274,25 @@ function speak(index: number, duration: number) {
 	}
 
 	model.attributes.speaking = true
-	const timer = setTimeout(() => {
-		timers.splice(timers.indexOf(timer), 1)
+	schedule(() => {
 		model.attributes.speaking = false
-	}, duration * 1000)
-	timers.push(timer)
+	}, duration)
+
+	const updateCount = Math.max(1, Math.floor(duration / UPDATE_INTERVAL))
+	for (let update = 1; update <= updateCount; update++) {
+		const wordCount = update * WORDS_PER_UPDATE
+		const chunkStart = Math.floor((wordCount - 1) / CHUNK_LENGTH) * CHUNK_LENGTH
+		const message = Array.from({ length: wordCount - chunkStart }, (_, k) => WORDS[(chunkStart + k) % WORDS.length]).join(' ')
+		const final = wordCount % CHUNK_LENGTH === 0 || update === updateCount
+		schedule(() => transcript(index, message, 'en', final), update * UPDATE_INTERVAL)
+	}
 }
 
 /**
  * Send a live transcript chunk from one of the simulated participants.
  *
- * The transcript panel is shown on the first chunk.
+ * The transcript panel is shown on the first chunk. Also called by
+ * {@link speak}, so the timeline is transcribed as well.
  *
  * @param index - position of the participant in the simulation
  * @param message - transcribed text
