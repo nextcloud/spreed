@@ -264,4 +264,34 @@ class AuditLogListenerTest extends TestCase {
 
 		$this->assertSame([], $this->auditEvents);
 	}
+
+	public static function dataCallRecording(): array {
+		return [
+			[Room::RECORDING_VIDEO, Room::RECORDING_VIDEO_STARTING, 'spreed.recording.started', 'Recording of conversation "%s" was started (%s)', ['token' => 'abcdef', 'recordingType' => 'video']],
+			[Room::RECORDING_AUDIO, Room::RECORDING_AUDIO_STARTING, 'spreed.recording.started', 'Recording of conversation "%s" was started (%s)', ['token' => 'abcdef', 'recordingType' => 'audio']],
+			[Room::RECORDING_NONE, Room::RECORDING_VIDEO, 'spreed.recording.stopped', 'Recording of conversation "%s" was stopped', ['token' => 'abcdef']],
+		];
+	}
+
+	#[DataProvider('dataCallRecording')]
+	public function testCallRecording(int $newStatus, int $oldStatus, string $operation, string $message, array $parameters): void {
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_CALL_RECORDING, $newStatus, $oldStatus));
+
+		$this->assertAuditEvent($operation, $message, $parameters);
+	}
+
+	public static function dataCallRecordingTransitionIgnored(): array {
+		return [
+			[Room::RECORDING_VIDEO_STARTING, Room::RECORDING_NONE],
+			[Room::RECORDING_FAILED, Room::RECORDING_VIDEO_STARTING],
+			[Room::RECORDING_NONE, Room::RECORDING_FAILED],
+		];
+	}
+
+	#[DataProvider('dataCallRecordingTransitionIgnored')]
+	public function testCallRecordingTransitionIgnored(int $newStatus, int $oldStatus): void {
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_CALL_RECORDING, $newStatus, $oldStatus));
+
+		$this->assertSame([], $this->auditEvents);
+	}
 }
