@@ -38,6 +38,10 @@ enum Operation: string {
 	case BanDeleted = 'spreed.ban.deleted';
 	case ExternalCallPolicyParticipantRemoved = 'spreed.external_call_policy.participant_removed';
 
+	// Federation
+	case FederationInviteAccepted = 'spreed.federation_invite.accepted';
+	case FederationInviteRejected = 'spreed.federation_invite.rejected';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -62,6 +66,8 @@ enum Operation: string {
 			self::BanCreated => 'A participant or IP address was banned from a conversation',
 			self::BanDeleted => 'A ban was removed from a conversation',
 			self::ExternalCallPolicyParticipantRemoved => 'A participant was removed because the external call service did not allow them',
+			self::FederationInviteAccepted => 'An invitation to a conversation on another server was accepted',
+			self::FederationInviteRejected => 'An invitation to a conversation on another server was rejected',
 		};
 	}
 }
