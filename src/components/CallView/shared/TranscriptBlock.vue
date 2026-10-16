@@ -345,7 +345,9 @@ export default {
 
 			let clientRectIndex = 0
 
-			return this.lines.map((line, index) => {
+			const lineBoundaries = [] as Array<{ top: number, bottom: number }>
+
+			for (const [index, line] of this.lines.entries()) {
 				const clientRectsOfLastChunkInLine = this.$refs.chunks![line.lastChunkIndex].getClientRects()
 
 				if (index > 0 && line.lastChunkIndex === this.lines[index - 1].lastChunkIndex) {
@@ -355,6 +357,10 @@ export default {
 				}
 
 				const currentClientRectsOfLastChunkInLine = clientRectsOfLastChunkInLine[clientRectIndex]
+				// Layout boxes are gone since the lines were stored
+				if (!currentClientRectsOfLastChunkInLine) {
+					return []
+				}
 
 				// Chunks are shown as inline spans, which do not have the full
 				// line height. The spans are vertically centered on the line,
@@ -363,11 +369,13 @@ export default {
 				const chunkHeight = currentClientRectsOfLastChunkInLine.bottom - currentClientRectsOfLastChunkInLine.top
 				const chunkToLineHeightDifference = lineHeight - chunkHeight
 
-				return {
+				lineBoundaries.push({
 					top: currentClientRectsOfLastChunkInLine.top - (chunkToLineHeightDifference / 2),
 					bottom: currentClientRectsOfLastChunkInLine.bottom + (chunkToLineHeightDifference / 2),
-				}
-			})
+				})
+			}
+
+			return lineBoundaries
 		},
 
 		getSeparatorBetweenChunks(chunk1: Chunk, chunk2: Chunk) {
