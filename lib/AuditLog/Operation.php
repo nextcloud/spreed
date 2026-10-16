@@ -29,6 +29,15 @@ enum Operation: string {
 	case ConversationMessageExpirationChanged = 'spreed.conversation_message_expiration.changed';
 	case ConversationRecordingConsentChanged = 'spreed.conversation_recording_consent.changed';
 
+	// Participants
+	case ParticipantAdded = 'spreed.participant.added';
+	case ParticipantRemoved = 'spreed.participant.removed';
+	case ParticipantTypeChanged = 'spreed.participant_type.changed';
+	case ParticipantPermissionsChanged = 'spreed.participant_permissions.changed';
+	case BanCreated = 'spreed.ban.created';
+	case BanDeleted = 'spreed.ban.deleted';
+	case ExternalCallPolicyParticipantRemoved = 'spreed.external_call_policy.participant_removed';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -46,6 +55,13 @@ enum Operation: string {
 			self::ConversationMentionPermissionsChanged => 'Who may mention everyone in a conversation was changed',
 			self::ConversationMessageExpirationChanged => 'The message expiration of a conversation was changed',
 			self::ConversationRecordingConsentChanged => 'The recording consent requirement of a conversation was changed',
+			self::ParticipantAdded => 'A participant was added to a group or public conversation',
+			self::ParticipantRemoved => 'A participant was removed from or left a group or public conversation',
+			self::ParticipantTypeChanged => 'The participant type of a participant was changed, for example to moderator',
+			self::ParticipantPermissionsChanged => 'The permissions of one participant or of all participants were changed',
+			self::BanCreated => 'A participant or IP address was banned from a conversation',
+			self::BanDeleted => 'A ban was removed from a conversation',
+			self::ExternalCallPolicyParticipantRemoved => 'A participant was removed because the external call service did not allow them',
 		};
 	}
 }

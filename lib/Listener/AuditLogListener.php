@@ -9,10 +9,16 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Talk\AuditLog\Operation;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\AttendeeRemovedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -20,7 +26,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 
 /**
- * Writes changes to conversations to the admin audit log
+ * Writes changes to conversations and their participants to the admin audit log
  *
  * @template-implements IEventListener<Event>
  */
@@ -38,12 +44,18 @@ class AuditLogListener implements IEventListener {
 			$this->lobbyModified($event);
 		} elseif ($event instanceof RoomModifiedEvent) {
 			$this->roomModified($event);
+		} elseif ($event instanceof AttendeesAddedEvent) {
+			$this->attendeesAdded($event);
+		} elseif ($event instanceof AttendeeRemovedEvent) {
+			$this->attendeeRemoved($event);
+		} elseif ($event instanceof ParticipantModifiedEvent) {
+			$this->participantModified($event);
 		}
 	}
 
 	private function roomCreated(RoomCreatedEvent $event): void {
 		$room = $event->getRoom();
-		if ($room->getType() !== Room::TYPE_GROUP && $room->getType() !== Room::TYPE_PUBLIC) {
+		if (!$this->isSharedConversation($room)) {
 			return;
 		}
 
@@ -90,6 +102,91 @@ class AuditLogListener implements IEventListener {
 			ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->logValueChange('Message expiration', $token, $event, Operation::ConversationMessageExpirationChanged),
 			ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT => $this->logValueChange('Recording consent requirement', $token, $event, Operation::ConversationRecordingConsentChanged),
 			default => null,
+		};
+	}
+
+	private function attendeesAdded(AttendeesAddedEvent $event): void {
+		$room = $event->getRoom();
+		if (!$this->isSharedConversation($room)) {
+			return;
+		}
+
+		foreach ($event->getAttendees() as $attendee) {
+			if ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
+				continue;
+			}
+
+			$this->log('Participant "%s" (%s, attendee %s) was added to conversation "%s" as %s', [
+				'actorId' => $this->getLoggedActorId($attendee),
+				'actorType' => $attendee->getActorType(),
+				'attendeeId' => $attendee->getId(),
+				'token' => $room->getToken(),
+				'participantType' => $this->participantTypeLabel($attendee->getParticipantType()),
+			], Operation::ParticipantAdded);
+		}
+	}
+
+	private function attendeeRemoved(AttendeeRemovedEvent $event): void {
+		$room = $event->getRoom();
+		$attendee = $event->getAttendee();
+		if (!$this->isSharedConversation($room) || $attendee->getActorType() === Attendee::ACTOR_GUESTS) {
+			return;
+		}
+
+		$this->log('Participant "%s" (%s, attendee %s) was removed from conversation "%s" (reason: %s)', [
+			'actorId' => $this->getLoggedActorId($attendee),
+			'actorType' => $attendee->getActorType(),
+			'attendeeId' => $attendee->getId(),
+			'token' => $room->getToken(),
+			'reason' => $event->getReason(),
+		], Operation::ParticipantRemoved);
+	}
+
+	private function participantModified(ParticipantModifiedEvent $event): void {
+		$attendee = $event->getParticipant()->getAttendee();
+		$parameters = [
+			'actorId' => $this->getLoggedActorId($attendee),
+			'actorType' => $attendee->getActorType(),
+			'attendeeId' => $attendee->getId(),
+			'token' => $event->getRoom()->getToken(),
+		];
+
+		match ($event->getProperty()) {
+			AParticipantModifiedEvent::PROPERTY_TYPE => $this->log('Participant type of "%s" (%s, attendee %s) in conversation "%s" was changed from %s to %s', $parameters + [
+				'oldParticipantType' => $event->getOldValue() === null ? null : $this->participantTypeLabel((int)$event->getOldValue()),
+				'participantType' => $this->participantTypeLabel((int)$event->getNewValue()),
+			], Operation::ParticipantTypeChanged),
+			AParticipantModifiedEvent::PROPERTY_PERMISSIONS => $this->log('Permissions of "%s" (%s, attendee %s) in conversation "%s" were changed from %s to %s', $parameters + [
+				'oldPermissions' => $event->getOldValue(),
+				'permissions' => $event->getNewValue(),
+			], Operation::ParticipantPermissionsChanged),
+			default => null,
+		};
+	}
+
+	/**
+	 * Email guests are identified by their attendee ID instead of the email address
+	 */
+	private function getLoggedActorId(Attendee $attendee): ?string {
+		return $attendee->getActorType() === Attendee::ACTOR_EMAILS ? null : $attendee->getActorId();
+	}
+
+	/**
+	 * One-to-one, note-to-self and changelog conversations are managed by the server and not audited
+	 */
+	private function isSharedConversation(Room $room): bool {
+		return $room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC;
+	}
+
+	private function participantTypeLabel(int $participantType): string {
+		return match ($participantType) {
+			Participant::OWNER => 'owner',
+			Participant::MODERATOR => 'moderator',
+			Participant::USER => 'user',
+			Participant::GUEST => 'guest',
+			Participant::USER_SELF_JOINED => 'self-joined user',
+			Participant::GUEST_MODERATOR => 'guest moderator',
+			default => 'unknown',
 		};
 	}
 
