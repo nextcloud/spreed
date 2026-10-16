@@ -299,7 +299,11 @@ export default {
 			}
 
 			let lastKnownChunkElement = this.$refs.chunks[lastKnownChunkIndex]
-			let lastKnownChunkElementTop = lastKnownChunkElement.getClientRects()[lastKnownChunkElement.getClientRects().length - 1].top
+			const clientRects = lastKnownChunkElement.getClientRects()
+			if (!clientRects.length) {
+				return
+			}
+			let lastKnownChunkElementTop = clientRects[clientRects.length - 1].top
 
 			for (let i = lastKnownChunkIndex + 1; i < this.$refs.chunks.length; i++) {
 				const nextChunkElement = this.$refs.chunks[i]
