@@ -58,6 +58,14 @@ enum Operation: string {
 	case BotInstalled = 'spreed.bot.installed';
 	case BotUninstalled = 'spreed.bot.uninstalled';
 
+	// Administration
+	case SipSettingsUpdated = 'spreed.sip_settings.updated';
+	case HostedSignalingAccountCreated = 'spreed.hosted_signaling_account.created';
+	case HostedSignalingAccountDeleted = 'spreed.hosted_signaling_account.deleted';
+	case BridgeUpdated = 'spreed.bridge.updated';
+	case BridgeDeleted = 'spreed.bridge.deleted';
+	case CallParticipantsExported = 'spreed.call_participants.exported';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -94,6 +102,12 @@ enum Operation: string {
 			self::ConversationBotDisabled => 'A bot was disabled in a conversation',
 			self::BotInstalled => 'A bot was installed through the bot install event',
 			self::BotUninstalled => 'A bot was uninstalled through the bot uninstall event',
+			self::SipSettingsUpdated => 'The SIP bridge settings were changed',
+			self::HostedSignalingAccountCreated => 'A hosted signaling server account was registered',
+			self::HostedSignalingAccountDeleted => 'The hosted signaling server account was deleted',
+			self::BridgeUpdated => 'The Matterbridge of a conversation was updated',
+			self::BridgeDeleted => 'The Matterbridge of a conversation was deleted',
+			self::CallParticipantsExported => 'The participants list of a call was downloaded',
 		};
 	}
 }
