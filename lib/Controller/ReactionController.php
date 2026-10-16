@@ -21,6 +21,7 @@ use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -39,6 +40,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		IRequest $request,
 		private readonly ReactionManager $reactionManager,
 		private readonly SendService $matrixSendService,
+		private readonly ParticipantService $participantService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -81,7 +83,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 			if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 				$this->matrixSendService->addReaction($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
 			} else {
-				$this->reactionManager->addReactionMessage(
+				$comment = $this->reactionManager->addReactionMessage(
 					$this->getRoom(),
 					$this->getParticipant()->getAttendee()->getActorType(),
 					$this->getParticipant()->getAttendee()->getActorId(),
@@ -89,6 +91,9 @@ class ReactionController extends AEnvironmentAwareOCSController {
 					$messageId,
 					$reaction
 				);
+				if ($this->getRoom()->getType() === Room::TYPE_ONE_TO_ONE) {
+					$this->participantService->updateLastReadMessage($this->getParticipant(), (int)$comment->getId());
+				}
 			}
 			$status = Http::STATUS_CREATED;
 		} catch (NotFoundException) {
