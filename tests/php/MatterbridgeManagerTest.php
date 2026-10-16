@@ -12,14 +12,20 @@ use OC\Authentication\Token\IProvider;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\DB\IResult;
+use OCP\DB\QueryBuilder\IExpressionBuilder;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IAvatarManager;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -44,6 +50,7 @@ class MatterbridgeManagerTest extends TestCase {
 	protected LoggerInterface&MockObject $logger;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected IRemoteHostValidator&MockObject $hostValidator;
+	protected IEventDispatcher&MockObject $dispatcher;
 	protected MatterbridgeManager $matterbridgeManager;
 
 	public function setUp(): void {
@@ -63,6 +70,7 @@ class MatterbridgeManagerTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->hostValidator = $this->createMock(IRemoteHostValidator::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 
 		$this->matterbridgeManager = new MatterbridgeManager(
 			$this->db,
@@ -79,6 +87,7 @@ class MatterbridgeManagerTest extends TestCase {
 			$this->logger,
 			$this->timeFactory,
 			$this->hostValidator,
+			$this->dispatcher,
 		);
 	}
 
@@ -145,5 +154,47 @@ class MatterbridgeManagerTest extends TestCase {
 		} else {
 			$this->assertEquals($parts, self::invokePrivate($this->matterbridgeManager, 'validateParts', [$parts]));
 		}
+	}
+
+	public function testDeleteBridgeOfRoomLogsCriticalAction(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('abcdef');
+
+		$expr = $this->createMock(IExpressionBuilder::class);
+		$query = $this->createMock(IQueryBuilder::class);
+		$query->method('delete')->willReturnSelf();
+		$query->method('where')->willReturnSelf();
+		$query->method('expr')->willReturn($expr);
+		$query->method('executeQuery')->willReturn($this->createMock(IResult::class));
+		$this->db->method('getQueryBuilder')->willReturn($query);
+
+		$matterbridgeManager = $this->getMockBuilder(MatterbridgeManager::class)
+			->setConstructorArgs([
+				$this->db,
+				$this->config,
+				$this->appConfig,
+				$this->url,
+				$this->userManager,
+				$this->manager,
+				$this->participantService,
+				$this->chatManager,
+				$this->tokenProvider,
+				$this->random,
+				$this->avatarManager,
+				$this->logger,
+				$this->timeFactory,
+				$this->hostValidator,
+				$this->dispatcher,
+			])
+			->onlyMethods(['getBridgeOfRoom'])
+			->getMock();
+		$matterbridgeManager->method('getBridgeOfRoom')->willReturn(['enabled' => true, 'pid' => 0, 'parts' => []]);
+
+		$this->dispatcher->expects($this->once())
+			->method('dispatchTyped')
+			->with($this->callback(fn (CriticalActionPerformedEvent $event): bool => $event->getOperation() === 'spreed.bridge.deleted'
+				&& $event->getParameters() === ['token' => 'abcdef']));
+
+		$this->assertTrue($matterbridgeManager->deleteBridgeOfRoom($room));
 	}
 }
