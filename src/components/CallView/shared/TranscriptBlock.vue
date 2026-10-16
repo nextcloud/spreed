@@ -278,6 +278,10 @@ export default {
 
 			if (!this.lines.length) {
 				const firstChunkClientRectsLength = this.$refs.chunks[0].getClientRects().length
+				// No layout boxes, e.g. when the transcript is not rendered
+				if (!firstChunkClientRectsLength) {
+					return
+				}
 
 				// If there is a single chunk and it has several bounding
 				// rectangles each rectangle will be in its own line.
