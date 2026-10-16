@@ -13,11 +13,14 @@ use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\BotDisabledEvent;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BotServer;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
@@ -26,7 +29,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 
 /**
- * Writes changes to conversations and their participants to the admin audit log
+ * Writes changes to conversations, their participants and their bots to the admin audit log
  *
  * @template-implements IEventListener<Event>
  */
@@ -50,6 +53,10 @@ class AuditLogListener implements IEventListener {
 			$this->attendeeRemoved($event);
 		} elseif ($event instanceof ParticipantModifiedEvent) {
 			$this->participantModified($event);
+		} elseif ($event instanceof BotEnabledEvent) {
+			$this->botToggled($event->getRoom(), $event->getBotServer(), 'enabled', Operation::ConversationBotEnabled);
+		} elseif ($event instanceof BotDisabledEvent) {
+			$this->botToggled($event->getRoom(), $event->getBotServer(), 'disabled', Operation::ConversationBotDisabled);
 		}
 	}
 
@@ -182,6 +189,14 @@ class AuditLogListener implements IEventListener {
 			], Operation::ParticipantPermissionsChanged),
 			default => null,
 		};
+	}
+
+	private function botToggled(Room $room, BotServer $bot, string $action, Operation $operation): void {
+		$this->log('Bot %s ("%s") was ' . $action . ' in conversation "%s"', [
+			'botId' => $bot->getId(),
+			'botName' => $bot->getName(),
+			'token' => $room->getToken(),
+		], $operation);
 	}
 
 	/**

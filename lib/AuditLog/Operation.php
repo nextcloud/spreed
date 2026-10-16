@@ -52,6 +52,12 @@ enum Operation: string {
 	case MessageEdited = 'spreed.message.edited';
 	case ChatHistoryCleared = 'spreed.chat_history.cleared';
 
+	// Bots
+	case ConversationBotEnabled = 'spreed.conversation_bot.enabled';
+	case ConversationBotDisabled = 'spreed.conversation_bot.disabled';
+	case BotInstalled = 'spreed.bot.installed';
+	case BotUninstalled = 'spreed.bot.uninstalled';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -84,6 +90,10 @@ enum Operation: string {
 			self::MessageDeleted => 'A moderator deleted a message of another participant',
 			self::MessageEdited => 'A moderator edited a message of another participant',
 			self::ChatHistoryCleared => 'The chat history of a conversation was cleared',
+			self::ConversationBotEnabled => 'A bot was enabled in a conversation',
+			self::ConversationBotDisabled => 'A bot was disabled in a conversation',
+			self::BotInstalled => 'A bot was installed through the bot install event',
+			self::BotUninstalled => 'A bot was uninstalled through the bot uninstall event',
 		};
 	}
 }

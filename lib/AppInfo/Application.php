@@ -378,6 +378,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, AuditLogListener::class);
 		$context->registerEventListener(AttendeeRemovedEvent::class, AuditLogListener::class);
 		$context->registerEventListener(ParticipantModifiedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(BotEnabledEvent::class, AuditLogListener::class);
+		$context->registerEventListener(BotDisabledEvent::class, AuditLogListener::class);
 
 		// Video verification
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, PublicShareAuthListener::class);
