@@ -13,12 +13,15 @@ use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\BotDisabledEvent;
+use OCA\Talk\Events\BotEnabledEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Listener\AuditLogListener;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BotServer;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
@@ -293,5 +296,21 @@ class AuditLogListenerTest extends TestCase {
 		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_CALL_RECORDING, $newStatus, $oldStatus));
 
 		$this->assertSame([], $this->auditEvents);
+	}
+
+	public function testBotEnabledAndDisabled(): void {
+		$bot = new BotServer();
+		$bot->setId(3);
+		$bot->setName('Helper');
+		$room = $this->createRoom();
+
+		$this->listener->handle(new BotEnabledEvent($room, $bot));
+		$this->listener->handle(new BotDisabledEvent($room, $bot));
+
+		$this->assertCount(2, $this->auditEvents);
+		$this->assertSame('spreed.conversation_bot.enabled', $this->auditEvents[0]->getOperation());
+		$this->assertSame('Bot %s ("%s") was enabled in conversation "%s"', $this->auditEvents[0]->getLogMessage());
+		$this->assertSame(['botId' => 3, 'botName' => 'Helper', 'token' => 'abcdef'], $this->auditEvents[0]->getParameters());
+		$this->assertSame('spreed.conversation_bot.disabled', $this->auditEvents[1]->getOperation());
 	}
 }
