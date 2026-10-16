@@ -49,7 +49,7 @@ class MessageSentListener implements IEventListener {
 		}
 
 		if (!$event->getRoom()->hasFederatedParticipants()) {
-		  return;
+			return;
 		}
 
 		// Try to have as neutral as possible messages
