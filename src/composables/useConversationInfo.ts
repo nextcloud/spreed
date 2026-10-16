@@ -89,8 +89,13 @@ export function useConversationInfo({
 	/**
 	 * @return Part of the name until the first space
 	 */
+	const hideLastChatMessageAuthor = computed(() => {
+		return !exposeMessages || !hasLastMessage.value
+			|| (lastMessage.value.systemMessage.length > 0 && lastMessage.value.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION)
+	})
+
 	const shortLastChatMessageAuthor = computed(() => {
-		if (!exposeMessages || !hasLastMessage.value || lastMessage.value.systemMessage.length) {
+		if (hideLastChatMessageAuthor.value) {
 			return ''
 		}
 
@@ -98,7 +103,7 @@ export function useConversationInfo({
 	})
 
 	const fullLastChatMessageAuthor = computed(() => {
-		if (!exposeMessages || !hasLastMessage.value || lastMessage.value.systemMessage.length) {
+		if (hideLastChatMessageAuthor.value) {
 			return ''
 		}
 
