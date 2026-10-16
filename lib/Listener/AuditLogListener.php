@@ -101,8 +101,28 @@ class AuditLogListener implements IEventListener {
 			ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS => $this->logValueChange('Mention permissions', $token, $event, Operation::ConversationMentionPermissionsChanged),
 			ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->logValueChange('Message expiration', $token, $event, Operation::ConversationMessageExpirationChanged),
 			ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT => $this->logValueChange('Recording consent requirement', $token, $event, Operation::ConversationRecordingConsentChanged),
+			ARoomModifiedEvent::PROPERTY_CALL_RECORDING => $this->callRecordingModified($token, $event),
 			default => null,
 		};
+	}
+
+	/**
+	 * Only the confirmed start and the end of a recording are logged, not the transitional states
+	 */
+	private function callRecordingModified(string $token, RoomModifiedEvent $event): void {
+		$newStatus = $event->getNewValue();
+		$oldStatus = $event->getOldValue();
+
+		if ($newStatus === Room::RECORDING_VIDEO || $newStatus === Room::RECORDING_AUDIO) {
+			$this->log('Recording of conversation "%s" was started (%s)', [
+				'token' => $token,
+				'recordingType' => $newStatus === Room::RECORDING_VIDEO ? 'video' : 'audio',
+			], Operation::RecordingStarted);
+		} elseif ($newStatus === Room::RECORDING_NONE && in_array($oldStatus, [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO], true)) {
+			$this->log('Recording of conversation "%s" was stopped', [
+				'token' => $token,
+			], Operation::RecordingStopped);
+		}
 	}
 
 	private function attendeesAdded(AttendeesAddedEvent $event): void {

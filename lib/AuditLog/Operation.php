@@ -42,6 +42,11 @@ enum Operation: string {
 	case FederationInviteAccepted = 'spreed.federation_invite.accepted';
 	case FederationInviteRejected = 'spreed.federation_invite.rejected';
 
+	// Recording
+	case RecordingStarted = 'spreed.recording.started';
+	case RecordingStopped = 'spreed.recording.stopped';
+	case RecordingStored = 'spreed.recording.stored';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -68,6 +73,9 @@ enum Operation: string {
 			self::ExternalCallPolicyParticipantRemoved => 'A participant was removed because the external call service did not allow them',
 			self::FederationInviteAccepted => 'An invitation to a conversation on another server was accepted',
 			self::FederationInviteRejected => 'An invitation to a conversation on another server was rejected',
+			self::RecordingStarted => 'A call recording was started',
+			self::RecordingStopped => 'A call recording was stopped',
+			self::RecordingStored => 'A call recording was stored in the folder of its owner',
 		};
 	}
 }

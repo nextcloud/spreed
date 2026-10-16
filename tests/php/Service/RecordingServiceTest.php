@@ -41,6 +41,7 @@ use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
 use OCP\Security\ISecureRandom;
@@ -343,7 +344,19 @@ class RecordingServiceTest extends TestCase {
 
 		$this->notificationManager->expects($this->once())->method('notify');
 
+		$auditEvents = [];
+		$this->eventDispatcher->method('dispatchTyped')
+			->willReturnCallback(function (object $event) use (&$auditEvents): void {
+				if ($event instanceof CriticalActionPerformedEvent) {
+					$auditEvents[] = $event;
+				}
+			});
+
 		$this->recordingService->finishUpload($room, $owner, 'name.ogg');
+
+		$this->assertCount(1, $auditEvents);
+		$this->assertSame('spreed.recording.stored', $auditEvents[0]->getOperation());
+		$this->assertSame(['token' => 'token123', 'fileId' => 42, 'owner' => 'user1'], $auditEvents[0]->getParameters());
 	}
 
 	public function testFinishUploadMissingFile(): void {
