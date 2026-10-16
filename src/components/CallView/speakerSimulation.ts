@@ -4,8 +4,9 @@
  */
 
 /**
- * Development helper: fakes a conversation between six participants so the
- * multi-speaker layout can be exercised without a room full of people.
+ * Development helper: fakes a conversation between six participants, with
+ * test pattern videos, so the multi-speaker layout can be exercised without a
+ * room full of people.
  *
  * Only active in debug mode: the call view sets it up and tears it down only
  * when `OC.debug` is truthy.
@@ -15,11 +16,12 @@
  *
  *     OCA.Talk.speakerSimulation.start()      // (re)start the timeline
  *     OCA.Talk.speakerSimulation.start(2)     // 2x faster, see `start()`
+ *     OCA.Talk.speakerSimulation.start(1, 30, 640) // 30fps, 640px wide videos
  *     OCA.Talk.speakerSimulation.stop()
  *     OCA.Talk.speakerSimulation.speak(2, 5)  // make participant 2 speak 5s
  */
 
-import { reactive } from 'vue'
+import { markRaw, reactive } from 'vue'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel.js'
 import { placeholderName } from './Grid/gridPlaceholders.ts'
@@ -71,8 +73,8 @@ type SimulatedModel = ReturnType<typeof createModel>
 
 /**
  * Build an object with the surface of a `CallParticipantModel` that the call
- * view actually reads. No peer connection is involved, so the tiles show the
- * participant name over an avatar rather than a video.
+ * view actually reads. No peer connection is involved, so the tiles show a
+ * canvas test pattern rather than a camera video.
  *
  * @param index - position of the participant in the simulation
  */
@@ -92,7 +94,7 @@ function createModel(index: number) {
 		connecting: false,
 		initialConnection: false,
 		connectedAtLeastOnce: true,
-		stream: null,
+		stream: null as MediaStream | null,
 		audioAvailable: true,
 		speaking: false,
 		videoBlocked: false,
@@ -117,6 +119,7 @@ function createModel(index: number) {
 
 let models: SimulatedModel[] = []
 let timers: ReturnType<typeof setTimeout>[] = []
+let videoIntervals: ReturnType<typeof setInterval>[] = []
 
 /**
  * Remove the simulated participants and cancel the timeline.
@@ -125,7 +128,11 @@ function stop() {
 	timers.forEach((timer) => clearTimeout(timer))
 	timers = []
 
+	videoIntervals.forEach((interval) => clearInterval(interval))
+	videoIntervals = []
+
 	models.forEach((model) => {
+		model.attributes.stream?.getTracks().forEach((track) => track.stop())
 		const index = callParticipantCollection.callParticipantModels.indexOf(model as never)
 		if (index !== -1) {
 			callParticipantCollection.callParticipantModels.splice(index, 1)
@@ -134,6 +141,46 @@ function stop() {
 	models = []
 
 	console.info('[speaker simulation] stopped')
+}
+
+/**
+ * Play a moving test pattern as the video of a simulated participant.
+ *
+ * @param model - the simulated participant
+ * @param index - position of the participant in the simulation
+ * @param fps - frames per second
+ * @param width - width of the video, in pixels
+ */
+function startVideo(model: SimulatedModel, index: number, fps: number, width: number) {
+	// Alternate aspect ratios to check how the tiles fit both
+	const [height, ratio] = index % 2 ? [width * 3 / 4, '4:3'] : [width * 9 / 16, '16:9']
+	// Drawing sizes below are for a 640px wide video
+	const scale = width / 640
+
+	const canvas = document.createElement('canvas')
+	canvas.width = width
+	canvas.height = height
+	const context = canvas.getContext('2d')!
+	videoIntervals.push(setInterval(() => {
+		context.fillStyle = `hsl(${index * 60} 50% 40%)`
+		context.fillRect(0, 0, width, height)
+		// Frame on the edges shows whether the tile crops the video
+		context.strokeStyle = 'white'
+		context.lineWidth = 8 * scale
+		context.strokeRect(4 * scale, 4 * scale, width - 8 * scale, height - 8 * scale)
+		context.fillStyle = 'white'
+		context.font = `${32 * scale}px sans-serif`
+		context.textAlign = 'center'
+		context.textBaseline = 'middle'
+		context.fillText(`${ratio} ${model.attributes.name}`, width / 2, height / 2 - 20 * scale)
+		context.fillText(new Date().toLocaleTimeString(), width / 2, height / 2 + 20 * scale)
+		// Moving square, so a frozen video is easy to spot
+		context.fillRect((Date.now() / 5 * scale) % width, height - 80 * scale, 40 * scale, 40 * scale)
+	}, 1000 / fps))
+
+	// Not reactive, the video element needs the real MediaStream
+	model.attributes.stream = markRaw(canvas.captureStream(fps))
+	model.attributes.videoAvailable = true
 }
 
 /**
@@ -166,11 +213,14 @@ function speak(index: number, duration: number) {
  *   promoted any more, which is only useful to check that brief exchanges
  *   leave the layout alone. Use `speak()` by hand to make people talk over
  *   each other.
+ * @param fps - frames per second of the simulated videos
+ * @param width - width of the simulated videos, in pixels
  */
-function start(speed = 1) {
+function start(speed = 1, fps = 15, width = 320) {
 	stop()
 
 	models = Array.from({ length: PARTICIPANT_COUNT }, (_, index) => createModel(index))
+	models.forEach((model, index) => startVideo(model, index, fps, width))
 	callParticipantCollection.callParticipantModels.push(...(models as never[]))
 
 	const scheduleRun = () => {
