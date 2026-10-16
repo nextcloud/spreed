@@ -1,0 +1,161 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Talk\Tests\php\Listener;
+
+use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\RoomCreatedEvent;
+use OCA\Talk\Events\RoomModifiedEvent;
+use OCA\Talk\Listener\AuditLogListener;
+use OCA\Talk\Room;
+use OCA\Talk\Webinary;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
+
+class AuditLogListenerTest extends TestCase {
+	protected IEventDispatcher&MockObject $dispatcher;
+	protected AuditLogListener $listener;
+	/** @var list<CriticalActionPerformedEvent> */
+	protected array $auditEvents = [];
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->auditEvents = [];
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->dispatcher->method('dispatchTyped')
+			->willReturnCallback(function (Event $event): void {
+				if ($event instanceof CriticalActionPerformedEvent) {
+					$this->auditEvents[] = $event;
+				}
+			});
+		$this->listener = new AuditLogListener($this->dispatcher);
+	}
+
+	protected function createRoom(int $type = Room::TYPE_GROUP): Room&MockObject {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('abcdef');
+		$room->method('getType')->willReturn($type);
+		$room->method('getObjectType')->willReturn('file');
+		$room->method('getObjectId')->willReturn('42');
+		return $room;
+	}
+
+	protected function assertAuditEvent(string $operation, string $message, array $parameters): void {
+		$this->assertCount(1, $this->auditEvents);
+		$this->assertSame($operation, $this->auditEvents[0]->getOperation());
+		$this->assertSame($message, $this->auditEvents[0]->getLogMessage());
+		$this->assertSame($parameters, $this->auditEvents[0]->getParameters());
+	}
+
+	public function testRoomCreated(): void {
+		$this->listener->handle(new RoomCreatedEvent($this->createRoom(Room::TYPE_PUBLIC)));
+
+		$this->assertAuditEvent('spreed.conversation.created', 'Conversation "%s" was created as %s conversation', [
+			'token' => 'abcdef',
+			'conversationType' => 'public',
+			'objectType' => 'file',
+			'objectId' => '42',
+		]);
+	}
+
+	public static function dataRoomCreatedIgnored(): array {
+		return [
+			[Room::TYPE_ONE_TO_ONE],
+			[Room::TYPE_NOTE_TO_SELF],
+			[Room::TYPE_CHANGELOG],
+		];
+	}
+
+	#[DataProvider('dataRoomCreatedIgnored')]
+	public function testRoomCreatedIgnored(int $type): void {
+		$this->listener->handle(new RoomCreatedEvent($this->createRoom($type)));
+
+		$this->assertSame([], $this->auditEvents);
+	}
+
+	public function testTypeChanged(): void {
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_TYPE, Room::TYPE_PUBLIC, Room::TYPE_GROUP));
+
+		$this->assertAuditEvent('spreed.conversation_type.changed', 'Type of conversation "%s" was changed from %s to %s', [
+			'token' => 'abcdef',
+			'oldConversationType' => 'group',
+			'conversationType' => 'public',
+		]);
+	}
+
+	public static function dataPasswordChanged(): array {
+		return [
+			['secret-password', 'enabled'],
+			['', 'disabled'],
+		];
+	}
+
+	#[DataProvider('dataPasswordChanged')]
+	public function testPasswordChanged(string $password, string $expected): void {
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_PASSWORD, $password));
+
+		$this->assertAuditEvent('spreed.conversation_password.changed', 'Password protection of conversation "%s" was %s', [
+			'token' => 'abcdef',
+			'passwordProtection' => $expected,
+		]);
+		$this->assertNotContains('secret-password', $this->auditEvents[0]->getParameters());
+	}
+
+	public static function dataValueChanged(): array {
+		return [
+			[ARoomModifiedEvent::PROPERTY_LISTABLE, Room::LISTABLE_ALL, Room::LISTABLE_NONE, 'Listable scope', 'spreed.conversation_listable.changed'],
+			[ARoomModifiedEvent::PROPERTY_READ_ONLY, Room::READ_ONLY, Room::READ_WRITE, 'Read-only state', 'spreed.conversation_read_only.changed'],
+			[ARoomModifiedEvent::PROPERTY_SIP_ENABLED, Webinary::SIP_ENABLED, Webinary::SIP_DISABLED, 'SIP dial-in state', 'spreed.conversation_sip.changed'],
+			[ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS, 254, 0, 'Default permissions', 'spreed.conversation_permissions.changed'],
+			[ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, 1, 0, 'Mention permissions', 'spreed.conversation_mention_permissions.changed'],
+			[ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION, 3600, 0, 'Message expiration', 'spreed.conversation_message_expiration.changed'],
+			[ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, 1, 0, 'Recording consent requirement', 'spreed.conversation_recording_consent.changed'],
+		];
+	}
+
+	#[DataProvider('dataValueChanged')]
+	public function testValueChanged(string $property, int $newValue, int $oldValue, string $setting, string $operation): void {
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), $property, $newValue, $oldValue));
+
+		$this->assertAuditEvent($operation, $setting . ' of conversation "%s" was changed from %s to %s', [
+			'token' => 'abcdef',
+			'oldValue' => $oldValue,
+			'newValue' => $newValue,
+		]);
+	}
+
+	public function testUnauditedPropertyIsIgnored(): void {
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_NAME, 'New name', 'Old name'));
+
+		$this->assertSame([], $this->auditEvents);
+	}
+
+	public function testLobbyModified(): void {
+		$timer = new \DateTime('2026-10-16T12:00:00+00:00');
+		$this->listener->handle(new LobbyModifiedEvent($this->createRoom(), Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE, $timer, false));
+
+		$this->assertAuditEvent('spreed.conversation_lobby.changed', 'Lobby of conversation "%s" was changed from %s to %s', [
+			'token' => 'abcdef',
+			'oldLobbyState' => Webinary::LOBBY_NONE,
+			'lobbyState' => Webinary::LOBBY_NON_MODERATORS,
+			'lobbyTimer' => '2026-10-16T12:00:00+00:00',
+		]);
+	}
+
+	public function testLobbyTimerReachedIsIgnored(): void {
+		$this->listener->handle(new LobbyModifiedEvent($this->createRoom(), Webinary::LOBBY_NONE, Webinary::LOBBY_NON_MODERATORS, null, true));
+
+		$this->assertSame([], $this->auditEvents);
+	}
+}
