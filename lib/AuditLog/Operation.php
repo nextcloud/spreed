@@ -47,6 +47,11 @@ enum Operation: string {
 	case RecordingStopped = 'spreed.recording.stopped';
 	case RecordingStored = 'spreed.recording.stored';
 
+	// Chat
+	case MessageDeleted = 'spreed.message.deleted';
+	case MessageEdited = 'spreed.message.edited';
+	case ChatHistoryCleared = 'spreed.chat_history.cleared';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -76,6 +81,9 @@ enum Operation: string {
 			self::RecordingStarted => 'A call recording was started',
 			self::RecordingStopped => 'A call recording was stopped',
 			self::RecordingStored => 'A call recording was stored in the folder of its owner',
+			self::MessageDeleted => 'A moderator deleted a message of another participant',
+			self::MessageEdited => 'A moderator edited a message of another participant',
+			self::ChatHistoryCleared => 'The chat history of a conversation was cleared',
 		};
 	}
 }
