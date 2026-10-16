@@ -173,6 +173,8 @@ class RoomSyncService {
 		$matrixRoom->setCreator($state->creator !== '' ? mb_substr($state->creator, 0, 255) : null);
 		$matrixRoom->setCreators($state->creators !== [] ? json_encode($state->creators, JSON_THROW_ON_ERROR) : null);
 		$matrixRoom->setEncrypted($state->encrypted);
+		$matrixRoom->setRotationPeriodMs($state->rotationPeriodMs);
+		$matrixRoom->setRotationPeriodMsgs($state->rotationPeriodMsgs);
 		$matrixRoom->setPowerLevels($state->powerLevels !== [] ? json_encode($state->powerLevels, JSON_THROW_ON_ERROR) : null);
 
 		$wasInvited = ($members[$account->getMxid()] ?? null)?->getMembership() === Member::INVITE;
@@ -536,7 +538,10 @@ class RoomSyncService {
 				: ['creator' => $matrixRoom->getCreator()], '');
 		}
 		if ($matrixRoom->getEncrypted()) {
-			$events[] = new Event('', 'm.room.encryption', '', [], '');
+			$events[] = new Event('', 'm.room.encryption', '', array_filter([
+				'rotation_period_ms' => $matrixRoom->getRotationPeriodMs(),
+				'rotation_period_msgs' => $matrixRoom->getRotationPeriodMsgs(),
+			], static fn (?int $value): bool => $value !== null), '');
 		}
 		if ($matrixRoom->getPowerLevels() !== null) {
 			$events[] = new Event('', 'm.room.power_levels', '', $matrixRoom->getPowerLevelsArray(), '');

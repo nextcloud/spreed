@@ -182,6 +182,21 @@ class PrimitivesTest extends TestCase {
 		self::assertSame('two', $inbound->decrypt(Message::TYPE_NORMAL, Base64::encode($raw)));
 	}
 
+	public function testOlmMessageGap(): void {
+		[, $bob, $outbound] = self::olmPair();
+		['session' => $inbound] = Session::fromPreKeyMessage($bob, $outbound->encrypt('first')['body']);
+		for ($i = 0; $i < 100; $i++) {
+			$outbound->encrypt('lost');
+		}
+		self::assertSame('after the gap', $inbound->decrypt(...array_values($outbound->encrypt('after the gap'))));
+
+		for ($i = 0; $i < 2001; $i++) {
+			$outbound->encrypt('lost');
+		}
+		$this->expectExceptionObject(new CryptoException('Too many skipped messages'));
+		$inbound->decrypt(...array_values($outbound->encrypt('too late')));
+	}
+
 	public function testRatchetAdvanceToMatchesStepping(): void {
 		$a = Ratchet::fromBytes(str_repeat("\x01", 128), 0);
 		$b = Ratchet::fromBytes(str_repeat("\x01", 128), 0);
@@ -248,6 +263,20 @@ class PrimitivesTest extends TestCase {
 		self::assertSame('{"a":2}', $exported->decrypt($c2)['plaintext']);
 		self::assertSame('{"a":0}', InboundSession::unpickle($inbound->pickle())->decrypt($c0)['plaintext']);
 		self::assertSame(3, OutboundSession::unpickle($outbound->pickle())->getMessageIndex());
+	}
+
+	public function testMegolmEarlierState(): void {
+		$outbound = OutboundSession::create(0);
+		$early = InboundSession::fromSessionKey($outbound->sessionKey());
+		$outbound->encrypt('one');
+		$later = InboundSession::fromSessionKey($outbound->sessionKey());
+		$forged = InboundSession::fromExportedKey(Base64::encode("\x01" . pack('N', 0) . random_bytes(128) . Base64::decode($outbound->getId())));
+
+		self::assertTrue($early->isEarlierStateOf($later));
+		self::assertFalse($later->isEarlierStateOf($early));
+		self::assertFalse($early->isEarlierStateOf($early));
+		self::assertFalse($forged->isEarlierStateOf($later), 'The ratchet has to advance to the later state');
+		self::assertFalse(InboundSession::fromSessionKey(OutboundSession::create(0)->sessionKey())->isEarlierStateOf($later), 'Other session');
 	}
 
 	public function testMegolmTamperingDetected(): void {

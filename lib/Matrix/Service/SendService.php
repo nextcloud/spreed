@@ -20,14 +20,11 @@ use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use OCA\Talk\Matrix\Client\Html\MarkdownToHtml;
-use OCA\Talk\Matrix\Client\Model\Member;
 use OCA\Talk\Matrix\Client\Model\PowerLevels;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\AccountMapper;
 use OCA\Talk\Matrix\Model\EventMap;
 use OCA\Talk\Matrix\Model\EventMapMapper;
-use OCA\Talk\Matrix\Model\MatrixMember;
-use OCA\Talk\Matrix\Model\MatrixMemberMapper;
 use OCA\Talk\Matrix\Model\MatrixRoom;
 use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Matrix\Sync\RoomSyncService;
@@ -63,7 +60,6 @@ class SendService {
 		private readonly EventMapMapper $eventMapMapper,
 		private readonly RoomSyncService $roomSyncService,
 		private readonly CryptoService $cryptoService,
-		private readonly MatrixMemberMapper $memberMapper,
 		private readonly ChatManager $chatManager,
 		private readonly ReactionManager $reactionManager,
 		private readonly ICommentsManager $commentsManager,
@@ -573,11 +569,9 @@ class SendService {
 	protected function sendRoomEvent(Account $account, MatrixRoom $matrixRoom, string $type, array $content): string {
 		return $this->send($account, function (Client $client, string $transactionId) use ($account, $matrixRoom, $type, $content): string {
 			if ($matrixRoom->getEncrypted()) {
-				$members = array_keys(array_filter(
-					$this->memberMapper->getForRoom((string)$matrixRoom->getId()),
-					static fn (MatrixMember $member): bool => in_array($member->getMembership(), [Member::JOIN, Member::INVITE], true),
-				));
-				$content = $this->cryptoService->encryptRoomEvent($account, $client, $matrixRoom->getMatrixRoomId(), array_map('strval', $members), $type, $content);
+				// ponytail: members are fetched for every encrypted event, cache them when big rooms make sending slow
+				$members = $client->getRoomMembers($matrixRoom->getMatrixRoomId());
+				$content = $this->cryptoService->encryptRoomEvent($account, $client, $matrixRoom->getMatrixRoomId(), $members, $type, $content, $matrixRoom->getRotationPeriodMs(), $matrixRoom->getRotationPeriodMsgs());
 				$type = 'm.room.encrypted';
 			}
 			return $client->sendEvent($matrixRoom->getMatrixRoomId(), $type, $content, $transactionId);
