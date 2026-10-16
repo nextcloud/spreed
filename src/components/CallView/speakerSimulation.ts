@@ -5,8 +5,8 @@
 
 /**
  * Development helper: fakes a conversation between six participants, with
- * test pattern videos, so the multi-speaker layout can be exercised without a
- * room full of people.
+ * test pattern videos and live transcripts, so the multi-speaker layout and
+ * the transcript panel can be exercised without a room full of people.
  *
  * Only active in debug mode: the call view sets it up and tears it down only
  * when `OC.debug` is truthy.
@@ -19,9 +19,11 @@
  *     OCA.Talk.speakerSimulation.start(1, 30, 640) // 30fps, 640px wide videos
  *     OCA.Talk.speakerSimulation.stop()
  *     OCA.Talk.speakerSimulation.speak(2, 5)  // make participant 2 speak 5s
+ *     OCA.Talk.speakerSimulation.transcript(2, 'Hello', 'en', false) // one chunk, shows the panel
  */
 
-import { markRaw, reactive } from 'vue'
+import { markRaw, nextTick, reactive } from 'vue'
+import { useCallViewStore } from '../../stores/callView.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel.js'
 import { placeholderName } from './Grid/gridPlaceholders.ts'
@@ -71,6 +73,8 @@ const TIMELINE_DURATION = 155
 
 type SimulatedModel = ReturnType<typeof createModel>
 
+type TranscriptHandler = (model: object, message: string, languageId: string, final: boolean) => void
+
 /**
  * Build an object with the surface of a `CallParticipantModel` that the call
  * view actually reads. No peer connection is involved, so the tiles show a
@@ -79,6 +83,8 @@ type SimulatedModel = ReturnType<typeof createModel>
  * @param index - position of the participant in the simulation
  */
 function createModel(index: number) {
+	const transcriptHandlers = new Set<TranscriptHandler>()
+
 	const attributes = reactive({
 		peerId: `simulated-peer-${index}`,
 		nextcloudSessionId: `simulated-session-${index}`,
@@ -106,9 +112,18 @@ function createModel(index: number) {
 	return {
 		attributes,
 		get: (key: keyof typeof attributes) => attributes[key],
+		transcriptHandlers,
 		// Methods the call view calls on a participant model
-		on: () => {},
-		off: () => {},
+		on: (event: string, handler: TranscriptHandler) => {
+			if (event === 'transcript') {
+				transcriptHandlers.add(handler)
+			}
+		},
+		off: (event: string, handler: TranscriptHandler) => {
+			if (event === 'transcript') {
+				transcriptHandlers.delete(handler)
+			}
+		},
 		forceMute: () => {},
 		setVideoBlocked: () => {},
 		setSimulcastVideoQuality: () => {},
@@ -120,6 +135,39 @@ function createModel(index: number) {
 let models: SimulatedModel[] = []
 let timers: ReturnType<typeof setTimeout>[] = []
 let videoIntervals: ReturnType<typeof setInterval>[] = []
+let originalDisableLiveTranscription: ReturnType<typeof useCallViewStore>['disableLiveTranscription'] | undefined
+
+/**
+ * Show the live transcript panel with the simulated participants subscribed.
+ */
+async function showTranscript() {
+	const callViewStore = useCallViewStore()
+	// Skip the server request on leaving the call, there is no ExApp to disable
+	originalDisableLiveTranscription = callViewStore.disableLiveTranscription
+	callViewStore.disableLiveTranscription = async () => {
+		callViewStore.isLiveTranscriptionEnabled = false
+	}
+
+	// The renderer subscribes only to the models present when it is mounted
+	callViewStore.isLiveTranscriptionEnabled = false
+	await nextTick()
+	callViewStore.isLiveTranscriptionEnabled = true
+}
+
+/**
+ * Hide the live transcript panel and restore the store action replaced in
+ * {@link showTranscript}.
+ */
+function hideTranscript() {
+	if (!originalDisableLiveTranscription) {
+		return
+	}
+
+	const callViewStore = useCallViewStore()
+	callViewStore.disableLiveTranscription = originalDisableLiveTranscription
+	originalDisableLiveTranscription = undefined
+	callViewStore.isLiveTranscriptionEnabled = false
+}
 
 /**
  * Remove the simulated participants and cancel the timeline.
@@ -127,6 +175,8 @@ let videoIntervals: ReturnType<typeof setInterval>[] = []
 function stop() {
 	timers.forEach((timer) => clearTimeout(timer))
 	timers = []
+
+	hideTranscript()
 
 	videoIntervals.forEach((interval) => clearInterval(interval))
 	videoIntervals = []
@@ -205,6 +255,30 @@ function speak(index: number, duration: number) {
 }
 
 /**
+ * Send a live transcript chunk from one of the simulated participants.
+ *
+ * The transcript panel is shown on the first chunk.
+ *
+ * @param index - position of the participant in the simulation
+ * @param message - transcribed text
+ * @param languageId - language of the text
+ * @param final - false to replace the chunk on the next call
+ */
+async function transcript(index: number, message: string, languageId = 'en', final = true) {
+	const model = models[index]
+	if (!model) {
+		console.warn('[speaker simulation] no participant', index)
+		return
+	}
+
+	if (!originalDisableLiveTranscription) {
+		await showTranscript()
+	}
+
+	model.transcriptHandlers.forEach((handler) => handler(model, message, languageId, final))
+}
+
+/**
  * Add the simulated participants and play the timeline in a loop.
  *
  * @param speed - how much faster than real time to play, 1 by default. The
@@ -245,7 +319,7 @@ function start(speed = 1, fps = 15, width = 320) {
 export function setUpSpeakerSimulation(token: string) {
 	if (window.OCA?.Talk) {
 		// @ts-expect-error: OCA is not typed
-		window.OCA.Talk.speakerSimulation = { start, stop, speak }
+		window.OCA.Talk.speakerSimulation = { start, stop, speak, transcript }
 	}
 
 	if (token === SIMULATION_TOKEN) {
