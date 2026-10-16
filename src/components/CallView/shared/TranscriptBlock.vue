@@ -289,6 +289,11 @@ export default {
 				}
 			}
 
+			// No layout boxes, e.g. when the transcript is not rendered
+			if (!this.lines.length) {
+				return
+			}
+
 			const lastKnownChunkIndex = this.lines.at(-1)!.lastChunkIndex
 			if (lastKnownChunkIndex >= this.$refs.chunks.length - 1) {
 				return
