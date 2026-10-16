@@ -36,6 +36,7 @@ use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IHasher;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
@@ -584,5 +585,37 @@ class RoomServiceTest extends TestCase {
 			$objectId,
 			attributes: RoomAttributes::CLASSIFIED->value,
 		);
+	}
+
+	public function testDeleteRoomLogsCriticalAction(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(-1);
+		$room->method('getName')->willReturn('Room name');
+		$room->method('getToken')->willReturn('abcdef');
+		$room->method('getObjectType')->willReturn('file');
+		$room->method('getObjectId')->willReturn('42');
+		$room->method('getBreakoutRoomMode')->willReturn(BreakoutRoom::MODE_NOT_CONFIGURED);
+		$room->method('isFederatedConversation')->willReturn(false);
+		$this->participantService->method('getParticipantUserIds')->willReturn([]);
+
+		$auditEvents = [];
+		$this->dispatcher->method('dispatchTyped')
+			->willReturnCallback(function (object $event) use (&$auditEvents): void {
+				if ($event instanceof CriticalActionPerformedEvent) {
+					$auditEvents[] = $event;
+				}
+			});
+
+		$this->service->deleteRoom($room);
+
+		$this->assertCount(1, $auditEvents);
+		$this->assertSame('spreed.conversation.deleted', $auditEvents[0]->getOperation());
+		$this->assertSame('Conversation "{name}" ({token}) deleted', $auditEvents[0]->getLogMessage());
+		$this->assertSame([
+			'name' => 'Room name',
+			'token' => 'abcdef',
+			'objectType' => 'file',
+			'objectId' => '42',
+		], $auditEvents[0]->getParameters());
 	}
 }
