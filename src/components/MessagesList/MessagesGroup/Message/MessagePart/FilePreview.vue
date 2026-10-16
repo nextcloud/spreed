@@ -119,13 +119,14 @@ import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 import AudioPlayer from './AudioPlayer.vue'
-import { useViewer } from '../../../../../composables/useViewer.js'
+import { useViewer } from '../../../../../composables/useViewer.ts'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
+import { generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
@@ -212,11 +213,12 @@ export default {
 	emits: ['removeFile'],
 
 	setup() {
-		const { openViewer } = useViewer('talk')
+		const { openViewer, canOpenInViewer } = useViewer('talk')
 		const sharedItemsStore = useSharedItemsStore()
 
 		return {
 			openViewer,
+			canOpenInViewer,
 			sharedItemsStore,
 			actorStore: useActorStore(),
 			uploadStore: useUploadStore(),
@@ -462,14 +464,7 @@ export default {
 			// use preview provider URL to render a smaller preview
 			const previewSize = Math.ceil(384 * window.devicePixelRatio)
 			if (this.actorStore.userId === null) {
-				// guest mode: grab token from the link URL
-				// FIXME: use a cleaner way...
-				const token = this.file.link.slice(this.file.link.lastIndexOf('/') + 1)
-				return generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x=-1&y={height}&a=1', {
-					token,
-					file: this.internalAbsolutePath,
-					height: previewSize,
-				})
+				return generatePublicSharePreviewUrl(this.file.link, this.file.name, { x: -1, y: previewSize })
 			} else {
 				return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
 					fileId: this.file.id,
@@ -479,7 +474,7 @@ export default {
 		},
 
 		isViewerAvailable() {
-			return OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
+			return this.canOpenInViewer(this.file)
 		},
 
 		isVoiceMessage() {
@@ -652,7 +647,7 @@ export default {
 				list = this.viewerList
 			}
 
-			this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
+			this.openViewer(list, this.file, loadMore)
 		},
 	},
 }

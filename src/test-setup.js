@@ -26,7 +26,8 @@ vi.mock('@nextcloud/dialogs', () => ({
 	TOAST_PERMANENT_TIMEOUT: -1,
 }))
 
-vi.mock('@nextcloud/files', () => ({
+vi.mock('@nextcloud/files', async (importOriginal) => ({
+	...(await importOriginal()),
 	validateFileName: vi.fn(),
 	formatFileSize: vi.fn((size) => `${size} B`),
 }))
@@ -47,6 +48,20 @@ vi.mock('@nextcloud/upload', () => ({
 
 vi.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: vi.fn(() => mockedCapabilities),
+}))
+
+vi.mock('@nextcloud/viewer', () => ({
+	canView: vi.fn(() => false),
+	canCompare: vi.fn(() => false),
+	getHandlers: vi.fn(() => new Map()),
+	getViewer: vi.fn(() => ({
+		open: vi.fn().mockResolvedValue({ addEventListener: vi.fn() }),
+		openFolder: vi.fn().mockResolvedValue({ addEventListener: vi.fn() }),
+		compare: vi.fn().mockResolvedValue({ addEventListener: vi.fn() }),
+		close: vi.fn(),
+	})),
+	registerDefaultHandlers: vi.fn(),
+	registerHandler: vi.fn(),
 }))
 
 vi.mock('@sapphi-red/web-noise-suppressor', () => ({
