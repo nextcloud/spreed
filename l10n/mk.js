@@ -664,6 +664,7 @@ OC.L10N.register(
     "_%n user_::_%n users_" : ["1 корисник","%n корисници"],
     "Cancel" : "Cancel",
     "Save" : "Save",
+    "Test connection" : "Тест на конекцијата",
     "Remove" : "Отстрани ",
     "Installed version: {version}" : "Инсталирана верзија: {version}",
     "Downloading …" : "Преземање ...",

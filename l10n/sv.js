@@ -1031,6 +1031,7 @@ OC.L10N.register(
     "Dial-out number" : "Utgående nummer",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "E164-formaterat nummer som används som reservnummer vid utgående samtal",
     "Dial-out prefix" : "Prefix för utgående samtal",
+    "Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)" : "Föråldrad: används bara för direkt uppringning från äldre SIP-bryggor som skickar telefonnummer utan det här prefixet (standardvärde: `+`).",
     "Restrict SIP configuration" : "Begränsa SIP-konfiguration",
     "Enable SIP configuration" : "Aktivera SIP-konfiguration",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Endast användare av följande grupper kan aktivera SIP i konversationer som de modererar",

@@ -1029,6 +1029,7 @@
     "Dial-out number" : "Nummer til udgående opkald",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "Nummer i E164-format, der bruges som reservenummer ved udgående opkald",
     "Dial-out prefix" : "Præfiks til udgående opkald",
+    "Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)" : "Forældet: Bruges kun til direkte indringning fra ældre SIP-broer, som sender telefonnumre uden dette præfiks (standard er `+`)",
     "Restrict SIP configuration" : "Begræns SIP-konfiguration",
     "Enable SIP configuration" : "Aktivér SIP-konfiguration",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Kun brugere i følgende grupper kan aktivere SIP i samtaler, de er moderator for",
