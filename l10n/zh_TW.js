@@ -1031,6 +1031,7 @@ OC.L10N.register(
     "Dial-out number" : "Dial-out 號碼",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "以 E164 格式顯示的號碼作為撥出通話的備用來電號碼",
     "Dial-out prefix" : "Dial-out 前綴",
+    "Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)" : "已棄用：僅用於從舊版 SIP 橋接器直接撥入的情況，此類橋接器傳送的電話號碼不包含此前綴（預設為 `+`）",
     "Restrict SIP configuration" : "限制 SIP 組態",
     "Enable SIP configuration" : "啟用 SIP 組態",
     "Only users of the following groups can enable SIP in conversations they moderate" : "僅以下群組的使用者可以在他們主持的對話中啟用 SIP",
