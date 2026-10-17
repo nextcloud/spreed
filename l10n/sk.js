@@ -1031,6 +1031,7 @@ OC.L10N.register(
     "Dial-out number" : "Číslo na vytočenie",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "Číslo v formáte E164 používané ako náhradné číslo volajúceho pre odchádzajúce hovory",
     "Dial-out prefix" : "Predvoľba na vytočenie",
+    "Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)" : "Zastarané: Používa sa iba pre priame vytočenie zo starších SIP mostov, ktoré odosielajú telefónne čísla bez tejto predpony (predvolená hodnota je `+`)",
     "Restrict SIP configuration" : "Obmedziť nastavenie SIP",
     "Enable SIP configuration" : "Zapnúť nastavenie SIP",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Iba používatelia nasledujúcich skupín môžu povoliť SIP v konverzáciách, ktoré moderujú",
