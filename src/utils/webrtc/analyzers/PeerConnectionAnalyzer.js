@@ -122,6 +122,21 @@ function PeerConnectionAnalyzer() {
 		video: true,
 	}
 
+	// Total number of entries ever pushed to _rtcStats[kind] since last reset.
+	// Used together with _loggedUpToRtcStatsTotal to determine which entries
+	// are new and have not been logged yet.
+	this._totalRtcStatsAdded = {
+		audio: 0,
+		video: 0,
+	}
+	// Value of _totalRtcStatsAdded[kind] after the last _logStats call.
+	// -1 is a sentinel meaning "not currently in a bad quality period"; on the
+	// next bad check all current _rtcStats entries will be logged.
+	this._loggedUpToRtcStatsTotal = {
+		audio: -1,
+		video: -1,
+	}
+
 	this._peerConnection = null
 	this._peerDirection = null
 	this._peerType = null
@@ -221,6 +236,9 @@ PeerConnectionAnalyzer.prototype = {
 		this._packetsPerSecond[kind].reset()
 		this._timestamps[kind].reset()
 		this._timestampsForLogs[kind].reset()
+
+		this._totalRtcStatsAdded[kind] = 0
+		this._loggedUpToRtcStatsTotal[kind] = -1
 	},
 
 	_handleIceConnectionStateChanged() {
@@ -303,6 +321,7 @@ PeerConnectionAnalyzer.prototype = {
 				this._rtcStats[kind].shift()
 			}
 			this._rtcStats[kind].push([])
+			this._totalRtcStatsAdded[kind]++
 		}
 
 		if (this._peerDirection === PEER_DIRECTION.SENDER) {
@@ -316,6 +335,10 @@ PeerConnectionAnalyzer.prototype = {
 		}
 		if (this._analysisEnabled.video) {
 			this._setConnectionQualityVideo(this._calculateConnectionQualityVideo())
+		}
+
+		for (const kind of ['audio', 'video']) {
+			this._logRemainingStatsIfQualityRecovered(kind)
 		}
 	},
 
@@ -767,6 +790,15 @@ PeerConnectionAnalyzer.prototype = {
 	},
 
 	_logStats(kind, message) {
+		const logAll = this._loggedUpToRtcStatsTotal[kind] === -1
+		const newCount = logAll
+			? this._rtcStats[kind].length
+			: this._totalRtcStatsAdded[kind] - this._loggedUpToRtcStatsTotal[kind]
+
+		if (!logAll && newCount === 0) {
+			return
+		}
+
 		const tag = this._getLogTag(kind)
 
 		if (message) {
@@ -780,20 +812,53 @@ PeerConnectionAnalyzer.prototype = {
 		console.debug('%s: Round trip time: %s', tag, this._roundTripTime[kind].toString())
 		console.debug('%s: Timestamps: %s', tag, this._timestampsForLogs[kind].toString())
 
-		this._logRtcStats(tag, kind)
+		const startTotal = logAll ? 0 : this._loggedUpToRtcStatsTotal[kind]
+		const startIdx = Math.max(0, this._rtcStats[kind].length - newCount)
+		this._logRtcStats(tag, kind, startTotal, startIdx)
+
+		this._loggedUpToRtcStatsTotal[kind] = this._totalRtcStatsAdded[kind]
 	},
 
-	_logRtcStats(tag, kind) {
-		this._rtcStats[kind].forEach((rtcStats, i) => {
+	// Logs entries in _rtcStats[kind] from startIdx onwards, using startTotal
+	// as the base for the printed entry indices so they are consistent across
+	// calls even as old entries are shifted out of the sliding window.
+	_logRtcStats(tag, kind, startTotal = 0, startIdx = 0) {
+		for (let i = startIdx; i < this._rtcStats[kind].length; i++) {
+			const rtcStats = this._rtcStats[kind][i]
+			const logIdx = startTotal + (i - startIdx)
+
 			if (!rtcStats.length) {
-				console.debug('%s: %i: no matching type', tag, i)
-				return
+				console.debug('%s: %i: no matching type', tag, logIdx)
+				continue
 			}
 
 			rtcStats.forEach((rtcStat, j) => {
-				console.debug('%s: %i-%i: %s', tag, i, j, JSON.stringify(rtcStat))
+				console.debug('%s: %i-%i: %s', tag, logIdx, j, JSON.stringify(rtcStat))
 			})
-		})
+		}
+	},
+
+	// Called after each quality update. If quality has recovered from a bad
+	// period, flushes any rtcStats entries collected since the last _logStats
+	// call so that no data is missing in the logs.
+	_logRemainingStatsIfQualityRecovered(kind) {
+		if (this._loggedUpToRtcStatsTotal[kind] === -1) {
+			return
+		}
+
+		const quality = this._connectionQuality[kind]
+		if (quality === CONNECTION_QUALITY.VERY_BAD || quality === CONNECTION_QUALITY.NO_TRANSMITTED_DATA) {
+			return
+		}
+
+		const newCount = this._totalRtcStatsAdded[kind] - this._loggedUpToRtcStatsTotal[kind]
+		if (newCount > 0) {
+			const tag = this._getLogTag(kind)
+			const startIdx = Math.max(0, this._rtcStats[kind].length - newCount)
+			this._logRtcStats(tag, kind, this._loggedUpToRtcStatsTotal[kind], startIdx)
+		}
+
+		this._loggedUpToRtcStatsTotal[kind] = -1
 	},
 
 }
