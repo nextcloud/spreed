@@ -11,6 +11,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OC\User\LazyUser;
 use OCA\Files_Sharing\Event\UserShareAccessUpdatedEvent;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
@@ -1591,7 +1592,14 @@ class RoomService {
 		if (class_exists(CriticalActionPerformedEvent::class)) {
 			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
 				'Conversation "%s" deleted',
-				['name' => $room->getName()],
+				[
+					'name' => $room->getName(),
+					'token' => $room->getToken(),
+					'objectType' => $room->getObjectType(),
+					'objectId' => $room->getObjectId(),
+				],
+				false,
+				Operation::ConversationDeleted->value,
 			));
 		}
 	}

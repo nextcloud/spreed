@@ -10,14 +10,17 @@ namespace OCA\Talk\Service;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCP\AppFramework\Http;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
@@ -34,6 +37,7 @@ class HostedSignalingServerService {
 		private readonly LoggerInterface $logger,
 		private readonly IL10N $l10n,
 		private readonly ISecureRandom $secureRandom,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 
 		$this->apiServerUrl = $this->config->getSystemValue('talk_hardcoded_hpb_service', 'https://api.spreed.cloud');
@@ -213,6 +217,16 @@ class HostedSignalingServerService {
 
 		$accountId = (string)$data['account_id'];
 		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-id', $accountId);
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Hosted signaling server account %s was registered for %s',
+			[
+				'accountId' => $accountId,
+				'url' => $registerAccountData->getUrl(),
+			],
+			false,
+			Operation::HostedSignalingAccountCreated->value,
+		));
 
 		return new AccountId($accountId);
 	}
@@ -482,5 +496,12 @@ class HostedSignalingServerService {
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, $status);
 		}
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Hosted signaling server account %s was deleted',
+			['accountId' => $accountId->get()],
+			false,
+			Operation::HostedSignalingAccountDeleted->value,
+		));
 	}
 }

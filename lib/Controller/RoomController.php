@@ -10,6 +10,7 @@ namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ClientException;
 use OCA\DAV\CalDAV\TimezoneService;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
@@ -2371,7 +2372,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 					$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
 						'Removed former user "%s" from conversation "%s" [%s] due to external call policy',
-						[$this->userId, $room->getToken(), $room->getObjectId()],
+						[
+							'userId' => $this->userId,
+							'token' => $room->getToken(),
+							'objectId' => $room->getObjectId(),
+						],
+						false,
+						Operation::ExternalCallPolicyParticipantRemoved->value,
 					));
 				}
 				return new DataResponse(['error' => 'ban'], Http::STATUS_FORBIDDEN);
@@ -3693,7 +3700,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->participantService->removeAttendee($this->room, $this->participant, AAttendeeRemovedEvent::REASON_REMOVED);
 			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
 				'Removed former %s "%s" from conversation "%s" [%s] due to external call policy',
-				[$this->participant->getAttendee()->getActorType(), $this->participant->getAttendee()->getActorId(), $this->room->getToken(), $this->room->getObjectId()],
+				[
+					'actorType' => $this->participant->getAttendee()->getActorType(),
+					'actorId' => $this->participant->getAttendee()->getActorId(),
+					'token' => $this->room->getToken(),
+					'objectId' => $this->room->getObjectId(),
+				],
+				false,
+				Operation::ExternalCallPolicyParticipantRemoved->value,
 			));
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
