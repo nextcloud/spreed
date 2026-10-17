@@ -1031,6 +1031,7 @@ OC.L10N.register(
     "Dial-out number" : "Giden arama numarası",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "Giden aramalar için varsayılan arayan numara olarak kullanılacak E164 biçiminde numara",
     "Dial-out prefix" : "Giden arama ön eki",
+    "Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)" : "Kullanımdan kaldırıldı: Yalnızca bu ön ek olmadan telefon numaraları gönderen eski SIP köprülerinden doğrudan arama için kullanılır (varsayılan değer: `+`)",
     "Restrict SIP configuration" : "SIP yapılandırması kısıtlansın",
     "Enable SIP configuration" : "SIP yapılandırması kullanılsın",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Yalnızca aşağıdaki grupların kullanıcıları sorumlu oldukları görüşmelerde SIP özelliğini açabilir",
