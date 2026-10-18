@@ -1029,6 +1029,7 @@
     "Dial-out number" : "Abgehende Telefonnummer",
     "E164 formatted number used as a fallback caller number for outgoing calls" : "E164-formatierte Nummer, die als Fallback-Rufnummer für ausgehende Anrufe verwendet wird",
     "Dial-out prefix" : "Vorwahl für ausgehende Anrufe",
+    "Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix (default is `+`)" : "Veraltet: Wird nur für die Direktwahl von älteren SIP-Brücken verwendet, die Telefonnummern ohne dieses Präfix senden (Standard ist \"+\")",
     "Restrict SIP configuration" : "SIP-Konfiguration einschränken",
     "Enable SIP configuration" : "SIP-Konfiguration aktivieren",
     "Only users of the following groups can enable SIP in conversations they moderate" : "Nur Benutzer der folgenden Gruppen können SIP in von dessen moderierten Unterhaltungen aktivieren",
