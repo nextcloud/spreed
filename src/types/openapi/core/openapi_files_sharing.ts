@@ -497,6 +497,7 @@ export type components = {
             mimetype: string;
             "mount-type": string;
             note: string;
+            original_displayname: string | null;
             parent: unknown;
             password?: string | null;
             password_expiration_time?: string | null;
