@@ -8,7 +8,7 @@
 
 name: OpenAPI Command
 on:
-  issue_comment:
+  issue_comment: # zizmor: ignore[dangerous-triggers]
     types: [created]
 
 permissions:
