@@ -712,6 +712,7 @@ export type {
 	createFileFromTemplateResponse,
 	FileTemplate,
 	getFileTemplatesListResponse,
+	TemplateFile,
 } from './core.ts'
 
 // Files sharing API
