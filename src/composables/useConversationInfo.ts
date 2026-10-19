@@ -89,13 +89,8 @@ export function useConversationInfo({
 	/**
 	 * @return Part of the name until the first space
 	 */
-	const hideLastChatMessageAuthor = computed(() => {
-		return !exposeMessages || !hasLastMessage.value
-			|| (lastMessage.value.systemMessage.length > 0 && lastMessage.value.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION)
-	})
-
 	const shortLastChatMessageAuthor = computed(() => {
-		if (hideLastChatMessageAuthor.value) {
+		if (!exposeMessages || !hasLastMessage.value || lastMessage.value.systemMessage.length) {
 			return ''
 		}
 
@@ -103,7 +98,7 @@ export function useConversationInfo({
 	})
 
 	const fullLastChatMessageAuthor = computed(() => {
-		if (hideLastChatMessageAuthor.value) {
+		if (!exposeMessages || !hasLastMessage.value || lastMessage.value.systemMessage.length) {
 			return ''
 		}
 
@@ -167,6 +162,21 @@ export function useConversationInfo({
 				icon: null,
 				message: t('spreed', 'No messages'),
 				title: t('spreed', 'No messages'),
+			}
+		}
+
+		if (lastMessage.value.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION) {
+			const reaction = lastMessage.value.actorId === item.value.actorId && lastMessage.value.actorType === item.value.actorType
+				? t('spreed', 'You reacted with {reaction}', { reaction: lastMessage.value.message }, { escape: false, sanitize: false })
+				: t('spreed', '{user} reacted with {reaction}', {
+						user: getDisplayNameWithFallback(lastMessage.value.actorDisplayName, lastMessage.value.actorType),
+						reaction: lastMessage.value.message,
+					}, { escape: false, sanitize: false })
+			return {
+				actor: null,
+				icon: null,
+				message: reaction,
+				title: reaction,
 			}
 		}
 

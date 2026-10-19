@@ -163,21 +163,21 @@ describe('ConversationItem.vue', () => {
 				await testConversationLabel(item, 'Alice has joined the call')
 			})
 
-			test('displays own last reaction with "You" author in one to one conversations', async () => {
+			test('displays own last reaction in one to one conversations', async () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
 				item.lastMessage.actorId = 'actor-id-1'
 				item.lastMessage.message = '👍'
 				item.lastMessage.systemMessage = MESSAGE.SYSTEM_TYPE.REACTION
 
-				await testConversationLabel(item, 'You:👍')
+				await testConversationLabel(item, 'You reacted with 👍')
 			})
 
-			test('displays last reaction without author in one to one conversations', async () => {
+			test('displays last reaction with author name in one to one conversations', async () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
 				item.lastMessage.message = '👍'
 				item.lastMessage.systemMessage = MESSAGE.SYSTEM_TYPE.REACTION
 
-				await testConversationLabel(item, '👍')
+				await testConversationLabel(item, 'Alice Wonderland reacted with 👍')
 			})
 
 			test('displays last message without author in one to one conversations', async () => {
