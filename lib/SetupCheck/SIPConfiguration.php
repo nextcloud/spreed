@@ -42,32 +42,7 @@ class SIPConfiguration implements ISetupCheck {
 			return SetupResult::success($this->l->t('Using the SIP functionality requires a High-performance backend.'));
 		}
 
-		$query = $this->connection->getQueryBuilder();
-		$query->select('phone_number')
-			->from('talk_phone_numbers')
-			->where($query->expr()->like('phone_number', $query->createNamedParameter(
-				$this->connection->escapeLikeParameter('+') . '%'
-			)))
-			->orWhere($query->expr()->like('phone_number', $query->createNamedParameter(
-				$this->connection->escapeLikeParameter('0') . '%'
-			)));
-
-		$result = $query->executeQuery();
-		$invalidNumbers = $result->fetchFirstColumn();
-		$result->closeCursor();
-
-		if (!empty($invalidNumbers)) {
-			$message = $this->l->t("Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}");
-			$message = str_replace(
-				'{list}',
-				implode("\n", $invalidNumbers),
-				$message
-			);
-			return SetupResult::error($message, 'https://portal.nextcloud.com/article/Nextcloud-Talk/Nextcloud-Talk-Phone/Direct-Dial-in#content-provisioning');
-		}
-
-		if ($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET) === ''
-			&& $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO) === ''
+		if (!$this->talkConfig->isSIPConfigured()
 			&& $this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN) < 34) {
 			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}

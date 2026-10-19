@@ -72,16 +72,7 @@ class InvitationServiceTest extends TestCase {
 
 	public function testPhoneInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
 		$currentUser = $this->createStub(IUser::class);
-		// SIP is fully available, only the classified flag must reject the number
-
-		// when Config::SIP_BRIDGE_DIALIN_INFO and Config::SIP_BRIDGE_SECRET both are not empty, SIP is configured
-		$this->appConfig
-			->method('getAppValueString')
-			->willReturnCallback(fn (string $key): string => match ($key) {
-				Config::SIP_BRIDGE_DIALIN_INFO => Config::SIP_BRIDGE_DIALIN_INFO,
-				Config::SIP_BRIDGE_SHARED_SECRET => Config::SIP_BRIDGE_SHARED_SECRET,
-			});
-
+		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
 		$this->phoneNumberUtil->expects(self::never())
 			->method('convertToStandardFormat');
@@ -227,15 +218,7 @@ class InvitationServiceTest extends TestCase {
 
 	public function testPhoneInvitationsAreAcceptedForRegularConversation(): void {
 		$currentUser = $this->createStub(IUser::class);
-
-		// when Config::SIP_BRIDGE_DIALIN_INFO and CONFIG::SIP_BRIDGE_SECRET both are not empty, SIP is configured
-		$this->appConfig
-			->method('getAppValueString')
-			->willReturnCallback(fn (string $key): string => match ($key) {
-				Config::SIP_BRIDGE_DIALIN_INFO => Config::SIP_BRIDGE_DIALIN_INFO,
-				Config::SIP_BRIDGE_SHARED_SECRET => Config::SIP_BRIDGE_SHARED_SECRET,
-			});
-
+		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
 		$this->serverConfig->method('getSystemValueString')->willReturn('DE');
 		$this->phoneNumberUtil->method('convertToStandardFormat')

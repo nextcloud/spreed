@@ -269,7 +269,7 @@ class RoomFormatter {
 			}
 		}
 
-		if (!empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET))) {
+		if ($this->talkConfig->isSIPConfigured()) {
 			$roomData['sipEnabled'] = $room->getSIPEnabled();
 			if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED) {
 				// Generate a PIN if the attendee is a user and doesn't have one.
@@ -351,7 +351,7 @@ class RoomFormatter {
 				}
 
 				$roomData['canEnableSIP']
-					= !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET))
+					= $this->talkConfig->isSIPConfigured()
 					&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
 					&& ($room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC)
 					&& $currentParticipant->hasModeratorPermissions(false)

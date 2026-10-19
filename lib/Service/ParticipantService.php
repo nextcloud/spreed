@@ -1157,7 +1157,7 @@ class ParticipantService {
 		}
 
 		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
-			&& !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET))) {
+			&& $this->talkConfig->isSIPConfigured()) {
 			$attendee->setPin($this->generatePin());
 		}
 
@@ -1176,7 +1176,7 @@ class ParticipantService {
 	public function generatePinForParticipant(Room $room, Participant $participant): void {
 		$attendee = $participant->getAttendee();
 		if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED
-			&& !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET))
+			&& $this->talkConfig->isSIPConfigured()
 			&& ($attendee->getActorType() === Attendee::ACTOR_USERS || $attendee->getActorType() === Attendee::ACTOR_EMAILS)
 			&& !$attendee->getPin()) {
 			$attendee->setPin($this->generatePin());

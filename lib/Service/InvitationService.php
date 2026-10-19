@@ -194,8 +194,7 @@ class InvitationService {
 			return;
 		}
 
-		$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
-		if (!$isSIPConfigured || !$this->talkConfig->canUserDialOutSIP($currentUser)) {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->canUserDialOutSIP($currentUser)) {
 			$invitationList->setPhoneNumberResults([], $phoneNumbers);
 			return;
 		}
