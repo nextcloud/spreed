@@ -168,8 +168,7 @@ export function useConversationInfo({
 		if (lastMessage.value.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION) {
 			const reaction = lastMessage.value.actorId === item.value.actorId && lastMessage.value.actorType === item.value.actorType
 				? t('spreed', 'You reacted with {reaction}', { reaction: lastMessage.value.message }, { escape: false, sanitize: false })
-				: t('spreed', '{user} reacted with {reaction}', {
-						user: getDisplayNameWithFallback(lastMessage.value.actorDisplayName, lastMessage.value.actorType),
+				: t('spreed', 'Reacted with {reaction}', {
 						reaction: lastMessage.value.message,
 					}, { escape: false, sanitize: false })
 			return {

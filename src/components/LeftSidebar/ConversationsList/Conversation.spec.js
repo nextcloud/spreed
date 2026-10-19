@@ -177,7 +177,7 @@ describe('ConversationItem.vue', () => {
 				item.lastMessage.message = '👍'
 				item.lastMessage.systemMessage = MESSAGE.SYSTEM_TYPE.REACTION
 
-				await testConversationLabel(item, 'Alice Wonderland reacted with 👍')
+				await testConversationLabel(item, 'Reacted with 👍')
 			})
 
 			test('displays last message without author in one to one conversations', async () => {
