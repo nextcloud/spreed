@@ -5,6 +5,8 @@
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { defaultRemoteURL } from '@nextcloud/files/dav'
+import { encodePath } from '@nextcloud/paths'
+import { getBaseUrl } from '@nextcloud/router'
 
 /**
  * Generate a WebDAV url to a user files
@@ -38,11 +40,13 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
 }
 
 /**
- * Generate a download link for a public share
+ * Generate a public WebDAV download link for a public share
  *
- * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH/
- * @return The download link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH/download
+ * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH?path=/Media
+ * @param sharePath - The path of the file inside a folder share, e.g., /Media/photo.jpg
+ * @return The download link, e.g., https://nextcloud.ltd/public.php/dav/files/CBeNTiJz5JeT2CH/Media/photo.jpg
  */
-export function generatePublicShareDownloadUrl(shareLink: string) {
-	return shareLink + '/download'
+export function generatePublicShareDownloadUrl(shareLink: string, sharePath: string = '') {
+	const token = new URL(shareLink).pathname.split('/').filter(Boolean).at(-1)
+	return getBaseUrl() + '/public.php/dav/files/' + token + encodePath(sharePath)
 }

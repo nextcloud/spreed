@@ -1309,6 +1309,7 @@ class SystemMessageTest extends TestCase {
 			'mimetype' => 'image/jpeg',
 			'preview-available' => 'yes',
 			'hide-download' => 'no',
+			'share-path' => '/photo.jpg',
 		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]));
 	}
 
@@ -1423,6 +1424,7 @@ class SystemMessageTest extends TestCase {
 			'mimetype' => 'image/jpeg',
 			'preview-available' => 'yes',
 			'hide-download' => 'no',
+			'share-path' => '/photo.jpg',
 		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, null, 42]));
 	}
 
