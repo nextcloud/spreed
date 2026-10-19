@@ -239,6 +239,8 @@ module.exports = defineConfig((env) => {
 			symlinks: false,
 			fallback: {
 				fs: false,
+				// Isn't used in the browser (libraries 'crypto-js' and '@matrix-org/olm' require it only in Node.js)
+				crypto: false,
 			},
 		},
 
