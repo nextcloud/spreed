@@ -54,14 +54,6 @@ export default {
 		},
 
 		/**
-		 * File path inside the public folder share of the link
-		 */
-		sharePath: {
-			type: String,
-			default: '',
-		},
-
-		/**
 		 * File path relative to the user's home storage, used for previewing
 		 * the audio before upload
 		 */
@@ -122,7 +114,7 @@ export default {
 			const userId = this.actorStore.userId
 			if (userId === null) {
 				// guest mode, use public link download URL
-				return generatePublicShareDownloadUrl(this.link, this.sharePath)
+				return generatePublicShareDownloadUrl(this.link, this.path)
 			} else {
 				// use direct DAV URL
 				return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)

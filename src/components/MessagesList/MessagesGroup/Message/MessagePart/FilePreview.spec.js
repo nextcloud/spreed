@@ -306,7 +306,7 @@ describe('FilePreview.vue', () => {
 			test('directly renders small GIF files for guests from a folder share', async () => {
 				props.file.size = '128'
 				props.file.link = 'https://localhost/nc-webroot/s/xtokenx?path=%2FMedia'
-				props.file['share-path'] = '/Media/test %20.gif'
+				props.file.path = '/Media/test %20.gif'
 				actorStore.userId = null
 
 				const wrapper = mountFilePreview()
@@ -340,7 +340,7 @@ describe('FilePreview.vue', () => {
 				props.file.mimetype = 'audio/mpeg'
 				props.file.name = 'test %20.mp3'
 				props.file.link = 'https://localhost/nc-webroot/s/xtokenx?path=%2FMedia'
-				props.file['share-path'] = '/Media/test %20.mp3'
+				props.file.path = '/Media/test %20.mp3'
 				actorStore.userId = null
 
 				const wrapper = mountFilePreview()

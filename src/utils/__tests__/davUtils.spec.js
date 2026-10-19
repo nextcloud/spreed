@@ -12,10 +12,11 @@ describe('davUtils', () => {
 		it.each([
 			['https://nextcloud.ltd/index.php/s/TOKEN', undefined, '/public.php/dav/files/TOKEN'],
 			['https://nextcloud.ltd/index.php/s/TOKEN/', undefined, '/public.php/dav/files/TOKEN'],
+			['https://nextcloud.ltd/index.php/s/TOKEN', 'photo 1.jpg', '/public.php/dav/files/TOKEN'],
 			['https://nextcloud.ltd/index.php/s/TOKEN', '/photo 1.jpg', '/public.php/dav/files/TOKEN/photo%201.jpg'],
 			['https://nextcloud.ltd/index.php/s/TOKEN?path=%2FMedia', '/Media/#1.jpg', '/public.php/dav/files/TOKEN/Media/%231.jpg'],
-		])('generates download link for %s and %s', (link, sharePath, expected) => {
-			expect(generatePublicShareDownloadUrl(link, sharePath)).toBe(getBaseUrl() + expected)
+		])('generates download link for %s and %s', (link, path, expected) => {
+			expect(generatePublicShareDownloadUrl(link, path)).toBe(getBaseUrl() + expected)
 		})
 	})
 })
