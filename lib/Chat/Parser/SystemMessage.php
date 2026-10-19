@@ -864,6 +864,7 @@ class SystemMessage implements IEventListener {
 	 * @throws ShareNotFound
 	 */
 	protected function getFileFromNodeId(Room $room, ?Participant $participant, int $nodeId, bool $allowInaccurate = false): array {
+		$sharePath = null;
 		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			if ($allowInaccurate) {
 				// Lightweight lookup: search the filecache directly without setting up the user
@@ -917,6 +918,7 @@ class SystemMessage implements IEventListener {
 			$name = $node->getName();
 			$size = $node->getSize();
 			$path = $name;
+			$sharePath = rtrim($pathInShare, '/') . '/' . $name;
 
 			$params = ['token' => $shareToken];
 			if ($pathInShare !== '/' && $pathInShare !== '') {
@@ -941,6 +943,10 @@ class SystemMessage implements IEventListener {
 			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
 			'hide-download' => 'no',
 		];
+
+		if ($sharePath !== null) {
+			$data['share-path'] = $sharePath;
+		}
 
 		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
 			try {
