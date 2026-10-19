@@ -661,6 +661,7 @@ OC.L10N.register(
     "Delete tag" : "Șterge eticheta",
     "Move up" : "Mută înainte",
     "Move down" : "Mută în jos",
+    "Home" : "Acasă",
     "Unread" : "Necitit",
     "Alphabetically" : "Alfabetic",
     "No matches found" : "Nicio potrivire",
