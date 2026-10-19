@@ -519,7 +519,7 @@ export type components = {
             stackname?: string;
             /** @description File size in bytes */
             size?: string;
-            /** @description Path of the file */
+            /** @description Path of the file (for guests: relative to the folder share of the `link` when starting with a slash) */
             path?: string;
             /** @description Mimetype of the file */
             mimetype?: string;
