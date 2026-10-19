@@ -293,7 +293,7 @@ class Capabilities implements IPublicCapability {
 					// 'predefined-backgrounds' => list<string>,
 					// 'predefined-backgrounds-v2' => list<string>,
 					'can-upload-background' => false,
-					'sip-enabled' => !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET)),
+					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
 					'sip-dialout-enabled' => $this->appConfig->getAppValueBool(Config::SIP_DIALOUT),
 					'default-phone-region' => $this->serverConfig->getSystemValueString('default_phone_region'),
 					'can-enable-sip' => false,

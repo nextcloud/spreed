@@ -271,7 +271,7 @@ class SignalingController extends OCSController {
 			'federation' => $this->getFederationSettings($room),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
-			'sipDialinInfo' => !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET)) ? $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO) : '',
+			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO) : '',
 		];
 
 		if ($signalingMode !== Config::SIGNALING_INTERNAL) {
