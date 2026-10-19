@@ -35,6 +35,7 @@ use OCP\IUserSession;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -273,9 +274,9 @@ class RoomShareProviderTest extends TestCase {
 		$this->assertFalse($this->shareExists($userRoomShare));
 	}
 
-	protected function mockPublicRoom(string $passwordHash): void {
+	protected function mockRoom(string $passwordHash, int $type = Room::TYPE_PUBLIC): void {
 		$room = $this->createMock(Room::class);
-		$room->method('getType')->willReturn(Room::TYPE_PUBLIC);
+		$room->method('getType')->willReturn($type);
 		$room->method('getToken')->willReturn('roomtoken');
 		$room->method('hasPassword')->willReturn($passwordHash !== '');
 		$room->method('getPassword')->willReturn($passwordHash);
@@ -283,7 +284,7 @@ class RoomShareProviderTest extends TestCase {
 	}
 
 	public function testGetShareByTokenWithoutRoomPassword(): void {
-		$this->mockPublicRoom('');
+		$this->mockRoom('');
 		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
 
 		$share = $this->provider->getShareByToken('sharetoken');
@@ -292,9 +293,40 @@ class RoomShareProviderTest extends TestCase {
 		$this->assertNull($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND));
 	}
 
+	public function testGetShareByTokenInGroupRoomForGuestParticipant(): void {
+		$this->mockRoom('', Room::TYPE_GROUP);
+		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
+
+		$this->participantService->method('getParticipant')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->talkSession->method('getSessionForRoom')
+			->with('roomtoken')
+			->willReturn('guestsession');
+		$this->participantService->method('getParticipantBySession')
+			->with($this->anything(), 'guestsession')
+			->willReturn($this->createMock(Participant::class));
+
+		$share = $this->provider->getShareByToken('sharetoken');
+
+		$this->assertSame('sharetoken', $share->getToken());
+	}
+
+	public function testGetShareByTokenInGroupRoomForNonParticipant(): void {
+		$this->mockRoom('', Room::TYPE_GROUP);
+		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
+
+		$this->participantService->method('getParticipant')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->participantService->method('getParticipantBySession')
+			->willThrowException(new ParticipantNotFoundException());
+
+		$this->expectException(ShareNotFound::class);
+		$this->provider->getShareByToken('sharetoken');
+	}
+
 	public function testGetShareByTokenWithRoomPasswordForNonParticipant(): void {
 		$hash = Server::get(IHasher::class)->hash('secret');
-		$this->mockPublicRoom($hash);
+		$this->mockRoom($hash);
 		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $hash);
 
 		$this->participantService->method('getParticipant')
@@ -321,7 +353,7 @@ class RoomShareProviderTest extends TestCase {
 	#[DataProvider('dataGetShareByTokenWithRoomPasswordForParticipant')]
 	public function testGetShareByTokenWithRoomPasswordForParticipant(bool $isUser): void {
 		$hash = Server::get(IHasher::class)->hash('secret');
-		$this->mockPublicRoom($hash);
+		$this->mockRoom($hash);
 		$shareId = $this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $hash);
 
 		if ($isUser) {
@@ -396,7 +428,7 @@ class RoomShareProviderTest extends TestCase {
 	#[DataProvider('dataUpdateCopiesRoomPassword')]
 	public function testUpdateCopiesRoomPassword(bool $withPassword): void {
 		$hash = Server::get(IHasher::class)->hash('secret');
-		$this->mockPublicRoom($withPassword ? $hash : '');
+		$this->mockRoom($withPassword ? $hash : '');
 		$shareId = $this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $withPassword ? '' : $hash);
 
 		$node = $this->createMock(Node::class);

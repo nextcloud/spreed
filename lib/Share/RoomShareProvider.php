@@ -16,6 +16,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -1127,7 +1128,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			throw new ShareNotFound();
 		}
 
-		if ($room->getType() !== Room::TYPE_PUBLIC) {
+		if ($room->getType() !== Room::TYPE_PUBLIC && $this->getCurrentParticipant($room) === null) {
 			throw new ShareNotFound();
 		}
 
@@ -1153,20 +1154,27 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$update->executeStatement();
 	}
 
+	private function getCurrentParticipant(Room $room): ?Participant {
+		try {
+			return $this->participantService->getParticipant($room, $this->userSession->getUser()?->getUID(), false);
+		} catch (ParticipantNotFoundException) {
+		}
+
+		try {
+			return $this->participantService->getParticipantBySession($room, $this->talkSession->getSessionForRoom($room->getToken()));
+		} catch (ParticipantNotFoundException) {
+			return null;
+		}
+	}
+
 	/**
 	 * Participants already passed the conversation password, so the share is
 	 * marked as authenticated in the session the same way the public share
 	 * password form does it.
 	 */
 	private function markAuthenticatedForParticipant(IShare $share, Room $room): void {
-		try {
-			$this->participantService->getParticipant($room, $this->userSession->getUser()?->getUID(), false);
-		} catch (ParticipantNotFoundException) {
-			try {
-				$this->participantService->getParticipantBySession($room, $this->talkSession->getSessionForRoom($room->getToken()));
-			} catch (ParticipantNotFoundException) {
-				return;
-			}
+		if ($this->getCurrentParticipant($room) === null) {
+			return;
 		}
 
 		$allowedTokens = json_decode($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND) ?? '[]', true);
