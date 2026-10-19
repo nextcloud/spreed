@@ -372,6 +372,25 @@ class CryptoServiceTest extends TestCase {
 		return InboundSession::fromSessionKey($payload['content']['session_key']);
 	}
 
+	public function testUndecryptableMessageStartsNewSession(): void {
+		[$ourKeys] = $this->bootstrap();
+		$bob = $this->deviceWithOneTimeKey('@bob:hs', 'BOB');
+		// Encrypted with a one-time key the device does not have (anymore)
+		$event = self::roomKeyEvent($bob, '@bob:hs', 'BOB', [$ourKeys, Base64::encode(Keys::curve25519KeyPair()['public'])], OutboundSession::create(0));
+
+		self::assertSame([], $this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [$event]]])));
+
+		self::assertCount(1, $this->toDevice);
+		[$type, $messages] = $this->toDevice[0];
+		self::assertSame('m.room.encrypted', $type);
+		$content = $messages['@bob:hs']['BOB'];
+		['plaintext' => $plaintext] = Session::fromPreKeyMessage($bob, OlmEnvelope::ourCiphertext($content, $bob)['body'], Base64::decode($content['sender_key']));
+		self::assertSame('m.dummy', OlmEnvelope::validatePayload($plaintext, '@alice:hs', $bob, '@bob:hs')['type']);
+
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [$event]]]));
+		self::assertCount(1, $this->toDevice, 'A new session is started at most once per interval');
+	}
+
 	public function testEncryptRoomEvent(): void {
 		[$ourKeys] = $this->bootstrap();
 		$bob = $this->deviceWithOneTimeKey('@bob:hs', 'BOB');
@@ -400,6 +419,34 @@ class CryptoServiceTest extends TestCase {
 
 		self::assertNotSame($first['session_id'], $second['session_id']);
 		self::assertSame([], json_decode($this->outboundSessions['!room:hs']->getSharedWith(), true));
+	}
+
+	public function testRotationOfTheRoom(): void {
+		$this->bootstrap();
+		$encrypt = fn (?int $rotationPeriodMs, ?int $rotationPeriodMsgs): string => $this->service->encryptRoomEvent($this->account, $this->client, '!room:hs', ['@alice:hs'], 'm.room.message', ['body' => 'Hello'], $rotationPeriodMs, $rotationPeriodMsgs)['session_id'];
+
+		$first = $encrypt(null, 2);
+		self::assertSame($first, $encrypt(null, 2));
+		self::assertNotSame($first, $encrypt(null, 2), 'New room key after two messages');
+
+		$fourth = $encrypt(null, 1000);
+		self::assertSame($fourth, $encrypt(null, 1000));
+		$this->outboundSessions['!room:hs']->setPickle('encrypted:' . self::outboundAtIndex(CryptoService::ROTATION_MESSAGES));
+		self::assertNotSame($fourth, $encrypt(null, 1000), 'Longer periods than the default are not used');
+
+		$session = $encrypt(500, null);
+		self::assertNotSame($session, $encrypt(500, null), 'New room key after the time ran out');
+	}
+
+	/**
+	 * Pickle of an outbound session that sent $index messages
+	 */
+	private static function outboundAtIndex(int $index): string {
+		$session = OutboundSession::create(0);
+		for ($i = 0; $i < $index; $i++) {
+			$session->encrypt('');
+		}
+		return $session->pickle();
 	}
 
 	public function testDeviceWithForgedOneTimeKeyDoesNotGetTheRoomKey(): void {
@@ -556,13 +603,13 @@ class CryptoServiceTest extends TestCase {
 	/**
 	 * Back up the room key of a session of Bob, encrypted to the backup key like Matrix clients do
 	 */
-	private function backUp(OlmAccount $bob, OutboundSession $outbound): void {
+	private function backUp(OlmAccount $bob, OutboundSession $outbound, ?string $sessionKey = null): void {
 		$ephemeral = Keys::curve25519KeyPair();
 		$derived = Kdf::hkdf(Keys::ecdh($ephemeral['secret'], Base64::decode(self::BACKUP_PUBLIC_KEY)), 80, '');
 		$session = json_encode([
 			'algorithm' => MegolmEnvelope::ALGORITHM,
 			'sender_key' => $bob->getIdentityKeyBase64(),
-			'session_key' => InboundSession::fromSessionKey($outbound->sessionKey())->export(),
+			'session_key' => $sessionKey ?? InboundSession::fromSessionKey($outbound->sessionKey())->export(),
 			'sender_claimed_keys' => ['ed25519' => $bob->getSigningKeyBase64()],
 			'forwarding_curve25519_key_chain' => [],
 		]);
@@ -587,6 +634,30 @@ class CryptoServiceTest extends TestCase {
 		self::assertSame('', $this->groupSessions['!room:hs/' . $outbound->getId()]->getSender(), 'The sender is only known once a message is decrypted');
 		self::assertSame('Hello', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'))?->getBody());
 		self::assertSame(['key' => Base64::encode(str_repeat("\x07", 32)), 'version' => '1'], json_decode(substr((string)$this->account->getBackupKey(), strlen('encrypted:')), true));
+	}
+
+	public function testRoomKeyIsOnlyReplacedByAnEarlierStateOfTheSession(): void {
+		$ourDevice = $this->bootstrap();
+		$this->setUpSecretStorage();
+		$bob = $this->device('@bob:hs', 'BOB');
+		$outbound = OutboundSession::create(0);
+		$atStart = InboundSession::fromSessionKey($outbound->sessionKey())->export();
+		$outbound->encrypt('');
+		$outbound->encrypt('');
+		$this->service->processSync($this->account, $this->client, self::batch(['to_device' => ['events' => [self::roomKeyEvent($bob, '@bob:hs', 'BOB', $ourDevice, $outbound)]]]));
+		$stored = $this->groupSessions['!room:hs/' . $outbound->getId()];
+		self::assertSame(2, $stored->getFirstKnownIndex());
+
+		// Same session id, but a ratchet that does not lead to the stored one
+		$this->backUp($bob, $outbound, Base64::encode("\x01" . pack('N', 0) . random_bytes(128) . Base64::decode($outbound->getId())));
+		self::assertSame([], $this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY));
+		self::assertSame(2, $stored->getFirstKnownIndex());
+		self::assertSame('Hello', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Hello'))?->getBody());
+
+		$this->backUp($bob, $outbound, $atStart);
+		self::assertSame([['!room:hs', $outbound->getId()]], $this->service->restoreBackup($this->account, $this->client, self::RECOVERY_KEY));
+		self::assertSame(0, $stored->getFirstKnownIndex());
+		self::assertSame('Again', $this->service->decryptRoomEvent($this->account, $this->client, '!room:hs', self::roomEvent($bob, $outbound, '@bob:hs', 'Again'))?->getBody());
 	}
 
 	public function testRestoreBackupWithWrongRecoveryKey(): void {

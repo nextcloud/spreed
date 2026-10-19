@@ -73,7 +73,7 @@ class SyncServiceTest extends TestCase {
 
 	public function testLockedAccountIsSkipped(): void {
 		$account = $this->account();
-		$this->accountMapper->method('acquireLock')->with($account, 1000, 1070)->willReturn(false);
+		$this->accountMapper->method('acquireLock')->with($account, 1000, 1070)->willReturn(null);
 		$this->client->expects(self::never())->method('sync');
 
 		self::assertNull($this->service->syncAccount($account, 10));
@@ -81,7 +81,7 @@ class SyncServiceTest extends TestCase {
 
 	public function testInitialSync(): void {
 		$account = $this->account();
-		$this->accountMapper->method('acquireLock')->willReturn(true);
+		$this->accountMapper->method('acquireLock')->willReturnArgument(0);
 		$this->client->expects(self::once())
 			->method('createFilter')
 			->with('@alice:example.org', SyncService::FILTER)
@@ -110,7 +110,7 @@ class SyncServiceTest extends TestCase {
 
 	public function testFailedInitialSyncIsRepeated(): void {
 		$account = $this->account();
-		$this->accountMapper->method('acquireLock')->willReturn(true);
+		$this->accountMapper->method('acquireLock')->willReturnArgument(0);
 		$this->client->method('createFilter')->willReturn('filter');
 		$this->client->expects(self::once())->method('sync')->willReturn(self::batch('first'));
 		$this->roomSyncService->method('process')->willReturn(['rooms' => 1, 'messages' => 0, 'failed' => 1]);
@@ -123,7 +123,7 @@ class SyncServiceTest extends TestCase {
 
 	public function testFailedRoomInIncrementalSyncIsSkipped(): void {
 		$account = $this->account('first');
-		$this->accountMapper->method('acquireLock')->willReturn(true);
+		$this->accountMapper->method('acquireLock')->willReturnArgument(0);
 		$this->client->expects(self::never())->method('createFilter');
 		$this->client->method('sync')->with('first', 'filter')->willReturn(self::batch('second', true));
 		$this->roomSyncService->method('process')->willReturn(['rooms' => 0, 'messages' => 0, 'failed' => 1]);
@@ -134,10 +134,24 @@ class SyncServiceTest extends TestCase {
 		self::assertSame('1 rooms failed to sync, see the log', $account->getLastError());
 	}
 
+	public function testSyncContinuesFromTheStoredAccount(): void {
+		$stale = $this->account('first');
+		$stored = $this->account('second');
+		$this->accountMapper->method('acquireLock')->with($stale)->willReturn($stored);
+		$this->client->expects(self::once())->method('sync')->with('second', 'filter')->willReturn(self::batch('third', true));
+		$this->roomSyncService->expects(self::once())->method('process')->with($stored)->willReturn(['rooms' => 0, 'messages' => 0, 'failed' => 0]);
+		$this->accountMapper->expects(self::once())->method('update')->with($stored);
+
+		$this->service->syncAccount($stale, 10);
+
+		self::assertSame('third', $stored->getNextBatch());
+		self::assertSame('first', $stale->getNextBatch());
+	}
+
 	public function testForegroundSyncWaitsForNews(): void {
 		$account = $this->account('first');
 		$this->accountService->method('getForUser')->with('alice')->willReturn($account);
-		$this->accountMapper->expects(self::once())->method('acquireLock')->with($account, 1000, 1000 + 20 + SyncService::LOCK_SECONDS)->willReturn(true);
+		$this->accountMapper->expects(self::once())->method('acquireLock')->with($account, 1000, 1000 + 20 + SyncService::LOCK_SECONDS)->willReturnArgument(0);
 		$this->client->expects(self::exactly(2))
 			->method('sync')
 			->willReturnMap([
@@ -160,7 +174,7 @@ class SyncServiceTest extends TestCase {
 
 	public function testRejectedToken(): void {
 		$account = $this->account('first');
-		$this->accountMapper->method('acquireLock')->willReturn(true);
+		$this->accountMapper->method('acquireLock')->willReturnArgument(0);
 		$this->client->method('sync')->willThrowException(new UnknownTokenException('Token expired', 401, 'M_UNKNOWN_TOKEN'));
 		$this->accountService->expects(self::once())->method('markTokenInvalid')->with($account, 'Token expired');
 		$this->accountMapper->expects(self::once())->method('releaseLock')->with($account);
@@ -170,7 +184,7 @@ class SyncServiceTest extends TestCase {
 
 	public function testUnreachableHomeserver(): void {
 		$account = $this->account('first');
-		$this->accountMapper->method('acquireLock')->willReturn(true);
+		$this->accountMapper->method('acquireLock')->willReturnArgument(0);
 		$this->client->method('sync')->willThrowException(new TransportException('Homeserver unreachable'));
 		$this->accountService->expects(self::never())->method('markTokenInvalid');
 		$this->accountMapper->expects(self::once())->method('releaseLock')->with($account);

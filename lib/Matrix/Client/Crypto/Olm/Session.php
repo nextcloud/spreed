@@ -21,6 +21,8 @@ final class Session {
 	private const RATCHET_INFO = 'OLM_RATCHET';
 	private const KEYS_INFO = 'OLM_KEYS';
 	private const MAX_SKIPPED = 40;
+	/** Messages that can be skipped at once, as in libolm and vodozemac */
+	private const MAX_MESSAGE_GAP = 2000;
 	private const MAX_RECEIVER_CHAINS = 5;
 
 	private string $rootKey;
@@ -199,7 +201,7 @@ final class Session {
 		if ($message['chainIndex'] < $chain['index']) {
 			throw new CryptoException('Message key already used (index ' . $message['chainIndex'] . ' < ' . $chain['index'] . ')');
 		}
-		if ($message['chainIndex'] - $chain['index'] > self::MAX_SKIPPED) {
+		if ($message['chainIndex'] - $chain['index'] > self::MAX_MESSAGE_GAP) {
 			throw new CryptoException('Too many skipped messages');
 		}
 		// Skip forward, remembering the skipped keys

@@ -83,7 +83,8 @@ class SyncService {
 			return null;
 		}
 		$start = $this->timeFactory->getTime();
-		if (!$this->accountMapper->acquireLock($account, $start, $start + $budget + self::LOCK_SECONDS)) {
+		$account = $this->accountMapper->acquireLock($account, $start, $start + $budget + self::LOCK_SECONDS);
+		if ($account === null) {
 			return null;
 		}
 

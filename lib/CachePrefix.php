@@ -16,4 +16,5 @@ class CachePrefix {
 	public const MATRIX_CONNECTION = 'talk/matrixconnection';
 	public const MATRIX_READ_MARKER = 'talk/matrixreadmarker';
 	public const MATRIX_VERIFIED = 'talk/matrixverified';
+	public const MATRIX_UNWEDGE = 'talk/matrixunwedge';
 }

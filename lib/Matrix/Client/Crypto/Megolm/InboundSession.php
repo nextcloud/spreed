@@ -86,6 +86,19 @@ final class InboundSession {
 		return ['plaintext' => Kdf::aesCbcDecrypt($aesKey, $iv, $message['ciphertext']), 'index' => $message['index']];
 	}
 
+	/**
+	 * Whether this session goes back further than $other and advances to it, so
+	 * it decrypts everything $other does
+	 */
+	public function isEarlierStateOf(self $other): bool {
+		if (!hash_equals($this->signingKey, $other->signingKey) || $this->getFirstKnownIndex() >= $other->getFirstKnownIndex()) {
+			return false;
+		}
+		$ratchet = Ratchet::fromBytes($this->initialRatchet->toBytes(), $this->initialRatchet->getCounter());
+		$ratchet->advanceTo($other->getFirstKnownIndex());
+		return hash_equals($other->initialRatchet->toBytes(), $ratchet->toBytes());
+	}
+
 	/** Export at the first known index (for forwarding / backup, version 1). */
 	public function export(): string {
 		return Base64::encode(chr(self::EXPORT_VERSION) . pack('N', $this->initialRatchet->getCounter()) . $this->initialRatchet->toBytes() . $this->signingKey);
