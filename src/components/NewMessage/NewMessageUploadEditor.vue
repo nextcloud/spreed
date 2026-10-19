@@ -206,7 +206,7 @@ export default {
 			},
 
 			set(value) {
-				this.uploadStore.skipCompression = value === 'high'
+				this.uploadStore.updateSkipCompression(value === 'high')
 			},
 		},
 
@@ -222,7 +222,7 @@ export default {
 			},
 
 			set(value) {
-				this.uploadStore.allowUpdate = value === 'editable'
+				this.uploadStore.updateAllowUpdate(value === 'editable')
 			},
 		},
 
