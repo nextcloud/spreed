@@ -87,7 +87,7 @@
 
 			<!-- Matterbridge settings -->
 			<NcAppSettingsSection
-				v-if="canFullModerate && matterbridgeEnabled && !isClassified"
+				v-if="canFullModerate && matterbridgeEnabled && !isClassified && !isMatrix"
 				id="matterbridge"
 				:name="t('spreed', 'Matterbridge')">
 				<MatterbridgeSettings />
@@ -95,7 +95,7 @@
 
 			<!-- Bots settings -->
 			<NcAppSettingsSection
-				v-if="selfIsOwnerOrModerator && supportBotsV1 && !isClassified"
+				v-if="selfIsOwnerOrModerator && supportBotsV1 && !isClassified && !isMatrix"
 				id="bots"
 				:name="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
@@ -281,6 +281,10 @@ export default {
 
 		isBreakoutRoom() {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
+		},
+
+		isMatrix() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.MATRIX
 		},
 
 		supportBotsV1() {
