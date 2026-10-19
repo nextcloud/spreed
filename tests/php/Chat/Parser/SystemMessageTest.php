@@ -1302,14 +1302,13 @@ class SystemMessageTest extends TestCase {
 			'id' => '42',
 			'name' => 'photo.jpg',
 			'size' => '12345',
-			'path' => 'photo.jpg',
+			'path' => '/photo.jpg',
 			'link' => 'absolute-link',
 			'etag' => md5('etag'),
 			'permissions' => '27',
 			'mimetype' => 'image/jpeg',
 			'preview-available' => 'yes',
 			'hide-download' => 'no',
-			'share-path' => '/photo.jpg',
 		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]));
 	}
 
@@ -1417,14 +1416,13 @@ class SystemMessageTest extends TestCase {
 			'id' => '42',
 			'name' => 'photo.jpg',
 			'size' => '12345',
-			'path' => 'photo.jpg',
+			'path' => '/photo.jpg',
 			'link' => 'absolute-link',
 			'etag' => md5('etag'),
 			'permissions' => '27',
 			'mimetype' => 'image/jpeg',
 			'preview-available' => 'yes',
 			'hide-download' => 'no',
-			'share-path' => '/photo.jpg',
 		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, null, 42]));
 	}
 

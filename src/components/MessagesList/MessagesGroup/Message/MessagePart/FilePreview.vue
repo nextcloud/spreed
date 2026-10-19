@@ -305,7 +305,6 @@ export default {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
-					sharePath: this.file['share-path'],
 					localUrl: this.fallbackLocalUrl,
 					messageId: Number(this.messageId),
 					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
@@ -453,7 +452,7 @@ export default {
 			// return direct image
 			if (this.actorStore.userId === null) {
 				// guest mode, use public link download URL
-				return generatePublicShareDownloadUrl(this.file.link, this.file['share-path'])
+				return generatePublicShareDownloadUrl(this.file.link, this.file.path)
 			} else {
 				// use direct DAV URL
 				return generateRemoteUrl(`dav/files/${this.actorStore.userId}`) + encodePath(this.internalAbsolutePath)

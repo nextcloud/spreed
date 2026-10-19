@@ -43,10 +43,10 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
  * Generate a public WebDAV download link for a public share
  *
  * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH?path=/Media
- * @param sharePath - The path of the file inside a folder share, e.g., /Media/photo.jpg
+ * @param path - The file path, only used when starting with a slash (relative to a folder share), e.g., /Media/photo.jpg
  * @return The download link, e.g., https://nextcloud.ltd/public.php/dav/files/CBeNTiJz5JeT2CH/Media/photo.jpg
  */
-export function generatePublicShareDownloadUrl(shareLink: string, sharePath: string = '') {
+export function generatePublicShareDownloadUrl(shareLink: string, path: string = '') {
 	const token = new URL(shareLink).pathname.split('/').filter(Boolean).at(-1)
-	return getBaseUrl() + '/public.php/dav/files/' + token + encodePath(sharePath)
+	return getBaseUrl() + '/public.php/dav/files/' + token + (path.startsWith('/') ? encodePath(path) : '')
 }
