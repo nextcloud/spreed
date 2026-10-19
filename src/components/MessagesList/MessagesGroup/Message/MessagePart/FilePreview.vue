@@ -108,7 +108,7 @@
 import { formatFileSize } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
-import { generateRemoteUrl, generateUrl, imagePath } from '@nextcloud/router'
+import { generateRemoteUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -126,7 +126,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
-import { generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
+import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
@@ -465,10 +465,7 @@ export default {
 			if (this.actorStore.userId === null) {
 				return generatePublicSharePreviewUrl(this.file.link, this.file.path, { x: -1, y: previewSize })
 			} else {
-				return generateUrl('/core/preview?fileId={fileId}&x=-1&y={height}&a=1', {
-					fileId: this.file.id,
-					height: previewSize,
-				})
+				return generatePreviewUrl(this.file.id, { x: -1, y: previewSize })
 			}
 		},
 

@@ -5,7 +5,7 @@
 
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 import { describe, expect, it } from 'vitest'
-import { generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../davUtils.ts'
+import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../davUtils.ts'
 
 describe('davUtils', () => {
 	describe('generatePublicShareDownloadUrl', () => {
@@ -17,6 +17,15 @@ describe('davUtils', () => {
 			['https://nextcloud.ltd/index.php/s/TOKEN?path=%2FMedia', '/Media/#1.jpg', '/public.php/dav/files/TOKEN/Media/%231.jpg'],
 		])('generates download link for %s and %s', (link, path, expected) => {
 			expect(generatePublicShareDownloadUrl(link, path)).toBe(getBaseUrl() + expected)
+		})
+	})
+
+	describe('generatePreviewUrl', () => {
+		it.each([
+			[123, { x: 32, y: 32 }, '/core/preview?fileId=123&x=32&y=32&a=1'],
+			['123', { x: -1, y: 384 }, '/core/preview?fileId=123&x=-1&y=384&a=1'],
+		])('generates preview link for %s and %o', (fileId, size, expected) => {
+			expect(generatePreviewUrl(fileId, size)).toBe(generateUrl(expected))
 		})
 	})
 
