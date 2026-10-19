@@ -90,6 +90,7 @@ import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { generatePublicShareDownloadUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
@@ -375,7 +376,7 @@ export default {
 			// return direct image
 			if (this.actorStore.userId === null) {
 				// guest mode, use public link download URL
-				return this.file.link + '/download/' + encodePath(this.file.name)
+				return generatePublicShareDownloadUrl(this.file.link, this.file['share-path'])
 			} else {
 				// use direct DAV URL
 				return generateRemoteUrl(`dav/files/${this.actorStore.userId}`) + encodePath(this.internalAbsolutePath)

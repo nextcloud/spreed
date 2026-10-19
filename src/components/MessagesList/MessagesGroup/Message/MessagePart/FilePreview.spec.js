@@ -4,7 +4,7 @@
  */
 
 import { encodePath } from '@nextcloud/paths'
-import { generateRemoteUrl, imagePath } from '@nextcloud/router'
+import { generateRemoteUrl, getBaseUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
@@ -299,7 +299,21 @@ describe('FilePreview.vue', () => {
 
 				expect(wrapper.element.tagName).toBe('A')
 				expect(wrapper.find('img').attributes('src'))
-					.toBe(props.file.link + '/download/test%20%2520.gif')
+					.toBe(getBaseUrl() + '/public.php/dav/files/xtokenx')
+			})
+
+			test('directly renders small GIF files for guests from a folder share', async () => {
+				props.file.size = '128'
+				props.file.link = 'https://localhost/nc-webroot/s/xtokenx?path=%2FMedia'
+				props.file['share-path'] = '/Media/test %20.gif'
+				actorStore.userId = null
+
+				const wrapper = mountFilePreview()
+
+				await wrapper.find('img').trigger('load')
+
+				expect(wrapper.find('img').attributes('src'))
+					.toBe(getBaseUrl() + '/public.php/dav/files/xtokenx/Media/test%20%2520.gif')
 			})
 
 			test('renders static preview for big GIF files', async () => {

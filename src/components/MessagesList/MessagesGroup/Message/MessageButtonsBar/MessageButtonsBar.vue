@@ -677,7 +677,7 @@ export default {
 				? (this.isSharedFolder
 						? generateUserFolderUrl(this.messageFile.path)
 						: generateUserFileUrl(this.messageFile.path))
-				: generatePublicShareDownloadUrl(this.messageFile.link)
+				: generatePublicShareDownloadUrl(this.messageFile.link, this.messageFile['share-path']) + (this.isSharedFolder ? '?accept=zip' : '')
 		},
 
 		isCurrentGuest() {

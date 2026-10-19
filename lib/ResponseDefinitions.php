@@ -138,6 +138,8 @@ namespace OCA\Talk;
  *     size?: string,
  *     // Path of the file
  *     path?: string,
+ *     // Path of the file inside the public folder share of the `link`
+ *     'share-path'?: string,
  *     // Mimetype of the file
  *     mimetype?: string,
  *     // Whether a preview is available for the file
