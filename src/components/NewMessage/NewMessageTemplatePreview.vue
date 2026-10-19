@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { generateUrl } from '@nextcloud/router'
+import { generatePreviewUrl } from '../../utils/davUtils.ts'
 
 // preview width generation
 const previewWidth = 256
@@ -116,7 +116,7 @@ export default {
 			if (this.previewUrl) {
 				return this.previewUrl
 			}
-			return generateUrl(`/core/preview?fileId=${this.fileid}&x=${previewWidth}&y=${previewWidth}&a=1`)
+			return generatePreviewUrl(this.fileid, { x: previewWidth, y: previewWidth })
 		},
 
 		mimeIcon() {
