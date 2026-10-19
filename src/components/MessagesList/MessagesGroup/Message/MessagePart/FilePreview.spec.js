@@ -15,6 +15,7 @@ import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
 import router from '../../../../../__mocks__/router.js'
+import { SHARED_ITEM } from '../../../../../constants.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 
@@ -339,6 +340,22 @@ describe('FilePreview.vue', () => {
 				expect(imageUrl.searchParams.get('fileId')).toBe('123')
 				expect(imageUrl.searchParams.get('x')).toBe('-1')
 				expect(imageUrl.searchParams.get('y')).toBe('384')
+			})
+		})
+
+		describe('audio rendering', () => {
+			test('renders audio player for guests from a folder share', () => {
+				props.itemType = SHARED_ITEM.TYPES.VOICE
+				props.file.mimetype = 'audio/mpeg'
+				props.file.name = 'test %20.mp3'
+				props.file.link = 'https://localhost/nc-webroot/s/xtokenx?path=%2FMedia'
+				props.file['share-path'] = '/Media/test %20.mp3'
+				actorStore.userId = null
+
+				const wrapper = mountFilePreview()
+
+				expect(wrapper.find('audio').attributes('src'))
+					.toBe(getBaseUrl() + '/public.php/dav/files/xtokenx/Media/test%20%2520.mp3')
 			})
 		})
 

@@ -305,6 +305,7 @@ export default {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
+					sharePath: this.file['share-path'],
 					localUrl: this.fallbackLocalUrl,
 					messageId: Number(this.messageId),
 					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
