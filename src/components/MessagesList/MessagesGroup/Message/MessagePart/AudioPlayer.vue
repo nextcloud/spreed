@@ -25,6 +25,7 @@ import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
+import { generatePublicShareDownloadUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 
 export default {
@@ -48,6 +49,14 @@ export default {
 		 * Link share root, includes the file name.
 		 */
 		path: {
+			type: String,
+			default: '',
+		},
+
+		/**
+		 * File path inside the public folder share of the link
+		 */
+		sharePath: {
 			type: String,
 			default: '',
 		},
@@ -113,7 +122,7 @@ export default {
 			const userId = this.actorStore.userId
 			if (userId === null) {
 				// guest mode, use public link download URL
-				return this.link + '/download/' + encodePath(this.name)
+				return generatePublicShareDownloadUrl(this.link, this.sharePath)
 			} else {
 				// use direct DAV URL
 				return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
