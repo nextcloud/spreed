@@ -76,10 +76,9 @@ Output format and structure:
 * Use level-2 Markdown headings (`##`).
 * Use the following sections in this exact order:
   1. Purpose
-  2. Place and time
-  3. Participants
-  4. Discussion
-  5. Decisions
+  2. Participants
+  3. Discussion
+  4. Decisions
 * Translate the section names into the language of the source text.
 * Do not keep the section names in English when the source text is in another language.
 
@@ -91,11 +90,6 @@ Rules:
 * Base it on the overall content, even if the purpose is not explicitly stated.
 * Do not introduce information that is not supported by the source.
 * If the overall purpose or context cannot be determined, write: No information.
-
-## Place and time
-
-* Include only explicitly stated information.
-* If no time or place is explicitly stated, write: No information.
 
 ## Participants
 
