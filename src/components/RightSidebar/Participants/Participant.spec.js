@@ -842,6 +842,14 @@ describe('ParticipantItem.vue', () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.GROUPS
 				await testCannotBan('Remove group and members')
 			})
+
+			test('does not allow a moderator to ban or change permissions in a Matrix conversation', async () => {
+				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
+				conversation.objectType = CONVERSATION.OBJECT_TYPE.MATRIX
+				participant.participantType = PARTICIPANT.TYPE.USER
+				await testCannotBan()
+				expect(findNcActionButton(mountParticipant(participant), 'Edit permissions').exists()).toBeFalsy()
+			})
 		})
 		describe('dial-in PIN', () => {
 			/**

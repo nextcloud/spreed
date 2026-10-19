@@ -40,7 +40,7 @@ describe('ConversationSettingsDialog.vue', () => {
 					participantType: PARTICIPANT.TYPE.OWNER,
 					attributes: 0,
 					canDeleteConversation: false,
-					canLeaveConversation: false,
+					canLeaveConversation: true,
 				}),
 			},
 		})
@@ -54,19 +54,26 @@ describe('ConversationSettingsDialog.vue', () => {
 		wrapper.vm.token = TOKEN
 		await wrapper.vm.$nextTick()
 
-		return wrapper.findAllComponents({ name: 'NcAppSettingsSection' }).map((section) => section.attributes('id'))
+		return [
+			...wrapper.findAllComponents({ name: 'NcAppSettingsSection' }).map((section) => section.attributes('id')),
+			...HIDDEN_COMPONENTS.filter((name) => wrapper.findComponent({ name }).exists()),
+		]
 	}
 
-	it('shows Matterbridge and bots settings in regular conversations', async () => {
-		const sections = await mountDialog(CONVERSATION.OBJECT_TYPE.DEFAULT)
-		expect(sections).toContain('matterbridge')
-		expect(sections).toContain('bots')
+	const HIDDEN_SECTIONS = ['meeting', 'permissions', 'live-transcription', 'breakout-rooms', 'matterbridge', 'bots']
+	const HIDDEN_COMPONENTS = ['LinkShareSettings', 'ExpirationSettings', 'BanSettings', 'LockingSettings']
+
+	it('shows moderation settings in regular conversations', async () => {
+		const settings = await mountDialog(CONVERSATION.OBJECT_TYPE.DEFAULT)
+		expect(settings).toEqual(expect.arrayContaining([...HIDDEN_SECTIONS, ...HIDDEN_COMPONENTS]))
 	})
 
-	it('hides Matterbridge and bots settings in Matrix conversations', async () => {
-		const sections = await mountDialog(CONVERSATION.OBJECT_TYPE.MATRIX)
-		expect(sections).toContain('conversation-settings')
-		expect(sections).not.toContain('matterbridge')
-		expect(sections).not.toContain('bots')
+	it('hides unsupported moderation settings in Matrix conversations', async () => {
+		const settings = await mountDialog(CONVERSATION.OBJECT_TYPE.MATRIX)
+		expect(settings).toContain('conversation-settings')
+		expect(settings).toContain('dangerzone')
+		for (const hidden of [...HIDDEN_SECTIONS, ...HIDDEN_COMPONENTS]) {
+			expect(settings).not.toContain(hidden)
+		}
 	})
 })
