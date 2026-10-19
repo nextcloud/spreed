@@ -916,7 +916,8 @@ class SystemMessage implements IEventListener {
 
 			$name = $node->getName();
 			$size = $node->getSize();
-			$path = $name;
+			// Leading slash marks the path as relative to the folder share of the link
+			$path = rtrim($pathInShare, '/') . '/' . $name;
 
 			$params = ['token' => $shareToken];
 			if ($pathInShare !== '/' && $pathInShare !== '') {
