@@ -66,7 +66,7 @@ class AuditLogListener implements IEventListener {
 			return;
 		}
 
-		$this->log('Conversation "%s" was created as %s conversation', [
+		$this->log('Conversation "{token}" was created as {conversationType} conversation', [
 			'token' => $room->getToken(),
 			'conversationType' => $this->conversationTypeLabel($room->getType()),
 			'objectType' => $room->getObjectType(),
@@ -79,7 +79,7 @@ class AuditLogListener implements IEventListener {
 			return;
 		}
 
-		$this->log('Lobby of conversation "%s" was changed from %s to %s', [
+		$this->log('Lobby of conversation "{token}" was changed from {oldLobbyState} to {lobbyState}', [
 			'token' => $event->getRoom()->getToken(),
 			'oldLobbyState' => $this->formatValue($event->getOldValue()),
 			'lobbyState' => $this->formatValue($event->getNewValue()),
@@ -91,13 +91,13 @@ class AuditLogListener implements IEventListener {
 		$token = $event->getRoom()->getToken();
 
 		match ($event->getProperty()) {
-			ARoomModifiedEvent::PROPERTY_TYPE => $this->log('Type of conversation "%s" was changed from %s to %s', [
+			ARoomModifiedEvent::PROPERTY_TYPE => $this->log('Type of conversation "{token}" was changed from {oldConversationType} to {conversationType}', [
 				'token' => $token,
 				'oldConversationType' => $this->conversationTypeLabel($event->getOldValue()),
 				'conversationType' => $this->conversationTypeLabel($event->getNewValue()),
 			], Operation::ConversationTypeChanged),
 			// The value is the password itself, so only whether one is set is logged
-			ARoomModifiedEvent::PROPERTY_PASSWORD => $this->log('Password protection of conversation "%s" was %s', [
+			ARoomModifiedEvent::PROPERTY_PASSWORD => $this->log('Password protection of conversation "{token}" was {passwordProtection}', [
 				'token' => $token,
 				'passwordProtection' => $event->getNewValue() !== '' && $event->getNewValue() !== null ? 'enabled' : 'disabled',
 			], Operation::ConversationPasswordChanged),
@@ -121,12 +121,12 @@ class AuditLogListener implements IEventListener {
 		$oldStatus = $event->getOldValue();
 
 		if ($newStatus === Room::RECORDING_VIDEO || $newStatus === Room::RECORDING_AUDIO) {
-			$this->log('Recording of conversation "%s" was started (%s)', [
+			$this->log('Recording of conversation "{token}" was started ({recordingType})', [
 				'token' => $token,
 				'recordingType' => $newStatus === Room::RECORDING_VIDEO ? 'video' : 'audio',
 			], Operation::RecordingStarted);
 		} elseif ($newStatus === Room::RECORDING_NONE && in_array($oldStatus, [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO], true)) {
-			$this->log('Recording of conversation "%s" was stopped', [
+			$this->log('Recording of conversation "{token}" was stopped', [
 				'token' => $token,
 			], Operation::RecordingStopped);
 		}
@@ -143,10 +143,9 @@ class AuditLogListener implements IEventListener {
 				continue;
 			}
 
-			$this->log('Participant "%s" (%s, attendee %s) was added to conversation "%s" as %s', [
+			$this->log('{actorType} "{actorId}" was added to conversation "{token}" as {participantType}', [
 				'actorId' => $this->getLoggedActorId($attendee),
 				'actorType' => $attendee->getActorType(),
-				'attendeeId' => $attendee->getId(),
 				'token' => $room->getToken(),
 				'participantType' => $this->participantTypeLabel($attendee->getParticipantType()),
 			], Operation::ParticipantAdded);
@@ -160,10 +159,9 @@ class AuditLogListener implements IEventListener {
 			return;
 		}
 
-		$this->log('Participant "%s" (%s, attendee %s) was removed from conversation "%s" (reason: %s)', [
+		$this->log('{actorType} "{actorId}" was removed from conversation "{token}" (reason: {reason})', [
 			'actorId' => $this->getLoggedActorId($attendee),
 			'actorType' => $attendee->getActorType(),
-			'attendeeId' => $attendee->getId(),
 			'token' => $room->getToken(),
 			'reason' => $event->getReason(),
 		], Operation::ParticipantRemoved);
@@ -174,16 +172,15 @@ class AuditLogListener implements IEventListener {
 		$parameters = [
 			'actorId' => $this->getLoggedActorId($attendee),
 			'actorType' => $attendee->getActorType(),
-			'attendeeId' => $attendee->getId(),
 			'token' => $event->getRoom()->getToken(),
 		];
 
 		match ($event->getProperty()) {
-			AParticipantModifiedEvent::PROPERTY_TYPE => $this->log('Participant type of "%s" (%s, attendee %s) in conversation "%s" was changed from %s to %s', $parameters + [
+			AParticipantModifiedEvent::PROPERTY_TYPE => $this->log('Participant type of {actorType} "{actorId}" in conversation "{token}" was changed from {oldParticipantType} to {participantType}', $parameters + [
 				'oldParticipantType' => $event->getOldValue() === null ? null : $this->participantTypeLabel((int)$event->getOldValue()),
 				'participantType' => $this->participantTypeLabel((int)$event->getNewValue()),
 			], Operation::ParticipantTypeChanged),
-			AParticipantModifiedEvent::PROPERTY_PERMISSIONS => $this->log('Permissions of "%s" (%s, attendee %s) in conversation "%s" were changed from %s to %s', $parameters + [
+			AParticipantModifiedEvent::PROPERTY_PERMISSIONS => $this->log('Permissions of {actorType} "{actorId}" in conversation "{token}" were changed from {oldPermissions} to {permissions}', $parameters + [
 				'oldPermissions' => $event->getOldValue(),
 				'permissions' => $event->getNewValue(),
 			], Operation::ParticipantPermissionsChanged),
@@ -192,7 +189,7 @@ class AuditLogListener implements IEventListener {
 	}
 
 	private function botToggled(Room $room, BotServer $bot, string $action, Operation $operation): void {
-		$this->log('Bot %s ("%s") was ' . $action . ' in conversation "%s"', [
+		$this->log('Bot #{botId} ("{botName}") was ' . $action . ' in conversation "{token}"', [
 			'botId' => $bot->getId(),
 			'botName' => $bot->getName(),
 			'token' => $room->getToken(),
@@ -226,7 +223,7 @@ class AuditLogListener implements IEventListener {
 	}
 
 	private function logValueChange(string $setting, string $token, RoomModifiedEvent $event, Operation $operation): void {
-		$this->log($setting . ' of conversation "%s" was changed from %s to %s', [
+		$this->log($setting . ' of conversation "{token}" was changed from {oldValue} to {newValue}', [
 			'token' => $token,
 			'oldValue' => $this->formatValue($event->getOldValue()),
 			'newValue' => $this->formatValue($event->getNewValue()),
