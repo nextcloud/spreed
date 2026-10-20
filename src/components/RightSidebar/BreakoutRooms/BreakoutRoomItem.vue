@@ -31,6 +31,8 @@
 				</NcButton>
 				<NcActions
 					v-if="canModerate"
+					:aria-label="t('spreed', 'Actions for {roomName}', { roomName })"
+					:title="t('spreed', 'Actions for {roomName}', { roomName })"
 					:inline="showAssistanceButton ? 1 : 0"
 					:forceMenu="!showAssistanceButton">
 					<NcActionButton
