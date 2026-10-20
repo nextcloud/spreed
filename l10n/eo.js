@@ -359,7 +359,6 @@ OC.L10N.register(
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
     "Talk to %s" : "Paroli al %s",
-    "Send" : "Sendi",
-    "Anonymous poll" : "Enketo sennoma"
+    "Send" : "Sendi"
 },
 "nplurals=2; plural=(n != 1);");

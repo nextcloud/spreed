@@ -1415,26 +1415,15 @@
     "Tasks" : "Tareas",
     "Reports" : "Informes",
     "Talk to %s" : "Hablar con %s",
-    "Failed" : "Error",
-    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Error: WebAssembly está deshabilitado o no es compatible con este navegador. Por favor, habilita WebAssembly o utiliza un navegador con soporte para realizar la comprobación.",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: Los archivos \".wasm\" y \".tflite\" se devolvieron correctamente por el servidor web.",
     "Collapse stripe" : "Ocultar franja",
     "Expand stripe" : "Expandir franja",
     "Open poll • You voted already" : "Encuesta abierta • Ya has votado",
     "Open poll • Click to vote" : "Encuesta abierta • Haz clic para votar",
     "Poll • Ended" : "Encuesta • Finalizada",
-    "Talk recording from {time} ({conversation})" : "Grabación de Talk desde {time} ({conversation})",
     "Send" : "Enviar",
     "Can post messages and reactions" : "Puede publicar mensajes y reacciones",
-    "Anonymous poll" : "Encuesta anónima",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Resultados de la encuesta • %n voto","Resultados de la encuesta • %n votos","Resultados de la encuesta • %n votos"],
-    "_Open poll • %n vote_::_Open poll • %n votes_" : ["Encuesta abierta • %n voto","Encuesta abierta • %n votos","Encuesta abierta • %n votos"],
     "Submit vote" : "Enviar voto",
-    "Your privacy setting has been saved" : "Tu configuración de privacidad ha sido guardada",
-    "Failed to save sounds setting" : "Error al guardar la configuración de sonidos",
-    "Sounds setting saved" : "Configuración de sonidos guardada",
-    "Search …" : "Buscar...",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te uniste a la conversación en otra ventana o dispositivo. Actualmente, Nextcloud Talk no admite esto, por lo que esta sesión se cerró.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de señalización configurado necesita ser actualizado para ser compatible con esta versión de Talk. Por favor, contacta a tu administrador."
+    "Search …" : "Buscar..."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

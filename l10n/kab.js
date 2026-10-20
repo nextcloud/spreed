@@ -442,7 +442,6 @@ OC.L10N.register(
     "Reports" : "Assaɣen",
     "Agenda" : "Tasmektit",
     "Talk to %s" : "Mmeslay d %s",
-    "Failed" : "Ur yeddi ara",
     "Send" : "Tuzna",
     "Search …" : "Nadi ..."
 },
