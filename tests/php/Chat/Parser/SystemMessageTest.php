@@ -785,8 +785,8 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(54)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
 		$participant = $this->createStub(Participant::class);
@@ -857,8 +857,8 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(54)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([
 				'width' => 1234,
 				'height' => 4567,
@@ -938,7 +938,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn('absolute-link-owner');
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getImageMetadataForFileId');
+			->method('getImageMetadataForNode');
 
 		$participant = $this->createMock(Participant::class);
 		$attendee = Attendee::fromRow([
@@ -1026,7 +1026,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(false);
 
 		$this->filesMetadataCache->expects($this->never())
-			->method('getImageMetadataForFileId');
+			->method('getImageMetadataForNode');
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
@@ -1162,8 +1162,8 @@ class SystemMessageTest extends TestCase {
 			->method('isAvailable');
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(42)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([]);
 
 		$this->url->expects($this->once())
@@ -1280,8 +1280,8 @@ class SystemMessageTest extends TestCase {
 			->willReturn(true);
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(42)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([]);
 
 		$this->url->expects($this->once())
@@ -1304,7 +1304,7 @@ class SystemMessageTest extends TestCase {
 			'id' => '42',
 			'name' => 'photo.jpg',
 			'size' => '12345',
-			'path' => 'photo.jpg',
+			'path' => '/photo.jpg',
 			'link' => 'absolute-link',
 			'etag' => md5('etag'),
 			'permissions' => '27',
@@ -1403,8 +1403,8 @@ class SystemMessageTest extends TestCase {
 			->method('isAvailable');
 
 		$this->filesMetadataCache->expects($this->once())
-			->method('getImageMetadataForFileId')
-			->with(42)
+			->method('getImageMetadataForNode')
+			->with($node)
 			->willReturn([]);
 
 		$this->url->expects($this->once())
@@ -1418,7 +1418,7 @@ class SystemMessageTest extends TestCase {
 			'id' => '42',
 			'name' => 'photo.jpg',
 			'size' => '12345',
-			'path' => 'photo.jpg',
+			'path' => '/photo.jpg',
 			'link' => 'absolute-link',
 			'etag' => md5('etag'),
 			'permissions' => '27',
@@ -1483,6 +1483,26 @@ class SystemMessageTest extends TestCase {
 		}
 
 		$this->assertSame($expected, self::invokePrivate($parser, 'getActorFromComment', [$room, $chatMessage]));
+	}
+
+	public function testGetMatrixUser(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(23);
+
+		$attendee = Attendee::fromRow(['actor_type' => Attendee::ACTOR_MATRIX, 'actor_id' => '@bob:example.org', 'display_name' => 'Bob']);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn($attendee);
+		$this->participantService->expects($this->exactly(2))
+			->method('getParticipantByActor')
+			->willReturnCallback(static fn (Room $room, string $actorType, string $actorId): Participant => match ($actorId) {
+				'@bob:example.org' => $participant,
+				default => throw new ParticipantNotFoundException(),
+			});
+
+		$parser = $this->getParser();
+		$this->assertSame(['type' => 'highlight', 'id' => 'matrix/@bob:example.org', 'name' => 'Bob'], self::invokePrivate($parser, 'getMatrixUser', [$room, '@bob:example.org']));
+		$this->assertSame(['type' => 'highlight', 'id' => 'matrix/@bob:example.org', 'name' => 'Bob'], self::invokePrivate($parser, 'getMatrixUser', [$room, '@bob:example.org']), 'Display name is cached');
+		$this->assertSame(['type' => 'highlight', 'id' => 'matrix/@carol:example.org', 'name' => '@carol:example.org'], self::invokePrivate($parser, 'getMatrixUser', [$room, '@carol:example.org']));
 	}
 
 	public static function dataGetUser(): array {

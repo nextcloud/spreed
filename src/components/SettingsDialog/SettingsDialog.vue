@@ -66,6 +66,13 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
+			v-if="!isGuest && matrixEnabled"
+			id="matrix_account"
+			:name="t('spreed', 'Matrix account')">
+			<MatrixAccountSettings />
+		</NcAppSettingsSection>
+
+		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="privacy"
 			:name="t('spreed', 'Privacy')">
@@ -87,7 +94,7 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
-			v-if="!isGuest && supportUnarchive"
+			v-if="!isGuest && (supportUnarchive || supportTagsShowUnread)"
 			id="conversations"
 			:name="t('spreed', 'Conversations')">
 			<ConversationsSettings />
@@ -129,6 +136,7 @@
 				<NcHotkey :label="t('spreed', 'Focus the chat input')" hotkey="C" />
 				<NcHotkey :label="t('spreed', 'Unfocus the chat input to use shortcuts')" hotkey="Escape" />
 				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
+				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Edit your last message')" hotkey="ArrowUp" />
 			</NcHotkeyList>
 
 			<NcHotkeyList
@@ -171,6 +179,7 @@ import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
 import AppearanceSettings from './AppearanceSettings.vue'
 import ConversationsSettings from './ConversationsSettings.vue'
 import LiveTranscriptionTargetLanguageSelect from './LiveTranscriptionTargetLanguageSelect.vue'
+import MatrixAccountSettings from './MatrixAccountSettings.vue'
 import { PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -185,6 +194,7 @@ const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-m
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 const supportUnarchive = getTalkConfig('local', 'conversations', 'unarchive') !== undefined
+const supportTagsShowUnread = getTalkConfig('local', 'conversations', 'tags-show-unread') !== undefined
 
 export default {
 	name: 'SettingsDialog',
@@ -196,6 +206,7 @@ export default {
 		AppearanceSettings,
 		ConversationsSettings,
 		LiveTranscriptionTargetLanguageSelect,
+		MatrixAccountSettings,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
@@ -223,6 +234,7 @@ export default {
 			supportDefaultBlurVirtualBackground,
 			supportLiveTranslation,
 			supportUnarchive,
+			supportTagsShowUnread,
 			actorStore,
 		}
 	},
@@ -243,6 +255,10 @@ export default {
 
 		isGuest() {
 			return !this.actorStore.userId
+		},
+
+		matrixEnabled() {
+			return getTalkConfig('local', 'matrix', 'enabled') === true
 		},
 
 		readStatusPrivacyIsPublic() {

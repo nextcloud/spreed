@@ -136,7 +136,7 @@ namespace OCA\Talk;
  *     stackname?: string,
  *     // File size in bytes
  *     size?: string,
- *     // Path of the file
+ *     // Path of the file (for guests: relative to the folder share of the `link` when starting with a slash)
  *     path?: string,
  *     // Mimetype of the file
  *     mimetype?: string,
@@ -300,6 +300,44 @@ namespace OCA\Talk;
  *     reminderTimestamp: int,
  *     // Conversation token
  *     roomToken: string,
+ * }
+ *
+ * @psalm-type TalkMatrixAccount = array{
+ *     // SnowflakeID
+ *     id: numeric-string,
+ *     // SnowflakeID of the homeserver
+ *     homeserverId: numeric-string,
+ *     // Full Matrix user id, e.g. `@alice:example.org`
+ *     mxid: string,
+ *     // Matrix device id of Talk
+ *     deviceId: string,
+ *     // 0 = active, 1 = the homeserver rejected the access token and the user has to log in again
+ *     status: 0|1,
+ *     // Error reported by the homeserver when it rejected the access token or the last sync failed
+ *     lastError: ?string,
+ *     // Unix timestamp of the last sync, `0` if it never synced
+ *     lastSync: int,
+ *     // Whether another device cross-signed the device of the server, null when encryption is not available on the server
+ *     verified: ?bool,
+ * }
+ *
+ * @psalm-type TalkMatrixVerification = array{
+ *     // One of `requested`, `ready`, `started`, `accepted`, `keys_exchanged`, `mac_sent`, `done` and `cancelled`
+ *     state: string,
+ *     // Emoji to compare with the other device, once the keys were exchanged
+ *     emoji: list<array{emoji: string, name: string}>,
+ *     // Why the verification was cancelled
+ *     reason: ?string,
+ * }
+ *
+ * @psalm-type TalkMatrixHomeserver = array{
+ *     // SnowflakeID
+ *     id: numeric-string,
+ *     name: string,
+ *     serverName: string,
+ *     baseUrl: string,
+ *     enabled: bool,
+ *     specVersions: list<string>,
  * }
  *
  * @psalm-type TalkFederationInvite = array{
@@ -857,6 +895,8 @@ namespace OCA\Talk;
  *             group-mode: 'none'|'group-first'|'private-first',
  *             // User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))
  *             unarchive: 'never'|'mention'|'always',
+ *             // User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))
+ *             tags-show-unread: 'never'|'mention'|'always',
  *         },
  *         federation: array{
  *             // Whether federation is enabled
@@ -867,6 +907,10 @@ namespace OCA\Talk;
  *             outgoing-enabled: bool,
  *             // Whether only trusted servers are allowed for federation
  *             only-trusted-servers: bool,
+ *         },
+ *         matrix: array{
+ *             // Whether Matrix accounts can be linked
+ *             enabled: bool,
  *         },
  *         previews: array{
  *             // Maximum GIF file size in bytes for previews

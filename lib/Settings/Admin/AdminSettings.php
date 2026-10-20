@@ -53,6 +53,7 @@ class AdminSettings implements ISettings {
 		$this->initGeneralSettings();
 		$this->initAllowedGroups();
 		$this->initFederation();
+		$this->initMatrix();
 		$this->initMatterbridge();
 		$this->initStunServers();
 		$this->initTurnServers();
@@ -87,12 +88,17 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('allowed_groups', $groups);
 	}
 
+	protected function initMatrix(): void {
+		$this->initialState->provideInitialState('matrix_enabled', $this->appConfig->getAppValueBool(Config::MATRIX_ENABLED));
+		$this->initialState->provideInitialState('matrix_allowed_groups', $this->getGroupDetailsArray($this->appConfig->getAppValueArray(Config::MATRIX_ALLOWED_GROUPS), 'matrix_allowed_groups'));
+	}
+
 	protected function initFederation(): void {
 		$this->initialState->provideInitialState('federation_enabled', $this->talkConfig->isFederationEnabled());
 		$this->initialState->provideInitialState('federation_incoming_enabled', $this->appConfig->getAppValueBool('federation_incoming_enabled', true));
 		$this->initialState->provideInitialState('federation_outgoing_enabled', $this->appConfig->getAppValueBool('federation_outgoing_enabled', true));
 		$this->initialState->provideInitialState('federation_only_trusted_servers', $this->appConfig->getAppValueBool('federation_only_trusted_servers'));
-		$this->initialState->provideInitialState('federation_allowed_groups', $this->appConfig->getAppValueArray('federation_allowed_groups'));
+		$this->initialState->provideInitialState('federation_allowed_groups', $this->getGroupDetailsArray($this->appConfig->getAppValueArray('federation_allowed_groups'), 'federation_allowed_groups'));
 	}
 
 	protected function initMatterbridge(): void {
@@ -449,9 +455,9 @@ class AdminSettings implements ISettings {
 			'secret' => $this->talkConfig->getRecordingSecret(),
 			'uploadLimit' => is_infinite($uploadLimit) ? 0 : $uploadLimit,
 		]);
-		$this->initialState->provideInitialState('recording_consent', $this->talkConfig->getRecordingConsentConfig());
+		$this->initialState->provideInitialState('recording_consent', $this->appConfig->getAppValueInt(Config::RECORDING_CONSENT));
 		$this->initialState->provideInitialState('call_recording_transcription', $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION));
-		$this->initialState->provideInitialState('call_recording_summary', $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes');
+		$this->initialState->provideInitialState('call_recording_summary', $this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY));
 	}
 
 	protected function initSIPBridge(): void {

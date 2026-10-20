@@ -35,15 +35,15 @@
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
 				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token="token" :canModerate="canFullModerate" />
 				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :canModerate="canFullModerate" />
-				<LinkShareSettings v-if="!isNoteToSelf && !isClassified" :token="token" :canModerate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf && !isClassified && !isMatrix" :token="token" :canModerate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :canModerate="selfIsOwnerOrModerator" />
-				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature" :token="token" :canModerate="selfIsOwnerOrModerator" />
-				<BanSettings v-if="supportBanV1 && canFullModerate" :token="token" />
+				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature && !isMatrix" :token="token" :canModerate="selfIsOwnerOrModerator" />
+				<BanSettings v-if="supportBanV1 && canFullModerate && !isMatrix" :token="token" />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
 			<NcAppSettingsSection
-				v-if="canFullModerate && !isNoteToSelf"
+				v-if="canFullModerate && !isNoteToSelf && !isMatrix"
 				id="meeting"
 				:name="meetingHeader">
 				<LobbySettings :token="token" />
@@ -52,7 +52,7 @@
 
 			<!-- Conversation permissions -->
 			<NcAppSettingsSection
-				v-if="canFullModerate && !isNoteToSelf"
+				v-if="canFullModerate && !isNoteToSelf && !isMatrix"
 				id="permissions"
 				:name="t('spreed', 'Permissions')">
 				<ConversationPermissionsSettings :token="token" />
@@ -87,7 +87,7 @@
 
 			<!-- Matterbridge settings -->
 			<NcAppSettingsSection
-				v-if="canFullModerate && matterbridgeEnabled && !isClassified"
+				v-if="canFullModerate && matterbridgeEnabled && !isClassified && !isMatrix"
 				id="matterbridge"
 				:name="t('spreed', 'Matterbridge')">
 				<MatterbridgeSettings />
@@ -95,7 +95,7 @@
 
 			<!-- Bots settings -->
 			<NcAppSettingsSection
-				v-if="selfIsOwnerOrModerator && supportBotsV1 && !isClassified"
+				v-if="selfIsOwnerOrModerator && supportBotsV1 && !isClassified && !isMatrix"
 				id="bots"
 				:name="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
@@ -107,7 +107,7 @@
 				id="dangerzone"
 				:name="t('spreed', 'Danger zone')">
 				<PreserveConversationSettings v-if="showPreserveConversationSetting" :token="token" />
-				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
+				<LockingSettings v-if="canFullModerate && !isNoteToSelf && !isMatrix" :token="token" />
 				<template v-if="supportsArchive">
 					<h4 class="app-settings-section__subtitle">
 						{{ t('spreed', 'Archive conversation') }}
@@ -163,7 +163,7 @@ import {
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation, isMatrixConversation } from '../../utils/conversation.ts'
 
 // FIXME Should use remote not local
 const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
@@ -283,6 +283,10 @@ export default {
 			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
 		},
 
+		isMatrix() {
+			return isMatrixConversation(this.conversation)
+		},
+
 		supportBotsV1() {
 			return hasTalkFeature(this.token, 'bots-v1')
 		},
@@ -297,6 +301,7 @@ export default {
 				&& this.selfIsOwnerOrModerator
 				&& !this.isClassified
 				&& !this.isChannel
+				&& !this.isMatrix
 		},
 
 		hintLiveTranscription() {
@@ -305,6 +310,7 @@ export default {
 				&& this.selfIsOwnerOrModerator
 				&& showTalkFeatureHint(34)
 				&& !this.isClassified
+				&& !this.isMatrix
 		},
 
 		canConfigureBreakoutRooms() {
@@ -314,6 +320,7 @@ export default {
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
 				&& !this.isClassified
 				&& !this.isChannel
+				&& !this.isMatrix
 		},
 
 		recordingConsentAvailable() {

@@ -139,6 +139,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
         + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
         + `429 Too Many Requests` When a guest mentioned other participants too often (50 mention messages per day)
+        + `502 Bad Gateway` When the Matrix homeserver rejected the message or could not be reached (`matrix-rooms` capability)
 
     - Header:
 
@@ -302,6 +303,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation or chat message could not be found for the participant
         + `405 Method Not Allowed` When the message is not a normal chat message
+        + `502 Bad Gateway` When the Matrix homeserver rejected the deletion or could not be reached (`matrix-rooms` capability)
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
     - Header:
@@ -337,6 +339,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation or chat message could not be found for the participant
         + `405 Method Not Allowed` When the message is not a normal chat message
+        + `502 Bad Gateway` When the Matrix homeserver rejected the edit or could not be reached (`matrix-rooms` capability)
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
     - Header:

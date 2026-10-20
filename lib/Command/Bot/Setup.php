@@ -16,6 +16,7 @@ use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\Room;
 use OCA\Talk\Service\BotService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
@@ -77,6 +78,12 @@ class Setup extends Base {
 
 				if ($room->isFederatedConversation()) {
 					$output->writeln('<error>Federated conversations can not have bots: ' . $token . '</error>');
+					$returnCode = 2;
+					continue;
+				}
+
+				if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+					$output->writeln('<error>Matrix conversations can not have bots: ' . $token . '</error>');
 					$returnCode = 2;
 					continue;
 				}

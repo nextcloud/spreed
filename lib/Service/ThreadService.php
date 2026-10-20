@@ -156,6 +156,8 @@ class ThreadService {
 			->andWhere($query->expr()->neq('a.notification_level', $query->createNamedParameter(Participant::NOTIFY_NEVER)))
 			// FIXME ORDER BY last_activity and subscription moment of the user for better sorting?
 			->orderBy('t.last_activity', 'DESC')
+			// last_activity has second precision, so tie on the newest message (last_message_id is 0 until the first reply)
+			->addOrderBy($query->func()->greatest('t.last_message_id', 't.id'), 'DESC')
 			->setMaxResults($limit);
 
 		if ($offset > 0) {

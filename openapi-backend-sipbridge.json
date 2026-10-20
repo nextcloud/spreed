@@ -105,6 +105,7 @@
                             "chat",
                             "conversations",
                             "federation",
+                            "matrix",
                             "previews",
                             "signaling",
                             "experiments",
@@ -335,7 +336,8 @@
                                     "retention-classified",
                                     "sort-order",
                                     "group-mode",
-                                    "unarchive"
+                                    "unarchive",
+                                    "tags-show-unread"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -409,6 +411,15 @@
                                             "always"
                                         ],
                                         "description": "User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))"
+                                    },
+                                    "tags-show-unread": {
+                                        "type": "string",
+                                        "enum": [
+                                            "never",
+                                            "mention",
+                                            "always"
+                                        ],
+                                        "description": "User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))"
                                     }
                                 }
                             },
@@ -436,6 +447,18 @@
                                     "only-trusted-servers": {
                                         "type": "boolean",
                                         "description": "Whether only trusted servers are allowed for federation"
+                                    }
+                                }
+                            },
+                            "matrix": {
+                                "type": "object",
+                                "required": [
+                                    "enabled"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether Matrix accounts can be linked"
                                     }
                                 }
                             },
@@ -813,7 +836,7 @@
                     },
                     "path": {
                         "type": "string",
-                        "description": "Path of the file"
+                        "description": "Path of the file (for guests: relative to the folder share of the `link` when starting with a slash)"
                     },
                     "mimetype": {
                         "type": "string",

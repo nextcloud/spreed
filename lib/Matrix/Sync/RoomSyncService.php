@@ -1,0 +1,775 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Talk\Matrix\Sync;
+
+use OCA\Talk\Events\AAttendeeRemovedEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Model\Event;
+use OCA\Talk\Matrix\Client\Model\JoinedRoom;
+use OCA\Talk\Matrix\Client\Model\Member;
+use OCA\Talk\Matrix\Client\Model\PowerLevels;
+use OCA\Talk\Matrix\Client\Model\RoomState;
+use OCA\Talk\Matrix\Client\Model\SyncBatch;
+use OCA\Talk\Matrix\Client\Room\NameCalculator;
+use OCA\Talk\Matrix\Model\Account;
+use OCA\Talk\Matrix\Model\AccountMapper;
+use OCA\Talk\Matrix\Model\EventMap;
+use OCA\Talk\Matrix\Model\EventMapMapper;
+use OCA\Talk\Matrix\Model\MatrixMember;
+use OCA\Talk\Matrix\Model\MatrixMemberMapper;
+use OCA\Talk\Matrix\Model\MatrixRoom;
+use OCA\Talk\Matrix\Model\MatrixRoomMapper;
+use OCA\Talk\Matrix\Service\CryptoService;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IL10N;
+use OCP\Notification\IManager as INotificationManager;
+use OCP\Notification\INotification;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Mirrors the joined Matrix rooms of linked accounts as read-only
+ * conversations: name, description, the joined members as attendees and the
+ * timeline as chat messages. Members with a linked account are added as
+ * users, everyone else as Matrix actor.
+ */
+class RoomSyncService {
+	/** Chat and reactions are mirrored, calls are not supported */
+	public const DEFAULT_PERMISSIONS = Attendee::PERMISSIONS_CUSTOM | Attendee::PERMISSIONS_CHAT | Attendee::PERMISSIONS_REACT;
+	/** Pixels of the avatar thumbnails */
+	public const AVATAR_SIZE = 512;
+	/** Events loaded from before the timeline of a new conversation or after a gap */
+	public const HISTORY_LIMIT = 50;
+	/** Pages of history loaded at most, in case they only contain state events */
+	public const HISTORY_PAGES = 3;
+
+	public function __construct(
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly ParticipantService $participantService,
+		private readonly MatrixRoomMapper $roomMapper,
+		private readonly MatrixMemberMapper $memberMapper,
+		private readonly AccountMapper $accountMapper,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly EventMapMapper $eventMapMapper,
+		private readonly MessageSyncService $messageSyncService,
+		private readonly CryptoService $cryptoService,
+		private readonly AvatarService $avatarService,
+		private readonly INotificationManager $notificationManager,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
+	) {
+	}
+
+	/**
+	 * @param bool $initial Whether the batch is from an initial sync, so the messages are history
+	 * @return array{rooms: int, messages: int, failed: int}
+	 */
+	public function process(Account $account, Client $client, SyncBatch $batch, bool $initial): array {
+		$stats = ['rooms' => 0, 'messages' => 0, 'failed' => 0];
+		// Room keys first, so the messages of the batch can be decrypted
+		$roomKeys = $this->cryptoService->processSync($account, $client, $batch);
+
+		foreach ($batch->joined as $roomId => $joined) {
+			try {
+				$stats['messages'] += $this->applyJoinedRoom($account, $client, $joined, $initial);
+				$stats['rooms']++;
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Matrix room ' . $roomId . ' could not be synced for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+
+		$stats['failed'] += $this->decryptWaitingEvents($account, $client, $roomKeys);
+
+		if (isset($batch->accountData['m.push_rules'])) {
+			try {
+				$this->applyPushRules($account, $batch->accountData['m.push_rules']);
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Push rules could not be applied for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+
+		foreach ($batch->invited as $roomId => $strippedState) {
+			try {
+				$this->applyInvite($account, $roomId, $strippedState);
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Matrix invite to ' . $roomId . ' could not be handled for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+
+		foreach ($batch->left as $roomId) {
+			try {
+				$this->leaveRoom($account, $roomId);
+			} catch (\Throwable $e) {
+				$stats['failed']++;
+				$this->logger->error('Leaving Matrix room ' . $roomId . ' failed for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+		return $stats;
+	}
+
+	/**
+	 * Remove the user of the account from all mirrored rooms and delete the
+	 * conversations no other linked account is in
+	 */
+	public function removeAccount(Account $account): void {
+		foreach ($this->memberMapper->getForAccount((string)$account->getId()) as $member) {
+			if ($member->getMembership() === Member::INVITE) {
+				$this->notificationManager->markProcessed($this->getInviteNotification($account, $member->getMatrixRoomId()));
+			}
+			$member->setAccountId(null);
+			$this->memberMapper->update($member);
+			$this->removeUserFromRoom($account, $member->getMatrixRoomId());
+		}
+	}
+
+	/**
+	 * @return int Number of new messages
+	 */
+	protected function applyJoinedRoom(Account $account, Client $client, JoinedRoom $joined, bool $initial): int {
+		$matrixRoom = $this->findMatrixRoom($joined->roomId);
+		$state = new RoomState($joined->roomId);
+		$members = [];
+		if ($matrixRoom !== null) {
+			$members = $this->memberMapper->getForRoom((string)$matrixRoom->getId());
+			$this->seedState($state, $matrixRoom, $members);
+		}
+		$state->applyAll($joined->stateEvents);
+
+		if ($state->isSpace()) {
+			return 0;
+		}
+
+		if ($matrixRoom === null) {
+			$matrixRoom = new MatrixRoom();
+			$matrixRoom->setMatrixRoomId($joined->roomId);
+			// Unique on the Matrix room id, so a concurrent sync of another account fails here and retries later
+			$matrixRoom = $this->roomMapper->insert($matrixRoom);
+		}
+		$matrixRoom->setName($state->name !== null ? mb_substr($state->name, 0, 255) : null);
+		$matrixRoom->setTopic($state->topic);
+		$matrixRoom->setCanonicalAlias($state->canonicalAlias !== null ? mb_substr($state->canonicalAlias, 0, 255) : null);
+		$matrixRoom->setCreator($state->creator !== '' ? mb_substr($state->creator, 0, 255) : null);
+		$matrixRoom->setCreators($state->creators !== [] ? json_encode($state->creators, JSON_THROW_ON_ERROR) : null);
+		$matrixRoom->setEncrypted($state->encrypted);
+		$matrixRoom->setRotationPeriodMs($state->rotationPeriodMs);
+		$matrixRoom->setRotationPeriodMsgs($state->rotationPeriodMsgs);
+		$matrixRoom->setPowerLevels($state->powerLevels !== [] ? json_encode($state->powerLevels, JSON_THROW_ON_ERROR) : null);
+
+		$wasInvited = ($members[$account->getMxid()] ?? null)?->getMembership() === Member::INVITE;
+		$members = $this->updateMembers($matrixRoom, $state, $members);
+		if ($wasInvited) {
+			$this->notificationManager->markProcessed($this->getInviteNotification($account, (string)$matrixRoom->getId()));
+		}
+		$accounts = $this->getLinkedAccounts($members);
+
+		$name = $this->getName($state, $joined, $account, $members);
+		$description = mb_substr($state->topic ?? '', 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
+		// Messages to encrypted rooms need the sodium extension
+		$readOnly = $state->encrypted && !$this->cryptoService->isAvailable() ? Room::READ_ONLY : Room::READ_WRITE;
+		$room = $this->findTalkRoom($matrixRoom);
+		$created = $room === null;
+		if ($room === null) {
+			$room = $this->roomService->createConversation(
+				Room::TYPE_GROUP,
+				$name,
+				objectType: Room::OBJECT_TYPE_MATRIX,
+				objectId: (string)$matrixRoom->getId(),
+				readOnly: $readOnly,
+				permissions: self::DEFAULT_PERMISSIONS,
+				description: $description,
+			);
+			$matrixRoom->setRoomId($room->getId());
+		} else {
+			$this->roomService->setName($room, $name);
+			$this->roomService->setDescription($room, $description);
+			$this->roomService->setReadOnly($room, $readOnly);
+			if ($room->getDefaultPermissions() !== self::DEFAULT_PERMISSIONS) {
+				$this->roomService->setDefaultPermissions($room, self::DEFAULT_PERMISSIONS);
+			}
+		}
+		$this->roomMapper->update($matrixRoom);
+
+		$powerLevels = $state->getPowerLevels();
+		$this->updateAttendees($room, $members, $accounts, $powerLevels);
+		$this->updateRoles($room, $powerLevels, $accounts);
+		$this->updateAvatar($client, $room, $matrixRoom, $state, $account);
+
+		$timeline = $joined->timeline;
+		if (($created || $joined->limited) && $joined->prevBatch !== null) {
+			$timeline = [...$this->getHistory($client, $matrixRoom, $joined->prevBatch), ...$timeline];
+		}
+		$timeline = array_map(fn (Event $event): Event => $event->type === 'm.room.encrypted'
+			? $this->cryptoService->decryptRoomEvent($account, $client, $joined->roomId, $event) ?? $event
+			: $event, $timeline);
+		$messages = $this->messageSyncService->apply($room, $matrixRoom, $timeline, $members, $accounts, $initial || $created);
+		$fromBackup = $this->cryptoService->requestRoomKeys($account, $client, $joined->roomId, array_values(array_filter($timeline, static fn (Event $event): bool => $event->type === 'm.room.encrypted')));
+		$this->decryptWaitingEvents($account, $client, $fromBackup);
+		$this->applyReadReceipts($room, $matrixRoom, $joined->readReceipts, $accounts);
+		return $messages;
+	}
+
+	/**
+	 * Replace the placeholders of messages that were encrypted with room keys that arrived now
+	 *
+	 * @param list<array{0: string, 1: string}> $roomKeys Matrix room id and session id of the new room keys
+	 * @return int Rooms that failed
+	 */
+	public function decryptWaitingEvents(Account $account, Client $client, array $roomKeys): int {
+		$sessionsByRoom = [];
+		foreach ($roomKeys as [$roomId, $sessionId]) {
+			$sessionsByRoom[$roomId][$sessionId] = true;
+		}
+
+		$failed = 0;
+		foreach ($sessionsByRoom as $roomId => $sessions) {
+			try {
+				$this->decryptWaitingEventsOfRoom($account, $client, (string)$roomId, $sessions);
+			} catch (\Throwable $e) {
+				$failed++;
+				$this->logger->error('Waiting events of Matrix room ' . $roomId . ' could not be decrypted for ' . $account->getMxid(), ['exception' => $e]);
+			}
+		}
+		return $failed;
+	}
+
+	/**
+	 * @param array<string, true> $sessions Session ids of the new room keys
+	 */
+	protected function decryptWaitingEventsOfRoom(Account $account, Client $client, string $matrixRoomId, array $sessions): void {
+		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
+		$room = $matrixRoom !== null ? $this->findTalkRoom($matrixRoom) : null;
+		if ($matrixRoom === null || $room === null) {
+			return;
+		}
+		$eventMaps = array_filter(
+			$this->eventMapMapper->findWaitingForKey((string)$matrixRoom->getId()),
+			static fn (EventMap $eventMap): bool => isset($sessions[(string)$eventMap->getMegolmSession()]),
+		);
+		if ($eventMaps === []) {
+			return;
+		}
+
+		$members = $this->memberMapper->getForRoom((string)$matrixRoom->getId());
+		$accounts = $this->getLinkedAccounts($members);
+		foreach ($eventMaps as $eventMap) {
+			$encrypted = new Event($eventMap->getEventId(), 'm.room.encrypted', $eventMap->getSender(), json_decode((string)$eventMap->getCiphertext(), true) ?: []);
+			$event = $this->cryptoService->decryptRoomEvent($account, $client, $matrixRoomId, $encrypted);
+			if ($event !== null) {
+				$this->messageSyncService->applyDecrypted($room, $matrixRoom, $eventMap, $event, $members, $accounts);
+			}
+		}
+	}
+
+	/**
+	 * @param array<string, MatrixMember> $members
+	 * @return array<string, Account> indexed by Matrix user id
+	 */
+	protected function getLinkedAccounts(array $members): array {
+		return $this->accountMapper->getByMxids(array_values(array_filter(array_map(
+			static fn (MatrixMember $member): ?string => $member->getAccountId() !== null ? $member->getMxid() : null,
+			$members,
+		))));
+	}
+
+	/**
+	 * Events before the timeline, oldest first, until an already mirrored
+	 * event or the limit is reached. Messages are ordered by their id, so
+	 * history can only be added before the newer events of the timeline.
+	 *
+	 * @return list<Event>
+	 */
+	protected function getHistory(Client $client, MatrixRoom $matrixRoom, string $from): array {
+		$history = [];
+		try {
+			for ($page = 0; $page < self::HISTORY_PAGES; $page++) {
+				$messages = $client->getMessages($matrixRoom->getMatrixRoomId(), $from, self::HISTORY_LIMIT);
+				foreach ($messages['events'] as $event) {
+					if ($event->isState()) {
+						continue;
+					}
+					if (count($history) >= self::HISTORY_LIMIT || $this->eventMapMapper->findByEventId((string)$matrixRoom->getId(), $event->eventId) !== null) {
+						return array_reverse($history);
+					}
+					$history[] = $event;
+				}
+				if ($messages['end'] === null) {
+					break;
+				}
+				$from = $messages['end'];
+			}
+		} catch (MatrixException $e) {
+			$this->logger->info('History of Matrix room ' . $matrixRoom->getMatrixRoomId() . ' could not be loaded', ['exception' => $e]);
+		}
+		return array_reverse($history);
+	}
+
+	/**
+	 * Move the read marker of members forward to the event they read
+	 *
+	 * @param array<string, list<string>> $readReceipts Matrix user ids indexed by event id
+	 * @param array<string, Account> $accounts Linked accounts of the members, indexed by Matrix user id
+	 */
+	protected function applyReadReceipts(Room $room, MatrixRoom $matrixRoom, array $readReceipts, array $accounts): void {
+		foreach ($readReceipts as $eventId => $userIds) {
+			$commentId = $this->eventMapMapper->findByEventId((string)$matrixRoom->getId(), $eventId)?->getCommentId();
+			if ($commentId === null) {
+				continue;
+			}
+			foreach ($userIds as $userId) {
+				[$actorType, $actorId] = isset($accounts[$userId])
+					? [Attendee::ACTOR_USERS, $accounts[$userId]->getUserId()]
+					: [Attendee::ACTOR_MATRIX, $userId];
+				try {
+					$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
+				} catch (ParticipantNotFoundException) {
+					continue;
+				}
+				if ($participant->getAttendee()->getLastReadMessage() < $commentId) {
+					$this->participantService->updateLastReadMessage($participant, $commentId);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Mirror the notification settings of the Matrix rooms to the conversations of the user
+	 *
+	 * @param array<string, mixed> $pushRules
+	 */
+	protected function applyPushRules(Account $account, array $pushRules): void {
+		foreach ($this->memberMapper->getForAccount((string)$account->getId()) as $member) {
+			if ($member->getMembership() !== Member::JOIN) {
+				continue;
+			}
+			$matrixRoom = $this->roomMapper->getById($member->getMatrixRoomId());
+			$room = $this->findTalkRoom($matrixRoom);
+			if ($room === null) {
+				continue;
+			}
+			try {
+				$attendee = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $account->getUserId())->getAttendee();
+			} catch (ParticipantNotFoundException) {
+				continue;
+			}
+			$level = self::getNotificationLevel($pushRules, $matrixRoom->getMatrixRoomId());
+			if ($attendee->getNotificationLevel() !== $level) {
+				// Not through the participant service, which does not allow going back to the default
+				$attendee->setNotificationLevel($level);
+				$this->attendeeMapper->update($attendee);
+			}
+		}
+	}
+
+	/**
+	 * Muted rooms have an override rule, rooms with all or only mentions a
+	 * room rule that notifies or not. The rules are named after the room.
+	 *
+	 * @param array<string, mixed> $pushRules
+	 * @return Participant::NOTIFY_*
+	 */
+	public static function getNotificationLevel(array $pushRules, string $roomId): int {
+		foreach (['override', 'room'] as $kind) {
+			foreach (is_array($pushRules['global'][$kind] ?? null) ? $pushRules['global'][$kind] : [] as $rule) {
+				if (!is_array($rule) || ($rule['rule_id'] ?? null) !== $roomId || ($rule['enabled'] ?? true) === false) {
+					continue;
+				}
+				$notifies = in_array('notify', is_array($rule['actions'] ?? null) ? $rule['actions'] : [], true);
+				if ($kind === 'room') {
+					return $notifies ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
+				}
+				if (!$notifies) {
+					return Participant::NOTIFY_NEVER;
+				}
+			}
+		}
+		return Participant::NOTIFY_DEFAULT;
+	}
+
+	/**
+	 * The account left the room, was removed or declined the invite
+	 */
+	public function leaveRoom(Account $account, string $matrixRoomId): void {
+		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
+		if ($matrixRoom === null) {
+			return;
+		}
+
+		$member = $this->memberMapper->getForRoom((string)$matrixRoom->getId())[$account->getMxid()] ?? null;
+		if ($member !== null) {
+			$member->setMembership(Member::LEAVE);
+			$this->memberMapper->update($member);
+		}
+		$this->notificationManager->markProcessed($this->getInviteNotification($account, (string)$matrixRoom->getId()));
+		$this->removeUserFromRoom($account, (string)$matrixRoom->getId());
+	}
+
+	/**
+	 * Remember the invite and notify the user, the conversation is created once they joined
+	 *
+	 * @param list<Event> $strippedState
+	 */
+	protected function applyInvite(Account $account, string $matrixRoomId, array $strippedState): void {
+		$state = new RoomState($matrixRoomId);
+		$state->applyAll($strippedState);
+		$invite = $state->getMembers()[$account->getMxid()] ?? null;
+		if ($state->isSpace() || $invite === null || !$invite->isInvited()) {
+			return;
+		}
+
+		$matrixRoom = $this->findMatrixRoom($matrixRoomId);
+		if ($matrixRoom === null) {
+			$matrixRoom = new MatrixRoom();
+			$matrixRoom->setMatrixRoomId($matrixRoomId);
+			$matrixRoom->setName($state->name !== null ? mb_substr($state->name, 0, 255) : null);
+			$matrixRoom->setCanonicalAlias($state->canonicalAlias !== null ? mb_substr($state->canonicalAlias, 0, 255) : null);
+			$matrixRoom = $this->roomMapper->insert($matrixRoom);
+		}
+
+		$member = $this->memberMapper->getForRoom((string)$matrixRoom->getId())[$account->getMxid()] ?? null;
+		if ($member?->getMembership() === Member::INVITE || $member?->getMembership() === Member::JOIN) {
+			return;
+		}
+		if ($member === null) {
+			$member = new MatrixMember();
+			$member->setMatrixRoomId((string)$matrixRoom->getId());
+			$member->setMxid($account->getMxid());
+		}
+		$member->setMembership(Member::INVITE);
+		$member->setAccountId((string)$account->getId());
+		$member->getId() === null ? $this->memberMapper->insert($member) : $this->memberMapper->update($member);
+
+		$inviter = '';
+		foreach ($strippedState as $event) {
+			if ($event->type === 'm.room.member' && $event->stateKey === $account->getMxid()) {
+				$inviter = $event->sender;
+			}
+		}
+		$inviterName = ($state->getMembers()[$inviter] ?? null)?->getName() ?? $inviter;
+
+		$notification = $this->getInviteNotification($account, (string)$matrixRoom->getId());
+		$notification->setDateTime($this->timeFactory->getDateTime())
+			->setSubject('matrix_invite', [
+				'inviter' => $inviter,
+				'inviterName' => $inviterName,
+				'roomName' => $state->name ?? $state->canonicalAlias ?? $inviterName,
+			]);
+		$this->notificationManager->notify($notification);
+	}
+
+	/**
+	 * @param string $matrixRoomId Id of the MatrixRoom entity
+	 */
+	protected function getInviteNotification(Account $account, string $matrixRoomId): INotification {
+		return $this->notificationManager->createNotification()
+			->setApp('spreed')
+			->setUser($account->getUserId())
+			->setObject('matrix_invite', $matrixRoomId);
+	}
+
+	protected function removeUserFromRoom(Account $account, string $matrixRoomId): void {
+		try {
+			$matrixRoom = $this->roomMapper->getById($matrixRoomId);
+		} catch (DoesNotExistException) {
+			return;
+		}
+
+		$room = $this->findTalkRoom($matrixRoom);
+		if ($room !== null) {
+			try {
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $account->getUserId());
+				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_LEFT);
+			} catch (ParticipantNotFoundException) {
+			}
+		}
+
+		if (!$this->memberMapper->hasLinkedMembers($matrixRoomId)) {
+			$this->memberMapper->deleteForRoom($matrixRoomId);
+			$this->eventMapMapper->deleteForRoom($matrixRoomId);
+			$this->roomMapper->delete($matrixRoom);
+			if ($room !== null) {
+				$this->roomService->deleteRoom($room);
+			}
+		}
+	}
+
+	/**
+	 * Restore the state known from earlier syncs, incremental syncs only
+	 * contain the changes
+	 *
+	 * @param array<string, MatrixMember> $members
+	 */
+	protected function seedState(RoomState $state, MatrixRoom $matrixRoom, array $members): void {
+		$events = [];
+		if ($matrixRoom->getName() !== null) {
+			$events[] = new Event('', 'm.room.name', '', ['name' => $matrixRoom->getName()], '');
+		}
+		if ($matrixRoom->getTopic() !== null) {
+			$events[] = new Event('', 'm.room.topic', '', ['topic' => $matrixRoom->getTopic()], '');
+		}
+		if ($matrixRoom->getCanonicalAlias() !== null) {
+			$events[] = new Event('', 'm.room.canonical_alias', '', ['alias' => $matrixRoom->getCanonicalAlias()], '');
+		}
+		if ($matrixRoom->getCreator() !== null) {
+			$creators = $matrixRoom->getCreatorsArray();
+			$events[] = new Event('', 'm.room.create', $creators[0] ?? $matrixRoom->getCreator(), $creators !== []
+				? ['room_version' => '12', 'additional_creators' => array_slice($creators, 1)]
+				: ['creator' => $matrixRoom->getCreator()], '');
+		}
+		if ($matrixRoom->getEncrypted()) {
+			$events[] = new Event('', 'm.room.encryption', '', array_filter([
+				'rotation_period_ms' => $matrixRoom->getRotationPeriodMs(),
+				'rotation_period_msgs' => $matrixRoom->getRotationPeriodMsgs(),
+			], static fn (?int $value): bool => $value !== null), '');
+		}
+		if ($matrixRoom->getPowerLevels() !== null) {
+			$events[] = new Event('', 'm.room.power_levels', '', $matrixRoom->getPowerLevelsArray(), '');
+		}
+		if ($matrixRoom->getAvatarUrl() !== null) {
+			$events[] = new Event('', 'm.room.avatar', '', ['url' => $matrixRoom->getAvatarUrl()], '');
+		}
+		foreach ($members as $member) {
+			$events[] = new Event('', 'm.room.member', '', array_filter([
+				'membership' => $member->getMembership(),
+				'displayname' => $member->getDisplayName(),
+				'avatar_url' => $member->getAvatarUrl(),
+			], static fn (?string $value): bool => $value !== null), $member->getMxid());
+		}
+		$state->applyAll($events);
+	}
+
+	/**
+	 * @param array<string, MatrixMember> $members
+	 * @return array<string, MatrixMember>
+	 */
+	protected function updateMembers(MatrixRoom $matrixRoom, RoomState $state, array $members): array {
+		$stateMembers = $state->getMembers();
+		$accounts = $this->accountMapper->getByMxids(array_map('strval', array_keys($stateMembers)));
+
+		foreach ($stateMembers as $mxid => $stateMember) {
+			$mxid = (string)$mxid;
+			$member = $members[$mxid] ?? null;
+			if ($member === null) {
+				$member = new MatrixMember();
+				$member->setMatrixRoomId((string)$matrixRoom->getId());
+				$member->setMxid($mxid);
+			}
+			$member->setMembership($stateMember->membership);
+			$member->setDisplayName($stateMember->displayName !== null ? mb_substr($stateMember->displayName, 0, 255) : null);
+			$member->setAvatarUrl($stateMember->avatarUrl !== null ? mb_substr($stateMember->avatarUrl, 0, 255) : null);
+			$member->setAccountId(isset($accounts[$mxid]) ? (string)$accounts[$mxid]->getId() : null);
+
+			if ($member->getId() === null) {
+				$members[$mxid] = $this->memberMapper->insert($member);
+			} elseif ($member->getUpdatedFields() !== []) {
+				$this->memberMapper->update($member);
+			}
+		}
+		return $members;
+	}
+
+	/**
+	 * Unnamed rooms are named after their members as seen by the first linked
+	 * member, so the name does not change depending on which account synced
+	 *
+	 * @param array<string, MatrixMember> $members
+	 */
+	protected function getName(RoomState $state, JoinedRoom $joined, Account $account, array $members): string {
+		$linked = array_keys(array_filter($members, static fn (MatrixMember $member): bool => $member->getAccountId() !== null && $member->getMembership() === Member::JOIN));
+		$linked = array_map('strval', $linked);
+		sort($linked);
+
+		$name = NameCalculator::calculate(
+			$state,
+			$linked[0] ?? $account->getMxid(),
+			$joined->heroes,
+			$joined->joinedMemberCount,
+			$joined->invitedMemberCount,
+			fn (string $text): string => match ($text) {
+				'Empty room' => $this->l->t('Empty room'),
+				// TRANSLATORS %s is the list of former members of a Matrix room
+				'Empty room (was %s)' => $this->l->t('Empty room (was %s)'),
+				// TRANSLATORS %1$s is a list of names, %2$d the number of further members of a Matrix room
+				'%1$s and %2$d others' => $this->l->t('%1$s and %2$d others'),
+				// TRANSLATORS Separator before the last name of a list, e.g. "Alice, Bob and Carol"
+				' and ' => $this->l->t(' and '),
+				default => $text,
+			},
+		);
+		return mb_substr($name, 0, 255);
+	}
+
+	/**
+	 * @param array<string, MatrixMember> $members
+	 * @param array<string, Account> $accounts
+	 */
+	protected function updateAttendees(Room $room, array $members, array $accounts, PowerLevels $powerLevels): void {
+		$expected = [];
+		foreach ($members as $mxid => $member) {
+			if ($member->getMembership() !== Member::JOIN) {
+				continue;
+			}
+			$account = $accounts[$mxid] ?? null;
+			if ($account !== null) {
+				$expected[Attendee::ACTOR_USERS . '/' . $account->getUserId()] = [Attendee::ACTOR_USERS, $account->getUserId(), $member];
+			} else {
+				$expected[Attendee::ACTOR_MATRIX . '/' . $mxid] = [Attendee::ACTOR_MATRIX, (string)$mxid, $member];
+			}
+		}
+
+		foreach ($this->participantService->getParticipantsForRoom($room) as $participant) {
+			$attendee = $participant->getAttendee();
+			$key = $attendee->getActorType() . '/' . $attendee->getActorId();
+			if (isset($expected[$key])) {
+				$this->updateDisplayName($attendee, $expected[$key][2]);
+				unset($expected[$key]);
+			} elseif (in_array($attendee->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_MATRIX], true)) {
+				$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+			}
+		}
+
+		$this->participantService->addUsers($room, array_values(array_map(static fn (array $entry): array => [
+			'actorType' => $entry[0],
+			'actorId' => $entry[1],
+			'displayName' => self::getMemberName($entry[2]),
+			'participantType' => self::getParticipantType($powerLevels->getUserLevel($entry[2]->getMxid())),
+		], $expected)));
+	}
+
+	/**
+	 * Administrators become owners and Matrix moderators become moderators. Users
+	 * who may not send messages or reactions in the Matrix room lose the
+	 * permission in the conversation.
+	 *
+	 * @param array<string, Account> $accounts
+	 */
+	protected function updateRoles(Room $room, PowerLevels $powerLevels, array $accounts): void {
+		$mxids = [];
+		foreach ($accounts as $mxid => $account) {
+			$mxids[$account->getUserId()] = (string)$mxid;
+		}
+
+		foreach ($this->participantService->getParticipantsForRoom($room) as $participant) {
+			$attendee = $participant->getAttendee();
+			$mxid = match ($attendee->getActorType()) {
+				Attendee::ACTOR_USERS => $mxids[$attendee->getActorId()] ?? null,
+				Attendee::ACTOR_MATRIX => $attendee->getActorId(),
+				default => null,
+			};
+			if ($mxid === null) {
+				continue;
+			}
+
+			$participantType = self::getParticipantType($powerLevels->getUserLevel($mxid));
+			if ($attendee->getParticipantType() !== $participantType) {
+				$this->participantService->updateParticipantType($room, $participant, $participantType);
+			}
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS || $participantType !== Participant::USER) {
+				// Moderators always have all permissions in conversations
+				continue;
+			}
+
+			$permissions = Attendee::PERMISSIONS_CUSTOM;
+			if ($powerLevels->canSendEvent($mxid, 'm.room.message')) {
+				$permissions |= Attendee::PERMISSIONS_CHAT;
+			}
+			if ($powerLevels->canSendEvent($mxid, 'm.reaction')) {
+				$permissions |= Attendee::PERMISSIONS_REACT;
+			}
+			if ($permissions === self::DEFAULT_PERMISSIONS) {
+				$permissions = Attendee::PERMISSIONS_DEFAULT;
+			}
+
+			if ($attendee->getPermissions() !== $permissions) {
+				$this->participantService->updatePermissions($room, $participant, Attendee::PERMISSIONS_MODIFY_SET, $permissions);
+			}
+		}
+	}
+
+	public static function getParticipantType(int $powerLevel): int {
+		return match (true) {
+			$powerLevel >= PowerLevels::LEVEL_ADMIN => Participant::OWNER,
+			$powerLevel >= PowerLevels::LEVEL_MODERATOR => Participant::MODERATOR,
+			default => Participant::USER,
+		};
+	}
+
+	/**
+	 * Apply the room avatar, direct chats without one show the avatar of the other member
+	 */
+	protected function updateAvatar(Client $client, Room $room, MatrixRoom $matrixRoom, RoomState $state, Account $account): void {
+		$avatarUrl = $state->avatarUrl;
+		if ($avatarUrl === null) {
+			$others = array_filter($state->getMembers(), static fn (Member $member): bool => $member->userId !== $account->getMxid() && ($member->isJoined() || $member->isInvited()));
+			$avatarUrl = count($others) === 1 ? reset($others)->avatarUrl : null;
+		}
+		if ($avatarUrl === $matrixRoom->getAvatarUrl()) {
+			return;
+		}
+
+		try {
+			if ($avatarUrl === null) {
+				$this->avatarService->deleteAvatar($room);
+			} else {
+				$this->avatarService->setAvatarFromData($room, (string)$client->downloadThumbnail($avatarUrl, self::AVATAR_SIZE)->getBody());
+			}
+		} catch (\Exception $e) {
+			$this->logger->info('Avatar of Matrix room ' . $matrixRoom->getMatrixRoomId() . ' could not be applied', ['exception' => $e]);
+			return;
+		}
+		$matrixRoom->setAvatarUrl($avatarUrl !== null ? mb_substr($avatarUrl, 0, 255) : null);
+		$this->roomMapper->update($matrixRoom);
+	}
+
+	protected function updateDisplayName(Attendee $attendee, MatrixMember $member): void {
+		$name = self::getMemberName($member);
+		if ($attendee->getActorType() === Attendee::ACTOR_MATRIX && $attendee->getDisplayName() !== $name) {
+			$this->participantService->updateDisplayNameForActor(Attendee::ACTOR_MATRIX, $attendee->getActorId(), $name);
+		}
+	}
+
+	protected static function getMemberName(MatrixMember $member): string {
+		$name = trim((string)$member->getDisplayName());
+		return $name !== '' ? $name : $member->getMxid();
+	}
+
+	protected function findMatrixRoom(string $matrixRoomId): ?MatrixRoom {
+		try {
+			return $this->roomMapper->getByMatrixRoomId($matrixRoomId);
+		} catch (DoesNotExistException) {
+			return null;
+		}
+	}
+
+	protected function findTalkRoom(MatrixRoom $matrixRoom): ?Room {
+		if ($matrixRoom->getRoomId() === 0) {
+			return null;
+		}
+		try {
+			return $this->manager->getRoomById($matrixRoom->getRoomId());
+		} catch (RoomNotFoundException) {
+			return null;
+		}
+	}
+}

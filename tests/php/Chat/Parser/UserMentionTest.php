@@ -482,6 +482,29 @@ class UserMentionTest extends TestCase {
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
+	public function testGetRichMessageWithMatrixUserMention(): void {
+		$comment = $this->newComment([
+			['type' => 'matrix', 'id' => '@bob:example.org'],
+			['type' => 'matrix', 'id' => '@carol:example.org'],
+		]);
+		$room = $this->createStub(Room::class);
+		$chatMessage = new Message($room, $this->createStub(Participant::class), $comment, $this->createStub(IL10N::class));
+		$chatMessage->setMessage('Mention to @"matrix/@bob:example.org" and @"matrix/@carol:example.org"', []);
+		$bob = $this->createMock(Participant::class);
+		$bob->method('getAttendee')->willReturn(Attendee::fromRow(['actor_type' => Attendee::ACTOR_MATRIX, 'actor_id' => '@bob:example.org', 'display_name' => 'Bob']));
+		$this->participantService->method('getParticipantByActor')
+			->willReturnCallback(static fn (Room $room, string $actorType, string $actorId): Participant => $actorId === '@bob:example.org' ? $bob : throw new ParticipantNotFoundException());
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		// Longer mentions are replaced first
+		$this->assertEquals('Mention to {mention-matrix2} and {mention-matrix1}', $chatMessage->getMessage());
+		$this->assertEquals([
+			'mention-matrix1' => ['type' => 'matrix', 'id' => '@carol:example.org', 'name' => '@carol:example.org', 'mention-id' => 'matrix/@carol:example.org'],
+			'mention-matrix2' => ['type' => 'matrix', 'id' => '@bob:example.org', 'name' => 'Bob', 'mention-id' => 'matrix/@bob:example.org'],
+		], $chatMessage->getMessageParameters());
+	}
+
 	public function testGetRichMessageWhenAGuestWithoutNameIsMentioned(): void {
 		$mentions = [
 			['type' => 'guest', 'id' => 'guest/123456'],

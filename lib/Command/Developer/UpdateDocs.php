@@ -10,6 +10,7 @@ namespace OCA\Talk\Command\Developer;
 
 use OC\Core\Command\Base;
 use OCP\App\IAppManager;
+use OCP\Console\Attribute\AsCommand;
 use OCP\IConfig;
 use OCP\Server;
 use Symfony\Component\Console\Command\Command;
@@ -58,6 +59,12 @@ class UpdateDocs extends Base {
 	}
 
 	protected function getCommand(string $namespace): Command {
+		$asCommand = (new \ReflectionClass($namespace))->getAttributes(AsCommand::class);
+		if ($asCommand !== []) {
+			// Attribute based commands are only wrapped into a Command by the console application
+			return $this->getApplication()->find($asCommand[0]->newInstance()->name);
+		}
+
 		$command = Server::get($namespace);
 		// Clean full definition of command that have the default Symfony options
 		$command->setApplication($this->getApplication());

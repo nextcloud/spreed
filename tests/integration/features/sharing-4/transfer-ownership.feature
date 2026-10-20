@@ -48,6 +48,23 @@ Feature: sharing-4/transfer-ownership
       | share_with             | group room |
       | share_with_displayname | Group room |
 
+  Scenario: download a received file with the target of a received file transferred to the recipient
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And transfering ownership from "participant1" to "participant2"
+    And user "participant2" gets the DAV properties for "/"
+    When user "participant3" shares "welcome.txt" with room "group room" with OCS 100
+    Then user "participant2" gets the DAV properties for "/Talk"
+    And the list of returned files for "participant2" is
+      | /Talk/ |
+      | /Talk/welcome.txt |
+    And user "participant2" downloads file "Talk/welcome.txt" reusing the session with 200
+    And user "participant2" downloads file "Talk/welcome.txt" reusing the session with 200
+
   Scenario: transfer ownership of a file reshared with a room to a user in the room
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |

@@ -9,7 +9,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { ref } from 'vue'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import { MENTION } from '../../../../../constants.ts'
-import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
+import { getConversationAvatarOcsUrl, getMatrixUserAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 
 export default {
@@ -78,6 +78,10 @@ export default {
 			return [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(this.type)
 		},
 
+		isMentionToMatrixUser() {
+			return this.type === MENTION.TYPE.MATRIX
+		},
+
 		isRemoteUser() {
 			return this.isMentionToUser && this.server !== ''
 		},
@@ -129,6 +133,8 @@ export default {
 					? (this.token ? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, this.isDarkTheme, 64) : null)
 					: generateAvatarUrl(this.id, { isDarkTheme: this.isDarkTheme, size: 64, guestFallback: true })
 				return { url, icon: 'icon-user-forced-white' }
+			} else if (this.isMentionToMatrixUser) {
+				return { url: getMatrixUserAvatarOcsUrl(this.token, this.id, this.isDarkTheme, 64), icon: 'icon-user-forced-white' }
 			} else if (this.isGroupMention) {
 				return { url: null, icon: 'icon-group-forced-white' }
 			} else if (this.isTeamMention) {

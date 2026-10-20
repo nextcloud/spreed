@@ -85,8 +85,15 @@ export type getCapabilitiesResponse = ApiResponse<operations['room-get-capabilit
 // Initial state
 export type InitialState = {
 	spreed: {
+		federation_allowed_groups: { id: string, displayname: string }[]
+		federation_enabled: boolean
+		federation_incoming_enabled: boolean
+		federation_only_trusted_servers: boolean
+		federation_outgoing_enabled: boolean
 		has_cache_configured: boolean
 		has_valid_subscription: boolean
+		matrix_allowed_groups: { id: string, displayname: string }[]
+		matrix_enabled: boolean
 		signaling_mode: string
 		signaling_servers: {
 			hideWarning: boolean
@@ -483,6 +490,35 @@ export type disableBotResponse = ApiResponse<operations['bot-disable-bot']['resp
 export type certificateExpirationParams = operationsAdmin['certificate-get-certificate-expiration']['parameters']['query']
 export type certificateExpirationResponse = ApiResponse<operationsAdmin['certificate-get-certificate-expiration']['responses'][200]['content']['application/json']>
 
+// Matrix
+export type MatrixHomeserver = componentsAdmin['schemas']['MatrixHomeserver']
+export type addMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-add-homeserver']>['requestBody']['content']['application/json']
+export type updateMatrixHomeserverParams = Required<operationsAdmin['matrix_admin-update-homeserver']>['requestBody']['content']['application/json']
+export type getMatrixHomeserversResponse = ApiResponse<operationsAdmin['matrix_admin-list-homeservers']['responses'][200]['content']['application/json']>
+export type addMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-add-homeserver']['responses'][201]['content']['application/json']>
+export type updateMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-update-homeserver']['responses'][200]['content']['application/json']>
+export type testMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-test-homeserver']['responses'][200]['content']['application/json']>
+export type removeMatrixHomeserverResponse = ApiResponse<operationsAdmin['matrix_admin-remove-homeserver']['responses'][200]['content']['application/json']>
+export type MatrixAccount = components['schemas']['MatrixAccount']
+export type linkMatrixAccountParams = Required<operations['matrix_account-link-account']>['requestBody']['content']['application/json']
+export type getMatrixAccountResponse = ApiResponse<operations['matrix_account-get-account']['responses'][200]['content']['application/json']>
+export type linkMatrixAccountResponse = ApiResponse<operations['matrix_account-link-account']['responses'][201]['content']['application/json']>
+export type createMatrixRoomParams = Required<operations['matrix_room-create-room']>['requestBody']['content']['application/json']
+export type createMatrixRoomResponse = ApiResponse<operations['matrix_room-create-room']['responses'][201]['content']['application/json']>
+export type joinMatrixRoomParams = Required<operations['matrix_room-join-room']>['requestBody']['content']['application/json']
+export type joinMatrixRoomResponse = ApiResponse<operations['matrix_room-join-room']['responses'][200]['content']['application/json']>
+export type checkMatrixConnectionResponse = ApiResponse<operations['matrix_account-check-connection']['responses'][200]['content']['application/json']>
+export type reloginMatrixAccountParams = Required<operations['matrix_account-relogin-account']>['requestBody']['content']['application/json']
+export type reloginMatrixAccountResponse = ApiResponse<operations['matrix_account-relogin-account']['responses'][200]['content']['application/json']>
+export type unlinkMatrixAccountResponse = ApiResponse<operations['matrix_account-unlink-account']['responses'][200]['content']['application/json']>
+export type MatrixVerification = components['schemas']['MatrixVerification']
+export type startMatrixVerificationResponse = ApiResponse<operations['matrix_account-start-verification']['responses'][201]['content']['application/json']>
+export type getMatrixVerificationResponse = ApiResponse<operations['matrix_account-get-verification']['responses'][200]['content']['application/json']>
+export type confirmMatrixVerificationResponse = ApiResponse<operations['matrix_account-confirm-verification']['responses'][200]['content']['application/json']>
+export type cancelMatrixVerificationResponse = ApiResponse<operations['matrix_account-cancel-verification']['responses'][200]['content']['application/json']>
+export type restoreMatrixBackupParams = Required<operations['matrix_account-restore-backup']>['requestBody']['content']['application/json']
+export type restoreMatrixBackupResponse = ApiResponse<operations['matrix_account-restore-backup']['responses'][200]['content']['application/json']>
+
 // Federations
 export type FederationInvite = componentsFed['schemas']['FederationInvite']
 type FederationInviteRichParameters = {
@@ -610,6 +646,12 @@ export type {
 	UserPreferencesResponse,
 	UserProfileData,
 	UserProfileResponse,
+} from './core.ts'
+
+// App config (provisioning API)
+export type {
+	AppConfigSetValueParams,
+	AppConfigSetValueResponse,
 } from './core.ts'
 
 // Presets

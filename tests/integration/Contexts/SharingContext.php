@@ -30,6 +30,8 @@ class SharingContext implements Context {
 	private ?\SimpleXMLElement $lastCreatedShareData = null;
 	/** @var array<string, string> Draft folder paths returned by the probe endpoint, keyed by "{user}|{token}". */
 	private array $draftFolderByUserToken = [];
+	/** @var array<string, array{auth: array{string, string}, cookies: CookieJar}> */
+	private array $davSessionOptions = [];
 
 	public function __construct(string $baseUrl, array $admin, string $regularUserPassword) {
 		$this->baseUrl = $baseUrl;
@@ -249,6 +251,37 @@ class SharingContext implements Context {
 		$this->sendingToDav('DELETE', $url);
 
 		$this->theHTTPStatusCodeShouldBe(204);
+	}
+
+	/**
+	 * Like the desktop client an app password is used and the session is kept,
+	 * so only the first request of the user logs in. Requests in an existing
+	 * session set up the file system lazily for the requested path.
+	 */
+	#[When('user :user downloads file :path reusing the session with :statusCode')]
+	public function userDownloadsFileReusingTheSession(string $user, string $path, int $statusCode): void {
+		$this->currentUser = $user;
+
+		$this->davSessionOptions[$user] ??= [
+			'auth' => [$user, $this->getAppPassword($user)],
+			'cookies' => new CookieJar(),
+		];
+		$this->sendingToDav('GET', "/$user/$path", null, null, $this->davSessionOptions[$user]);
+
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	private function getAppPassword(string $user): string {
+		$client = new Client();
+		$response = $client->get($this->baseUrl . 'ocs/v2.php/core/getapppassword', [
+			'auth' => [$user, $this->regularUserPassword],
+			'headers' => [
+				'OCS-APIRequest' => 'true',
+				'Accept' => 'application/json',
+			],
+		]);
+
+		return json_decode($response->getBody()->getContents(), true)['ocs']['data']['apppassword'];
 	}
 
 	#[When('user :user shares :path with user :sharee')]
@@ -850,7 +883,7 @@ class SharingContext implements Context {
 		}
 	}
 
-	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null): void {
+	private function sendingToDav(string $verb, string $url, ?array $headers = null, ?string $body = null, array $extraOptions = []): void {
 		$fullUrl = $this->baseUrl . 'remote.php/dav/files' . $url;
 		$client = new Client();
 		$options = [];
@@ -868,6 +901,7 @@ class SharingContext implements Context {
 		if ($body !== null) {
 			$options['body'] = $body;
 		}
+		$options = array_merge($options, $extraOptions);
 
 		try {
 			$this->response = $client->request($verb, $fullUrl, $options);

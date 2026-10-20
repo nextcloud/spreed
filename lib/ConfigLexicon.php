@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Signaling\Manager as SignalingManager;
 use OCP\Config\Lexicon\Entry;
@@ -18,7 +19,7 @@ use OCP\IAppConfig;
 
 class ConfigLexicon implements ILexicon {
 	/**
-	 * Detault instructions used to generate Talk call recording summaries.
+	 * Default instructions used to generate Talk call recording summaries.
 	 */
 	private const string DEFAULT_CALL_RECORDING_SUMMARY_PROMPT = <<<'PROMPT'
 You are a helpful assistant that summarizes text.
@@ -182,13 +183,20 @@ PROMPT;
 			new Entry(Config::EXPERIMENTS_USERS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for logged-in users on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
 			new Entry(Config::EXPERIMENTS_GUESTS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for guests on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
 			new Entry(Config::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend'),
+			new Entry(Config::CALL_RECORDING, ValueType::BOOL, true, definition: 'Enable call recording'),
+			new Entry(Config::CALL_RECORDING_SUMMARY, ValueType::BOOL, true, definition: 'Whether call recordings should automatically be summarized when a transcription summary provider is enabled.'),
 			new Entry(Config::CALL_RECORDING_SUMMARY_PROMPT, ValueType::STRING, self::DEFAULT_CALL_RECORDING_SUMMARY_PROMPT, definition: 'Instructions used by LLM to generate Talk call recording summaries'),
+			new Entry(Config::CALL_RECORDING_TRANSCRIPTION, ValueType::BOOL, false, definition: 'Whether call recordings should automatically be transcribed when a transcription provider is enabled.'),
+			new Entry(Config::RECORDING_CONSENT, ValueType::INT, RecordingService::CONSENT_REQUIRED_NO, definition: 'Whether users have to agree on being recorded before they can join the call (see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#recording-consent-required)'),
+			new Entry(Config::RECORDING_SERVERS, ValueType::ARRAY, [], definition: 'List of recording servers, should be configured via the web interface', flags: IAPPConfig::FLAG_SENSITIVE),
 			new Entry(Config::FORCE_PASSWORDS, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
 			new Entry(Config::BACKGROUNDS_BRANDED_FOR_GUESTS, ValueType::BOOL, false, definition: 'Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/`'),
 			new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virutal backgrounds provided by the releases'),
 			new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files'),
 			new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)'),
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
+			new Entry(Config::MATRIX_ENABLED, ValueType::BOOL, false, definition: 'Whether users can link a Matrix account and use their Matrix rooms as conversations'),
+			new Entry(Config::MATRIX_ALLOWED_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to link a Matrix account (empty means everyone)'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
 			new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)'),
@@ -204,7 +212,6 @@ PROMPT;
 			new Entry(Config::MATTERBRIDGE_BINARY, ValueType::STRING, '', definition: 'Path to the matterbridge binary file'),
 			new Entry(Config::MATTERBRIDGE_BOT_PASSWORD, ValueType::STRING, '', definition: 'Automatically generated password of the matterbridge bot user profile', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations'),
-			new Entry(Config::CALL_RECORDING_TRANSCRIPTION, ValueType::BOOL, false, definition: 'Whether call recordings should automatically be transcribed when a transcription provider is enabled.'),
 			new Entry(Config::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Default chat style when not overwritten by the user'),
 			new Entry(Config::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, definition: 'Default conversation list style when not overwritten by the user'),
 			new Entry(Config::HIDE_SIGNALING_WARNING, ValueType::BOOL, false, definition: 'Flag that allows to suppress the warning that an HPB should be configured'),
@@ -222,6 +229,7 @@ PROMPT;
 			new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true),
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER),
+			new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS),
 		];
 	}
 }

@@ -176,6 +176,7 @@ class Message {
 				Attendee::ACTOR_GUESTS,
 				Attendee::ACTOR_EMAILS,
 				Attendee::ACTOR_BOTS,
+				Attendee::ACTOR_MATRIX,
 			], true);
 	}
 

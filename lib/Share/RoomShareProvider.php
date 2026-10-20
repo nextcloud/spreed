@@ -917,32 +917,60 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)));
 
 			$result = $qb->executeQuery();
-			$shareId = $result->fetchOne();
+			$shareIds = $result->fetchFirstColumn();
 			$result->closeCursor();
 
-			if ($shareId !== false) {
-				return $this->getSharesByIds([$shareId], $userId);
+			if (!empty($shareIds)) {
+				$shares = $this->filterReceivedShares($this->getSharesByIds($shareIds, $userId), $userId);
+				if (!empty($shares)) {
+					return $shares;
+				}
 			}
 
 			$attachmentFolder = $this->config->getAttachmentFolder($userId);
 			$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
 			$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
 
+			// The self join excludes shares with a userroom share, their target is matched above
 			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->select('id', 'share_with')
-				->from('share')
-				->where($qb->expr()->eq('file_target', $qb->createNamedParameter($pathWithPlaceholder)))
-				->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
+			$qb->select('s.id', 's.share_with')
+				->from('share', 's')
+				->leftJoin('s', 'share', 'sc', $qb->expr()->andX(
+					$qb->expr()->eq('sc.parent', 's.id'),
+					$qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)),
+					$qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)),
+				))
+				->where($qb->expr()->eq('s.file_target', $qb->createNamedParameter($pathWithPlaceholder)))
+				->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
+				->andWhere($qb->expr()->isNull('sc.id'));
 
 			$result = $qb->executeQuery();
-			$potentialShare = $result->fetchAssociative();
+			$potentialShares = $result->fetchAllAssociative();
 			$result->closeCursor();
 
-			if ($potentialShare !== false && $this->manager->isUserAttendeeInRoom($userId, $potentialShare['share_with'])) {
-				return $this->getSharesByIds([$potentialShare['id']], $userId);
+			if (empty($potentialShares)) {
+				return [];
 			}
 
-			return [];
+			// Joining talk_rooms and talk_attendees above would save this query,
+			// but would duplicate the membership logic of the Manager
+			$rooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
+			$shareIds = [];
+			foreach ($potentialShares as $potentialShare) {
+				if (in_array($potentialShare['share_with'], $rooms, true)) {
+					$shareIds[] = $potentialShare['id'];
+				}
+			}
+
+			if (empty($shareIds)) {
+				return [];
+			}
+
+			// files_sharing mounts at the returned target, so resolve the placeholder like for children below
+			return array_map(
+				fn (IShare $share): IShare => $share->setTarget(str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $share->getTarget())),
+				$this->filterReceivedShares($this->getSharesByIds($shareIds, $userId), $userId),
+			);
 		}
 
 		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
@@ -1038,6 +1066,17 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		}
 
 		return $shares;
+	}
+
+	/**
+	 * @param list<IShare> $shares
+	 * @return list<IShare> the shares the user received from others
+	 */
+	private function filterReceivedShares(array $shares, string $userId): array {
+		return array_values(array_filter(
+			$shares,
+			fn (IShare $share): bool => $share->getShareOwner() !== $userId && $share->getSharedBy() !== $userId,
+		));
 	}
 
 	private function isAccessibleResult(array $data): bool {

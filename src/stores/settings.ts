@@ -21,6 +21,7 @@ import {
 	setConversationsGroupMode,
 	setConversationsListStyle,
 	setConversationsSortOrder,
+	setConversationsTagsShowUnread,
 	setConversationsUnarchive,
 	setLiveTranscriptionTargetLanguageId,
 	setReadStatusPrivacy,
@@ -36,6 +37,7 @@ type LIST_STYLE_OPTIONS = typeof CONVERSATION.LIST_STYLE[keyof typeof CONVERSATI
 type SORT_ORDER_OPTIONS = typeof CONVERSATION.SORT_ORDER[keyof typeof CONVERSATION.SORT_ORDER]
 type GROUP_MODE_OPTIONS = typeof CONVERSATION.GROUP_MODE[keyof typeof CONVERSATION.GROUP_MODE]
 type UNARCHIVE_OPTIONS = typeof CONVERSATION.UNARCHIVE[keyof typeof CONVERSATION.UNARCHIVE]
+type TAGS_SHOW_UNREAD_OPTIONS = typeof CONVERSATION.TAGS_SHOW_UNREAD[keyof typeof CONVERSATION.TAGS_SHOW_UNREAD]
 
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
 
@@ -60,6 +62,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const sortOrder = ref<SORT_ORDER_OPTIONS>(getTalkConfig('local', 'conversations', 'sort-order') ?? CONVERSATION.SORT_ORDER.ACTIVITY)
 	const groupMode = ref<GROUP_MODE_OPTIONS>(getTalkConfig('local', 'conversations', 'group-mode') ?? CONVERSATION.GROUP_MODE.NONE)
 	const unarchive = ref<UNARCHIVE_OPTIONS>(getTalkConfig('local', 'conversations', 'unarchive') ?? CONVERSATION.UNARCHIVE.NEVER)
+	const tagsShowUnread = ref<TAGS_SHOW_UNREAD_OPTIONS>(getTalkConfig('local', 'conversations', 'tags-show-unread') ?? CONVERSATION.TAGS_SHOW_UNREAD.ALWAYS)
 
 	const liveTranscriptionTargetLanguageId = ref<string | undefined>(getTalkConfig('local', 'call', 'live-transcription-target-language-id'))
 	if (!hasUserAccount && BrowserStorage.getItem('liveTranscriptionTargetLanguageId') !== null) {
@@ -250,6 +253,16 @@ export const useSettingsStore = defineStore('settings', () => {
 	}
 
 	/**
+	 * Update when unread conversations are shown in collapsed conversation tags
+	 *
+	 * @param value - the tags show unread mode ('never', 'mention', 'always')
+	 */
+	async function updateTagsShowUnread(value: TAGS_SHOW_UNREAD_OPTIONS) {
+		await setConversationsTagsShowUnread(value)
+		tagsShowUnread.value = value
+	}
+
+	/**
 	 * Fetch and store the list of available room presets (only once).
 	 */
 	async function fetchPresets() {
@@ -279,6 +292,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		sortOrder,
 		groupMode,
 		unarchive,
+		tagsShowUnread,
 		liveTranscriptionTargetLanguageId,
 		presets,
 		visiblePresets,
@@ -288,6 +302,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateSortOrder,
 		updateGroupMode,
 		updateUnarchive,
+		updateTagsShowUnread,
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,

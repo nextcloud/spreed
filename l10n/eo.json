@@ -11,6 +11,7 @@
     "Unknown filetype" : "Nekonata dosiertipo",
     "Description" : "Priskribo",
     "Talk" : "Paroli",
+    "Location" : "Loko",
     "Dismiss notification" : "Forsendi sciigon",
     "Accept" : "Akcepti",
     "Decline" : "Malakcepti",
@@ -279,16 +280,16 @@
     "Created at" : "Kreita je",
     "Yes" : "Jes",
     "No" : "Ne",
+    "Cancel" : "Cancel",
+    "Save" : "Save",
     "{option1} and {option2}" : "{option1} kaj {option2}",
     "OK" : "OK",
     "Confirm" : "Konfirmi",
     "Reset" : "Restarigi",
-    "Cancel" : "Cancel",
     "From" : "De",
     "To" : "Al",
     "Calendar" : "Kalendaro",
     "Attendees" : "Ĉeestontoj",
-    "Save" : "Save",
     "Done" : "Farita",
     "Grid view" : "Krada vido",
     "More actions" : "Pliaj agoj",
@@ -337,6 +338,7 @@
     "Details" : "Detaloj",
     "Search in {name}" : "Serĉi en 1{name}",
     "Default language" : "Defaŭlta lingvo",
+    "Close" : "Malfermi",
     "Keep" : "Konservi",
     "Select a region" : "Elekti regionon",
     "Search" : "Serĉi",
@@ -355,7 +357,6 @@
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
     "Talk to %s" : "Paroli al %s",
-    "Send" : "Sendi",
-    "Anonymous poll" : "Enketo sennoma"
+    "Send" : "Sendi"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

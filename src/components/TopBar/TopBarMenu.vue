@@ -190,7 +190,7 @@ import {
 } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
-import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation, isMatrixConversation } from '../../utils/conversation.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -312,7 +312,8 @@ export default {
 		canConfigureBreakoutRooms() {
 			if (this.conversation.type !== CONVERSATION.TYPE.GROUP || !this.canFullModerate
 				|| this.isClassified
-				|| isChannelConversation(this.conversation)) {
+				|| isChannelConversation(this.conversation)
+				|| isMatrixConversation(this.conversation)) {
 				return false
 			}
 

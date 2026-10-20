@@ -17,6 +17,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Collaborators\ISearchResult;
+use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -167,6 +168,15 @@ class SearchPluginTest extends TestCase {
 			->willReturnCallback(fn ($type, $uid, $name) => [$uid => $name]);
 
 		self::invokePrivate($plugin, 'searchUsers', [$search, $users, $result]);
+	}
+
+	public function testSearchMatrixUsers(): void {
+		$result = $this->createMock(ISearchResult::class);
+		$result->expects($this->once())
+			->method('addResultSet')
+			->with(new SearchResultType('matrix'), [['label' => 'Bob', 'value' => ['shareType' => 'matrix', 'shareWith' => '@bob:example.org']]], []);
+
+		self::invokePrivate($this->getPlugin(), 'searchFederatedUsers', ['bo', ['@bob:example.org' => 'Bob', '@carol:example.org' => 'Carol'], $result, 'matrix', 'matrix']);
 	}
 
 	public static function dataSearchGuests(): array {

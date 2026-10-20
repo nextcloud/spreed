@@ -318,6 +318,11 @@ export type components = {
                      * @enum {string}
                      */
                     unarchive: "never" | "mention" | "always";
+                    /**
+                     * @description User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))
+                     * @enum {string}
+                     */
+                    "tags-show-unread": "never" | "mention" | "always";
                 };
                 federation: {
                     /** @description Whether federation is enabled */
@@ -328,6 +333,10 @@ export type components = {
                     "outgoing-enabled": boolean;
                     /** @description Whether only trusted servers are allowed for federation */
                     "only-trusted-servers": boolean;
+                };
+                matrix: {
+                    /** @description Whether Matrix accounts can be linked */
+                    enabled: boolean;
                 };
                 previews: {
                     /**
@@ -554,7 +563,7 @@ export type components = {
             stackname?: string;
             /** @description File size in bytes */
             size?: string;
-            /** @description Path of the file */
+            /** @description Path of the file (for guests: relative to the folder share of the `link` when starting with a slash) */
             path?: string;
             /** @description Mimetype of the file */
             mimetype?: string;

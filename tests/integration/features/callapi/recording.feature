@@ -451,7 +451,7 @@ Feature: callapi/recording
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
       | call_recording_transcription | true |
-      | call_recording_summary       | yes  |
+      | call_recording_summary       | true |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -515,7 +515,7 @@ Feature: callapi/recording
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
       | call_recording_transcription | true |
-      | call_recording_summary       | yes  |
+      | call_recording_summary       | true |
     Given the following testing app config is set
       | fail-testing-audio2text | yes |
     Given user "participant1" creates room "room1" (v4)
@@ -539,7 +539,7 @@ Feature: callapi/recording
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
       | call_recording_transcription | true |
-      | call_recording_summary       | yes  |
+      | call_recording_summary       | true |
     Given the following testing app config is set
       | fail-testing-text2text | yes |
     Given user "participant1" creates room "room1" (v4)
@@ -563,8 +563,8 @@ Feature: callapi/recording
   Scenario: Store recording and transcript with success but summarize is off
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
-      | call_recording_transcription | true |
-      | call_recording_summary       | no   |
+      | call_recording_transcription | true  |
+      | call_recording_summary       | false |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -586,7 +586,7 @@ Feature: callapi/recording
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
       | call_recording_transcription | false |
-      | call_recording_summary       | yes   |
+      | call_recording_summary       | true  |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |

@@ -156,6 +156,7 @@ export const CONVERSATION = {
 		EXTERNAL_CALL: 'external_call',
 		CLASSIFIED: 'classified',
 		CLASSIFIED_PERSIST: 'classified_persist',
+		MATRIX: 'matrix',
 		DEFAULT: '',
 	},
 
@@ -186,6 +187,12 @@ export const CONVERSATION = {
 		ALWAYS: 'always',
 	},
 
+	TAGS_SHOW_UNREAD: {
+		NEVER: 'never',
+		MENTION: 'mention',
+		ALWAYS: 'always',
+	},
+
 	MAX_NAME_LENGTH: 255,
 } as const
 
@@ -201,6 +208,8 @@ export const ATTENDEE = {
 		BRIDGED: 'bridged',
 		FEDERATED_USERS: 'federated_users',
 		PHONES: 'phones',
+		/** Matrix user without a linked Nextcloud account, actorId is the Matrix user id */
+		MATRIX: 'matrix',
 		DELETED_USERS: 'deleted_users',
 		/* @internal Only use with server APIs (like /core/autocomplete/get) and never with Talk APIs */
 		REMOTES: 'remotes',
@@ -500,6 +509,13 @@ export const FEDERATION = {
 	},
 } as const
 
+export const MATRIX = {
+	ACCOUNT_STATUS: {
+		ACTIVE: 0,
+		TOKEN_INVALID: 1,
+	},
+} as const
+
 export const MENTION = {
 	TYPE: {
 		CALL: 'call',
@@ -508,6 +524,7 @@ export const MENTION = {
 		EMAIL: 'email',
 		USERGROUP: 'user-group',
 		CIRCLE: 'circle',
+		MATRIX: 'matrix',
 		// Parsed to another types
 		FEDERATED_USER: 'federated_user',
 		GROUP: 'group',

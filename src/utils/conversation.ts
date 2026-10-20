@@ -38,6 +38,15 @@ export function isChannelConversation(conversation: Conversation | undefined): b
 }
 
 /**
+ * Check if the conversation is synced with a Matrix room
+ *
+ * @param conversation conversation object
+ */
+export function isMatrixConversation(conversation: Conversation | undefined): boolean {
+	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.MATRIX
+}
+
+/**
  * Check if the conversation is an announcement (CHANNEL+ANNOUNCEMENT attribute bits are set)
  * Feature is supported with `announcement-preset` capability.
  *

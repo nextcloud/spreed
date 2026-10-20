@@ -24,6 +24,7 @@
 | `external_call`         | Yes            | Room whose calls are handled by an external video service (see [External Call Service](external-call-service.md)) | Meeting/room identifier on the external service side |
 | `classified`            | No             | Classified conversation queued for automatic deletion after a call (retention `retention_classified_rooms`) | Unix timestamp of the call that queued the deletion                               |
 | `classified_persist`    | No             | Classified conversation a moderator kept (unbound), so it is no longer auto-deleted | Unix timestamp of when it was kept                                                |
+| `matrix`                | No             | Conversation mirroring a Matrix room of a linked Matrix account              | Internal id of the mirrored Matrix room                                           |
 
 ### Read-only states
 * `0` Read-write
@@ -83,6 +84,15 @@ Required capability: `config => conversations => unarchive`
 
 Shared files and objects (e.g. polls) are treated like chat messages. Own messages and other system messages never unarchive a conversation. Silent messages are treated like normal messages, as they also show the markers.
 
+### Conversation tags show unread mode
+Required capability: `config => conversations => tags-show-unread`
+
+Collapsed tag sections always show the active conversation and conversations with an ongoing call.
+
+* `never` - Unread conversations are hidden in collapsed tag sections, the tag header shows a counter of unread conversations instead
+* `mention` - Unread conversations are shown in collapsed tag sections when the user is mentioned directly or via `@all` or when one of their messages is replied to, or on any new chat message in one-to-one conversations, the same cases that show the mention marker in the conversation list. The tag header shows a counter of unread conversations
+* `always` (default) - All unread conversations are shown in collapsed tag sections
+
 ### Conversation attributes
 Required capability: `conversation-presets`
 
@@ -135,6 +145,7 @@ Required capability: `conversation-presets`
 * `circles` - [Circle from the Circles app](https://github.com/nextcloud/circles)
 * `guests` - Guest without a login
 * `emails` - A guest invited by email address
+* `matrix` - Matrix users without a linked Nextcloud account, the actor id is the Matrix user id
 
 ### Attendee permissions
 * `0` Default permissions (will pick the one from the next level of: user, call, conversation)
@@ -229,3 +240,9 @@ Required capability: `conversation-presets`
 ## Signaling modes
 * `internal` - No external signaling server is used
 * `external` - A single external signaling server is used
+
+## Matrix
+
+### Matrix account status
+* `0` Active
+* `1` Token invalid - The homeserver rejected the access token, the user has to log in again

@@ -68,13 +68,20 @@ class Config {
 	public const string EXPERIMENTS_USERS = 'experiments_users';
 	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
 	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
+	public const string CALL_RECORDING = 'call_recording';
+	public const string CALL_RECORDING_SUMMARY = 'call_recording_summary';
 	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
+	public const string CALL_RECORDING_TRANSCRIPTION = 'call_recording_transcription';
+	public const string RECORDING_CONSENT = 'recording_consent';
+	public const string RECORDING_SERVERS = 'recording_servers';
 	public const string FORCE_PASSWORDS = 'force_passwords';
 	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
 	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_useres';
 	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
 	public const string CREATE_SAMPLES = 'create_samples';
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
+	public const string MATRIX_ENABLED = 'matrix_enabled';
+	public const string MATRIX_ALLOWED_GROUPS = 'matrix_allowed_groups';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 	public const string MAX_GIF_SIZE = 'max_gif_size';
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
@@ -90,7 +97,6 @@ class Config {
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
-	public const string CALL_RECORDING_TRANSCRIPTION = 'call_recording_transcription';
 	public const string CHAT_STYLE = 'chat_style';
 	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
@@ -239,12 +245,12 @@ class Config {
 	}
 
 	public function getRecordingServers(): array {
-		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		$recording = $this->appConfig->getAppValueArray(self::RECORDING_SERVERS);
 		return $recording['servers'] ?? [];
 	}
 
 	public function getRecordingSecret(): string {
-		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		$recording = $this->appConfig->getAppValueArray(self::RECORDING_SERVERS);
 		return $recording['secret'] ?? '';
 	}
 
@@ -253,7 +259,7 @@ class Config {
 			return false;
 		}
 
-		if ($this->config->getAppValue('spreed', 'call_recording', 'yes') !== 'yes') {
+		if (!$this->appConfig->getAppValueBool(self::CALL_RECORDING)) {
 			return false;
 		}
 
@@ -284,7 +290,7 @@ class Config {
 	 * @return RecordingService::CONSENT_REQUIRED_*
 	 */
 	public function getRecordingConsentConfig(): int {
-		return match ((int)$this->config->getAppValue('spreed', 'recording_consent', (string)RecordingService::CONSENT_REQUIRED_NO)) {
+		return match ($this->appConfig->getAppValueInt(self::RECORDING_CONSENT)) {
 			RecordingService::CONSENT_REQUIRED_YES => RecordingService::CONSENT_REQUIRED_YES,
 			RecordingService::CONSENT_REQUIRED_OPTIONAL => RecordingService::CONSENT_REQUIRED_OPTIONAL,
 			default => RecordingService::CONSENT_REQUIRED_NO,
@@ -338,6 +344,24 @@ class Config {
 
 		$userGroups = $this->groupManager->getUserGroupIds($user);
 		return empty(array_intersect($allowedGroups, $userGroups));
+	}
+
+	public function isMatrixEnabled(): bool {
+		return $this->appConfig->getAppValueBool(self::MATRIX_ENABLED);
+	}
+
+	public function canLinkMatrixAccount(IUser $user): bool {
+		if (!$this->isMatrixEnabled()) {
+			return false;
+		}
+
+		$allowedGroups = $this->appConfig->getAppValueArray(self::MATRIX_ALLOWED_GROUPS);
+		if (empty($allowedGroups)) {
+			return true;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return !empty(array_intersect($allowedGroups, $userGroups));
 	}
 
 	/**
@@ -1056,6 +1080,32 @@ class Config {
 		}
 
 		return UserPreference::CONVERSATIONS_UNARCHIVE_NEVER;
+	}
+
+	/**
+	 * User setting when unread conversations are shown in collapsed conversation tags
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_*
+	 */
+	public function getConversationsTagsShowUnread(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD,
+			);
+
+			if (in_array($userSetting, [
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
+			], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS;
 	}
 
 	/**

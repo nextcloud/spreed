@@ -339,6 +339,7 @@ class RoomFormatter {
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
 					&& $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER
 					&& !$room->isPreserved()
+					&& $room->getObjectType() !== Room::OBJECT_TYPE_MATRIX
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = $room->getType() !== Room::TYPE_NOTE_TO_SELF
 					&& (!$room->isAnnouncement() || $currentParticipant->hasModeratorPermissions(false));

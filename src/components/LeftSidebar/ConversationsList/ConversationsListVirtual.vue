@@ -12,8 +12,9 @@ import { computed, watch } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationItem from './ConversationItem.vue'
 import ConversationTagHeader from './ConversationTagHeader.vue'
-import { AVATAR } from '../../../constants.ts'
+import { AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
+import { useSettingsStore } from '../../../stores/settings.ts'
 import { hasCall, hasUnreadMentions, hasUnreadMessages } from '../../../utils/conversation.ts'
 
 export type VirtualListItem = (Conversation | TagHeaderItem) & { _key?: string }
@@ -31,6 +32,7 @@ const props = defineProps<{
 	showTags?: boolean
 }>()
 
+const settingsStore = useSettingsStore()
 const tagsStore = useConversationTagsStore()
 
 /**
@@ -40,6 +42,23 @@ const tagsStore = useConversationTagsStore()
  */
 function isTagHeader(item: VirtualListItem): item is TagHeaderItem {
 	return '_type' in item && item._type === 'tag-header'
+}
+
+/**
+ * Check whether unread conversation should be shown in collapsed tag section
+ *
+ * @param conversation - conversation object
+ */
+function isUnreadShownCollapsed(conversation: Conversation): boolean {
+	switch (settingsStore.tagsShowUnread) {
+		case CONVERSATION.TAGS_SHOW_UNREAD.ALWAYS:
+			return hasUnreadMessages(conversation)
+		case CONVERSATION.TAGS_SHOW_UNREAD.MENTION:
+			return hasUnreadMentions(conversation)
+		case CONVERSATION.TAGS_SHOW_UNREAD.NEVER:
+		default:
+			return false
+	}
 }
 
 /**
@@ -141,9 +160,9 @@ const listItems = computed<VirtualListItem[]>(() => {
 
 		acc.push(header)
 		if (section.tag.collapsed) {
-			// Show currently active conversation and all unread conversations under this tag
+			// Show currently active conversation, conversations with call and unread conversations (according to user preference) under this tag
 			section.conversations = section.conversations.filter((conversation) => {
-				return conversation.token === props.token || hasUnreadMessages(conversation) || hasCall(conversation)
+				return conversation.token === props.token || hasCall(conversation) || isUnreadShownCollapsed(conversation)
 			})
 		}
 

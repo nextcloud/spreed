@@ -13,6 +13,7 @@ import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import FederationSettings from '../components/AdminSettings/FederationSettings.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
+import MatrixSettings from '../components/AdminSettings/MatrixSettings.vue'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
 import RecordingServers from '../components/AdminSettings/RecordingServers.vue'
 import SignalingServers from '../components/AdminSettings/SignalingServers.vue'
@@ -45,6 +46,7 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 		<GeneralSettings :hasSignalingServers="hasSignalingServers" />
 		<AllowedGroups />
 		<FederationSettings v-if="supportFederation" />
+		<MatrixSettings />
 		<BotsSettings />
 		<WebServerSetupChecks />
 		<StunServers />

@@ -113,6 +113,9 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->method('getConversationsUnarchive')
 			->willReturn('never');
 
+		$this->talkConfig->method('getConversationsTagsShowUnread')
+			->willReturn('always');
+
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
 			->willReturn(false);
@@ -235,6 +238,7 @@ class CapabilitiesTest extends TestCase {
 						'sort-order' => 'activity',
 						'group-mode' => 'none',
 						'unarchive' => 'never',
+						'tags-show-unread' => 'always',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
@@ -246,6 +250,9 @@ class CapabilitiesTest extends TestCase {
 						'incoming-enabled' => false,
 						'outgoing-enabled' => false,
 						'only-trusted-servers' => true,
+					],
+					'matrix' => [
+						'enabled' => false,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,
@@ -298,6 +305,9 @@ class CapabilitiesTest extends TestCase {
 			->with($user)
 			->willReturn(false);
 
+		$this->talkConfig->method('isMatrixEnabled')
+			->willReturn($canCreate);
+
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
 			->willReturn(true);
@@ -342,6 +352,9 @@ class CapabilitiesTest extends TestCase {
 
 		$this->talkConfig->method('getConversationsUnarchive')
 			->willReturn('never');
+
+		$this->talkConfig->method('getConversationsTagsShowUnread')
+			->willReturn('always');
 
 		$this->talkConfig->expects($this->any())
 			->method('getSignalingMode')
@@ -468,6 +481,7 @@ class CapabilitiesTest extends TestCase {
 						'sort-order' => 'activity',
 						'group-mode' => 'none',
 						'unarchive' => 'never',
+						'tags-show-unread' => 'always',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
@@ -479,6 +493,9 @@ class CapabilitiesTest extends TestCase {
 						'incoming-enabled' => false,
 						'outgoing-enabled' => false,
 						'only-trusted-servers' => true,
+					],
+					'matrix' => [
+						'enabled' => $canCreate,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,

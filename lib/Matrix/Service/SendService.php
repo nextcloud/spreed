@@ -1,0 +1,620 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Talk\Matrix\Service;
+
+use GuzzleHttp\Psr7\Stream;
+use OCA\Talk\CachePrefix;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
+use OCA\Talk\Matrix\Client\Client;
+use OCA\Talk\Matrix\Client\Crypto\Attachment;
+use OCA\Talk\Matrix\Client\Crypto\CryptoException;
+use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
+use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
+use OCA\Talk\Matrix\Client\Html\MarkdownToHtml;
+use OCA\Talk\Matrix\Client\Model\PowerLevels;
+use OCA\Talk\Matrix\Model\Account;
+use OCA\Talk\Matrix\Model\AccountMapper;
+use OCA\Talk\Matrix\Model\EventMap;
+use OCA\Talk\Matrix\Model\EventMapMapper;
+use OCA\Talk\Matrix\Model\MatrixRoom;
+use OCA\Talk\Matrix\Model\MatrixRoomMapper;
+use OCA\Talk\Matrix\Sync\RoomSyncService;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Thread;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Service\ThreadService;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\IComment;
+use OCP\Comments\ICommentsManager;
+use OCP\Comments\NotFoundException;
+use OCP\Files\File;
+use OCP\ICache;
+use OCP\ICacheFactory;
+use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
+
+/**
+ * Sends changes of Matrix conversations to the Matrix room. The homeserver
+ * has to accept them first, only then the conversation is changed, so a
+ * failed send never leaves a local message behind.
+ */
+class SendService {
+	private ICache $readMarkerCache;
+
+	public function __construct(
+		private readonly AccountService $accountService,
+		private readonly AccountMapper $accountMapper,
+		private readonly MatrixRoomMapper $roomMapper,
+		private readonly EventMapMapper $eventMapMapper,
+		private readonly RoomSyncService $roomSyncService,
+		private readonly CryptoService $cryptoService,
+		private readonly ChatManager $chatManager,
+		private readonly ReactionManager $reactionManager,
+		private readonly ICommentsManager $commentsManager,
+		private readonly ThreadService $threadService,
+		private readonly IUserManager $userManager,
+		private readonly ISecureRandom $secureRandom,
+		private readonly ITimeFactory $timeFactory,
+		ICacheFactory $cacheFactory,
+	) {
+		$this->readMarkerCache = $cacheFactory->createDistributed(CachePrefix::MATRIX_READ_MARKER);
+	}
+
+	/**
+	 * @param int $threadId Thread to post the message in, Thread::THREAD_CREATE to start one with the given title
+	 * @throws SendException
+	 */
+	public function sendMessage(Room $room, Participant $participant, string $message, ?IComment $replyTo, string $referenceId, bool $silent, int $threadId = Thread::THREAD_NONE, string $threadTitle = ''): IComment {
+		[$matrixRoom, $account] = $this->prepare($room, $participant);
+
+		$content = $this->getTextContent($message);
+		$relation = $this->getRelation($room, $matrixRoom, $replyTo, $threadId);
+		if ($relation !== null) {
+			$content['m.relates_to'] = $relation;
+		}
+
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.room.message', $content);
+		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
+		if ($eventMap === null) {
+			return $this->getSyncedComment($matrixRoom, $eventId);
+		}
+
+		$comment = $this->chatManager->sendMessage(
+			$room,
+			$participant,
+			Attendee::ACTOR_USERS,
+			$account->getUserId(),
+			$message,
+			$this->timeFactory->getDateTime('now', new \DateTimeZone('UTC')),
+			$replyTo,
+			$referenceId,
+			$silent,
+			threadId: $threadId,
+			threadTitle: $threadTitle,
+		);
+		$eventMap->setCommentId((int)$comment->getId());
+		$this->eventMapMapper->update($eventMap);
+		return $comment;
+	}
+
+	/**
+	 * @return IComment The system message about the edit
+	 * @throws SendException
+	 */
+	public function editMessage(Room $room, Participant $participant, IComment $comment, string $message): IComment {
+		[$matrixRoom, $account] = $this->prepare($room, $participant);
+		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), (int)$comment->getId());
+		if ($target === null) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		if ($target->getSender() !== $account->getMxid()) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+
+		$newContent = $this->getTextContent($message);
+		$content = $newContent;
+		$content['body'] = '* ' . $newContent['body'];
+		if (isset($newContent['formatted_body'])) {
+			$content['formatted_body'] = '* ' . $newContent['formatted_body'];
+		}
+		$content['m.new_content'] = $newContent;
+		$content['m.relates_to'] = ['rel_type' => 'm.replace', 'event_id' => $target->getEventId()];
+
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.room.message', $content);
+		$this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
+		return $this->chatManager->editMessage($room, $comment, $participant, $this->timeFactory->getDateTime(), $message);
+	}
+
+	/**
+	 * Own messages can always be deleted, messages of others with the redact power level
+	 *
+	 * @return IComment The system message about the deletion
+	 * @throws SendException
+	 */
+	public function deleteMessage(Room $room, Participant $participant, IComment $comment): IComment {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), (int)$comment->getId());
+		if ($target === null) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		if ($target->getSender() !== $account->getMxid() && !$matrixRoom->getPowerLevelsModel()->canRedact($account->getMxid())) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+
+		$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->redact($matrixRoom->getMatrixRoomId(), $target->getEventId(), $transactionId));
+		$this->claimEvent($matrixRoom, $account, $eventId, 'm.room.redaction');
+		return $this->chatManager->deleteMessage($room, $comment, $participant, $this->timeFactory->getDateTime());
+	}
+
+	/**
+	 * @throws SendException
+	 * @throws ReactionAlreadyExistsException
+	 * @throws NotFoundException
+	 */
+	public function addReaction(Room $room, Participant $participant, int $messageId, string $reaction): IComment {
+		[$matrixRoom, $account] = $this->prepare($room, $participant);
+		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), $messageId);
+		if ($target === null) {
+			throw new NotFoundException();
+		}
+		try {
+			$this->commentsManager->getReactionComment($messageId, Attendee::ACTOR_USERS, $account->getUserId(), $reaction);
+			throw new ReactionAlreadyExistsException();
+		} catch (NotFoundException) {
+		}
+
+		$content = ['m.relates_to' => ['rel_type' => 'm.annotation', 'event_id' => $target->getEventId(), 'key' => $reaction]];
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.reaction', $content);
+		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.reaction');
+		if ($eventMap === null) {
+			return $this->getSyncedComment($matrixRoom, $eventId);
+		}
+
+		$attendee = $participant->getAttendee();
+		$comment = $this->reactionManager->addReactionMessage($room, Attendee::ACTOR_USERS, $account->getUserId(), $attendee->getDisplayName(), $messageId, $reaction);
+		$eventMap->setCommentId((int)$comment->getId());
+		$this->eventMapMapper->update($eventMap);
+		return $comment;
+	}
+
+	/**
+	 * @throws SendException
+	 * @throws NotFoundException
+	 */
+	public function removeReaction(Room $room, Participant $participant, int $messageId, string $reaction): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$comment = $this->commentsManager->getReactionComment($messageId, Attendee::ACTOR_USERS, $account->getUserId(), $reaction);
+		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), (int)$comment->getId());
+		if ($target !== null) {
+			$eventId = $this->send($account, fn (Client $client, string $transactionId): string => $client->redact($matrixRoom->getMatrixRoomId(), $target->getEventId(), $transactionId));
+			$this->claimEvent($matrixRoom, $account, $eventId, 'm.room.redaction');
+		}
+
+		$attendee = $participant->getAttendee();
+		$this->reactionManager->deleteReactionMessage($room, Attendee::ACTOR_USERS, $account->getUserId(), $attendee->getDisplayName(), $messageId, $reaction);
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	public function rename(Room $room, Participant $participant, string $name): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		if (!$matrixRoom->getPowerLevelsModel()->canSendEvent($account->getMxid(), 'm.room.name', true)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, fn (Client $client): string => $client->sendStateEvent($matrixRoom->getMatrixRoomId(), 'm.room.name', ['name' => $name]));
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	public function setDescription(Room $room, Participant $participant, string $description): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		if (!$matrixRoom->getPowerLevelsModel()->canSendEvent($account->getMxid(), 'm.room.topic', true)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, fn (Client $client): string => $client->sendStateEvent($matrixRoom->getMatrixRoomId(), 'm.room.topic', ['topic' => $description]));
+	}
+
+	/**
+	 * Store the notification level as push rules of the Matrix account
+	 *
+	 * @param Participant::NOTIFY_ALWAYS|Participant::NOTIFY_MENTION|Participant::NOTIFY_NEVER $level
+	 * @throws SendException
+	 */
+	public function setNotificationLevel(Room $room, Participant $participant, int $level): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$roomId = $matrixRoom->getMatrixRoomId();
+		$this->send($account, function (Client $client) use ($roomId, $level): string {
+			if ($level === Participant::NOTIFY_NEVER) {
+				$client->setPushRule('override', $roomId, [
+					'conditions' => [['kind' => 'event_match', 'key' => 'room_id', 'pattern' => $roomId]],
+					'actions' => [],
+				]);
+				return '';
+			}
+
+			$client->setPushRule('room', $roomId, ['actions' => $level === Participant::NOTIFY_ALWAYS ? ['notify', ['set_tweak' => 'sound', 'value' => 'default']] : []]);
+			try {
+				$client->deletePushRule('override', $roomId);
+			} catch (MatrixException $e) {
+				if ($e->getErrcode() !== 'M_NOT_FOUND') {
+					throw $e;
+				}
+			}
+			return '';
+		});
+	}
+
+	/**
+	 * Invite the linked Matrix account of a user, they join the conversation by accepting the invite
+	 *
+	 * @throws SendException
+	 */
+	public function invite(Room $room, Participant $participant, string $userId): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$invitee = $this->accountService->getForUser($userId);
+		if ($invitee === null) {
+			throw new SendException('account', Http::STATUS_NOT_FOUND);
+		}
+		if (!$matrixRoom->getPowerLevelsModel()->canInvite($account->getMxid())) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, function (Client $client) use ($matrixRoom, $invitee): string {
+			$client->invite($matrixRoom->getMatrixRoomId(), $invitee->getMxid());
+			return '';
+		});
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	public function kick(Room $room, Participant $participant, Attendee $target): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$targetId = $this->getMatrixUserId($target);
+		if (!$matrixRoom->getPowerLevelsModel()->canKick($account->getMxid(), $targetId)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$this->send($account, function (Client $client) use ($matrixRoom, $targetId): string {
+			$client->kick($matrixRoom->getMatrixRoomId(), $targetId);
+			return '';
+		});
+	}
+
+	/**
+	 * @param int $participantType Participant::OWNER, Participant::MODERATOR or Participant::USER
+	 * @throws SendException
+	 */
+	public function setParticipantType(Room $room, Participant $participant, Attendee $target, int $participantType): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		$targetId = $this->getMatrixUserId($target);
+		$powerLevels = $matrixRoom->getPowerLevelsModel();
+		$level = match ($participantType) {
+			Participant::OWNER => PowerLevels::LEVEL_ADMIN,
+			Participant::MODERATOR => PowerLevels::LEVEL_MODERATOR,
+			default => $powerLevels->getDefaultUserLevel(),
+		};
+		if (!$powerLevels->canChangeUserLevel($account->getMxid(), $targetId, $level)) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN);
+		}
+		$content = $powerLevels->withUserLevel($targetId, $level);
+		$this->send($account, fn (Client $client): string => $client->sendStateEvent($matrixRoom->getMatrixRoomId(), 'm.room.power_levels', $content));
+	}
+
+	/**
+	 * Leave the Matrix room, the user is removed from the conversation right away
+	 *
+	 * @throws SendException
+	 */
+	public function leave(Room $room, Participant $participant): void {
+		[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		try {
+			$this->send($account, function (Client $client) use ($matrixRoom): string {
+				$client->leave($matrixRoom->getMatrixRoomId());
+				return '';
+			});
+		} catch (SendException $e) {
+			$previous = $e->getPrevious();
+			if (!$previous instanceof MatrixException || !in_array($previous->getErrcode(), ['M_FORBIDDEN', 'M_NOT_FOUND'], true)) {
+				throw $e;
+			}
+			// Not in the Matrix room anymore
+		}
+		$this->roomSyncService->leaveRoom($account, $matrixRoom->getMatrixRoomId());
+	}
+
+	/**
+	 * Upload a file that was shared into the conversation and post it to the Matrix room
+	 *
+	 * @param IComment $comment The message about the shared file
+	 * @throws SendException
+	 */
+	public function sendFile(Room $room, IComment $comment, File $file, string $caption): void {
+		$account = $comment->getActorType() === Attendee::ACTOR_USERS ? $this->accountService->getForUser($comment->getActorId()) : null;
+		if ($account === null || $account->getStatus() !== Account::STATUS_ACTIVE) {
+			throw new SendException('account', Http::STATUS_FORBIDDEN);
+		}
+		try {
+			$matrixRoom = $this->roomMapper->getById($room->getObjectId());
+		} catch (DoesNotExistException) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		if ($matrixRoom->getEncrypted() && !$this->cryptoService->isAvailable()) {
+			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
+		}
+
+		$mimeType = $file->getMimeType();
+		$stream = $file->fopen('rb');
+		if (!is_resource($stream)) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		if ($matrixRoom->getEncrypted()) {
+			// The homeserver gets neither the content, the type nor the name of the file
+			$encrypted = Attachment::encrypt($stream);
+			$upload = new Stream($encrypted['stream'], ['size' => $encrypted['size']]);
+			$contentUri = $this->send($account, fn (Client $client): string => $client->uploadMedia($upload, 'application/octet-stream', ''), AccountService::MEDIA_TIMEOUT);
+		} else {
+			$encrypted = null;
+			$upload = new Stream($stream, ['size' => (int)$file->getSize()]);
+			$contentUri = $this->send($account, fn (Client $client): string => $client->uploadMedia($upload, $mimeType, $file->getName()), AccountService::MEDIA_TIMEOUT);
+		}
+
+		$content = [
+			'msgtype' => match (explode('/', $mimeType)[0]) {
+				'image' => 'm.image',
+				'video' => 'm.video',
+				'audio' => 'm.audio',
+				default => 'm.file',
+			},
+			'body' => $caption !== '' ? $caption : $file->getName(),
+			'filename' => $file->getName(),
+			'info' => ['mimetype' => $mimeType, 'size' => $file->getSize()],
+		];
+		if ($encrypted !== null) {
+			$content['file'] = ['url' => $contentUri] + $encrypted['file'];
+		} else {
+			$content['url'] = $contentUri;
+		}
+		$relation = $this->getRelation($room, $matrixRoom, $this->getParentComment($comment), Thread::THREAD_NONE);
+		if ($relation !== null) {
+			$content['m.relates_to'] = $relation;
+		}
+		$eventId = $this->sendRoomEvent($account, $matrixRoom, 'm.room.message', $content);
+		$eventMap = $this->claimEvent($matrixRoom, $account, $eventId, 'm.room.message');
+		if ($eventMap !== null) {
+			$eventMap->setCommentId((int)$comment->getId());
+			$this->eventMapMapper->update($eventMap);
+		}
+	}
+
+	/**
+	 * Mark the message as read in the Matrix room as well, failures are ignored
+	 */
+	public function sendReadMarker(Room $room, Participant $participant, int $messageId): void {
+		try {
+			[$matrixRoom, $account] = $this->prepare($room, $participant, false);
+		} catch (SendException) {
+			return;
+		}
+
+		$cacheKey = $account->getId() . '/' . $matrixRoom->getId();
+		$sent = $this->readMarkerCache->get($cacheKey);
+		if (is_int($sent) && $sent >= $messageId) {
+			return;
+		}
+
+		$target = $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), $messageId);
+		if ($target === null) {
+			return;
+		}
+		try {
+			$this->accountService->getClient($account, 5)->setReadMarker($matrixRoom->getMatrixRoomId(), $target->getEventId());
+			$this->readMarkerCache->set($cacheKey, $messageId, 3600);
+		} catch (MatrixException|DoesNotExistException) {
+		}
+	}
+
+	/**
+	 * Talk Markdown as Matrix message, mentions of users with a linked
+	 * account become mentions on Matrix and @all mentions the room
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function getTextContent(string $message): array {
+		$mentions = [];
+		$mentionRoom = false;
+		$resolve = function (string $token) use (&$mentions, &$mentionRoom): ?array {
+			$userId = trim(substr($token, 1), '"');
+			if ($userId === 'all') {
+				$mentionRoom = true;
+				return ['name' => '@room'];
+			}
+			if (str_starts_with($userId, Attendee::ACTOR_MATRIX . '/')) {
+				$mxid = substr($userId, strlen(Attendee::ACTOR_MATRIX . '/'));
+				$mentions[] = $mxid;
+				return ['mxid' => $mxid, 'name' => $mxid];
+			}
+			try {
+				$account = $this->accountMapper->getByUserId($userId);
+			} catch (DoesNotExistException) {
+				return null;
+			}
+			$mentions[] = $account->getMxid();
+			return ['mxid' => $account->getMxid(), 'name' => $this->userManager->getDisplayName($userId) ?? $userId];
+		};
+
+		$converter = new MarkdownToHtml();
+		$converter->setInlineHook(static function (string $token) use ($resolve): ?string {
+			$mention = $resolve($token);
+			if ($mention === null || !isset($mention['mxid'])) {
+				return $mention['name'] ?? null;
+			}
+			return '<a href="https://matrix.to/#/' . rawurlencode($mention['mxid']) . '">' . htmlspecialchars($mention['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8') . '</a>';
+		});
+		$html = $converter->convert($message);
+
+		$body = preg_replace_callback('/(?<=^|[\s(>])@(?:"[^"]+"|[\w.@:\-]+)/u', static fn (array $match): string => $resolve($match[0])['name'] ?? $match[0], $message) ?? $message;
+
+		$content = ['msgtype' => 'm.text', 'body' => $body];
+		if ($html !== null) {
+			$content['format'] = 'org.matrix.custom.html';
+			$content['formatted_body'] = $html;
+		}
+		$content['m.mentions'] = array_filter([
+			'user_ids' => array_values(array_unique($mentions)),
+			'room' => $mentionRoom,
+		]) ?: new \stdClass();
+		return $content;
+	}
+
+	/**
+	 * @param bool $sendsEvents Whether room events are sent, which are encrypted in encrypted rooms
+	 * @return array{0: MatrixRoom, 1: Account}
+	 * @throws SendException
+	 */
+	protected function prepare(Room $room, Participant $participant, bool $sendsEvents = true): array {
+		try {
+			$matrixRoom = $this->roomMapper->getById($room->getObjectId());
+		} catch (DoesNotExistException) {
+			throw new SendException('message', Http::STATUS_NOT_FOUND);
+		}
+		if ($sendsEvents && $matrixRoom->getEncrypted() && !$this->cryptoService->isAvailable()) {
+			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST);
+		}
+
+		$attendee = $participant->getAttendee();
+		$account = $attendee->getActorType() === Attendee::ACTOR_USERS ? $this->accountService->getForUser($attendee->getActorId()) : null;
+		if ($account === null || $account->getStatus() !== Account::STATUS_ACTIVE) {
+			throw new SendException('account', Http::STATUS_FORBIDDEN);
+		}
+		return [$matrixRoom, $account];
+	}
+
+	/**
+	 * Reply and thread of a message as Matrix relation. Messages in threads
+	 * are a reply for clients without thread support.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	protected function getRelation(Room $room, MatrixRoom $matrixRoom, ?IComment $replyTo, int $threadId): ?array {
+		if ($replyTo !== null) {
+			$threadId = (int)$replyTo->getTopmostParentId() ?: (int)$replyTo->getId();
+		}
+		$root = $threadId > 0 && $this->threadService->validateThread($room->getId(), $threadId)
+			? $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), $threadId)
+			: null;
+		$parent = $replyTo !== null ? $this->eventMapMapper->findByCommentId((string)$matrixRoom->getId(), (int)$replyTo->getId()) : null;
+
+		if ($root === null) {
+			return $parent !== null ? ['m.in_reply_to' => ['event_id' => $parent->getEventId()]] : null;
+		}
+		return [
+			'rel_type' => 'm.thread',
+			'event_id' => $root->getEventId(),
+			'is_falling_back' => $parent === null,
+			// ponytail: the fallback replies to the root, the spec suggests the latest message of the thread
+			'm.in_reply_to' => ['event_id' => ($parent ?? $root)->getEventId()],
+		];
+	}
+
+	protected function getParentComment(IComment $comment): ?IComment {
+		if ($comment->getParentId() === '0' || $comment->getParentId() === '') {
+			return null;
+		}
+		try {
+			return $this->commentsManager->get($comment->getParentId());
+		} catch (NotFoundException) {
+			return null;
+		}
+	}
+
+	/**
+	 * @param \Closure(Client, string): string $request Gets the client and a new transaction id, returns the event id
+	 * @throws SendException
+	 */
+	protected function send(Account $account, \Closure $request, int $timeout = 20): string {
+		try {
+			return $request($this->accountService->getClient($account, $timeout), 'nc' . $this->secureRandom->generate(24, ISecureRandom::CHAR_ALPHANUMERIC));
+		} catch (UnknownTokenException $e) {
+			$this->accountService->markTokenInvalid($account, $e->getMessage());
+			throw new SendException('account', Http::STATUS_FORBIDDEN, $e);
+		} catch (ForbiddenException $e) {
+			throw new SendException('permission', Http::STATUS_FORBIDDEN, $e);
+		} catch (MatrixException|DoesNotExistException $e) {
+			throw new SendException('matrix', Http::STATUS_BAD_GATEWAY, $e);
+		} catch (CryptoException $e) {
+			throw new SendException('encrypted', Http::STATUS_BAD_REQUEST, $e);
+		}
+	}
+
+	/**
+	 * Send an event to the room, encrypted for the devices of the members in encrypted rooms
+	 *
+	 * @param array<string, mixed> $content
+	 * @return string Event id
+	 * @throws SendException
+	 */
+	protected function sendRoomEvent(Account $account, MatrixRoom $matrixRoom, string $type, array $content): string {
+		return $this->send($account, function (Client $client, string $transactionId) use ($account, $matrixRoom, $type, $content): string {
+			if ($matrixRoom->getEncrypted()) {
+				// ponytail: members are fetched for every encrypted event, cache them when big rooms make sending slow
+				$members = $client->getRoomMembers($matrixRoom->getMatrixRoomId());
+				$content = $this->cryptoService->encryptRoomEvent($account, $client, $matrixRoom->getMatrixRoomId(), $members, $type, $content, $matrixRoom->getRotationPeriodMs(), $matrixRoom->getRotationPeriodMsgs());
+				$type = 'm.room.encrypted';
+			}
+			return $client->sendEvent($matrixRoom->getMatrixRoomId(), $type, $content, $transactionId);
+		});
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	protected function getMatrixUserId(Attendee $attendee): string {
+		if ($attendee->getActorType() === Attendee::ACTOR_MATRIX) {
+			return $attendee->getActorId();
+		}
+		$account = $attendee->getActorType() === Attendee::ACTOR_USERS ? $this->accountService->getForUser($attendee->getActorId()) : null;
+		if ($account === null) {
+			throw new SendException('account', Http::STATUS_NOT_FOUND);
+		}
+		return $account->getMxid();
+	}
+
+	/**
+	 * Record the sent event, so the sync does not mirror it again
+	 *
+	 * @return EventMap|null Null when the sync was faster and already mirrored the event
+	 */
+	protected function claimEvent(MatrixRoom $matrixRoom, Account $account, string $eventId, string $type): ?EventMap {
+		$eventMap = new EventMap();
+		$eventMap->setMatrixRoomId((string)$matrixRoom->getId());
+		$eventMap->setEventId($eventId);
+		$eventMap->setEventType($type);
+		$eventMap->setSender($account->getMxid());
+		return $this->eventMapMapper->insertIfNew($eventMap) ? $eventMap : null;
+	}
+
+	/**
+	 * @throws SendException
+	 */
+	protected function getSyncedComment(MatrixRoom $matrixRoom, string $eventId): IComment {
+		$commentId = $this->eventMapMapper->findByEventId((string)$matrixRoom->getId(), $eventId)?->getCommentId();
+		try {
+			return $this->commentsManager->get((string)$commentId);
+		} catch (NotFoundException $e) {
+			throw new SendException('matrix', Http::STATUS_BAD_GATEWAY, $e);
+		}
+	}
+}

@@ -327,8 +327,8 @@ class RecordingServiceTest extends TestCase {
 
 		$this->mockNotification();
 		// Disable both AI tasks to keep the finalize path simple
-		$this->serverConfig->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, string $default = '') => $key === 'call_recording_summary' ? 'no' : 'no'
+		$this->appConfig->method('getAppValueBool')->willReturnCallback(
+			fn (string $key, bool $default = false) => $key === 'call_recording_summary'
 		);
 
 		// Cleanup of the temporary share
@@ -432,14 +432,16 @@ class RecordingServiceTest extends TestCase {
 		$this->roomManager->method('getRoomForUserByToken')->with($roomToken, $owner)->willReturn($room);
 		$this->participantService->method('getParticipant')->with($room, $owner)->willReturn($participant);
 
-		$this->serverConfig->method('getAppValue')
+		$this->appConfig->method('getAppValueBool')
 			->willReturnCallback(
-				function (string $app, string $key, string $default = ''): string {
-					return $default;
-				}
+				fn (string $key, bool $default = false): bool => $key === Config::CALL_RECORDING_SUMMARY
 			);
 
-		$this->appConfig->method('getAppValueString')->with(Config::CALL_RECORDING_SUMMARY_PROMPT)->willReturn($customPrompt);
+		$this->appConfig->method('getAppValueString')
+			->willReturnCallback(
+				fn (string $key, string $default = ''): string => $key === Config::CALL_RECORDING_SUMMARY_PROMPT ? $customPrompt : $default
+			);
+
 		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([TextToText::ID]);
 
 		$this->taskProcessingManager->expects($this->once())->method('scheduleTask')

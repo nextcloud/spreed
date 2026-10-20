@@ -117,6 +117,13 @@ class FeatureContext implements Context {
 	/** @var CookieJar[] */
 	private array $cookieJars;
 
+	/**
+	 * The admin is never deleted, so its session is kept across scenarios
+	 * instead of logging in again on every server for each scenario
+	 * @var array<string, CookieJar>
+	 */
+	private static array $adminCookieJars = [];
+
 	protected string $localServerUrl;
 	protected string $remoteServerUrl;
 	protected string $baseUrl;
@@ -2203,7 +2210,6 @@ class FeatureContext implements Context {
 			$row
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2231,7 +2237,6 @@ class FeatureContext implements Context {
 		if ($this->response->getStatusCode() !== 202) {
 			return;
 		}
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		self::$textToMessageId[$row['message']] = $response['id'];
@@ -2354,7 +2359,6 @@ class FeatureContext implements Context {
 			$body
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2395,7 +2399,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $newMessage]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		if ($statusCode === 200 || $statusCode === 202) {
 			self::$textToMessageId[$newMessage] = $messageId;
@@ -2491,7 +2494,6 @@ class FeatureContext implements Context {
 			])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2513,7 +2515,6 @@ class FeatureContext implements Context {
 			])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -2533,7 +2534,6 @@ class FeatureContext implements Context {
 			['fromMessageId' => $fromMessageId],
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		self::$aiTaskIds[$user . '/summary/' . self::$identifierToToken[$identifier]] = $response['taskId'];
@@ -3001,7 +3001,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $message], ['referenceId', $referenceId]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -3031,7 +3030,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $reply], $replyTo])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -3053,7 +3051,6 @@ class FeatureContext implements Context {
 			new TableNode([['message', $reply], ['replyTo', $replyTo], ['replyToToken', self::$identifierToToken[$sourceIdentifier]]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
@@ -3496,7 +3493,6 @@ class FeatureContext implements Context {
 			$this->compareThreadsResponse($formData, [$result]);
 		}
 
-		sleep(1);
 	}
 
 	#[Then('/^user "([^"]*)" subscribes to thread "([^"]*)" in room "([^"]*)" with notification level (\d+) with (\d+)(?: \((v1)\))?$/')]
@@ -3894,7 +3890,6 @@ class FeatureContext implements Context {
 		);
 
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	#[Then('/^user "([^"]*)" (starts|stops) breakout rooms in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -4799,7 +4794,7 @@ class FeatureContext implements Context {
 		Assert::assertEquals($expected, $actual);
 	}
 
-	#[When('/^wait for ([0-9]+) (second|seconds)$/')]
+	#[When('/^wait for ([0-9]+) seconds?$/')]
 	public function waitForXSecond(int $seconds): void {
 		sleep($seconds);
 	}
@@ -5008,7 +5003,6 @@ class FeatureContext implements Context {
 			$options
 		);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	#[When('/^recording server requests recording upload of "([^"]*)" for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -5117,7 +5111,6 @@ class FeatureContext implements Context {
 		);
 		$this->setCurrentUser($currentUser);
 		$this->assertStatusCode($this->response, $statusCode);
-		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	#[Then('/^read bot ids from OCC$/')]
@@ -5675,6 +5668,9 @@ class FeatureContext implements Context {
 	}
 
 	protected function getUserCookieJar($user): CookieJar {
+		if ($user === 'admin') {
+			return self::$adminCookieJars[$this->currentServer] ??= new CookieJar();
+		}
 		if (!isset($this->cookieJars[$user])) {
 			$this->cookieJars[$user] = new CookieJar();
 		}
@@ -5708,6 +5704,42 @@ class FeatureContext implements Context {
 
 		var_dump($this->response->getBody()->getContents());
 		$this->assertStatusCode($this->response, 200);
+	}
+
+	#[Given('userroom shares of :user are removed')]
+	public function removeUserRoomShares(string $user): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/apps/spreedcheats/forged/userroom-shares', [
+			'userId' => $user,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[Given('share mounts of :user are moved to the placeholder')]
+	public function moveShareMountsToPlaceholder(string $user): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('PUT', '/apps/spreedcheats/forged/share-mounts', [
+			'userId' => $user,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[Then('share mounts of :user are')]
+	public function assertShareMounts(string $user, TableNode $mountPoints): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/apps/spreedcheats/share-mounts?' . http_build_query([
+			'userId' => $user,
+		]));
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+
+		$expected = array_map(fn (array $row): string => $row[0], $mountPoints->getRows());
+		$actual = $this->getDataFromResponse($this->response);
+		sort($expected);
+		sort($actual);
+		Assert::assertSame($expected, $actual);
 	}
 
 	#[Given('/^user "([^"]*)" creates calendar events for a room "([^"]*)" \((v4)\)$/')]

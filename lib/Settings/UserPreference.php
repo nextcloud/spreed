@@ -39,5 +39,10 @@ class UserPreference {
 	public const CONVERSATIONS_UNARCHIVE_MENTION = 'mention';
 	public const CONVERSATIONS_UNARCHIVE_ALWAYS = 'always';
 
+	public const CONVERSATIONS_TAGS_SHOW_UNREAD = 'conversations_tags_show_unread';
+	public const CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER = 'never';
+	public const CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION = 'mention';
+	public const CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS = 'always';
+
 	public const LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID = 'live_transcription_target_language_id';
 }

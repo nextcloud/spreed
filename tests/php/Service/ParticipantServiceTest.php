@@ -128,6 +128,31 @@ class ParticipantServiceTest extends TestCase {
 		self::assertCount(1, $participants);
 	}
 
+	public function testLastCommonReadChatMessageIncludesMatrixUsers(): void {
+		$attendees = [];
+		foreach ([[Attendee::ACTOR_USERS, 'test', 50], [Attendee::ACTOR_MATRIX, '@bob:example.org', 30], [Attendee::ACTOR_GUESTS, 'guest', 10]] as [$actorType, $actorId, $lastRead]) {
+			$attendee = new Attendee();
+			$attendee->setActorType($actorType);
+			$attendee->setActorId($actorId);
+			$attendee->setRoomId(123456789);
+			$attendee->setLastReadMessage($lastRead);
+			$attendees[] = $this->attendeeMapper->insert($attendee);
+		}
+
+		try {
+			$room = $this->createMock(Room::class);
+			$room->method('getId')->willReturn(123456789);
+			self::assertSame(30, $this->service->getLastCommonReadChatMessage($room));
+			self::assertSame([123456789 => 30], $this->service->getLastCommonReadChatMessageForMultipleRooms([123456789]));
+		} finally {
+			foreach ($attendees as $attendee) {
+				if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
+					$this->attendeeMapper->delete($attendee);
+				}
+			}
+		}
+	}
+
 	public function testInviteEmailAddressThrowsForClassifiedRoom(): void {
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')

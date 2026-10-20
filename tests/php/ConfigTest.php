@@ -412,4 +412,28 @@ class ConfigTest extends TestCase {
 		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
 	}
 
+	public static function dataCanLinkMatrixAccount(): array {
+		return [
+			'disabled' => [false, ['admin'], ['admin'], false],
+			'everyone' => [true, [], ['other'], true],
+			'in allowed group' => [true, ['admin', 'matrix'], ['matrix'], true],
+			'not in allowed group' => [true, ['matrix'], ['other'], false],
+		];
+	}
+
+	#[DataProvider('dataCanLinkMatrixAccount')]
+	public function testCanLinkMatrixAccount(bool $enabled, array $allowedGroups, array $userGroups, bool $expected): void {
+		$this->appConfig->method('getAppValueBool')
+			->with(Config::MATRIX_ENABLED)
+			->willReturn($enabled);
+		$this->appConfig->method('getAppValueArray')
+			->with(Config::MATRIX_ALLOWED_GROUPS)
+			->willReturn($allowedGroups);
+		$user = $this->createMock(IUser::class);
+		$this->groupManager->method('getUserGroupIds')
+			->with($user)
+			->willReturn($userGroups);
+
+		$this->assertSame($expected, $this->getConfig()->canLinkMatrixAccount($user));
+	}
 }

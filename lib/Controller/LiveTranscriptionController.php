@@ -14,8 +14,10 @@ use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Exceptions\MatrixUnsupportedFeatureException;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Room;
 use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -54,6 +56,10 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function enable(): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			throw new MatrixUnsupportedFeatureException();
+		}
+
 		if ($this->room->isClassified()) {
 			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
 		}

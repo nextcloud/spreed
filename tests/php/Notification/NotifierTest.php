@@ -37,6 +37,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\AlreadyProcessedException;
+use OCP\Notification\IAction;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Share\IManager as IShareManager;
@@ -1091,5 +1092,109 @@ class NotifierTest extends TestCase {
 			$this->expectExceptionMessage($message);
 		}
 		$this->notifier->prepare($n, 'de');
+	}
+
+	public function testPrepareMatrixRelogin(): void {
+		/** @var INotification&MockObject $n */
+		$n = $this->createMock(INotification::class);
+		$n->method('getApp')->willReturn('spreed');
+		$n->method('getUser')->willReturn('recipient');
+		$n->method('getObjectType')->willReturn('matrix_account');
+		$n->method('getSubject')->willReturn('matrix_relogin');
+		$n->method('getSubjectParameters')->willReturn(['mxid' => '@bob:example.org']);
+
+		$this->userManager->method('get')
+			->with('recipient')
+			->willReturn($this->createMock(IUser::class));
+		$this->config->method('isDisabledForUser')
+			->willReturn(false);
+
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')
+			->willReturnCallback(fn (string $text, array $parameters = []): string => vsprintf($text, $parameters));
+		$this->lFactory->method('get')
+			->with('spreed', 'de')
+			->willReturn($l);
+
+		$this->url->method('imagePath')
+			->with('spreed', 'app-dark.svg')
+			->willReturn('/img/app-dark.svg');
+		$this->url->method('getAbsoluteURL')
+			->with('/img/app-dark.svg')
+			->willReturn('https://cloud.example/img/app-dark.svg');
+		$this->url->method('linkToRouteAbsolute')
+			->with('spreed.Page.index')
+			->willReturn('https://cloud.example/apps/spreed');
+
+		$n->expects($this->once())
+			->method('setParsedSubject')
+			->with('Your Matrix account needs a new login')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setParsedMessage')
+			->with('The Matrix homeserver rejected the session of @bob:example.org. Log in again in the Talk settings to continue using your Matrix account.')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setIcon')
+			->with('https://cloud.example/img/app-dark.svg')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setLink')
+			->with('https://cloud.example/apps/spreed')
+			->willReturnSelf();
+
+		$this->assertSame($n, $this->notifier->prepare($n, 'de'));
+	}
+
+	public function testPrepareMatrixInvite(): void {
+		/** @var INotification&MockObject $n */
+		$n = $this->createMock(INotification::class);
+		$n->method('getApp')->willReturn('spreed');
+		$n->method('getUser')->willReturn('recipient');
+		$n->method('getObjectType')->willReturn('matrix_invite');
+		$n->method('getObjectId')->willReturn('100');
+		$n->method('getSubject')->willReturn('matrix_invite');
+		$n->method('getSubjectParameters')->willReturn(['inviter' => '@bob:example.org', 'inviterName' => 'Bob', 'roomName' => 'Team']);
+
+		$this->userManager->method('get')
+			->with('recipient')
+			->willReturn($this->createMock(IUser::class));
+		$this->config->method('isDisabledForUser')
+			->willReturn(false);
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')
+			->willReturnArgument(0);
+		$this->lFactory->method('get')
+			->willReturn($l);
+		$this->url->method('linkToOCSRouteAbsolute')
+			->willReturnCallback(static fn (string $route, array $parameters): string => $route . '/' . $parameters['id']);
+
+		$actions = [];
+		$n->method('createAction')
+			->willReturnCallback(function () use (&$actions): IAction {
+				$action = $this->createMock(IAction::class);
+				$action->method('setParsedLabel')->willReturnSelf();
+				$action->method('setPrimary')->willReturnSelf();
+				$action->method('setLink')
+					->willReturnCallback(function (string $link, string $method) use ($action, &$actions): IAction {
+						$actions[] = $method . ' ' . $link;
+						return $action;
+					});
+				return $action;
+			});
+		$n->expects($this->once())
+			->method('setRichSubject')
+			->with('{user} invited you to the Matrix room {roomName}', [
+				'user' => ['type' => 'highlight', 'id' => 'matrix/@bob:example.org', 'name' => 'Bob'],
+				'roomName' => ['type' => 'highlight', 'id' => 'matrix-room/100', 'name' => 'Team'],
+			])
+			->willReturnSelf();
+		$n->method('setIcon')->willReturnSelf();
+
+		$this->assertSame($n, $this->notifier->prepare($n, 'de'));
+		$this->assertSame([
+			'POST spreed.MatrixRoom.acceptInvite/100',
+			'DELETE spreed.MatrixRoom.declineInvite/100',
+		], $actions);
 	}
 }

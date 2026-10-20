@@ -194,12 +194,16 @@ export const mockedCapabilities: Capabilities = {
 				'sort-order': CONVERSATION.SORT_ORDER.ACTIVITY,
 				'group-mode': CONVERSATION.GROUP_MODE.NONE,
 				unarchive: CONVERSATION.UNARCHIVE.NEVER,
+				'tags-show-unread': CONVERSATION.TAGS_SHOW_UNREAD.ALWAYS,
 			},
 			federation: {
 				enabled: false,
 				'incoming-enabled': false,
 				'outgoing-enabled': false,
 				'only-trusted-servers': true,
+			},
+			matrix: {
+				enabled: false,
 			},
 			previews: {
 				'max-gif-size': 3145728,
@@ -249,12 +253,16 @@ export const mockedCapabilities: Capabilities = {
 				'sort-order',
 				'group-mode',
 				'unarchive',
+				'tags-show-unread',
 			],
 			federation: [
 				'enabled',
 				'incoming-enabled',
 				'outgoing-enabled',
 				'only-trusted-servers',
+			],
+			matrix: [
+				'enabled',
 			],
 			previews: [
 				'max-gif-size',

@@ -916,7 +916,8 @@ class SystemMessage implements IEventListener {
 
 			$name = $node->getName();
 			$size = $node->getSize();
-			$path = $name;
+			// Leading slash marks the path as relative to the folder share of the link
+			$path = rtrim($pathInShare, '/') . '/' . $name;
 
 			$params = ['token' => $shareToken];
 			if ($pathInShare !== '/' && $pathInShare !== '') {
@@ -944,7 +945,7 @@ class SystemMessage implements IEventListener {
 
 		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
 			try {
-				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				$sizeMetadata = $this->metadataCache->getImageMetadataForNode($node);
 				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
 					$data['width'] = (string)$sizeMetadata['width'];
 					$data['height'] = (string)$sizeMetadata['height'];
@@ -1108,7 +1109,7 @@ class SystemMessage implements IEventListener {
 		// If a preview is available, check if we can get the dimensions of the file from the metadata API
 		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
 			try {
-				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				$sizeMetadata = $this->metadataCache->getImageMetadataForNode($node);
 				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
 					$data['width'] = (string)$sizeMetadata['width'];
 					$data['height'] = (string)$sizeMetadata['height'];
@@ -1177,8 +1178,29 @@ class SystemMessage implements IEventListener {
 		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			return $this->getRemoteUser($room, $actorId);
 		}
+		if ($actorType === Attendee::ACTOR_MATRIX) {
+			return $this->getMatrixUser($room, $actorId);
+		}
 
 		return $this->getUser($actorId);
+	}
+
+	protected function getMatrixUser(Room $room, string $mxid): array {
+		$key = $room->getId() . '/' . Attendee::ACTOR_MATRIX . '/' . $mxid;
+		if (!isset($this->guestNames[$key])) {
+			try {
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_MATRIX, $mxid);
+				$this->guestNames[$key] = $participant->getAttendee()->getDisplayName() ?: $mxid;
+			} catch (ParticipantNotFoundException) {
+				$this->guestNames[$key] = $mxid;
+			}
+		}
+
+		return [
+			'type' => 'highlight',
+			'id' => Attendee::ACTOR_MATRIX . '/' . $mxid,
+			'name' => $this->guestNames[$key],
+		];
 	}
 
 	protected function getUser(string $uid): array {

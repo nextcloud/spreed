@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Share\Helper;
 
+use OCP\Files\Cache\ICacheEntry;
+use OCP\Files\Node;
 use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
 use OCP\FilesMetadata\Exceptions\FilesMetadataTypeException;
 use OCP\FilesMetadata\IFilesMetadataManager;
@@ -39,15 +41,16 @@ class FilesMetadataCache {
 	}
 
 	/**
-	 * @param int $fileId
+	 * @param Node|ICacheEntry $node
 	 * @return array
 	 * @psalm-return array{width: int, height: int, blurhash?: string}
 	 * @throws FilesMetadataNotFoundException
 	 */
-	public function getImageMetadataForFileId(int $fileId): array {
+	public function getImageMetadataForNode(Node|ICacheEntry $node): array {
+		$fileId = $node->getId();
 		if (!array_key_exists($fileId, $this->filesSizeData)) {
 			try {
-				$this->cachePhotosSize($fileId, $this->filesMetadataManager->getMetadata($fileId, true));
+				$this->cachePhotosSize($fileId, $this->filesMetadataManager->getMetadataForNode($node, true));
 			} catch (FilesMetadataNotFoundException) {
 				$this->filesSizeData[$fileId] = null;
 			}
