@@ -809,7 +809,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/certificate/expiration": {
             "get": {
                 "operationId": "certificate-get-certificate-expiration",
-                "summary": "Get the certificate expiration for a host",
+                "summary": "Get the certificate expiration for a configured TURN, STUN, signaling or recording server",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "settings"
