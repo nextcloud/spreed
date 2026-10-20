@@ -1035,16 +1035,6 @@ OC.L10N.register(
     "Notes" : "Notas",
     "Talk to %s" : "Faedda cun %s",
     "Collapse stripe" : "Istringhe sa tira",
-    "Expand stripe" : "Ammània sa tira",
-    "Set reminder for later today" : "Cunfigura un'apuntu pro luego",
-    "Set reminder for tomorrow" : "Cunfigura un'apuntu pro cras",
-    "Set reminder for this weekend" : "Cunfigura un'apuntu pro custu fine de chida",
-    "Set reminder for next week" : "Cunfigura un'apuntu pro chida chi benit",
-    "Talk recording from {time} ({conversation})" : "Registratzione de boghe {time} ({conversation})",
-    "Anonymous poll" : "Sondàgiu anònimu",
-    "Your privacy setting has been saved" : "Sa cunfiguratzione de riservadesa tua est istada sarvada",
-    "Failed to save sounds setting" : "Non at fatu a sarvare sa cunfiguratzione de is sonos",
-    "Sounds setting saved" : "Cunfiguratzione de is sonos sarvada",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "As fatu s'atzessu in sa resonada in un'àtera ventana o dispositivu. In custu momentu cust'atzione no est suportada dae Nextcloud Talk tando sa sessione est istada serrada."
+    "Expand stripe" : "Ammània sa tira"
 },
 "nplurals=2; plural=(n != 1);");

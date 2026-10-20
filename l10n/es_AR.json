@@ -142,7 +142,6 @@
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Reportes",
-    "Failed" : "Error",
     "Send" : "Enviar"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

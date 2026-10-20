@@ -639,11 +639,6 @@ OC.L10N.register(
     "Notes" : "Minnispunktar",
     "Talk to %s" : "Tala við %s",
     "Talk conversation for event" : "Samtal fyrir atburð",
-    "Set reminder for later today" : "Setja áminningu seinna í dag",
-    "Set reminder for tomorrow" : "Setja áminningu fyrir morgundaginn",
-    "Set reminder for this weekend" : "Setja áminningu fyrir þessa helgi",
-    "Set reminder for next week" : "Setja áminningu fyrir í næstu viku",
-    "Send" : "Senda",
-    "Anonymous poll" : "Nafnlaus könnun"
+    "Send" : "Senda"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
