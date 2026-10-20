@@ -1238,6 +1238,27 @@ class FeatureContext implements Context {
 		}
 	}
 
+	#[Then('/^external call service syncs participants of room "([^"]*)" as "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceSyncsParticipants(string $identifier, string $owner, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+		$participants = [];
+		foreach ($formData ? $formData->getRowsHash() : [] as $type => $ids) {
+			$participants[$type] = $ids === '' ? [] : explode(',', $ids);
+		}
+
+		$random = bin2hex(random_bytes(32));
+		$headers = [
+			'x-nextcloud-talk-external-service-random' => $random,
+			'x-nextcloud-talk-external-service-checksum' => hash_hmac('sha256', $random . $owner, $secret),
+		];
+
+		$this->setCurrentUser('');
+		$this->sendRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants', [
+			'owner' => $owner,
+			'participants' => $participants,
+		], $headers);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForPath(string $user, string $path, int $statusCode, string $apiVersion): void {
 		$fileId = $this->getFileIdForPath($user, $path);
