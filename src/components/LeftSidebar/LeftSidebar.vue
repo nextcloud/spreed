@@ -26,6 +26,8 @@
 							<NcActions
 								v-show="searchText === ''"
 								:variant="isFiltered ? 'secondary' : 'tertiary'"
+								:aria-label="t('spreed', 'Filter, sort and group conversations')"
+								:title="t('spreed', 'Filter, sort and group conversations')"
 								class="filters"
 								:class="{ 'hidden-visually': isSearching }">
 								<template #icon>
@@ -151,6 +153,8 @@
 						<TransitionWrapper name="radial-reveal">
 							<NcActions
 								v-show="searchText === ''"
+								:aria-label="t('spreed', 'Join a conversation or start a new one')"
+								:title="t('spreed', 'Join a conversation or start a new one')"
 								class="actions"
 								:class="{ 'hidden-visually': isSearching }">
 								<template #icon>
