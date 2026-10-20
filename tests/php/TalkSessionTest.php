@@ -117,4 +117,16 @@ class TalkSessionTest extends TestCase {
 			->with('spreed-password', $expected);
 		$this->talkSession->removePasswordForRoom('t1');
 	}
+
+	#[DataProvider('dataRemove')]
+	public function testRemoveAuthedEmailActorIdForRoom(?string $sessionData, ?string $expected): void {
+		$this->session->expects($this->once())
+			->method('get')
+			->with('spreed-authed-email')
+			->willReturn($sessionData);
+		$this->session->expects($this->once())
+			->method('set')
+			->with('spreed-authed-email', $expected);
+		$this->talkSession->removeAuthedEmailActorIdForRoom('t1');
+	}
 }

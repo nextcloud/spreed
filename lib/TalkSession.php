@@ -57,6 +57,10 @@ class TalkSession {
 		$this->setValue('spreed-authed-email', $token, $actorId);
 	}
 
+	public function removeAuthedEmailActorIdForRoom(string $token): void {
+		$this->removeValue('spreed-authed-email', $token);
+	}
+
 	public function getFileShareTokenForRoom(string $roomToken): ?string {
 		return $this->getValue('spreed-file-share-token', $roomToken);
 	}
