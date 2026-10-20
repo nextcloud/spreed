@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
 use OCA\Talk\Service\CertificateService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -24,6 +25,7 @@ class CertificateController extends OCSController {
 		string $appName,
 		IRequest $request,
 		private readonly CertificateService $certificateService,
+		private readonly Config $talkConfig,
 		private readonly IL10N $l,
 		private readonly LoggerInterface $logger,
 	) {
@@ -31,7 +33,7 @@ class CertificateController extends OCSController {
 	}
 
 	/**
-	 * Get the certificate expiration for a host
+	 * Get the certificate expiration for a configured TURN, STUN, signaling or recording server
 	 * @param string $host Host to check
 	 * @return DataResponse<Http::STATUS_OK, array{expiration_in_days: ?int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
@@ -43,6 +45,10 @@ class CertificateController extends OCSController {
 		'apiVersion' => '(v1)',
 	])]
 	public function getCertificateExpiration(string $host): DataResponse {
+		if (!$this->isConfiguredHost($host)) {
+			return new DataResponse(['message' => $this->l->t('The host is not a configured server')], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$expirationInDays = $this->certificateService->getCertificateExpirationInDays($host);
 
@@ -56,5 +62,40 @@ class CertificateController extends OCSController {
 
 			return new DataResponse(['message' => $this->l->t('An error occurred. Please contact your administrator.')], Http::STATUS_BAD_REQUEST);
 		}
+	}
+
+	private function isConfiguredHost(string $host): bool {
+		$normalized = $this->normalizeHost($host);
+		if ($normalized === null) {
+			return false;
+		}
+
+		$servers = array_merge(
+			array_column($this->talkConfig->getTurnServers(false), 'server'),
+			$this->talkConfig->getStunServers(),
+			array_column($this->talkConfig->getSignalingServers(), 'server'),
+			array_column($this->talkConfig->getRecordingServers(), 'server'),
+		);
+
+		foreach ($servers as $server) {
+			if (is_string($server) && $this->normalizeHost($server) === $normalized) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function normalizeHost(string $host): ?string {
+		$parsedHost = $this->certificateService->getParsedTlsHost($host);
+		if ($parsedHost === null || $parsedHost === '') {
+			return null;
+		}
+
+		$parsedHost = strtolower($parsedHost);
+		if (!str_contains($parsedHost, ':')) {
+			$parsedHost .= ':443';
+		}
+		return $parsedHost;
 	}
 }
