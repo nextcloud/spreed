@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OC\Authentication\Token\IProvider as IAuthTokenProvider;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
@@ -22,11 +23,13 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\Token\IToken;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IAvatarManager;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
@@ -53,6 +56,7 @@ class MatterbridgeManager {
 		private readonly LoggerInterface $logger,
 		private readonly ITimeFactory $timeFactory,
 		private readonly IRemoteHostValidator $hostValidator,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -129,6 +133,18 @@ class MatterbridgeManager {
 		// save config
 		$this->saveBridgeToDb($room->getId(), $newBridge);
 
+		// The bridge parts hold credentials for the external services and are never logged
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Matterbridge of conversation "{token}" was updated ({enabled}, {parts} parts)',
+			[
+				'token' => $room->getToken(),
+				'enabled' => $enabled ? 'enabled' : 'disabled',
+				'parts' => count($newBridge['parts']),
+			],
+			false,
+			Operation::BRIDGE_UPDATED->value,
+		));
+
 		$logContent = $this->getBridgeLog($room);
 		return [
 			'running' => ($pid !== 0),
@@ -154,6 +170,14 @@ class MatterbridgeManager {
 				'pid',
 				$query->createNamedParameter($currentBridge['pid'], IQueryBuilder::PARAM_INT)));
 		$query->executeQuery();
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Matterbridge of conversation "{token}" was deleted',
+			['token' => $room->getToken()],
+			false,
+			Operation::BRIDGE_DELETED->value,
+		));
+
 		return true;
 	}
 

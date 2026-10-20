@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\BotDisabledEvent;
 use OCA\Talk\Events\BotEnabledEvent;
@@ -25,7 +26,9 @@ use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 
@@ -38,6 +41,7 @@ class BotListener implements IEventListener {
 		private readonly BotConversationMapper $botConversationMapper,
 		private readonly BotService $botService,
 		private readonly LoggerInterface $logger,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -117,7 +121,9 @@ class BotListener implements IEventListener {
 			$bot->setUrlHash(sha1($event->getUrl()));
 			$bot->setState(Bot::STATE_ENABLED);
 			$bot->setFeatures($features);
-			$this->botServerMapper->insert($bot);
+			$bot = $this->botServerMapper->insert($bot);
+
+			$this->logBotRegistration($bot, 'installed', Operation::BOT_INSTALLED);
 		}
 	}
 
@@ -126,7 +132,28 @@ class BotListener implements IEventListener {
 			$bot = $this->botServerMapper->findByUrlAndSecret($event->getUrl(), $event->getSecret());
 			$this->botConversationMapper->deleteByBotId($bot->getId());
 			$this->botServerMapper->delete($bot);
+
+			$this->logBotRegistration($bot, 'uninstalled', Operation::BOT_UNINSTALLED);
 		} catch (DoesNotExistException) {
 		}
+	}
+
+	/**
+	 * Only the origin of the bot URL is logged, as it may carry secrets in its path or query
+	 */
+	protected function logBotRegistration(BotServer $bot, string $action, Operation $operation): void {
+		$url = parse_url($bot->getUrl()) ?: [];
+		$urlOrigin = ($url['scheme'] ?? '') . '://' . ($url['host'] ?? '') . (isset($url['port']) ? ':' . $url['port'] : '');
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Bot #{botId} ("{botName}") calling {urlOrigin} was ' . $action,
+			[
+				'botId' => $bot->getId(),
+				'botName' => $bot->getName(),
+				'urlOrigin' => $urlOrigin,
+			],
+			false,
+			$operation->value,
+		));
 	}
 }

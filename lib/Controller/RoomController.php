@@ -10,6 +10,7 @@ namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ClientException;
 use OCA\DAV\CalDAV\TimezoneService;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
@@ -2370,8 +2371,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$this->participantService->removeUser($room, $this->userManager->get($this->userId), AAttendeeRemovedEvent::REASON_REMOVED);
 
 					$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
-						'Removed former user "%s" from conversation "%s" [%s] due to external call policy',
-						[$this->userId, $room->getToken(), $room->getObjectId()],
+						'Removed former {actorType} "{actorId}" from conversation "{token}" [{objectId}] due to external call policy',
+						[
+							'actorType' => Attendee::ACTOR_USERS,
+							'actorId' => $this->userId,
+							'token' => $room->getToken(),
+							'objectId' => $room->getObjectId(),
+						],
+						false,
+						Operation::EXTERNAL_CALL_POLICY_PARTICIPANT_REMOVED->value,
 					));
 				}
 				return new DataResponse(['error' => 'ban'], Http::STATUS_FORBIDDEN);
@@ -3692,8 +3700,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($response['status'] === Http::STATUS_FORBIDDEN) {
 			$this->participantService->removeAttendee($this->room, $this->participant, AAttendeeRemovedEvent::REASON_REMOVED);
 			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
-				'Removed former %s "%s" from conversation "%s" [%s] due to external call policy',
-				[$this->participant->getAttendee()->getActorType(), $this->participant->getAttendee()->getActorId(), $this->room->getToken(), $this->room->getObjectId()],
+				'Removed former {actorType} "{actorId}" from conversation "{token}" [{objectId}] due to external call policy',
+				[
+					'actorType' => $this->participant->getAttendee()->getActorType(),
+					'actorId' => $this->participant->getAttendee()->getActorId(),
+					'token' => $this->room->getToken(),
+					'objectId' => $this->room->getObjectId(),
+				],
+				false,
+				Operation::EXTERNAL_CALL_POLICY_PARTICIPANT_REMOVED->value,
 			));
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}

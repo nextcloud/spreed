@@ -8,19 +8,30 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Http\Client\IClient;
+use OCP\Http\Client\IClientService;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class RoomControllerTest extends TestCase {
 	private ParticipantService&MockObject $participantService;
 	private SendService&MockObject $sendService;
+	private Config&MockObject $talkConfig;
+	private IEventDispatcher&MockObject $dispatcher;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
 	private RoomController $controller;
@@ -29,6 +40,8 @@ class RoomControllerTest extends TestCase {
 		parent::setUp();
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sendService = $this->createMock(SendService::class);
+		$this->talkConfig = $this->createMock(Config::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
 
@@ -41,6 +54,8 @@ class RoomControllerTest extends TestCase {
 				default => match ($type) {
 					ParticipantService::class => $this->participantService,
 					SendService::class => $this->sendService,
+					Config::class => $this->talkConfig,
+					IEventDispatcher::class => $this->dispatcher,
 					default => $this->createMock($type),
 				},
 			};
@@ -67,5 +82,35 @@ class RoomControllerTest extends TestCase {
 		$this->sendService->expects(self::never())->method('setNotificationLevel');
 
 		self::assertSame(Http::STATUS_BAD_REQUEST, $this->controller->setNotificationLevel(Participant::NOTIFY_DEFAULT)->getStatus());
+	}
+
+	public function testExternalCallPolicyRemovalIsLogged(): void {
+		$this->talkConfig->method('isExternalCallServiceConfigured')->willReturn(true);
+		$this->talkConfig->method('getExternalCallService')->willReturn('https://example.com/{meetingId}');
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EXTERNAL_CALL);
+		$this->room->method('getObjectId')->willReturn('meeting');
+		$this->room->method('getToken')->willReturn('abcdef');
+		$attendee = new Attendee();
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('alice');
+		$this->participant->method('getAttendee')->willReturn($attendee);
+
+		$client = $this->createMock(IClient::class);
+		$client->method('get')->willThrowException(new ClientException('forbidden', new Request('GET', 'https://example.com/meeting'), new Response(Http::STATUS_FORBIDDEN)));
+		$clientService = $this->createMock(IClientService::class);
+		$clientService->method('newClient')->willReturn($client);
+		$this->overwriteService(IClientService::class, $clientService);
+
+		$this->participantService->expects(self::once())->method('removeAttendee');
+		$this->dispatcher->expects(self::once())
+			->method('dispatchTyped')
+			->with($this->callback(fn (CriticalActionPerformedEvent $event): bool => $event->getOperation() === 'spreed.external_call_policy.participant_removed'
+				&& $event->getParameters() === ['actorType' => 'users', 'actorId' => 'alice', 'token' => 'abcdef', 'objectId' => 'meeting']));
+
+		try {
+			self::assertSame(Http::STATUS_FORBIDDEN, $this->controller->getExternalCallUrl()->getStatus());
+		} finally {
+			$this->restoreService(IClientService::class);
+		}
 	}
 }

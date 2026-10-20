@@ -28,6 +28,7 @@ use OCP\ICacheFactory;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\ISecureRandom;
 use OCP\UserStatus\IManager;
 use PHPUnit\Framework\Attributes\Group;
@@ -177,5 +178,19 @@ class ParticipantServiceTest extends TestCase {
 		$this->expectExceptionMessage('classified');
 
 		$this->service->startDialOutRequest($dialOutService, $room, 1, '+491601234567');
+	}
+
+	public function testUpdateAllPermissionsLogsCriticalAction(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(-1);
+		$room->method('getToken')->willReturn('abcdef');
+
+		$this->dispatcher->expects($this->once())
+			->method('dispatchTyped')
+			->with($this->callback(fn (CriticalActionPerformedEvent $event): bool => $event->getOperation() === 'spreed.participant_permissions.changed'
+				&& $event->getLogMessage() === 'Permissions of all participants in conversation "{token}" were changed (method: {method}, permissions: {permissions})'
+				&& $event->getParameters() === ['token' => 'abcdef', 'method' => Attendee::PERMISSIONS_MODIFY_SET, 'permissions' => 254]));
+
+		$this->service->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, 254);
 	}
 }

@@ -11,6 +11,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -33,6 +34,7 @@ use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Notification\IManager;
 use OCP\Security\Events\GenerateSecurePasswordEvent;
 use OCP\Security\ISecureRandom;
@@ -370,6 +372,17 @@ class RecordingService {
 	 */
 	private function finalizeRecording(Room $room, Participant $participant, File $fileNode, string $owner): void {
 		$this->notifyStoredRecording($room, $participant, $fileNode);
+
+		$this->eventDispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Recording of conversation "{token}" was stored as file {fileId} for user "{owner}"',
+			[
+				'token' => $room->getToken(),
+				'fileId' => $fileNode->getId(),
+				'owner' => $owner,
+			],
+			false,
+			Operation::RECORDING_STORED->value,
+		));
 
 		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
 		$shouldSummarize = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY);

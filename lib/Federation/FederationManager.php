@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -24,9 +25,11 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\IUser;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Notification\IManager;
 use SensitiveParameter;
 
@@ -59,6 +62,7 @@ class FederationManager {
 		private readonly IManager $notificationManager,
 		private readonly ICloudIdManager $cloudIdManager,
 		private readonly RestrictionValidator $restrictionValidator,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -205,6 +209,18 @@ class FederationManager {
 
 		$this->markNotificationProcessed($user->getUID(), $shareId);
 
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Invitation #{invitationId} to federated conversation "{remoteToken}" on "{remoteServerUrl}" was accepted',
+			[
+				'invitationId' => $invitation->getId(),
+				'remoteToken' => $invitation->getRemoteToken(),
+				'remoteServerUrl' => $invitation->getRemoteServerUrl(),
+				'token' => $room->getToken(),
+			],
+			false,
+			Operation::FEDERATION_INVITE_ACCEPTED->value,
+		));
+
 		return new Participant($room, $attendee, null);
 	}
 
@@ -260,6 +276,17 @@ class FederationManager {
 		$this->markNotificationProcessed($userId, $invitation->getId());
 
 		$this->backendNotifier->sendShareDeclined($invitation->getRemoteServerUrl(), $invitation->getRemoteAttendeeId(), $invitation->getAccessToken());
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Invitation #{invitationId} to federated conversation "{remoteToken}" on "{remoteServerUrl}" was rejected',
+			[
+				'invitationId' => $invitation->getId(),
+				'remoteToken' => $invitation->getRemoteToken(),
+				'remoteServerUrl' => $invitation->getRemoteServerUrl(),
+			],
+			false,
+			Operation::FEDERATION_INVITE_REJECTED->value,
+		));
 	}
 
 	/**

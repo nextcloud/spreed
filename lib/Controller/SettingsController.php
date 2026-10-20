@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -15,10 +16,12 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 
 class SettingsController extends OCSController {
 
@@ -29,6 +32,7 @@ class SettingsController extends OCSController {
 		private readonly IGroupManager $groupManager,
 		private readonly BeforePreferenceSetEventListener $preferenceListener,
 		private readonly ?string $userId,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -83,9 +87,21 @@ class SettingsController extends OCSController {
 			}
 		}
 
+		$sharedSecretChanged = $this->config->getAppValue('spreed', 'sip_bridge_shared_secret') !== $sharedSecret;
+
 		$this->config->setAppValue('spreed', 'sip_bridge_groups', json_encode($groups));
 		$this->config->setAppValue('spreed', 'sip_bridge_dialin_info', $dialInInfo);
 		$this->config->setAppValue('spreed', 'sip_bridge_shared_secret', $sharedSecret);
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'SIP bridge settings were changed: groups "{sipGroups}", shared secret {sharedSecret}',
+			[
+				'sipGroups' => implode(', ', $groups),
+				'sharedSecret' => $sharedSecretChanged ? 'changed' : 'unchanged',
+			],
+			false,
+			Operation::SIP_SETTINGS_UPDATED->value,
+		));
 
 		return new DataResponse(null);
 	}

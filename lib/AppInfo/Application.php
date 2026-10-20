@@ -86,6 +86,7 @@ use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\FloatingCall\FloatingCallPluginLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\AddMissingIndicesListener;
+use OCA\Talk\Listener\AuditLogListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
 use OCA\Talk\Listener\BotListener;
 use OCA\Talk\Listener\CalDavEventListener;
@@ -369,6 +370,16 @@ class Application extends App implements IBootstrap {
 
 		// Threads listeners
 		$context->registerEventListener(AttendeesRemovedEvent::class, ThreadListener::class);
+
+		// Admin audit log
+		$context->registerEventListener(RoomCreatedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(LobbyModifiedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(AttendeesAddedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, AuditLogListener::class);
+		$context->registerEventListener(BotEnabledEvent::class, AuditLogListener::class);
+		$context->registerEventListener(BotDisabledEvent::class, AuditLogListener::class);
 
 		// Video verification
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, PublicShareAuthListener::class);

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use DateTime;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -19,8 +20,10 @@ use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Ip\IFactory;
 use Psr\Log\LoggerInterface;
 
@@ -34,6 +37,7 @@ class BanService {
 		private readonly IRequest $request,
 		private readonly LoggerInterface $logger,
 		private readonly IFactory $ipFactory,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -119,7 +123,21 @@ class BanService {
 			}
 		}
 
-		return $this->banMapper->insert($ban);
+		$ban = $this->banMapper->insert($ban);
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'{bannedActorType} "{bannedActorId}" was banned from conversation "{token}" (ban #{banId})',
+			[
+				'bannedActorType' => $bannedActorType,
+				'bannedActorId' => $bannedActorId,
+				'token' => $room->getToken(),
+				'banId' => $ban->getId(),
+			],
+			false,
+			Operation::BAN_CREATED->value,
+		));
+
+		return $ban;
 	}
 
 	public function copyBanForRemoteAddress(Ban $ban, string $remoteAddress): void {
@@ -255,6 +273,19 @@ class BanService {
 		try {
 			$ban = $this->banMapper->findByBanIdAndRoom($banId, $roomId);
 			$this->banMapper->delete($ban);
+
+			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+				'Ban #{banId} of {bannedActorType} "{bannedActorId}" was removed from conversation #{roomId}',
+				[
+					'banId' => $banId,
+					'bannedActorType' => $ban->getBannedActorType(),
+					'bannedActorId' => $ban->getBannedActorId(),
+					// FIXME Should use token instead
+					'roomId' => $roomId,
+				],
+				false,
+				Operation::BAN_DELETED->value,
+			));
 		} catch (DoesNotExistException) {
 			// Ban does not exist
 		}

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\DialOutFailedException;
@@ -44,9 +45,11 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 
 /**
  * @psalm-import-type TalkCallPeer from ResponseDefinitions
@@ -68,6 +71,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		private readonly Config $talkConfig,
 		private readonly Authenticator $federationAuthenticator,
 		private readonly SIPDialOutService $dialOutService,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -212,6 +216,16 @@ class CallController extends AEnvironmentAwareOCSController {
 
 		$date = $this->timeFactory->getDateTime('now', $dateTimeZone)->format('Y-m-d');
 		$fileName = $cleanedRoomName . ' ' . $date . '.csv';
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Participants list of the call in conversation "{token}" was downloaded ({participants} participants)',
+			[
+				'token' => $this->room->getToken(),
+				'participants' => count($participants),
+			],
+			false,
+			Operation::CALL_PARTICIPANTS_EXPORTED->value,
+		));
 
 		return new DataDownloadResponse(stream_get_contents($output), $fileName, 'text/csv');
 	}

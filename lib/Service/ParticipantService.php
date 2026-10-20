@@ -13,6 +13,7 @@ use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Files_Sharing\Event\UserShareAccessUpdatedEvent;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
@@ -75,6 +76,7 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use OCP\UserStatus\IManager as IUserStatusManager;
@@ -342,6 +344,17 @@ class ParticipantService {
 
 	public function updateAllPermissions(Room $room, string $method, int $newState): void {
 		$this->attendeeMapper->modifyPermissions($room->getId(), $method, $newState);
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Permissions of all participants in conversation "{token}" were changed (method: {method}, permissions: {permissions})',
+			[
+				'token' => $room->getToken(),
+				'method' => $method,
+				'permissions' => $newState,
+			],
+			false,
+			Operation::PARTICIPANT_PERMISSIONS_CHANGED->value,
+		));
 	}
 
 	public function updateLastReadMessage(Participant $participant, int $lastReadMessage): void {

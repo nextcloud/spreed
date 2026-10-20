@@ -16,6 +16,7 @@ use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
+use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
@@ -36,6 +37,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Security\RateLimiting\ILimiter;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -436,7 +438,15 @@ class ChatManagerTest extends TestCase {
 		$this->chatManager->deleteMessages($chat);
 	}
 
-	public function testDeleteMessage(): void {
+	public static function dataDeleteMessage(): array {
+		return [
+			'own message' => ['user', false],
+			'message of another participant' => ['other', true],
+		];
+	}
+
+	#[DataProvider('dataDeleteMessage')]
+	public function testDeleteMessage(string $messageActorId, bool $expectAuditEvent): void {
 		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$attendee = $mapper->createAttendeeFromRow([
 			'a_id' => 1,
@@ -486,11 +496,23 @@ class ChatManagerTest extends TestCase {
 			->willReturn('123456');
 		$comment->method('getVerb')
 			->willReturn('comment');
+		$comment->method('getActorType')
+			->willReturn(Attendee::ACTOR_USERS);
+		$comment->method('getActorId')
+			->willReturn($messageActorId);
 		$comment->expects($this->once())
 			->method('setMessage');
 		$comment->expects($this->once())
 			->method('setVerb')
 			->with('comment_deleted');
+		$chat->method('getToken')
+			->willReturn('t0k3n');
+
+		$this->dispatcher->expects($expectAuditEvent ? $this->once() : $this->never())
+			->method('dispatchTyped')
+			->with($this->callback(fn (CriticalActionPerformedEvent $event): bool => $event->getOperation() === 'spreed.message.deleted'
+				&& $event->getLogMessage() === 'Message #{messageId} of {messageActorType} "{messageActorId}" in conversation "{token}" was deleted by a moderator'
+				&& $event->getParameters() === ['messageId' => '123456', 'messageActorType' => 'users', 'messageActorId' => 'other', 'token' => 't0k3n']));
 
 		$this->commentsManager->expects($this->once())
 			->method('save')
@@ -700,6 +722,11 @@ class ChatManagerTest extends TestCase {
 		$this->timeFactory->method('getDateTime')
 			->willReturn($date);
 
+		$this->dispatcher->expects($this->once())
+			->method('dispatchTyped')
+			->with($this->callback(fn (CriticalActionPerformedEvent $event): bool => $event->getOperation() === 'spreed.chat_history.cleared'
+				&& $event->getParameters() === ['token' => 't0k3n']));
+
 		$manager = $this->getManager(['addSystemMessage']);
 		$manager->expects($this->once())
 			->method('addSystemMessage')
@@ -713,6 +740,33 @@ class ChatManagerTest extends TestCase {
 				false
 			);
 		$manager->clearHistory($chat, 'users', 'admin');
+	}
+
+	public function testEditMessageOfAnotherParticipantLogsCriticalAction(): void {
+		$chat = $this->createMock(Room::class);
+		$chat->method('getToken')->willReturn('t0k3n');
+		$attendee = new Attendee();
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('moderator');
+		$participant = new Participant($chat, $attendee, null);
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getId')->willReturn('123456');
+		$comment->method('getVerb')->willReturn('comment');
+		$comment->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
+		$comment->method('getActorId')->willReturn('author');
+		$comment->method('getMetaData')->willReturn([Message::METADATA_SILENT => true]);
+
+		$this->dispatcher->expects($this->once())
+			->method('dispatchTyped')
+			->with($this->callback(fn (CriticalActionPerformedEvent $event): bool => $event->getOperation() === 'spreed.message.edited'
+				&& $event->getLogMessage() === 'Message #{messageId} of {messageActorType} "{messageActorId}" in conversation "{token}" was edited by a moderator'
+				&& $event->getParameters() === ['messageId' => '123456', 'messageActorType' => 'users', 'messageActorId' => 'author', 'token' => 't0k3n']));
+
+		$chatManager = $this->getManager(['addSystemMessage']);
+		$chatManager->method('addSystemMessage')->willReturn($this->createStub(IComment::class));
+
+		$chatManager->editMessage($chat, $comment, $participant, new \DateTime(), 'Edited message');
 	}
 
 	public static function dataSearchIsPartOfConversationNameOrAtAll(): array {

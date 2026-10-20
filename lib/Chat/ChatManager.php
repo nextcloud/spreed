@@ -11,6 +11,7 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
+use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\BackgroundJob\UnpinMessage;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
@@ -48,6 +49,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Security\RateLimiting\ILimiter;
 use OCP\Security\RateLimiting\IRateLimitExceededException;
@@ -649,6 +651,7 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
+		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'deleted', Operation::MESSAGE_DELETED);
 
 		$messageId = (int)$comment->getId();
 		$this->attachmentService->deleteAttachmentByMessageId($messageId);
@@ -677,6 +680,29 @@ class ChatManager {
 			$comment,
 			true
 		);
+	}
+
+	/**
+	 * Moderators acting on someone else's message are audited, authors changing their own messages are not.
+	 * Only the fact is logged, never the message text.
+	 */
+	protected function logModerationOfOthersMessage(Room $chat, IComment $comment, Participant $participant, string $action, Operation $operation): void {
+		$attendee = $participant->getAttendee();
+		if ($comment->getActorType() === $attendee->getActorType() && $comment->getActorId() === $attendee->getActorId()) {
+			return;
+		}
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Message #{messageId} of {messageActorType} "{messageActorId}" in conversation "{token}" was ' . $action . ' by a moderator',
+			[
+				'messageId' => $comment->getId(),
+				'messageActorType' => $comment->getActorType(),
+				'messageActorId' => $comment->getActorId(),
+				'token' => $chat->getToken(),
+			],
+			false,
+			$operation->value,
+		));
 	}
 
 	/**
@@ -726,6 +752,7 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
+		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'edited', Operation::MESSAGE_EDITED);
 		$this->referenceManager->invalidateCache($chat->getToken());
 
 		if (!$wasSilent) {
@@ -908,6 +935,13 @@ class ChatManager {
 
 		$this->pollService->deleteByRoomId($chat->getId());
 		$this->threadService->deleteByRoom($chat);
+
+		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+			'Chat history of conversation "{token}" was cleared',
+			['token' => $chat->getToken()],
+			false,
+			Operation::CHAT_HISTORY_CLEARED->value,
+		));
 
 		return $this->addSystemMessage(
 			$chat,
