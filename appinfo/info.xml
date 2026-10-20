@@ -91,6 +91,7 @@
 			<step>OCA\Talk\Migration\CacheUserDisplayNames</step>
 			<step>OCA\Talk\Migration\FixLastReadMessageZero</step>
 			<step>OCA\Talk\Migration\RegenerateSignalingKeys</step>
+			<step>OCA\Talk\Migration\FixHasFederationFlag</step>
 		</post-migration>
 	</repair-steps>
 
