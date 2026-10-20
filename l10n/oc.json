@@ -1114,17 +1114,11 @@
     "__language_name__" : "Occitan",
     "Tasks" : "Prètzfaches",
     "Talk to %s" : "Parlar a %s",
-    "Failed" : "Fracàs",
     "Open poll • You voted already" : "Sondatge・Avètz ja votat",
     "Open poll • Click to vote" : "Sondatge・Clicar per votar",
     "Poll • Ended" : "Sondatge・Terminat",
-    "Talk recording from {time} ({conversation})" : "Enregistrament Talk a partir de {time} ({conversation})",
     "Send" : "Enviar",
     "Submit vote" : "Enviar lo vòt",
-    "Your privacy setting has been saved" : "Paramètre de confidencialitat enregistrat",
-    "Failed to save sounds setting" : "Cargament impossible del paramètre de son",
-    "Sounds setting saved" : "Paramètres de son enregistrats",
-    "Search …" : "Recercar...",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Avètz rejonch la conversacion dins una autra fenèstra o periferic. Aquò es actualament pas pres en cargar per Nextcloud Talk doncas aquesta session es estada tampada."
+    "Search …" : "Recercar..."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

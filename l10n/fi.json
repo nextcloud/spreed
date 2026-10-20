@@ -1334,23 +1334,12 @@
     "Call summary - {title}" : "Puhelun yhteenveto - {title}",
     "Talk to %s" : "Keskustele käyttäjän %s kanssa",
     "Talk conversation for event" : "Tapahtuman Talk-keskustelu",
-    "Failed" : "Epäonnistui",
     "Schedule a meeting from your calendar. A Talk conversation needs to be set as location to show up here" : "Sovi tapaaminen kalenterissasi. Talk-keskustelu pitää asettaa sijainniksi, jotta se näkyy tässä",
-    "Set reminder for later today" : "Aseta muistutus myöhemmälle ajankohdalle tälle päivälle",
-    "Set reminder for tomorrow" : "Aseta muistutus huomiselle",
-    "Set reminder for this weekend" : "Aseta muistutus tälle viikonlopulle",
-    "Set reminder for next week" : "Aseta muistutus seuraavalle viikolle",
-    "Talk recording from {time} ({conversation})" : "Äänitallenne {time} ({conversation})",
     "Send" : "Lähetä",
     "Can post messages and reactions" : "Voi lähettää viestejä ja reaktioita",
-    "Anonymous poll" : "Anonyymi kysely",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Kyselyn tulokset • %n ääni","Kyselyn tulokset • %n ääntä"],
     "Submit vote" : "Lähetä ääni",
-    "Your privacy setting has been saved" : "Yksityisyysasetuksesi on tallennettu",
-    "Failed to save sounds setting" : "Ääniasetusten tallentaminen epäonnistui",
-    "Sounds setting saved" : "Ääniasetukset tallennettu",
     "Always shown if recording consent is required" : "Näytetään aina, jos tarvitaan suostumus äänitykseen",
-    "Search …" : "Hae…",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Liityit keskusteluun toisessa ikkunassa tai toisella laitteella. Tämä ei ole tällä hetkellä tuettua Nextcloud Talkissa, joten tämä istunto suljettiin."
+    "Search …" : "Hae…"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

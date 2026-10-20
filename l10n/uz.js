@@ -393,7 +393,6 @@ OC.L10N.register(
     "Reports" : "Hisobotlar",
     "Talk conversation for event" : "Tadbir uchun suhbat",
     "Enable Federation in Talk app" : "Talk ilovasida Jamg'armani yoqish",
-    "Send" : "Yuborish",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi."
+    "Send" : "Yuborish"
 },
 "nplurals=1; plural=0;");
