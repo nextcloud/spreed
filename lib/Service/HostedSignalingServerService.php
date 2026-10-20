@@ -228,7 +228,7 @@ class HostedSignalingServerService {
 				'url' => $registerAccountData->getUrl(),
 			],
 			false,
-			Operation::HostedSignalingAccountCreated->value,
+			Operation::HOSTED_SIGNALING_ACCOUNT_CREATED->value,
 		));
 
 		return new AccountId($accountId);
@@ -504,7 +504,7 @@ class HostedSignalingServerService {
 			'Hosted signaling server account {accountId} was deleted',
 			['accountId' => $accountId->get()],
 			false,
-			Operation::HostedSignalingAccountDeleted->value,
+			Operation::HOSTED_SIGNALING_ACCOUNT_DELETED->value,
 		));
 	}
 }

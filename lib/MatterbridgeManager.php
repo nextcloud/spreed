@@ -142,7 +142,7 @@ class MatterbridgeManager {
 				'parts' => count($newBridge['parts']),
 			],
 			false,
-			Operation::BridgeUpdated->value,
+			Operation::BRIDGE_UPDATED->value,
 		));
 
 		$logContent = $this->getBridgeLog($room);
@@ -175,7 +175,7 @@ class MatterbridgeManager {
 			'Matterbridge of conversation "{token}" was deleted',
 			['token' => $room->getToken()],
 			false,
-			Operation::BridgeDeleted->value,
+			Operation::BRIDGE_DELETED->value,
 		));
 
 		return true;

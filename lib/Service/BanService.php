@@ -134,7 +134,7 @@ class BanService {
 				'banId' => $ban->getId(),
 			],
 			false,
-			Operation::BanCreated->value,
+			Operation::BAN_CREATED->value,
 		));
 
 		return $ban;
@@ -284,7 +284,7 @@ class BanService {
 					'roomId' => $roomId,
 				],
 				false,
-				Operation::BanDeleted->value,
+				Operation::BAN_DELETED->value,
 			));
 		} catch (DoesNotExistException) {
 			// Ban does not exist

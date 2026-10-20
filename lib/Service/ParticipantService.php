@@ -353,7 +353,7 @@ class ParticipantService {
 				'permissions' => $newState,
 			],
 			false,
-			Operation::ParticipantPermissionsChanged->value,
+			Operation::PARTICIPANT_PERMISSIONS_CHANGED->value,
 		));
 	}
 

@@ -218,7 +218,7 @@ class FederationManager {
 				'token' => $room->getToken(),
 			],
 			false,
-			Operation::FederationInviteAccepted->value,
+			Operation::FEDERATION_INVITE_ACCEPTED->value,
 		));
 
 		return new Participant($room, $attendee, null);
@@ -285,7 +285,7 @@ class FederationManager {
 				'remoteServerUrl' => $invitation->getRemoteServerUrl(),
 			],
 			false,
-			Operation::FederationInviteRejected->value,
+			Operation::FEDERATION_INVITE_REJECTED->value,
 		));
 	}
 

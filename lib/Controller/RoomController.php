@@ -2379,7 +2379,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 							'objectId' => $room->getObjectId(),
 						],
 						false,
-						Operation::ExternalCallPolicyParticipantRemoved->value,
+						Operation::EXTERNAL_CALL_POLICY_PARTICIPANT_REMOVED->value,
 					));
 				}
 				return new DataResponse(['error' => 'ban'], Http::STATUS_FORBIDDEN);
@@ -3708,7 +3708,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 					'objectId' => $this->room->getObjectId(),
 				],
 				false,
-				Operation::ExternalCallPolicyParticipantRemoved->value,
+				Operation::EXTERNAL_CALL_POLICY_PARTICIPANT_REMOVED->value,
 			));
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}

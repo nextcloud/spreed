@@ -381,7 +381,7 @@ class RecordingService {
 				'owner' => $owner,
 			],
 			false,
-			Operation::RecordingStored->value,
+			Operation::RECORDING_STORED->value,
 		));
 
 		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);

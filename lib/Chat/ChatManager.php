@@ -651,7 +651,7 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
-		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'deleted', Operation::MessageDeleted);
+		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'deleted', Operation::MESSAGE_DELETED);
 
 		$messageId = (int)$comment->getId();
 		$this->attachmentService->deleteAttachmentByMessageId($messageId);
@@ -752,7 +752,7 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
-		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'edited', Operation::MessageEdited);
+		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'edited', Operation::MESSAGE_EDITED);
 		$this->referenceManager->invalidateCache($chat->getToken());
 
 		if (!$wasSilent) {
@@ -940,7 +940,7 @@ class ChatManager {
 			'Chat history of conversation "{token}" was cleared',
 			['token' => $chat->getToken()],
 			false,
-			Operation::ChatHistoryCleared->value,
+			Operation::CHAT_HISTORY_CLEARED->value,
 		));
 
 		return $this->addSystemMessage(

@@ -123,7 +123,7 @@ class BotListener implements IEventListener {
 			$bot->setFeatures($features);
 			$bot = $this->botServerMapper->insert($bot);
 
-			$this->logBotRegistration($bot, 'installed', Operation::BotInstalled);
+			$this->logBotRegistration($bot, 'installed', Operation::BOT_INSTALLED);
 		}
 	}
 
@@ -133,7 +133,7 @@ class BotListener implements IEventListener {
 			$this->botConversationMapper->deleteByBotId($bot->getId());
 			$this->botServerMapper->delete($bot);
 
-			$this->logBotRegistration($bot, 'uninstalled', Operation::BotUninstalled);
+			$this->logBotRegistration($bot, 'uninstalled', Operation::BOT_UNINSTALLED);
 		} catch (DoesNotExistException) {
 		}
 	}

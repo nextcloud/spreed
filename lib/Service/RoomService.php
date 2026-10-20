@@ -1599,7 +1599,7 @@ class RoomService {
 					'objectId' => $room->getObjectId(),
 				],
 				false,
-				Operation::ConversationDeleted->value,
+				Operation::CONVERSATION_DELETED->value,
 			));
 		}
 	}

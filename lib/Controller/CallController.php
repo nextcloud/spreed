@@ -224,7 +224,7 @@ class CallController extends AEnvironmentAwareOCSController {
 				'participants' => count($participants),
 			],
 			false,
-			Operation::CallParticipantsExported->value,
+			Operation::CALL_PARTICIPANTS_EXPORTED->value,
 		));
 
 		return new DataDownloadResponse(stream_get_contents($output), $fileName, 'text/csv');

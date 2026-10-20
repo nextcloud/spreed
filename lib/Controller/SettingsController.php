@@ -100,7 +100,7 @@ class SettingsController extends OCSController {
 				'sharedSecret' => $sharedSecretChanged ? 'changed' : 'unchanged',
 			],
 			false,
-			Operation::SipSettingsUpdated->value,
+			Operation::SIP_SETTINGS_UPDATED->value,
 		));
 
 		return new DataResponse(null);

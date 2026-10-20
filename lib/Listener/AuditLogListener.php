@@ -54,9 +54,9 @@ class AuditLogListener implements IEventListener {
 		} elseif ($event instanceof ParticipantModifiedEvent) {
 			$this->participantModified($event);
 		} elseif ($event instanceof BotEnabledEvent) {
-			$this->botToggled($event->getRoom(), $event->getBotServer(), 'enabled', Operation::ConversationBotEnabled);
+			$this->botToggled($event->getRoom(), $event->getBotServer(), 'enabled', Operation::CONVERSATION_BOT_ENABLED);
 		} elseif ($event instanceof BotDisabledEvent) {
-			$this->botToggled($event->getRoom(), $event->getBotServer(), 'disabled', Operation::ConversationBotDisabled);
+			$this->botToggled($event->getRoom(), $event->getBotServer(), 'disabled', Operation::CONVERSATION_BOT_DISABLED);
 		}
 	}
 
@@ -71,7 +71,7 @@ class AuditLogListener implements IEventListener {
 			'conversationType' => $this->conversationTypeLabel($room->getType()),
 			'objectType' => $room->getObjectType(),
 			'objectId' => $room->getObjectId(),
-		], Operation::ConversationCreated);
+		], Operation::CONVERSATION_CREATED);
 	}
 
 	private function lobbyModified(LobbyModifiedEvent $event): void {
@@ -84,7 +84,7 @@ class AuditLogListener implements IEventListener {
 			'oldLobbyState' => $this->formatValue($event->getOldValue()),
 			'lobbyState' => $this->formatValue($event->getNewValue()),
 			'lobbyTimer' => $event->getLobbyTimer()?->format(\DateTimeInterface::ATOM),
-		], Operation::ConversationLobbyChanged);
+		], Operation::CONVERSATION_LOBBY_CHANGED);
 	}
 
 	private function roomModified(RoomModifiedEvent $event): void {
@@ -95,19 +95,19 @@ class AuditLogListener implements IEventListener {
 				'token' => $token,
 				'oldConversationType' => $this->conversationTypeLabel($event->getOldValue()),
 				'conversationType' => $this->conversationTypeLabel($event->getNewValue()),
-			], Operation::ConversationTypeChanged),
+			], Operation::CONVERSATION_TYPE_CHANGED),
 			// The value is the password itself, so only whether one is set is logged
 			ARoomModifiedEvent::PROPERTY_PASSWORD => $this->log('Password protection of conversation "{token}" was {passwordProtection}', [
 				'token' => $token,
 				'passwordProtection' => $event->getNewValue() !== '' && $event->getNewValue() !== null ? 'enabled' : 'disabled',
-			], Operation::ConversationPasswordChanged),
-			ARoomModifiedEvent::PROPERTY_LISTABLE => $this->logValueChange('Listable scope', $token, $event, Operation::ConversationListableChanged),
-			ARoomModifiedEvent::PROPERTY_READ_ONLY => $this->logValueChange('Read-only state', $token, $event, Operation::ConversationReadOnlyChanged),
-			ARoomModifiedEvent::PROPERTY_SIP_ENABLED => $this->logValueChange('SIP dial-in state', $token, $event, Operation::ConversationSipChanged),
-			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS => $this->logValueChange('Default permissions', $token, $event, Operation::ConversationPermissionsChanged),
-			ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS => $this->logValueChange('Mention permissions', $token, $event, Operation::ConversationMentionPermissionsChanged),
-			ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->logValueChange('Message expiration', $token, $event, Operation::ConversationMessageExpirationChanged),
-			ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT => $this->logValueChange('Recording consent requirement', $token, $event, Operation::ConversationRecordingConsentChanged),
+			], Operation::CONVERSATION_PASSWORD_CHANGED),
+			ARoomModifiedEvent::PROPERTY_LISTABLE => $this->logValueChange('Listable scope', $token, $event, Operation::CONVERSATION_LISTABLE_CHANGED),
+			ARoomModifiedEvent::PROPERTY_READ_ONLY => $this->logValueChange('Read-only state', $token, $event, Operation::CONVERSATION_READ_ONLY_CHANGED),
+			ARoomModifiedEvent::PROPERTY_SIP_ENABLED => $this->logValueChange('SIP dial-in state', $token, $event, Operation::CONVERSATION_SIP_CHANGED),
+			ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS => $this->logValueChange('Default permissions', $token, $event, Operation::CONVERSATION_PERMISSIONS_CHANGED),
+			ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS => $this->logValueChange('Mention permissions', $token, $event, Operation::CONVERSATION_MENTION_PERMISSIONS_CHANGED),
+			ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->logValueChange('Message expiration', $token, $event, Operation::CONVERSATION_MESSAGE_EXPIRATION_CHANGED),
+			ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT => $this->logValueChange('Recording consent requirement', $token, $event, Operation::CONVERSATION_RECORDING_CONSENT_CHANGED),
 			ARoomModifiedEvent::PROPERTY_CALL_RECORDING => $this->callRecordingModified($token, $event),
 			default => null,
 		};
@@ -124,11 +124,11 @@ class AuditLogListener implements IEventListener {
 			$this->log('Recording of conversation "{token}" was started ({recordingType})', [
 				'token' => $token,
 				'recordingType' => $newStatus === Room::RECORDING_VIDEO ? 'video' : 'audio',
-			], Operation::RecordingStarted);
+			], Operation::RECORDING_STARTED);
 		} elseif ($newStatus === Room::RECORDING_NONE && in_array($oldStatus, [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO], true)) {
 			$this->log('Recording of conversation "{token}" was stopped', [
 				'token' => $token,
-			], Operation::RecordingStopped);
+			], Operation::RECORDING_STOPPED);
 		}
 	}
 
@@ -148,7 +148,7 @@ class AuditLogListener implements IEventListener {
 				'actorType' => $attendee->getActorType(),
 				'token' => $room->getToken(),
 				'participantType' => $this->participantTypeLabel($attendee->getParticipantType()),
-			], Operation::ParticipantAdded);
+			], Operation::PARTICIPANT_ADDED);
 		}
 	}
 
@@ -164,7 +164,7 @@ class AuditLogListener implements IEventListener {
 			'actorType' => $attendee->getActorType(),
 			'token' => $room->getToken(),
 			'reason' => $event->getReason(),
-		], Operation::ParticipantRemoved);
+		], Operation::PARTICIPANT_REMOVED);
 	}
 
 	private function participantModified(ParticipantModifiedEvent $event): void {
@@ -179,11 +179,11 @@ class AuditLogListener implements IEventListener {
 			AParticipantModifiedEvent::PROPERTY_TYPE => $this->log('Participant type of {actorType} "{actorId}" in conversation "{token}" was changed from {oldParticipantType} to {participantType}', $parameters + [
 				'oldParticipantType' => $event->getOldValue() === null ? null : $this->participantTypeLabel((int)$event->getOldValue()),
 				'participantType' => $this->participantTypeLabel((int)$event->getNewValue()),
-			], Operation::ParticipantTypeChanged),
+			], Operation::PARTICIPANT_TYPE_CHANGED),
 			AParticipantModifiedEvent::PROPERTY_PERMISSIONS => $this->log('Permissions of {actorType} "{actorId}" in conversation "{token}" were changed from {oldPermissions} to {permissions}', $parameters + [
 				'oldPermissions' => $event->getOldValue(),
 				'permissions' => $event->getNewValue(),
-			], Operation::ParticipantPermissionsChanged),
+			], Operation::PARTICIPANT_PERMISSIONS_CHANGED),
 			default => null,
 		};
 	}
