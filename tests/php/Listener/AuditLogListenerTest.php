@@ -71,7 +71,7 @@ class AuditLogListenerTest extends TestCase {
 	public function testRoomCreated(): void {
 		$this->listener->handle(new RoomCreatedEvent($this->createRoom(Room::TYPE_PUBLIC)));
 
-		$this->assertAuditEvent('spreed.conversation.created', 'Conversation "%s" was created as %s conversation', [
+		$this->assertAuditEvent('spreed.conversation.created', 'Conversation "{token}" was created as {conversationType} conversation', [
 			'token' => 'abcdef',
 			'conversationType' => 'public',
 			'objectType' => 'file',
@@ -97,7 +97,7 @@ class AuditLogListenerTest extends TestCase {
 	public function testTypeChanged(): void {
 		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_TYPE, Room::TYPE_PUBLIC, Room::TYPE_GROUP));
 
-		$this->assertAuditEvent('spreed.conversation_type.changed', 'Type of conversation "%s" was changed from %s to %s', [
+		$this->assertAuditEvent('spreed.conversation_type.changed', 'Type of conversation "{token}" was changed from {oldConversationType} to {conversationType}', [
 			'token' => 'abcdef',
 			'oldConversationType' => 'group',
 			'conversationType' => 'public',
@@ -115,7 +115,7 @@ class AuditLogListenerTest extends TestCase {
 	public function testPasswordChanged(string $password, string $expected): void {
 		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), ARoomModifiedEvent::PROPERTY_PASSWORD, $password));
 
-		$this->assertAuditEvent('spreed.conversation_password.changed', 'Password protection of conversation "%s" was %s', [
+		$this->assertAuditEvent('spreed.conversation_password.changed', 'Password protection of conversation "{token}" was {passwordProtection}', [
 			'token' => 'abcdef',
 			'passwordProtection' => $expected,
 		]);
@@ -138,7 +138,7 @@ class AuditLogListenerTest extends TestCase {
 	public function testValueChanged(string $property, int $newValue, int $oldValue, string $setting, string $operation): void {
 		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), $property, $newValue, $oldValue));
 
-		$this->assertAuditEvent($operation, $setting . ' of conversation "%s" was changed from %s to %s', [
+		$this->assertAuditEvent($operation, $setting . ' of conversation "{token}" was changed from {oldValue} to {newValue}', [
 			'token' => 'abcdef',
 			'oldValue' => $oldValue,
 			'newValue' => $newValue,
@@ -155,7 +155,7 @@ class AuditLogListenerTest extends TestCase {
 		$timer = new \DateTime('2026-10-16T12:00:00+00:00');
 		$this->listener->handle(new LobbyModifiedEvent($this->createRoom(), Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE, $timer, false));
 
-		$this->assertAuditEvent('spreed.conversation_lobby.changed', 'Lobby of conversation "%s" was changed from %s to %s', [
+		$this->assertAuditEvent('spreed.conversation_lobby.changed', 'Lobby of conversation "{token}" was changed from {oldLobbyState} to {lobbyState}', [
 			'token' => 'abcdef',
 			'oldLobbyState' => Webinary::LOBBY_NONE,
 			'lobbyState' => Webinary::LOBBY_NON_MODERATORS,
@@ -187,18 +187,16 @@ class AuditLogListenerTest extends TestCase {
 
 		$this->assertCount(2, $this->auditEvents);
 		$this->assertSame('spreed.participant.added', $this->auditEvents[0]->getOperation());
-		$this->assertSame('Participant "%s" (%s, attendee %s) was added to conversation "%s" as %s', $this->auditEvents[0]->getLogMessage());
+		$this->assertSame('{actorType} "{actorId}" was added to conversation "{token}" as {participantType}', $this->auditEvents[0]->getLogMessage());
 		$this->assertSame([
 			'actorId' => 'alice',
 			'actorType' => 'users',
-			'attendeeId' => 7,
 			'token' => 'abcdef',
 			'participantType' => 'moderator',
 		], $this->auditEvents[0]->getParameters());
 		$this->assertSame([
 			'actorId' => null,
 			'actorType' => 'emails',
-			'attendeeId' => 9,
 			'token' => 'abcdef',
 			'participantType' => 'guest',
 		], $this->auditEvents[1]->getParameters());
@@ -215,10 +213,9 @@ class AuditLogListenerTest extends TestCase {
 	public function testAttendeeRemoved(): void {
 		$this->listener->handle(new AttendeeRemovedEvent($this->createRoom(), $this->createAttendee(Attendee::ACTOR_GROUPS, 'admins'), AAttendeeRemovedEvent::REASON_REMOVED, []));
 
-		$this->assertAuditEvent('spreed.participant.removed', 'Participant "%s" (%s, attendee %s) was removed from conversation "%s" (reason: %s)', [
+		$this->assertAuditEvent('spreed.participant.removed', '{actorType} "{actorId}" was removed from conversation "{token}" (reason: {reason})', [
 			'actorId' => 'admins',
 			'actorType' => 'groups',
-			'attendeeId' => 7,
 			'token' => 'abcdef',
 			'reason' => 'remove',
 		]);
@@ -235,10 +232,9 @@ class AuditLogListenerTest extends TestCase {
 		$participant = new Participant($room, $this->createAttendee(Attendee::ACTOR_USERS, 'alice'), null);
 		$this->listener->handle(new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_TYPE, Participant::MODERATOR, Participant::USER));
 
-		$this->assertAuditEvent('spreed.participant_type.changed', 'Participant type of "%s" (%s, attendee %s) in conversation "%s" was changed from %s to %s', [
+		$this->assertAuditEvent('spreed.participant_type.changed', 'Participant type of {actorType} "{actorId}" in conversation "{token}" was changed from {oldParticipantType} to {participantType}', [
 			'actorId' => 'alice',
 			'actorType' => 'users',
-			'attendeeId' => 7,
 			'token' => 'abcdef',
 			'oldParticipantType' => 'user',
 			'participantType' => 'moderator',
@@ -250,10 +246,9 @@ class AuditLogListenerTest extends TestCase {
 		$participant = new Participant($room, $this->createAttendee(Attendee::ACTOR_USERS, 'alice'), null);
 		$this->listener->handle(new ParticipantModifiedEvent($room, $participant, AParticipantModifiedEvent::PROPERTY_PERMISSIONS, 254, 0));
 
-		$this->assertAuditEvent('spreed.participant_permissions.changed', 'Permissions of "%s" (%s, attendee %s) in conversation "%s" were changed from %s to %s', [
+		$this->assertAuditEvent('spreed.participant_permissions.changed', 'Permissions of {actorType} "{actorId}" in conversation "{token}" were changed from {oldPermissions} to {permissions}', [
 			'actorId' => 'alice',
 			'actorType' => 'users',
-			'attendeeId' => 7,
 			'token' => 'abcdef',
 			'oldPermissions' => 0,
 			'permissions' => 254,
@@ -270,9 +265,9 @@ class AuditLogListenerTest extends TestCase {
 
 	public static function dataCallRecording(): array {
 		return [
-			[Room::RECORDING_VIDEO, Room::RECORDING_VIDEO_STARTING, 'spreed.recording.started', 'Recording of conversation "%s" was started (%s)', ['token' => 'abcdef', 'recordingType' => 'video']],
-			[Room::RECORDING_AUDIO, Room::RECORDING_AUDIO_STARTING, 'spreed.recording.started', 'Recording of conversation "%s" was started (%s)', ['token' => 'abcdef', 'recordingType' => 'audio']],
-			[Room::RECORDING_NONE, Room::RECORDING_VIDEO, 'spreed.recording.stopped', 'Recording of conversation "%s" was stopped', ['token' => 'abcdef']],
+			[Room::RECORDING_VIDEO, Room::RECORDING_VIDEO_STARTING, 'spreed.recording.started', 'Recording of conversation "{token}" was started ({recordingType})', ['token' => 'abcdef', 'recordingType' => 'video']],
+			[Room::RECORDING_AUDIO, Room::RECORDING_AUDIO_STARTING, 'spreed.recording.started', 'Recording of conversation "{token}" was started ({recordingType})', ['token' => 'abcdef', 'recordingType' => 'audio']],
+			[Room::RECORDING_NONE, Room::RECORDING_VIDEO, 'spreed.recording.stopped', 'Recording of conversation "{token}" was stopped', ['token' => 'abcdef']],
 		];
 	}
 
@@ -309,7 +304,7 @@ class AuditLogListenerTest extends TestCase {
 
 		$this->assertCount(2, $this->auditEvents);
 		$this->assertSame('spreed.conversation_bot.enabled', $this->auditEvents[0]->getOperation());
-		$this->assertSame('Bot %s ("%s") was enabled in conversation "%s"', $this->auditEvents[0]->getLogMessage());
+		$this->assertSame('Bot #{botId} ("{botName}") was enabled in conversation "{token}"', $this->auditEvents[0]->getLogMessage());
 		$this->assertSame(['botId' => 3, 'botName' => 'Helper', 'token' => 'abcdef'], $this->auditEvents[0]->getParameters());
 		$this->assertSame('spreed.conversation_bot.disabled', $this->auditEvents[1]->getOperation());
 	}

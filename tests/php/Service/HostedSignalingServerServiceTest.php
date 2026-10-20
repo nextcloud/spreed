@@ -12,6 +12,7 @@ use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -41,6 +42,7 @@ class HostedSignalingServerServiceTest extends TestCase {
 
 		$this->service = new HostedSignalingServerService(
 			$config,
+			$this->createMock(IAppConfig::class),
 			$clientService,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(IL10N::class),
