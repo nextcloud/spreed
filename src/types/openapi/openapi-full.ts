@@ -2471,7 +2471,7 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Get the certificate expiration for a host
+         * Get the certificate expiration for a configured TURN, STUN, signaling or recording server
          * @description This endpoint requires admin access
          */
         get: operations["certificate-get-certificate-expiration"];
