@@ -974,16 +974,12 @@
     "Reports" : "Informes",
     "Call summary" : "Resume de llamaes",
     "Talk to %s" : "Falar con «%s»",
-    "Failed" : "Falló",
     "Open poll • You voted already" : "Encuesta abierta • Yá votesti",
     "Open poll • Click to vote" : "Encuesta abierta • Calca pa votar",
     "Poll • Ended" : "Encuesta • Finó",
     "Send" : "Unviar",
-    "Anonymous poll" : "Encuesta anónima",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Resultaos de la encuesta • %n votu","Resultaos de la encuesta • %n votos"],
     "Submit vote" : "Unviar el votu",
-    "Failed to save sounds setting" : "Nun se pue guardar la configuración de los soníos",
-    "Sounds setting saved" : "Guardóse la configuración de los soníos",
     "Search …" : "Buscar…"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

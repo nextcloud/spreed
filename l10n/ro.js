@@ -917,15 +917,7 @@ OC.L10N.register(
     "Tasks" : "Sarcini",
     "Notes" : "Notițe",
     "Talk to %s" : "Conversați cu %s",
-    "Failed" : "Eșuat",
-    "Set reminder for later today" : "Setează memo pentru azi, mai târziu",
-    "Set reminder for tomorrow" : "Setează memo pentru mâine",
-    "Set reminder for this weekend" : "Setează memo pentru acest weekend",
-    "Set reminder for next week" : "Setează memo pentru săptămâna viitoare",
     "Send" : "Trimite",
-    "Your privacy setting has been saved" : "Setările de confidențialitate au fost salvate",
-    "Failed to save sounds setting" : "Eroare la salvarea setărilor de sunet",
-    "Sounds setting saved" : "Setările de sunet au fost salvate",
     "Search …" : "Caută ..."
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
