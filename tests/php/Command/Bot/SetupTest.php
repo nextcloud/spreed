@@ -76,9 +76,10 @@ class SetupTest extends TestCase {
 			]);
 	}
 
-	protected function mockRoom(bool $classified): Room&MockObject {
+	protected function mockRoom(bool $classified, string $objectType = ''): Room&MockObject {
 		$room = $this->createMock(Room::class);
 		$room->method('isFederatedConversation')->willReturn(false);
+		$room->method('getObjectType')->willReturn($objectType);
 		$room->method('isClassified')->willReturn($classified);
 
 		$this->roomManager->method('getRoomByToken')
@@ -96,6 +97,23 @@ class SetupTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Classified conversations can not have bots: t0k3n</error>'));
+		$this->botConversationMapper->expects($this->never())
+			->method('insert');
+		$this->dispatcher->expects($this->never())
+			->method('dispatchTyped');
+
+		$returnCode = self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+		$this->assertSame(2, $returnCode);
+	}
+
+	public function testSetupInMatrixConversationIsRejected(): void {
+		$this->mockInput();
+		$this->mockBotServer();
+		$this->mockRoom(false, Room::OBJECT_TYPE_MATRIX);
+
+		$this->output->expects($this->once())
+			->method('writeln')
+			->with($this->equalTo('<error>Matrix conversations can not have bots: t0k3n</error>'));
 		$this->botConversationMapper->expects($this->never())
 			->method('insert');
 		$this->dispatcher->expects($this->never())

@@ -156,6 +156,7 @@ export const CONVERSATION = {
 		EXTERNAL_CALL: 'external_call',
 		CLASSIFIED: 'classified',
 		CLASSIFIED_PERSIST: 'classified_persist',
+		MATRIX: 'matrix',
 		DEFAULT: '',
 	},
 

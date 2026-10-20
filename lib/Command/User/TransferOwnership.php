@@ -74,7 +74,7 @@ class TransferOwnership extends Base {
 		$includeNonModeratorRooms = $input->getOption('include-non-moderator');
 		$removeSourceUser = $input->getOption('remove-source-user');
 
-		$modified = $federatedRooms = 0;
+		$modified = $federatedRooms = $matrixRooms = 0;
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_USERS, $sourceUID);
 		foreach ($rooms as $room) {
 			if ($room->getType() !== Room::TYPE_GROUP && $room->getType() !== Room::TYPE_PUBLIC) {
@@ -89,6 +89,11 @@ class TransferOwnership extends Base {
 
 			if ($room->isFederatedConversation()) {
 				$federatedRooms++;
+				continue;
+			}
+
+			if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+				$matrixRooms++;
 				continue;
 			}
 
@@ -134,6 +139,10 @@ class TransferOwnership extends Base {
 
 		if ($federatedRooms > 0) {
 			$output->writeln('<comment>Could not transfer membership in ' . $federatedRooms . ' federated rooms.</comment>');
+		}
+
+		if ($matrixRooms > 0) {
+			$output->writeln('<comment>Could not transfer membership in ' . $matrixRooms . ' Matrix rooms.</comment>');
 		}
 
 		$output->writeln('<info>Added or promoted user ' . $destinationUser->getUID() . ' in ' . $modified . ' rooms.</info>');

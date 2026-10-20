@@ -427,7 +427,7 @@ import {
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
-import { isChannelConversation } from '../../../utils/conversation.ts'
+import { isChannelConversation, isMatrixConversation } from '../../../utils/conversation.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
@@ -749,6 +749,7 @@ export default {
 		showPermissionsOptions() {
 			return this.canBeModerated
 				&& !this.isModerator
+				&& !isMatrixConversation(this.conversation)
 				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
