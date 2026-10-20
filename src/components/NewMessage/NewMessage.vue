@@ -157,6 +157,8 @@
 			<NcActions
 				v-if="showSendActions"
 				:disabled="disabled"
+				:aria-label="t('spreed', 'Send options')"
+				:title="t('spreed', 'Send options')"
 				forceMenu
 				:primary="silentChat"
 				:open="isNcActionsOpen"
@@ -251,6 +253,7 @@
 			<NcButton
 				v-if="!isSidebar && showScheduledMessagesToggle"
 				:variant="showScheduledMessagesToggleVariant"
+				:aria-label="t('spreed', 'Show scheduled messages')"
 				:title="t('spreed', 'Show scheduled messages')"
 				@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
 				<template #icon>
