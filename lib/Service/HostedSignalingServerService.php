@@ -10,8 +10,8 @@ namespace OCA\Talk\Service;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
-use OCA\Talk\Config;
 use OCA\Talk\AuditLog\Operation;
+use OCA\Talk\Config;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
