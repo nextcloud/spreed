@@ -42,6 +42,8 @@
 		<NcActions
 			v-if="showDevices"
 			:disabled="!isAudioAllowed && !audioOutputSupported || !!audioStreamError"
+			:aria-label="t('spreed', 'Audio devices')"
+			:title="t('spreed', 'Audio devices')"
 			class="audio-selector-button"
 			:class="{
 				'no-audio-available': !isAudioAvailable,

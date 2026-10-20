@@ -79,7 +79,11 @@
 			</div>
 
 			<div v-if="isPollOpen" class="poll-modal__actions">
-				<NcActions v-if="canEndPoll" forceMenu>
+				<NcActions
+					v-if="canEndPoll"
+					:aria-label="t('spreed', 'Poll actions')"
+					:title="t('spreed', 'Poll actions')"
+					forceMenu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
@@ -120,7 +124,10 @@
 				</NcButton>
 			</div>
 			<div v-else-if="selfIsOwnerOrModerator" class="poll-modal__actions">
-				<NcActions forceMenu>
+				<NcActions
+					:aria-label="t('spreed', 'Poll actions')"
+					:title="t('spreed', 'Poll actions')"
+					forceMenu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />

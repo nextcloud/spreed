@@ -40,6 +40,8 @@
 				v-else
 				forceMenu
 				open
+				:aria-label="t('spreed', 'More actions')"
+				:title="t('spreed', 'More actions')"
 				placement="bottom-end"
 				:boundariesElement="boundariesElement"
 				@close="onMenuClose">

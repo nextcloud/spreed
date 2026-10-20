@@ -24,6 +24,8 @@
 		<NcActions
 			v-if="showDevices"
 			:disabled="!isVideoAvailable || !isVideoAllowed || !!videoStreamError"
+			:aria-label="t('spreed', 'Video devices')"
+			:title="t('spreed', 'Video devices')"
 			class="video-selector-button"
 			@open="updateDevices">
 			<template #icon>
