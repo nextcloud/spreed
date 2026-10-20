@@ -105,6 +105,12 @@ class Config {
 	public const string HOSTED_SIGNALING_SERVER_ACCOUNT = 'hosted_signaling_server_account';
 	public const string HOSTED_SIGNALING_SERVER_NONCE = 'hosted_signaling_server_nonce';
 	public const string HOSTED_SIGNALING_SERVER_ACCOUNT_ID = 'hosted_signaling_server_account_id';
+	public const string SIP_BRIDGE_DIALIN_INFO = 'sip_bridge_dialin_info';
+	public const string SIP_BRIDGE_DIALOUT_ANONYMOUS = 'sip_bridge_dialout_anonymous';
+	public const string SIP_BRIDGE_DIALOUT_NUMBER = 'sip_bridge_dialout_number';
+	public const string SIP_BRIDGE_DIALOUT_PREFIX = 'sip_bridge_dialout_prefix';
+	public const string SIP_BRIDGE_SHARED_SECRET = 'sip_bridge_shared_secret';
+	public const string SIP_DIALOUT = 'sip_dialout';
 
 	/**
 	 * 1. Call recording, …
@@ -176,8 +182,8 @@ class Config {
 	}
 
 	public function isSIPConfigured(): bool {
-		return $this->getSIPSharedSecret() !== ''
-			&& $this->getDialInInfo() !== '';
+		return $this->appConfig->getAppValueString(self::SIP_BRIDGE_SHARED_SECRET) !== ''
+			&& $this->appConfig->getAppValueString(self::SIP_BRIDGE_DIALIN_INFO) !== '';
 	}
 
 	/**
@@ -203,15 +209,7 @@ class Config {
 	}
 
 	public function isConversationSubfoldersEnabled(): bool {
-		return $this->appConfig->getAppValueBool(self::CONVERSATION_SUBFOLDERS, true);
-	}
-
-	public function getDialInInfo(): string {
-		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
-	}
-
-	public function getSIPSharedSecret(): string {
-		return $this->config->getAppValue('spreed', 'sip_bridge_shared_secret');
+		return $this->appConfig->getAppValueBool(self::CONVERSATION_SUBFOLDERS);
 	}
 
 	public function canUserEnableSIP(IUser $user): bool {
@@ -221,7 +219,7 @@ class Config {
 
 		$this->canEnableSIP[$user->getUID()] = false;
 
-		$allowedGroups = $this->getSIPGroups();
+		$allowedGroups = $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_SIP);
 		if (empty($allowedGroups)) {
 			$this->canEnableSIP[$user->getUID()] = true;
 		} else {
@@ -233,15 +231,11 @@ class Config {
 	}
 
 	public function canUserDialOutSIP(IUser $user): bool {
-		if (!$this->isSIPDialOutEnabled()) {
+		if (!$this->appConfig->getAppValueBool(Config::SIP_DIALOUT)) {
 			return false;
 		}
 
 		return $this->canUserEnableSIP($user);
-	}
-
-	public function isSIPDialOutEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'sip_dialout', 'no') !== 'no';
 	}
 
 	public function getRecordingServers(): array {

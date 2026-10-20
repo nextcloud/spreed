@@ -15,6 +15,7 @@ use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\InvitationList;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -35,6 +36,7 @@ class InvitationService {
 		private readonly ParticipantService $participantService,
 		private readonly IConfig $serverConfig,
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly IEmailValidator $emailValidator,
 	) {
 	}

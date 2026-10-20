@@ -21,6 +21,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\SIPDialOutService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
@@ -38,6 +39,7 @@ use Test\TestCase;
 #[Group('DB')]
 class ParticipantServiceTest extends TestCase {
 	protected Config&MockObject $talkConfig;
+	protected IAppConfig&MockObject $appConfig;
 	protected ?AttendeeMapper $attendeeMapper = null;
 	protected ?SessionMapper $sessionMapper = null;
 	protected SessionService&MockObject $sessionService;
@@ -58,6 +60,7 @@ class ParticipantServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->attendeeMapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$this->sessionMapper = new SessionMapper(\OCP\Server::get(IDBConnection::class));
 		$this->sessionService = $this->createMock(SessionService::class);
@@ -74,6 +77,7 @@ class ParticipantServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new ParticipantService(
 			$this->talkConfig,
+			$this->appConfig,
 			$this->attendeeMapper,
 			$this->sessionMapper,
 			$this->sessionService,

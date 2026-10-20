@@ -63,6 +63,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\Exception;
@@ -118,6 +119,7 @@ class ParticipantService {
 
 	public function __construct(
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly AttendeeMapper $attendeeMapper,
 		private readonly SessionMapper $sessionMapper,
 		private readonly SessionService $sessionService,
