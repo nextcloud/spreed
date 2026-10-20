@@ -136,7 +136,7 @@ namespace OCA\Talk;
  *     stackname?: string,
  *     // File size in bytes
  *     size?: string,
- *     // Path of the file
+ *     // Path of the file (for guests: relative to the folder share of the `link` when starting with a slash)
  *     path?: string,
  *     // Mimetype of the file
  *     mimetype?: string,
