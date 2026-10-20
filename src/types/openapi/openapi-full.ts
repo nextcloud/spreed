@@ -1322,6 +1322,28 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a list of participants for a room */
+        get: operations["room-get-participants"];
+        /**
+         * Synchronize the participants of a conversation with the given list
+         * @description Only available for the external call service. Participants missing from the list are removed (except owners), participants new in the list are added.
+         */
+        put: operations["room-sync-participants"];
+        /** Add a participant to a room */
+        post: operations["room-add-participant-to-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/favorite": {
         parameters: {
             query?: never;
@@ -1406,24 +1428,6 @@ export type paths = {
          * @description Required capability: `unbind-conversation`
          */
         delete: operations["room-unbind-room-from-object"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a list of participants for a room */
-        get: operations["room-get-participants"];
-        put?: never;
-        /** Add a participant to a room */
-        post: operations["room-add-participant-to-room"];
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -10954,6 +10958,302 @@ export interface operations {
             };
         };
     };
+    "room-get-participants": {
+        parameters: {
+            query?: {
+                /** @description Include the user statuses */
+                includeStatus?: boolean;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Participants returned */
+            200: {
+                headers: {
+                    "X-Nextcloud-Has-User-Statuses"?: boolean;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Participant"][];
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions for getting participants */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-sync-participants": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum */
+                "x-nextcloud-talk-external-service-random"?: string;
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service */
+                "x-nextcloud-talk-external-service-checksum"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description Token of the room */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description List of participants the conversation should have grouped by type
+                     * @default []
+                     */
+                    participants?: components["schemas"]["InvitationList"];
+                    /**
+                     * @description User ID of an owner of the conversation that will be used as actor
+                     * @default
+                     */
+                    owner?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Participants synchronized successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Participants synchronized but not all participants could be added */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["RoomWithInvalidInvitations"];
+                        };
+                    };
+                };
+            };
+            /** @description Room is not an external call service conversation */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "owner" | "room" | "room-type";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Invalid external call service secret */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "auth";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Owner is not an owner of the conversation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "owner" | "room" | "room-type";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Room or owner not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "owner" | "room" | "room-type";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-add-participant-to-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New participant */
+                    newParticipant: string;
+                    /**
+                     * @description Source of the participant
+                     * @default users
+                     * @enum {string}
+                     */
+                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "teams";
+                };
+            };
+        };
+        responses: {
+            /** @description Participant successfully added */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** Format: int64 */
+                                type?: number;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description User, group or other target to invite was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description SIP dial-out is not configured */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     "room-add-to-favorites": {
         parameters: {
             query?: never;
@@ -11284,169 +11584,6 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "object-type";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-get-participants": {
-        parameters: {
-            query?: {
-                /** @description Include the user statuses */
-                includeStatus?: boolean;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Participants returned */
-            200: {
-                headers: {
-                    "X-Nextcloud-Has-User-Statuses"?: boolean;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Participant"][];
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions for getting participants */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-add-participant-to-room": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description New participant */
-                    newParticipant: string;
-                    /**
-                     * @description Source of the participant
-                     * @default users
-                     * @enum {string}
-                     */
-                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "teams";
-                };
-            };
-        };
-        responses: {
-            /** @description Participant successfully added */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** Format: int64 */
-                                type?: number;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description User, group or other target to invite was not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description SIP dial-out is not configured */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
                     };
