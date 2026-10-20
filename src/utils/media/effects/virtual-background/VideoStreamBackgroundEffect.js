@@ -372,7 +372,7 @@ export default class VideoStreamBackgroundEffect {
 	 *        VIDEO_STREAM.
 	 */
 	setVirtualBackground(virtualBackground) {
-		if (this._options.virtualBackground.backgroundType !== this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE || (this._virtualImage?.complete && this._virtualImage?.naturalWidth > 0)) {
+		if (this._options.virtualBackground.backgroundType !== VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE || (this._virtualImage?.complete && this._virtualImage?.naturalWidth > 0)) {
 			this._prevBgMode = !this._isFirstBgChange ? this._options.virtualBackground.backgroundType : null
 		}
 		// Clear previous elements to allow them to be garbage collected
