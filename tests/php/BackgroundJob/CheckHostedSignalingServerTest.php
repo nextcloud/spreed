@@ -13,7 +13,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -25,12 +24,10 @@ use Test\TestCase;
 class CheckHostedSignalingServerTest extends TestCase {
 	protected ITimeFactory&MockObject $timeFactory;
 	protected HostedSignalingServerService&MockObject $hostedSignalingServerService;
-	protected IConfig&MockObject $config;
 	protected IManager&MockObject $notificationManager;
 	protected IGroupManager&MockObject $groupManager;
 	protected IURLGenerator&MockObject $urlGenerator;
 	protected LoggerInterface&MockObject $logger;
-	protected Config&MockObject $talkConfig;
 	protected IAppConfig&MockObject $appConfig;
 
 	public function setUp(): void {
@@ -38,12 +35,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->hostedSignalingServerService = $this->createMock(HostedSignalingServerService::class);
-		$this->config = $this->createMock(IConfig::class);
 		$this->notificationManager = $this->createMock(IManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
-		$this->talkConfig = $this->createMock(Config::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
 	}
 
@@ -51,12 +46,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 		return new CheckHostedSignalingServer(
 			$this->timeFactory,
 			$this->hostedSignalingServerService,
-			$this->config,
 			$this->notificationManager,
 			$this->groupManager,
 			$this->urlGenerator,
 			$this->logger,
-			$this->talkConfig,
 			$this->appConfig,
 		);
 	}
@@ -64,12 +57,15 @@ class CheckHostedSignalingServerTest extends TestCase {
 	public function testRunWithNoChange(): void {
 		$backgroundJob = $this->getBackgroundJob();
 
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
-				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]);
+		$this->appConfig
+			->method('getAppValueString')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID)
+			->willReturn('my-account-id');
+
+		$this->appConfig
+			->method('getAppValueArray')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
+			->willReturn(['status' => 'pending']);
 
 		$this->hostedSignalingServerService->expects($this->once())
 			->method('fetchAccountInfo')
@@ -88,25 +84,29 @@ class CheckHostedSignalingServerTest extends TestCase {
 			],
 		];
 
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
-				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]);
+		$this->appConfig->expects($this->any())
+			->method('getAppValueString')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID)
+			->willReturn('my-account-id');
 
-		$expectedCalls = [
-			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
+		$this->appConfig->expects($this->any())
+			->method('getAppValueArray')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
+			->willReturn(['status' => 'pending']);
+
+		$expectedCallsArray = [
+			['signaling_servers', ['servers' => [['server' => 'signaling-url', 'verify' => true]], 'secret' => 'signaling-secret'], false, false],
+			[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $newStatus, false, false],
 		];
 
 		$i = 0;
-		$this->config->expects($this->exactly(count($expectedCalls)))
-			->method('setAppValue')
-			->willReturnCallback(function () use ($expectedCalls, &$i): void {
-				$this->assertArrayHasKey($i, $expectedCalls);
-				$this->assertSame($expectedCalls[$i], func_get_args());
+		$this->appConfig->expects($this->exactly(count($expectedCallsArray)))
+			->method('setAppValueArray')
+			->willReturnCallback(function () use ($expectedCallsArray, &$i): bool {
+				$this->assertArrayHasKey($i, $expectedCallsArray);
+				$this->assertSame($expectedCallsArray[$i], func_get_args());
 				$i++;
+				return true;
 			});
 
 		$group = $this->createMock(IGroup::class);
@@ -157,39 +157,33 @@ class CheckHostedSignalingServerTest extends TestCase {
 			],
 		];
 
-		$this->config
-			->method('getAppValue')
+		$this->appConfig
+			->method('getAppValueString')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID)
+			->willReturn('my-account-id');
+
+		$this->appConfig
+			->method('getAppValueArray')
 			->willReturnMap([
-				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
-				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
+				[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, [], false, ['status' => 'pending']],
+				[Config::STUN_SERVERS, [], false, []],
+				[Config::TURN_SERVERS, [], false, []],
 			]);
 
-		$expectedCalls = [
-			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
+		$expectedCallsArray = [
+			['signaling_servers', ['servers' => [['server' => 'signaling-url', 'verify' => true]], 'secret' => 'signaling-secret'], false, false],
+			['stun_servers', ['stun.domain.invalid:443','stun.domain.invalid:3478'], false, false],
+			['turn_servers', [['server' => 'turn1.domain.invalid:443','secret' => 'turn-secret','schemes' => 'turn,turns','protocols' => 'udp,tcp'],['server' => 'turn2.domain.invalid:443','secret' => 'other-turn-secret','schemes' => 'turns','protocols' => 'tcp']], false, false],
+			[Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $newStatus, false, false],
 		];
 
 		$i = 0;
-		$this->config->expects($this->exactly(count($expectedCalls)))
-			->method('setAppValue')
-			->willReturnCallback(function () use ($expectedCalls, &$i): void {
-				$this->assertArrayHasKey($i, $expectedCalls);
-				$this->assertSame($expectedCalls[$i], func_get_args());
-				$i++;
-			});
-
-		$expectedAppConfigCalls = [
-			['stun_servers', ['stun.domain.invalid:443','stun.domain.invalid:3478'], false, false],
-			['turn_servers', [['server' => 'turn1.domain.invalid:443','secret' => 'turn-secret','schemes' => 'turn,turns','protocols' => 'udp,tcp'],['server' => 'turn2.domain.invalid:443','secret' => 'other-turn-secret','schemes' => 'turns','protocols' => 'tcp']], false, false],
-		];
-
-		$j = 0;
-		$this->appConfig->expects($this->exactly(count($expectedAppConfigCalls)))
+		$this->appConfig->expects($this->exactly(count($expectedCallsArray)))
 			->method('setAppValueArray')
-			->willReturnCallback(function () use ($expectedAppConfigCalls, &$j): bool {
-				$this->assertArrayHasKey($j, $expectedAppConfigCalls);
-				$this->assertSame($expectedAppConfigCalls[$j], func_get_args());
-				$j++;
+			->willReturnCallback(function () use ($expectedCallsArray, &$i): bool {
+				$this->assertArrayHasKey($i, $expectedCallsArray);
+				$this->assertSame($expectedCallsArray[$i], func_get_args());
+				$i++;
 				return true;
 			});
 
