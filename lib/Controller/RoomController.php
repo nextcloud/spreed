@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ClientException;
+use OCA\Circles\Model\Member;
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
@@ -57,6 +58,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\InvitationList;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
@@ -106,6 +108,7 @@ use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IManager as ICalendarManager;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -939,6 +942,154 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$data = $this->formatRoom($room, $this->participantService->getParticipant($room, $actorUserId, false));
 		$data['invalidParticipants'] = $invitationList->getInvalidList();
 
+		return new DataResponse($data, Http::STATUS_ACCEPTED);
+	}
+
+	/**
+	 * Synchronize the participants of a conversation with the given list
+	 *
+	 * Only available for the external call service. Participants missing from
+	 * the list are removed (except owners), participants new in the list are added.
+	 *
+	 * @param string $token Token of the room
+	 * @param array<string, list<string>> $participants List of participants the conversation should have grouped by type
+	 * @psalm-param TalkInvitationList $participants
+	 * @param string $owner User ID of an owner of the conversation that will be used as actor
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'owner'|'room'|'room-type'}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
+	 *
+	 * 200: Participants synchronized successfully
+	 * 202: Participants synchronized but not all participants could be added
+	 * 400: Room is not an external call service conversation
+	 * 401: Invalid external call service secret
+	 * 403: Owner is not an owner of the conversation
+	 * 404: Room or owner not found
+	 */
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/participants', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function syncParticipants(string $token, array $participants = [], string $owner = ''): DataResponse {
+		$externalServiceRandom = $this->request->getHeader('x-nextcloud-talk-external-service-random');
+		$externalServiceChecksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
+		if (!$this->validateExternalCallServiceRequest($owner, $externalServiceRandom, $externalServiceChecksum)) {
+			$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkExternalCallServiceSecret']);
+			return $response;
+		}
+
+		$user = $this->userManager->get($owner);
+		if (!$user instanceof IUser) {
+			return new DataResponse(['error' => 'owner'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$room = $this->manager->getRoomByToken($token);
+			$ownerParticipant = $this->participantService->getParticipant($room, $owner, false);
+		} catch (RoomNotFoundException|ParticipantNotFoundException) {
+			return new DataResponse(['error' => 'room'], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$ownerParticipant->isOwner()) {
+			return new DataResponse(['error' => 'owner'], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$invitationList = $this->invitationService->validateInvitations($participants, $user, $room);
+
+		// Entries of the raw list are kept as well, so participants are not
+		// removed only because their invitation can not be validated again
+		$keep = [];
+		foreach ($participants['users'] ?? [] as $userId) {
+			$keep[Attendee::ACTOR_USERS . '/' . $userId] = true;
+		}
+		foreach ($participants['federated_users'] ?? [] as $cloudId) {
+			$keep[Attendee::ACTOR_FEDERATED_USERS . '/' . $cloudId] = true;
+		}
+		foreach ($invitationList->getFederatedUsers() as $cloudId) {
+			$keep[Attendee::ACTOR_FEDERATED_USERS . '/' . $cloudId->getId()] = true;
+		}
+		foreach ($participants['groups'] ?? [] as $groupId) {
+			$keep[Attendee::ACTOR_GROUPS . '/' . $groupId] = true;
+		}
+		foreach ($invitationList->getGroup() as $group) {
+			foreach ($group->getUsers() as $groupMember) {
+				$keep[Attendee::ACTOR_USERS . '/' . $groupMember->getUID()] = true;
+			}
+		}
+		foreach ($participants['teams'] ?? [] as $teamId) {
+			$keep[Attendee::ACTOR_CIRCLES . '/' . $teamId] = true;
+		}
+		foreach ($invitationList->getTeams() as $team) {
+			foreach ($team->getInheritedMembers() as $teamMember) {
+				if ($teamMember->getUserType() === Member::TYPE_USER) {
+					$keep[Attendee::ACTOR_USERS . '/' . $teamMember->getUserId()] = true;
+				}
+			}
+		}
+		foreach ($participants['emails'] ?? [] as $email) {
+			$keep[Attendee::ACTOR_EMAILS . '/' . hash('sha256', strtolower($email))] = true;
+		}
+		$keepPhoneNumbers = array_flip(array_merge($participants['phones'] ?? [], array_values($invitationList->getPhoneNumbers())));
+
+		$presentUsers = $presentFederatedUsers = $presentPhoneNumbers = [];
+		foreach ($this->participantService->getParticipantsForRoom($room) as $participant) {
+			$attendee = $participant->getAttendee();
+			if ($participant->isOwner()
+				|| ($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID)) {
+				continue;
+			}
+
+			if ($attendee->getActorType() === Attendee::ACTOR_PHONES) {
+				if (isset($keepPhoneNumbers[$attendee->getPhoneNumber()])) {
+					$presentPhoneNumbers[$attendee->getPhoneNumber()] = true;
+					continue;
+				}
+			} elseif (!in_array($attendee->getActorType(), [
+				Attendee::ACTOR_USERS,
+				Attendee::ACTOR_FEDERATED_USERS,
+				Attendee::ACTOR_GROUPS,
+				Attendee::ACTOR_CIRCLES,
+				Attendee::ACTOR_EMAILS,
+			], true)) {
+				continue;
+			} elseif (isset($keep[$attendee->getActorType() . '/' . $attendee->getActorId()])) {
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+					$presentUsers[$attendee->getActorId()] = true;
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+					$presentFederatedUsers[$attendee->getActorId()] = true;
+				}
+				continue;
+			}
+
+			$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
+		}
+		$presentUsers[$owner] = true;
+
+		// Users, federated users and phone numbers are not deduplicated when adding
+		$toAdd = new InvitationList();
+		$toAdd->setUserResults(array_diff_key($invitationList->getUsers(), $presentUsers), []);
+		$toAdd->setFederatedUserResults(array_filter($invitationList->getFederatedUsers(), static fn (ICloudId $cloudId): bool => !isset($presentFederatedUsers[$cloudId->getId()])), []);
+		$toAdd->setGroupResults($invitationList->getGroup(), []);
+		$toAdd->setTeamResults($invitationList->getTeams(), []);
+		$toAdd->setEmailResults($invitationList->getEmails(), []);
+		$toAdd->setPhoneNumberResults(array_filter($invitationList->getPhoneNumbers(), static fn (string $phoneNumber): bool => !isset($presentPhoneNumbers[$phoneNumber])), []);
+		if ($toAdd->hasValidInvitations()) {
+			$this->participantService->addInvitationList($room, $toAdd, $user);
+		}
+
+		$data = $this->formatRoom($room, $ownerParticipant);
+		if (!$invitationList->hasInvalidInvitations()) {
+			return new DataResponse($data, Http::STATUS_OK);
+		}
+
+		$data['invalidParticipants'] = $invitationList->getInvalidList();
 		return new DataResponse($data, Http::STATUS_ACCEPTED);
 	}
 
