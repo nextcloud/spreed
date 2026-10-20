@@ -33,10 +33,13 @@ class TransferOwnershipTest extends TestCase {
 		$participantService->expects($this->never())
 			->method($this->anything());
 
+		$destinationUser = $this->createMock(IUser::class);
+		$destinationUser->method('getUID')
+			->willReturn('destination');
 		$userManager = $this->createMock(IUserManager::class);
 		$userManager->method('get')
 			->with('destination')
-			->willReturn($this->createMock(IUser::class));
+			->willReturn($destinationUser);
 
 		$command = new TransferOwnership($participantService, $manager, $userManager);
 
@@ -55,7 +58,7 @@ class TransferOwnershipTest extends TestCase {
 			->willReturnCallback(function (string $message): void {
 				static $expected = [
 					'<comment>Could not transfer membership in 1 Matrix rooms.</comment>',
-					'<info>Added or promoted user  in 0 rooms.</info>',
+					'<info>Added or promoted user destination in 0 rooms.</info>',
 				];
 				$this->assertSame(array_shift($expected), $message);
 			});
