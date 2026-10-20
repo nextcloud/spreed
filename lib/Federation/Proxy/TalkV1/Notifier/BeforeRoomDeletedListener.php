@@ -33,6 +33,10 @@ class BeforeRoomDeletedListener implements IEventListener {
 			return;
 		}
 
+		if (!$event->getRoom()->hasFederatedParticipants()) {
+			return;
+		}
+
 		$participants = $this->participantService->getParticipantsByActorType($event->getRoom(), Attendee::ACTOR_FEDERATED_USERS);
 		foreach ($participants as $participant) {
 			$cloudId = $this->cloudIdManager->resolveCloudId($participant->getAttendee()->getActorId());
