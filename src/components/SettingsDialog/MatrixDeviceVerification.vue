@@ -56,13 +56,13 @@ const statusText = computed(() => {
 		case 'keys_exchanged':
 			return t('spreed', 'Do the emoji match the ones shown on your other device, in the same order?')
 		case 'mac_sent':
-			return t('spreed', 'Waiting for your other device to confirm the emoji …')
+			return t('spreed', 'Waiting for your other device to confirm the emoji …')
 		case 'done':
 			return t('spreed', 'The server is verified. Your other device now trusts it, so encrypted messages are shared with it.')
 		case 'cancelled':
 			return t('spreed', 'The verification was cancelled: {reason}', { reason: verification.value.reason ?? '' })
 		default:
-			return t('spreed', 'Waiting for your other device …')
+			return t('spreed', 'Waiting for your other device …')
 	}
 })
 

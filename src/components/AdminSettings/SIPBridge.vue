@@ -254,7 +254,7 @@ export default {
 
 		async saveSIPSettings() {
 			this.loading = true
-			this.saveLabel = t('spreed', 'Saving …')
+			this.saveLabel = t('spreed', 'Saving …')
 
 			const sipGroups = this.sipGroups.map((group) => {
 				return group.id

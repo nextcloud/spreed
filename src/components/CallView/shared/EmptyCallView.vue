@@ -131,16 +131,16 @@ export default {
 
 		title() {
 			if (this.isConnecting) {
-				return t('spreed', 'Connecting …')
+				return t('spreed', 'Connecting …')
 			}
 			if (this.isPhoneConversation) {
-				return t('spreed', 'Calling …')
+				return t('spreed', 'Calling …')
 			}
 			if (this.isOneToOneConversation) {
 				// Rendered via Vue text interpolation - avoid double escaping to correctly render special characters
 				return t('spreed', 'Waiting for {user} to join the call', { user: this.conversation.displayName }, { escape: false })
 			}
-			return t('spreed', 'Waiting for others to join the call …')
+			return t('spreed', 'Waiting for others to join the call …')
 		},
 
 		message() {

@@ -79,11 +79,11 @@ describe('VideoVue.vue', () => {
 
 	describe('connection state feedback', () => {
 		const connectionMessage = {
-			NOT_ESTABLISHED: 'Connection could not be established. Trying again …',
-			NOT_ESTABLISHED_NOT_RETRYING: 'Connection could not be established …',
-			LOST: 'Connection lost. Trying to reconnect …',
-			LOST_NOT_RETRYING: 'Connection was lost and could not be re-established …',
-			PROBLEMS: 'Connection problems …',
+			NOT_ESTABLISHED: 'Connection could not be established. Trying again …',
+			NOT_ESTABLISHED_NOT_RETRYING: 'Connection could not be established …',
+			LOST: 'Connection lost. Trying to reconnect …',
+			LOST_NOT_RETRYING: 'Connection was lost and could not be re-established …',
+			PROBLEMS: 'Connection problems …',
 			NONE: null,
 		}
 

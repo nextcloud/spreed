@@ -91,7 +91,7 @@ const supportConversationCreationAll = hasTalkFeature('local', 'conversation-cre
 
 const DUMMY_CONVERSATION = {
 	token: '',
-	displayName: t('spreed', 'Loading …'),
+	displayName: t('spreed', 'Loading …'),
 	isFavorite: false,
 	isArchived: false,
 	hasPassword: false,

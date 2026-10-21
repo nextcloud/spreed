@@ -56,7 +56,7 @@ function openPollEditor({ id, action }: { id: number | null, action?: string }) 
 		<EmptyView
 			v-if="!pollDrafts.length"
 			class="drafts__empty"
-			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
+			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
 			:description="pollDraftsLoaded ? t('spreed', 'There is no poll drafts yet saved for this conversation') : ''">
 			<template #icon>
 				<IconPoll v-if="pollDraftsLoaded" />

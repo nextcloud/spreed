@@ -9,7 +9,7 @@
 			v-if="!isRecording"
 			:title="startRecordingTitle"
 			:aria-label="startRecordingTitle"
-			:aria-description="isMediaRecorderLoading ? t('spreed', 'Loading …') : undefined"
+			:aria-description="isMediaRecorderLoading ? t('spreed', 'Loading …') : undefined"
 			variant="tertiary"
 			:disabled="disabled || isMediaRecorderLoading"
 			@click="start">

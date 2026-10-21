@@ -131,7 +131,7 @@ describe('ConversationItem.vue', () => {
 
 		test('display joining conversation message when not joined yet', async () => {
 			item.actorId = null
-			await testConversationLabel(item, 'Joining conversation …')
+			await testConversationLabel(item, 'Joining conversation …')
 		})
 
 		test('displays nothing when there is no last chat message', async () => {

@@ -121,7 +121,7 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 	// Add 'Loading' message if there are no results received from the server yet
 	if (showConversations && props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
 		virtualList.push({ type: 'caption', id: 'loading_results_caption', name: t('spreed', 'Other sources') })
-		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
+		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
 		return virtualList
 	}
 
@@ -191,7 +191,7 @@ function getMessagesSection(): VirtualListItem[] {
 		items.push({
 			type: 'hint',
 			id: 'hint_messages',
-			hint: props.searchResultsLoading ? t('spreed', 'Loading …') : t('spreed', 'No matches found'),
+			hint: props.searchResultsLoading ? t('spreed', 'Loading …') : t('spreed', 'No matches found'),
 		})
 	} else {
 		props.searchResultsMessages.forEach((item: UnifiedSearchResultEntryWithRouterLink) => {

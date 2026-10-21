@@ -122,7 +122,7 @@ const startCallLabel = computed(() => {
 		return t('spreed', 'Join call')
 	}
 	if (isJoiningCall.value) {
-		return t('spreed', 'Connecting …')
+		return t('spreed', 'Connecting …')
 	}
 	return props.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
 })

@@ -585,7 +585,7 @@ export default {
 			if (this.isInCall && this.phoneCallStatus) {
 				switch (this.phoneCallStatus) {
 					case 'ringing':
-						return '📞 ' + t('spreed', 'Ringing …')
+						return '📞 ' + t('spreed', 'Ringing …')
 					case 'rejected':
 						return '⚠️ ' + t('spreed', 'Call rejected')
 					case 'accepted':
@@ -600,7 +600,7 @@ export default {
 
 			if (this.isSpeakingStatusAvailable) {
 				return this.isParticipantSpeaking
-					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
+					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
 					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
 			}
 

@@ -20,7 +20,7 @@ type CheckStatus = 'checking' | 'ok' | 'warning' | 'error'
 type CheckResult = { status: CheckStatus, detail: string }
 type CheckId = 'wasm' | 'tflite'
 
-const CHECKING: CheckResult = { status: 'checking', detail: t('spreed', 'Checking …') }
+const CHECKING: CheckResult = { status: 'checking', detail: t('spreed', 'Checking …') }
 const ERROR: CheckResult = { status: 'error', detail: t('spreed', 'Error') }
 const FILES_FAILED_TEXT = t('spreed', 'Failed: ".wasm" and ".tflite" files were not properly returned by the web server. Please check "System requirements" section in Talk documentation.')
 

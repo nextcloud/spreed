@@ -296,7 +296,7 @@ async function removeHomeserver(homeserver: MatrixHomeserver) {
 							:inputLabel="t('spreed', 'Groups allowed to link Matrix accounts')"
 							name="matrix_allowed_groups"
 							:options="groups"
-							:placeholder="t('spreed', 'Select groups …')"
+							:placeholder="t('spreed', 'Select groups …')"
 							:disabled="loading"
 							multiple
 							searchable

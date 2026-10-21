@@ -240,7 +240,7 @@ export default {
 
 		creatingConversationDescription() {
 			if (this.isLoading) {
-				return t('spreed', 'Creating the conversation …')
+				return t('spreed', 'Creating the conversation …')
 			} else if (this.error) {
 				if (this.errorReason === 'password_required') {
 					return t('spreed', 'Error: A password is required to create the conversation.')

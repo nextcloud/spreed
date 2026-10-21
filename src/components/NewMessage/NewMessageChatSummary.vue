@@ -44,7 +44,7 @@ const token = useGetToken()
 const chatSummaryMessage = ref('')
 const chatSummaryCaption = computed(() => {
 	return loading.value
-		? t('spreed', 'Generating summary of unread messages …')
+		? t('spreed', 'Generating summary of unread messages …')
 		: t('spreed', 'Summary is AI generated and might contain mistakes')
 })
 

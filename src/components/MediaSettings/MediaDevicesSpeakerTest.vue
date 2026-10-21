@@ -60,7 +60,7 @@ export default {
 		buttonLabel() {
 			return this.isPlayingTestSound
 				// TRANSLATORS Playing the test sound to check speakers
-				? t('spreed', 'Playing …')
+				? t('spreed', 'Playing …')
 				: t('spreed', 'Test speakers')
 		},
 

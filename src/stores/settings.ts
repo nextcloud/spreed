@@ -72,7 +72,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const attachmentFolder = ref<string>(getTalkConfig('local', 'attachments', 'folder') ?? '')
 	const presets = ref<ConversationPreset[]>([])
 
-	const dialInInfo = ref(t('spreed', 'Loading …'))
+	const dialInInfo = ref(t('spreed', 'Loading …'))
 
 	EventBus.on('signaling-settings-updated', setDialInInfoFromSettings)
 	onScopeDispose(() => {

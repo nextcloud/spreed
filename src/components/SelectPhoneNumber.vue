@@ -102,7 +102,7 @@ export default {
 
 		errorHint() {
 			if (!this.isLibphonenumberReady) {
-				return t('spreed', 'Loading …')
+				return t('spreed', 'Loading …')
 			}
 
 			switch (this.libphonenumber.validatePhoneNumberLength(this.value, defaultPhoneRegion)) {

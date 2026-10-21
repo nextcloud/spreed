@@ -163,7 +163,7 @@ function openSharingTab() {
 			</template>
 			<template #description>
 				<p v-if="isTalkSidebarSupportedForFile === undefined">
-					{{ t('spreed', 'Loading …') }}
+					{{ t('spreed', 'Loading …') }}
 				</p>
 				<p v-else-if="isTalkSidebarSupportedForFile === false">
 					{{ t('spreed', 'Share this file with others to discuss it') }}
