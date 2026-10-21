@@ -597,7 +597,7 @@ export default {
 			} else if (this.noChatPermission) {
 				return t('spreed', 'No permission to post messages in this conversation')
 			} else if (!this.currentConversationIsJoined) {
-				return t('spreed', 'Joining conversation …')
+				return t('spreed', 'Joining conversation …')
 			} else if (this.silentChat) {
 				return t('spreed', 'Write a message without notification')
 			} else {

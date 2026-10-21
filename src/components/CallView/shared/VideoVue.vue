@@ -292,23 +292,23 @@ export default {
 
 		connectionMessage() {
 			if (!this.wasConnectedAtLeastOnce && this.isNoLongerTryingToReconnect) {
-				return t('spreed', 'Connection could not be established …')
+				return t('spreed', 'Connection could not be established …')
 			}
 
 			if (this.isNoLongerTryingToReconnect) {
-				return t('spreed', 'Connection was lost and could not be re-established …')
+				return t('spreed', 'Connection was lost and could not be re-established …')
 			}
 
 			if (!this.wasConnectedAtLeastOnce && this.isReconnecting) {
-				return t('spreed', 'Connection could not be established. Trying again …')
+				return t('spreed', 'Connection could not be established. Trying again …')
 			}
 
 			if (this.isReconnecting) {
-				return t('spreed', 'Connection lost. Trying to reconnect …')
+				return t('spreed', 'Connection lost. Trying to reconnect …')
 			}
 
 			if (this.isDisconnected) {
-				return t('spreed', 'Connection problems …')
+				return t('spreed', 'Connection problems …')
 			}
 
 			return null

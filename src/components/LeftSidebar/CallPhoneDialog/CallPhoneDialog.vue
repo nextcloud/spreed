@@ -39,7 +39,7 @@
 			</template>
 
 			<template #description>
-				<p>{{ t('spreed', 'Creating the conversation …') }}</p>
+				<p>{{ t('spreed', 'Creating the conversation …') }}</p>
 			</template>
 		</NcEmptyContent>
 	</NcDialog>

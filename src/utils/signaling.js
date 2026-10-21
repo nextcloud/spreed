@@ -676,7 +676,7 @@ Signaling.Standalone.prototype.connect = function() {
 	if (this.signalingConnectionError === null
 		&& this.signalingConnectionWarning === null) {
 		this.signalingConnectionTimeout = setTimeout(() => {
-			this.signalingConnectionWarning = showWarning(t('spreed', 'Connecting is taking longer than expected …'), {
+			this.signalingConnectionWarning = showWarning(t('spreed', 'Connecting is taking longer than expected …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}, 2000)
@@ -732,7 +732,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning = null
 		}
 		if (this.signalingConnectionError === null) {
-			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
+			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
@@ -1079,7 +1079,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		this.helloResponseErrorCount++
 
 		if (this.signalingConnectionError === null && this.helloResponseErrorCount < 5) {
-			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
+			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		} else if (this.helloResponseErrorCount === 5) {

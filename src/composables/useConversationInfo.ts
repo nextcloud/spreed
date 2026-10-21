@@ -111,8 +111,8 @@ export function useConversationInfo({
 			return {
 				actor: null,
 				icon: null,
-				message: t('spreed', 'Joining conversation …'),
-				title: t('spreed', 'Joining conversation …'),
+				message: t('spreed', 'Joining conversation …'),
+				title: t('spreed', 'Joining conversation …'),
 			}
 		}
 

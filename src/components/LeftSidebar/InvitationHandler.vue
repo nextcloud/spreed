@@ -63,7 +63,7 @@
 				</template>
 
 				<template #description>
-					<p>{{ isLoading ? t('spreed', 'Loading …') : t('spreed', 'No pending invitations') }}</p>
+					<p>{{ isLoading ? t('spreed', 'Loading …') : t('spreed', 'No pending invitations') }}</p>
 				</template>
 			</NcEmptyContent>
 		</div>

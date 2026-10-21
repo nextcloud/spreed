@@ -112,7 +112,7 @@ export default {
 
 		installButtonText() {
 			return this.isInstalling
-				? t('spreed', 'Downloading …')
+				? t('spreed', 'Downloading …')
 				: t('spreed', 'Install Talk Matterbridge')
 		},
 	},

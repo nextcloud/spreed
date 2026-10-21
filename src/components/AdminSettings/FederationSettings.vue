@@ -184,7 +184,7 @@ async function saveAllowedGroups() {
 							:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
 							name="federation_allowed_groups"
 							:options="groups"
-							:placeholder="t('spreed', 'Select groups …')"
+							:placeholder="t('spreed', 'Select groups …')"
 							:disabled="loading"
 							multiple
 							searchable

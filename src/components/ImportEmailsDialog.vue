@@ -155,7 +155,7 @@ async function submitList(file: File | null) {
 		<div class="import-list__form">
 			<template v-if="loading">
 				<p class="import-list__caption">
-					{{ t('spreed', 'Verifying uploaded file …') }}
+					{{ t('spreed', 'Verifying uploaded file …') }}
 				</p>
 				<p class="import-list__description">
 					{{ t('spreed', 'This might take a moment') }}

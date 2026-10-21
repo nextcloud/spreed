@@ -221,7 +221,7 @@ export default {
 		saveAllowedGroups() {
 			this.loading = true
 			this.loadingGroups = true
-			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
+			this.saveLabelAllowedGroups = t('spreed', 'Saving …')
 
 			const groups = this.allowedGroups.map((group) => {
 				return group.id
@@ -242,7 +242,7 @@ export default {
 		saveStartConversationsGroups() {
 			this.loading = true
 			this.loadingGroups = true
-			this.saveLabelStartConversations = t('spreed', 'Saving …')
+			this.saveLabelStartConversations = t('spreed', 'Saving …')
 
 			const groups = this.canStartConversations.map((group) => {
 				return group.id
@@ -263,7 +263,7 @@ export default {
 		saveStartCallsGroups() {
 			this.loading = true
 			this.loadingGroups = true
-			this.saveLabelStartCallsGroups = t('spreed', 'Saving …')
+			this.saveLabelStartCallsGroups = t('spreed', 'Saving …')
 
 			const groups = this.canStartCallsGroups.map((group) => {
 				return group.id

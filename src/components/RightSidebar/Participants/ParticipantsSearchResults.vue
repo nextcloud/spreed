@@ -66,7 +66,7 @@
 		</template>
 
 		<NcAppNavigationCaption v-if="sourcesWithoutResults && !onlyUsers" :name="sourcesWithoutResultsList" />
-		<NavigationHint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
+		<NavigationHint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<NavigationHint v-else-if="sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
 
 		<template v-if="showSearchHints">

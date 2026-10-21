@@ -91,7 +91,7 @@
 				<span v-if="loadingNewMessages" class="scroller__loading-new">
 					<span class="scroller__loading-new-wrapper">
 						<NcLoadingIcon :size="20" />
-						{{ t('spreed', 'Loading …') }}
+						{{ t('spreed', 'Loading …') }}
 					</span>
 				</span>
 			</TransitionWrapper>

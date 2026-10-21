@@ -37,7 +37,7 @@
 					</template>
 
 					<template #description>
-						<p>{{ isLoading ? t('spreed', 'Loading …') : t('spreed', 'No banned users') }}</p>
+						<p>{{ isLoading ? t('spreed', 'Loading …') : t('spreed', 'No banned users') }}</p>
 					</template>
 				</NcEmptyContent>
 			</div>

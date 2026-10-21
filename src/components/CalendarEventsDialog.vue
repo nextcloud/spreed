@@ -406,7 +406,7 @@ async function submitNewMeeting() {
 					</template>
 
 					<template #description>
-						<p>{{ loading ? t('spreed', 'Loading …') : t('spreed', 'No upcoming meetings') }}</p>
+						<p>{{ loading ? t('spreed', 'Loading …') : t('spreed', 'No upcoming meetings') }}</p>
 					</template>
 				</NcEmptyContent>
 				<div v-if="canScheduleMeeting" class="calendar-events__buttons">
@@ -477,7 +477,7 @@ async function submitNewMeeting() {
 					v-if="!participantsInitialised"
 					class="calendar-meeting--loading">
 					<NcLoadingIcon />
-					{{ t('spreed', 'Loading …') }}
+					{{ t('spreed', 'Loading …') }}
 				</div>
 				<p v-else-if="participants.length === 0">
 					{{ t('spreed', 'No other participants to send invitations to.') }}
@@ -549,7 +549,7 @@ async function submitNewMeeting() {
 				<NcEmptyContent
 					v-else
 					class="calendar-meeting__empty-content"
-					:name="!participantsInitialised ? t('spreed', 'Loading …') : t('spreed', 'No results')">
+					:name="!participantsInitialised ? t('spreed', 'Loading …') : t('spreed', 'No results')">
 					<template #icon>
 						<NcLoadingIcon v-if="!participantsInitialised" />
 						<IconAccountSearchOutline v-else />
