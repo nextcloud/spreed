@@ -21,7 +21,7 @@ Feature: conversation-4/promotion-demotion
     # TODO remove handler with "roomModified" in favour of handler with
     # "participantsModified" once the clients no longer expect a
     # "roomModified" message for participant type changes.
-      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":0,"read-only":0,"listable":0,"active-since":0,"sip-enabled":0,"description":""}}} |
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 2               |
