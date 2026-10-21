@@ -1,381 +1,878 @@
 # Signaling messages
 
-This contains the schema of signaling messages used in Nextcloud Talk.
+Talk-specific signaling messages exchanged by clients, and Talk-specific events sent by the signaling server.
 
-## General
+The messages are the same with the internal signaling and the external signaling server (High-performance backend, HPB). Only the wrapper differs, see [Transports](#transports).
 
-### Sender property (external signaling)
+For the base protocol of the HPB (`hello`, `welcome`, `bye`, `error`, joining rooms) see the [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/).
 
-```
-{
-    sessionid = #STRING#,
-    type = #STRING#,
-    userid = #STRING,
-}
-```
-
-## Offer
-
-### External signaling
-
-| field           | type    | Description                        |
-|-----------------|---------|------------------------------------|
-| `roomType`      | string  | "video" or "screen"                |
-| `sid`           | string  | external signaling server >= 0.5.0 |
-
-```
-{
-    "type": "message",
-    "message": {
-        "sender": {
-            ...
-        },
-        "data": {
-            "to": #STRING#,
-            "from":  #STRING#,
-            "type": "offer",
-            "roomType": #STRING#,
-            "payload": {
-                "type": "offer",
-                "sdp": #STRING#,
-            },
-            "sid": #STRING#,
-        },
-    },
-}
-```
+## Transports
 
 ### Internal signaling
 
-| field           | type    | Description           |
-|-----------------|---------|-----------------------|
-| `roomType`      | string  | "video" or "screen"   |
-| `nick`          | string  | optional              |
+#### Sending
 
+`POST /ocs/v2.php/apps/spreed/api/v3/signaling/{token}`, see [Internal signaling API](internal-signaling.md).
+
+| field      | type   | Description                                                            |
+|------------|--------|------------------------------------------------------------------------|
+| `messages` | string | JSON encoded list of `{ev, fn, sessionId}` objects                     |
+| `ev`       | string | `message`, other values are ignored                                    |
+| `fn`       | string | JSON encoded [message](#messages-between-call-participants)            |
+| `sessionId`| string | Session id of the sender, must be the session of the request          |
+
+Example of a decoded `messages` list:
+
+```json
+[
+    {
+        "ev": "message",
+        "fn": "{\"to\":\"bob-session-id\",\"roomType\":\"video\",\"type\":\"raiseHand\",\"payload\":{\"state\":true,\"timestamp\":1729500000000}}",
+        "sessionId": "alice-session-id"
+    }
+]
 ```
-{
-    "type": "message",
-    "data": {
-        "to": #STRING#,
-        "sid": #STRING#,
-        "roomType": #STRING#,
-        "type": "offer",
-        "payload": {
-            "type": "offer",
-            "sdp": #STRING#,
-            "nick": #STRING#,
-        },
-        "from": #STRING#,
+
+The server adds `from` and drops the message when:
+
+* `to` is not a session in the same conversation
+* `type` is `control` and the sender is not a moderator
+* `type` is `offer` or `answer` and the SDP publishes audio, video or a screen without the matching [permission](constants.md#attendee-permissions)
+
+Everything else is relayed unchecked.
+
+#### Receiving
+
+Long poll on `GET /ocs/v2.php/apps/spreed/api/v3/signaling/{token}`, up to 30 seconds. The response is a list of `{type, data}`:
+
+| type          | data                                                                         |
+|---------------|------------------------------------------------------------------------------|
+| `message`     | JSON encoded [message](#messages-between-call-participants), including `from` |
+| `usersInRoom` | See [Users in room](#users-in-room), always the last entry                   |
+
+```json
+[
+    {
+        "type": "message",
+        "data": "{\"to\":\"bob-session-id\",\"roomType\":\"video\",\"type\":\"raiseHand\",\"payload\":{\"state\":true,\"timestamp\":1729500000000},\"from\":\"alice-session-id\"}"
     },
-}
+    {
+        "type": "usersInRoom",
+        "data": []
+    }
+]
 ```
 
-## Candidate
+Status codes: `400` internal signaling disabled, `404` session, conversation or participant gone (body is an empty `usersInRoom`), `409` session killed. Unfetched messages expire after 5 minutes.
 
 ### External signaling
 
-| field      | type   | Description                        |
-| ---------- | ------ | ---------------------------------- |
-| `roomType` | string | "video" or "screen"                |
-| `sid`      | string | external signaling server >= 0.5.0 |
+#### Sending
 
-```
+To a single session:
+
+```json
 {
     "type": "message",
     "message": {
-        "sender": {
-            ...
+        "recipient": {
+            "type": "session",
+            "sessionid": "bob-session-id"
         },
         "data": {
-            "to": #STRING#,
-            "from":  #STRING#,
-            "type": "candidate",
-            "roomType": #STRING#,
-            "payload": {
-                "candidate": {
-                    "candidate": #STRING#,
-                    "sdpMid": #STRING#,
-                    "sdpMLineIndex": #INTEGER#,
-                },
-            },
-            "sid": #STRING#,
-        },
-    },
-}
-```
-
-### Internal signaling
-
-| field      | type   | Description                        |
-| ---------- | ------ | ---------------------------------- |
-| `roomType` | string | "video" or "screen"                |
-
-```
-{
-    "type": "message",
-    "data": {
-        "to": #STRING#,
-        "sid": #STRING#,
-        "roomType": #STRING#,
-        "type": "candidate",
-        "payload": {
-            "candidate": {
-                "candidate": #STRING#,
-                "sdpMid": #STRING#,
-                "sdpMLineIndex": #INTEGER#,
-            },
-        },
-        "from": #STRING#,
-    },
-}
-```
-
-## Update all participants
-
-External signaling only
-
-| field    | type    | Description        |
-| -------- | ------- | ------------------ |
-| `roomid` | string  | conversation token |
-
-```
-{
-    "type": "event",
-    "event": {
-        "target": "participants",
-        "type": "update",
-        "update": {
-            "roomid": #STRING#,
-            "incall": 0,
-            "all": true,
-        },
-    },
-}
-```
-
-## Update participants
-
-External signaling only
-
-| field                    | type    | Description        |
-| ------------------------ | ------- | ------------------ |
-| `roomid`                 | string  | conversation token |
-| `userId`                 | string  | optional           |
-| `nextcloudSessionId`     | string  | optional           |
-| `internal`               | boolean | optional           |
-| `participantPermissions` | integer | Talk >= 13         |
-
-Note that `userId` in participants->update comes from the Nextcloud server, so it is `userId`; in other messages, like room->join, it comes directly from the external signaling server, so it is `userid` instead.
-
- ```
-{
-    "type": "event",
-    "event": {
-        "target": "participants",
-        "type": "update",
-        "update": {
-            "roomid": #STRING#,
-            "users": [
-                {
-                    "inCall": #INTEGER#,
-                    "lastPing": #INTEGER#,
-                    "sessionId": #STRING#,
-                    "participantType": #INTEGER#,
-                    "userId": #STRING#,
-                    "nextcloudSessionId": #STRING#,
-                    "internal": #BOOLEAN#,
-                    "participantPermissions": #INTEGER#,
-                },
-                ...
-            ],
-        },
-    },
-}
-```
-
-## Users in room
-
-Internal signaling only
-
-| field                    | type    | Description                               |
-| ------------------------ | ------- | ----------------------------------------- |
-| `roomId`                 | integer | Internal room id (not conversation token) |
-| `userId`                 | string  | Always included, although it can be empty |
-| `participantPermissions` | integer | Talk >= 13                                |
-
-```
-{
-    "type": "usersInRoom",
-    "data": [
-        {
-            "inCall": #INTEGER#,
-            "lastPing": #INTEGER#,
-            "roomId": #INTEGER#,
-            "sessionId": #STRING#,
-            "userId": #STRING#,
-            "participantPermissions": #INTEGER#,
-        },
-        ...
-    ],
-}
-```
-
-## Raise hand
-
-Needs `raise-hand` capability
-
-| field                    | type    | Description                       |
-| ------------------------ | ------- | --------------------------------- |
-| `state`                  | boolean | 0 - hand lowered; 1 - hand raised |
-
-### External signaling
-
-```
-{
-    "type": "message",
-    "message": {
-        "sender": {
-            ...
-        },
-        "data": {
-            "to": #STRING#,
-            "sid": #STRING#,
+            "to": "bob-session-id",
             "roomType": "video",
             "type": "raiseHand",
             "payload": {
-                "state": #BOOLEAN#,
-                "timestamp": #LONG#,
-            },
-            "from": #STRING#,
-        },
-    },
-}
-```
-
-### Internal signaling
-
-```
-{
-    "type": "message",
-    "data": {
-        "to": #STRING#,
-        "sid": #STRING#,
-        "roomType": "video",
-        "type": "raiseHand",
-        "payload": {
-            "state": #BOOLEAN#,
-            "timestamp": #LONG#,
-        },
-        "from": #STRING#,
-    },
-}
-```
-
-## Unshare screen
-
-### External signaling
-
-```
-{
-    "type": "message",
-    "message": {
-        "sender": {
-            ...
-        },
-        "data": {
-            "roomType": "screen",
-            "type": "unshareScreen",
-            "from": #STRING#,
-        },
-    },
-}
-```
-
-### Internal signaling
-
-```
-{
-    "type": "message",
-    "data": {
-        "to": #STRING#,
-        "sid": #STRING#,
-        "broadcaster": #STRING#,
-        "roomType": "screen",
-        "type": "unshareScreen",
-        "from": #STRING#,
-    },
-}
-```
-
-## Switchto
-
-External signaling only
-
-Needs `breakout-rooms-v1` capability and external signaling server >= 1.1.0
-
-| field    | type    | Description        |
-| -------- | ------- | ------------------ |
-| `roomid` | string  | conversation token |
-
-```
-{
-    "type": "event",
-    "event": {
-        "target": "room",
-        "type": "switchto",
-        "switchto": {
-            "roomid": #STRING#,
-        },
-    },
-}
-```
-
-## Call reactions
-
-### External signaling
-
-| field      | type   | Description                               |
-| ---------- | ------ | ----------------------------------------- |
-| `roomType` | string | "video" or "screen"                       |
-| `reaction` | string | Single emoji which is shown as a reaction |
-| `sid`      | string | external signaling server >= 0.5.0        |
-
-```
-{
-    "type": "message",
-    "message": {
-        "sender": {
-            ...
-        },
-        "data": {
-            "to": #STRING#,
-            "sid": #STRING#,
-            "roomType": #STRING#,
-            "type": "reaction",
-            "payload" :{
-                "reaction": #STRING#
+                "state": true,
+                "timestamp": 1729500000000
             }
         }
     }
 }
 ```
 
-### Internal signaling
+`data` is the [message](#messages-between-call-participants) unchanged, including `to`. To the whole conversation, the recipient is `{"type": "room"}` and there is no `to`.
 
-| field      | type   | Description                               |
-| ---------- | ------ | ----------------------------------------- |
-| `roomType` | string | "video" or "screen"                       |
-| `reaction` | string | Single emoji which is shown as a reaction |
+Messages with `type` `control` are sent as `control`, with only their `payload` as `data`:
 
-```
+```json
 {
-    "to": #STRING#,
-    "sid": #STRING#,
-    "roomType": #STRING#,
-    "type": "reaction",
-    "payload": {
-        "reaction": #STRING#
-    },
-    "from": #STRING#
+    "type": "control",
+    "control": {
+        "recipient": {
+            "type": "session",
+            "sessionid": "bob-session-id"
+        },
+        "data": {
+            "action": "forceMute",
+            "peerId": "bob-session-id"
+        }
+    }
 }
 ```
+
+#### Receiving
+
+```json
+{
+    "type": "message",
+    "message": {
+        "sender": {
+            "type": "session",
+            "sessionid": "alice-session-id",
+            "userid": "alice"
+        },
+        "data": {
+            "to": "bob-session-id",
+            "roomType": "video",
+            "type": "raiseHand",
+            "payload": {
+                "state": true,
+                "timestamp": 1729500000000
+            }
+        }
+    }
+}
+```
+
+Relayed `data` has no `from`. Offers and answers generated by the media server do have one, but always use `message.sender.sessionid`. `userid` is set for users, except on media server offers.
+
+`control` messages arrive as `{"type": "control", "control": {"sender": {...}, "data": {...}}}`. Treat them as a message with `type` `control`, `payload` = `control.data` and `from` = `control.sender.sessionid`.
+
+### Peer connections with the external signaling server
+
+All peer connections go to the media server of the HPB, not to the other participants:
+
+* Publishing: send an [offer](#offer) to your own session id. The answer comes from your own session id.
+* Receiving: send a [request offer](#request-offer) to the session of the publisher. The offer comes from that session; send the answer and candidates back to it with the `sid` of the offer.
+
+## Messages between call participants
+
+### Common fields
+
+| field         | type   | Description                                                                                  |
+|---------------|--------|----------------------------------------------------------------------------------------------|
+| `to`          | string | Session id of the recipient                                                                  |
+| `from`        | string | Session id of the sender, only when receiving                                                |
+| `type`        | string | Message type, see below                                                                      |
+| `roomType`    | string | `video` for audio and video, `screen` for screen sharing                                     |
+| `sid`         | string | Optional, peer connection id. Chosen by the offerer, repeated in answer and candidates. With the HPB, media server offers carry their own `sid` (>= 0.5.0) |
+| `broadcaster` | string | Optional, session id of the screen sharer, only with `roomType` `screen`                   |
+| `payload`     | mixed  | See below                                                                                    |
+
+Messages not tied to a peer connection (mute, nick, raise hand, reactions, force mute) are sent to each participant in the call individually, with `roomType` `video` and no `sid`.
+
+Ignore unknown types.
+
+Without the HPB, the participant with the larger session id sends the offer; the other side offers itself after 10 seconds without one. Only participants with audio or video in their `inCall` flags send media.
+
+### Offer
+
+| field     | type   | Description                     |
+|-----------|--------|---------------------------------|
+| `type`    | string | `offer`                         |
+| `sdp`     | string | Session description             |
+| `nick`    | string | Optional, display name of the sender |
+
+```json
+{
+    "to": "bob-session-id",
+    "sid": "1729500000000",
+    "roomType": "video",
+    "type": "offer",
+    "payload": {
+        "type": "offer",
+        "sdp": "v=0\r\no=- 4611731400430051336 2 IN IP4 127.0.0.1\r\n...",
+        "nick": "Alice"
+    }
+}
+```
+
+With the HPB feature `simulcast` the web client offers several video encodings.
+
+### Answer
+
+Like the [offer](#offer), with `type` `answer` and the `sid` of the offer.
+
+```json
+{
+    "to": "alice-session-id",
+    "sid": "1729500000000",
+    "roomType": "video",
+    "type": "answer",
+    "payload": {
+        "type": "answer",
+        "sdp": "v=0\r\no=- 2875390414385720214 2 IN IP4 127.0.0.1\r\n...",
+        "nick": "Bob"
+    }
+}
+```
+
+### Candidate
+
+| field                     | type    | Description                |
+|---------------------------|---------|----------------------------|
+| `candidate`               | object  | ICE candidate              |
+| `candidate.candidate`     | string  | Candidate description      |
+| `candidate.sdpMid`        | string  | Media stream identification |
+| `candidate.sdpMLineIndex` | integer | Index of the media description |
+
+```json
+{
+    "to": "bob-session-id",
+    "sid": "1729500000000",
+    "roomType": "video",
+    "type": "candidate",
+    "payload": {
+        "candidate": {
+            "candidate": "candidate:842163049 1 udp 1677729535 198.51.100.7 47152 typ srflx raddr 0.0.0.0 rport 0 generation 0",
+            "sdpMid": "0",
+            "sdpMLineIndex": 0
+        }
+    }
+}
+```
+
+### End of candidates
+
+All local candidates were gathered; the receiver adds an empty candidate. The payload is meaningless (the web client sends the serialized DOM event).
+
+```json
+{
+    "to": "bob-session-id",
+    "sid": "1729500000000",
+    "roomType": "video",
+    "type": "endOfCandidates",
+    "payload": {
+        "isTrusted": true
+    }
+}
+```
+
+### Connectivity error
+
+Sent by the offerer when ICE failed, so the other side reconnects too. No payload.
+
+```json
+{
+    "to": "bob-session-id",
+    "sid": "1729500000000",
+    "roomType": "video",
+    "type": "connectivityError"
+}
+```
+
+### Mute and unmute
+
+Local audio or video was disabled (`mute`) or enabled (`unmute`). The current state is also sent to each participant joining the call: without the HPB once the connection is established, with the HPB immediately and again after 1, 2, 4, 8 and 16 seconds.
+
+| field  | type   | Description          |
+|--------|--------|----------------------|
+| `name` | string | `audio` or `video`   |
+
+```json
+{
+    "to": "bob-session-id",
+    "roomType": "video",
+    "type": "mute",
+    "payload": {
+        "name": "audio"
+    }
+}
+```
+
+The state is also sent on the [data channel](#data-channel-messages).
+
+### Nick changed
+
+The local display name changed. Also sent to each participant joining the call: without the HPB only when no peer connection is made (otherwise `nick` in the offer or answer is used), with the HPB always, with the same repetition as [mute](#mute-and-unmute), since media server offers have no `nick`.
+
+| field  | type   | Description          |
+|--------|--------|----------------------|
+| `name` | string | New display name     |
+
+```json
+{
+    "to": "bob-session-id",
+    "roomType": "video",
+    "type": "nickChanged",
+    "payload": {
+        "name": "Alice"
+    }
+}
+```
+
+### Raise hand
+
+Needs the `raise-hand` capability. Not re-sent to participants who join later.
+
+| field       | type    | Description                                |
+|-------------|---------|--------------------------------------------|
+| `state`     | boolean | `true` raised, `false` lowered            |
+| `timestamp` | integer | Time of the change, in milliseconds        |
+
+```json
+{
+    "to": "bob-session-id",
+    "roomType": "video",
+    "type": "raiseHand",
+    "payload": {
+        "state": true,
+        "timestamp": 1729500000000
+    }
+}
+```
+
+### Call reactions
+
+Only offer the reactions in `config => call => supported-reactions`.
+
+| field      | type   | Description                               |
+|------------|--------|-------------------------------------------|
+| `reaction` | string | A single emoji                            |
+
+```json
+{
+    "to": "bob-session-id",
+    "roomType": "video",
+    "type": "reaction",
+    "payload": {
+        "reaction": "👍"
+    }
+}
+```
+
+### Unshare screen
+
+Screen sharing stopped. No payload.
+
+Without the HPB, to each receiver of the screen:
+
+```json
+{
+    "to": "bob-session-id",
+    "sid": "1729500000000",
+    "broadcaster": "alice-session-id",
+    "roomType": "screen",
+    "type": "unshareScreen"
+}
+```
+
+With the HPB, once to the conversation (recipient `{"type": "room"}`), and to the own session id over the screen publisher connection (like the first example), which makes the HPB close that publisher:
+
+```json
+{
+    "roomType": "screen",
+    "type": "unshareScreen"
+}
+```
+
+### Typing
+
+`startedTyping` / `stoppedTyping` in the chat, sent to every session in the conversation, not only the call. Sessions that join while typing get `startedTyping`. No `roomType`, no payload.
+
+Only used when `config => chat => typing-privacy` is `0` ([public](constants.md#participant-typing-privacy)).
+
+```json
+{
+    "to": "bob-session-id",
+    "type": "startedTyping"
+}
+```
+
+### Force mute
+
+Needs the `force-mute` capability. Sent by a moderator to each participant in the call. The participant `peerId` mutes itself, the others show it as muted. Both transports drop `control` messages from non-moderators.
+
+| field    | type   | Description                          |
+|----------|--------|--------------------------------------|
+| `action` | string | `forceMute`                          |
+| `peerId` | string | Session id of the participant to mute |
+
+```json
+{
+    "to": "bob-session-id",
+    "roomType": "video",
+    "type": "control",
+    "payload": {
+        "action": "forceMute",
+        "peerId": "carol-session-id"
+    }
+}
+```
+
+### Phone participant controls
+
+Sent by a moderator to a dialed-out phone participant, handled by the SIP bridge.
+
+| payload `type` | fields  | Description                                                                         |
+|----------------|---------|-------------------------------------------------------------------------------------|
+| `hangup`       |         | End the call                                                                        |
+| `mute`         | `audio` | Flags: `1` microphone muted, `2` speaker muted. `0` unmutes, `3` holds          |
+| `dtmf`         | `digit` | One DTMF digit, `0`-`9`, `*` or `#`                                                 |
+
+```json
+{
+    "to": "phone-session-id",
+    "type": "control",
+    "payload": {
+        "type": "mute",
+        "audio": 1
+    }
+}
+```
+
+### Call encryption
+
+Key exchange for end-to-end encrypted calls, over Olm. HPB only. Needs the `call-end-to-end-encryption` capability, `config => call => end-to-end-encryption`, and the `encryption` feature in the client `hello`.
+
+When a session joins the conversation (not only the call), the one with the larger session id sends `encryption.start`.
+
+`type` is `message`, no `roomType`; the encryption type is in the payload:
+
+| payload `type`       | fields                    | Description                                                        |
+|----------------------|---------------------------|--------------------------------------------------------------------|
+| `encryption.start`   | `id`, `identity`, `key`   | Start an Olm session. Curve25519 identity key and one-time key     |
+| `encryption.finish`  | `id`, `key`               | Reply to `encryption.start`, same `id`                             |
+| `encryption.setkey`  | `id`, `key`               | Current frame encryption key                                       |
+| `encryption.gotkey`  | `id`, `key`               | Reply to `encryption.setkey`, same `id`                            |
+| `encryption.error`   | `error`                   | Error, e.g. no session                                             |
+
+`id` is a random UUID. Except in `encryption.start`, `key` is an Olm message `{"type": 0|1, "body": "..."}` (pre-key or normal) that decrypts to `{"key": "<base64>", "index": 0}` (`key` is `false` when encryption is off), or `{}` when no key is set yet.
+
+```json
+{
+    "to": "bob-session-id",
+    "type": "message",
+    "payload": {
+        "id": "8e6b2a64-0a8c-4f3b-9f0e-6b1f3c0b2a8d",
+        "type": "encryption.start",
+        "identity": "x4bH0wQmB3c2o0PjB2s6Jw5Vf2r6N7uC0dM1eK9aL3Q",
+        "key": "q0YyXjZ2Tz4mWk1ZdW9pRnN5b0p6dGVnVnRtbm1yYzE"
+    }
+}
+```
+
+### Transcript
+
+Sent by the live transcription service. Fields are top level, not in `payload`.
+
+| field              | type    | Description                                      |
+|--------------------|---------|--------------------------------------------------|
+| `speakerSessionId` | string  | Session id of the speaker                        |
+| `message`          | string  | Transcribed text                                 |
+| `langId`           | string  | Language of the text                             |
+| `final`            | boolean | Optional, `false` while the text may change. Default `true` |
+
+```json
+{
+    "type": "transcript",
+    "speakerSessionId": "alice-session-id",
+    "message": "Hello everyone",
+    "langId": "en",
+    "final": true
+}
+```
+
+## Messages to the external signaling server
+
+Sent like other HPB messages, but handled by the HPB itself. Not available with the internal signaling.
+
+### Request offer
+
+Asks for an offer to receive the media of the recipient session. The offer comes from that session.
+
+| field      | type   | Description                                                                                              |
+|------------|--------|----------------------------------------------------------------------------------------------------------|
+| `roomType` | string | `video`                                                                                                  |
+| `sid`      | string | Optional, update the existing connection with this `sid` instead of creating one. HPB feature `update-sdp` |
+
+```json
+{
+    "type": "message",
+    "message": {
+        "recipient": {
+            "type": "session",
+            "sessionid": "alice-session-id"
+        },
+        "data": {
+            "type": "requestoffer",
+            "roomType": "video"
+        }
+    }
+}
+```
+
+The web client repeats the request every 10 seconds until the offer arrives.
+
+### Send offer
+
+Sent by the screen sharer: makes the HPB send the recipient an offer for the screen, since others cannot know a screen is shared.
+
+```json
+{
+    "type": "message",
+    "message": {
+        "recipient": {
+            "type": "session",
+            "sessionid": "bob-session-id"
+        },
+        "data": {
+            "type": "sendoffer",
+            "roomType": "screen"
+        }
+    }
+}
+```
+
+### Select stream
+
+Changes what the media server sends on a receiving connection. Uses `to`, `sid` and `roomType` of that connection.
+
+| payload field | type    | Description                                                                        |
+|---------------|---------|------------------------------------------------------------------------------------|
+| `substream`   | integer | Simulcast quality, `0` is lowest. HPB feature `simulcast`                         |
+| `temporal`    | integer | Simulcast temporal layer                                                           |
+| `video`       | boolean | `false` pauses the video, `true` resumes it. HPB feature `update-sdp`             |
+| `audio`       | boolean | Same for audio                                                                     |
+
+The fields can be combined. The web client sends either `substream` and `temporal`, or `video`.
+
+```json
+{
+    "to": "alice-session-id",
+    "sid": "1729500000000",
+    "roomType": "video",
+    "type": "selectStream",
+    "payload": {
+        "video": false
+    }
+}
+```
+
+## Events from the external signaling server
+
+HPB only. Generated from requests of the Nextcloud server, except participant flags and phone call status, which come from the SIP bridge.
+
+### End call for everyone
+
+| field    | type    | Description                       |
+|----------|---------|-----------------------------------|
+| `roomid` | string  | Conversation token                |
+| `incall` | integer | `0`                               |
+| `all`    | boolean | `true`                            |
+
+```json
+{
+    "type": "event",
+    "event": {
+        "target": "participants",
+        "type": "update",
+        "update": {
+            "roomid": "abcd1234",
+            "incall": 0,
+            "all": true
+        }
+    }
+}
+```
+
+### Update participants
+
+Participants joined or left the call, or were modified (permissions, type, ...).
+
+| field     | type  | Description        |
+|-----------|-------|--------------------|
+| `roomid`  | string | Conversation token |
+| `changed` | array | Optional, the participants whose state changed, see below |
+| `users`   | array | Optional, snapshot: everyone in the call after a call change, everyone in the conversation otherwise. Includes internal and virtual sessions. Dropped once the HPB supports `changed-users` |
+
+Handle both: on resume and when an internal client changes, the HPB sends only `users`.
+
+Each participant:
+
+| field                    | type    | Description                                                                                        |
+|--------------------------|---------|----------------------------------------------------------------------------------------------------|
+| `inCall`                 | integer | [In-call flags](constants.md#participant-in-call-flag)                                             |
+| `lastPing`               | integer | Timestamp of the last ping                                                                         |
+| `sessionId`              | string  | HPB session id                                                                                     |
+| `nextcloudSessionId`     | string  | Optional, Nextcloud session id. Only for call flag changes                                         |
+| `participantType`        | integer | [Participant type](constants.md#participant-types)                                                 |
+| `participantPermissions` | integer | [Permissions](constants.md#attendee-permissions)                                                   |
+| `actorType`              | string  | Optional, [actor type](constants.md#attendee-types). Talk >= 20                                    |
+| `actorId`                | string  | Optional, actor id. Talk >= 20                                                                     |
+| `userId`                 | string  | Optional, only for users                                                                           |
+| `displayName`            | string  | Optional, only for participant modifications                                                       |
+| `internal`               | boolean | Optional, `true` for internal clients (recording server, phone participants)                      |
+| `virtual`                | boolean | Optional, `true` for phone participants                                                            |
+| `features`               | array   | Optional, features of an internal client                                                           |
+
+The casing is `userId` here (from the Nextcloud server) but `userid` in HPB messages like room join. The HPB replaces `sessionId` with its own id and drops sessions it does not know.
+
+```json
+{
+    "type": "event",
+    "event": {
+        "target": "participants",
+        "type": "update",
+        "update": {
+            "roomid": "abcd1234",
+            "changed": [
+                {
+                    "inCall": 7,
+                    "lastPing": 1729500000,
+                    "sessionId": "alice-session-id",
+                    "nextcloudSessionId": "alice-nextcloud-session-id",
+                    "participantType": 1,
+                    "participantPermissions": 254,
+                    "actorType": "users",
+                    "actorId": "alice",
+                    "userId": "alice"
+                }
+            ]
+        }
+    }
+}
+```
+
+### Switch to
+
+Move to another conversation (breakout rooms). Needs the `breakout-rooms-v1` capability and HPB >= 1.1.0.
+
+| field    | type   | Description                        |
+|----------|--------|------------------------------------|
+| `roomid` | string | Token of the target conversation   |
+
+```json
+{
+    "type": "event",
+    "event": {
+        "target": "room",
+        "type": "switchto",
+        "switchto": {
+            "roomid": "efgh5678"
+        }
+    }
+}
+```
+
+### Participant flags
+
+State of a phone participant changed, set by the SIP bridge.
+
+| field       | type    | Description                                                                 |
+|-------------|---------|-----------------------------------------------------------------------------|
+| `roomid`    | string  | Conversation token                                                          |
+| `sessionid` | string  | Session id of the phone participant                                         |
+| `flags`     | integer | `1` microphone muted, `2` speaker muted, `4` speaking. The web client also reads `8` as hand raised |
+
+```json
+{
+    "type": "event",
+    "event": {
+        "target": "participants",
+        "type": "flags",
+        "flags": {
+            "roomid": "abcd1234",
+            "sessionid": "phone-session-id",
+            "flags": 4
+        }
+    }
+}
+```
+
+### Room list
+
+The `roomlist` events `invite`, `disinvite` (`reason` `disinvited` or `deleted`) and `update` are part of the [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/). Sessions joined to the conversation get property changes as a `room` message instead. Talk defines the `properties`:
+
+| field              | type    | Description                                                                 |
+|--------------------|---------|-----------------------------------------------------------------------------|
+| `name`             | string  | Conversation name                                                           |
+| `type`             | integer | [Conversation type](constants.md#conversation-types)                        |
+| `lobby-state`      | integer | [Lobby state](constants.md#webinar-lobby-states)                            |
+| `lobby-timer`      | integer | Timestamp when the lobby opens, `0` if not set                             |
+| `read-only`        | integer | [Read-only state](constants.md#read-only-states)                            |
+| `listable`         | integer | [Listable scope](constants.md#listable-scope)                               |
+| `active-since`     | integer | Timestamp of the call start, `0` if no call                                 |
+| `sip-enabled`      | integer | [SIP state](constants.md#sip-states)                                        |
+| `description`      | string  | Optional, in every update caused by a conversation change                   |
+| `participant-list` | string  | Optional, `refresh` in invite and disinvite (others get these as `update`) |
+
+With `participant-list`, ignore the other properties and refresh the participant list.
+
+```json
+{
+    "type": "event",
+    "event": {
+        "target": "roomlist",
+        "type": "update",
+        "update": {
+            "roomid": "abcd1234",
+            "properties": {
+                "name": "Team meeting",
+                "type": 2,
+                "lobby-state": 0,
+                "lobby-timer": 0,
+                "read-only": 0,
+                "listable": 0,
+                "active-since": 0,
+                "sip-enabled": 0,
+                "description": "Weekly sync"
+            }
+        }
+    }
+}
+```
+
+### Room messages
+
+From the Nextcloud server to all sessions in the conversation, typed by `data.type`.
+
+| `data.type` | fields             | Description                                                                                                  |
+|-------------|--------------------|--------------------------------------------------------------------------------------------------------------|
+| `chat`      | `chat.refresh` or `chat.comment` | New chat message. With `refresh`, fetch new messages |
+| `recording` | `recording.status` | [Recording status](constants.md#call-recording-status) changed |
+
+Clients with the `chat-relay` feature in their `hello` get `chat.comment` for relayed messages and no `refresh`; others only get `refresh`. Only chat messages and the system messages listed in `SYSTEM_MESSAGE_TYPE_RELAY` (`lib/Signaling/Listener.php`) are relayed. Reactions are relayed as `reaction` / `reaction_revoked` system messages with the reacted message as `parent`. System message texts are English.
+
+`chat.comment` is a message as in the [Chat API](chat.md), plus:
+
+* `lastCommonRead`: id of the last message read by everyone
+* `parent`: optional, parent of a reply
+* `poll`: optional, for poll system messages
+* `call.silent`: optional, for `call_started` system messages
+* `threadInfo`: optional, for `thread_created` and `thread_renamed`
+
+The HPB blanks `actorDisplayName` for sessions that may not see display names.
+
+```json
+{
+    "type": "event",
+    "event": {
+        "target": "room",
+        "type": "message",
+        "message": {
+            "roomid": "abcd1234",
+            "data": {
+                "type": "recording",
+                "recording": {
+                    "status": 1
+                }
+            }
+        }
+    }
+}
+```
+
+### Phone call status
+
+The SIP bridge reports the status of dial-out calls, the HPB stores it as [transient data](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/) under `callstatus_<callid>`. Joining clients get it in the transient `initial` message. `rejected` and `cleared` are removed after 5 seconds.
+
+| field    | type   | Description                                                       |
+|----------|--------|-------------------------------------------------------------------|
+| `callid` | string | Phone call id                                                     |
+| `status` | string | `ringing`, `accepted`, `connected`, `rejected` or `cleared`       |
+| `cause`, `code`, `message` | | Optional, reason when the call ended                  |
+
+```json
+{
+    "type": "transient",
+    "transient": {
+        "type": "set",
+        "key": "callstatus_9a8b7c6d",
+        "value": {
+            "callid": "9a8b7c6d",
+            "status": "ringing"
+        }
+    }
+}
+```
+
+## Users in room
+
+Internal signaling only. Ends every long poll response, lists the sessions in the conversation. Fields: `SignalingSession` in the [OpenAPI specification](https://github.com/nextcloud/spreed/blob/main/openapi.json).
+
+* `roomId` is the internal conversation id, not the token
+* `userId` is always set, empty for non-users
+
+```json
+{
+    "type": "usersInRoom",
+    "data": [
+        {
+            "userId": "alice",
+            "roomId": 42,
+            "lastPing": 1729500000,
+            "sessionId": "alice-session-id",
+            "inCall": 7,
+            "participantPermissions": 254,
+            "actorType": "users",
+            "actorId": "alice"
+        }
+    ]
+}
+```
+
+## Data channel messages
+
+Not signaling: JSON `{"type": ..., "payload": ...}` on the `status` data channel of the peer connections. With the HPB only on the own publisher connection; the media server forwards them to all subscribers.
+
+| type                           | payload | Description                                    |
+|--------------------------------|---------|------------------------------------------------|
+| `audioOn` / `audioOff`         |         | Audio enabled or disabled                      |
+| `videoOn` / `videoOff`         |         | Video enabled or disabled                      |
+| `speaking` / `stoppedSpeaking` |         | Started or stopped speaking                    |
+| `nickChanged`                  | string or object | Display name changed, see below       |
+
+The `nickChanged` payload is the name as a string for guests, `{"name", "userid"}` for users.
+
+```json
+{
+    "type": "nickChanged",
+    "payload": {
+        "name": "Alice",
+        "userid": "alice"
+    }
+}
+```
+
+## Features
+
+### HPB features
+
+Announced by the HPB in its `welcome`/`hello` response.
+
+| Feature      | Used for                                                                                  |
+|--------------|-------------------------------------------------------------------------------------------|
+| `mcu`        | [Request offer](#request-offer), [Send offer](#send-offer), [Select stream](#select-stream) |
+| `simulcast`  | Simulcast [offers](#offer), `substream` in [Select stream](#select-stream)                 |
+| `update-sdp` | `sid` in [Request offer](#request-offer), `video` in [Select stream](#select-stream)       |
+| `switchto`   | [Switch to](#switch-to)                                                                   |
+| `incall-all` | [End call for everyone](#end-call-for-everyone)                                           |
+
+### Client hello features
+
+Sent by the client in its `hello` to the HPB.
+
+| Feature      | Used for                                          |
+|--------------|---------------------------------------------------|
+| `chat-relay` | `chat.comment` in [Room messages](#room-messages) |
+| `encryption` | [Call encryption](#call-encryption)               |
+
+### Talk capabilities
+
+| Capability                   | Used for                            |
+|------------------------------|-------------------------------------|
+| `raise-hand`                 | [Raise hand](#raise-hand)           |
+| `force-mute`                 | [Force mute](#force-mute)           |
+| `breakout-rooms-v1`          | [Switch to](#switch-to)             |
+| `call-end-to-end-encryption` | [Call encryption](#call-encryption) |
+
+### Talk config
+
+| Config                                  | Used for                          |
+|-----------------------------------------|-----------------------------------|
+| `config => call => supported-reactions` | [Call reactions](#call-reactions) |
+| `config => call => end-to-end-encryption` | [Call encryption](#call-encryption) |
+| `config => chat => typing-privacy`      | [Typing](#typing)                 |

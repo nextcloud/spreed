@@ -49,12 +49,8 @@
 
 ### Internal signaling API
 
-Todo
+See [Signaling messages](signaling-messages.md#internal-signaling) for the messages sent and received with the internal signaling.
 
 ### External signaling API
 
 See [External signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/) for the Signaling API of the High-performance backend.
-
-### Signaling messages
-
-See [Signaling Messages](signaling-messages.md)
