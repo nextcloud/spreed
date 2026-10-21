@@ -1082,6 +1082,7 @@ export default {
 	position: relative;
 	height: 100%;
 	width: 100%;
+	min-height: 0;
 
 	&.full-page {
 		// force the promoted remote or local video to cover the whole call view
