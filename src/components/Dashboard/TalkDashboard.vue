@@ -33,6 +33,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import { hasUnreadMentions } from '../../utils/conversation.ts'
+import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
@@ -42,6 +43,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
+const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const isDirectionRTL = isRTL()
 const isMobile = useIsMobile()
@@ -130,14 +132,16 @@ const filteredConversations = computed(() => store.getters.conversationsList.fil
  */
 async function startMeeting() {
 	try {
+		const password = forcePasswordProtection ? await generatePassword() : undefined
 		const conversation = await store.dispatch('createGroupConversation', {
 			// TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
 			roomName: conversationName.value || t('spreed', 'Meeting'),
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
 			objectId: Math.floor(Date.now() / 1000).toString(),
+			password,
 		})
-		await copyConversationLinkToClipboard(conversation.token)
+		await copyConversationLinkToClipboard(conversation.token, undefined, undefined, password)
 		await router.push({
 			name: 'conversation',
 			params: { token: conversation.token },
