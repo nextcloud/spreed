@@ -22,6 +22,7 @@ use OCP\IL10N;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use PHPUnit\Framework\Attributes\Group;
