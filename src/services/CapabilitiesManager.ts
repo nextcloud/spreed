@@ -77,6 +77,15 @@ export function hasTalkFeature(token: string = 'local', feature: string): boolea
 }
 
 /**
+ * Check whether the notifications app of the local server offers the given OCS endpoint feature
+ *
+ * @param feature endpoint capability in string format
+ */
+export function hasNotificationsFeature(feature: string): boolean {
+	return localCapabilities?.notifications?.['ocs-endpoints']?.includes(feature) ?? false
+}
+
+/**
  * Get an according config value from local or remote capabilities
  *
  * @param token conversation token
