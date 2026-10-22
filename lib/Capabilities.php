@@ -140,6 +140,7 @@ class Capabilities implements IPublicCapability {
 		'announcement-preset',
 		'promote-demote-owner',
 		'matrix-rooms',
+		'chat-attachments-batch',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -179,6 +180,7 @@ class Capabilities implements IPublicCapability {
 		'classified-conversations',
 		'announcement-preset',
 		'matrix-rooms',
+		'chat-attachments-batch',
 	];
 
 	public const LOCAL_CONFIGS = [

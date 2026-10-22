@@ -243,3 +243,4 @@
 ## 26
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)
+* `chat-attachments-batch` (local) - Whether several files of the conversation Draft folder can be posted in one request, keeping their messages next to each other in the given order. Supersedes the deprecated single file attachment endpoint

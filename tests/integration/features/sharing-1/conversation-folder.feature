@@ -239,3 +239,94 @@ Feature: sharing-1/conversation-folder
       | item_type   | folder                                    |
       | path        | REGEXP /^\/Talk\/.+\/J_o_e-participant3$/ |
       | permissions | 1                                         |
+
+  Scenario: Post several files in one request keeps their order and puts the caption on the last one
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant2" sends message "Message 1" to room "group room" with 201
+    And user "participant1" uploads file "a.txt" with content "A" to conversation folder for room "group room" with name "room"
+    And user "participant1" uploads file "b.txt" with content "B" to conversation folder for room "group room" with name "room"
+    And user "participant1" uploads file "c.txt" with content "C" to conversation folder for room "group room" with name "room"
+    When user "participant1" posts files "a.txt, b.txt, c.txt" from conversation folder of room "group room" with 200 (v1)
+      | talkMetaData.caption | Caption text |
+    Then the last attachments response has the following results
+      | referenceId | status | error |
+      | ref-0       | posted |       |
+      | ref-1       | posted |       |
+      | ref-2       | posted |       |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message      | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | Caption text | "IGNORE"          |
+      | group room | users     | participant1 | participant1-displayname | {file}       | "IGNORE"          |
+      | group room | users     | participant1 | participant1-displayname | {file}       | "IGNORE"          |
+      | group room | users     | participant2 | participant2-displayname | Message 1    | []                |
+
+  Scenario: Files that can not be posted are reported and the caption moves to the last posted file
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" uploads file "a.txt" with content "A" to conversation folder for room "group room" with name "room"
+    And user "participant1" uploads file "b.txt" with content "B" to conversation folder for room "group room" with name "room"
+    When user "participant1" posts files "a.txt, home:welcome.txt, b.txt, a.txt, missing.txt" from conversation folder of room "group room" with 200 (v1)
+      | talkMetaData.caption | Caption text |
+    Then the last attachments response has the following results
+      | referenceId | status | error     |
+      | ref-0       | posted |           |
+      | ref-1       | failed | folder    |
+      | ref-2       | posted |           |
+      | ref-3       | failed | duplicate |
+      | ref-4       | failed | file      |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message      | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | Caption text | "IGNORE"          |
+      | group room | users     | participant1 | participant1-displayname | {file}       | "IGNORE"          |
+
+  Scenario: Posting several files with a thread title creates one thread for all of them
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" uploads file "a.txt" with content "A" to conversation folder for room "group room" with name "room"
+    And user "participant1" uploads file "b.txt" with content "B" to conversation folder for room "group room" with name "room"
+    When user "participant1" posts files "a.txt, b.txt" from conversation folder of room "group room" with 200 (v1)
+      | talkMetaData.caption     | Caption text |
+      | talkMetaData.threadTitle | Thread 1     |
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message      | messageParameters | threadTitle |
+      | group room | users     | participant1 | participant1-displayname | Caption text | "IGNORE"          | Thread 1    |
+      | group room | users     | participant1 | participant1-displayname | {file}       | "IGNORE"          | Thread 1    |
+    And user "participant1" sees the following recent threads in room "group room" with 200
+      | t.id   | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage  |
+      | {file} | Thread 1 | 1            | Caption text  | 0                   | {file}       | Caption text |
+
+  Scenario: Posting several files needs at least one file and conversation subfolders
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" uploads file "a.txt" with content "A" to conversation folder for room "group room" with name "room"
+    When user "participant1" posts files "" from conversation folder of room "group room" with 400 (v1)
+    And the following "spreed" app config is set
+      | conversation_subfolders | no |
+    When user "participant1" posts files "a.txt" from conversation folder of room "group room" with 501 (v1)
+
+  Scenario: Posting several files as a reply makes every file a reply and starts no thread
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant2" sends message "Message 1" to room "group room" with 201
+    And user "participant1" uploads file "a.txt" with content "A" to conversation folder for room "group room" with name "room"
+    And user "participant1" uploads file "b.txt" with content "B" to conversation folder for room "group room" with name "room"
+    When user "participant1" posts files "a.txt, b.txt" from conversation folder of room "group room" with 200 (v1)
+      | talkMetaData.caption     | Caption text |
+      | talkMetaData.replyTo     | Message 1    |
+      | talkMetaData.threadTitle | Thread 1     |
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message      | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Caption text | "IGNORE"          | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | {file}       | "IGNORE"          | Message 1     |
+      | group room | users     | participant2 | participant2-displayname | Message 1    | []                |               |
+    And user "participant1" sees the following recent threads in room "group room" with 200
