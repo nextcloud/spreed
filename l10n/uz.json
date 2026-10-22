@@ -272,13 +272,12 @@
     "Zimbabwe" : "Zimbabve",
     "Federation" : "Jamg'arma",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Jamg'armaning muloqot moduli yoqilgan bo'lsa, \"memcache.locking\" ni sozlash tavsiya etiladi.",
-    "Loading …" : "Yuklanmoqda…",
+    "Loading …" : "Yuklanmoqda...",
     "The password is wrong. Try again." : "Parol noto'g'ri. Qayta urinib ko'ring.",
     "Password" : "Parol",
     "Submit" : "Yuborish",
     "Everyone" : "Barcha",
     "Save changes" : "Save changes",
-    "Saving …" : "Saqlanmoqda...",
     "Saved!" : "Saqlangan!",
     "Name" : "Nomi",
     "Permissions" : "Ruxsatnomalar",
@@ -295,7 +294,6 @@
     "Save" : "Saqlash",
     "Remove" : "O'chirish",
     "{option1} and {option2}" : "{option1} va {option2}",
-    "Checking …" : "Checking …",
     "OK" : "OK",
     "Federated user" : "Korporativ foydalanuvchi",
     "Confirm" : "Tasdiqlash",
@@ -358,7 +356,6 @@
     "Results" : "Natijalar",
     "Owner" : "Egasi",
     "Remove participant" : "Ishtirokchini olib tashlash",
-    "Searching …" : "Qidirilmoqda …",
     "Participants" : "Ishtirokchilar",
     "Details" : "Tafsilotlar",
     "Search in {name}" : " {name}ni qidirish",
@@ -390,7 +387,11 @@
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
     "Talk conversation for event" : "Tadbir uchun suhbat",
+    "Saving …" : "Saqlanmoqda...",
     "Enable Federation in Talk app" : "Talk ilovasida Jamg'armani yoqish",
-    "Send" : "Yuborish"
+    "Checking …" : "Checking …",
+    "Loading …" : "Yuklanmoqda…",
+    "Send" : "Yuborish",
+    "Searching …" : "Qidirilmoqda …"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

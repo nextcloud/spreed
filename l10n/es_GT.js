@@ -59,7 +59,6 @@ OC.L10N.register(
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
     "{option1} and {option2}" : "{option1} y {option2}",
     "TURN server protocols" : "Protocolos del servidor TURN",
-    "Checking …" : "Verificando ...",
     "OK" : "OK",
     "Confirm" : "Confirmar",
     "Reset" : "Restablecer",
@@ -70,7 +69,6 @@ OC.L10N.register(
     "No results" : "No hay resultados",
     "Grid view" : "Vista de cuadrícula",
     "More actions" : "Más acciones",
-    "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
     "You can invite others in the participant tab of the sidebar" : "Puedes invitar a otras personas en la pestaña de participante del menú lateral",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "¡Puedes invitar a otros usando la pestaña de participante de la barra lateral o compartiendo esta liga para invitar a otras personas!",
     "Share this link to invite others!" : "¡Comparte esta liga para invitar a otras personas!",
@@ -145,6 +143,8 @@ OC.L10N.register(
     "__language_name__" : "Español (Guatemala)",
     "Tasks" : "Tareas",
     "Talk to %s" : "Hablar con %s",
+    "Checking …" : "Verificando ...",
+    "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
     "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -463,7 +463,6 @@ OC.L10N.register(
     "Users and moderators" : "Implijourien ha habaskaerienn",
     "Moderators only" : "Habaskerienn nemetken",
     "Save changes" : "Enrollañ ar cheñchamantoù",
-    "Saving …" : "Orc'h enrolliñ",
     "Saved!" : "Enrollet !",
     "Limit to groups" : "Nemet d'ar strolladoù",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "M'az eo choazet ur strollad d'an neubetañ, ne vo nemet tud ar strollad en diviz.",
@@ -536,7 +535,6 @@ OC.L10N.register(
     "Done" : "Graet",
     "Grid view" : "Gwel ar gael",
     "Reload" : "Adkargañ",
-    "Waiting for others to join the call …" : "O c'hortoz ma teuio ar re all er gemenadenn ...",
     "You can invite others in the participant tab of the sidebar" : "Galout a rit kouviañ tud gant an daolenn lodek er verenn gostez",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Galout a rit kouviañ tud en dolenn lodek er varenn gostez pe rannañ al liamm-mañ evit kouviañ anezho !",
     "Share this link to invite others!" : "Rannit al liamm-mañ gant ar re all !",
@@ -622,7 +620,6 @@ OC.L10N.register(
     "Add groups" : "Ouzhoennañ strolladoù",
     "Add other sources" : "Ouzhpennañ dre un orin all",
     "Add emails" : "Ouzhpennañ postelloù",
-    "Searching …" : "O klask ...",
     "Search for more users" : "Klask d evit muioc'h a implijourienn.",
     "Participants" : "Tud",
     "Details" : "Munudoù",
@@ -703,6 +700,9 @@ OC.L10N.register(
     "__language_name__" : "Brezhoneg",
     "Notes" : "Notennoù",
     "Talk to %s" : "Komz da %s",
-    "Send" : "Kas"
+    "Saving …" : "Orc'h enrolliñ",
+    "Waiting for others to join the call …" : "O c'hortoz ma teuio ar re all er gemenadenn ...",
+    "Send" : "Kas",
+    "Searching …" : "O klask ..."
 },
 "nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);");
