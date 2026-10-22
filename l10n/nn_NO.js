@@ -56,7 +56,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "Everyone" : "Alle",
     "Save changes" : "Lagre endringar",
-    "Saving …" : "Lagrar …",
+    "Saving …" : "Lagrar …",
     "Saved!" : "Lagra!",
     "Disabled" : "Deaktivert",
     "Name" : "Namn",
@@ -146,6 +146,7 @@ OC.L10N.register(
     "__language_name__" : "Nynorsk",
     "Tasks" : "Oppgåver",
     "Notes" : "Notat",
+    "Saving …" : "Lagrar …",
     "Send" : "Send"
 },
 "nplurals=2; plural=(n != 1);");

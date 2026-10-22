@@ -239,12 +239,11 @@
     "Zambia" : "Zambya",
     "Zimbabwe" : "Zimbabwi",
     "Leave call" : "Eǧǧ asiwel",
-    "Loading …" : "Asali ...",
     "Password" : "Awal n uɛeddi",
     "Submit" : "Azen",
     "Everyone" : "Yal yiwen",
     "Save changes" : "Sekles asnifel",
-    "Saving …" : "Asekles ...",
+    "Saving …" : "Asekles …",
     "Saved!" : "Tettwasekles!",
     "Enabled" : "Yermed",
     "Disabled" : "Ittwarermed",
@@ -395,7 +394,7 @@
     "Moderator" : "Amaẓrag",
     "bot" : "arubut",
     "Copy phone number" : "Nɣel uṭṭun n tiliɣri",
-    "Searching …" : "Anadi …",
+    "Searching …" : "Anadi …",
     "Participants" : "Imttekkiyen",
     "Search messages" : "Nadi deg iznan",
     "Chat" : "Adiwenni",
@@ -440,7 +439,10 @@
     "Reports" : "Assaɣen",
     "Agenda" : "Tasmektit",
     "Talk to %s" : "Mmeslay d %s",
+    "Saving …" : "Asekles ...",
+    "Loading …" : "Asali ...",
     "Send" : "Tuzna",
+    "Searching …" : "Anadi …",
     "Search …" : "Nadi ..."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

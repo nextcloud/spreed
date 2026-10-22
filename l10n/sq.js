@@ -191,7 +191,6 @@ OC.L10N.register(
     "Remove" : "Hiqe",
     "{option1} and {option2}" : "{option1} dhe {option2}",
     "TURN server protocols" : "Protokollet e serverit TURN",
-    "Checking …" : "Duke kontrolluar ...",
     "OK" : "OK",
     "Confirm" : "Konfirmo",
     "Reset" : "Rivendos",
@@ -203,7 +202,6 @@ OC.L10N.register(
     "Grid view" : "Pamje galeri",
     "More actions" : "Më tepër veprime ",
     "Reload" : "Ringarkoje",
-    "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",
     "Copy link" : "Kopjoje lidhjen",
     "Mute audio" : "Mute audio",
     "None" : "Asnjë",
@@ -278,6 +276,8 @@ OC.L10N.register(
     "iOS app" : "Aplikacion iOS",
     "__language_name__" : "Shqip",
     "Tasks" : "Detyra",
+    "Checking …" : "Duke kontrolluar ...",
+    "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",
     "Send" : "Dërgo"
 },
 "nplurals=2; plural=(n != 1);");

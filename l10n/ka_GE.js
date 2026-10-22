@@ -63,7 +63,6 @@ OC.L10N.register(
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
     "{option1} and {option2}" : "{option1} და {option2}",
     "TURN server protocols" : "TURN სერვერის პროტოკოლები",
-    "Checking …" : "მოწმდება ...",
     "OK" : "OK",
     "Confirm" : "დადასტურება",
     "Reset" : "საწყის მდოგმარეობაში დაბრუნება",
@@ -73,7 +72,6 @@ OC.L10N.register(
     "Done" : "დასრულდა",
     "Grid view" : "ბადისებური ხედი",
     "More actions" : "მეტი ქმედება",
-    "Waiting for others to join the call …" : "ზარში შემოსვლისთვის ველოდებით სხვებს …",
     "You can invite others in the participant tab of the sidebar" : "შეგიძლიათ სხვები მოიწვიოთ გვერდით ბარში, მონაწილებიის ტაბულით",
     "Share this link to invite others!" : "სხვების მოსაწვევად გააზიარეთ ეს ბმული!",
     "Mute audio" : "ხმის ჩახშობა",
@@ -146,6 +144,8 @@ OC.L10N.register(
     "Tasks" : "დავალებები",
     "Notes" : "ჩანაწერები",
     "Talk to %s" : "საუბარი მომხმარებელთან %s",
+    "Checking …" : "მოწმდება ...",
+    "Waiting for others to join the call …" : "ზარში შემოსვლისთვის ველოდებით სხვებს …",
     "Send" : "გაგზავნა"
 },
 "nplurals=2; plural=(n!=1);");

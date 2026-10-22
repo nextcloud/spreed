@@ -252,7 +252,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Submit" : "Dien in",
     "Everyone" : "Almal",
-    "Saving …" : "Bewaar tans…",
     "Saved!" : "Gestoor!",
     "Pending" : "Hangend",
     "Active" : "Aktief",
@@ -262,7 +261,6 @@ OC.L10N.register(
     "Save" : "Save",
     "Error code" : "Foutkode",
     "{option1} and {option2}" : "{option1} en {option2}",
-    "Checking …" : "Gaan tans na …",
     "OK" : "OK",
     "Confirm" : "Bevestig",
     "Reset" : "Herstel",
@@ -309,6 +307,8 @@ OC.L10N.register(
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
     "Talk to %s" : "Praat met %s",
+    "Saving …" : "Bewaar tans…",
+    "Checking …" : "Gaan tans na …",
     "Send" : "Stuur"
 },
 "nplurals=2; plural=(n != 1);");
