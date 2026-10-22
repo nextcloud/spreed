@@ -1166,6 +1166,8 @@ export default {
 .scroller {
 	position: relative;
 	flex: 1 0;
+	// Provides 100cqh (scroller height) for MessageItem buttons bar
+	container-type: size;
 	padding-top: var(--default-grid-baseline);
 	overflow-y: scroll;
 	overflow-x: hidden;
