@@ -193,7 +193,8 @@ class MatrixMediaControllerTest extends TestCase {
 
 	public function testTamperedEncryptedFileIsRefused(): void {
 		$ciphertext = $this->encryptedAttachment('png');
-		$this->client->method('downloadMedia')->willReturn(new Psr7Response(200, [], 'x' . substr($ciphertext, 1)));
+		$ciphertext[0] = chr(ord($ciphertext[0]) ^ 1);
+		$this->client->method('downloadMedia')->willReturn(new Psr7Response(200, [], $ciphertext));
 
 		self::assertSame(Http::STATUS_BAD_GATEWAY, $this->controller->download('55')->getStatus());
 	}
