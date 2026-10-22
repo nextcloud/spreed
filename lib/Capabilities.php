@@ -333,15 +333,15 @@ class Capabilities implements IPublicCapability {
 				],
 				'federation' => [
 					'enabled' => false,
-					'incoming-enabled' => false,
-					'outgoing-enabled' => false,
-					'only-trusted-servers' => true,
+					'incoming-enabled' => true,
+					'outgoing-enabled' => true,
+					'only-trusted-servers' => false,
 				],
 				'matrix' => [
 					'enabled' => $user instanceof IUser && $this->talkConfig->isMatrixEnabled(),
 				],
 				'previews' => [
-					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE, 3145728),
+					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE),
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, $this->appConfig->getAppValueInt(Config::SESSION_PING_LIMIT)),
@@ -377,9 +377,9 @@ class Capabilities implements IPublicCapability {
 			if ($this->talkConfig->isFederationEnabled() && $this->talkConfig->isFederationEnabledForUserId($user)) {
 				$capabilities['config']['federation'] = [
 					'enabled' => true,
-					'incoming-enabled' => $this->appConfig->getAppValueBool('federation_incoming_enabled', true),
-					'outgoing-enabled' => $this->appConfig->getAppValueBool('federation_outgoing_enabled', true),
-					'only-trusted-servers' => $this->appConfig->getAppValueBool('federation_only_trusted_servers'),
+					'incoming-enabled' => $this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED),
+					'outgoing-enabled' => $this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED),
+					'only-trusted-servers' => $this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS),
 				];
 			}
 
@@ -394,8 +394,8 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['signaling']['hello-v2-token-key'] = $pubKey;
 		}
 
-		$includeBrandedBackgrounds = $user instanceof IUser || $this->appConfig->getAppValueBool('backgrounds_branded_for_guests');
-		$includeDefaultBackgrounds = !$user instanceof IUser || $this->appConfig->getAppValueBool('backgrounds_default_for_users', true);
+		$includeBrandedBackgrounds = $user instanceof IUser || $this->appConfig->getAppValueBool(Config::BACKGROUNDS_BRANDED_FOR_GUESTS);
+		$includeDefaultBackgrounds = !$user instanceof IUser || $this->appConfig->getAppValueBool(Config::BACKGROUNDS_DEFAULT_FOR_USERS);
 
 		$predefinedBackgrounds = [];
 		$defaultBackgrounds = $this->getBackgroundsFromDirectory(__DIR__ . '/../img/backgrounds', '_default');
@@ -414,7 +414,7 @@ class Capabilities implements IPublicCapability {
 		$capabilities['config']['call']['predefined-backgrounds-v2'] = array_values($predefinedBackgrounds);
 
 		if ($user instanceof IUser) {
-			$userAllowedToUpload = $this->appConfig->getAppValueBool('backgrounds_upload_users', true);
+			$userAllowedToUpload = $this->appConfig->getAppValueBool(Config::BACKGROUNDS_UPLOAD_USERS);
 			if ($userAllowedToUpload) {
 				$quota = $user->getQuota();
 				if ($quota !== 'none') {
