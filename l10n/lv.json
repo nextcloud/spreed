@@ -363,7 +363,6 @@
     "Chat, video & audio-conferencing using WebRTC" : "Video un audio konferences, izmantojot WebRTC",
     "Leave call" : "Pamest zvanu",
     "Duplicate session" : "Pavairot sesiju",
-    "Loading …" : "Ielādē…",
     "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Mēs esam noteikuši vairākus nederīgus paroles mēģinājumus no šīs IP adreses, tādējādi nākamā pieteikšanās ir ierobežota līdz 30 sekundēm.",
     "The password is wrong. Try again." : "Parole ir nepareiza. Jāmēģina vēlreiz.",
     "Password" : "Parole",
@@ -373,7 +372,6 @@
     "This conversation has ended" : "Šī saruna ir beigusies",
     "Everyone" : "Visi",
     "Save changes" : "Saglabāt izmaiņas",
-    "Saving …" : "Saglabā ...",
     "Saved!" : "Saglabāts!",
     "Limit to groups" : "Ierobežot kopām",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Ja ir atlasīta vismaz viena grupa, tikai cilvēki no sarakstā uzskaitītajām grupām var piedalīties sarunās.",
@@ -421,7 +419,6 @@
     "Done" : "Pabeigts",
     "Exit full screen (F)" : "Iziet no pilnekrāna (F)",
     "Grid view" : "Režģa izkārtojums",
-    "Waiting for others to join the call …" : "Gaidot citus pievienoties zvanam …",
     "You can invite others in the participant tab of the sidebar" : "Sānjoslā, dalībnieku cilnē var uzaicināt citus dalībniekus",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Sānjoslas dalībnieku cilnē varat uzaicināt citus lietotājus vai kopīgot šo saiti, lai uzaicinātu citus.",
     "Share this link to invite others!" : "Kopīgo šo saiti, lai uzaicinātu citus!",
@@ -502,7 +499,7 @@
     "Promote to moderator" : "Iecelt par satura pārraudzītāju",
     "Add users or teams" : "Pievienot lietotājus vai komandas",
     "Add teams" : "Pievienot komandas",
-    "Searching …" : "Meklē...",
+    "Searching …" : "Meklē …",
     "Participants" : "Dalībnieki",
     "Open chat" : "Atvērt tērzēšanu",
     "Details" : "Informācija",
@@ -576,6 +573,10 @@
     "Reports" : "Atskaites",
     "Talk to %s" : "Runāt ar %s",
     "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus.",
-    "Send" : "Sūtīt"
+    "Saving …" : "Saglabā ...",
+    "Loading …" : "Ielādē…",
+    "Waiting for others to join the call …" : "Gaidot citus pievienoties zvanam …",
+    "Send" : "Sūtīt",
+    "Searching …" : "Meklē..."
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }

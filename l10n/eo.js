@@ -261,12 +261,10 @@ OC.L10N.register(
     "Zimbabwe" : "Zimbabvo",
     "Federation" : "Federado",
     "Invalid date, date format must be YYYY-MM-DD" : "Nevalida dato; datoformo estu JJJJ-MM-TT",
-    "Loading …" : "Ŝargado...",
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Submit" : "Sendi",
     "Everyone" : "Ĉiuj",
     "Save changes" : "Konservi ŝanĝojn",
-    "Saving …" : "Konservado...",
     "Saved!" : "Konservita!",
     "Limit to groups" : "Limigi al grupoj",
     "Disabled" : "Malkapabligita",
@@ -336,7 +334,6 @@ OC.L10N.register(
     "Settings" : "Agordoj",
     "Owner" : "Posedanto",
     "Moderator" : "Kontrolanto",
-    "Searching …" : "Serĉado ...",
     "Details" : "Detaloj",
     "Search in {name}" : "Serĉi en 1{name}",
     "Default language" : "Defaŭlta lingvo",
@@ -359,6 +356,9 @@ OC.L10N.register(
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
     "Talk to %s" : "Paroli al %s",
-    "Send" : "Sendi"
+    "Saving …" : "Konservado...",
+    "Loading …" : "Ŝargado...",
+    "Send" : "Sendi",
+    "Searching …" : "Serĉado ..."
 },
 "nplurals=2; plural=(n != 1);");

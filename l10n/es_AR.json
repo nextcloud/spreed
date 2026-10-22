@@ -62,7 +62,6 @@
     "Done" : "Terminado",
     "Grid view" : "Vista de cuadrícula",
     "Reload" : "Recargar",
-    "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
     "Copy link" : "Copiar link",
     "Mute audio" : "Silenciar audio",
     "None" : "Ninguno",
@@ -107,7 +106,6 @@
     "New file" : "Nuevo archivo",
     "Settings" : "Configuración",
     "Moderator" : "Moderador",
-    "Searching …" : "Buscando ...",
     "Participants" : "Participantes",
     "Details" : "Detalles",
     "Search in {name}" : "Buscar en {name}",
@@ -142,6 +140,8 @@
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Reportes",
-    "Send" : "Enviar"
+    "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
+    "Send" : "Enviar",
+    "Searching …" : "Buscando ..."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
