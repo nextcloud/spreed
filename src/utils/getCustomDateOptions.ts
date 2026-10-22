@@ -61,7 +61,6 @@ export function getCustomDateOptions() {
 	}
 
 	// Next Monday 08:00 AM (hidden if Sunday now)
-	// TODO: use getFirstDay from nextcloud/l10n
 	if (currentDayOfWeek !== 0) {
 		const nextMonday = new Date()
 		nextMonday.setDate(currentDate.getDate() + ((1 + 7 - currentDayOfWeek) % 7 || 7))
@@ -72,6 +71,20 @@ export function getCustomDateOptions() {
 			timestamp: nextWeekTime,
 			label: t('spreed', 'Next week – {timeLocale}', { timeLocale: formatDateTime(nextWeekTime, 'shortWeekdayWithTime') }),
 			ariaLabel: t('spreed', 'Set time for next week'),
+		})
+	}
+
+	// Next Saturday 08:00 AM (only if Saturday or Sunday now)
+	if ([0, 6].includes(currentDayOfWeek)) {
+		const nextSaturday = new Date()
+		nextSaturday.setDate(currentDate.getDate() + ((6 + 7 - currentDayOfWeek) % 7 || 7))
+		const nextWeekendTime = nextSaturday.setHours(8, 0, 0, 0)
+
+		options.push({
+			key: 'nextWeekend',
+			timestamp: nextWeekendTime,
+			label: t('spreed', 'Next weekend – {timeLocale}', { timeLocale: formatDateTime(nextWeekendTime, 'shortWeekdayWithTime') }),
+			ariaLabel: t('spreed', 'Set time for next weekend'),
 		})
 	}
 
