@@ -27,7 +27,6 @@ OC.L10N.register(
     "Submit" : "ส่ง",
     "Everyone" : "ทุกคน",
     "Save changes" : "บันทึกการเปลี่ยนแปลง",
-    "Saving …" : "กำลังบันทึก …",
     "Enabled" : "เปิดใช้งาน",
     "Disabled" : "ปิดใช้งาน",
     "Name" : "ชื่อ",
@@ -102,7 +101,6 @@ OC.L10N.register(
     "Settings" : "การตั้งค่า",
     "Results" : "ผลลัพธ์",
     "Owner" : "เจ้าของ",
-    "Searching …" : "กำลังค้นหา …",
     "Participants ({count})" : "ผู้เข้าร่วม ({count})",
     "Details" : "รายละเอียด",
     "Shared items" : "สิ่งที่แชร์",
@@ -127,6 +125,8 @@ OC.L10N.register(
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
     "Notes" : "โน้ต",
-    "Send" : "ส่ง"
+    "Saving …" : "กำลังบันทึก …",
+    "Send" : "ส่ง",
+    "Searching …" : "กำลังค้นหา …"
 },
 "nplurals=1; plural=0;");
