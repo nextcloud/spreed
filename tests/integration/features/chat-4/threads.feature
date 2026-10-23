@@ -214,6 +214,10 @@ Feature: chat-4/threads
     Then user "participant1" sees 1 number of subscribed threads with 1 offset
       | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
+    When user "participant2" sets lobby state for room "room2" to "non moderators" with 200 (v4)
+    Then user "participant1" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | Message 1-1   | 0                   | Message 1    | Message 1-1 |
 
   Scenario: Reply with an attachment
     Given user "participant1" creates room "room1" (v4)
