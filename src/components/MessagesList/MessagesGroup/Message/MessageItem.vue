@@ -48,7 +48,7 @@
 			:class="{
 				overlay: isSplitViewEnabled && (!isShortSimpleMessage || (isSmallMobile || isSidebar)) && isReactionsMenuOpen,
 			}">
-			<template v-if="showMessageButtonsBar">
+			<div v-if="showMessageButtonsBar" class="message-buttons-bar-wrapper">
 				<ScheduledMessageActions
 					v-if="showScheduledMessages"
 					v-model:isActionMenuOpen="isActionMenuOpen"
@@ -73,7 +73,7 @@
 					@reply="handleReply"
 					@edit="handleEdit"
 					@delete="handleDelete" />
-			</template>
+			</div>
 			<div
 				v-else-if="isSplitViewEnabled && isPinned"
 				class="icon-pin-highlighted"
@@ -405,6 +405,16 @@ export default {
 			}
 		}
 
+		// Centered on short messages, on the scroller middle for tall ones
+		.message-buttons-bar-wrapper {
+			position: sticky;
+			top: 0;
+			bottom: 0;
+			display: flex;
+			align-items: center;
+			height: min(100%, 100cqh);
+		}
+
 		.icon-pin-highlighted {
 			display: flex;
 			color: var(--color-main-background);
@@ -495,10 +505,15 @@ export default {
 	100% { background-color: rgba(var(--color-background-hover), 0); }
 }
 
+.message-buttons-bar-wrapper {
+	display: contents;
+}
+
 .message-buttons-bar {
 	display: flex;
 	inset-inline-end: 14px;
 	top: 0;
+	bottom: 0;
 	position: sticky;
 	height: var(--default-clickable-area);
 	z-index: 1;
