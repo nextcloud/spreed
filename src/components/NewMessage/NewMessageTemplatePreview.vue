@@ -34,37 +34,7 @@
 </template>
 
 <script>
-import { getCurrentUser } from '@nextcloud/auth'
-import { generateUrl } from '@nextcloud/router'
-
-/**
- *
- * @param path
- */
-function encodeFilePath(path) {
-	const pathSections = (path.startsWith('/') ? path : `/${path}`).split('/')
-	let relativePath = ''
-	pathSections.forEach((section) => {
-		if (section !== '') {
-			relativePath += '/' + encodeURIComponent(section)
-		}
-	})
-	return relativePath
-}
-
-/**
- *
- */
-function isPublic() {
-	return !getCurrentUser()
-}
-
-/**
- *
- */
-function getToken() {
-	return document.getElementById('sharingToken') && document.getElementById('sharingToken').value
-}
+import { generatePreviewUrl } from '../../utils/davUtils.ts'
 
 // preview width generation
 const previewWidth = 256
@@ -146,11 +116,7 @@ export default {
 			if (this.previewUrl) {
 				return this.previewUrl
 			}
-			// TODO: find a nicer standard way of doing this?
-			if (isPublic()) {
-				return generateUrl(`/apps/files_sharing/publicpreview/${getToken()}?fileId=${this.fileid}&file=${encodeFilePath(this.filename)}&x=${previewWidth}&y=${previewWidth}&a=1`)
-			}
-			return generateUrl(`/core/preview?fileId=${this.fileid}&x=${previewWidth}&y=${previewWidth}&a=1`)
+			return generatePreviewUrl(this.fileid, { x: previewWidth, y: previewWidth })
 		},
 
 		mimeIcon() {
