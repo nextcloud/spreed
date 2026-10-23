@@ -626,6 +626,7 @@ OC.L10N.register(
     "Moderators only" : "Само модератори",
     "Disable calls" : "Деактивиране на обажданията",
     "Save changes" : "Запиши промените",
+    "Saving …" : "Запазване ...",
     "Saved!" : "Записано!",
     "Limit to groups" : "Ограничен достъп",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Когато е избрана поне една група, само хората от изброените групи могат да участват в разговорите.",
