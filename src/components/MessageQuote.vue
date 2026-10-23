@@ -7,7 +7,6 @@
 import type { ChatMessage } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
 import { computed, ref, toRef } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -22,6 +21,7 @@ import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
+import { generatePreviewUrl, generatePublicSharePreviewUrl } from '../utils/davUtils.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 import { parseToSimpleMessage } from '../utils/textParse.ts'
 
@@ -112,7 +112,9 @@ const filePreview = computed(() => {
 	if (fileData) {
 		return {
 			alt: fileData.name,
-			src: generateUrl('/core/preview?fileId={fileId}&x=32&y=32&a=1', { fileId: fileData.id }),
+			src: actorStore.userId === null
+				? generatePublicSharePreviewUrl(fileData.link!, fileData.path!, { x: 32, y: 32 })
+				: generatePreviewUrl(fileData.id, { x: 32, y: 32 }),
 		}
 	} else {
 		return undefined

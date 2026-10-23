@@ -112,7 +112,6 @@
 import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import VueCropper from 'vue-cropperjs'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -126,6 +125,7 @@ import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { AVATAR } from '../../constants.ts'
+import { generatePreviewUrl } from '../../utils/davUtils.ts'
 
 import 'cropperjs/dist/cropper.css'
 
@@ -284,7 +284,7 @@ export default {
 			}
 
 			try {
-				const tempAvatar = generateUrl(`/core/preview?fileId=${fileid}&x=512&y=512&a=1`)
+				const tempAvatar = generatePreviewUrl(fileid, { x: 512, y: 512 })
 				this.$refs.cropper.replace(tempAvatar)
 				this.showCropper = true
 			} catch (e) {
