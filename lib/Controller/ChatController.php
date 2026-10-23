@@ -1828,6 +1828,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 				continue;
 			}
 
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				continue;
+			}
+
 			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
