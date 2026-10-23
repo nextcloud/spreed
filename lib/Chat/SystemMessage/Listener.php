@@ -144,7 +144,7 @@ class Listener implements IEventListener {
 
 			// Attachment endpoint posts its own file_shared message by node ID;
 			// the folder-level TYPE_ROOM share it creates here is only for access control.
-			if ($route === 'ocs.spreed.chat.postattachmenttoroom') {
+			if ($route === 'ocs.spreed.chat.postattachmenttoroom' || $route === 'ocs.spreed.chat.postattachmentstoroom') {
 				return;
 			}
 
@@ -398,6 +398,7 @@ class Listener implements IEventListener {
 		// purely for access control — it must not be given a message-expiration date.
 		$route = strtolower($this->request->getParam('_route') ?? '');
 		if ($route === 'ocs.spreed.chat.postattachmenttoroom'
+			|| $route === 'ocs.spreed.chat.postattachmentstoroom'
 			|| $route === 'ocs.spreed.chat.probeattachmentfolder') {
 			return;
 		}

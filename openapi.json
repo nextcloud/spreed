@@ -34,6 +34,45 @@
                     "phones"
                 ]
             },
+            "AttachmentResult": {
+                "type": "object",
+                "required": [
+                    "referenceId",
+                    "status"
+                ],
+                "properties": {
+                    "referenceId": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "posted",
+                            "failed"
+                        ]
+                    },
+                    "error": {
+                        "type": "string",
+                        "enum": [
+                            "file",
+                            "type",
+                            "folder",
+                            "duplicate",
+                            "post"
+                        ],
+                        "description": "Why the file was not posted: not found, not a file, not in the Draft folder, listed twice, or posting it failed"
+                    },
+                    "renames": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
             "Ban": {
                 "type": "object",
                 "required": [
@@ -12816,7 +12855,8 @@
             "post": {
                 "operationId": "chat-post-attachment-to-room",
                 "summary": "Post a file from the conversation Draft folder as a chat message",
-                "description": "The file must be inside the Draft folder returned by the probe endpoint. This endpoint moves the file from Draft into the shared conversation subfolder (resolving any name conflicts), creates the chat message, and returns the actual final filename. The subfolder is shared with the room via a folder-level TYPE_ROOM share — no per-file share is created, keeping the Share Overview clean.",
+                "description": "Moves the file from the Draft folder returned by the probe endpoint into the shared conversation subfolder, resolving name conflicts, and posts it. The subfolder is shared with the room, so no per-file share is created.",
+                "deprecated": true,
                 "tags": [
                     "chat"
                 ],
@@ -13022,7 +13062,7 @@
                         }
                     },
                     "500": {
-                        "description": "Could not prepare the conversation folder",
+                        "description": "Could not prepare the conversation folder or post the file",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -13099,6 +13139,326 @@
                     },
                     "400": {
                         "description": "Path does not point to a file",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "Conversation subfolders feature is disabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/attachments": {
+            "post": {
+                "operationId": "chat-post-attachments-to-room",
+                "summary": "Post several files from the conversation Draft folder as chat messages",
+                "description": "Moves the files from the Draft folder returned by the probe endpoint into the shared conversation subfolder and posts them in the given order, with no other message in between. The caption goes to the last posted file, or into a message of its own when the last file fails after others were posted. A requested thread is started by the first posted file and contains all of them.",
+                "tags": [
+                    "chat"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "files"
+                                ],
+                                "properties": {
+                                    "files": {
+                                        "type": "array",
+                                        "description": "Files to post, in the order of their messages",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "filePath"
+                                            ],
+                                            "properties": {
+                                                "filePath": {
+                                                    "type": "string"
+                                                },
+                                                "fileName": {
+                                                    "type": "string"
+                                                },
+                                                "referenceId": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "talkMetaData": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "JSON-encoded metadata for all files (caption, messageType, silent, replyTo, threadId, threadTitle)"
+                                    },
+                                    "allowUpdate": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Allow recipients to modify shared files"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Result of each file, in the order of the request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "results"
+                                                    ],
+                                                    "properties": {
+                                                        "results": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/AttachmentResult"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "No files or too many files given",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Could not prepare the conversation folder",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "507": {
+                        "description": "User storage quota exceeded",
                         "content": {
                             "application/json": {
                                 "schema": {
