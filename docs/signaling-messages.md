@@ -684,7 +684,7 @@ State of a phone participant changed, set by the SIP bridge.
 
 ### Room list
 
-The `roomlist` events `invite`, `disinvite` (`reason` `disinvited` or `deleted`) and `update` are part of the [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/). Sessions joined to the conversation get property changes as a `room` message instead. Talk defines the `properties`:
+The `roomlist` events `invite`, `disinvite` (`reason` `disinvited` or `deleted`) and `update` are part of the [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/). Sessions joined to the conversation also get the change as a `room` message, guests only that one. `disinvite` has no `properties`. Talk defines the `properties`:
 
 | field              | type    | Description                                                                 |
 |--------------------|---------|-----------------------------------------------------------------------------|
@@ -697,9 +697,11 @@ The `roomlist` events `invite`, `disinvite` (`reason` `disinvited` or `deleted`)
 | `active-since`     | integer | Timestamp of the call start, `0` if no call                                 |
 | `sip-enabled`      | integer | [SIP state](constants.md#sip-states)                                        |
 | `description`      | string  | Optional, in every update caused by a conversation change                   |
-| `participant-list` | string  | Optional, `refresh` in invite and disinvite (others get these as `update`) |
+| `participant-list` | string  | Optional, `refresh` when participants were added or removed: in `invite` for invited users, in `update` for the others |
 
 With `participant-list`, ignore the other properties and refresh the participant list.
+
+Older servers send `lobby-timer` and `active-since` as `null` when not set, and otherwise as a serialized PHP `DateTime` object, e.g. `{"date": "2026-10-21 14:00:00.000000", "timezone_type": 3, "timezone": "UTC"}`.
 
 ```json
 {
