@@ -9,14 +9,15 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Signaling;
 
 use OCA\Talk\Command\Signaling\ListCommand;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class ListCommandTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected ListCommand&MockObject $command;
@@ -24,10 +25,10 @@ class ListCommandTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
 		$this->command = $this->getMockBuilder(ListCommand::class)
-			->setConstructorArgs([$this->config])
+			->setConstructorArgs([$this->appConfig])
 			->onlyMethods(['writeMixedInOutputFormat'])
 			->getMock();
 
@@ -36,10 +37,10 @@ class ListCommandTest extends TestCase {
 	}
 
 	public function testEmptyAppConfig(): void {
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn(json_encode([]));
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn([]);
 
 		$this->command->expects($this->once())
 			->method('writeMixedInOutputFormat')
@@ -53,18 +54,10 @@ class ListCommandTest extends TestCase {
 	}
 
 	public function testAppConfigDataChanges(): void {
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn(json_encode([
-				'servers' => [
-					[
-						'server' => 'wss://signaling.example.com',
-						'verify' => true
-					]
-				],
-				'secret' => 'my-test-secret'
-			]));
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn(['servers' => [['server' => 'wss://signaling.example.com','verify' => true]],'secret' => 'my-test-secret']);
 
 		$this->command->expects($this->once())
 			->method('writeMixedInOutputFormat')

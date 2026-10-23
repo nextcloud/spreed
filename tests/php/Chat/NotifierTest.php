@@ -73,7 +73,6 @@ class NotifierTest extends TestCase {
 					$this->groupManager,
 					$this->participantService,
 					$this->threadService,
-					$this->config,
 					$this->appConfig,
 					$this->timeFactory,
 					$this->util,
@@ -87,7 +86,6 @@ class NotifierTest extends TestCase {
 			$this->groupManager,
 			$this->participantService,
 			$this->threadService,
-			$this->config,
 			$this->appConfig,
 			$this->timeFactory,
 			$this->util

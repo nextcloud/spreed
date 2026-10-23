@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Signaling;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Add extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -59,13 +60,12 @@ class Add extends Base {
 			return 1;
 		}
 
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$signaling_servers = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
 
-		$signaling = json_decode($config, true);
-		if ($signaling === null || empty($signaling) || !is_array($signaling)) {
+		if (empty($signaling_servers)) {
 			$servers = [];
 		} else {
-			$servers = is_array($signaling['servers']) ? $signaling['servers'] : [];
+			$servers = $signaling_servers['servers'];
 		}
 		$servers[] = [
 			'server' => $server,
@@ -76,7 +76,8 @@ class Add extends Base {
 			'secret' => $secret,
 		];
 
-		$this->config->setAppValue('spreed', 'signaling_servers', json_encode($signaling));
+		$this->appConfig->setAppValueArray(Config::SIGNALING_SERVERS, $signaling);
+		$this->appConfig->setAppValueString(Config::SIGNALING_SERVERS_SECRET, $signaling['secret']);
 		$output->writeln('<info>Added signaling server ' . $server . '.</info>');
 		return 0;
 	}

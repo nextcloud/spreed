@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Migration;
 
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -25,6 +27,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	public function __construct(
 		private readonly IDBConnection $connection,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly ISecureRandom $secureRandom,
 	) {
 		$this->tokens = [];
@@ -44,7 +47,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 		}
 
 		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
-		$entropy = (int)$this->config->getAppValue('spreed', 'token_entropy', '8');
+		$entropy = $this->appConfig->getAppValueInt(Config::TOKEN_ENTROPY);
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('spreedme_rooms')

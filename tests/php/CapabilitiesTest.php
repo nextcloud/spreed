@@ -155,13 +155,12 @@ class CapabilitiesTest extends TestCase {
 				['retention_phone_rooms', 7],
 				['retention_instant_meetings', 1],
 				['retention_classified_rooms', 3600],
-				['experiments_guests', 0, 0],
-				['summary_threshold', 100],
-				['feature_hints_hidden', 0, 999],
-				['feature_hints_hidden', 999],
-				['max_gif_size', 3145728, 200000],
 				['start_calls', Room::START_CALL_EVERYONE],
 				['session_ping_limit', 200],
+				['experiments_guests', 0],
+				['summary_threshold', 100],
+				['feature_hints_hidden', 999],
+				['max_gif_size', 200000],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -376,11 +375,12 @@ class CapabilitiesTest extends TestCase {
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
-		$this->appConfig->expects($this->any())
-			->method('getAppValueBool')
+		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
+				['backgrounds_branded_for_guests', false],
 				['backgrounds_default_for_users', true, true],
 				['backgrounds_upload_users', true, true],
+				['enable_matterbridge', false],
 			]);
 
 		$this->appConfig->expects($this->any())->method('getAppValueInt')
@@ -390,12 +390,12 @@ class CapabilitiesTest extends TestCase {
 				['retention_phone_rooms', 7],
 				['retention_instant_meetings', 1],
 				['retention_classified_rooms', 3600],
-				['experiments_users', 0, 0],
 				['summary_threshold', 100],
 				['feature_hints_hidden', 1],
-				['max_gif_size', 3145728, 200000],
 				['start_calls', Room::START_CALL_NOONE],
 				['session_ping_limit', 50],
+				['experiments_users', 0],
+				['max_gif_size', 200000],
 			]);
 
 		$this->serverConfig->expects($this->any())

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php;
 
+use OC\AppFramework\Services\AppConfig;
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
@@ -30,7 +31,7 @@ use Test\TestCase;
 
 class ConfigTest extends TestCase {
 	protected IConfig $config;
-	protected IAppConfig&MockObject $appConfig;
+	protected IAppConfig $appConfig;
 	protected IUserConfig&MockObject $userConfig;
 	protected ISecureRandom&MockObject $secureRandom;
 	protected IGroupManager&MockObject $groupManager;
@@ -54,10 +55,10 @@ class ConfigTest extends TestCase {
 		$this->filenameValidator = $this->createMock(IFilenameValidator::class);
 	}
 
-	protected function getConfig(): Config {
+	protected function getConfig(?IAppConfig $appConfig = null): Config {
 		return new Config(
 			$this->config,
-			$this->appConfig,
+			$appConfig ?? $this->appConfig,
 			$this->userConfig,
 			$this->secureRandom,
 			$this->groupManager,
@@ -66,6 +67,18 @@ class ConfigTest extends TestCase {
 			$this->timeFactory,
 			$this->dispatcher,
 			$this->filenameValidator,
+		);
+	}
+
+	protected function getAppConfig(): IAppConfig {
+		return $this->appConfig;
+	}
+
+	protected function getRealAppConfig(): AppConfig {
+		return new AppConfig(
+			\OCP\Server::get(IConfig::class),
+			\OCP\Server::get(\OCP\IAppConfig::class),
+			'spreed',
 		);
 	}
 
@@ -334,7 +347,7 @@ class ConfigTest extends TestCase {
 
 	#[DataProvider('dataTicketV2Algorithm')]
 	public function testSignalingTicketV2User(string $algo): void {
-		$this->config = \OCP\Server::get(IConfig::class);
+		$appConfig = $this->getRealAppConfig();
 
 		/** @var IUser&MockObject $user */
 		$user = $this->createMock(IUser::class);
@@ -363,16 +376,17 @@ class ConfigTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('Jane Doe');
 
-		$helper = $this->getConfig();
+		$helper = $this->getConfig($appConfig);
 
-		$this->config->setAppValue('spreed', 'signaling_token_alg', $algo);
+		$appConfig->setAppValueString(Config::SIGNALING_TOKEN_ALG, $algo);
+
 		// Make sure new keys are generated.
-		$this->config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
-		$this->config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
+		$appConfig->deleteAppValue('signaling_token_privkey_' . strtolower($algo));
+		$appConfig->deleteAppValue('signaling_token_pubkey_' . strtolower($algo));
 		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, 'user1');
 		$this->assertNotNull($ticket);
 
-		$key = new Key($this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$key = new Key($appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($algo)), $algo);
 		$decoded = JWT::decode($ticket, $key);
 
 		$this->assertEquals($now, $decoded->iat);
@@ -383,7 +397,7 @@ class ConfigTest extends TestCase {
 
 	#[DataProvider('dataTicketV2Algorithm')]
 	public function testSignalingTicketV2Anonymous(string $algo): void {
-		$this->config = \OCP\Server::get(IConfig::class);
+		$appConfig = $this->getRealAppConfig();
 
 		$now = time();
 		$this->timeFactory
@@ -396,16 +410,16 @@ class ConfigTest extends TestCase {
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
 
-		$helper = $this->getConfig();
+		$helper = $this->getConfig($appConfig);
 
-		$this->config->setAppValue('spreed', 'signaling_token_alg', $algo);
+		$appConfig->setAppValueString(Config::SIGNALING_TOKEN_ALG, $algo);
 		// Make sure new keys are generated.
-		$this->config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
-		$this->config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
+		$appConfig->deleteAppValue('signaling_token_privkey_' . strtolower($algo));
+		$appConfig->deleteAppValue('signaling_token_pubkey_' . strtolower($algo));
 		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, null);
 		$this->assertNotNull($ticket);
 
-		$key = new Key($this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$key = new Key($appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($algo)), $algo);
 		$decoded = JWT::decode($ticket, $key);
 
 		$this->assertEquals($now, $decoded->iat);
