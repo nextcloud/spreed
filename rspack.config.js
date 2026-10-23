@@ -37,7 +37,7 @@ module.exports = defineConfig((env) => {
 	return {
 		target: 'web',
 		mode,
-		devtool: isDev ? 'cheap-source-map' : 'source-map',
+		devtool: isDev ? 'cheap-source-map' : 'nosources-source-map',
 
 		entry: {
 			'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
