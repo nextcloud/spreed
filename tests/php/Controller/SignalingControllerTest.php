@@ -562,6 +562,46 @@ class SignalingControllerTest extends TestCase {
 		$this->assertSame($expectedVideoResult, self::invokePrivate($this->controller, 'isTryingToPublishMedia', [$sdp, 'video']));
 	}
 
+	public static function dataSendMessagesOfferPermissions(): array {
+		$sdp = "v=0\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111\r\na=sendrecv\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=sendrecv\r\n";
+		$recvOnlySdp = "v=0\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111\r\na=recvonly\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\na=recvonly\r\n";
+		return [
+			'video allowed' => [Attendee::PERMISSIONS_MAX_DEFAULT, ['roomType' => 'video', 'payload' => ['sdp' => $sdp]], true],
+			'screen allowed' => [Attendee::PERMISSIONS_MAX_DEFAULT, ['roomType' => 'screen', 'payload' => ['sdp' => $sdp]], true],
+			'video denied' => [Attendee::PERMISSIONS_DEFAULT, ['roomType' => 'video', 'payload' => ['sdp' => $sdp]], false],
+			'screen denied' => [Attendee::PERMISSIONS_DEFAULT, ['roomType' => 'screen', 'payload' => ['sdp' => $sdp]], false],
+			'video recvonly' => [Attendee::PERMISSIONS_DEFAULT, ['roomType' => 'video', 'payload' => ['sdp' => $recvOnlySdp]], true],
+			'missing roomType' => [Attendee::PERMISSIONS_DEFAULT, ['payload' => ['sdp' => $sdp]], false],
+			'invalid roomType' => [Attendee::PERMISSIONS_DEFAULT, ['roomType' => 'other', 'payload' => ['sdp' => $sdp]], false],
+			'missing roomType with permissions' => [Attendee::PERMISSIONS_MAX_DEFAULT, ['payload' => ['sdp' => $sdp]], false],
+			'missing sdp' => [Attendee::PERMISSIONS_MAX_DEFAULT, ['roomType' => 'video', 'payload' => []], false],
+		];
+	}
+
+	#[DataProvider('dataSendMessagesOfferPermissions')]
+	public function testSendMessagesOfferPermissions(int $permissions, array $message, bool $expectedDelivered): void {
+		$this->session->method('getSessionForRoom')
+			->with('token')
+			->willReturn('sender');
+		$room = $this->createMock(Room::class);
+		$this->manager->method('getRoomForSession')
+			->willReturn($room);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getPermissions')
+			->willReturn($permissions);
+		$this->participantService->method('getParticipantBySession')
+			->willReturn($participant);
+
+		$this->messages->expects($expectedDelivered ? $this->once() : $this->never())
+			->method('addMessage');
+
+		$this->controller->sendMessages('token', json_encode([[
+			'ev' => 'message',
+			'sessionId' => 'sender',
+			'fn' => json_encode(array_merge(['to' => 'receiver', 'type' => 'offer'], $message)),
+		]]));
+	}
+
 	private function validateBackendRandom($data, $random, $checksum) {
 		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
