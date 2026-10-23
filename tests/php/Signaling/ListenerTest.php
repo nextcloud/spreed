@@ -16,10 +16,13 @@ use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
+use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Room;
@@ -319,6 +322,105 @@ class ListenerTest extends TestCase {
 						'id' => 123,
 						'lastCommonRead' => 0,
 					],
+				],
+			]);
+
+		$this->listener->handle($event);
+	}
+
+	public function testChatMessageSentEventWithLobby(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
+
+		$event = new ChatMessageSentEvent(
+			$room,
+			$comment,
+		);
+
+		$this->messageParser->expects($this->never())
+			->method('createMessage');
+		$this->backendNotifier->expects($this->once())
+			->method('sendRoomMessage')
+			->with($room, [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+				],
+			]);
+
+		$this->listener->handle($event);
+	}
+
+	public static function dataSystemMessageSentEventWithLobby(): array {
+		return [
+			['message_edited', []],
+			['poll_voted', ['poll' => ['id' => 1]]],
+			['poll_closed', ['poll' => ['id' => 1]]],
+		];
+	}
+
+	#[DataProvider('dataSystemMessageSentEventWithLobby')]
+	public function testSystemMessageSentEventWithLobby(string $systemMessage, array $parameters): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => $systemMessage, 'parameters' => $parameters]));
+
+		$event = new SystemMessageSentEvent(
+			$room,
+			$comment,
+			skipLastActivityUpdate: false
+		);
+
+		$this->messageParser->expects($this->never())
+			->method('createMessage');
+		$this->pollService->expects($this->never())
+			->method('getPoll');
+		$this->backendNotifier->expects($this->once())
+			->method('sendRoomMessage')
+			->with($room, [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+				],
+			]);
+
+		$this->listener->handle($event);
+	}
+
+	public static function dataReactionSentEventWithLobby(): array {
+		return [
+			[ReactionAddedEvent::class],
+			[ReactionRemovedEvent::class],
+		];
+	}
+
+	#[DataProvider('dataReactionSentEventWithLobby')]
+	public function testReactionSentEventWithLobby(string $eventClass): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
+		$comment = $this->createMock(IComment::class);
+
+		$event = new $eventClass(
+			$room,
+			$comment,
+			Attendee::ACTOR_USERS,
+			'participant1',
+			'Participant 1',
+			'👍',
+		);
+
+		$this->messageParser->expects($this->never())
+			->method('createMessage');
+		$this->backendNotifier->expects($this->once())
+			->method('sendRoomMessage')
+			->with($room, [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
 				],
 			]);
 

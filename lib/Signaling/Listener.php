@@ -52,6 +52,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
@@ -513,6 +514,11 @@ class Listener implements IEventListener {
 			],
 		];
 
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
+
 		$l10n = $this->l10nFactory->get(Application::APP_ID, 'en');
 		$message = $this->messageParser->createMessage($event->getRoom(), null, $comment, $l10n);
 		$this->messageParser->parseMessage($message);
@@ -570,7 +576,8 @@ class Listener implements IEventListener {
 			],
 		];
 
-		if (!in_array($messageType, self::SYSTEM_MESSAGE_TYPE_RELAY, true)) {
+		if (!in_array($messageType, self::SYSTEM_MESSAGE_TYPE_RELAY, true)
+			|| $room->getLobbyState() !== Webinary::LOBBY_NONE) {
 			$this->externalSignaling->sendRoomMessage($room, $data);
 			return;
 		}
@@ -654,6 +661,11 @@ class Listener implements IEventListener {
 				'refresh' => true,
 			],
 		];
+
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
 
 		$comment = $event->getMessage();
 		$messageType = $event instanceof ReactionAddedEvent ? ChatManager::VERB_REACTION : 'reaction_revoked';
