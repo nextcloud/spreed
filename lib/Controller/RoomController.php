@@ -2141,7 +2141,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 				if ($authenticatedEmailGuest !== null && $previousParticipant === null) {
 					try {
 						$previousParticipant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $authenticatedEmailGuest);
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
+						// Stale spreed-authed-email session: the email attendee was
+						// removed (e.g. by a moderator) since the invite link was opened.
+						$this->session->removeAuthedEmailActorIdForRoom($token);
+						$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+						$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+						return $response;
 					}
 				}
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
