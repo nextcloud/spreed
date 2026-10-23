@@ -604,8 +604,8 @@ Each participant:
 | `actorId`                | string  | Optional, actor id. Talk >= 20                                                                     |
 | `userId`                 | string  | Optional, only for users                                                                           |
 | `displayName`            | string  | Optional, only for participant modifications                                                       |
-| `internal`               | boolean | Optional, `true` for internal clients (recording server, phone participants)                      |
-| `virtual`                | boolean | Optional, `true` for phone participants                                                            |
+| `internal`               | boolean | Optional, `true` for internal clients (recording server, SIP bridge, live transcription)           |
+| `virtual`                | boolean | Optional, `true` for phone participants (virtual sessions of the SIP bridge)                       |
 | `features`               | array   | Optional, features of an internal client                                                           |
 
 The casing is `userId` here (from the Nextcloud server) but `userid` in HPB messages like room join. The HPB replaces `sessionId` with its own id and drops sessions it does not know.
