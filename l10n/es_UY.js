@@ -105,7 +105,7 @@ OC.L10N.register(
     "Moderator" : "Moderador",
     "Participants" : "Participantes",
     "Details" : "Detalles",
-    "Search in {name}" : "Buscar en {name}\n",
+    "Search in {name}" : "Buscar en {name}",
     "Close" : "Close",
     "Try again" : "Reintentar",
     "Screensharing options" : "Opciones de compartir pantalla",
