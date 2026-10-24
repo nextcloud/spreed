@@ -124,7 +124,7 @@ jobs:
 
       - name: Read package.json node and npm engines version
         if: steps.check_typescript_openapi.outputs.files_exists == 'true'
-        uses: nextcloud-libraries/parse-package-engines-action@122ae05d4257008180a514e1ddeb0c1b9d094bdd # v0.1.0
+        uses: nextcloud-libraries/parse-package-engines-action@39fcc545a815c353dd0a3fd8fd2ef6e59fd02b92 # v0.2.0
         id: node_versions
         # Continue if no package.json
         continue-on-error: true
