@@ -2391,6 +2391,8 @@ OC.L10N.register(
     "Set time for this weekend" : "Установить время на эти выходные",
     "Next week – {timeLocale}" : "Следующая неделя – {timeLocale}",
     "Set time for next week" : "Установить время на следующую неделю",
+    "Next weekend – {timeLocale}" : "Следующие выходные – {timeLocale}",
+    "Set time for next weekend" : "Установить время на следующие выходные",
     "Message link copied to clipboard" : "Ссылка на сообщение скопирована в буфер обмена",
     "Conversation link copied to clipboard" : "Ссылка на обсуждение скопирована в буфер обмена",
     "The link could not be copied" : "Не удалось скопировать ссылку",
