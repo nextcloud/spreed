@@ -47,7 +47,7 @@ jobs:
         with:
           persist-credentials: false
           path: source
-          repository: nextcloud/.github
+          repository: ${{ github.repository_owner }}/.github
 
       - name: Checkout app
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -108,7 +108,7 @@ jobs:
                   echo "ℹ️ Locked version: $locked_version"
                   echo "ℹ️ Current version: $new_version"
                   echo "🆙 Updating existing workflow: $filename"
-                  echo "- 🆙 Updated [$filename](https://github.com/nextcloud/.github/commits/master/workflow-templates/$filename)" >> $GITHUB_ENV
+                  echo "- 🆙 Updated [$filename](https://github.com/${GITHUB_REPOSITORY_OWNER}/.github/commits/HEAD/workflow-templates/$filename)" >> $GITHUB_ENV
 
                   cp "$workflow" "$target_file"
 
@@ -160,7 +160,7 @@ jobs:
           draft: ${{ env.DRAFT_ONLY == 1 }}
           add-paths: .github/workflows/*.yml,.github/actions-lock.txt
           body: |
-            Automated update of all workflow templates from [nextcloud/.github](https://github.com/nextcloud/.github)
+            Automated update of all workflow templates from [${{ github.repository_owner }}/.github](https://github.com/${{ github.repository_owner }}/.github)
             ${{ env.SUMMARY }}
           labels: |
             dependencies
