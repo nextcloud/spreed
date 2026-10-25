@@ -1073,6 +1073,10 @@ export type components = {
                 "mod-rewrite-working": boolean;
                 previews: {
                     enabled_providers: string[];
+                    /** Format: int64 */
+                    max_width: number;
+                    /** Format: int64 */
+                    max_height: number;
                 };
                 user?: {
                     language: string;
