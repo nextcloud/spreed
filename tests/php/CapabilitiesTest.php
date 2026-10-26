@@ -151,6 +151,8 @@ class CapabilitiesTest extends TestCase {
 		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
 				['enable_matterbridge', false],
+				['sip_bridge_dialout', false],
+				['sip_bridge_dialout_anonymous', false],
 				['federation_enabled', false],
 				['federation_incoming_enabled', true],
 				['federation_outgoing_enabled', true],
@@ -258,9 +260,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'federation' => [
 						'enabled' => false,
-						'incoming-enabled' => true,
-						'outgoing-enabled' => true,
-						'only-trusted-servers' => false,
+						'incoming-enabled' => false,
+						'outgoing-enabled' => false,
+						'only-trusted-servers' => true,
 					],
 					'matrix' => [
 						'enabled' => false,
@@ -512,9 +514,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'federation' => [
 						'enabled' => false,
-						'incoming-enabled' => true,
-						'outgoing-enabled' => true,
-						'only-trusted-servers' => false,
+						'incoming-enabled' => false,
+						'outgoing-enabled' => false,
+						'only-trusted-servers' => true,
 					],
 					'matrix' => [
 						'enabled' => $canCreate,

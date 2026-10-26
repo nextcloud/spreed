@@ -333,9 +333,9 @@ class Capabilities implements IPublicCapability {
 				],
 				'federation' => [
 					'enabled' => false,
-					'incoming-enabled' => true,
-					'outgoing-enabled' => true,
-					'only-trusted-servers' => false,
+					'incoming-enabled' => false,
+					'outgoing-enabled' => false,
+					'only-trusted-servers' => true,
 				],
 				'matrix' => [
 					'enabled' => $user instanceof IUser && $this->talkConfig->isMatrixEnabled(),
