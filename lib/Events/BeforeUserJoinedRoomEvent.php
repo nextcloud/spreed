@@ -10,11 +10,13 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 use OCP\IUser;
+use SensitiveParameter;
 
 class BeforeUserJoinedRoomEvent extends ABeforeJoinedRoomEvent {
 	public function __construct(
 		Room $room,
 		private readonly IUser $user,
+		#[SensitiveParameter]
 		string $password,
 		bool $passedPasswordProtection,
 	) {

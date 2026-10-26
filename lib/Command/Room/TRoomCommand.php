@@ -30,6 +30,7 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserManager;
+use SensitiveParameter;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -159,7 +160,7 @@ trait TRoomCommand {
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	protected function setRoomPassword(Room $room, string $password): void {
+	protected function setRoomPassword(Room $room, #[SensitiveParameter] string $password): void {
 		if ($room->hasPassword() ? $this->roomService->verifyPassword($room, $password)['result'] : ($password === '')) {
 			return;
 		}

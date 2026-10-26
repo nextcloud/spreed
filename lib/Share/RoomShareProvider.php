@@ -44,6 +44,7 @@ use OCP\Share\IPartialShareProvider;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
 use OCP\Share\IShareProviderGetUsers;
+use SensitiveParameter;
 
 /**
  * Share provider for room shares.
@@ -201,6 +202,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		int $permissions,
 		string $token,
 		?\DateTime $expirationDate,
+		#[SensitiveParameter]
 		string $passwordHash,
 	): int {
 		$insert = $this->dbConnection->getQueryBuilder();

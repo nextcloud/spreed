@@ -74,6 +74,7 @@ use OCP\Security\IHasher;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type TalkRoom from ResponseDefinitions
@@ -775,7 +776,7 @@ class RoomService {
 	/**
 	 * @throws PasswordException|TypeException
 	 */
-	public function makePublicWithPassword(Room $room, string $password): void {
+	public function makePublicWithPassword(Room $room, #[SensitiveParameter] string $password): void {
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return;
 		}
@@ -1080,7 +1081,7 @@ class RoomService {
 	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
 	 * @throws PasswordException
 	 */
-	public function setPassword(Room $room, string $password): void {
+	public function setPassword(Room $room, #[SensitiveParameter] string $password): void {
 		if ($room->getType() !== Room::TYPE_PUBLIC) {
 			throw new PasswordException(PasswordException::REASON_TYPE);
 		}
@@ -1118,7 +1119,7 @@ class RoomService {
 	/**
 	 * @return array{result: ?bool, url: string}
 	 */
-	public function verifyPassword(Room $room, string $password): array {
+	public function verifyPassword(Room $room, #[SensitiveParameter] string $password): array {
 		$event = new RoomPasswordVerifyEvent($room, $password);
 		$this->dispatcher->dispatchTyped($event);
 

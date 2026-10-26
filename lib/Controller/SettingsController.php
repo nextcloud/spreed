@@ -22,6 +22,7 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
+use SensitiveParameter;
 
 class SettingsController extends OCSController {
 
@@ -78,6 +79,7 @@ class SettingsController extends OCSController {
 	public function setSIPSettings(
 		array $sipGroups = [],
 		string $dialInInfo = '',
+		#[SensitiveParameter]
 		string $sharedSecret = ''): DataResponse {
 		$groups = [];
 		foreach ($sipGroups as $gid) {

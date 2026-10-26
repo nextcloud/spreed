@@ -151,6 +151,7 @@ class PageController extends Controller {
 	protected function pageHandler(
 		string $token = '',
 		string $callUser = '',
+		#[SensitiveParameter]
 		string $password = '',
 		string $email = '',
 		#[SensitiveParameter]

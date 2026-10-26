@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
+use SensitiveParameter;
 
 class RoomPasswordVerifyEvent extends ARoomEvent {
 	protected ?bool $isPasswordValid = null;
@@ -16,6 +17,7 @@ class RoomPasswordVerifyEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
+		#[SensitiveParameter]
 		private readonly string $password,
 	) {
 		parent::__construct($room);
