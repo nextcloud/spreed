@@ -12,6 +12,7 @@ use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Kdf;
 use OCA\Talk\Matrix\Client\Crypto\Keys;
+use SensitiveParameter;
 
 /**
  * An Olm double-ratchet session between two devices (Olm spec, version 3).
@@ -223,7 +224,7 @@ final class Session {
 	}
 
 	/** @param array{ratchetKey: string, chainIndex: int, ciphertext: string, body: string, mac: string} $message */
-	private function decryptWithMessageKey(string $messageKey, array $message): string {
+	private function decryptWithMessageKey(#[SensitiveParameter] string $messageKey, array $message): string {
 		[$aesKey, $macKey, $iv] = Kdf::messageKeys($messageKey, self::KEYS_INFO);
 		$expected = substr(Kdf::hmac($macKey, $message['body']), 0, Message::MAC_LENGTH);
 		if (!hash_equals($expected, $message['mac'])) {
@@ -232,13 +233,13 @@ final class Session {
 		return Kdf::aesCbcDecrypt($aesKey, $iv, $message['ciphertext']);
 	}
 
-	private function initialiseAsAlice(string $secret): void {
+	private function initialiseAsAlice(#[SensitiveParameter] string $secret): void {
 		$derived = Kdf::hkdf($secret, 64, self::ROOT_INFO);
 		$this->rootKey = substr($derived, 0, 32);
 		$this->senderChain = ['key' => Keys::curve25519KeyPair(), 'chainKey' => substr($derived, 32), 'index' => 0];
 	}
 
-	private function initialiseAsBob(string $secret, string $theirRatchetKey): void {
+	private function initialiseAsBob(#[SensitiveParameter] string $secret, string $theirRatchetKey): void {
 		$derived = Kdf::hkdf($secret, 64, self::ROOT_INFO);
 		$this->rootKey = substr($derived, 0, 32);
 		$this->receiverChains = [['ratchetKey' => $theirRatchetKey, 'chainKey' => substr($derived, 32), 'index' => 0]];
@@ -272,7 +273,7 @@ final class Session {
 		], JSON_THROW_ON_ERROR);
 	}
 
-	public static function unpickle(string $pickle): self {
+	public static function unpickle(#[SensitiveParameter] string $pickle): self {
 		$d = json_decode($pickle, true);
 		if (!is_array($d) || ($d['v'] ?? 0) !== 1) {
 			throw new CryptoException('Invalid session pickle');

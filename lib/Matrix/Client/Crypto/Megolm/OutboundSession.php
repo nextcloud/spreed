@@ -12,6 +12,7 @@ use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Kdf;
 use OCA\Talk\Matrix\Client\Crypto\Keys;
+use SensitiveParameter;
 
 /** A Megolm session we send with. */
 final class OutboundSession {
@@ -72,7 +73,7 @@ final class OutboundSession {
 		], JSON_THROW_ON_ERROR);
 	}
 
-	public static function unpickle(string $pickle): self {
+	public static function unpickle(#[SensitiveParameter] string $pickle): self {
 		$d = json_decode($pickle, true);
 		if (!is_array($d) || ($d['v'] ?? 0) !== 1) {
 			throw new CryptoException('Invalid outbound session pickle');

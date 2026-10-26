@@ -82,6 +82,7 @@ use OCP\Server;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 class ParticipantService {
 
@@ -543,7 +544,7 @@ class ParticipantService {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoom(RoomService $roomService, Room $room, IUser $user, string $password, bool $passedPasswordProtection = false): Participant {
+	public function joinRoom(RoomService $roomService, Room $room, IUser $user, #[SensitiveParameter] string $password, bool $passedPasswordProtection = false): Participant {
 		$event = new BeforeUserJoinedRoomEvent($room, $user, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -634,7 +635,7 @@ class ParticipantService {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null, ?string $displayName = null, ?string $phoneNumber = null): Participant {
+	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, #[SensitiveParameter] string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null, ?string $displayName = null, ?string $phoneNumber = null): Participant {
 		$event = new BeforeGuestJoinedRoomEvent($room, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -2512,7 +2513,7 @@ class ParticipantService {
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
 	 */
-	public function getParticipantByPin(Room $room, string $pin): Participant {
+	public function getParticipantByPin(Room $room, #[SensitiveParameter] string $pin): Participant {
 		$query = $this->connection->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);

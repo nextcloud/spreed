@@ -124,6 +124,7 @@ use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type TalkCapabilities from ResponseDefinitions
@@ -597,7 +598,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param string $owner User ID the external call service wants to act as
 	 * @return bool True if the request is from the external call service and valid
 	 */
-	private function validateExternalCallServiceRequest(string $owner, string $random, string $checksum): bool {
+	private function validateExternalCallServiceRequest(string $owner, string $random, #[SensitiveParameter] string $checksum): bool {
 		if ($owner === '' || !$this->talkConfig->isExternalCallServiceConfigured()) {
 			return false;
 		}
@@ -711,6 +712,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		string $source = '', /* @deprecated */
 		string $objectType = '',
 		string $objectId = '',
+		#[SensitiveParameter]
 		string $password = '',
 		int $readOnly = Room::READ_WRITE,
 		int $listable = Room::LISTABLE_NONE,
@@ -1917,7 +1919,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function makePublic(string $password = ''): DataResponse {
+	public function makePublic(#[SensitiveParameter] string $password = ''): DataResponse {
 		if ($this->room->isPreserved()) {
 			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
 		}
@@ -2089,7 +2091,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function setPassword(string $password): DataResponse {
+	public function setPassword(#[SensitiveParameter] string $password): DataResponse {
 		try {
 			$this->roomService->setPassword($this->room, $password);
 		} catch (PasswordException $e) {
@@ -2332,7 +2334,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
+	public function joinRoom(string $token, #[SensitiveParameter] string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		$authenticatedEmailGuest = null;
 		if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
@@ -2602,7 +2604,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function verifyDialInPin(string $pin): DataResponse {
+	public function verifyDialInPin(#[SensitiveParameter] string $pin): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}

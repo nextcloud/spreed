@@ -104,7 +104,7 @@ class PageController extends Controller {
 	#[FrontpageRoute(verb: 'POST', url: '/call/{token}', requirements: [
 		'token' => '[a-z0-9]{4,30}',
 	], root: '')]
-	public function authenticatePassword(string $token, string $password = ''): Response {
+	public function authenticatePassword(string $token, #[SensitiveParameter] string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->pageHandler($token, password: $password);
 	}
@@ -151,6 +151,7 @@ class PageController extends Controller {
 	protected function pageHandler(
 		string $token = '',
 		string $callUser = '',
+		#[SensitiveParameter]
 		string $password = '',
 		string $email = '',
 		#[SensitiveParameter]
@@ -378,6 +379,7 @@ class PageController extends Controller {
 	 */
 	protected function guestEnterRoom(
 		string $token,
+		#[SensitiveParameter]
 		string $password,
 		string $email,
 		#[SensitiveParameter]

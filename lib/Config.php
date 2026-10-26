@@ -26,6 +26,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
+use SensitiveParameter;
 
 class Config {
 	public const ALLOWED_BACKEND_TIMEOFFSET = 45;
@@ -801,7 +802,7 @@ class Config {
 		return $this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg));
 	}
 
-	public function deriveSignalingTokenPublicKey(string $privateKey, string $alg): string {
+	public function deriveSignalingTokenPublicKey(#[SensitiveParameter] string $privateKey, string $alg): string {
 		// Clear any existing (unrelated) OpenSSL errors
 		while (openssl_error_string() !== false);
 
@@ -893,7 +894,7 @@ class Config {
 	 * @param string $ticket
 	 * @return bool
 	 */
-	public function validateSignalingTicket(?string $userId, string $ticket): bool {
+	public function validateSignalingTicket(?string $userId, #[SensitiveParameter] string $ticket): bool {
 		if (empty($userId)) {
 			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {

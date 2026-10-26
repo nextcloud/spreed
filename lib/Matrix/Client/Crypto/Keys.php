@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Matrix\Client\Crypto;
 
 use OCA\Talk\Matrix\Client\Util\Canonical;
+use SensitiveParameter;
 
 /** Curve25519 / Ed25519 key pairs and Matrix JSON signing. */
 final class Keys {
@@ -24,11 +25,11 @@ final class Keys {
 		return ['public' => sodium_crypto_sign_publickey($pair), 'secret' => sodium_crypto_sign_secretkey($pair)];
 	}
 
-	public static function curve25519PublicKey(string $secret): string {
+	public static function curve25519PublicKey(#[SensitiveParameter] string $secret): string {
 		return sodium_crypto_scalarmult_base($secret);
 	}
 
-	public static function ecdh(string $ourSecret, string $theirPublic): string {
+	public static function ecdh(#[SensitiveParameter] string $ourSecret, string $theirPublic): string {
 		if (strlen($theirPublic) !== SODIUM_CRYPTO_SCALARMULT_BYTES) {
 			throw new CryptoException('Invalid Curve25519 key');
 		}
@@ -40,7 +41,7 @@ final class Keys {
 		}
 	}
 
-	public static function sign(string $ed25519Secret, string $message): string {
+	public static function sign(#[SensitiveParameter] string $ed25519Secret, string $message): string {
 		return sodium_crypto_sign_detached($message, $ed25519Secret);
 	}
 
@@ -57,7 +58,7 @@ final class Keys {
 	 * @param array<string, mixed> $object
 	 * @return array<string, mixed> object with the signature added
 	 */
-	public static function signJson(array $object, string $userId, string $keyId, string $ed25519Secret): array {
+	public static function signJson(array $object, string $userId, string $keyId, #[SensitiveParameter] string $ed25519Secret): array {
 		$copy = $object;
 		unset($copy['signatures'], $copy['unsigned']);
 		$signature = self::sign($ed25519Secret, Canonical::encode($copy));

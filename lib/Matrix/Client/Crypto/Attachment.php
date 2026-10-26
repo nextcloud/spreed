@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Client\Crypto;
 
+use SensitiveParameter;
+
 /**
  * Encrypted attachments of end-to-end encrypted rooms: AES-256-CTR with a
  * SHA-256 hash of the ciphertext. Files are processed in chunks into
@@ -65,7 +67,7 @@ final class Attachment {
 	 * @return array{stream: resource, size: int} Rewound plaintext
 	 * @throws CryptoException when the ciphertext does not match the hash, nothing is returned then
 	 */
-	public static function decrypt($ciphertext, array $keys): array {
+	public static function decrypt($ciphertext, #[SensitiveParameter] array $keys): array {
 		[$stream, $size, $hash] = self::crypt($ciphertext, $keys['key'], $keys['iv'], true);
 		if (!hash_equals($keys['sha256'], $hash)) {
 			fclose($stream);
@@ -80,7 +82,7 @@ final class Attachment {
 	 * @param resource $input
 	 * @return array{0: resource, 1: int, 2: string} Rewound output, its size and the raw SHA-256 of the ciphertext
 	 */
-	private static function crypt($input, string $key, string $iv, bool $inputIsCiphertext): array {
+	private static function crypt($input, #[SensitiveParameter] string $key, string $iv, bool $inputIsCiphertext): array {
 		$output = fopen('php://temp', 'w+b');
 		if ($output === false) {
 			throw new CryptoException('No temporary stream');

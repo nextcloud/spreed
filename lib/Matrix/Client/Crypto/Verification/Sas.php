@@ -13,6 +13,7 @@ use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Kdf;
 use OCA\Talk\Matrix\Client\Crypto\Keys;
 use OCA\Talk\Matrix\Client\Util\Canonical;
+use SensitiveParameter;
 
 /**
  * The cryptographic half of `m.sas.v1` verification: ECDH, SAS bytes, MACs.
@@ -28,7 +29,7 @@ final class Sas {
 	private array $ourKey;
 	private ?string $sharedSecret = null;
 
-	public function __construct(?array $ourKey = null) {
+	public function __construct(#[SensitiveParameter] ?array $ourKey = null) {
 		$this->ourKey = $ourKey ?? Keys::curve25519KeyPair();
 	}
 
@@ -92,7 +93,7 @@ final class Sas {
 		return json_encode(['p' => Base64::encode($this->ourKey['public']), 's' => Base64::encode($this->ourKey['secret']), 'x' => $this->sharedSecret === null ? null : Base64::encode($this->sharedSecret)], JSON_THROW_ON_ERROR);
 	}
 
-	public static function unpickle(string $pickle): self {
+	public static function unpickle(#[SensitiveParameter] string $pickle): self {
 		$d = json_decode($pickle, true);
 		if (!is_array($d)) {
 			throw new CryptoException('Invalid SAS pickle');
