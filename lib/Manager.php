@@ -1204,6 +1204,7 @@ class Manager {
 		string $name = '',
 		string $objectType = '',
 		string $objectId = '',
+		#[SensitiveParameter]
 		string $password = '',
 		?int $readOnly = null,
 		?int $listable = null,
@@ -1576,7 +1577,7 @@ class Manager {
 	 * @param string $password
 	 * @throws Exception
 	 */
-	public function setPublic(int $roomId, string $password = ''): void {
+	public function setPublic(int $roomId, #[SensitiveParameter] string $password = ''): void {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('type', $update->createNamedParameter(Room::TYPE_PUBLIC, IQueryBuilder::PARAM_INT))

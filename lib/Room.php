@@ -12,6 +12,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\Comments\IComment;
 use OCP\Server;
+use SensitiveParameter;
 
 class Room {
 	/**
@@ -111,6 +112,7 @@ class Room {
 		private readonly string $token,
 		private string $name,
 		private string $description,
+		#[SensitiveParameter]
 		private string $password,
 		private string $avatar,
 		private readonly string $remoteServer,
@@ -341,7 +343,7 @@ class Room {
 		return $this->password;
 	}
 
-	public function setPassword(string $password): void {
+	public function setPassword(#[SensitiveParameter] string $password): void {
 		$this->password = $password;
 	}
 
