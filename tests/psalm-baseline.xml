@@ -196,5 +196,10 @@
     <UndefinedClass>
       <code><![CDATA[Cache]]></code>
     </UndefinedClass>
-  </file>
+	</file>
+	<file src="lib/Share/Helper/FilesMetadataCache.php">
+	<DeprecatedMethod>
+		<code><![CDATA[getMetadata]]></code>
+	</DeprecatedMethod>
+	</file>
 </files>
