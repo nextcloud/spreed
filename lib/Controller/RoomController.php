@@ -1680,7 +1680,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
 			}
 
-			$isSIPConfigured = !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO)) && !empty($this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET));
 			if (
 				!$addedBy instanceof IUser
 				|| !$this->talkConfig->isSIPConfigured()
@@ -2604,7 +2603,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-
 	public function verifyDialInPin(#[SensitiveParameter] string $pin): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2744,7 +2742,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
-		if (!$this->talkConfig->isSIPConfigured() || !$this->appConfig->getAppValueBool(Config::SIP_DIALOUT)) {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT)) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 
@@ -2842,7 +2840,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
-		if (!$this->talkConfig->isSIPConfigured() || !$this->appConfig->getAppValueBool(Config::SIP_DIALOUT)) {
+		if (!$this->talkConfig->isSIPConfigured() || !$this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT)) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
 		}
 

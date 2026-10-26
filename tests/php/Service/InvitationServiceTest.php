@@ -65,7 +65,6 @@ class InvitationServiceTest extends TestCase {
 			$this->participantService,
 			$this->serverConfig,
 			$this->talkConfig,
-			$this->appConfig,
 			$this->emailValidator,
 		);
 	}

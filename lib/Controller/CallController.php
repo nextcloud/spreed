@@ -474,9 +474,6 @@ class CallController extends AEnvironmentAwareOCSController {
 				$numbers = $this->phoneNumberMapper->findByUser($attendee->getActorId());
 				if (!empty($numbers)) {
 					$callerNumber = array_shift($numbers)->getPhoneNumber();
-					$number = array_shift($numbers);
-					$callerNumber = $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_PREFIX);
-					$callerNumber .= $number->getPhoneNumber();
 				}
 			}
 		}
