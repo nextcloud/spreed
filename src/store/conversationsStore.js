@@ -787,6 +787,7 @@ const actions = {
 			commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while updating webinar lobby: ', error)
+			throw error
 		}
 	},
 
