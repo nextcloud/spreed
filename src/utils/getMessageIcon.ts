@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import type { ComponentPublicInstance } from 'vue'
 import type { Conversation } from '../types/index.ts'
 
 import IconCardTextOutline from 'vue-material-design-icons/CardTextOutline.vue'
@@ -21,7 +20,7 @@ import { MESSAGE, SHARED_ITEM } from '../constants.ts'
  *
  * @param lastMessage
  */
-export function getMessageIcon(lastMessage: Conversation['lastMessage']): ComponentPublicInstance | null {
+export function getMessageIcon(lastMessage: Conversation['lastMessage']) {
 	if (!lastMessage || Array.isArray(lastMessage)) {
 		return null
 	}
