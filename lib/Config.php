@@ -244,7 +244,7 @@ class Config {
 	}
 
 	public function canUserDialOutSIP(IUser $user): bool {
-		if (!$this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT)) {
+		if (!$this->appConfig->getAppValueBool(self::SIP_BRIDGE_DIALOUT)) {
 			return false;
 		}
 
@@ -521,13 +521,13 @@ class Config {
 	 * @return string[]
 	 */
 	public function getStunServers(): array {
-		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(self::STUN_SERVERS);
 		if (empty($servers)) {
-			$servers = [Config::DEFAULT_STUN_SERVER];
+			$servers = [self::DEFAULT_STUN_SERVER];
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static fn ($server) => $server !== Config::DEFAULT_STUN_SERVER);
+			$servers = array_filter($servers, static fn ($server) => $server !== self::DEFAULT_STUN_SERVER);
 		}
 
 		return $servers;
@@ -539,7 +539,7 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(self::TURN_SERVERS);
 
 		if ($withEvent) {
 			$event = new BeforeTurnServersGetEvent($servers);
@@ -678,9 +678,9 @@ class Config {
 	 * @return array
 	 */
 	public function getSignalingServers(): array {
-		$config = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
+		$config = $this->appConfig->getAppValueArray(self::SIGNALING_SERVERS);
 
-		if (array_key_exists('secret', $config) && !array_key_exists('servers', $config)) {
+		if (!array_key_exists('servers', $config)) {
 			return [];
 		}
 
@@ -691,15 +691,12 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingSecret(): string {
-		$config = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
-		if (array_key_exists('secret', $config)) {
-			return $config['secret'];
-		}
-		return '';
+		$config = $this->appConfig->getAppValueArray(self::SIGNALING_SERVERS);
+		return $config['secret'] ?? '';
 	}
 
 	public function getHideSignalingWarning(): bool {
-		return $this->appConfig->getAppValueBool(Config::HIDE_SIGNALING_WARNING);
+		return $this->appConfig->getAppValueBool(self::HIDE_SIGNALING_WARNING);
 	}
 
 	/**
@@ -729,7 +726,7 @@ class Config {
 			// TODO(fancycode): Is there a possibility for a race condition?
 			$secret = $this->secureRandom->generate(255);
 			if (empty($userId)) {
-				$this->appConfig->setAppValueString(Config::SIGNALING_TICKET_SECRET, $secret);
+				$this->appConfig->setAppValueString(self::SIGNALING_TICKET_SECRET, $secret);
 			} else {
 				$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
 			}
@@ -803,7 +800,6 @@ class Config {
 		$this->ensureSignalingTokenKeys($alg);
 
 		return $this->appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($alg));
-		;
 	}
 
 	public function deriveSignalingTokenPublicKey(#[SensitiveParameter] string $privateKey, string $alg): string {
@@ -900,7 +896,7 @@ class Config {
 	 */
 	public function validateSignalingTicket(?string $userId, #[SensitiveParameter] string $ticket): bool {
 		if (empty($userId)) {
-			$secret = $this->appConfig->getAppValueString(Config::SIGNALING_TICKET_SECRET);
+			$secret = $this->appConfig->getAppValueString(self::SIGNALING_TICKET_SECRET);
 		} else {
 			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}

@@ -96,6 +96,9 @@ class SignalingControllerTest extends TestCase {
 
 	private ?CustomInputSignalingController $controller = null;
 
+	private const string SIP_BRIDGE_SECRET = 'MySIPSecretValueMySIPSecretValue1234';
+	private const string SIGNALING_SECRET = 'MySecretValueMySecretValue1234567890';
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -107,6 +110,7 @@ class SignalingControllerTest extends TestCase {
 		$this->serverConfig = \OCP\Server::get(IConfig::class);
 		$this->appConfig = $this->getRealAppConfig();
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
+		$this->appConfig->setAppValueArray(Config::SIGNALING_SERVERS, ['servers' => [], 'secret' => self::SIGNALING_SECRET]);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
@@ -562,7 +566,11 @@ class SignalingControllerTest extends TestCase {
 		if (empty($checksum)) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
+
+		$this->appConfig->setAppValueString('signaling_servers_secret', 'MySecretValueMySecretValue1234567890');
+		$signalingSecret = $this->appConfig->getAppValueString('signaling_servers_secret');
+
+		$hash = hash_hmac('sha256', $random . $data, $signalingSecret);
 		return hash_equals($hash, strtolower((string)$checksum));
 	}
 
@@ -570,6 +578,7 @@ class SignalingControllerTest extends TestCase {
 		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
+
 		$this->appConfig->setAppValueString('signaling_servers_secret', 'MySecretValueMySecretValue1234567890');
 		$signalingSecret = $this->appConfig->getAppValueString('signaling_servers_secret');
 		$hash = hash_hmac('sha256', $random . $data, $signalingSecret);
@@ -1467,8 +1476,6 @@ class SignalingControllerTest extends TestCase {
 		$participant = $participantService->getParticipant($room, $this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 	}
-
-	private const string SIP_BRIDGE_SECRET = 'MySIPSecretValueMySIPSecretValue1234';
 
 	private function sipBridgeChecksum(string $data, string $random): string {
 		return hash_hmac('sha256', $random . $data, self::SIP_BRIDGE_SECRET);

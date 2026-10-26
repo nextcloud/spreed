@@ -392,8 +392,8 @@ class CapabilitiesTest extends TestCase {
 		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
 				['backgrounds_branded_for_guests', false],
-				['backgrounds_default_for_users', true, true],
-				['backgrounds_upload_users', true, true],
+				['backgrounds_default_for_users', true],
+				['backgrounds_upload_users', true],
 				['sip_bridge_dialout', false],
 				['sip_bridge_dialout_anonymous', false],
 				['enable_matterbridge', false],

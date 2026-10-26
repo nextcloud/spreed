@@ -120,7 +120,7 @@ class AdminSettings implements ISettings {
 		);
 
 		$this->initialState->provideInitialState(
-			'enable_matterbridge',
+			'matterbridge_enable',
 			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED)
 		);
 	}
