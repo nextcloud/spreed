@@ -11,6 +11,7 @@ namespace OCA\Talk\Matrix\Client\Crypto\Olm;
 use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Keys;
+use SensitiveParameter;
 
 /**
  * An Olm account: the device's long-term Curve25519 identity key, Ed25519
@@ -199,7 +200,7 @@ final class Account {
 		], JSON_THROW_ON_ERROR);
 	}
 
-	public static function unpickle(string $pickle): self {
+	public static function unpickle(#[SensitiveParameter] string $pickle): self {
 		$data = json_decode($pickle, true);
 		if (!is_array($data) || ($data['v'] ?? 0) !== 1) {
 			throw new CryptoException('Invalid account pickle');

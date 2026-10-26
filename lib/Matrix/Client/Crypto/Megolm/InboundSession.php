@@ -12,6 +12,7 @@ use OCA\Talk\Matrix\Client\Crypto\Base64;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Kdf;
 use OCA\Talk\Matrix\Client\Crypto\Keys;
+use SensitiveParameter;
 
 /**
  * A Megolm session we can decrypt with. Holds the ratchet at the earliest
@@ -29,7 +30,7 @@ final class InboundSession {
 	}
 
 	/** From an m.room_key `session_key` (signed, version 2). */
-	public static function fromSessionKey(string $sessionKey): self {
+	public static function fromSessionKey(#[SensitiveParameter] string $sessionKey): self {
 		$data = Base64::decode($sessionKey);
 		if (strlen($data) !== 1 + 4 + Ratchet::LENGTH + 32 + 64 || ord($data[0]) !== OutboundSession::SESSION_KEY_VERSION) {
 			throw new CryptoException('Invalid Megolm session key');
@@ -114,7 +115,7 @@ final class InboundSession {
 		], JSON_THROW_ON_ERROR);
 	}
 
-	public static function unpickle(string $pickle): self {
+	public static function unpickle(#[SensitiveParameter] string $pickle): self {
 		$d = json_decode($pickle, true);
 		if (!is_array($d) || ($d['v'] ?? 0) !== 1) {
 			throw new CryptoException('Invalid inbound session pickle');

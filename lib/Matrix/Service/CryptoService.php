@@ -42,6 +42,7 @@ use OCP\ICacheFactory;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * Decrypts end-to-end encrypted Matrix rooms: the server is a device of
@@ -523,7 +524,7 @@ class CryptoService {
 	 * @return ?array{0: string, 1: string} Matrix room id and session id when the backup has the room key
 	 * @throws MatrixException
 	 */
-	protected function getFromBackup(Account $account, Client $client, string $backupKey, string $version, string $roomId, string $sessionId): ?array {
+	protected function getFromBackup(Account $account, Client $client, #[SensitiveParameter] string $backupKey, string $version, string $roomId, string $sessionId): ?array {
 		try {
 			$data = $client->getRoomKeys($version, $roomId, $sessionId)[$roomId][$sessionId] ?? [];
 		} catch (MatrixException $e) {
@@ -539,7 +540,7 @@ class CryptoService {
 	 * @param array<string, mixed> $data Session of the backup
 	 * @return ?array{0: string, 1: string} Matrix room id and session id when the room key is new
 	 */
-	protected function importBackupSession(Account $account, string $backupKey, string $roomId, string $sessionId, array $data): ?array {
+	protected function importBackupSession(Account $account, #[SensitiveParameter] string $backupKey, string $roomId, string $sessionId, array $data): ?array {
 		try {
 			$content = Backup::decryptSession($backupKey, is_array($data['session_data'] ?? null) ? $data['session_data'] : []);
 			return $this->importRoomKey($account, ['room_id' => $roomId, 'session_id' => $sessionId] + $content);

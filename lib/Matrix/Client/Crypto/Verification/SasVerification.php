@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Matrix\Client\Crypto\Verification;
 
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
+use SensitiveParameter;
 
 /**
  * State machine of one `m.sas.v1` self-verification (our device vs. another
@@ -312,7 +313,7 @@ final class SasVerification {
 		], JSON_THROW_ON_ERROR);
 	}
 
-	public static function unpickle(string $pickle): self {
+	public static function unpickle(#[SensitiveParameter] string $pickle): self {
 		$d = json_decode($pickle, true);
 		if (!is_array($d) || ($d['v'] ?? 0) !== 1) {
 			throw new CryptoException('Invalid verification pickle');

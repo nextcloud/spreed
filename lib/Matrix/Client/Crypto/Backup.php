@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Client\Crypto;
 
+use SensitiveParameter;
+
 /**
  * Restoring room keys from the key backup (`m.megolm_backup.v1.curve25519-aes-sha2`)
  * with the recovery key of the user, which unlocks the backup key in the
@@ -25,7 +27,7 @@ final class Backup {
 	 *
 	 * @throws CryptoException when it is not a valid recovery key
 	 */
-	public static function decodeRecoveryKey(string $recoveryKey): string {
+	public static function decodeRecoveryKey(#[SensitiveParameter] string $recoveryKey): string {
 		$bytes = self::base58Decode(preg_replace('/\s+/', '', $recoveryKey) ?? '');
 		if (strlen($bytes) !== 2 + 32 + 1 || !str_starts_with($bytes, self::RECOVERY_KEY_PREFIX)) {
 			throw new CryptoException('Not a recovery key');
@@ -46,7 +48,7 @@ final class Backup {
 	 *
 	 * @param array<string, mixed> $description
 	 */
-	public static function matchesKeyDescription(string $key, array $description): bool {
+	public static function matchesKeyDescription(#[SensitiveParameter] string $key, array $description): bool {
 		if (($description['algorithm'] ?? null) !== self::SECRET_STORAGE_ALGORITHM || !is_string($description['iv'] ?? null) || !is_string($description['mac'] ?? null)) {
 			return false;
 		}
@@ -61,7 +63,7 @@ final class Backup {
 	 * @param array<string, mixed> $encrypted The entry of the key in the `encrypted` object of the secret
 	 * @throws CryptoException
 	 */
-	public static function decryptSecret(string $key, string $name, array $encrypted): string {
+	public static function decryptSecret(#[SensitiveParameter] string $key, string $name, array $encrypted): string {
 		if (!is_string($encrypted['iv'] ?? null) || !is_string($encrypted['ciphertext'] ?? null) || !is_string($encrypted['mac'] ?? null)) {
 			throw new CryptoException('Incomplete secret');
 		}
@@ -82,7 +84,7 @@ final class Backup {
 	 * @return array<string, mixed> Content like a forwarded room key, without room and session id
 	 * @throws CryptoException
 	 */
-	public static function decryptSession(string $backupKey, array $sessionData): array {
+	public static function decryptSession(#[SensitiveParameter] string $backupKey, array $sessionData): array {
 		if (!is_string($sessionData['ephemeral'] ?? null) || !is_string($sessionData['ciphertext'] ?? null) || !is_string($sessionData['mac'] ?? null)) {
 			throw new CryptoException('Incomplete backup session');
 		}
@@ -103,7 +105,7 @@ final class Backup {
 	/**
 	 * @return array{0: string, 1: string} AES and MAC key of a secret
 	 */
-	private static function secretKeys(string $key, string $name): array {
+	private static function secretKeys(#[SensitiveParameter] string $key, string $name): array {
 		$derived = Kdf::hkdf($key, 64, $name);
 		return [substr($derived, 0, 32), substr($derived, 32, 32)];
 	}
