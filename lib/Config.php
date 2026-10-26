@@ -691,17 +691,11 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingSecret(): string {
-		$config = $this->appConfig->getAppValueString(Config::SIGNALING_SERVERS_SECRET);
-		if (!empty($config)) {
-			return $config;
-		}
-
 		$config = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
-		if (empty($config)) {
-			return '';
+		if (array_key_exists('secret', $config)) {
+			return $config['secret'];
 		}
-
-		return $config['secret'];
+		return '';
 	}
 
 	public function getHideSignalingWarning(): bool {

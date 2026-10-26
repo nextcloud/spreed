@@ -72,10 +72,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState(Config::DEFAULT_GROUP_NOTIFICATION, $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION));
 		$this->initialState->provideInitialState(Config::CONVERSATIONS_FILES, (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES));
 		$this->initialState->provideInitialState(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES));
-		$this->initialState->provideInitialState(Config::SUMMARY_THRESHOLD, $this->appConfig->getAppValueInt(Config::SUMMARY_THRESHOLD, 100));
-		$this->initialState->provideInitialState(Config::MAX_CALL_DURATION, $this->appConfig->getAppValueInt(Config::MAX_CALL_DURATION, 0));
 		$this->initialState->provideInitialState('valid_apache_php_configuration', $this->validApachePHPConfiguration());
-		$this->initialState->provideInitialState(Config::MATTERBRIDGE_ENABLED, $this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED));
 	}
 
 	protected function initAllowedGroups(): void {
