@@ -147,6 +147,7 @@ class RoomService {
 		?IUser $owner = null,
 		string $objectType = '',
 		string $objectId = '',
+		#[SensitiveParameter]
 		string $password = '',
 		int $readOnly = Room::READ_WRITE,
 		int $listable = Room::LISTABLE_NONE,

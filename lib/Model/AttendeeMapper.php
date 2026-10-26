@@ -14,6 +14,7 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception as DBException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use SensitiveParameter;
 
 /**
  * @method Attendee mapRowToEntity(array $row)
@@ -56,7 +57,7 @@ class AttendeeMapper extends QBMapper {
 	/**
 	 * @return list<Attendee>
 	 */
-	public function getByAccessToken(string $accessToken): array {
+	public function getByAccessToken(#[SensitiveParameter] string $accessToken): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
