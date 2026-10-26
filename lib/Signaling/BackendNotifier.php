@@ -610,6 +610,11 @@ class BackendNotifier {
 			],
 		]);
 		$duration = microtime(true) - $start;
+
+		// Don't log chat messages to not leak the content
+		if (isset($message['chat']['comment'])) {
+			$message['chat']['comment'] = '[redacted #' . ($message['chat']['comment']['id'] ?? 'null') . ']';
+		}
 		$this->logger->debug('Send room message: {token} {message} ({duration})', [
 			'token' => $room->getToken(),
 			'message' => $message,
