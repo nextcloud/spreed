@@ -1145,7 +1145,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	/**
 	 * Copy the password hash of the conversation to all its shares
 	 */
-	public function setPasswordInRoom(string $roomToken, string $passwordHash): void {
+	public function setPasswordInRoom(string $roomToken, #[SensitiveParameter] string $passwordHash): void {
 		$this->cleanSharesByIdCache();
 
 		$update = $this->dbConnection->getQueryBuilder();

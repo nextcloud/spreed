@@ -13,6 +13,7 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use SensitiveParameter;
 
 /**
  * @method BotServer mapRowToEntity(array $row)
@@ -44,7 +45,7 @@ class BotServerMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findByUrlAndSecret(string $url, string $secret): BotServer {
+	public function findByUrlAndSecret(string $url, #[SensitiveParameter] string $secret): BotServer {
 		$urlHash = sha1($url);
 
 		$query = $this->db->getQueryBuilder();

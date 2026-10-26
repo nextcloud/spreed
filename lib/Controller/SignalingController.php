@@ -46,6 +46,7 @@ use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type TalkSignalingFederationSettings from ResponseDefinitions
@@ -767,7 +768,7 @@ class SignalingController extends OCSController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}}, array{}>
 	 */
-	private function backendAuth(array $auth): DataResponse {
+	private function backendAuth(#[SensitiveParameter] array $auth): DataResponse {
 		$params = $auth['params'];
 		$userId = $params['userid'];
 		if (!$this->talkConfig->validateSignalingTicket($userId, $params['ticket'])) {

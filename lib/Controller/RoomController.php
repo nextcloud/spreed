@@ -591,7 +591,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param string $owner User ID the external call service wants to act as
 	 * @return bool True if the request is from the external call service and valid
 	 */
-	private function validateExternalCallServiceRequest(string $owner, string $random, string $checksum): bool {
+	private function validateExternalCallServiceRequest(string $owner, string $random, #[SensitiveParameter] string $checksum): bool {
 		if ($owner === '' || !$this->talkConfig->isExternalCallServiceConfigured()) {
 			return false;
 		}

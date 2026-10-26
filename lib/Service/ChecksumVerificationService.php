@@ -28,7 +28,7 @@ class ChecksumVerificationService {
 	 * @return bool True if the request is from the backend and valid, false if not from SIP bridge
 	 * @throws UnauthorizedException when the request tried to authenticate as backend but is not valid
 	 */
-	public function validateRequest(string $random, string $checksum, #[SensitiveParameter] string $secret, string $data): bool {
+	public function validateRequest(string $random, #[SensitiveParameter] string $checksum, #[SensitiveParameter] string $secret, string $data): bool {
 		if ($random === '' && $checksum === '') {
 			return false;
 		}
