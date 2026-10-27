@@ -13,7 +13,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\Signaling\Manager;
-use OCA\Talk\Signaling\RoomPropertiesHelper;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Http\Client\IClientService;
 use OCP\IURLGenerator;
@@ -30,8 +29,10 @@ class BackendNotifierTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$config = $this->createMock(Config::class);
+		$config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
 		$this->backendNotifier = new BackendNotifier(
-			$this->createMock(Config::class),
+			$config,
 			$this->createMock(IAppConfig::class),
 			$this->logger,
 			$this->createMock(IClientService::class),
@@ -39,7 +40,6 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(Manager::class),
 			$this->createMock(ParticipantService::class),
 			$this->createMock(IURLGenerator::class),
-			$this->createMock(RoomPropertiesHelper::class),
 		);
 	}
 
