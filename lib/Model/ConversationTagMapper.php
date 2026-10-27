@@ -53,7 +53,7 @@ class ConversationTagMapper extends QBMapper {
 		// Use quoted string match to avoid false positives (e.g. "1" matching "12")
 		$qb->select('a.id', 'a.tag_ids')
 			->from('talk_attendees', 'a')
-			->where($qb->expr()->like('a.tag_ids', $qb->createNamedParameter('%"' . $tagId . '"%')))
+			->where($qb->expr()->like('a.tag_ids', $qb->createNamedParameter('%"' . $this->db->escapeLikeParameter($tagId) . '"%')))
 			->andWhere($qb->expr()->eq('a.actor_type', $qb->createNamedParameter('users')))
 			->andWhere($qb->expr()->eq('a.actor_id', $qb->createNamedParameter($userId)));
 
