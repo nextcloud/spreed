@@ -670,7 +670,6 @@ OC.L10N.register(
     "Start time has been updated" : "Thời gian bắt đầu đã được cập nhật",
     "Error occurred while updating start time" : "Đã xảy ra lỗi khi cập nhật thời gian bắt đầu",
     "Meeting start time" : "Thời gian bắt đầu cuộc họp",
-    "Start time (optional)" : "Thời gian bắt đầu (tùy chọn)",
     "Error occurred when locking the conversation" : "Đã xảy ra lỗi khi khóa cuộc trò chuyện",
     "Error occurred when unlocking the conversation" : "Đã xảy ra lỗi khi mở khóa cuộc trò chuyện",
     "Lock conversation" : "Khóa cuộc trò chuyện",
@@ -959,6 +958,7 @@ OC.L10N.register(
     "Expand stripe" : "Mở rộng sọc",
     "Connecting …" : "Đang kết nối …",
     "Waiting for others to join the call …" : "Đang chờ người khác tham gia cuộc gọi…",
+    "Start time (optional)" : "Thời gian bắt đầu (tùy chọn)",
     "Joining conversation …" : "Tham gia cuộc trò chuyện …",
     "Send" : "Gửi",
     "Searching …" : "Đang tìm kiếm ..."

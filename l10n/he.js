@@ -458,7 +458,6 @@ OC.L10N.register(
     "Password protection" : "הגנה בססמה",
     "Set a password" : "הגדרת ססמה",
     "Change password" : "שינוי ססמה",
-    "Start time (optional)" : "מועד התחלה (רשות)",
     "Edit" : "עריכה",
     "More information" : "מידע נוסף",
     "Delete" : "Delete",
@@ -621,6 +620,7 @@ OC.L10N.register(
     "Checking …" : "מתבצעת בדיקה…",
     "Loading …" : "בטעינה…",
     "Waiting for others to join the call …" : "בהמתנה לאחרים להצטרף לשיחה…",
+    "Start time (optional)" : "מועד התחלה (רשות)",
     "Send" : "שליחה",
     "Searching …" : "מתבצע חיפוש…"
 },

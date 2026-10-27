@@ -463,7 +463,6 @@
     "Password protection" : "Vörn með lykilorði",
     "Set a password" : "Setja lykilorð",
     "Invalid language" : "Ógilt tungumál",
-    "Start time (optional)" : "Upphafstími (valfrjálst)",
     "Edit" : "Breyta",
     "More information" : "Nánari upplýsingar",
     "Delete" : "Eyða",
@@ -634,6 +633,7 @@
     "__language_name__" : "Íslenska",
     "Tasks" : "Verkefni",
     "Notes" : "Minnispunktar",
+    "Reports" : "Skýrslur",
     "Talk to %s" : "Tala við %s",
     "Talk conversation for event" : "Samtal fyrir atburð",
     "Saving …" : "Vista …",
@@ -641,6 +641,7 @@
     "Loading …" : "Hleð inn …",
     "Connecting …" : "Tengist ...",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
+    "Start time (optional)" : "Upphafstími (valfrjálst)",
     "Send" : "Senda",
     "Searching …" : "Leita …"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"

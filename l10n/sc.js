@@ -704,7 +704,6 @@ OC.L10N.register(
     "Start time has been updated" : "S'ora de cumintzu est istada agiornada",
     "Error occurred while updating start time" : "B'at àpidu un'errore agiornende s'ora de cumintzu",
     "Meeting start time" : "Ora de cumintzu de sa riunione",
-    "Start time (optional)" : "Ora de cumintzu (a sèberu)",
     "Error occurred when locking the conversation" : "B'at àpidu un errore blochende sa resonada",
     "Error occurred when unlocking the conversation" : "B'at àpidu un'errore isblochende sa resonada",
     "Lock conversation" : "Bloca resonada",
@@ -1035,6 +1034,7 @@ OC.L10N.register(
     "Expand stripe" : "Ammània sa tira",
     "Connecting …" : "Connetende …",
     "Waiting for others to join the call …" : "Abetende chi is àteras persones intrent in sa mutida",
+    "Start time (optional)" : "Ora de cumintzu (a sèberu)",
     "Joining conversation …" : "Intrende in sa resonada",
     "Searching …" : "Chirchende …"
 },
