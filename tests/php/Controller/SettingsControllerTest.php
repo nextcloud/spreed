@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OCA\Talk\Config;
 use OCA\Talk\Controller\SettingsController;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -22,6 +24,7 @@ use Test\TestCase;
 
 class SettingsControllerTest extends TestCase {
 	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected IGroupManager&MockObject $groupManager;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected SettingsController $controller;
@@ -30,12 +33,14 @@ class SettingsControllerTest extends TestCase {
 		parent::setUp();
 
 		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->controller = new SettingsController(
 			'spreed',
 			$this->createMock(IRequest::class),
 			$this->config,
+			$this->appConfig,
 			$this->groupManager,
 			$this->createMock(BeforePreferenceSetEventListener::class),
 			'admin',
@@ -58,7 +63,10 @@ class SettingsControllerTest extends TestCase {
 			['sip-users', $group],
 			['unknown', null],
 		]);
-		$this->config->method('getAppValue')->with('spreed', 'sip_bridge_shared_secret')->willReturn($oldSecret);
+
+		$this->appConfig->method('getAppValueString')->willReturnMap([
+			[Config::SIP_BRIDGE_SHARED_SECRET, $oldSecret],
+		]);
 
 		$this->dispatcher->expects($this->once())
 			->method('dispatchTyped')

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\AuditLog\Operation;
+use OCA\Talk\Config;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -16,6 +17,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -30,6 +32,7 @@ class SettingsController extends OCSController {
 		string $appName,
 		IRequest $request,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly IGroupManager $groupManager,
 		private readonly BeforePreferenceSetEventListener $preferenceListener,
 		private readonly ?string $userId,
@@ -89,11 +92,10 @@ class SettingsController extends OCSController {
 			}
 		}
 
-		$sharedSecretChanged = $this->config->getAppValue('spreed', 'sip_bridge_shared_secret') !== $sharedSecret;
-
-		$this->config->setAppValue('spreed', 'sip_bridge_groups', json_encode($groups));
-		$this->config->setAppValue('spreed', 'sip_bridge_dialin_info', $dialInInfo);
-		$this->config->setAppValue('spreed', 'sip_bridge_shared_secret', $sharedSecret);
+		$sharedSecretChanged = $this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET) !== $sharedSecret;
+		$this->appConfig->setAppValueArray(Config::ALLOWED_GROUPS_SIP, $groups);
+		$this->appConfig->setAppValueString(Config::SIP_BRIDGE_DIALIN_INFO, $dialInInfo);
+		$this->appConfig->setAppValueString(Config::SIP_BRIDGE_SHARED_SECRET, $sharedSecret);
 
 		$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
 			'SIP bridge settings were changed: groups "{sipGroups}", shared secret {sharedSecret}',

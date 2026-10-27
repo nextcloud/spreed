@@ -461,10 +461,10 @@ class CallController extends AEnvironmentAwareOCSController {
 		}
 
 		$callerNumber = true;
-		if ($this->appConfig->getAppValueBool('sip_bridge_dialout_anonymous')) {
+		if ($this->appConfig->getAppValueBool(Config::SIP_BRIDGE_DIALOUT_ANONYMOUS)) {
 			$callerNumber = false;
-		} elseif ($this->appConfig->getAppValueString('sip_bridge_dialout_number') !== '') {
-			$callerNumber = $this->appConfig->getAppValueString('sip_bridge_dialout_number');
+		} elseif ($this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_NUMBER) !== '') {
+			$callerNumber = $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_NUMBER);
 		}
 
 		// No elseif, so we have the fallback to sip_bridge_dialout_number when the caller is no user or doesn't have a number

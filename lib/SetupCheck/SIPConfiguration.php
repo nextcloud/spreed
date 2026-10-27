@@ -42,8 +42,7 @@ class SIPConfiguration implements ISetupCheck {
 			return SetupResult::success($this->l->t('Using the SIP functionality requires a High-performance backend.'));
 		}
 
-		if ($this->talkConfig->getSIPSharedSecret() === ''
-			&& $this->talkConfig->getDialInInfo() === ''
+		if (!$this->talkConfig->isSIPConfigured()
 			&& $this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN) < 34) {
 			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}
