@@ -205,9 +205,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
 			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
 			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
-			$this->config->getAppValue('spreed', 'federation_enabled'),
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
 			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_ENABLED),
 			$this->appConfig->getAppValueInt(Config::RECORDING_CONSENT),
 			$this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO),
 			$this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET),
@@ -215,11 +215,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY),
 			$this->config->getAppValue('theming', 'cachebuster', '1'),
 			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
-			$this->config->getAppValue('spreed', 'federation_incoming_enabled'),
-			$this->config->getAppValue('spreed', 'federation_outgoing_enabled'),
-			$this->config->getAppValue('spreed', 'federation_only_trusted_servers'),
-			$this->config->getAppValue('spreed', 'federation_allowed_groups', '[]'),
 			$this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN),
+			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION)),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS),
 		];
 
 		if ($this->userId !== null) {
