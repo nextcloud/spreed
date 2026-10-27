@@ -450,6 +450,7 @@ OC.L10N.register(
     "Translate from" : "Traducir desde",
     "Send now" : "Enviar ahora",
     "Contact" : "Contacto",
+    "Remove {fileName}" : "Quitar {fileName}",
     "You voted" : "Votaste",
     "No messages" : "Sin mensajes",
     "Send later" : "Enviar más tarde",
