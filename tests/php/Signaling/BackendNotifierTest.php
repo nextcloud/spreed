@@ -30,8 +30,10 @@ class BackendNotifierTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$config = $this->createMock(Config::class);
+		$config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
 		$this->backendNotifier = new BackendNotifier(
-			$this->createMock(Config::class),
+			$config,
 			$this->createMock(IAppConfig::class),
 			$this->logger,
 			$this->createMock(IClientService::class),
