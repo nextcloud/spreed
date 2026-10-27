@@ -47,10 +47,14 @@ export function generateFullConversationLink(token: string, messageId?: string, 
  * @param token - conversation token
  * @param [messageId] - messageId for message in conversation link
  * @param [threadId] - threadId for message in conversation link
+ * @param [password] - conversation password to copy along with the link
  */
-export async function copyConversationLinkToClipboard(token: string, messageId?: string, threadId?: string) {
+export async function copyConversationLinkToClipboard(token: string, messageId?: string, threadId?: string, password?: string) {
 	try {
-		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId, threadId))
+		const link = generateFullConversationLink(token, messageId, threadId)
+		await navigator.clipboard.writeText(password
+			? link + '\n' + t('spreed', 'Password: {password}', { password }, { escape: false, sanitize: false })
+			: link)
 		if (messageId) {
 			showSuccess(t('spreed', 'Message link copied to clipboard'))
 		} else {
