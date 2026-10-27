@@ -140,6 +140,7 @@ class Capabilities implements IPublicCapability {
 		'announcement-preset',
 		'promote-demote-owner',
 		'matrix-rooms',
+		'stickers',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -179,6 +180,7 @@ class Capabilities implements IPublicCapability {
 		'classified-conversations',
 		'announcement-preset',
 		'matrix-rooms',
+		'stickers',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -207,6 +209,7 @@ class Capabilities implements IPublicCapability {
 			'summary-threshold',
 			'style',
 			'matterbridge-enabled',
+			'stickers-folder',
 		],
 		'conversations' => [
 			'can-create',
@@ -316,6 +319,7 @@ class Capabilities implements IPublicCapability {
 					'summary-threshold' => max(1, $this->appConfig->getAppValueInt(Config::SUMMARY_THRESHOLD)),
 					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
 					'matterbridge-enabled' => $user instanceof IUser && $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1',
+					'stickers-folder' => $user instanceof IUser ? $this->talkConfig->getStickersFolder() : '',
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),

@@ -243,3 +243,5 @@
 ## 26
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)
+* `stickers` (local) - Whether the sticker packs of the user can be listed, see [Sticker API](sticker.md)
+* `config => chat => stickers-folder` (local) - Path of the folder with sticker packs, relative to the user's files; stickers are disabled when empty

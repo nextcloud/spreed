@@ -153,6 +153,12 @@
 					@submit="handleSubmit" />
 			</div>
 
+			<NewMessageStickerPicker
+				v-if="stickersFolder"
+				:folder="stickersFolder"
+				:disabled="disabled"
+				@select="handleStickerSelect" />
+
 			<!-- Silent chat -->
 			<NcActions
 				v-if="showSendActions"
@@ -368,6 +374,7 @@ import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
+import NewMessageStickerPicker from './NewMessageStickerPicker.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import NewMessageUploadEditor from './NewMessageUploadEditor.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
@@ -419,6 +426,7 @@ export default {
 		NewMessageAudioRecorder,
 		NewMessageChatSummary,
 		NewMessageNewFileDialog,
+		NewMessageStickerPicker,
 		NewMessageTypingIndicator,
 		NewMessageUploadEditor,
 		MessageQuote,
@@ -644,6 +652,13 @@ export default {
 			return !this.actorStore.isActorGuest
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
+		},
+
+		stickersFolder() {
+			if (!this.canShareFiles || this.messageToEdit || !hasTalkFeature(this.token, 'stickers')) {
+				return ''
+			}
+			return getTalkConfig(this.token, 'chat', 'stickers-folder') ?? ''
 		},
 
 		canUploadFiles() {
@@ -1258,16 +1273,33 @@ export default {
 				if (!path.startsWith('/')) {
 					throw new Error(t('files', 'Invalid path selected'))
 				}
-				this.focusInput()
-
-				const talkMetaData = JSON.stringify(Object.assign(
-					this.threadId ? { threadId: this.threadId } : {},
-					this.parentMessage?.id ? { replyTo: this.parentMessage?.id } : {},
-				))
-				this.chatExtrasStore.removeParentIdToReply(this.token)
-
-				this.uploadStore.shareFile({ token: this.token, path, talkMetaData })
+				this.shareFileByPath(path)
 			})
+		},
+
+		shareFileByPath(path) {
+			this.focusInput()
+
+			const talkMetaData = JSON.stringify(Object.assign(
+				this.threadId ? { threadId: this.threadId } : {},
+				this.parentMessage?.id ? { replyTo: this.parentMessage?.id } : {},
+			))
+			this.chatExtrasStore.removeParentIdToReply(this.token)
+
+			return this.uploadStore.shareFile({ token: this.token, path, talkMetaData })
+		},
+
+		async handleStickerSelect(sticker) {
+			try {
+				await this.shareFileByPath(sticker.path)
+			} catch (error) {
+				// A sticker sent before is already shared with the conversation:
+				// the message is posted again, but the request answers 403
+				if (error?.response?.status !== 403) {
+					console.error('Error while sending a sticker:', error)
+					showError(t('spreed', 'Failed to send the sticker'))
+				}
+			}
 		},
 
 		handleOpenTributeMenu() {

@@ -761,6 +761,28 @@ namespace OCA\Talk;
  *     userId: ?string,
  * }
  *
+ * @psalm-type TalkSticker = array{
+ *     // File id of the sticker's image
+ *     id: int,
+ *     // File name without extension
+ *     name: string,
+ *     // Path of the file relative to the user's files, to share it with a conversation
+ *     path: string,
+ *     // Mime type of the image
+ *     mimetype: string,
+ *     // ETag of the file, to refresh cached previews
+ *     etag: string,
+ * }
+ *
+ * @psalm-type TalkStickerPack = array{
+ *     // File id of the pack's folder
+ *     id: int,
+ *     // Name of the pack's folder
+ *     name: string,
+ *     // Stickers of the pack, sorted by name
+ *     stickers: non-empty-list<TalkSticker>,
+ * }
+ *
  * @psalm-type TalkThread = array{
  *     // Identifier of the thread
  *     id: positive-int,
@@ -871,6 +893,8 @@ namespace OCA\Talk;
  *             style: 'split'|'unified',
  *             // Whether Matterbridge is enabled
  *             matterbridge-enabled: bool,
+ *             // Path of the folder with sticker packs relative to the user's files, empty when stickers are disabled
+ *             stickers-folder: string,
  *         },
  *         conversations: array{
  *             // Whether the user can create conversations

@@ -230,6 +230,7 @@ class CapabilitiesTest extends TestCase {
 						'summary-threshold' => 100,
 						'style' => 'split',
 						'matterbridge-enabled' => false,
+						'stickers-folder' => '',
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -473,6 +474,7 @@ class CapabilitiesTest extends TestCase {
 						'summary-threshold' => 100,
 						'style' => 'split',
 						'matterbridge-enabled' => false,
+						'stickers-folder' => '',
 					],
 					'conversations' => [
 						'can-create' => $canCreate,

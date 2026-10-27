@@ -2149,6 +2149,27 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/stickers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the sticker packs of the user
+         * @description Required capability: `stickers`
+         *     A sticker is sent by sharing its file with the conversation. The list is empty when stickers are disabled (`config => chat => stickers-folder` is empty) or the user has no access to the folder.
+         */
+        get: operations["sticker-get-sticker-packs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/temp-user-avatar": {
         parameters: {
             query?: never;
@@ -2442,6 +2463,8 @@ export type components = {
                     style: "split" | "unified";
                     /** @description Whether Matterbridge is enabled */
                     "matterbridge-enabled": boolean;
+                    /** @description Path of the folder with sticker packs relative to the user's files, empty when stickers are disabled */
+                    "stickers-folder": string;
                 };
                 conversations: {
                     /** @description Whether the user can create conversations */
@@ -3538,6 +3561,32 @@ export type components = {
             }[];
             /** @description User id of the current user */
             userId: string | null;
+        };
+        Sticker: {
+            /**
+             * Format: int64
+             * @description File id of the sticker's image
+             */
+            id: number;
+            /** @description File name without extension */
+            name: string;
+            /** @description Path of the file relative to the user's files, to share it with a conversation */
+            path: string;
+            /** @description Mime type of the image */
+            mimetype: string;
+            /** @description ETag of the file, to refresh cached previews */
+            etag: string;
+        };
+        StickerPack: {
+            /**
+             * Format: int64
+             * @description File id of the pack's folder
+             */
+            id: number;
+            /** @description Name of the pack's folder */
+            name: string;
+            /** @description Stickers of the pack, sorted by name */
+            stickers: components["schemas"]["Sticker"][];
         };
         Thread: {
             /**
@@ -15562,6 +15611,50 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "sticker-get-sticker-packs": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sticker packs returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["StickerPack"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
