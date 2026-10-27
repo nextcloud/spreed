@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
+use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
@@ -28,6 +29,7 @@ use Test\TestCase;
 class HostedSignalingServerServiceTest extends TestCase {
 	protected IClient&MockObject $client;
 	protected IEventDispatcher&MockObject $dispatcher;
+	protected LoggerInterface&MockObject $logger;
 	protected HostedSignalingServerService $service;
 
 	public function setUp(): void {
@@ -39,12 +41,13 @@ class HostedSignalingServerServiceTest extends TestCase {
 		$clientService = $this->createMock(IClientService::class);
 		$clientService->method('newClient')->willReturn($this->client);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->service = new HostedSignalingServerService(
 			$config,
 			$this->createMock(IAppConfig::class),
 			$clientService,
-			$this->createMock(LoggerInterface::class),
+			$this->logger,
 			$this->createMock(IL10N::class),
 			$this->createMock(ISecureRandom::class),
 			$this->dispatcher,
@@ -67,6 +70,25 @@ class HostedSignalingServerServiceTest extends TestCase {
 				&& $event->getParameters() === ['accountId' => 'account-1', 'url' => 'https://cloud.example']));
 
 		$this->service->registerAccount(new RegisterAccountData('https://cloud.example', 'Admin', 'admin@example.com', 'en', 'DE'));
+	}
+
+	public function testFetchAccountInfoDoesNotLogSecretsOrBodies(): void {
+		$this->logger->expects($this->once())
+			->method('error')
+			->with($this->logicalNot($this->logicalOr(
+				$this->stringContains('signaling-secret'),
+				$this->stringContains('admin@example.com'),
+			)));
+
+		$this->client->method('get')->willReturn($this->createResponse(Http::STATUS_OK, json_encode([
+			'status' => 'active',
+			'created' => 'now',
+			'signaling' => ['url' => 'wss://signaling.example', 'secret' => 'signaling-secret'],
+			'owner' => ['email' => 'admin@example.com'],
+		])));
+
+		$this->expectException(HostedSignalingServerAPIException::class);
+		$this->service->fetchAccountInfo(new AccountId('account-1'));
 	}
 
 	public function testDeleteAccountLogsCriticalAction(): void {
