@@ -567,7 +567,6 @@ OC.L10N.register(
     "Delete conversation" : "Dilemel an diviz",
     "Do you really want to delete \"{displayName}\"?" : "Sur oc'h da zilemel  \"{displayName}\"?",
     "Password protection" : "Gwareziñ gant ur ger-tremen",
-    "Start time (optional)" : "Amzer kregiñ (dibab)",
     "Edit" : "Embann",
     "More information" : "Muioc'h a ditouroù",
     "Delete" : "Delete",
@@ -702,6 +701,7 @@ OC.L10N.register(
     "Talk to %s" : "Komz da %s",
     "Saving …" : "Orc'h enrolliñ",
     "Waiting for others to join the call …" : "O c'hortoz ma teuio ar re all er gemenadenn ...",
+    "Start time (optional)" : "Amzer kregiñ (dibab)",
     "Send" : "Kas",
     "Searching …" : "O klask ..."
 },

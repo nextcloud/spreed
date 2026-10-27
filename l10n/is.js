@@ -465,7 +465,6 @@ OC.L10N.register(
     "Password protection" : "Vörn með lykilorði",
     "Set a password" : "Setja lykilorð",
     "Invalid language" : "Ógilt tungumál",
-    "Start time (optional)" : "Upphafstími (valfrjálst)",
     "Edit" : "Breyta",
     "More information" : "Nánari upplýsingar",
     "Delete" : "Eyða",
@@ -636,6 +635,7 @@ OC.L10N.register(
     "__language_name__" : "Íslenska",
     "Tasks" : "Verkefni",
     "Notes" : "Minnispunktar",
+    "Reports" : "Skýrslur",
     "Talk to %s" : "Tala við %s",
     "Talk conversation for event" : "Samtal fyrir atburð",
     "Saving …" : "Vista …",
@@ -643,6 +643,7 @@ OC.L10N.register(
     "Loading …" : "Hleð inn …",
     "Connecting …" : "Tengist ...",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
+    "Start time (optional)" : "Upphafstími (valfrjálst)",
     "Send" : "Senda",
     "Searching …" : "Leita …"
 },
