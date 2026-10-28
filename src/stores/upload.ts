@@ -20,6 +20,7 @@ import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
+import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { getDavClient } from '../services/DavClient.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -89,19 +90,36 @@ export const useUploadStore = defineStore('upload', () => {
 	const compressedFileSizes = reactive<Record<string, number>>({})
 
 	/**
-	 * The user's choices for the current upload. They are only valid until it
-	 * is sent or discarded, see resetCurrentUpload()
+	 * The user's choices for uploads, kept in browser storage across uploads
 	 */
-	const allowUpdate = ref(false)
-	const skipCompression = ref(false)
+	const allowUpdate = ref(BrowserStorage.getItem('allowUpdate') === 'true')
+	const skipCompression = ref(BrowserStorage.getItem('skipCompression') === 'true')
 
 	/**
-	 * Closes the current upload, clearing the user's choices made for it
+	 * Update the share permission choice and keep it in storage
+	 *
+	 * @param value new 'allowUpdate' value
+	 */
+	function updateAllowUpdate(value: boolean) {
+		allowUpdate.value = value
+		BrowserStorage.setItem('allowUpdate', value.toString())
+	}
+
+	/**
+	 * Update the image quality choice and keep it in storage
+	 *
+	 * @param value new 'skipCompression' value
+	 */
+	function updateSkipCompression(value: boolean) {
+		skipCompression.value = value
+		BrowserStorage.setItem('skipCompression', value.toString())
+	}
+
+	/**
+	 * Closes the current upload
 	 */
 	function resetCurrentUpload() {
 		currentUploadId.value = undefined
-		allowUpdate.value = false
-		skipCompression.value = false
 	}
 
 	/**
@@ -883,6 +901,9 @@ export const useUploadStore = defineStore('upload', () => {
 		compressedFileSizes,
 		allowUpdate,
 		skipCompression,
+
+		updateAllowUpdate,
+		updateSkipCompression,
 
 		getUploadsArray,
 		getInitialisedUploads,
