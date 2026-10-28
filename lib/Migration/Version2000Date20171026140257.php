@@ -11,7 +11,6 @@ namespace OCA\Talk\Migration;
 use OCA\Talk\Config;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
@@ -26,7 +25,6 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 
 	public function __construct(
 		private readonly IDBConnection $connection,
-		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
 		private readonly ISecureRandom $secureRandom,
 	) {
@@ -41,7 +39,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	 */
 	#[\Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
-		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
+		if (version_compare($this->appConfig->getAppValueString('installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0
 			return;
 		}

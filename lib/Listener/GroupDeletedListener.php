@@ -13,18 +13,16 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Group\Events\GroupDeletedEvent;
-use OCP\IAppConfig;
-use OCP\IConfig;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class GroupDeletedListener implements IEventListener {
 	public function __construct(
-		private readonly IConfig $config,
 		private readonly Manager $manager,
 		private readonly ParticipantService $participantService,
 		private readonly IAppConfig $appConfig,
@@ -54,12 +52,10 @@ class GroupDeletedListener implements IEventListener {
 	}
 
 	protected function removeGroupFromConfig(string $configKey, string $removeGroupId): void {
-		$json = $this->config->getAppValue('spreed', $configKey, '[]');
-		$array = json_decode($json, true);
-		$gids = \is_array($array) ? $array : [];
+		$gids = $this->appConfig->getAppValueArray($configKey);
 
 		$gids = array_filter($gids, static fn ($gid) => $gid !== $removeGroupId);
 
-		$this->config->setAppValue('spreed', $configKey, json_encode($gids));
+		$this->appConfig->setAppValueArray($configKey, $gids);
 	}
 }

@@ -189,7 +189,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	protected function getTalkHashHeader(): array {
 		$values = [
 			$this->config->getSystemValueString('version'),
-			$this->config->getAppValue('spreed', 'installed_version'),
+			$this->appConfig->getAppValueString('installed_version'),
 			json_encode($this->appConfig->getAppValueArray(Config::STUN_SERVERS)),
 			json_encode($this->appConfig->getAppValueArray(Config::TURN_SERVERS)),
 			json_encode($this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS)),

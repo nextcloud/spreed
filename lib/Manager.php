@@ -1267,13 +1267,11 @@ class Manager {
 			}
 		}
 		if ($sipEnabled === null) {
-			$default = $this->config->getAppValue('spreed', 'sip_dialin_default', 'none');
-			if ($default !== 'none') {
-				$default = (int)$default;
-				if (in_array($default, [Webinary::SIP_DISABLED, Webinary::SIP_ENABLED, Webinary::SIP_ENABLED_NO_PIN], true)) {
-					$sipEnabled = $default;
-				}
+			$default = $this->appConfig->getAppValueInt(Config::SIP_DIALIN_DEFAULT);
+			if (in_array($default, [Webinary::SIP_DISABLED, Webinary::SIP_ENABLED, Webinary::SIP_ENABLED_NO_PIN], true)) {
+				$sipEnabled = $default;
 			}
+
 		}
 		if ($sipEnabled !== null) {
 			$insert->setValue('sip_enabled', $insert->createNamedParameter($sipEnabled, IQueryBuilder::PARAM_INT));
