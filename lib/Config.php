@@ -90,6 +90,7 @@ class Config {
 	public const string MATRIX_ALLOWED_GROUPS = 'matrix_allowed_groups';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 	public const string MAX_GIF_SIZE = 'max_gif_size';
+	public const string STICKERS_FOLDER = 'stickers_folder';
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
 	public const string TOKEN_ENTROPY = 'token_entropy';
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
@@ -377,6 +378,14 @@ class Config {
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
 		return Attendee::PERMISSIONS_MAX_DEFAULT & ~Attendee::PERMISSIONS_LOBBY_IGNORE;
+	}
+
+	/**
+	 * Path of the folder with sticker packs, relative to each user's files,
+	 * without leading or trailing slashes. Empty when stickers are disabled.
+	 */
+	public function getStickersFolder(): string {
+		return trim($this->appConfig->getAppValueString(self::STICKERS_FOLDER), '/');
 	}
 
 	public function getAttachmentFolder(string $userId): string {

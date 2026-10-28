@@ -198,6 +198,7 @@ PROMPT;
 			new Entry(Config::MATRIX_ALLOWED_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to link a Matrix account (empty means everyone)'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
+			new Entry(Config::STICKERS_FOLDER, ValueType::STRING, '', definition: 'Path of a folder, relative to each user\'s files (e.g. a team folder), whose subfolders are sticker packs. Empty disables stickers'),
 			new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)'),
 			new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort'),
 			new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI'),

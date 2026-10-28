@@ -181,6 +181,7 @@ export const mockedCapabilities: Capabilities = {
 				'summary-threshold': 100,
 				style: CHAT_STYLE.SPLIT,
 				'matterbridge-enabled': false,
+				'stickers-folder': '',
 			},
 			conversations: {
 				'can-create': true,

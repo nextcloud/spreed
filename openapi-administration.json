@@ -303,7 +303,8 @@
                                     "typing-privacy",
                                     "summary-threshold",
                                     "style",
-                                    "matterbridge-enabled"
+                                    "matterbridge-enabled",
+                                    "stickers-folder"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -346,6 +347,10 @@
                                     "matterbridge-enabled": {
                                         "type": "boolean",
                                         "description": "Whether Matterbridge is enabled"
+                                    },
+                                    "stickers-folder": {
+                                        "type": "string",
+                                        "description": "Path of the folder with sticker packs relative to the user's files, empty when stickers are disabled"
                                     }
                                 }
                             },

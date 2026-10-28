@@ -50,6 +50,7 @@ nav:
       - 'Chat management': 'chat.md'
       - 'Reaction management': 'reaction.md'
       - 'Poll management': 'poll.md'
+      - 'Sticker management': 'sticker.md'
       - 'Breakout rooms management': 'breakout-rooms.md'
       - 'Bots management': 'bot-management.md'
       - 'Integration by other apps': 'integration.md'

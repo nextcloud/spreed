@@ -654,6 +654,11 @@ export type {
 	AppConfigSetValueResponse,
 } from './core.ts'
 
+// Stickers
+export type Sticker = components['schemas']['Sticker']
+export type StickerPack = components['schemas']['StickerPack']
+export type getStickerPacksResponse = ApiResponse<operations['sticker-get-sticker-packs']['responses'][200]['content']['application/json']>
+
 // Presets
 export type ConversationPreset = components['schemas']['ConversationPreset']
 export type getPresetsResponse = ApiResponse<operations['preset-get-presets']['responses'][200]['content']['application/json']>

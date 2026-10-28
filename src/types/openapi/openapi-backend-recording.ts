@@ -173,6 +173,8 @@ export type components = {
                     style: "split" | "unified";
                     /** @description Whether Matterbridge is enabled */
                     "matterbridge-enabled": boolean;
+                    /** @description Path of the folder with sticker packs relative to the user's files, empty when stickers are disabled */
+                    "stickers-folder": string;
                 };
                 conversations: {
                     /** @description Whether the user can create conversations */

@@ -413,7 +413,8 @@
                                     "typing-privacy",
                                     "summary-threshold",
                                     "style",
-                                    "matterbridge-enabled"
+                                    "matterbridge-enabled",
+                                    "stickers-folder"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -456,6 +457,10 @@
                                     "matterbridge-enabled": {
                                         "type": "boolean",
                                         "description": "Whether Matterbridge is enabled"
+                                    },
+                                    "stickers-folder": {
+                                        "type": "string",
+                                        "description": "Path of the folder with sticker packs relative to the user's files, empty when stickers are disabled"
                                     }
                                 }
                             },
@@ -2726,6 +2731,66 @@
                         "type": "string",
                         "nullable": true,
                         "description": "User id of the current user"
+                    }
+                }
+            },
+            "Sticker": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "path",
+                    "mimetype",
+                    "etag"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "File id of the sticker's image"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "File name without extension"
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Path of the file relative to the user's files, to share it with a conversation"
+                    },
+                    "mimetype": {
+                        "type": "string",
+                        "description": "Mime type of the image"
+                    },
+                    "etag": {
+                        "type": "string",
+                        "description": "ETag of the file, to refresh cached previews"
+                    }
+                }
+            },
+            "StickerPack": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "stickers"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "File id of the pack's folder"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the pack's folder"
+                    },
+                    "stickers": {
+                        "type": "array",
+                        "description": "Stickers of the pack, sorted by name",
+                        "items": {
+                            "$ref": "#/components/schemas/Sticker"
+                        },
+                        "minItems": 1
                     }
                 }
             },
@@ -33002,6 +33067,111 @@
                                                 "data": {
                                                     "type": "string"
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/stickers": {
+            "get": {
+                "operationId": "sticker-get-sticker-packs",
+                "summary": "Get the sticker packs of the user",
+                "description": "Required capability: `stickers`\nA sticker is sent by sharing its file with the conversation. The list is empty when stickers are disabled (`config => chat => stickers-folder` is empty) or the user has no access to the folder.",
+                "tags": [
+                    "sticker"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sticker packs returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/StickerPack"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }
