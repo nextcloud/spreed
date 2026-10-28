@@ -567,8 +567,8 @@ class SignalingControllerTest extends TestCase {
 			return false;
 		}
 
-		$this->appConfig->setAppValueString('signaling_servers_secret', 'MySecretValueMySecretValue1234567890');
-		$signalingSecret = $this->appConfig->getAppValueString('signaling_servers_secret');
+		$this->appConfig->setAppValueString(Config::SIGNALING_SERVERS_SECRET, 'MySecretValueMySecretValue1234567890');
+		$signalingSecret = $this->appConfig->getAppValueString(Config::SIGNALING_SERVERS_SECRET);
 
 		$hash = hash_hmac('sha256', $random . $data, $signalingSecret);
 		return hash_equals($hash, strtolower((string)$checksum));
@@ -579,8 +579,8 @@ class SignalingControllerTest extends TestCase {
 			return false;
 		}
 
-		$this->appConfig->setAppValueString('signaling_servers_secret', 'MySecretValueMySecretValue1234567890');
-		$signalingSecret = $this->appConfig->getAppValueString('signaling_servers_secret');
+		$this->appConfig->setAppValueString(Config::SIGNALING_SERVERS_SECRET, 'MySecretValueMySecretValue1234567890');
+		$signalingSecret = $this->appConfig->getAppValueString(Config::SIGNALING_SERVERS_SECRET);
 		$hash = hash_hmac('sha256', $random . $data, $signalingSecret);
 		return $hash;
 	}

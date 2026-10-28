@@ -51,7 +51,7 @@ class VerifyKeys extends Base {
 			if ($update) {
 				$output->writeln('<comment>Stored public key for algorithm ' . strtolower($alg) . ' did not match stored private key.</comment>');
 				$output->writeln('<info>A new public key was created and stored.</info>');
-				$this->appConfig->setAppValueString('signaling_token_pubkey_' . strtolower($alg), $publicKeyDerived);
+				$this->appConfig->setAppValueString(Config::SIGNALING_TOKEN_PUBKEY, $publicKeyDerived);
 
 				return 0;
 			}

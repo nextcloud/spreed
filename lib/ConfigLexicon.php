@@ -234,6 +234,8 @@ PROMPT;
 			new Entry(Config::SIP_BRIDGE_DIALOUT, ValueType::BOOL, false, definition: 'SIP dial-out is allowed when a SIP bridge is configured', rename: 'sip_dialout'),
 			new Entry(Config::SIGNALING_TICKET_SECRET, ValueType::STRING, '', definition: 'Secret used to secure the signaling tickets for guests (255 character random string)', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::SIGNALING_TOKEN_ALG, ValueType::STRING, 'ES256', definition: 'Algorithm for the signaling tickets'),
+			new Entry(Config::SIGNALING_TOKEN_PRIVKEY, ValueType::STRING, '', definition: 'Private key for the signaling ticket creation by the server', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::SIGNALING_TOKEN_PUBKEY, ValueType::STRING, '', definition: 'Public key for the signaling ticket creation by the server'),
 			new Entry(Config::SIGNALING_SERVERS, ValueType::ARRAY, ['servers' => [],'secret' => ''], definition: 'List of signaling servers, should be configured via the web interface or the OCC commands', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::SIGNALING_SERVERS_SECRET, ValueType::STRING, '', flags: IAppConfig::FLAG_SENSITIVE),
 		];

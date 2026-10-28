@@ -381,12 +381,12 @@ class ConfigTest extends TestCase {
 		$appConfig->setAppValueString(Config::SIGNALING_TOKEN_ALG, $algo);
 
 		// Make sure new keys are generated.
-		$appConfig->deleteAppValue('signaling_token_privkey_' . strtolower($algo));
-		$appConfig->deleteAppValue('signaling_token_pubkey_' . strtolower($algo));
+		$appConfig->deleteAppValue(Config::SIGNALING_TOKEN_PRIVKEY);
+		$appConfig->deleteAppValue(Config::SIGNALING_TOKEN_PUBKEY);
 		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, 'user1');
 		$this->assertNotNull($ticket);
 
-		$key = new Key($appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$key = new Key($appConfig->getAppValueString(Config::SIGNALING_TOKEN_PUBKEY), $algo);
 		$decoded = JWT::decode($ticket, $key);
 
 		$this->assertEquals($now, $decoded->iat);
@@ -414,12 +414,12 @@ class ConfigTest extends TestCase {
 
 		$appConfig->setAppValueString(Config::SIGNALING_TOKEN_ALG, $algo);
 		// Make sure new keys are generated.
-		$appConfig->deleteAppValue('signaling_token_privkey_' . strtolower($algo));
-		$appConfig->deleteAppValue('signaling_token_pubkey_' . strtolower($algo));
+		$appConfig->deleteAppValue(Config::SIGNALING_TOKEN_PRIVKEY);
+		$appConfig->deleteAppValue(Config::SIGNALING_TOKEN_PUBKEY);
 		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, null);
 		$this->assertNotNull($ticket);
 
-		$key = new Key($appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$key = new Key($appConfig->getAppValueString(Config::SIGNALING_TOKEN_PUBKEY), $algo);
 		$decoded = JWT::decode($ticket, $key);
 
 		$this->assertEquals($now, $decoded->iat);
