@@ -9,7 +9,7 @@ Feature: conversation-4/classified-retention
       | preset   | classified |
     And user "participant1" is participant of room "classified" (v4)
     # Without a call the conversation is not queued for deletion and survives the sweep
-    And age room "classified" 2 hours
+    And age room "classified" 8 days
     When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
     Then user "participant1" is participant of room "classified" (v4)
     # A call happens and ends, which queues the conversation for deletion
@@ -20,7 +20,7 @@ Feature: conversation-4/classified-retention
     And user "participant1" is participant of the following rooms (v4)
       | id         | objectType |
       | classified | classified |
-    And age room "classified" 2 hours
+    And age room "classified" 8 days
     When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
     Then user "participant1" is not participant of room "classified" (v4)
 
@@ -46,7 +46,7 @@ Feature: conversation-4/classified-retention
     And user "participant1" is participant of the following rooms (v4)
       | id         | objectType |
       | classified | classified |
-    And age room "classified" 2 hours
+    And age room "classified" 8 days
     When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
     Then user "participant1" is not participant of room "classified" (v4)
 
@@ -67,7 +67,7 @@ Feature: conversation-4/classified-retention
     And user "participant1" is participant of the following rooms (v4)
       | id         | objectType         |
       | classified | classified_persist |
-    And age room "classified" 2 hours
+    And age room "classified" 8 days
     When force run "OCA\Talk\BackgroundJob\ExpireObjectRooms" background jobs
     Then user "participant1" is participant of room "classified" (v4)
     # A later call must not re-queue it for deletion
