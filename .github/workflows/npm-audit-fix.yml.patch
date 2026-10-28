@@ -1,0 +1,12 @@
+diff --git a/.github/workflows/npm-audit-fix.yml b/.github/workflows/npm-audit-fix.yml
+index a8c8d1205d..664333a600 100644
+--- a/.github/workflows/npm-audit-fix.yml
++++ b/.github/workflows/npm-audit-fix.yml
+@@ -114,7 +114,6 @@ jobs:
+           body: ${{ steps.npm-audit.outputs.markdown }}
+           labels: |
+             dependencies
+-            3. to review
+ 
+       # Approve using the default GITHUB_TOKEN, as the PR itself was created
+       # using COMMAND_BOT_PAT and GitHub does not allow an account to approve its own PR
