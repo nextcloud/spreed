@@ -34,13 +34,14 @@ import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useDashboardStore } from '../../stores/dashboard.ts'
+import { supportsTriggeredReminders, useDashboardStore } from '../../stores/dashboard.ts'
 import { hasUnreadMentions } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
-const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
+const supportsReminders = hasTalkFeature('local', 'upcoming-reminders') || supportsTriggeredReminders
+const remindersTitle = supportsTriggeredReminders ? t('spreed', 'Reminders') : t('spreed', 'Upcoming reminders')
 const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
@@ -73,9 +74,9 @@ const forwardScrollable = ref(false)
 const backwardScrollable = ref(false)
 const eventCardsWrapper = ref<HTMLDivElement | null>(null)
 const eventRooms = computed(() => dashboardStore.eventRooms || [])
-const upcomingReminders = computed(() => dashboardStore.upcomingReminders || [])
+const reminders = computed(() => dashboardStore.reminders || [])
 const eventsInitialised = computed(() => dashboardStore.eventRoomsInitialised)
-const remindersInitialised = computed(() => dashboardStore.upcomingRemindersInitialised)
+const remindersInitialised = computed(() => dashboardStore.remindersInitialised)
 const conversationName = ref('')
 let actualizeDataInterval: ReturnType<typeof setInterval> | null = null
 
@@ -87,7 +88,7 @@ let actualizeDataInterval: ReturnType<typeof setInterval> | null = null
 async function actualizeData() {
 	await Promise.all([
 		dashboardStore.fetchDashboardEventRooms(),
-		dashboardStore.fetchUpcomingReminders(),
+		dashboardStore.fetchReminders(),
 	])
 }
 
@@ -382,18 +383,19 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						:backgroundImage="illustration('mentions')" />
 				</div>
 				<div
-					v-if="supportsUpcomingReminders"
+					v-if="supportsReminders"
 					class="talk-dashboard__upcoming-reminders">
 					<DashboardSection
-						v-if="upcomingReminders.length > 0 || !remindersInitialised"
-						:title="t('spreed', 'Upcoming reminders')"
+						v-if="reminders.length > 0 || !remindersInitialised"
+						:title="remindersTitle"
 						:backgroundImage="illustration('reminders')">
 						<template #list>
 							<ul v-if="remindersInitialised" class="upcoming-reminders-list">
 								<SearchMessageItem
-									v-for="reminder in upcomingReminders"
-									:key="reminder.messageId"
+									v-for="reminder in reminders"
+									:key="reminder.notificationId ?? reminder.messageId"
 									:messageId="reminder.messageId"
+									:notificationId="reminder.notificationId"
 									:title="reminder.actorDisplayName"
 									:subline="reminder.message"
 									:messageParameters="reminder.messageParameters"
@@ -401,7 +403,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 									:to="{
 										name: 'conversation',
 										params: { token: reminder.roomToken },
-										hash: `#message_${reminder.messageId}`,
+										hash: reminder.messageId ? `#message_${reminder.messageId}` : undefined,
 									}"
 									:actorId="reminder.actorId"
 									:actorType="reminder.actorType"
