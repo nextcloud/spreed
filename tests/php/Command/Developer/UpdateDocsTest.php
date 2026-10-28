@@ -145,6 +145,10 @@ class UpdateDocsTest extends TestCase {
 				new AppConfigEntry(new Entry(Config::CALL_RECORDING_SUMMARY_PROMPT, ValueType::STRING, "a\nb", definition: 'Prompt')),
 				'| `call_recording_summary_prompt` | string | See `lib/ConfigLexicon.php` | No |  | Prompt |',
 			],
+			'deprecated' => [
+				new AppConfigEntry(new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Old', deprecated: true)),
+				'| `sip_bridge_dialout_prefix` | string | `+` | No |  | Deprecated: Old |',
+			],
 			'empty string default' => [
 				new AppConfigEntry(new Entry(Config::SAMPLES_DIRECTORY, ValueType::STRING, '', definition: 'Samples')),
 				"| `samples_directory` | string | `''` | No |  | Samples |",

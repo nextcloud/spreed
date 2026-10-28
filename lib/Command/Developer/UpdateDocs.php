@@ -96,7 +96,7 @@ class UpdateDocs extends Base {
 			. $this->formatDefault($entry) . ' | '
 			. ($config->hash ? 'Yes' : 'No') . ' | '
 			. ($config->adminSetting ? '🖌️' : '') . ($config->occCommands !== [] ? '💻' : '') . ' | '
-			. str_replace([PHP_EOL, '|'], ['<br>', '\|'], $entry->getDefinition()) . ' |';
+			. ($entry->isDeprecated() ? 'Deprecated: ' : '') . str_replace([PHP_EOL, '|'], ['<br>', '\|'], $entry->getDefinition()) . ' |';
 	}
 
 	protected function formatDefault(Entry $entry): string {

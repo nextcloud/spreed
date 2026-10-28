@@ -367,7 +367,7 @@ PROMPT;
 				adminSetting: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix', deprecated: true),
+				new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix', deprecated: true),
 				adminSetting: true,
 			),
 			new AppConfigEntry(
