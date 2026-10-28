@@ -78,7 +78,7 @@ class AdminSettings implements ISettings {
 	protected function initAllowedGroups(): void {
 		$this->initialState->provideInitialState('start_calls', $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS));
 
-		$groups = $this->getGroupDetailsArray($this->appConfig->getAppValueArray('start_calls_groups'), 'start_calls_groups');
+		$groups = $this->getGroupDetailsArray($this->appConfig->getAppValueArray(Config::ALLOWED_START_CALLS_GROUPS), 'start_calls_groups');
 		$this->initialState->provideInitialState('start_calls_groups', $groups);
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds(), 'start_conversations');

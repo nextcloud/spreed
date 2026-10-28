@@ -9,14 +9,15 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Signaling;
 
 use OCA\Talk\Command\Signaling\Delete;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class DeleteTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected Delete $command;
@@ -24,9 +25,9 @@ class DeleteTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
-		$this->command = new Delete($this->config);
+		$this->command = new Delete($this->appConfig);
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->output = $this->createMock(OutputInterface::class);
@@ -36,20 +37,13 @@ class DeleteTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('wss://signaling.example.com');
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn('');
-		$this->config->expects($this->once())
-			->method('setAppValue')
-			->with(
-				$this->equalTo('spreed'),
-				$this->equalTo('signaling_servers'),
-				$this->equalTo(json_encode([
-					'servers' => [],
-					'secret' => ''
-				]))
-			);
+		$this->appConfig->expects($this->any())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::SIGNALING_SERVERS, ['servers' => [],'secret' => '']);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>There is nothing to delete.</info>'));
@@ -61,45 +55,13 @@ class DeleteTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('wss://signaling2.test.com');
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn(json_encode([
-				'servers' => [
-					[
-						'server' => 'wss://signaling1.test.com',
-						'verify' => false,
-					],
-					[
-						'server' => 'wss://signaling2.test.com',
-						'verify' => false,
-					],
-					[
-						'server' => 'wss://signaling3.test.com',
-						'verify' => false,
-					]
-				],
-				'secret' => 'my-test-secret',
-			]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
-			->with(
-				$this->equalTo('spreed'),
-				$this->equalTo('signaling_servers'),
-				$this->equalTo(json_encode([
-					'servers' => [
-						[
-							'server' => 'wss://signaling1.test.com',
-							'verify' => false,
-						],
-						[
-							'server' => 'wss://signaling3.test.com',
-							'verify' => false,
-						]
-					],
-					'secret' => 'my-test-secret',
-				]))
-			);
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn(['servers' => [['server' => 'wss://signaling1.test.com','verify' => false],['server' => 'wss://signaling2.test.com','verify' => false],['server' => 'wss://signaling3.test.com','verify' => false]],'secret' => 'my-test-secret']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::SIGNALING_SERVERS, ['servers' => [['server' => 'wss://signaling1.test.com','verify' => false],['server' => 'wss://signaling3.test.com','verify' => false]],'secret' => 'my-test-secret']);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>Deleted wss://signaling2.test.com.</info>'));
@@ -111,33 +73,13 @@ class DeleteTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('wss://signaling4.test.com');
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn(json_encode([
-				'servers' => [
-					[
-						'server' => 'wss://signaling1.test.com',
-						'verify' => false,
-					]
-				],
-				'secret' => 'my-test-secret',
-			]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
-			->with(
-				$this->equalTo('spreed'),
-				$this->equalTo('signaling_servers'),
-				$this->equalTo(json_encode([
-					'servers' => [
-						[
-							'server' => 'wss://signaling1.test.com',
-							'verify' => false,
-						]
-					],
-					'secret' => 'my-test-secret',
-				]))
-			);
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn(['servers' => [['server' => 'wss://signaling1.test.com','verify' => false]],'secret' => 'my-test-secret']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::SIGNALING_SERVERS, ['servers' => [['server' => 'wss://signaling1.test.com','verify' => false]],'secret' => 'my-test-secret']);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>There is nothing to delete.</info>'));

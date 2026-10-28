@@ -150,6 +150,9 @@ PROMPT;
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false),
 			new Entry(Config::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 3600, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)'),
+			new Entry(Config::RETENTION_EVENT_ROOMS, ValueType::INT, 28, definition: 'Retention period of event conversations in days (`0` means no-retention)'),
+			new Entry(Config::RETENTION_PHONE_ROOMS, ValueType::INT, 7, definition: 'Retention period of phone dial-in and dial-out conversations in days (`0` means no-retention'),
+			new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention)'),
 			new Entry(Config::STUN_SERVERS, ValueType::ARRAY, [Config::DEFAULT_STUN_SERVER], definition: 'List of STUN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::TURN_SERVERS, ValueType::ARRAY, [], definition: 'List of TURN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::ALLOWED_GROUPS_TALK, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to use Talk'),
@@ -160,6 +163,8 @@ PROMPT;
 			new Entry(Config::FEDERATION_INCOMING_ENABLED, ValueType::BOOL, true, definition: 'Whether users of this instance can be invited to federated conversations'),
 			new Entry(Config::FEDERATION_OUTGOING_ENABLED, ValueType::BOOL, true, definition: 'Whether users of this instance can invite federated users into conversations'),
 			new Entry(Config::FEDERATION_ONLY_TRUSTED_SERVERS, ValueType::BOOL, false, definition: 'Whether federation should be limited to the list of "Trusted servers"'),
+			new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, 0, definition: 'Who can start a call,' . PHP_EOL . 'see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call'),
+			new Entry(Config::ALLOWED_START_CALLS_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to start calls (everyone when empty). This also applies to moderators; guests and federated users can then never start calls.' . PHP_EOL . 'For federated conversations the host server decides. Others can still chat and join ongoing calls'),
 			new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
 			new Entry(Config::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing tostart conversations in the right sidebar'),
 			new Entry(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled'),
@@ -193,6 +198,7 @@ PROMPT;
 			new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virutal backgrounds provided by the releases'),
 			new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files'),
 			new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)'),
+			new Entry(Config::SAMPLES_DIRECTORY, ValueType::STRING, '', definition: 'Specify a readable directory that contains other sample conversation data'),
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
 			new Entry(Config::MATRIX_ENABLED, ValueType::BOOL, false, definition: 'Whether users can link a Matrix account and use their Matrix rooms as conversations'),
 			new Entry(Config::MATRIX_ALLOWED_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to link a Matrix account (empty means everyone)'),
@@ -225,6 +231,10 @@ PROMPT;
 			new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix', deprecated: true),
 			new Entry(Config::SIP_BRIDGE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret allowing the SIP bridge to authenticate on the Nextcloud server', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::SIP_BRIDGE_DIALOUT, ValueType::BOOL, false, definition: 'SIP dial-out is allowed when a SIP bridge is configured', rename: 'sip_dialout'),
+			new Entry(Config::SIGNALING_TICKET_SECRET, ValueType::STRING, '', definition: 'Secret used to secure the signaling tickets for guests (255 character random string)', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::SIGNALING_TOKEN_ALG, ValueType::STRING, 'ES256', definition: 'Algorithm for the signaling tickets'),
+			new Entry(Config::SIGNALING_SERVERS, ValueType::ARRAY, ['servers' => [],'secret' => ''], definition: 'List of signaling servers, should be configured via the web interface or the OCC commands', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::SIGNALING_SERVERS_SECRET, ValueType::STRING, '', flags: IAppConfig::FLAG_SENSITIVE),
 		];
 	}
 

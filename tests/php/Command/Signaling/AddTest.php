@@ -9,14 +9,15 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Signaling;
 
 use OCA\Talk\Command\Signaling\Add;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class AddTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected Add $command;
@@ -24,9 +25,9 @@ class AddTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
-		$this->command = new Add($this->config);
+		$this->command = new Add($this->appConfig);
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->output = $this->createMock(OutputInterface::class);
@@ -48,7 +49,7 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server cannot be empty.</error>'));
-		$this->config->expects($this->never())
+		$this->appConfig->expects($this->never())
 			->method('setAppValue');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
@@ -70,7 +71,7 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Secret cannot be empty.</error>'));
-		$this->config->expects($this->never())
+		$this->appConfig->expects($this->never())
 			->method('setAppValue');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
@@ -89,25 +90,13 @@ class AddTest extends TestCase {
 		$this->input->method('getOption')
 			->with('verify')
 			->willReturn(true);
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn(json_encode([]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
-			->with(
-				$this->equalTo('spreed'),
-				$this->equalTo('signaling_servers'),
-				$this->equalTo(json_encode([
-					'servers' => [
-						[
-							'server' => 'wss://signaling.test.com',
-							'verify' => true
-						]
-					],
-					'secret' => 'my-test-secret'
-				]))
-			);
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::SIGNALING_SERVERS, ['servers' => [['server' => 'wss://signaling.test.com', 'verify' => true]],'secret' => 'my-test-secret']);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>Added signaling server wss://signaling.test.com.</info>'));
@@ -128,37 +117,13 @@ class AddTest extends TestCase {
 		$this->input->method('getOption')
 			->with('verify')
 			->willReturn(true);
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'signaling_servers')
-			->willReturn(json_encode([
-				'servers' => [
-					[
-						'server' => 'wss://signaling1.test.com',
-						'verify' => true
-					]
-				],
-				'secret' => 'my-test-secret'
-			]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
-			->with(
-				$this->equalTo('spreed'),
-				$this->equalTo('signaling_servers'),
-				$this->equalTo(json_encode([
-					'servers' => [
-						[
-							'server' => 'wss://signaling1.test.com',
-							'verify' => true
-						],
-						[
-							'server' => 'wss://signaling2.test.com',
-							'verify' => true
-						]
-					],
-					'secret' => 'my-test-secret'
-				]))
-			);
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with(Config::SIGNALING_SERVERS)
+			->willReturn(['servers' => [['server' => 'wss://signaling1.test.com','verify' => true]],'secret' => 'my-test-secret']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::SIGNALING_SERVERS, ['servers' => [['server' => 'wss://signaling1.test.com','verify' => true],['server' => 'wss://signaling2.test.com','verify' => true]],'secret' => 'my-test-secret']);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>Added signaling server wss://signaling2.test.com.</info>'));

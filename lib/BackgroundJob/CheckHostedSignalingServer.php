@@ -129,21 +129,14 @@ class CheckHostedSignalingServer extends TimedJob {
 		if ($oldStatus !== $newStatus) {
 			if ($newStatus === 'deleted') {
 				// remove signaling servers if account is not active anymore
-				$this->appConfig->deleteAppValue('signaling_servers');
-				//$this->config->deleteAppValue('spreed', 'signaling_servers');
+				$this->appConfig->deleteAppValue(Config::SIGNALING_SERVERS_SECRET);
+				$this->appConfig->deleteAppValue(Config::SIGNALING_SERVERS);
 
 				$notificationSubject = 'removed';
 			} elseif ($newStatus === 'active') {
 				// add signaling servers if account got active
-				$this->appConfig->setAppValueArray('signaling_servers', [
-					'servers' => [
-						[
-							'server' => $accountInfo['signaling']['url'],
-							'verify' => true,
-						]
-					],
-					'secret' => $accountInfo['signaling']['secret'],
-				]);
+				$this->appConfig->setAppValueArray(Config::SIGNALING_SERVERS, ['servers' => [['server' => $accountInfo['signaling']['url'], 'verify' => true]], 'secret' => $accountInfo['signaling']['secret']]);
+				$this->appConfig->setAppValueString(Config::SIGNALING_SERVERS_SECRET, $accountInfo['signaling']['secret']);
 				$this->updateStunTurnSettings($oldAccountInfo, $accountInfo);
 
 				$notificationSubject = 'added';
@@ -161,15 +154,8 @@ class CheckHostedSignalingServer extends TimedJob {
 		} elseif ($newStatus === 'active') {
 			if ($oldAccountInfo['signaling']['url'] !== $accountInfo['signaling']['url']
 				|| $oldAccountInfo['signaling']['secret'] !== $accountInfo['signaling']['secret']) {
-				$this->appConfig->setAppValueArray('signaling_servers', [
-					'servers' => [
-						[
-							'server' => $accountInfo['signaling']['url'],
-							'verify' => true,
-						]
-					],
-					'secret' => $accountInfo['signaling']['secret'],
-				]);
+				$this->appConfig->setAppValueArray(Config::SIGNALING_SERVERS, ['servers' => ['server' => $accountInfo['signaling']['url'], 'verify' => true], 'secret' => $accountInfo['signaling']['secret']]);
+				$this->appConfig->setAppValueString(Config::SIGNALING_SERVERS_SECRET, $accountInfo['signaling']['secret']);
 			}
 			$this->updateStunTurnSettings($oldAccountInfo, $accountInfo);
 		}

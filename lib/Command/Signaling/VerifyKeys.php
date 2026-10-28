@@ -10,7 +10,7 @@ namespace OCA\Talk\Command\Signaling;
 
 use OC\Core\Command\Base;
 use OCA\Talk\Config;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,8 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class VerifyKeys extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -51,7 +51,7 @@ class VerifyKeys extends Base {
 			if ($update) {
 				$output->writeln('<comment>Stored public key for algorithm ' . strtolower($alg) . ' did not match stored private key.</comment>');
 				$output->writeln('<info>A new public key was created and stored.</info>');
-				$this->config->setAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg), $publicKeyDerived);
+				$this->appConfig->setAppValueString('signaling_token_pubkey_' . strtolower($alg), $publicKeyDerived);
 
 				return 0;
 			}

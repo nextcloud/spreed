@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Signaling;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Delete extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -37,9 +38,8 @@ class Delete extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$server = $input->getArgument('server');
 
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
-		$signaling = json_decode($config, true);
-		if ($signaling === null || empty($signaling) || !is_array($signaling)) {
+		$signaling = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
+		if (empty($signaling)) {
 			$signaling = [
 				'servers' => [],
 				'secret' => '',
@@ -50,7 +50,8 @@ class Delete extends Base {
 		$servers = array_filter($signaling['servers'], fn ($s) => $s['server'] !== $server);
 		$signaling['servers'] = array_values($servers); // reindex
 
-		$this->config->setAppValue('spreed', 'signaling_servers', json_encode($signaling));
+		$this->appConfig->setAppValueArray(Config::SIGNALING_SERVERS, $signaling);
+		$this->appConfig->setAppValueString(Config::SIGNALING_SERVERS_SECRET, $signaling['secret']);
 		if ($count > count($signaling['servers'])) {
 			$output->writeln('<info>Deleted ' . $server . '.</info>');
 		} else {

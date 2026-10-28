@@ -23,7 +23,6 @@ use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
@@ -34,7 +33,6 @@ class HostedSignalingServerController extends OCSController {
 		string $appName,
 		IRequest $request,
 		private readonly IL10N $l10n,
-		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
 		private readonly LoggerInterface $logger,
 		private readonly HostedSignalingServerService $hostedSignalingServerService,
@@ -154,9 +152,11 @@ class HostedSignalingServerController extends OCSController {
 
 		$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_ACCOUNT);
 		$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID);
+		$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_NONCE);
 
 		// remove signaling servers if account is not active anymore
-		$this->config->deleteAppValue('spreed', 'signaling_servers');
+		$this->appConfig->deleteAppValue(Config::SIGNALING_SERVERS);
+		$this->appConfig->deleteAppValue(Config::SIGNALING_SERVERS_SECRET);
 
 		$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId);
 
