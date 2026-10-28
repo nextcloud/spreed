@@ -149,7 +149,7 @@ PROMPT;
 			new Entry(UserPreference::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES),
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false),
-			new Entry(Config::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 3600, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)'),
+			new Entry(Config::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 604800, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)'),
 			new Entry(Config::RETENTION_EVENT_ROOMS, ValueType::INT, 28, definition: 'Retention period of event conversations in days (`0` means no-retention)'),
 			new Entry(Config::RETENTION_PHONE_ROOMS, ValueType::INT, 7, definition: 'Retention period of phone dial-in and dial-out conversations in days (`0` means no-retention'),
 			new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention)'),
