@@ -697,6 +697,7 @@ OC.L10N.register(
     "Stay in call" : "Forbli i samtalen",
     "Duplicate session" : "Dupliser økten",
     "Discuss this file" : "Diskuter denne filen",
+    "Loading …" : "Laster inn ...",
     "Share this file with others to discuss it" : "Del denne filen med andre og diskuter den",
     "Join conversation" : "Delta i samtale",
     "Share this file" : "Del denne filen",
