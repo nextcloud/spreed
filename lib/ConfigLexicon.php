@@ -226,6 +226,7 @@ PROMPT;
 			new Entry(Config::HOSTED_SIGNALING_SERVER_NONCE, ValueType::STRING, '', definition: 'Temporary nonce while configuring the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-nonce'),
 			new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID, ValueType::STRING, '', definition: 'Account identifier of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account-id'),
 			new Entry(Config::SIP_BRIDGE_DIALIN_INFO, ValueType::STRING, '', definition: 'Additional information added in the SIP dial-in invitation mail and sidebar', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::SIP_DIALIN_DEFAULT, ValueType::INT, 0, definition: 'Default value of SIP dial-in when creating new conversations'),
 			new Entry(Config::SIP_BRIDGE_DIALOUT_ANONYMOUS, ValueType::BOOL, false, definition: 'When set to true, all out-going SIP calls will be anonymous calls (CLIR)'),
 			new Entry(Config::SIP_BRIDGE_DIALOUT_NUMBER, ValueType::STRING, '', definition: 'Fallback phone number that is used as caller for out-going calls when the user has no phone-number configured (has to be E164 `+49123456789` formatted'),
 			new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix', deprecated: true),

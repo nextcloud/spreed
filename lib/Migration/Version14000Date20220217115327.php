@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use Closure;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Migration\Attributes\DataCleansing;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -18,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version14000Date20220217115327 extends SimpleMigrationStep {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 
@@ -29,6 +29,6 @@ class Version14000Date20220217115327 extends SimpleMigrationStep {
 	 */
 	#[\Override]
 	public function preSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
-		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-last-checked');
+		$this->appConfig->deleteAppValue('hosted-signaling-server-account-last-checked');
 	}
 }

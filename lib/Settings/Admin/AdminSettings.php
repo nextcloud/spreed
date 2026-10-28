@@ -69,9 +69,9 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initGeneralSettings(): void {
-		$this->initialState->provideInitialState(Config::DEFAULT_GROUP_NOTIFICATION, $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION));
-		$this->initialState->provideInitialState(Config::CONVERSATIONS_FILES, (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES));
-		$this->initialState->provideInitialState(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES));
+		$this->initialState->provideInitialState('default_group_notification', $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION));
+		$this->initialState->provideInitialState('conversations_files', (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES));
+		$this->initialState->provideInitialState('conversations_files_public_shares', (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES));
 		$this->initialState->provideInitialState('valid_apache_php_configuration', $this->validApachePHPConfiguration());
 	}
 
@@ -486,7 +486,7 @@ class AdminSettings implements ISettings {
 
 		if (count($gids) !== count($groups)) {
 			$gids = array_map(static fn (array $group) => $group['id'], $groups);
-			$this->serverConfig->setAppValue('spreed', $configKey, json_encode($gids));
+			$this->appConfig->setAppValueArray($configKey, $gids);
 		}
 
 		return $groups;
