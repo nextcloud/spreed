@@ -156,7 +156,7 @@ PROMPT;
 	 */
 	public function getTalkAppConfigs(): array {
 		return [
-			new AppConfigEntry(new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false)),
+			new AppConfigEntry(new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false, definition: 'Set automatically when the High-performance backend supports the `changed-users` feature, so only the affected users are sent in room updates')),
 			new AppConfigEntry(new Entry(Config::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 604800, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)')),
 			new AppConfigEntry(
 				new Entry(Config::STUN_SERVERS, ValueType::ARRAY, [Config::DEFAULT_STUN_SERVER], definition: 'List of STUN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
@@ -185,7 +185,7 @@ PROMPT;
 				arrayType: 'list<string>',
 			),
 			new AppConfigEntry(
-				new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversation'),
+				new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversations'),
 				hash: true,
 				adminSetting: true,
 				arrayType: 'list<string>',
@@ -223,22 +223,22 @@ PROMPT;
 				arrayType: 'list<string>',
 			),
 			new AppConfigEntry(
-				new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
+				new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.)'),
 				hash: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing tostart conversations in the right sidebar'),
+				new Entry(Config::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing to start conversations in the right sidebar'),
 				adminSetting: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled'),
+				new Entry(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled)'),
 				adminSetting: true,
 			),
 			new AppConfigEntry(
 				new Entry(Config::DEFAULT_ROOM_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators' . PHP_EOL . '(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags)'),
 				hash: true,
 			),
-			new AppConfigEntry(new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: '')),
+			new AppConfigEntry(new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: 'Whether files shared in a conversation are stored in a dedicated subfolder of the conversation inside the attachment folder')),
 			new AppConfigEntry(new Entry(Config::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location')),
 			new AppConfigEntry(new Entry(Config::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)')),
 			new AppConfigEntry(new Entry(Config::GRID_VIDEOS_LIMIT_ENFORCED, ValueType::BOOL, false, definition: 'Whether the number of grid videos should be enforced')),
@@ -264,7 +264,7 @@ PROMPT;
 				hash: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend'),
+				new Entry(Config::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend)'),
 				adminSetting: true,
 			),
 			new AppConfigEntry(
@@ -288,14 +288,14 @@ PROMPT;
 				adminSetting: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::RECORDING_SERVERS, ValueType::ARRAY, [], definition: 'List of recording servers, should be configured via the web interface', flags: IAPPConfig::FLAG_SENSITIVE),
+				new Entry(Config::RECORDING_SERVERS, ValueType::ARRAY, [], definition: 'List of recording servers, should be configured via the web interface', flags: IAppConfig::FLAG_SENSITIVE),
 				hash: true,
 				adminSetting: true,
 				arrayType: 'array{servers: list<array{server: string, verify: bool}>, secret: string}',
 			),
 			new AppConfigEntry(new Entry(Config::FORCE_PASSWORDS, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password')),
 			new AppConfigEntry(new Entry(Config::BACKGROUNDS_BRANDED_FOR_GUESTS, ValueType::BOOL, false, definition: 'Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/`')),
-			new AppConfigEntry(new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virutal backgrounds provided by the releases')),
+			new AppConfigEntry(new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virtual backgrounds provided by the releases')),
 			new AppConfigEntry(new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files')),
 			new AppConfigEntry(new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)')),
 			new AppConfigEntry(
@@ -313,19 +313,19 @@ PROMPT;
 				arrayType: 'list<string>',
 			),
 			new AppConfigEntry(new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves')),
-			new AppConfigEntry(new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size')),
+			new AppConfigEntry(new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render GIF previews with animation', rename: 'max-gif-size')),
 			new AppConfigEntry(new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)')),
 			new AppConfigEntry(new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort')),
 			new AppConfigEntry(new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI')),
 			new AppConfigEntry(
-				new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call '),
+				new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call'),
 				hash: true,
 				adminSetting: true,
 			),
 			new AppConfigEntry(new Entry(Config::SAMPLES_DIRECTORY, ValueType::STRING, '', definition: 'Specify a readable directory that contains other sample conversation data')),
 			new AppConfigEntry(new Entry(Config::RETENTION_EVENT_ROOMS, ValueType::INT, 28, definition: 'Retention period of event conversations in days (`0` means no-retention)')),
 			new AppConfigEntry(new Entry(Config::RETENTION_PHONE_ROOMS, ValueType::INT, 7, definition: 'Retention period of phone dial-in and dial-out conversations in days (`0` means no-retention)')),
-			new AppConfigEntry(new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention')),
+			new AppConfigEntry(new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention)')),
 			new AppConfigEntry(new Entry(Config::MAX_CALL_DURATION, ValueType::INT, 0, definition: 'Maximum duration of a call in seconds, 0 for unlimited. Federated calls will be terminated based on the setting of the host server.' . PHP_EOL . 'Calls are ended via a background job, so system cron should be used and calls will last a bit longer' . PHP_EOL . '(until the next execution of cron).')),
 			new AppConfigEntry(
 				new Entry(Config::FEATURE_HINTS_HIDDEN, ValueType::INT, 0, definition: 'Feature hints that should be hidden. Set to `999999` to hide all.'),
@@ -334,7 +334,7 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::MATTERBRIDGE_BINARY, ValueType::STRING, '', definition: 'Path to the matterbridge binary file')),
 			new AppConfigEntry(new Entry(Config::MATTERBRIDGE_BOT_PASSWORD, ValueType::STRING, '', definition: 'Automatically generated password of the matterbridge bot user profile', flags: IAppConfig::FLAG_SENSITIVE)),
 			new AppConfigEntry(
-				new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations'),
+				new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations)'),
 				adminSetting: true,
 			),
 			new AppConfigEntry(new Entry(Config::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Default chat style when not overwritten by the user')),
@@ -363,7 +363,7 @@ PROMPT;
 				adminSetting: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::SIP_BRIDGE_DIALOUT_NUMBER, ValueType::STRING, '', definition: 'Fallback phone number that is used as caller for out-going calls when the user has no phone-number configured (has to be E164 `+49123456789` formatted'),
+				new Entry(Config::SIP_BRIDGE_DIALOUT_NUMBER, ValueType::STRING, '', definition: 'Fallback phone number that is used as caller for out-going calls when the user has no phone-number configured (has to be E164 `+49123456789` formatted)'),
 				adminSetting: true,
 			),
 			new AppConfigEntry(
@@ -401,7 +401,7 @@ PROMPT;
 				arrayType: 'array{servers: list<array{server: string, verify: bool}>, secret: string}',
 			),
 			new AppConfigEntry(
-				new Entry(Config::SIGNALING_SERVERS_SECRET, ValueType::STRING, '', flags: IAppConfig::FLAG_SENSITIVE),
+				new Entry(Config::SIGNALING_SERVERS_SECRET, ValueType::STRING, '', definition: 'Shared secret between Nextcloud and the signaling servers, should be configured via the web interface or the OCC commands', flags: IAppConfig::FLAG_SENSITIVE),
 				occCommands: [SignalingAdd::class, SignalingDelete::class],
 			),
 		];
@@ -415,10 +415,10 @@ PROMPT;
 	#[\Override]
 	public function getUserConfigs(): array {
 		return [
-			new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true),
-			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
-			new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER),
-			new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS),
+			new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether sounds are played when participants join or leave a call'),
+			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Chat style of the user, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#chat-style'),
+			new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER, definition: 'When archived conversations are unarchived automatically, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversations-unarchive-mode'),
+			new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS, definition: 'Which unread conversations are shown in collapsed tag sections, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversation-tags-show-unread-mode'),
 		];
 	}
 }
