@@ -395,8 +395,11 @@ export default {
 					}),
 					buttons: [
 						{
-							label: t('spreed', 'Stay in call'),
+							label: IS_DESKTOP ? t('spreed', 'Open in new window') : t('spreed', 'Open in new tab'),
 							variant: 'primary',
+							callback: () => {
+								window.open(this.$router.resolve(to).href, '_blank')
+							},
 						},
 						{
 							label: t('spreed', 'Leave call'),
