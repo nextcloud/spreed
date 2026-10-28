@@ -112,6 +112,8 @@ class Config {
 	public const string CONVERSATIONS_LIST_STYLES = 'conversations_list_styles';
 	public const string SIGNALING_TICKET_SECRET = 'signaling_ticket_secret';
 	public const string SIGNALING_TOKEN_ALG = 'signaling_token_alg';
+	public const string SIGNALING_TOKEN_PRIVKEY = 'signaling_token_privkey';
+	public const string SIGNALING_TOKEN_PUBKEY = 'signaling_token_pubkey';
 	public const string HOSTED_SIGNALING_SERVER_NONCE = 'hosted_signaling_server_nonce';
 	public const string HOSTED_SIGNALING_SERVER_ACCOUNT_ID = 'hosted_signaling_server_account_id';
 	public const string HOSTED_SIGNALING_SERVER_ACCOUNT = 'hosted_signaling_server_account';
@@ -691,6 +693,10 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingSecret(): string {
+		$secret = $this->appConfig->getAppValueString(self::SIGNALING_SERVERS_SECRET);
+		if (!empty($secret)) {
+			return $secret;
+		}
 		$config = $this->appConfig->getAppValueArray(self::SIGNALING_SERVERS);
 		return $config['secret'] ?? '';
 	}
@@ -742,8 +748,9 @@ class Config {
 	}
 
 	private function ensureSignalingTokenKeys(string $alg): void {
-		$secret = $this->appConfig->getAppValueString('signaling_token_privkey_' . strtolower($alg));
-		if ($secret) {
+		$secret = $this->appConfig->getAppValueString(self::SIGNALING_TOKEN_PRIVKEY);
+		$currentAlg = $this->appConfig->getAppValueString(self::SIGNALING_TOKEN_ALG);
+		if ($secret && $alg === $currentAlg) {
 			return;
 		}
 
@@ -776,8 +783,12 @@ class Config {
 			throw new \Exception('Unsupported algorithm ' . $alg);
 		}
 
-		$this->appConfig->setAppValueString('signaling_token_privkey_' . strtolower($alg), $secret);
-		$this->appConfig->setAppValueString('signaling_token_pubkey_' . strtolower($alg), $public);
+		if ($alg !== $currentAlg) {
+			$this->appConfig->setAppValueString(self::SIGNALING_TOKEN_ALG, $alg);
+		}
+
+		$this->appConfig->setAppValueString(self::SIGNALING_TOKEN_PRIVKEY, $secret);
+		$this->appConfig->setAppValueString(self::SIGNALING_TOKEN_PUBKEY, $public);
 	}
 
 	public function getSignalingTokenAlgorithm(): string {
@@ -790,7 +801,7 @@ class Config {
 		}
 		$this->ensureSignalingTokenKeys($alg);
 
-		return $this->appConfig->getAppValueString('signaling_token_privkey_' . strtolower($alg));
+		return $this->appConfig->getAppValueString(self::SIGNALING_TOKEN_PRIVKEY);
 	}
 
 	public function getSignalingTokenPublicKey(?string $alg = null): string {
@@ -799,7 +810,7 @@ class Config {
 		}
 		$this->ensureSignalingTokenKeys($alg);
 
-		return $this->appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($alg));
+		return $this->appConfig->getAppValueString(self::SIGNALING_TOKEN_PUBKEY);
 	}
 
 	public function deriveSignalingTokenPublicKey(#[SensitiveParameter] string $privateKey, string $alg): string {
