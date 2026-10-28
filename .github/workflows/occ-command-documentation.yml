@@ -90,4 +90,4 @@ jobs:
         run: |
           ./occ talk:developer:update-docs
           cd apps/${{ env.APP_NAME }}
-          bash -c "[[ ! \"`git status --porcelain `\" ]] || (cat docs/occ.md && echo 'Documentation outdated. Run the command talk:developer:update-docs locally, commit the occ.md file and push the changes.' && exit 1)"
+          bash -c "[[ ! \"`git status --porcelain `\" ]] || (git diff && echo 'Documentation outdated. Run the command talk:developer:update-docs locally, commit the occ.md and settings.md files and push the changes.' && exit 1)"

@@ -9,7 +9,12 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Developer;
 
 use OC\Core\Command\Base;
+use OCA\Talk\Config\AppConfigEntry;
+use OCA\Talk\ConfigLexicon;
 use OCP\App\IAppManager;
+use OCP\Config\Lexicon\Entry;
+use OCP\Config\Lexicon\Preset;
+use OCP\Config\ValueType;
 use OCP\Console\Attribute\AsCommand;
 use OCP\IConfig;
 use OCP\Server;
@@ -23,6 +28,7 @@ class UpdateDocs extends Base {
 	public function __construct(
 		private readonly IConfig $config,
 		private readonly IAppManager $appManager,
+		private readonly ConfigLexicon $configLexicon,
 	) {
 		parent::__construct();
 	}
@@ -35,7 +41,7 @@ class UpdateDocs extends Base {
 	protected function configure(): void {
 		$this
 			->setName('talk:developer:update-docs')
-			->setDescription('Update documentation of commands')
+			->setDescription('Update documentation of commands and app configs')
 		;
 	}
 
@@ -55,7 +61,56 @@ class UpdateDocs extends Base {
 		$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
 		fwrite($handle, $documentation);
 		fclose($handle);
+
+		$settingsFile = __DIR__ . '/../../../docs/settings.md';
+		file_put_contents($settingsFile, $this->replaceAppConfigTable((string)file_get_contents($settingsFile)));
 		return 0;
+	}
+
+	public function replaceAppConfigTable(string $settings): string {
+		$section = strpos($settings, '## App configuration');
+		$start = strpos($settings, "\n| Key ", $section ?: 0);
+		$end = strpos($settings, "\n## ", $start ?: 0);
+		if ($section === false || $start === false || $end === false) {
+			throw new \RuntimeException('Could not find the app configuration table in docs/settings.md');
+		}
+
+		return substr($settings, 0, $start + 1) . $this->getAppConfigTable() . substr($settings, $end);
+	}
+
+	protected function getAppConfigTable(): string {
+		$table = "| Key | Type | Default | Hash | Option | Description |\n";
+		$table .= "|---|---|---|---|---|---|\n";
+		$configs = $this->configLexicon->getTalkAppConfigs();
+		usort($configs, static fn (AppConfigEntry $a, AppConfigEntry $b): int => strcmp($a->entry->getKey(), $b->entry->getKey()));
+		foreach ($configs as $config) {
+			$table .= $this->getAppConfigRow($config) . "\n";
+		}
+		return $table;
+	}
+
+	public function getAppConfigRow(AppConfigEntry $config): string {
+		$entry = $config->entry;
+		return '| `' . $entry->getKey() . '` | '
+			. ($config->arrayType !== null ? '`' . str_replace('|', '\|', $config->arrayType) . '`' : strtolower($entry->getValueType()->name)) . ' | '
+			. $this->formatDefault($entry) . ' | '
+			. ($config->hash ? 'Yes' : 'No') . ' | '
+			. ($config->adminSetting ? '🖌️' : '') . ($config->occCommands !== [] ? '💻' : '') . ' | '
+			. str_replace([PHP_EOL, '|'], ['<br>', '\|'], $entry->getDefinition()) . ' |';
+	}
+
+	protected function formatDefault(Entry $entry): string {
+		$default = $entry->getDefault(Preset::NONE);
+		if ($default === null) {
+			return '';
+		}
+		if (str_contains($default, "\n")) {
+			return 'See `lib/ConfigLexicon.php`';
+		}
+		if ($entry->getValueType() === ValueType::BOOL) {
+			return \in_array($default, ['1', 'yes', 'true', 'on'], true) ? '`true`' : '`false`';
+		}
+		return '`' . ($default === '' ? "''" : str_replace('|', '\|', $default)) . '`';
 	}
 
 	protected function getCommand(string $namespace): Command {
