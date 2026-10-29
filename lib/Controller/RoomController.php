@@ -2680,14 +2680,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			try {
 				// Try to find the number with added dialout prefix as a fallback for old sip-bridges
-				// TODO: Log as error in 26, remove fallback and dialout prefix with 27
+				// TODO: Remove fallback and dialout prefix with 27
 				$entity = $this->phoneService->getAccountToCallForPhoneNumber($dialoutPrefix . $phoneNumber);
 			} catch (DoesNotExistException) {
 				$this->logger->info('No account found for direct dial-in with number: ' . $phoneNumber);
 				return new DataResponse(null, Http::STATUS_NOT_FOUND);
 			}
 
-			$this->logger->warning('Found account for direct dial-in only by adding the dial-out prefix. Please adjust the mapping for number: ' . $phoneNumber);
+			$this->logger->error('Found account for direct dial-in only by adding the dial-out prefix. This fallback will be removed in the next major version. Please adjust the mapping for number: ' . $phoneNumber);
 		}
 
 		$caller = trim($caller);
