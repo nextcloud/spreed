@@ -2392,6 +2392,7 @@ OC.L10N.register(
     "Set time for next week" : "Angiv tidspunkt til næste uge",
     "Next weekend – {timeLocale}" : "Næste weekend – {timeLocale}",
     "Set time for next weekend" : "Angiv tidspunkt til næste weekend",
+    "Password: {password}" : "Adgangskode: {password}",
     "Message link copied to clipboard" : "Beskedlinket er kopieret til udklipsholderen",
     "Conversation link copied to clipboard" : "Samtalelinket er kopieret til udklipsholderen",
     "The link could not be copied" : "Linket kunne ikke kopieres",
