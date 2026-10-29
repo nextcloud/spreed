@@ -26,7 +26,6 @@ use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -60,7 +59,6 @@ class CanUseTalkMiddleware extends Middleware {
 		private readonly IUserSession $userSession,
 		private readonly IGroupManager $groupManager,
 		private readonly Config $talkConfig,
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly IRequest $request,
 		private readonly IURLGenerator $url,
@@ -156,9 +154,8 @@ class CanUseTalkMiddleware extends Middleware {
 	 * @throws UnsupportedClientVersionException
 	 */
 	protected function throwIfUnsupportedClientVersion(string $client, string $userAgent): void {
-		$configMinVersion = $this->serverConfig->getAppValue('spreed', 'minimum.supported.' . $client . '.version');
-
 		if ($client === 'desktop') {
+			$configKey = Config::MINIMUM_SUPPORTED_DESKTOP_VERSION;
 			$versionRegex = IRequest::USER_AGENT_TALK_DESKTOP;
 			$minVersion = self::TALK_DESKTOP_MIN_VERSION;
 
@@ -168,6 +165,7 @@ class CanUseTalkMiddleware extends Middleware {
 				$minVersion = self::TALK_DESKTOP_MIN_VERSION_RECORDING_CONSENT;
 			}
 		} elseif ($client === 'android') {
+			$configKey = Config::MINIMUM_SUPPORTED_ANDROID_VERSION;
 			$versionRegex = IRequest::USER_AGENT_TALK_ANDROID;
 			$minVersion = self::TALK_ANDROID_MIN_VERSION;
 
@@ -177,6 +175,7 @@ class CanUseTalkMiddleware extends Middleware {
 				$minVersion = self::TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT;
 			}
 		} elseif ($client === 'ios') {
+			$configKey = Config::MINIMUM_SUPPORTED_IOS_VERSION;
 			$versionRegex = IRequest::USER_AGENT_TALK_IOS;
 			$minVersion = self::TALK_IOS_MIN_VERSION;
 
@@ -188,6 +187,8 @@ class CanUseTalkMiddleware extends Middleware {
 		} else {
 			return;
 		}
+
+		$configMinVersion = $this->appConfig->getAppValueString($configKey);
 
 		preg_match($versionRegex, $userAgent, $matches);
 

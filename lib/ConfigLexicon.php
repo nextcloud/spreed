@@ -317,6 +317,7 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)')),
 			new AppConfigEntry(new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort')),
 			new AppConfigEntry(new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI')),
+			new AppConfigEntry(new Entry(Config::AI_UNREAD_SUMMARY_BATCH_SIZE, ValueType::INT, 500, definition: 'Maximum number of unread messages that are summarized with AI in one request')),
 			new AppConfigEntry(
 				new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call'),
 				hash: true,
@@ -327,6 +328,9 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::RETENTION_PHONE_ROOMS, ValueType::INT, 7, definition: 'Retention period of phone dial-in and dial-out conversations in days (`0` means no-retention)')),
 			new AppConfigEntry(new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention)')),
 			new AppConfigEntry(new Entry(Config::MAX_CALL_DURATION, ValueType::INT, 0, definition: 'Maximum duration of a call in seconds, 0 for unlimited. Federated calls will be terminated based on the setting of the host server.' . PHP_EOL . 'Calls are ended via a background job, so system cron should be used and calls will last a bit longer' . PHP_EOL . '(until the next execution of cron).')),
+			new AppConfigEntry(new Entry(Config::MINIMUM_SUPPORTED_ANDROID_VERSION, ValueType::STRING, '', definition: 'Minimum version of the Android client that is allowed to use Talk (in addition to the minimum version required by the server)', rename: 'minimum.supported.android.version')),
+			new AppConfigEntry(new Entry(Config::MINIMUM_SUPPORTED_DESKTOP_VERSION, ValueType::STRING, '', definition: 'Minimum version of the Desktop client that is allowed to use Talk (in addition to the minimum version required by the server)', rename: 'minimum.supported.desktop.version')),
+			new AppConfigEntry(new Entry(Config::MINIMUM_SUPPORTED_IOS_VERSION, ValueType::STRING, '', definition: 'Minimum version of the iOS client that is allowed to use Talk (in addition to the minimum version required by the server)', rename: 'minimum.supported.ios.version')),
 			new AppConfigEntry(
 				new Entry(Config::FEATURE_HINTS_HIDDEN, ValueType::INT, 0, definition: 'Feature hints that should be hidden. Set to `999999` to hide all.'),
 				hash: true,
@@ -351,6 +355,7 @@ PROMPT;
 			),
 			new AppConfigEntry(new Entry(Config::CHANGELOG, ValueType::BOOL, true, definition: 'Whether the changelog conversation is updated with new features on major releases')),
 			new AppConfigEntry(new Entry(Config::SESSION_PING_LIMIT, ValueType::INT, 200, definition: 'Number of sessions the HPB can ping in a single request', rename: 'session-ping-limit')),
+			new AppConfigEntry(new Entry(Config::PROJECT_ACCESS_INVALIDATED, ValueType::INT, 0, definition: 'Set automatically to track which invalidation of the projects access cache was already performed')),
 			new AppConfigEntry(
 				new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT, ValueType::ARRAY, [], definition: 'Account information of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account'),
 				adminSetting: true,
