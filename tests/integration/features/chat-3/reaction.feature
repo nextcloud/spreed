@@ -225,6 +225,14 @@ Feature: chat-3/reaction
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | lastMessage | unreadMessages |
       | room | 1    | 👍          | 0              |
+    When user "participant2" delete react with "👍" on message "Message 1" to room "room" with 200
+      | actorType | actorId | actorDisplayName | reaction |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | Message 1   | 0              |
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | Message 1   | 0              |
 
   Scenario: Reaction does not mark group conversation unread
     Given user "participant1" creates room "room" (v4)
