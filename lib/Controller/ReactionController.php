@@ -18,6 +18,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -35,6 +36,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		string $appName,
 		IRequest $request,
 		private readonly ReactionManager $reactionManager,
+		private readonly ParticipantService $participantService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -72,7 +74,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->reactionManager->addReactionMessage(
+			$comment = $this->reactionManager->addReactionMessage(
 				$this->getRoom(),
 				$this->getParticipant()->getAttendee()->getActorType(),
 				$this->getParticipant()->getAttendee()->getActorId(),
@@ -80,6 +82,9 @@ class ReactionController extends AEnvironmentAwareOCSController {
 				$messageId,
 				$reaction
 			);
+			if ($this->getRoom()->getType() === Room::TYPE_ONE_TO_ONE) {
+				$this->participantService->updateLastReadMessage($this->getParticipant(), (int)$comment->getId());
+			}
 			$status = Http::STATUS_CREATED;
 		} catch (NotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
