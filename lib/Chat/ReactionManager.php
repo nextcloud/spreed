@@ -129,6 +129,20 @@ class ReactionManager {
 		$comment->setVerb(ChatManager::VERB_REACTION_DELETED);
 		$this->commentsManager->save($comment);
 
+		if ($chat->getType() === Room::TYPE_ONE_TO_ONE && $chat->getLastMessageId() === (int)$comment->getId()) {
+			try {
+				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
+					$chat,
+					(int)$comment->getId(),
+					[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
+					true,
+				);
+				$this->roomService->setLastMessage($chat, $previousMessage);
+			} catch (NotFoundException) {
+				// No previous chat message, keep the deleted reaction as last message
+			}
+		}
+
 		$revokedComment = $this->chatManager->addSystemMessage(
 			$chat,
 			null,
