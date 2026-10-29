@@ -92,11 +92,26 @@ class UpdateDocs extends Base {
 	public function getAppConfigRow(AppConfigEntry $config): string {
 		$entry = $config->entry;
 		return '| `' . $entry->getKey() . '` | '
-			. ($config->arrayType !== null ? '`' . str_replace('|', '\|', $config->arrayType) . '`' : strtolower($entry->getValueType()->name)) . ' | '
+			. $this->formatType($config) . ' | '
 			. $this->formatDefault($entry) . ' | '
 			. ($config->hash ? 'Yes' : 'No') . ' | '
 			. ($config->adminSetting ? '🖌️' : '') . ($config->occCommands !== [] ? '💻' : '') . ' | '
 			. ($entry->isDeprecated() ? 'Deprecated: ' : '') . str_replace([PHP_EOL, '|'], ['<br>', '\|'], $entry->getDefinition()) . ' |';
+	}
+
+	protected function formatType(AppConfigEntry $config): string {
+		if ($config->arrayType !== null) {
+			return '`' . str_replace('|', '\|', $config->arrayType) . '`';
+		}
+
+		$type = strtolower($config->entry->getValueType()->name);
+		if ($config->enumType === null) {
+			return $type;
+		}
+
+		$values = array_map(static fn (string $value): string => '`' . $value . '`', explode('|', $config->enumType));
+		$last = array_pop($values);
+		return $type . '<br>' . ($values === [] ? $last : implode(', ', $values) . ' or ' . $last);
 	}
 
 	protected function formatDefault(Entry $entry): string {

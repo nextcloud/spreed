@@ -21,6 +21,7 @@ class AppConfigEntry {
 	 * @param bool $adminSetting The value can be set in the admin settings UI
 	 * @param list<class-string> $occCommands Dedicated occ commands to set the value
 	 * @param ?string $arrayType Psalm style type of the content for {@see ValueType::ARRAY} entries, e.g. `list<string>`
+	 * @param ?string $enumType Allowed values of {@see ValueType::STRING} and {@see ValueType::INT} entries separated by `|`, e.g. `split|unified`
 	 */
 	public function __construct(
 		public readonly Entry $entry,
@@ -28,6 +29,7 @@ class AppConfigEntry {
 		public readonly bool $adminSetting = false,
 		public readonly array $occCommands = [],
 		public readonly ?string $arrayType = null,
+		public readonly ?string $enumType = null,
 	) {
 	}
 }

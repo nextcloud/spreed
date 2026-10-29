@@ -15,6 +15,7 @@ use OCA\Talk\Config\AppConfigEntry;
 use OCA\Talk\ConfigLexicon;
 use OCP\App\IAppManager;
 use OCP\Config\Lexicon\Entry;
+use OCP\Config\Lexicon\Preset;
 use OCP\Config\ValueType;
 use OCP\IConfig;
 use PHPStan\PhpDocParser\Ast\AbstractNodeVisitor;
@@ -118,6 +119,28 @@ class UpdateDocsTest extends TestCase {
 		return null;
 	}
 
+	public function testEnumTypesAreValid(): void {
+		foreach ((new ConfigLexicon())->getTalkAppConfigs() as $config) {
+			if ($config->enumType === null) {
+				continue;
+			}
+
+			$key = $config->entry->getKey();
+			$valueType = $config->entry->getValueType();
+			$this->assertContains($valueType, [ValueType::STRING, ValueType::INT], $key);
+
+			$values = explode('|', $config->enumType);
+			$this->assertNotContains('', $values, $key);
+			$this->assertSame(array_values(array_unique($values)), $values, $key);
+			if ($valueType === ValueType::INT) {
+				foreach ($values as $value) {
+					$this->assertMatchesRegularExpression('/^-?\d+$/', $value, $key);
+				}
+			}
+			$this->assertContains($config->entry->getDefault(Preset::NONE), $values, $key);
+		}
+	}
+
 	public function testOccCommandsAreRegistered(): void {
 		$info = file_get_contents(__DIR__ . '/../../../../appinfo/info.xml');
 		foreach ((new ConfigLexicon())->getTalkAppConfigs() as $config) {
@@ -144,6 +167,18 @@ class UpdateDocsTest extends TestCase {
 			'multi-line string default' => [
 				new AppConfigEntry(new Entry(Config::CALL_RECORDING_SUMMARY_PROMPT, ValueType::STRING, "a\nb", definition: 'Prompt')),
 				'| `call_recording_summary_prompt` | string | See `lib/ConfigLexicon.php` | No |  | Prompt |',
+			],
+			'string enum' => [
+				new AppConfigEntry(new Entry(Config::CHAT_STYLE, ValueType::STRING, 'split', definition: 'Style'), enumType: 'split|unified'),
+				'| `chat_style` | string<br>`split` or `unified` | `split` | No |  | Style |',
+			],
+			'int enum with more values' => [
+				new AppConfigEntry(new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, 0, definition: 'Start'), enumType: '0|1|2|3'),
+				'| `start_calls` | int<br>`0`, `1`, `2` or `3` | `0` | No |  | Start |',
+			],
+			'single value enum' => [
+				new AppConfigEntry(new Entry(Config::SIGNALING_TOKEN_ALG, ValueType::STRING, 'ES256', definition: 'Alg'), enumType: 'ES256'),
+				'| `signaling_token_alg` | string<br>`ES256` | `ES256` | No |  | Alg |',
 			],
 			'deprecated' => [
 				new AppConfigEntry(new Entry(Config::SIP_BRIDGE_DIALOUT_PREFIX, ValueType::STRING, '+', definition: 'Old', deprecated: true)),
