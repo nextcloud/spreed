@@ -9,7 +9,7 @@ on:
       - '.github/workflows/matrix-crypto-interop.yml'
       - 'lib/Matrix/Client/Crypto/**'
       - 'lib/Matrix/Client/Util/Canonical.php'
-      - 'tests/interop/matrix/**'
+      - 'tests/matrix-crypto-interop/matrix/**'
 
 concurrency:
   group: matrix-crypto-interop-${{ github.head_ref || github.run_id }}
@@ -49,4 +49,4 @@ jobs:
           venv/bin/pip install vodozemac
 
       - name: Check interoperability
-        run: venv/bin/python tests/interop/matrix/vodozemac_check.py
+        run: venv/bin/python tests/matrix-crypto-interop/matrix/vodozemac_check.py
