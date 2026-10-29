@@ -738,9 +738,30 @@ export type paths = {
         put?: never;
         /**
          * Post a file from the conversation Draft folder as a chat message
-         * @description The file must be inside the Draft folder returned by the probe endpoint. This endpoint moves the file from Draft into the shared conversation subfolder (resolving any name conflicts), creates the chat message, and returns the actual final filename. The subfolder is shared with the room via a folder-level TYPE_ROOM share — no per-file share is created, keeping the Share Overview clean.
+         * @deprecated
+         * @description Moves the file from the Draft folder returned by the probe endpoint into the shared conversation subfolder, resolving name conflicts, and posts it. The subfolder is shared with the room, so no per-file share is created.
          */
         post: operations["chat-post-attachment-to-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post several files from the conversation Draft folder as chat messages
+         * @description Moves the files from the Draft folder returned by the probe endpoint into the shared conversation subfolder and posts them in the given order, with no other message in between. The caption goes to the last posted file, or into a message of its own when the last file fails after others were posted. A requested thread is started by the first posted file and contains all of them.
+         */
+        post: operations["chat-post-attachments-to-room"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2885,6 +2906,19 @@ export type components = {
     schemas: {
         /** @enum {string} */
         ActorTypes: "users" | "groups" | "guests" | "emails" | "circles" | "bridged" | "bots" | "federated_users" | "phones";
+        AttachmentResult: {
+            referenceId: string;
+            /** @enum {string} */
+            status: "posted" | "failed";
+            /**
+             * @description Why the file was not posted: not found, not a file, not in the Draft folder, listed twice, or posting it failed
+             * @enum {string}
+             */
+            error?: "file" | "type" | "folder" | "duplicate" | "post";
+            renames?: {
+                [key: string]: string;
+            }[];
+        };
         Ban: {
             /**
              * Format: int64
@@ -8403,6 +8437,138 @@ export interface operations {
                             data: {
                                 error: string;
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Could not prepare the conversation folder or post the file */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Conversation subfolders feature is disabled */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description User storage quota exceeded */
+            507: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-post-attachments-to-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Files to post, in the order of their messages */
+                    files: {
+                        filePath: string;
+                        fileName?: string;
+                        referenceId?: string;
+                    }[];
+                    /**
+                     * @description JSON-encoded metadata for all files (caption, messageType, silent, replyTo, threadId, threadTitle)
+                     * @default
+                     */
+                    talkMetaData?: string;
+                    /**
+                     * @description Allow recipients to modify shared files
+                     * @default false
+                     */
+                    allowUpdate?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Result of each file, in the order of the request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                results: components["schemas"]["AttachmentResult"][];
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description No files or too many files given */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };

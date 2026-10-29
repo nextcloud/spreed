@@ -76,11 +76,14 @@ use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\FileInfo;
+use OCP\Files\Folder;
+use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException as FileNotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
 use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
@@ -97,6 +100,7 @@ use OCP\UserStatus\IUserStatus;
 use Psr\Log\LoggerInterface;
 
 /**
+ * @psalm-import-type TalkAttachmentResult from ResponseDefinitions
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
  * @psalm-import-type TalkChatMessage from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
@@ -107,6 +111,8 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
 class ChatController extends AEnvironmentAwareOCSController {
+	public const MAX_ATTACHMENTS_PER_REQUEST = 50;
+
 	/** @var string[] */
 	protected array $guestNames;
 
@@ -149,6 +155,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		private readonly LoggerInterface $logger,
 		private readonly ScheduledMessageService $scheduledMessageManager,
 		private readonly ConversationFolderService $conversationFolderService,
+		private readonly INotificationManager $notificationManager,
 		private readonly Config $talkConfig,
 		private readonly SendService $matrixSendService,
 		private readonly SyncService $matrixSyncService,
@@ -2556,12 +2563,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	/**
 	 * Post a file from the conversation Draft folder as a chat message
 	 *
-	 * The file must be inside the Draft folder returned by the probe endpoint.
-	 * This endpoint moves the file from Draft into the shared conversation
-	 * subfolder (resolving any name conflicts), creates the chat message, and
-	 * returns the actual final filename.  The subfolder is shared with the room
-	 * via a folder-level TYPE_ROOM share — no per-file share is created, keeping
-	 * the Share Overview clean.
+	 * Moves the file from the Draft folder returned by the probe endpoint into the
+	 * shared conversation subfolder, resolving name conflicts, and posts it. The
+	 * subfolder is shared with the room, so no per-file share is created.
+	 *
+	 * @deprecated Use the attachments endpoint (capability `chat-attachments-batch`) instead
 	 *
 	 * @param string $filePath Path of the file relative to the user's home root
 	 *                         (e.g. "Talk/Group Chat-abc123/Draft/uuid.jpg")
@@ -2576,7 +2582,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 400: Path does not point to a file
 	 * 404: File not found
 	 * 422: File is not inside the conversation Draft folder for this room
-	 * 500: Could not prepare the conversation folder
+	 * 500: Could not prepare the conversation folder or post the file
 	 * 501: Conversation subfolders feature is disabled
 	 * 507: User storage quota exceeded
 	 */
@@ -2590,63 +2596,210 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = '', bool $allowUpdate = false): DataResponse {
+		$results = $this->postDraftFiles([['filePath' => $filePath, 'fileName' => $fileName, 'referenceId' => $referenceId]], $talkMetaData, $allowUpdate);
+		if ($results instanceof DataResponse) {
+			return $results;
+		}
+
+		$result = $results[0];
+		return match ($result['error'] ?? null) {
+			null => new DataResponse(['renames' => $result['renames'] ?? []], Http::STATUS_OK),
+			'file' => new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND),
+			'type' => new DataResponse(['error' => $this->l->t('Path must point to a file')], Http::STATUS_BAD_REQUEST),
+			'folder' => new DataResponse(['error' => $this->l->t('File is not inside the conversation draft folder for this room')], Http::STATUS_UNPROCESSABLE_ENTITY),
+			default => new DataResponse(['error' => $this->l->t('Could not post the file')], Http::STATUS_INTERNAL_SERVER_ERROR),
+		};
+	}
+
+	/**
+	 * Post several files from the conversation Draft folder as chat messages
+	 *
+	 * Moves the files from the Draft folder returned by the probe endpoint into the
+	 * shared conversation subfolder and posts them in the given order, with no other
+	 * message in between. The caption goes to the last posted file, or into a message
+	 * of its own when the last file fails after others were posted. A requested
+	 * thread is started by the first posted file and contains all of them.
+	 *
+	 * @param list<array{filePath: string, fileName?: string, referenceId?: string}> $files Files to post, in the order of their messages
+	 * @param string $talkMetaData JSON-encoded metadata for all files (caption, messageType, silent, replyTo, threadId, threadTitle)
+	 * @param bool $allowUpdate Allow recipients to modify shared files
+	 * @return DataResponse<Http::STATUS_OK, array{results: list<TalkAttachmentResult>}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 *
+	 * 200: Result of each file, in the order of the request
+	 * 400: No files or too many files given
+	 * 500: Could not prepare the conversation folder
+	 * 501: Conversation subfolders feature is disabled
+	 * 507: User storage quota exceeded
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachments', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function postAttachmentsToRoom(array $files, string $talkMetaData = '', bool $allowUpdate = false): DataResponse {
+		$results = $this->postDraftFiles($files, $talkMetaData, $allowUpdate);
+		if ($results instanceof DataResponse) {
+			return $results;
+		}
+
+		return new DataResponse(['results' => $results], Http::STATUS_OK);
+	}
+
+	/**
+	 * Post files from the conversation Draft folder as chat messages
+	 *
+	 * @param array<array-key, array{filePath: string, fileName?: string, referenceId?: string}> $files
+	 * @return non-empty-list<TalkAttachmentResult>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 */
+	private function postDraftFiles(array $files, string $talkMetaData, bool $allowUpdate): array|DataResponse {
 		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
 			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
 		}
 
-		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
+		$files = array_values($files);
+		if ($files === [] || count($files) > self::MAX_ATTACHMENTS_PER_REQUEST) {
+			return new DataResponse(['error' => $this->l->t('Between 1 and %d files can be posted at once', [self::MAX_ATTACHMENTS_PER_REQUEST])], Http::STATUS_BAD_REQUEST);
+		}
+
+		/** @var string $uid non-null, guaranteed by RequireLoggedInParticipant */
 		$uid = $this->userId;
 
-		// Ensure the user's conversation subfolder exists and is shared with
-		// the room.  The service creates the full folder hierarchy if missing.
+		$folders = $this->prepareAttachmentFolders($uid, $allowUpdate);
+		if ($folders instanceof DataResponse) {
+			return $folders;
+		}
+		[$subfolder, $draftFolder] = $folders;
+
+		$options = $this->parseAttachmentMetaData($talkMetaData);
+		$caption = $options['metaData']['caption'] ?? null;
+		unset($options['metaData']['caption']);
+
+		// All files are checked first, so the caption goes to the last one that can be posted
+		$results = [];
+		$nodes = [];
+		foreach ($files as $index => $file) {
+			$node = is_string($file['filePath'] ?? null) ? $this->getDraftFile($uid, $draftFolder, $file['filePath']) : 'file';
+			if ($node instanceof Node && isset($nodes[$node->getId()])) {
+				$node = 'duplicate';
+			}
+
+			$results[] = [
+				'referenceId' => is_string($file['referenceId'] ?? null) ? $file['referenceId'] : '',
+				'status' => 'failed',
+				'error' => is_string($node) ? $node : 'post',
+			];
+			if ($node instanceof Node) {
+				$nodes[$node->getId()] = [$index, $node];
+			}
+		}
+
+		$lastIndex = $nodes !== [] ? end($nodes)[0] : null;
+		$anyPosted = false;
+
+		$shouldFlush = $this->notificationManager->defer();
+		try {
+			foreach ($nodes as [$index, $node]) {
+				$fileOptions = $options;
+				if ($index === $lastIndex && $caption !== null) {
+					$fileOptions['metaData']['caption'] = $caption;
+				}
+
+				try {
+					$fileName = is_string($files[$index]['fileName'] ?? null) ? $files[$index]['fileName'] : '';
+					[$renames, $comment] = $this->postDraftFile($uid, $subfolder, $node, $fileName, $results[$index]['referenceId'], $fileOptions);
+				} catch (\Exception $e) {
+					$this->logger->error('postDraftFiles: failed to post file: {error}', [
+						'error' => $e->getMessage(),
+						'exception' => $e,
+					]);
+					// Only next to posted files, otherwise retrying the upload would post the caption twice
+					if ($index === $lastIndex && $caption !== null && $anyPosted) {
+						$this->postAttachmentCaption($uid, $caption, $options);
+					}
+					continue;
+				}
+
+				$results[$index] = ['referenceId' => $results[$index]['referenceId'], 'status' => 'posted', 'renames' => $renames];
+				$anyPosted = true;
+
+				if ($options['threadId'] === Thread::THREAD_NONE && $options['threadTitle'] !== '') {
+					$options['threadId'] = (int)$comment->getId();
+					try {
+						$this->startThread($comment, $options['threadTitle']);
+					} catch (\Exception $e) {
+						$this->logger->error('postDraftFiles: failed to start thread: {error}', [
+							'error' => $e->getMessage(),
+							'exception' => $e,
+						]);
+						$options['threadId'] = Thread::THREAD_NONE;
+						$options['threadTitle'] = '';
+					}
+				}
+			}
+		} finally {
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Get the user's conversation subfolder, shared with the room, and its Draft folder
+	 *
+	 * @return array{0: Folder, 1: Folder}|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE, array{error: string}, array{}>
+	 */
+	private function prepareAttachmentFolders(string $uid, bool $allowUpdate): array|DataResponse {
 		try {
 			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
-			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+			return [$subfolder, $this->conversationFolderService->getOrCreateDraftFolder($subfolder)];
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (\Exception $e) {
-			$this->logger->error('postAttachmentToRoom: failed to prepare conversation folder: {error}', [
+			$this->logger->error('postDraftFiles: failed to prepare conversation folder: {error}', [
 				'error' => $e->getMessage(),
 				'exception' => $e,
 			]);
 			return new DataResponse(['error' => $this->l->t('Could not prepare conversation folder')], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
+	}
 
-		// Look up the file in the caller's file tree.
+	/**
+	 * Look up a file in the caller's file tree and make sure it is in the Draft folder
+	 *
+	 * @return Node|'file'|'type'|'folder' The file, or why it can not be posted
+	 */
+	private function getDraftFile(string $uid, Folder $draftFolder, string $filePath): Node|string {
 		try {
 			$node = $this->conversationFolderService->getFileNode($uid, $filePath);
 		} catch (FileNotFoundException) {
-			return new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
+			return 'file';
 		}
+
 		if ($node->getType() !== FileInfo::TYPE_FILE) {
-			return new DataResponse(['error' => $this->l->t('Path must point to a file')], Http::STATUS_BAD_REQUEST);
+			return 'type';
 		}
 
-		// Verify the file is inside the Draft folder for this conversation.
 		if ($node->getParent()->getId() !== $draftFolder->getId()) {
-			return new DataResponse(['error' => $this->l->t('File is not inside the conversation draft folder for this room')], Http::STATUS_UNPROCESSABLE_ENTITY);
+			return 'folder';
 		}
 
-		// Move the file from Draft into the shared subfolder, resolving any name
-		// conflicts by appending " (1)", " (2)", … to the base name.
-		$desiredName = $fileName !== '' ? $fileName : $node->getName();
-		$result = $this->conversationFolderService->finalizeUploadedFile($subfolder, $node, $desiredName);
-		$renameFrom = $result['from'];
-		$renameTo = $result['to'];
-		$node = $result['node'];
+		return $node;
+	}
 
-		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.
+	/**
+	 * Parse the talkMetaData of an attachment for caption, messageType, silent, replyTo, threadId and threadTitle
+	 *
+	 * @return array{metaData: array<string, mixed>, silent: bool, replyToComment: ?IComment, threadId: int, threadTitle: string} The threadTitle is only set when a thread should be started
+	 */
+	private function parseAttachmentMetaData(string $talkMetaData): array {
 		$metaData = json_decode($talkMetaData, true);
 		$metaData = is_array($metaData) ? $metaData : [];
-
-		// Validate and sanitize messageType.
-		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
-			$mime = $node->getMimeType();
-			if ($mime !== 'audio/mpeg' && $mime !== 'audio/wav') {
-				unset($metaData['messageType']);
-			}
-		}
-		$metaData['mimeType'] = $node->getMimeType();
 
 		if (isset($metaData['caption'])) {
 			if (is_string($metaData['caption']) && trim($metaData['caption']) !== '') {
@@ -2663,7 +2816,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$threadTitle = '';
 		if (isset($metaData['threadTitle'])) {
-			if (is_string($metaData['threadTitle']) && trim($metaData['threadTitle']) !== '') {
+			if ($replyToId === null && is_string($metaData['threadTitle']) && trim($metaData['threadTitle']) !== '') {
 				$threadTitle = trim($metaData['threadTitle']);
 			}
 			unset($metaData['threadTitle']);
@@ -2674,15 +2827,41 @@ class ChatController extends AEnvironmentAwareOCSController {
 			try {
 				$replyToComment = $this->chatManager->getComment($this->room, (string)$replyToId);
 			} catch (\Exception) {
-				// Invalid replyTo — ignore.
+				// Invalid replyTo, ignore
 			}
 		}
 
-		$createThread = $replyToId === null && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+		return [
+			'metaData' => $metaData,
+			'silent' => $silent,
+			'replyToComment' => $replyToComment,
+			'threadId' => $threadId,
+			'threadTitle' => $threadTitle,
+		];
+	}
 
-		// Create the file_shared system message referencing the file by node ID.
-		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
-		// share is needed; access is controlled by the folder-level share.
+	/**
+	 * Move a file from the Draft folder into the shared conversation subfolder
+	 * (resolving any name conflicts) and post it as a chat message
+	 *
+	 * @param array{metaData: array<string, mixed>, silent: bool, replyToComment: ?IComment, threadId: int, threadTitle: string} $options
+	 * @return array{0: list<array<string, string>>, 1: IComment} The renames and the message
+	 */
+	private function postDraftFile(string $uid, Folder $subfolder, Node $node, string $fileName, string $referenceId, array $options): array {
+		$desiredName = $fileName !== '' ? $fileName : $node->getName();
+		$result = $this->conversationFolderService->finalizeUploadedFile($subfolder, $node, $desiredName);
+		$node = $result['node'];
+
+		$metaData = $options['metaData'];
+		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
+			$mime = $node->getMimeType();
+			if ($mime !== 'audio/mpeg' && $mime !== 'audio/wav') {
+				unset($metaData['messageType']);
+			}
+		}
+		$metaData['mimeType'] = $node->getMimeType();
+
+		// 'fileId' instead of 'share', access comes from the folder-level share
 		$comment = $this->chatManager->addSystemMessage(
 			$this->room,
 			$this->participant,
@@ -2692,32 +2871,39 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$this->timeFactory->getDateTime(),
 			true,
 			$referenceId !== '' ? $referenceId : null,
-			$replyToComment,
+			$options['replyToComment'],
 			false,
-			$silent,
-			$threadId,
+			$options['silent'],
+			$options['threadId'],
 		);
 
-		if ($createThread) {
-			$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
-			// Add to subscribed threads list
-			$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
+		return [[[$result['from'] => $result['to']]], $comment];
+	}
 
-			$this->chatManager->addSystemMessage(
+	/**
+	 * Post the caption of a batch as a message of its own
+	 *
+	 * @param array{metaData: array<string, mixed>, silent: bool, replyToComment: ?IComment, threadId: int, threadTitle: string} $options
+	 */
+	private function postAttachmentCaption(string $uid, string $caption, array $options): void {
+		try {
+			$this->chatManager->sendMessage(
 				$this->room,
 				$this->participant,
-				$this->participant->getAttendee()->getActorType(),
-				$this->participant->getAttendee()->getActorId(),
-				json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
+				Attendee::ACTOR_USERS,
+				$uid,
+				$caption,
 				$this->timeFactory->getDateTime(),
-				false,
-				null,
-				$comment,
-				true,
-				true
+				$options['replyToComment'],
+				'',
+				$options['silent'],
+				threadId: $options['threadId'],
 			);
+		} catch (\Exception $e) {
+			$this->logger->error('postDraftFiles: failed to post caption: {error}', [
+				'error' => $e->getMessage(),
+				'exception' => $e,
+			]);
 		}
-
-		return new DataResponse(['renames' => [[$renameFrom => $renameTo]]], Http::STATUS_OK);
 	}
 }
