@@ -70,25 +70,25 @@ Legend:
 
 | Key | Type | Default | Hash | Option | Description |
 |---|---|---|---|---|---|
-| `allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to use Talk |
+| `allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to use Talk (everyone when empty) |
 | `backgrounds_branded_for_guests` | bool | `false` | No |  | Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/` |
-| `backgrounds_default_for_users` | bool |  | No |  | Whether users are allowed to use the default virtual backgrounds provided by the releases |
-| `backgrounds_upload_users` | bool |  | No |  | Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files |
+| `backgrounds_default_for_users` | bool | `true` | No |  | Whether users are allowed to use the default virtual backgrounds provided by the releases |
+| `backgrounds_upload_users` | bool | `true` | No |  | Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files |
 | `breakout_rooms` | bool | `true` | Yes |  | Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.) |
 | `bridge_bot_password` | string | `''` | No |  | Automatically generated password of the matterbridge bot user profile |
 | `call_end_to_end_encryption` | bool | `false` | No | 🖌️ | Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend) |
 | `call_recording` | bool | `true` | Yes |  | Enable call recording |
-| `call_recording_summary` | bool | `true` | Yes | 🖌️ | Whether call recordings should automatically be summarized when a transcription summary provider is enabled. |
+| `call_recording_summary` | bool | `true` | Yes | 🖌️ | Whether call recordings should automatically be summarized when a transcription and a summary provider is enabled. |
 | `call_recording_summary_prompt` | string | See `lib/ConfigLexicon.php` | No |  | Instructions used by LLM to generate Talk call recording summaries |
 | `call_recording_transcription` | bool | `false` | Yes | 🖌️ | Whether call recordings should automatically be transcribed when a transcription provider is enabled. |
 | `calls_start_without_media` | bool | `false` | No |  | Whether participants start with enabled or disabled audio and video by default |
 | `certificate_expiration_days` | int | `10` | No |  | Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365) |
 | `changelog` | bool | `true` | No |  | Whether the changelog conversation is updated with new features on major releases |
-| `chat_style` | string | `split` | No |  | Default chat style when not overwritten by the user |
+| `chat_style` | string<br>`split` or `unified` | `split` | No |  | Default chat style when not overwritten by the user |
 | `conversation_subfolders` | bool | `true` | No |  | Whether files shared in a conversation are stored in a dedicated subfolder of the conversation inside the attachment folder |
 | `conversations_files` | bool | `true` | No | 🖌️ | Whether the files app integration is enabled allowing to start conversations in the right sidebar |
 | `conversations_files_public_shares` | bool | `true` | No | 🖌️ | Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled) |
-| `conversations_list_style` | string | `two-lines` | No |  | Default conversation list style when not overwritten by the user |
+| `conversations_list_style` | string<br>`two-lines` or `compact` | `two-lines` | No |  | Default conversation list style when not overwritten by the user |
 | `create_samples` | bool | `true` | No |  | Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config) |
 | `default_attachment_folder` | string | `/Talk` | No |  | Specify default attachment folder location |
 | `default_group_notification` | int | `1` | No | 🖌️ | Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels<br>(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations) |
@@ -104,7 +104,7 @@ Legend:
 | `external_call_service_iframe_field` | string | `''` | No |  | JSON field name in the external service response that contains the iframe URL |
 | `external_call_service_shared_secret` | string | `''` | No |  | Shared secret used for two purposes:<br>as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.<br>Minimum 64 characters, `a-zA-Z0-9` recommended |
 | `feature_hints_hidden` | int | `0` | Yes |  | Feature hints that should be hidden. Set to `999999` to hide all. |
-| `federation_allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of local group ids that are allowed to use federated features |
+| `federation_allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of local group ids that are allowed to use federated features (everyone when empty) |
 | `federation_enabled` | bool | `false` | Yes | 🖌️ | Whether or not federation with this instance is allowed |
 | `federation_incoming_enabled` | bool | `true` | Yes | 🖌️ | Whether users of this instance can be invited to federated conversations |
 | `federation_only_trusted_servers` | bool | `false` | Yes | 🖌️ | Whether federation should be limited to the list of "Trusted servers" |
@@ -120,7 +120,7 @@ Legend:
 | `hosted_signaling_server_nonce` | string | `''` | No |  | Temporary nonce while configuring the hosted signaling server |
 | `inactivity_enable_lobby` | bool | `false` | No |  | Additionally enable the lobby for inactive rooms so they can only be read by moderators. |
 | `inactivity_lock_after_days` | int | `0` | No |  | A duration (in days) after which rooms are locked. Calculated from the last activity in the room. |
-| `matrix_allowed_groups` | `list<string>` | `[]` | No | 🖌️ | List of group ids that are allowed to link a Matrix account (empty means everyone) |
+| `matrix_allowed_groups` | `list<string>` | `[]` | No | 🖌️ | List of group ids that are allowed to link a Matrix account (everyone when empty) |
 | `matrix_enabled` | bool | `false` | No | 🖌️ | Whether users can link a Matrix account and use their Matrix rooms as conversations |
 | `matterbridge_binary` | string | `''` | No |  | Path to the matterbridge binary file |
 | `max_call_duration` | int | `0` | No |  | Maximum duration of a call in seconds, 0 for unlimited. Federated calls will be terminated based on the setting of the host server.<br>Calls are ended via a background job, so system cron should be used and calls will last a bit longer<br>(until the next execution of cron). |
@@ -136,7 +136,7 @@ Legend:
 | `signaling_servers` | `array{servers: list<array{server: string, verify: bool}>, secret: string}` | `{"servers":[],"secret":""}` | Yes | 🖌️💻 | List of signaling servers, should be configured via the web interface or the OCC commands |
 | `signaling_servers_secret` | string | `''` | No | 💻 | Shared secret between Nextcloud and the signaling servers, should be configured via the web interface or the OCC commands |
 | `signaling_ticket_secret` | string | `''` | Yes |  | Secret used to secure the signaling tickets for guests (255 character random string) |
-| `signaling_token_alg` | string | `ES256` | Yes |  | Algorithm for the signaling tickets |
+| `signaling_token_alg` | string<br>`ES256`, `ES384`, `RS256`, `RS384`, `RS512` or `EdDSA` | `ES256` | Yes |  | Algorithm for the signaling tickets |
 | `signaling_token_privkey` | string | `''` | No |  | Private key for the signaling ticket creation by the server |
 | `signaling_token_pubkey` | string | `''` | Yes | 💻 | Public key for the signaling ticket creation by the server |
 | `sip_bridge_dialin_info` | string | `''` | Yes | 🖌️ | Additional information added in the SIP dial-in invitation mail and sidebar |
@@ -144,12 +144,12 @@ Legend:
 | `sip_bridge_dialout_anonymous` | bool | `false` | No | 🖌️ | When set to true, all out-going SIP calls will be anonymous calls (CLIR) |
 | `sip_bridge_dialout_number` | string | `''` | No | 🖌️ | Fallback phone number that is used as caller for out-going calls when the user has no phone-number configured (has to be E164 `+49123456789` formatted) |
 | `sip_bridge_dialout_prefix` | string | `+` | No | 🖌️ | Deprecated: Only used for direct dial-in from older SIP bridges, which send phone numbers without this prefix |
-| `sip_bridge_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to enable SIP dial-in in a conversation |
+| `sip_bridge_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to enable SIP dial-in in a conversation (everyone when empty) |
 | `sip_bridge_shared_secret` | string | `''` | Yes | 🖌️ | Shared secret allowing the SIP bridge to authenticate on the Nextcloud server |
 | `sip_dialin_default` | int | `0` | No |  | Default value of SIP dial-in when creating new conversations |
 | `start_calls` | int | `0` | Yes | 🖌️ | Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call |
 | `start_calls_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to start calls (everyone when empty). This also applies to moderators; guests and federated users can then never start calls.<br>For federated conversations the host server decides. Others can still chat and join ongoing calls |
-| `start_conversations` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to create conversations |
+| `start_conversations` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to create conversations (everyone when empty) |
 | `stun_servers` | `list<string>` | `["stun.nextcloud.com:443"]` | Yes | 🖌️💻 | List of STUN servers for WebRTC connections |
 | `summary_threshold` | int | `100` | No |  | Amount of unread messages a user needs before they see the option to summarize with AI |
 | `token_entropy` | int | `8` | No |  | Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort |
