@@ -344,7 +344,7 @@ class RoomFormatter {
 				$roomData['canLeaveConversation'] = $room->getType() !== Room::TYPE_NOTE_TO_SELF
 					&& (!$room->isAnnouncement() || $currentParticipant->hasModeratorPermissions(false));
 
-				if ($this->appConfig->getAppValueBool('delete_one_to_one_conversations')
+				if ($this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
 					&& in_array($room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
 					$roomData['canDeleteConversation'] = true;
 					$roomData['canLeaveConversation'] = false;

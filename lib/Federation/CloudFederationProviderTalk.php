@@ -110,7 +110,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			$this->logger->debug('Received a federation invite but federation is disabled');
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
-		if (!$this->appConfig->getAppValueBool('federation_incoming_enabled', true)) {
+		if (!$this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED)) {
 			$this->logger->warning('Received a federation invite but incoming federation is disabled');
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
