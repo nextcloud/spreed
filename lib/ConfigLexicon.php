@@ -173,25 +173,25 @@ PROMPT;
 				arrayType: 'list<array{schemes: string, server: string, secret: string, protocols: string}>',
 			),
 			new AppConfigEntry(
-				new Entry(Config::ALLOWED_GROUPS_TALK, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to use Talk'),
+				new Entry(Config::ALLOWED_GROUPS_TALK, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to use Talk (everyone when empty)'),
 				hash: true,
 				adminSetting: true,
 				arrayType: 'list<string>',
 			),
 			new AppConfigEntry(
-				new Entry(Config::ALLOWED_GROUPS_SIP, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to enable SIP dial-in in a conversation'),
+				new Entry(Config::ALLOWED_GROUPS_SIP, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to enable SIP dial-in in a conversation (everyone when empty)'),
 				hash: true,
 				adminSetting: true,
 				arrayType: 'list<string>',
 			),
 			new AppConfigEntry(
-				new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversations'),
+				new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversations (everyone when empty)'),
 				hash: true,
 				adminSetting: true,
 				arrayType: 'list<string>',
 			),
 			new AppConfigEntry(
-				new Entry(Config::ALLOWED_GROUPS_FEDERATION, ValueType::ARRAY, [], definition: 'List of local group ids that are allowed to use federated features'),
+				new Entry(Config::ALLOWED_GROUPS_FEDERATION, ValueType::ARRAY, [], definition: 'List of local group ids that are allowed to use federated features (everyone when empty)'),
 				hash: true,
 				adminSetting: true,
 				arrayType: 'list<string>',
@@ -272,7 +272,7 @@ PROMPT;
 				hash: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::CALL_RECORDING_SUMMARY, ValueType::BOOL, true, definition: 'Whether call recordings should automatically be summarized when a transcription summary provider is enabled.'),
+				new Entry(Config::CALL_RECORDING_SUMMARY, ValueType::BOOL, true, definition: 'Whether call recordings should automatically be summarized when a transcription and a summary provider is enabled.'),
 				hash: true,
 				adminSetting: true,
 			),
@@ -295,8 +295,8 @@ PROMPT;
 			),
 			new AppConfigEntry(new Entry(Config::FORCE_PASSWORDS, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password')),
 			new AppConfigEntry(new Entry(Config::BACKGROUNDS_BRANDED_FOR_GUESTS, ValueType::BOOL, false, definition: 'Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/`')),
-			new AppConfigEntry(new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virtual backgrounds provided by the releases')),
-			new AppConfigEntry(new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files')),
+			new AppConfigEntry(new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, true, definition: 'Whether users are allowed to use the default virtual backgrounds provided by the releases')),
+			new AppConfigEntry(new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, true, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files')),
 			new AppConfigEntry(new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)')),
 			new AppConfigEntry(
 				new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
@@ -308,7 +308,7 @@ PROMPT;
 				adminSetting: true,
 			),
 			new AppConfigEntry(
-				new Entry(Config::MATRIX_ALLOWED_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to link a Matrix account (empty means everyone)'),
+				new Entry(Config::MATRIX_ALLOWED_GROUPS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to link a Matrix account (everyone when empty)'),
 				adminSetting: true,
 				arrayType: 'list<string>',
 			),
@@ -337,8 +337,14 @@ PROMPT;
 				new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations)'),
 				adminSetting: true,
 			),
-			new AppConfigEntry(new Entry(Config::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Default chat style when not overwritten by the user')),
-			new AppConfigEntry(new Entry(Config::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, definition: 'Default conversation list style when not overwritten by the user')),
+			new AppConfigEntry(
+				new Entry(Config::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Default chat style when not overwritten by the user'),
+				enumType: UserPreference::CHAT_STYLE_SPLIT . '|' . UserPreference::CHAT_STYLE_UNIFIED,
+			),
+			new AppConfigEntry(
+				new Entry(Config::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, definition: 'Default conversation list style when not overwritten by the user'),
+				enumType: UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES . '|' . UserPreference::CONVERSATION_LIST_STYLE_COMPACT,
+			),
 			new AppConfigEntry(
 				new Entry(Config::HIDE_SIGNALING_WARNING, ValueType::BOOL, false, definition: 'Flag that allows to suppress the warning that an HPB should be configured'),
 				adminSetting: true,
@@ -386,6 +392,7 @@ PROMPT;
 			new AppConfigEntry(
 				new Entry(Config::SIGNALING_TOKEN_ALG, ValueType::STRING, 'ES256', definition: 'Algorithm for the signaling tickets'),
 				hash: true,
+				enumType: 'ES256|ES384|RS256|RS384|RS512|EdDSA',
 			),
 			new AppConfigEntry(new Entry(Config::SIGNALING_TOKEN_PRIVKEY, ValueType::STRING, '', definition: 'Private key for the signaling ticket creation by the server', flags: IAppConfig::FLAG_SENSITIVE)),
 			new AppConfigEntry(
