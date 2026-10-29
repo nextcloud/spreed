@@ -108,10 +108,13 @@ use OCP\Calendar\Exceptions\CalendarException;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IManager as ICalendarManager;
 use OCP\Comments\IComment;
+use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
+use OCP\IAppConfig as IServerAppConfig;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -166,6 +169,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly IConfig $config,
 		private readonly ConfigLexicon $configLexicon,
 		private readonly IAppConfig $appConfig,
+		private readonly IServerAppConfig $serverAppConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly Config $talkConfig,
 		private readonly ICloudIdManager $cloudIdManager,
 		private readonly IPhoneNumberUtil $phoneNumberUtil,
@@ -192,25 +197,32 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return array{X-Nextcloud-Talk-Hash: string}
 	 */
 	protected function getTalkHashHeader(): array {
-		$values = [
-			$this->config->getSystemValueString('version'),
-			$this->appConfig->getAppValueString('installed_version'),
-			$this->config->getAppValue('theming', 'cachebuster', '1'),
-			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
-		];
+
+		$values = [];
+
+		if ($this->userId !== null) {
+			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
+			$values[] = $this->userConfig->getValueString($this->userId, 'spreed', UserPreference::ATTACHMENT_FOLDER);
+			$values[] = $this->userConfig->getValueString($this->userId, 'theming', 'userCacheBuster', '0');
+		} else {
+			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_GUESTS);
+		}
+		$values[] = $this->config->getSystemValueString('version');
+		$values[] = $this->appConfig->getAppValueString('installed_version');
+		$values[] = $this->serverAppConfig->getValueString('theming', 'cachebuster', '1');
 
 		foreach ($this->configLexicon->getTalkAppConfigs() as $config) {
 			$key = $config->entry->getKey();
 			if ($config->hash && $key !== Config::EXPERIMENTS_USERS && $key !== Config::EXPERIMENTS_GUESTS) {
-				$values[] = $this->config->getAppValue('spreed', $key);
+				$values[] = match ($config->entry->getValueType()) {
+					ValueType::STRING => $this->appConfig->getAppValueString($key),
+					ValueType::INT => $this->appConfig->getAppValueInt($key),
+					ValueType::BOOL => $this->appConfig->getAppValueBool($key) ? '1' : '0',
+					ValueType::FLOAT => $this->appConfig->getAppValueFloat($key),
+					ValueType::ARRAY => json_encode($this->appConfig->getAppValueArray($key)),
+					default => json_encode($this->appConfig->getAppValueString($key)) // mixed and future types
+				};
 			}
-		}
-
-		if ($this->userId !== null) {
-			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
-			$values[] = $this->config->getUserValue($this->userId, 'spreed', UserPreference::ATTACHMENT_FOLDER);
-		} else {
-			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_GUESTS);
 		}
 
 		return [
