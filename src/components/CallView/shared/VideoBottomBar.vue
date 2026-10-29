@@ -77,8 +77,7 @@
 
 			<NcButton
 				v-if="showStopFollowingButton"
-				class="following-button"
-				variant="tertiary"
+				variant="secondary"
 				@click="handleStopFollowing">
 				{{ t('spreed', 'Stop following') }}
 			</NcButton>
@@ -354,16 +353,6 @@ export default {
 
 	& .media-indicators {
 		display: flex;
-	}
-
-	& .following-button {
-		opacity: 0.8;
-		background-color: var(--color-background-dark);
-
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
 	}
 }
 
