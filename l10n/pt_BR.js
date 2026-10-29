@@ -2392,6 +2392,7 @@ OC.L10N.register(
     "Set time for next week" : "Definir um horário para a semana que vem",
     "Next weekend – {timeLocale}" : "Próximo fim de semana – {timeLocale}",
     "Set time for next weekend" : "Definir um horário para o fim de semana que vem",
+    "Password: {password}" : "Senha: {password}",
     "Message link copied to clipboard" : "Link da mensagem copiado para a área de transferência",
     "Conversation link copied to clipboard" : "Link da conversa copiado para a área de transferência",
     "The link could not be copied" : "Não foi possível copiar o link",

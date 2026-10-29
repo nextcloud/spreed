@@ -2392,6 +2392,7 @@ OC.L10N.register(
     "Set time for next week" : "Gelecek hafta için ayarla",
     "Next weekend – {timeLocale}" : "Sonraki hafta sonu – {timeLocale}",
     "Set time for next weekend" : "Sonraki hafta sonu için ayarla",
+    "Password: {password}" : "Parola: {password}",
     "Message link copied to clipboard" : "İleti bağlantısı panoya kopyalandı",
     "Conversation link copied to clipboard" : "Görüşme bağlantısı panoya kopyalandı",
     "The link could not be copied" : "Bağlantı kopyalanamadı",

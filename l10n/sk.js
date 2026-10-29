@@ -2392,6 +2392,7 @@ OC.L10N.register(
     "Set time for next week" : "Nastaviť čas na budúci týždeň",
     "Next weekend – {timeLocale}" : "Budúci víkend – {timeLocale}",
     "Set time for next weekend" : "Nastaviť čas na budúci víkend",
+    "Password: {password}" : "Heslo: {password}",
     "Message link copied to clipboard" : "Odkaz na správu bol skopírovaný do schránky.",
     "Conversation link copied to clipboard" : "Odkaz na konverzáciu bol skopírovaný do schránky",
     "The link could not be copied" : "Odkaz sa nepodarilo skopírovať.",
