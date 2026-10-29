@@ -6,6 +6,7 @@
 		"sort-packages": true
 	},
 	"require-dev": {
+		"phpstan/phpdoc-parser": "^2.3",
 		"phpunit/phpunit": "^11.5"
 	}
 }

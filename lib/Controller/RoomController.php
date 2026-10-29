@@ -14,6 +14,7 @@ use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\RoomExtendedEvent;
@@ -160,6 +161,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly AvatarService $avatarService,
 		private readonly Preloader $sharePreloader,
 		private readonly IConfig $config,
+		private readonly ConfigLexicon $configLexicon,
 		private readonly IAppConfig $appConfig,
 		private readonly Config $talkConfig,
 		private readonly ICloudIdManager $cloudIdManager,
@@ -190,36 +192,16 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$values = [
 			$this->config->getSystemValueString('version'),
 			$this->appConfig->getAppValueString('installed_version'),
-			json_encode($this->appConfig->getAppValueArray(Config::STUN_SERVERS)),
-			json_encode($this->appConfig->getAppValueArray(Config::TURN_SERVERS)),
-			json_encode($this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS)),
-			$this->appConfig->getAppValueString(Config::SIGNALING_TICKET_SECRET),
-			$this->appConfig->getAppValueString(Config::SIGNALING_TOKEN_ALG),
-			$this->appConfig->getAppValueString(Config::SIGNALING_TOKEN_PUBKEY),
-			$this->appConfig->getAppValueBool(Config::CALL_RECORDING),
-			json_encode($this->appConfig->getAppValueArray(Config::RECORDING_SERVERS)),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_TALK)),
-			$this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_START_CALLS_GROUPS)),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
-			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
-			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
-			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
-			$this->appConfig->getAppValueBool(Config::FEDERATION_ENABLED),
-			$this->appConfig->getAppValueInt(Config::RECORDING_CONSENT),
-			$this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALIN_INFO),
-			$this->appConfig->getAppValueString(Config::SIP_BRIDGE_SHARED_SECRET),
-			$this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION),
-			$this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY),
 			$this->config->getAppValue('theming', 'cachebuster', '1'),
 			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
-			$this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION)),
-			$this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED),
-			$this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED),
-			$this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS),
 		];
+
+		foreach ($this->configLexicon->getTalkAppConfigs() as $config) {
+			$key = $config->entry->getKey();
+			if ($config->hash && $key !== Config::EXPERIMENTS_USERS && $key !== Config::EXPERIMENTS_GUESTS) {
+				$values[] = $this->config->getAppValue('spreed', $key);
+			}
+		}
 
 		if ($this->userId !== null) {
 			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
