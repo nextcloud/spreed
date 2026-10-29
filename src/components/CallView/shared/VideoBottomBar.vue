@@ -300,9 +300,11 @@ export default {
 		},
 
 		switchToScreen() {
-			if (!this.sharedData.screenVisible || !this.isBig) {
-				emit('switch-screen-to-id', this.model.attributes.peerId)
+			// Screen already in the main area
+			if (this.sharedData.screenVisible && !this.callViewStore.isGrid && this.callViewStore.selectedVideoPeerId === null) {
+				return
 			}
+			emit('switch-screen-to-id', this.model.attributes.peerId)
 		},
 
 		handleStopFollowing() {
