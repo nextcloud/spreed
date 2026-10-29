@@ -105,11 +105,11 @@ class Config {
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 	public const string CHAT_STYLE = 'chat_style';
-	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
+	// The user config falls back to the app config, so they need to use the same name
+	public const string CONVERSATIONS_LIST_STYLE = UserPreference::CONVERSATIONS_LIST_STYLE;
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
 	public const string CHANGELOG = 'changelog';
 	public const string SESSION_PING_LIMIT = 'session_ping_limit';
-	public const string CONVERSATIONS_LIST_STYLES = 'conversations_list_styles';
 	public const string SIGNALING_TICKET_SECRET = 'signaling_ticket_secret';
 	public const string SIGNALING_TOKEN_ALG = 'signaling_token_alg';
 	public const string SIGNALING_TOKEN_PRIVKEY = 'signaling_token_privkey';
