@@ -389,16 +389,27 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
-	public function testGetUnreadCount(): void {
+	public static function dataGetUnreadCount(): array {
+		return [
+			[Room::TYPE_ONE_TO_ONE, ['comment', 'object_shared', 'reaction']],
+			[Room::TYPE_GROUP, ['comment', 'object_shared']],
+			[Room::TYPE_PUBLIC, ['comment', 'object_shared']],
+		];
+	}
+
+	#[DataProvider('dataGetUnreadCount')]
+	public function testGetUnreadCount(int $roomType, array $verbs): void {
 		/** @var Room&MockObject $chat */
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->atLeastOnce())
 			->method('getId')
 			->willReturn(23);
+		$chat->method('getType')
+			->willReturn($roomType);
 
 		$this->commentsManager->expects($this->once())
 			->method('getNumberOfCommentsWithVerbsForObjectSinceComment')
-			->with('chat', 23, 42, ['comment', 'object_shared']);
+			->with('chat', 23, 42, $verbs);
 
 		$this->chatManager->getUnreadCount($chat, 42);
 	}
