@@ -7,7 +7,7 @@ import { getCSPNonce } from '@nextcloud/auth'
 import { FileType, getSidebar } from '@nextcloud/files'
 import { generateFilePath } from '@nextcloud/router'
 import { defineAsyncComponent, defineCustomElement } from 'vue'
-import IconTalk from '../img/app-dark.svg?raw'
+import IconTalk from '../../../img/app-dark.svg?raw'
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()

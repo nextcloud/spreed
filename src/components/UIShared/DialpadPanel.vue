@@ -79,7 +79,7 @@ import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconBackspaceOutline from 'vue-material-design-icons/BackspaceOutline.vue'
 import IconDialpad from 'vue-material-design-icons/Dialpad.vue'
-import { regionCodes } from '../../regionCodes.js'
+import { regionCodes } from '../../utils/regionCodes.js'
 
 const allowedKeys = /^[0-9+\-()*#\s]+$/
 

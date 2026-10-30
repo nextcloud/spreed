@@ -9,10 +9,10 @@ import { getSharingToken } from '@nextcloud/sharing/public'
 import { createApp, reactive } from 'vue'
 import PublicShareSidebar from './PublicShareSidebar.vue'
 import PublicShareSidebarTrigger from './PublicShareSidebarTrigger.vue'
-import { initializeTalkOnce } from './init.js'
-import { createMemoryRouter } from './router/router.ts'
-import store from './store/index.js'
-import pinia from './stores/pinia.ts'
+import { initializeTalkOnce } from '../../init.js'
+import { createMemoryRouter } from '../../router/router.ts'
+import store from '../../store/index.js'
+import pinia from '../../stores/pinia.ts'
 
 initializeTalkOnce()
 

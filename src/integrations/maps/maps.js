@@ -8,9 +8,9 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 import escapeHtml from 'escape-html'
-import { SHARED_ITEM } from './constants.ts'
-import { postRichObjectToConversation } from './services/messagesService.ts'
-import { requestRoomSelection } from './utils/requestRoomSelection.js'
+import { SHARED_ITEM } from '../../constants.ts'
+import { postRichObjectToConversation } from '../../services/messagesService.ts'
+import { requestRoomSelection } from '../../utils/requestRoomSelection.js'
 
 import '@nextcloud/dialogs/style.css'
 

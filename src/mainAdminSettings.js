@@ -4,10 +4,10 @@
  */
 
 import { createApp } from 'vue'
-import AdminSettings from './views/AdminSettings.vue'
+import AdminSettingsApp from './AdminSettingsApp.vue'
 
 import '@nextcloud/dialogs/style.css'
 import './assets/admin-settings.css'
 
-export default createApp(AdminSettings)
+export default createApp(AdminSettingsApp)
 	.mount('#admin_settings')

@@ -8,10 +8,10 @@ import { generateFilePath } from '@nextcloud/router'
 import { createApp } from 'vue'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
-import { initializeTalkOnce } from './init.js'
-import { createMemoryRouter } from './router/router.ts'
-import store from './store/index.js'
-import pinia from './stores/pinia.ts'
+import { initializeTalkOnce } from '../../init.js'
+import { createMemoryRouter } from '../../router/router.ts'
+import store from '../../store/index.js'
+import pinia from '../../stores/pinia.ts'
 
 initializeTalkOnce()
 
@@ -30,7 +30,9 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 function adjustLayout() {
 	const requestPasswordElement = document.createElement('div')
 	requestPasswordElement.setAttribute('id', 'talk-public-share-auth')
-	document.getElementById('guest-content-vue').appendChild(requestPasswordElement)
+	// Server < 36 renders NcGuestContent (Vue 2) with #guest-content-vue
+	const guestBox = document.getElementById('core-public-share-auth') ?? document.getElementById('guest-content-vue')
+	guestBox.appendChild(requestPasswordElement)
 
 	const talkSidebarElement = document.createElement('div')
 	talkSidebarElement.setAttribute('id', 'talk-public-share-auth-sidebar')
