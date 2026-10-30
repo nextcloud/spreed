@@ -112,6 +112,12 @@ export default class VideoStreamBackgroundEffect {
 
 		this._segmentationPixelCount = this._options.width * this._options.height
 
+		// Create canvas elements (MediaPipe shares the WebGL one, so it is created first)
+		this._outputCanvasElement = document.createElement('canvas')
+		if (!this._useWebGL) {
+			this._outputCanvasElement.getContext('2d')
+		}
+
 		this._initMediaPipe().catch((e) => console.error(e))
 
 		// Bind event handler so it is only bound once for every instance.
@@ -123,11 +129,6 @@ export default class VideoStreamBackgroundEffect {
 		this._maskWidth = 0
 		this._maskHeight = 0
 
-		// Create canvas elements
-		this._outputCanvasElement = document.createElement('canvas')
-		if (!this._useWebGL) {
-			this._outputCanvasElement.getContext('2d')
-		}
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
@@ -153,6 +154,8 @@ export default class VideoStreamBackgroundEffect {
 					modelAssetPath: getModelAssetPath(),
 					delegate: this._useWebGL ? 'GPU' : 'CPU',
 				},
+				// Same WebGL context as the compositor, so it reads the mask texture without a copy.
+				canvas: this._useWebGL ? this._outputCanvasElement : undefined,
 				runningMode: 'VIDEO',
 				outputCategoryMask: false,
 				outputConfidenceMasks: true,

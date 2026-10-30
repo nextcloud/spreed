@@ -287,7 +287,6 @@ export default class WebGLCompositor {
 
 		// --- Textures ---
 		this.texFrame = this._makeTex()
-		this.texMask = this._makeTex()
 		this.texMaskFiltered = this._makeTex()
 		this.texMaskSmoothed = [this._makeTex(), this._makeTex()]
 		this.texBg = this._makeTex()
@@ -298,12 +297,6 @@ export default class WebGLCompositor {
 		this.fboMask = gl.createFramebuffer()
 		this.fboBlur1 = gl.createFramebuffer()
 		this.fboBlur2 = gl.createFramebuffer()
-
-		// --- Blit variables, lazy loaded ---
-		this.progBlit = null
-		this.blitBuf = null
-		this.blitPosLoc = null
-		this.blitSamplerLoc = null
 
 		// --- Default parameters ---
 		this.coverage = [0.45, 0.75]
@@ -398,78 +391,6 @@ export default class WebGLCompositor {
 	}
 
 	/**
-	 * Initialize shaders and buffers for blitting textures.
-	 *
-	 * @private
-	 * @param {WebGLRenderingContext} gl - GL context.
-	 * @return {void}
-	 */
-	_initBlitResources(gl) {
-		if (this.progBlit) {
-			return
-		}
-
-		const blitVS = `
-		attribute vec2 a_pos;
-		varying vec2 v_uv;
-		void main() {
-		  v_uv = (a_pos + 1.0) * 0.5;
-		  gl_Position = vec4(a_pos, 0.0, 1.0);
-		}`
-		const blitFS = `
-		precision mediump float;
-		varying vec2 v_uv;
-		uniform sampler2D u_tex;
-		void main() {
-		  gl_FragColor = texture2D(u_tex, v_uv);
-		}`
-
-		this.progBlit = this._linkProgram(gl, blitVS, blitFS)
-
-		this.blitBuf = gl.createBuffer()
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.blitBuf)
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
-
-		this.blitPosLoc = gl.getAttribLocation(this.progBlit, 'a_pos')
-		this.blitSamplerLoc = gl.getUniformLocation(this.progBlit, 'u_tex')
-	}
-
-	/**
-	 * Copy a MediaPipe mask texture into a canvas.
-	 *
-	 * @private
-	 * @param {object} mask - MediaPipe mask object with canvas + getAsWebGLTexture().
-	 * @return {void}
-	 */
-	_blitTextureToCanvas(mask) {
-		const gl = mask.canvas.getContext('webgl2')
-		if (!gl) {
-			console.error('Could not get WebGL context from mask canvas.')
-			return
-		}
-		this._initBlitResources(gl)
-
-		const texture = mask.getAsWebGLTexture()
-		const { width, height } = mask
-
-		gl.useProgram(this.progBlit)
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.blitBuf)
-		gl.enableVertexAttribArray(this.blitPosLoc)
-		gl.vertexAttribPointer(this.blitPosLoc, 2, gl.FLOAT, false, 0, 0)
-
-		gl.activeTexture(gl.TEXTURE0)
-		gl.bindTexture(gl.TEXTURE_2D, texture)
-		gl.uniform1i(this.blitSamplerLoc, 0)
-
-		gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-		gl.viewport(0, 0, width, height)
-		gl.clearColor(0, 0, 0, 0)
-		gl.clear(gl.COLOR_BUFFER_BIT)
-		gl.drawArrays(gl.TRIANGLES, 0, 6)
-	}
-
-	/**
 	 * Setup vertex attributes for rendering.
 	 *
 	 * @private
@@ -550,11 +471,12 @@ export default class WebGLCompositor {
 	 * Smooth the new mask with the previous one over time.
 	 *
 	 * @private
+	 * @param {WebGLTexture} maskTexture - New mask from MediaPipe, in this context.
 	 * @param {number} width - Output width.
 	 * @param {number} height - Output height.
 	 * @return {void}
 	 */
-	_applyTemporalSmoothing(width, height) {
+	_applyTemporalSmoothing(maskTexture, width, height) {
 		const gl = this.gl
 
 		// The first mask after a start or a resize is taken as is.
@@ -583,7 +505,7 @@ export default class WebGLCompositor {
 		gl.uniform1f(gl.getUniformLocation(this.progSmooth, 'u_reset'), reset ? 1 : 0)
 
 		gl.activeTexture(gl.TEXTURE0)
-		gl.bindTexture(gl.TEXTURE_2D, this.texMask)
+		gl.bindTexture(gl.TEXTURE_2D, maskTexture)
 		gl.activeTexture(gl.TEXTURE1)
 		gl.bindTexture(gl.TEXTURE_2D, previous)
 
@@ -791,6 +713,14 @@ export default class WebGLCompositor {
 			this.canvas.height = outH
 		}
 
+		// MediaPipe renders in this context too, so reset the state it may leave.
+		gl.bindVertexArray(this.vertexArray)
+		gl.disable(gl.BLEND)
+		gl.disable(gl.SCISSOR_TEST)
+		gl.disable(gl.DEPTH_TEST)
+		gl.disable(gl.STENCIL_TEST)
+		gl.disable(gl.CULL_FACE)
+
 		// Upload video frame
 		this._upload(this.texFrame, videoEl)
 
@@ -800,6 +730,7 @@ export default class WebGLCompositor {
 			if (showProgress) {
 				this._drawProgressBar(outW, outH)
 			}
+			gl.bindVertexArray(null)
 			return
 		}
 
@@ -812,12 +743,6 @@ export default class WebGLCompositor {
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, outW, outH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
 			this._maskFilteredW = outW
 			this._maskFilteredH = outH
-		}
-
-		// Upload and process mask
-		if (mask) {
-			this._blitTextureToCanvas(mask)
-			this._upload(this.texMask, mask.canvas, { flipY: true })
 		}
 
 		// Upload background if in image mode
@@ -833,13 +758,11 @@ export default class WebGLCompositor {
 		this.lastOutW = outW
 		this.lastOutH = outH
 
-		gl.bindVertexArray(this.vertexArray)
-
 		// Apply bilateral filter to mask
 		if (mask) {
 			// Redraws with the same mask reuse the smoothed one.
 			if (mask !== this._smoothedMask) {
-				this._applyTemporalSmoothing(outW, outH)
+				this._applyTemporalSmoothing(mask.getAsWebGLTexture(), outW, outH)
 				this._smoothedMask = mask
 			}
 			this._applyBilateralFilter(outW, outH)
@@ -884,6 +807,7 @@ export default class WebGLCompositor {
 		if (showProgress) {
 			this._drawProgressBar(outW, outH)
 		}
+		gl.bindVertexArray(null)
 	}
 
 	/**
@@ -899,7 +823,6 @@ export default class WebGLCompositor {
 
 		// Delete textures
 		gl.deleteTexture(this.texFrame)
-		gl.deleteTexture(this.texMask)
 		gl.deleteTexture(this.texMaskFiltered)
 		this.texMaskSmoothed.forEach((tex) => gl.deleteTexture(tex))
 		gl.deleteTexture(this.texBg)
@@ -926,10 +849,10 @@ export default class WebGLCompositor {
 		gl.deleteVertexArray(this.vertexArray)
 
 		// Clear references
-		this.texFrame = this.texMask = this.texMaskFiltered = this.texMaskSmoothed = null
+		this.texFrame = this.texMaskFiltered = this.texMaskSmoothed = null
 		this.texBg = this.texBlurred1 = this.texBlurred2 = null
-		this.positionBuffer = this.texCoordBuffer = this.blitBuf = null
-		this.progBilateral = this.progSmooth = this.progBlur = this.progBlend = this.progBlit = null
+		this.positionBuffer = this.texCoordBuffer = null
+		this.progBilateral = this.progSmooth = this.progBlur = this.progBlend = null
 		this._smoothedMask = null
 		this.fboMask = this.fboBlur1 = this.fboBlur2 = null
 		this.vertexArray = null
