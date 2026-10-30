@@ -12,14 +12,14 @@ use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\TalkWebhookDemo\Model\Bot;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IConfig;
+use OCP\IAppConfig as IServerAppConfig;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 
 class BotService {
 	public function __construct(
-		protected IConfig $config,
+		protected IServerAppConfig $serverAppConfig,
 		protected IURLGenerator $url,
 		protected IEventDispatcher $dispatcher,
 		protected IFactory $l10nFactory,
@@ -30,7 +30,7 @@ class BotService {
 	public function installBot(string $backend): void {
 		$id = sha1($backend);
 
-		$secretData = $this->config->getAppValue('talk_webhook_demo', 'secret_' . $id);
+		$secretData = $this->serverAppConfig->getValueString('talk_webhook_demo', 'secret' . $id);
 		if ($secretData) {
 			$secretArray = json_decode($secretData, true, 512, JSON_THROW_ON_ERROR);
 			$secret = $secretArray['secret'] ?? $this->random->generate(64, ISecureRandom::CHAR_HUMAN_READABLE);
@@ -41,7 +41,7 @@ class BotService {
 			$this->installLanguage($secret, $lang);
 		}
 
-		$this->config->setAppValue('talk_webhook_demo', 'secret_' . $id, json_encode([
+		$this->serverAppConfig->setValueString('talk_webhook_demo', 'secret_' . $id, json_encode([
 			'id' => $id,
 			'secret' => $secret,
 			'backend' => $backend,
