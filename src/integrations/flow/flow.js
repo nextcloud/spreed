@@ -4,7 +4,7 @@
  */
 
 import { defineCustomElement } from 'vue'
-import FlowPostToConversation from './views/FlowPostToConversation.vue'
+import FlowPostToConversation from './FlowPostToConversation.vue'
 
 const FlowPostToConversationComponent = defineCustomElement(FlowPostToConversation, {
 	shadowRoot: false,

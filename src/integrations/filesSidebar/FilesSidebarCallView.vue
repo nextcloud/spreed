@@ -5,11 +5,11 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount } from 'vue'
-import CallView from '../components/CallView/CallView.vue'
-import TopBar from '../components/TopBar/TopBar.vue'
-import { useGetToken } from '../composables/useGetToken.ts'
-import { useHashCheck } from '../composables/useHashCheck.js'
-import { useSessionIssueHandler } from '../composables/useSessionIssueHandler.ts'
+import CallView from '../../components/CallView/CallView.vue'
+import TopBar from '../../components/TopBar/TopBar.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
+import { useHashCheck } from '../../composables/useHashCheck.js'
+import { useSessionIssueHandler } from '../../composables/useSessionIssueHandler.ts'
 
 useHashCheck()
 
@@ -84,7 +84,7 @@ header.app-sidebar-header.hidden-by-call > div:not(.talk-sidebar-callview), {
 </style>
 
 <style lang="scss" scoped>
-@use '../assets/variables.scss' as *;
+@use '../../assets/variables.scss' as *;
 
 #call-container {
 	position: relative;
