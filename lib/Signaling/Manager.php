@@ -12,7 +12,6 @@ use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
 use OCA\Talk\Service\CertificateService;
-use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -20,7 +19,6 @@ use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
-use OCP\IConfig;
 
 class Manager {
 	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
@@ -29,10 +27,8 @@ class Manager {
 	private readonly ICache $cache;
 
 	public function __construct(
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly Config $talkConfig,
-		private readonly RoomService $roomService,
 		private readonly ITimeFactory $timeFactory,
 		private readonly IClientService $clientService,
 		private readonly CertificateService $certificateService,

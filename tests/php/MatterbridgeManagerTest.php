@@ -74,7 +74,6 @@ class MatterbridgeManagerTest extends TestCase {
 
 		$this->matterbridgeManager = new MatterbridgeManager(
 			$this->db,
-			$this->config,
 			$this->appConfig,
 			$this->url,
 			$this->userManager,
@@ -171,7 +170,6 @@ class MatterbridgeManagerTest extends TestCase {
 		$matterbridgeManager = $this->getMockBuilder(MatterbridgeManager::class)
 			->setConstructorArgs([
 				$this->db,
-				$this->config,
 				$this->appConfig,
 				$this->url,
 				$this->userManager,

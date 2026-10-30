@@ -29,7 +29,6 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -42,7 +41,6 @@ use SensitiveParameter;
 class Manager {
 	public function __construct(
 		private readonly IDBConnection $db,
-		private readonly IConfig $config,
 		private readonly Config $talkConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly IAppManager $appManager,
