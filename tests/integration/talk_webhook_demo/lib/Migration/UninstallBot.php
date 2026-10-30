@@ -11,14 +11,14 @@ namespace OCA\TalkWebhookDemo\Migration;
 
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\TalkWebhookDemo\Service\BotService;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig as IServerAppConfig;
 use OCP\IURLGenerator;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
 class UninstallBot implements IRepairStep {
 	public function __construct(
-		protected IConfig $config,
+		protected IServerAppConfig $serverAppConfig,
 		protected IURLGenerator $url,
 		protected BotService $service,
 	) {
@@ -37,7 +37,7 @@ class UninstallBot implements IRepairStep {
 		$backend = $this->url->getAbsoluteURL('');
 		$id = sha1($backend);
 
-		$secretData = $this->config->getAppValue('talk_webhook_demo', 'secret_' . $id);
+		$secretData = $this->serverAppConfig->getAppValueString('talk_webhook_demo', 'secret_' . $id);
 		if ($secretData) {
 			$secretArray = json_decode($secretData, true, 512, JSON_THROW_ON_ERROR);
 			if ($secretArray['secret']) {

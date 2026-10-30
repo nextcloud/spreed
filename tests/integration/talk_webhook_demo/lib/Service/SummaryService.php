@@ -11,6 +11,7 @@ namespace OCA\TalkWebhookDemo\Service;
 
 use OCA\TalkWebhookDemo\Model\LogEntry;
 use OCA\TalkWebhookDemo\Model\LogEntryMapper;
+use OCP\AppFramework\Services\IAppConfig as IServerAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IDateTimeFormatter;
@@ -32,6 +33,7 @@ class SummaryService {
 
 	public function __construct(
 		protected IConfig $config,
+		protected IServerAppConfig $serverAppConfig,
 		protected LogEntryMapper $logEntryMapper,
 		protected ITimeFactory $timeFactory,
 		protected IDateTimeFormatter $dateTimeFormatter,
@@ -196,7 +198,7 @@ class SummaryService {
 			}
 		}
 
-		if (($endTimestamp - $startTimestamp) < (int)$this->config->getAppValue('talk_webhook_demo', 'min-length', '60')) {
+		if (($endTimestamp - $startTimestamp) < $this->serverAppConfig->getAppValueInt('talk_webhook_demo', 'min-length', 60)) {
 			// No call summary for short calls
 			return null;
 		}
@@ -205,7 +207,7 @@ class SummaryService {
 		sort($attendees);
 
 		$systemDefault = $this->config->getSystemValueString('default_timezone', 'UTC');
-		$timezoneString = $this->config->getAppValue('talk_webhook_demo', 'timezone', $systemDefault);
+		$timezoneString = $this->serverAppConfig->getAppValueString('talk_webhook_demo', 'timezone', $systemDefault);
 		$timezone = null;
 		if ($timezoneString !== 'UTC') {
 			try {
