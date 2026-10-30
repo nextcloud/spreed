@@ -34,7 +34,7 @@ import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
 import { hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
-import { convertToUnix, messageExpirationOptions } from '../../utils/formattedTime.ts'
+import { convertToUnix, formatMessageExpiration } from '../../utils/formattedTime.ts'
 
 type MutualEvent = {
 	uri: DashboardEvent['eventLink']
@@ -89,10 +89,7 @@ const isMessageExpirationSet = computed(() => {
 })
 
 const messageExpirationDuration = computed(() => {
-	const { messageExpiration } = conversation.value
-
-	return messageExpirationOptions.find((option) => option.id === messageExpiration)?.label
-		?? t('spreed', 'Custom expiration time')
+	return formatMessageExpiration(conversation.value.messageExpiration)
 })
 
 const sidebarTitle = computed(() => {
