@@ -35,7 +35,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import { messageExpirationOptions } from '../../utils/formattedTime.ts'
+import { formatMessageExpiration, messageExpirationOptions } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'ExpirationSettings',
@@ -65,7 +65,12 @@ export default {
 			const expirationOptions = [...messageExpirationOptions]
 
 			if (!expirationOptions.some((option) => option.id === this.conversation.messageExpiration)) {
-				expirationOptions.push({ id: this.conversation.messageExpiration, label: t('spreed', 'Custom expiration time') })
+				expirationOptions.push({
+					id: this.conversation.messageExpiration,
+					label: t('spreed', 'Custom: {expirationTime}', {
+						expirationTime: formatMessageExpiration(this.conversation.messageExpiration),
+					}),
+				})
 			}
 
 			return expirationOptions
