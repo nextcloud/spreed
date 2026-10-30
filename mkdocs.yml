@@ -57,6 +57,7 @@ nav:
       - 'Settings management': 'settings.md'
       - 'Internal Signaling API': 'internal-signaling.md'
       - 'Standalone Signaling API↗': 'https://nextcloud-spreed-signaling.readthedocs.io/en/latest/'
+      - 'Signaling messages': 'signaling-messages.md'
   - 'Configuring a TURN server':
       - 'Overview': 'TURN.md'
       - 'coTURN': 'coturn.md'

@@ -49,7 +49,7 @@
 
 ### Internal signaling API
 
-Todo
+See [Signaling messages](signaling-messages.md#internal-signaling) for the messages sent and received with the internal signaling.
 
 ### External signaling API
 
