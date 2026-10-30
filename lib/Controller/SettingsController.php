@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Config;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
@@ -18,6 +19,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -33,6 +35,7 @@ class SettingsController extends OCSController {
 		IRequest $request,
 		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly IGroupManager $groupManager,
 		private readonly BeforePreferenceSetEventListener $preferenceListener,
 		private readonly ?string $userId,
@@ -60,7 +63,13 @@ class SettingsController extends OCSController {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->config->setUserValue($this->userId, 'spreed', $key, $value);
+		if (is_string($value)) {
+			$this->userConfig->setValueString($this->userId, Application::APP_ID, $key, $value);
+		}
+
+		if (is_int($value)) {
+			$this->userConfig->setValueInt($this->userId, Application::APP_ID, $key, $value);
+		}
 
 		return new DataResponse(null);
 	}

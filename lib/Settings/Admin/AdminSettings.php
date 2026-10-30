@@ -14,6 +14,7 @@ use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -33,6 +34,7 @@ class AdminSettings implements ISettings {
 		private readonly Config $talkConfig,
 		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly IInitialState $initialState,
 		private readonly ICacheFactory $memcacheFactory,
 		private readonly IGroupManager $groupManager,
@@ -398,11 +400,11 @@ class AdminSettings implements ISettings {
 			['code' => 'ZW', 'name' => $this->l10n->t('Zimbabwe')],
 		];
 
-		$userLanguage = $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'lang', 'en');
+		$userLanguage = $this->userConfig->getValueString($this->currentUser->getUID(), 'core', 'lang', 'en');
 		if ($userLanguage === 'de_DE') { // hardcode de_DE to de because this is a quirk in Nextcloud itself
 			$userLanguage = 'de';
 		}
-		$userLocale = $this->serverConfig->getUserValue($this->currentUser->getUID(), 'core', 'locale', 'en_US');
+		$userLocale = $this->userConfig->getValueString($this->currentUser->getUID(), 'core', 'locale', 'en_US');
 		$guessCountry = 'US';
 		if (str_contains($userLocale, '_')) {
 			$guessCountry = substr($userLocale, strrpos($userLocale, '_') + 1);

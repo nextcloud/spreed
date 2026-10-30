@@ -15,6 +15,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
@@ -26,6 +27,7 @@ class CallControllerTest extends TestCase {
 	private IEventDispatcher&MockObject $dispatcher;
 	private ITimeFactory&MockObject $timeFactory;
 	private IConfig&MockObject $serverConfig;
+	private IUserConfig&MockObject $userConfig;
 	private Room&MockObject $room;
 	private CallController $controller;
 
@@ -35,6 +37,7 @@ class CallControllerTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->room = $this->createMock(Room::class);
 
 		$arguments = [];
@@ -69,7 +72,7 @@ class CallControllerTest extends TestCase {
 		$this->room->method('getName')->willReturn('Team call');
 		$this->participantService->method('getParticipantsJoinedCurrentCall')
 			->willReturn([$this->createParticipant('alice'), $this->createParticipant('bob')]);
-		$this->serverConfig->method('getUserValue')->willReturn('UTC');
+		$this->userConfig->method('getValueString')->willReturn('UTC');
 		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-10-16'));
 		$this->controller->setRoom($this->room);
 		$this->controller->setParticipant($this->createParticipant('moderator'));
