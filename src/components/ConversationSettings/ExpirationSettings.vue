@@ -3,35 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div class="app-settings-subsection">
-		<h4 class="app-settings-section__subtitle">
-			{{ t('spreed', 'Message expiration') }}
-		</h4>
-		<div class="app-settings-section__hint">
-			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
-		</div>
-
-		<template v-if="canModerate">
-			<NcSelect
-				id="moderation_settings_message_expiration"
-				v-model="selectedOption"
-				:inputLabel="t('spreed', 'Set message expiration')"
-				:options="options"
-				label="label"
-				:clearable="false"
-				@search="search = $event" />
-		</template>
-
-		<template v-else>
-			<h5 class="app-settings-section__subtitle">
-				{{ t('spreed', 'Current message expiration') }}
-			</h5>
-			<p>{{ selectedOption.label }}</p>
-		</template>
-	</div>
-</template>
-
 <script setup lang="ts">
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
@@ -116,3 +87,32 @@ async function changeExpiration(expiration: ExpirationOption) {
 	}
 }
 </script>
+
+<template>
+	<div class="app-settings-subsection">
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Message expiration') }}
+		</h4>
+		<div class="app-settings-section__hint">
+			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
+		</div>
+
+		<template v-if="canModerate">
+			<NcSelect
+				id="moderation_settings_message_expiration"
+				v-model="selectedOption"
+				:inputLabel="t('spreed', 'Set message expiration')"
+				:options="options"
+				label="label"
+				:clearable="false"
+				@search="search = $event" />
+		</template>
+
+		<template v-else>
+			<h5 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Current message expiration') }}
+			</h5>
+			<p>{{ selectedOption.label }}</p>
+		</template>
+	</div>
+</template>
