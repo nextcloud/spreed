@@ -123,6 +123,7 @@ export default class VideoStreamBackgroundEffect {
 		// Bind event handler so it is only bound once for every instance.
 		this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this)
 		this._renderMask = this._renderMask.bind(this)
+		this._onVisibilityChange = this._onVisibilityChange.bind(this)
 
 		// caches for mask processing
 		this._tempImageData = null
@@ -355,14 +356,14 @@ export default class VideoStreamBackgroundEffect {
 	 * Starts the loop that triggers _renderMask() once per input video frame.
 	 *
 	 * Uses requestVideoFrameCallback where available (fires exactly on new
-	 * frames, keeps working in background tabs); falls back to the
-	 * Worker-based timer otherwise.
+	 * frames); falls back to the Worker-based timer otherwise and while the
+	 * page is hidden, as hidden pages get no video frame callbacks.
 	 *
 	 * @private
 	 * @return {void}
 	 */
 	_startFrameLoop() {
-		if ('requestVideoFrameCallback' in this._inputVideoElement) {
+		if ('requestVideoFrameCallback' in this._inputVideoElement && !document.hidden) {
 			this._useRVFC = true
 
 			const onVideoFrame = () => {
@@ -380,6 +381,25 @@ export default class VideoStreamBackgroundEffect {
 
 		this._useRVFC = false
 		this._scheduleFallbackTick()
+	}
+
+	/**
+	 * Restarts the frame loop with the timer that fits the page visibility.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_onVisibilityChange() {
+		if (this._rvfcHandle !== undefined) {
+			this._inputVideoElement.cancelVideoFrameCallback(this._rvfcHandle)
+			this._rvfcHandle = undefined
+		}
+		this._maskFrameTimerWorker.postMessage({
+			id: CLEAR_TIMEOUT,
+			message: 'this._maskFrameTimerWorker',
+		})
+
+		this._startFrameLoop()
 	}
 
 	/**
@@ -728,6 +748,7 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement.srcObject = this._stream
 		this._inputVideoElement.onloadeddata = () => {
 			this._startFrameLoop()
+			document.addEventListener('visibilitychange', this._onVisibilityChange)
 			this._inputVideoElement.onloadeddata = null
 		}
 
@@ -772,6 +793,8 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	stopEffect() {
 		this._running = false
+
+		document.removeEventListener('visibilitychange', this._onVisibilityChange)
 
 		// The "_running" check in onVideoFrame only stops future callbacks;
 		// one may already be pending, so cancel it explicitly.
