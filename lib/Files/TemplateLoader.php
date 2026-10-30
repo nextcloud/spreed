@@ -15,7 +15,6 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -30,7 +29,6 @@ class TemplateLoader implements IEventListener {
 	public function __construct(
 		private readonly IInitialState $initialState,
 		private readonly Config $talkConfig,
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly IUserSession $userSession,
 		private readonly IRequest $request,

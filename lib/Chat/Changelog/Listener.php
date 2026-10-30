@@ -13,7 +13,6 @@ use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
 
 /**
  * @template-implements IEventListener<Event>
@@ -21,7 +20,6 @@ use OCP\IConfig;
 class Listener implements IEventListener {
 	public function __construct(
 		private readonly Manager $manager,
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
 	) {
 	}

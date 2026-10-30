@@ -25,7 +25,6 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IAvatarManager;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -43,7 +42,6 @@ class MatterbridgeManager {
 
 	public function __construct(
 		private readonly IDBConnection $db,
-		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly IUserManager $userManager,

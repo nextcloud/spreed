@@ -109,7 +109,6 @@ class BackendNotifierTest extends TestCase {
 		$dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->manager = new Manager(
 			$dbConnection,
-			$config,
 			$this->config,
 			$this->appConfig,
 			\OCP\Server::get(IAppManager::class),

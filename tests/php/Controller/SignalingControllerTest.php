@@ -1396,7 +1396,6 @@ class SignalingControllerTest extends TestCase {
 
 		$this->manager = new Manager(
 			$dbConnection,
-			\OCP\Server::get(IConfig::class),
 			$this->createMock(Config::class),
 			$appConfig,
 			\OCP\Server::get(IAppManager::class),
