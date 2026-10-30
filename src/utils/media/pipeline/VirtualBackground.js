@@ -127,8 +127,8 @@ export default class VirtualBackground extends TrackSinkSource {
 
 	_initVideoStreamBackgroundEffect() {
 		const segmentationDimensions = {
-			modelSquare: {
-				height: 256,
+			modelLandscape: {
+				height: 144,
 				width: 256,
 			},
 		}
@@ -142,7 +142,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
 		}
 		const options = {
-			...segmentationDimensions.modelSquare,
+			...segmentationDimensions.modelLandscape,
 			virtualBackground,
 			webGL: VirtualBackground.isWebGLSupported(),
 		}
