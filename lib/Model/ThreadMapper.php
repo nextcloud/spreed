@@ -93,21 +93,31 @@ class ThreadMapper extends QBMapper {
 
 	/**
 	 * @param int<1, 50> $limit
+	 * @param ?\DateTimeInterface $notBefore Only threads whose first message is from this time on
 	 * @return list<Thread>
 	 */
-	public function getRecentByRoomId(int $roomId, int $limit): array {
+	public function getRecentByRoomId(int $roomId, int $limit, ?\DateTimeInterface $notBefore = null): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from($this->getTableName())
+		$query->select('t.*')
+			->from($this->getTableName(), 't')
 			->where($query->expr()->eq(
-				'room_id',
+				't.room_id',
 				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
 				IQueryBuilder::PARAM_INT,
 			))
-			->orderBy('last_activity', 'DESC')
+			->orderBy('t.last_activity', 'DESC')
 			// last_activity has second precision, so tie on the newest message (last_message_id is 0 until the first reply)
-			->addOrderBy($query->func()->greatest('last_message_id', 'id'), 'DESC')
+			->addOrderBy($query->func()->greatest('t.last_message_id', 't.id'), 'DESC')
 			->setMaxResults($limit);
+
+		if ($notBefore !== null) {
+			$query->join('t', 'comments', 'c', $query->expr()->eq('c.id', 't.id'))
+				->andWhere($query->expr()->gte(
+					'c.creation_timestamp',
+					$query->createNamedParameter(\DateTime::createFromInterface($notBefore), IQueryBuilder::PARAM_DATETIME_MUTABLE),
+					IQueryBuilder::PARAM_DATETIME_MUTABLE,
+				));
+		}
 
 		return $this->findEntities($query);
 	}

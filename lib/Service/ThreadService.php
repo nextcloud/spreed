@@ -131,9 +131,9 @@ class ThreadService {
 	 * @param int<1, 50> $limit
 	 * @return list<Thread>
 	 */
-	public function getRecentByRoomId(Room $room, int $limit): array {
+	public function getRecentByRoomId(Room $room, int $limit, ?\DateTimeInterface $notBefore = null): array {
 		$limit = min(50, max(1, $limit));
-		return $this->threadMapper->getRecentByRoomId($room->getId(), $limit);
+		return $this->threadMapper->getRecentByRoomId($room->getId(), $limit, $notBefore);
 	}
 
 	/**

@@ -94,6 +94,10 @@ class MessageParser {
 		$this->setMessageActor($message);
 		$this->setLastEditInfo($message);
 
+		if (!HistoryVisibility::isVisible($message->getParticipant(), $message->getComment())) {
+			$message->setVisibility(false);
+		}
+
 		$event = new MessageParseEvent($message->getRoom(), $message, $allowInaccurate);
 		$this->dispatcher->dispatchTyped($event);
 	}

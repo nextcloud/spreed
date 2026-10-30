@@ -11,6 +11,7 @@ namespace OCA\Talk\Collaboration\Reference;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\HistoryVisibility;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -173,6 +174,9 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 				try {
 					$comment = $this->chatManager->getComment($room, $messageId);
 				} catch (NotFoundException) {
+					throw new RoomNotFoundException();
+				}
+				if (!HistoryVisibility::isVisible($participant, $comment)) {
 					throw new RoomNotFoundException();
 				}
 				$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);

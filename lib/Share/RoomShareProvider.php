@@ -734,6 +734,11 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$cursor->closeCursor();
 
 		if ($recipientId !== null) {
+			$historySince = $this->manager->getRoomsWithAttachmentsForUser($recipientId);
+			$shares = array_filter(
+				$shares,
+				fn (IShare $share): bool => !$this->isBeforeHistory($historySince, $share->getSharedWith(), $share->getShareTime()->getTimestamp()),
+			);
 			return $this->resolveSharesForRecipient($shares, $recipientId);
 		} else {
 			return array_values($shares);
@@ -832,7 +837,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 */
 	#[\Override]
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
+		$historySince = $this->manager->getRoomsWithAttachmentsForUser($userId);
+		$allRooms = array_map(strval(...), array_keys($historySince));
 
 		if (empty($allRooms)) {
 			return [];
@@ -878,6 +884,10 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				}
 
 				if (!$this->isAccessibleResult($data)) {
+					continue;
+				}
+
+				if ($this->isBeforeHistory($historySince, (string)$data['share_with'], (int)$data['stime'])) {
 					continue;
 				}
 
@@ -936,7 +946,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			// The self join excludes shares with a userroom share, their target is matched above
 			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->select('s.id', 's.share_with')
+			$qb->select('s.id', 's.share_with', 's.stime')
 				->from('share', 's')
 				->leftJoin('s', 'share', 'sc', $qb->expr()->andX(
 					$qb->expr()->eq('sc.parent', 's.id'),
@@ -957,10 +967,11 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			// Joining talk_rooms and talk_attendees above would save this query,
 			// but would duplicate the membership logic of the Manager
-			$rooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
+			$rooms = $this->manager->getRoomsWithAttachmentsForUser($userId);
 			$shareIds = [];
 			foreach ($potentialShares as $potentialShare) {
-				if (in_array($potentialShare['share_with'], $rooms, true)) {
+				if (isset($rooms[$potentialShare['share_with']])
+					&& !$this->isBeforeHistory($rooms, (string)$potentialShare['share_with'], (int)$potentialShare['stime'])) {
 					$shareIds[] = $potentialShare['id'];
 				}
 			}
@@ -976,7 +987,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			);
 		}
 
-		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
+		$historySince = $this->manager->getRoomsWithAttachmentsForUser($userId);
+		$allRooms = array_map(strval(...), array_keys($historySince));
 
 		if (empty($allRooms)) {
 			return [];
@@ -1054,6 +1066,10 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					continue;
 				}
 
+				if ($this->isBeforeHistory($historySince, (string)$data['share_with'], (int)$data['stime'])) {
+					continue;
+				}
+
 				if ($offset > 0) {
 					$offset--;
 					continue;
@@ -1080,6 +1096,16 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$shares,
 			fn (IShare $share): bool => $share->getShareOwner() !== $userId && $share->getSharedBy() !== $userId,
 		));
+	}
+
+	/**
+	 * Whether a share of a conversation is older than the history the user
+	 * may see in it ({@see \OCA\Talk\Model\Attendee::getHistorySince()})
+	 *
+	 * @param array<string, int> $historySince history start by conversation token
+	 */
+	private function isBeforeHistory(array $historySince, string $roomToken, int $shareTime): bool {
+		return ($historySince[$roomToken] ?? 0) > $shareTime;
 	}
 
 	private function isAccessibleResult(array $data): bool {
@@ -1262,7 +1288,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$types[] = self::SHARE_TYPE_USERROOM;
 		}
 
-		$qb->select('id', 'parent', 'share_type', 'share_with', 'file_source', 'file_target', 'permissions')
+		$qb->select('id', 'parent', 'share_type', 'share_with', 'file_source', 'file_target', 'permissions', 'stime')
 			->from('share')
 			->where($qb->expr()->in('share_type', $qb->createNamedParameter($types, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->in('file_source', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
@@ -1283,7 +1309,10 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					continue;
 				}
 
-				$userList = $this->participantService->getParticipantUserIds($room);
+				$userList = array_diff(
+					$this->participantService->getParticipantUserIds($room),
+					$this->participantService->getUserIdsWithHistoryAfter($room, (int)$row['stime']),
+				);
 				foreach ($userList as $uid) {
 					$users[$uid] ??= [];
 					$users[$uid][$row['id']] = $row;
@@ -1509,12 +1538,15 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			return [];
 		}
 
+		$hidden = $this->participantService->getUserIdsWithHistoryAfter($room, $share->getShareTime()->getTimestamp());
+
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-			return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), json_decode($room->getName(), true));
+			$userIds = array_diff(json_decode($room->getName(), true), $hidden);
+			return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), array_values($userIds));
 		}
 
 		// Get all user ids for the room
-		$userIds = $this->participantService->getParticipantUserIds($room);
-		return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), $userIds);
+		$userIds = array_diff($this->participantService->getParticipantUserIds($room), $hidden);
+		return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), array_values($userIds));
 	}
 }

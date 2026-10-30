@@ -1060,11 +1060,12 @@ class ChatManager {
 	 * @param int $offset Last known message id
 	 * @param int $limit
 	 * @param bool $includeLastKnown
+	 * @param ?\DateTimeInterface $notBefore Only messages from this time on ({@see Participant::getHistorySince()})
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *                    creation date and message are relevant), or an empty array if the
 	 *                    timeout expired.
 	 */
-	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId = 0): array {
+	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId = 0, ?\DateTimeInterface $notBefore = null): array {
 		return $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
 			'chat',
 			(string)$chat->getId(),
@@ -1074,6 +1075,7 @@ class ChatManager {
 			$limit,
 			$includeLastKnown,
 			$threadId !== 0 ? (string)$threadId : '',
+			$notBefore,
 		);
 	}
 
@@ -1082,17 +1084,19 @@ class ChatManager {
 	 * @param int $offset Last known message id
 	 * @param array $verbs
 	 * @param bool $offsetIsVerbMatch
+	 * @param ?\DateTimeInterface $notBefore Only messages from this time on ({@see Participant::getHistorySince()})
 	 * @return IComment
 	 * @throws NotFoundException
 	 */
-	public function getPreviousMessageWithVerb(Room $chat, int $offset, array $verbs, bool $offsetIsVerbMatch): IComment {
+	public function getPreviousMessageWithVerb(Room $chat, int $offset, array $verbs, bool $offsetIsVerbMatch, ?\DateTimeInterface $notBefore = null): IComment {
 		$messages = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
 			'chat',
 			(string)$chat->getId(),
 			$verbs,
 			$offset,
 			'desc',
-			!$offsetIsVerbMatch ? 2 : 1
+			!$offsetIsVerbMatch ? 2 : 1,
+			notBefore: $notBefore,
 		);
 
 		if (empty($messages)) {
@@ -1113,21 +1117,22 @@ class ChatManager {
 	 * sent.
 	 *
 	 * @param int $offset Last known message id
+	 * @param ?\DateTimeInterface $notBefore Only messages from this time on ({@see Participant::getHistorySince()})
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *                    creation date and message are relevant), or an empty array if the
 	 *                    timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true, int $threadId = 0): array {
+	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true, int $threadId = 0, ?\DateTimeInterface $notBefore = null): array {
 		if ($markNotificationsAsRead && $user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
 
 		if ($this->cache instanceof NullCache
 			|| $this->cache instanceof ArrayCache) {
-			return $this->waitForNewMessagesWithDatabase($chat, $offset, $limit, $timeout, $includeLastKnown, $threadId);
+			return $this->waitForNewMessagesWithDatabase($chat, $offset, $limit, $timeout, $includeLastKnown, $threadId, $notBefore);
 		}
 
-		return $this->waitForNewMessagesWithCache($chat, $offset, $limit, $timeout, $includeLastKnown, $threadId);
+		return $this->waitForNewMessagesWithCache($chat, $offset, $limit, $timeout, $includeLastKnown, $threadId, $notBefore);
 	}
 
 	/**
@@ -1135,17 +1140,17 @@ class ChatManager {
 	 *
 	 * @return IComment[]
 	 */
-	protected function waitForNewMessagesWithCache(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown, int $threadId): array {
+	protected function waitForNewMessagesWithCache(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown, int $threadId, ?\DateTimeInterface $notBefore = null): array {
 		$elapsedTime = 0;
 
-		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown, $threadId);
+		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown, $threadId, $notBefore);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			$this->connection->close();
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown, $threadId);
+			$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown, $threadId, $notBefore);
 		}
 
 		return $comments;
@@ -1156,7 +1161,7 @@ class ChatManager {
 	 *
 	 * @return IComment[]
 	 */
-	protected function checkCacheOrDatabase(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId): array {
+	protected function checkCacheOrDatabase(Room $chat, int $offset, int $limit, bool $includeLastKnown, int $threadId, ?\DateTimeInterface $notBefore = null): array {
 		$cacheKey = $chat->getToken();
 		if ($threadId !== 0) {
 			$cacheKey .= '/' . $threadId;
@@ -1177,6 +1182,7 @@ class ChatManager {
 			$limit,
 			$includeLastKnown,
 			$threadId !== 0 ? (string)$threadId : '',
+			$notBefore,
 		);
 
 		if (empty($comments)) {
@@ -1195,7 +1201,7 @@ class ChatManager {
 	 *
 	 * @return IComment[]
 	 */
-	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown, int $threadId): array {
+	protected function waitForNewMessagesWithDatabase(Room $chat, int $offset, int $limit, int $timeout, bool $includeLastKnown, int $threadId, ?\DateTimeInterface $notBefore = null): array {
 		$elapsedTime = 0;
 
 		$comments = $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
@@ -1207,6 +1213,7 @@ class ChatManager {
 			$limit,
 			$includeLastKnown,
 			$threadId !== 0 ? (string)$threadId : '',
+			$notBefore,
 		);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
@@ -1222,6 +1229,7 @@ class ChatManager {
 				$limit,
 				$includeLastKnown,
 				$threadId !== 0 ? (string)$threadId : '',
+				$notBefore,
 			);
 		}
 
@@ -1292,10 +1300,11 @@ class ChatManager {
 	 * @param string $search content to search for
 	 * @param string[] $objectIds Limit the search by object ids
 	 * @param string[] $verbs Limit the verb of the comment
+	 * @param array<string, \DateTimeInterface> $notBeforeByObjectId Messages of these conversations only from the given time on ({@see Participant::getHistorySince()})
 	 * @return list<IComment>
 	 */
-	public function searchForObjectsWithFilters(string $search, array $objectIds, array $verbs, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50): array {
-		return $this->commentsManager->searchForObjectsWithFilters($search, 'chat', $objectIds, $verbs, $since, $until, $actorType, $actorId, $offset, $limit);
+	public function searchForObjectsWithFilters(string $search, array $objectIds, array $verbs, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50, array $notBeforeByObjectId = []): array {
+		return $this->commentsManager->searchForObjectsWithFilters($search, 'chat', $objectIds, $verbs, $since, $until, $actorType, $actorId, $offset, $limit, $notBeforeByObjectId);
 	}
 
 	/**

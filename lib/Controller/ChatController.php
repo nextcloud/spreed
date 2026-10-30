@@ -13,6 +13,7 @@ use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\HistoryVisibility;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
@@ -171,6 +172,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 			throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 		}
 
+		if (!$isPrivateReplyFromAnotherConvo && !HistoryVisibility::isVisible($this->participant, $parent)) {
+			throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($isPrivateReplyFromAnotherConvo) {
 			if ($targetParentRoom->isClassified()) {
 				// Messages of classified conversations can not be replied to privately
@@ -212,6 +217,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 			if ($targetParentRoom->getLobbyState() !== Webinary::LOBBY_NONE
 				&& !($targetParentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
+			}
+
+			if (!HistoryVisibility::isVisible($targetParentParticipant, $parent)) {
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}
 
 			$originalParentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
@@ -992,7 +1001,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
 			if ($this->userId !== null && $this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX && $this->talkConfig->isMatrixEnabled()) {
-				$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, 0, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId);
+				$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, 0, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId, $this->participant->getHistorySince());
 				if ($comments !== []) {
 					return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
 				}
@@ -1001,9 +1010,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$this->matrixSyncService->foregroundSync($this->userId, max(0, $timeout - 5));
 				$timeout = max(0, $timeout - ($this->timeFactory->getTime() - $start));
 			}
-			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId);
+			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead, $threadId, $this->participant->getHistorySince());
 		} else {
-			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown, $threadId);
+			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown, $threadId, $this->participant->getHistorySince());
 		}
 
 		return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
@@ -1061,7 +1070,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		$batchSize = $this->appConfig->getAppValueInt(Config::AI_UNREAD_SUMMARY_BATCH_SIZE, 500);
-		$comments = $this->chatManager->waitForNewMessages($this->room, $fromMessageId, $batchSize, 0, $currentUser, true, false);
+		$comments = $this->chatManager->waitForNewMessages($this->room, $fromMessageId, $batchSize, 0, $currentUser, true, false, notBefore: $this->participant->getHistorySince());
 		$this->sharePreloader->preloadShares($comments);
 
 		$messages = [];
@@ -1170,7 +1179,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$this->sharePreloader->preloadShares($comments);
 		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId() ?: (int)$comment->getId(), $comments);
-		$threads = $this->threadService->findByThreadIds($this->room->getId(), $potentialThreadIds);
+		$threads = $this->withoutThreadsBeforeHistory($this->threadService->findByThreadIds($this->room->getId(), $potentialThreadIds));
 
 		$i = 0;
 		$now = $this->timeFactory->getDateTime();
@@ -1346,13 +1355,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 		} else {
 			// Load at least 1 history entry to get the includeLastKnown
 			$historyLimit = max(1, $limit);
-			$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $historyLimit, true, $threadId);
+			$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $historyLimit, true, $threadId, $this->participant->getHistorySince());
 			$commentsHistory = array_reverse($commentsHistory);
 			if ($limit === 0) {
 				// No context requested, only the known message
 				$commentsFuture = [];
 			} else {
-				$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false, threadId: $threadId);
+				$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false, threadId: $threadId, notBefore: $this->participant->getHistorySince());
 			}
 		}
 
@@ -1449,7 +1458,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$message = $this->chatManager->getComment($this->room, (string)$messageId);
+			$message = $this->getVisibleComment((string)$messageId);
 		} catch (NotFoundException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
@@ -1565,7 +1574,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+			$comment = $this->getVisibleComment((string)$messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
@@ -1889,7 +1898,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->chatManager->getComment($this->room, (string)$messageId);
+			$this->getVisibleComment((string)$messageId);
 		} catch (NotFoundException $e) {
 			throw new DoesNotExistException($e->getMessage());
 		}
@@ -2038,7 +2047,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 					$this->room,
 					(int)$message->getId(),
 					[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
-					$message->getVerb() === ChatManager::VERB_MESSAGE || $message->getVerb() === ChatManager::VERB_OBJECT_SHARED
+					$message->getVerb() === ChatManager::VERB_MESSAGE || $message->getVerb() === ChatManager::VERB_OBJECT_SHARED,
+					$this->participant->getHistorySince(),
 				);
 				return $this->setReadMarker((int)$previousMessage->getId());
 			} catch (NotFoundException) {
@@ -2051,6 +2061,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 					(int)$message->getId(),
 					1,
 					false,
+					notBefore: $this->participant->getHistorySince(),
 				);
 
 				if (empty($messages)) {
@@ -2131,7 +2142,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$messageIdsByType = [];
 		// Get all attachments
 		foreach ($objectTypes as $objectType) {
-			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
+			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit, $this->participant->getHistorySince());
 			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): string => (string)$attachment->getMessageId(), $attachments);
 		}
 
@@ -2203,7 +2214,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$offset = max(0, $lastKnownMessageId);
 		$limit = min(200, max(1, $limit));
 
-		$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, $offset, $limit);
+		$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, $offset, $limit, $this->participant->getHistorySince());
 		$messageIds = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 
 		$messages = $this->getMessagesForRoom($messageIds);
@@ -2253,7 +2264,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+			$comment = $this->getVisibleComment((string)$messageId);
 		} catch (NotFoundException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
@@ -2303,7 +2314,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+			$comment = $this->getVisibleComment((string)$messageId);
 		} catch (NotFoundException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
@@ -2341,13 +2352,45 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * A message of the conversation the participant may see
+	 *
+	 * @throws NotFoundException
+	 */
+	protected function getVisibleComment(string $messageId): IComment {
+		$comment = $this->chatManager->getComment($this->room, $messageId);
+		if (!HistoryVisibility::isVisible($this->participant, $comment)) {
+			throw new NotFoundException('Message is from before the history the participant may see');
+		}
+		return $comment;
+	}
+
+	/**
+	 * Drops threads whose first message is from before the history the
+	 * participant may see, so their title is not shown on later replies
+	 *
+	 * @param array<int, Thread> $threads
+	 * @return array<int, Thread>
+	 */
+	protected function withoutThreadsBeforeHistory(array $threads): array {
+		if ($threads === [] || $this->participant->getHistorySince() === null) {
+			return $threads;
+		}
+		$roots = $this->chatManager->getMessagesById(array_keys($threads));
+		return array_filter(
+			$threads,
+			fn (int $threadId): bool => isset($roots[$threadId]) && HistoryVisibility::isVisible($this->participant, $roots[$threadId]),
+			ARRAY_FILTER_USE_KEY,
+		);
+	}
+
+	/**
 	 * @return array<string, TalkChatMessage>
 	 */
 	protected function getMessagesForRoom(array $messageIds): array {
 		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
 		$this->sharePreloader->preloadShares($comments);
 		$potentialThreadIds = array_map(static fn (IComment $comment) => (int)$comment->getTopmostParentId() ?: (int)$comment->getId(), $comments);
-		$threads = $this->threadService->findByThreadIds($this->room->getId(), $potentialThreadIds);
+		$threads = $this->withoutThreadsBeforeHistory($this->threadService->findByThreadIds($this->room->getId(), $potentialThreadIds));
 
 		$messages = [];
 		$comments = $this->chatManager->filterCommentsWithNonExistingFiles($comments);
@@ -2672,7 +2715,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$replyToComment = null;
 		if ($replyToId !== null) {
 			try {
-				$replyToComment = $this->chatManager->getComment($this->room, (string)$replyToId);
+				$replyToComment = $this->getVisibleComment((string)$replyToId);
 			} catch (\Exception) {
 				// Invalid replyTo — ignore.
 			}

@@ -64,6 +64,7 @@ class CommentsManager extends Manager {
 	 * @param int $limit optional, number of maximum comments to be returned. if
 	 *                   set to 0, all comments are returned.
 	 * @param bool $includeLastKnown
+	 * @param ?\DateTimeInterface $notBefore only comments created at or after this time
 	 * @return list<IComment>
 	 */
 	#[\Override]
@@ -75,6 +76,7 @@ class CommentsManager extends Manager {
 		int $limit = 30,
 		bool $includeLastKnown = false,
 		string $topmostParentId = '',
+		?\DateTimeInterface $notBefore = null,
 	): array {
 		return $this->getCommentsWithVerbForObjectSinceComment(
 			$objectType,
@@ -85,6 +87,7 @@ class CommentsManager extends Manager {
 			$limit,
 			$includeLastKnown,
 			$topmostParentId,
+			$notBefore,
 		);
 	}
 
@@ -99,6 +102,7 @@ class CommentsManager extends Manager {
 	 * @param int $limit optional, number of maximum comments to be returned. if
 	 *                   set to 0, all comments are returned.
 	 * @param bool $includeLastKnown
+	 * @param ?\DateTimeInterface $notBefore only comments created at or after this time
 	 * @return list<IComment>
 	 */
 	#[\Override]
@@ -111,6 +115,7 @@ class CommentsManager extends Manager {
 		int $limit = 30,
 		bool $includeLastKnown = false,
 		string $topmostParentId = '',
+		?\DateTimeInterface $notBefore = null,
 	): array {
 		$comments = [];
 
@@ -134,6 +139,14 @@ class CommentsManager extends Manager {
 			$query->andWhere($query->expr()->orX(
 				$query->expr()->eq('id', $query->createNamedParameter($topmostParentId)),
 				$query->expr()->eq('topmost_parent_id', $query->createNamedParameter($topmostParentId)),
+			));
+		}
+
+		if ($notBefore !== null) {
+			$query->andWhere($query->expr()->gte(
+				'creation_timestamp',
+				$query->createNamedParameter(\DateTime::createFromInterface($notBefore), IQueryBuilder::PARAM_DATETIME_MUTABLE),
+				IQueryBuilder::PARAM_DATETIME_MUTABLE
 			));
 		}
 
@@ -255,9 +268,10 @@ class CommentsManager extends Manager {
 	 * @param string $objectType Limit the search by object type
 	 * @param string[] $objectIds Limit the search by object ids
 	 * @param string[] $verbs Limit the verb of the comment
+	 * @param array<string, \DateTimeInterface> $notBeforeByObjectId Comments of these objects only from the given time on
 	 * @return list<IComment>
 	 */
-	public function searchForObjectsWithFilters(string $search, string $objectType, array $objectIds, array $verbs, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50): array {
+	public function searchForObjectsWithFilters(string $search, string $objectType, array $objectIds, array $verbs, ?\DateTimeImmutable $since, ?\DateTimeImmutable $until, ?string $actorType, ?string $actorId, int $offset, int $limit = 50, array $notBeforeByObjectId = []): array {
 		$query = $this->dbConn->getQueryBuilder();
 
 		$query->select('*')
@@ -288,7 +302,24 @@ class CommentsManager extends Manager {
 		if ($objectType !== '') {
 			$query->andWhere($query->expr()->eq('object_type', $query->createNamedParameter($objectType)));
 		}
-		if (!empty($objectIds)) {
+		if (!empty($notBeforeByObjectId) && !empty($objectIds)) {
+			$objectIds = array_map(strval(...), $objectIds);
+			$objectConditions = [];
+			$unrestricted = array_values(array_diff($objectIds, array_map(strval(...), array_keys($notBeforeByObjectId))));
+			if (!empty($unrestricted)) {
+				$objectConditions[] = $query->expr()->in('object_id', $query->createNamedParameter($unrestricted, IQueryBuilder::PARAM_STR_ARRAY));
+			}
+			foreach ($notBeforeByObjectId as $objectId => $notBefore) {
+				if (!in_array((string)$objectId, $objectIds, true)) {
+					continue;
+				}
+				$objectConditions[] = $query->expr()->andX(
+					$query->expr()->eq('object_id', $query->createNamedParameter((string)$objectId)),
+					$query->expr()->gte('creation_timestamp', $query->createNamedParameter(\DateTime::createFromInterface($notBefore), IQueryBuilder::PARAM_DATETIME_MUTABLE), IQueryBuilder::PARAM_DATETIME_MUTABLE),
+				);
+			}
+			$query->andWhere($query->expr()->orX(...$objectConditions));
+		} elseif (!empty($objectIds)) {
 			$query->andWhere($query->expr()->in('object_id', $query->createNamedParameter($objectIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		}
 		if (!empty($verbs)) {
@@ -309,4 +340,5 @@ class CommentsManager extends Manager {
 
 		return $comments;
 	}
+
 }
