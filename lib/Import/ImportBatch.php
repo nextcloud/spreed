@@ -30,4 +30,6 @@ final class ImportBatch {
 	public array $threadRoots = [];
 	/** @var array<int, ImportRef> share refs by file ID */
 	public array $shares = [];
+	/** @var list<ImportRef> message refs to insert at the end of the batch */
+	public array $newRefs = [];
 }

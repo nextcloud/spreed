@@ -15,6 +15,9 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {
+	/** Insert of imported comments, built once and reused for every comment */
+	private ?IQueryBuilder $importInsert = null;
+
 	public function removeFromCache(int|string $id): void {
 		$this->uncache((string)$id);
 	}
@@ -348,24 +351,30 @@ class CommentsManager extends Manager {
 	 * updates that once per batch ({@see self::updateChildrenInformationOf()}).
 	 */
 	public function insertImported(IComment $comment): void {
-		$query = $this->dbConn->getQueryBuilder();
-		$query->insert('comments')
-			->values([
-				'parent_id' => $query->createNamedParameter($comment->getParentId()),
-				'topmost_parent_id' => $query->createNamedParameter($comment->getTopmostParentId()),
-				'children_count' => $query->createNamedParameter($comment->getChildrenCount(), IQueryBuilder::PARAM_INT),
-				'actor_type' => $query->createNamedParameter($comment->getActorType()),
-				'actor_id' => $query->createNamedParameter($comment->getActorId()),
-				'message' => $query->createNamedParameter($comment->getMessage()),
-				'verb' => $query->createNamedParameter($comment->getVerb()),
-				'creation_timestamp' => $query->createNamedParameter($comment->getCreationDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE),
-				'latest_child_timestamp' => $query->createNamedParameter($comment->getLatestChildDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE),
-				'object_type' => $query->createNamedParameter($comment->getObjectType()),
-				'object_id' => $query->createNamedParameter($comment->getObjectId()),
-				'expire_date' => $query->createNamedParameter($comment->getExpireDate(), IQueryBuilder::PARAM_DATETIME_MUTABLE),
-				'reference_id' => $query->createNamedParameter($comment->getReferenceId()),
-				'meta_data' => $query->createNamedParameter(json_encode($comment->getMetaData(), JSON_THROW_ON_ERROR)),
-			]);
+		if ($this->importInsert === null) {
+			$query = $this->dbConn->getQueryBuilder();
+			$values = [];
+			foreach (['parent_id', 'topmost_parent_id', 'children_count', 'actor_type', 'actor_id', 'message', 'verb', 'creation_timestamp', 'latest_child_timestamp', 'object_type', 'object_id', 'expire_date', 'reference_id', 'meta_data'] as $column) {
+				$values[$column] = $query->createParameter($column);
+			}
+			$this->importInsert = $query->insert('comments')->values($values);
+		}
+
+		$query = $this->importInsert;
+		$query->setParameter('parent_id', $comment->getParentId());
+		$query->setParameter('topmost_parent_id', $comment->getTopmostParentId());
+		$query->setParameter('children_count', $comment->getChildrenCount(), IQueryBuilder::PARAM_INT);
+		$query->setParameter('actor_type', $comment->getActorType());
+		$query->setParameter('actor_id', $comment->getActorId());
+		$query->setParameter('message', $comment->getMessage());
+		$query->setParameter('verb', $comment->getVerb());
+		$query->setParameter('creation_timestamp', $comment->getCreationDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE);
+		$query->setParameter('latest_child_timestamp', $comment->getLatestChildDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE);
+		$query->setParameter('object_type', $comment->getObjectType());
+		$query->setParameter('object_id', $comment->getObjectId());
+		$query->setParameter('expire_date', $comment->getExpireDate(), IQueryBuilder::PARAM_DATETIME_MUTABLE);
+		$query->setParameter('reference_id', $comment->getReferenceId());
+		$query->setParameter('meta_data', json_encode($comment->getMetaData(), JSON_THROW_ON_ERROR));
 		$query->executeStatement();
 		$comment->setId((string)$query->getLastInsertId());
 	}

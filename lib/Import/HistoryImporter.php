@@ -396,6 +396,7 @@ class HistoryImporter implements IHistoryImporter {
 				$results[$i] = $this->importMessage($app, $room, $message, $nodes, $refs, $batch);
 			}
 
+			$this->refMapper->insertMany($batch->newRefs);
 			$this->commentsManager->updateChildrenInformationOf(array_keys($batch->parents));
 			$this->commentsManager->updateReactionSummary(array_keys($batch->reactionParents));
 			$this->threadService->recountThreads($room, array_keys($batch->threads));
@@ -601,7 +602,7 @@ class HistoryImporter implements IHistoryImporter {
 		$ref->setState(ImportRef::STATE_ACTIVE);
 		$ref->setEncodedDetails($parts, $reactions);
 		if ($existing === null) {
-			$this->refMapper->insert($ref);
+			$batch->newRefs[] = $ref;
 		} else {
 			$this->refMapper->update($ref);
 		}

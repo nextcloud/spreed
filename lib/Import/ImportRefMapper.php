@@ -22,6 +22,45 @@ class ImportRefMapper extends QBMapper {
 	}
 
 	/**
+	 * Inserts new refs with one prepared insert, much cheaper than
+	 * {@see self::insert()} per ref for the messages of an import
+	 *
+	 * @param list<ImportRef> $refs
+	 */
+	public function insertMany(array $refs): void {
+		if ($refs === []) {
+			return;
+		}
+
+		$columns = ['id', 'app', 'kind', 'ref_hash', 'ref', 'room_id', 'object_id', 'parent_id', 'sha256', 'state', 'display_name', 'owner_id', 'details'];
+		$query = $this->db->getQueryBuilder();
+		$values = [];
+		foreach ($columns as $column) {
+			$values[$column] = $query->createParameter($column);
+		}
+		$query->insert($this->getTableName())->values($values);
+
+		foreach ($refs as $ref) {
+			$ref->generateId();
+			$query->setParameter('id', $ref->getId(), IQueryBuilder::PARAM_INT);
+			$query->setParameter('app', $ref->getApp());
+			$query->setParameter('kind', $ref->getKind());
+			$query->setParameter('ref_hash', $ref->getRefHash());
+			$query->setParameter('ref', $ref->getRef());
+			$query->setParameter('room_id', $ref->getRoomId(), IQueryBuilder::PARAM_INT);
+			$query->setParameter('object_id', $ref->getObjectId(), IQueryBuilder::PARAM_INT);
+			$query->setParameter('parent_id', $ref->getParentId(), IQueryBuilder::PARAM_INT);
+			$query->setParameter('sha256', $ref->getSha256());
+			$query->setParameter('state', $ref->getState(), IQueryBuilder::PARAM_INT);
+			$query->setParameter('display_name', $ref->getDisplayName());
+			$query->setParameter('owner_id', $ref->getOwnerId());
+			$query->setParameter('details', $ref->getDetails());
+			$query->executeStatement();
+			$ref->resetUpdatedFields();
+		}
+	}
+
+	/**
 	 * @param ImportRef::KIND_* $kind
 	 * @throws DoesNotExistException
 	 */
