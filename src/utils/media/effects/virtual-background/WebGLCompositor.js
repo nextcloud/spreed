@@ -141,6 +141,24 @@ export default class WebGLCompositor {
 			outColor = vec4(vec3(0.0), newVal);
 		}`
 
+		// --- Temporal mask smoothing: follows movement quickly, damps flicker ---
+		const smoothFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_newMask;
+		uniform sampler2D u_previousMask;
+		uniform float u_reset;
+
+		in vec2 v_texCoord;
+		out vec4 outColor;
+
+		void main() {
+			float newVal = texture(u_newMask, v_texCoord).r;
+			float previousVal = texture(u_previousMask, v_texCoord).r;
+			float k = max(u_reset, clamp(abs(newVal - previousVal) * 4.0, 0.3, 1.0));
+			outColor = vec4(mix(previousVal, newVal, k), 0.0, 0.0, 1.0);
+		}`
+
 		// --- Gaussian Blur Fragment Shader ---
 		const blurFS = `#version 300 es
 		precision highp float;
@@ -242,6 +260,7 @@ export default class WebGLCompositor {
 
 		// --- Link Programs ---
 		this.progBilateral = this._linkProgram(gl, vs, bilateralFS)
+		this.progSmooth = this._linkProgram(gl, vs, smoothFS)
 		this.progBlur = this._linkProgram(gl, vs, blurFS)
 		this.progBlend = this._linkProgram(gl, vsOutput, blendFS)
 		this.progHUD = this._linkProgram(gl, hudVS, hudFS)
@@ -270,6 +289,7 @@ export default class WebGLCompositor {
 		this.texFrame = this._makeTex()
 		this.texMask = this._makeTex()
 		this.texMaskFiltered = this._makeTex()
+		this.texMaskSmoothed = [this._makeTex(), this._makeTex()]
 		this.texBg = this._makeTex()
 		this.texBlurred1 = this._makeTex()
 		this.texBlurred2 = this._makeTex()
@@ -300,6 +320,12 @@ export default class WebGLCompositor {
 		this._maskFilteredH = 0
 		this._blurW = 0
 		this._blurH = 0
+
+		// Ping-pong state of texMaskSmoothed; size 0 resets the smoothing.
+		this._smoothIndex = 0
+		this._smoothW = 0
+		this._smoothH = 0
+		this._smoothedMask = null
 	}
 
 	/**
@@ -515,7 +541,51 @@ export default class WebGLCompositor {
 		gl.activeTexture(gl.TEXTURE0)
 		gl.bindTexture(gl.TEXTURE_2D, this.texFrame)
 		gl.activeTexture(gl.TEXTURE1)
+		gl.bindTexture(gl.TEXTURE_2D, this.texMaskSmoothed[this._smoothIndex])
+
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
+	 * Smooth the new mask with the previous one over time.
+	 *
+	 * @private
+	 * @param {number} width - Output width.
+	 * @param {number} height - Output height.
+	 * @return {void}
+	 */
+	_applyTemporalSmoothing(width, height) {
+		const gl = this.gl
+
+		// The first mask after a start or a resize is taken as is.
+		const reset = this._smoothW !== width || this._smoothH !== height
+		if (reset) {
+			for (const tex of this.texMaskSmoothed) {
+				gl.bindTexture(gl.TEXTURE_2D, tex)
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			}
+			this._smoothW = width
+			this._smoothH = height
+		}
+
+		const previous = this.texMaskSmoothed[this._smoothIndex]
+		this._smoothIndex = 1 - this._smoothIndex
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboMask)
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texMaskSmoothed[this._smoothIndex], 0)
+
+		gl.viewport(0, 0, width, height)
+		gl.useProgram(this.progSmooth)
+		this._setupVertexAttributes(this.progSmooth)
+
+		gl.uniform1i(gl.getUniformLocation(this.progSmooth, 'u_newMask'), 0)
+		gl.uniform1i(gl.getUniformLocation(this.progSmooth, 'u_previousMask'), 1)
+		gl.uniform1f(gl.getUniformLocation(this.progSmooth, 'u_reset'), reset ? 1 : 0)
+
+		gl.activeTexture(gl.TEXTURE0)
 		gl.bindTexture(gl.TEXTURE_2D, this.texMask)
+		gl.activeTexture(gl.TEXTURE1)
+		gl.bindTexture(gl.TEXTURE_2D, previous)
 
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
 	}
@@ -767,6 +837,11 @@ export default class WebGLCompositor {
 
 		// Apply bilateral filter to mask
 		if (mask) {
+			// Redraws with the same mask reuse the smoothed one.
+			if (mask !== this._smoothedMask) {
+				this._applyTemporalSmoothing(outW, outH)
+				this._smoothedMask = mask
+			}
 			this._applyBilateralFilter(outW, outH)
 		}
 
@@ -826,6 +901,7 @@ export default class WebGLCompositor {
 		gl.deleteTexture(this.texFrame)
 		gl.deleteTexture(this.texMask)
 		gl.deleteTexture(this.texMaskFiltered)
+		this.texMaskSmoothed.forEach((tex) => gl.deleteTexture(tex))
 		gl.deleteTexture(this.texBg)
 		gl.deleteTexture(this.texBlurred1)
 		gl.deleteTexture(this.texBlurred2)
@@ -836,6 +912,7 @@ export default class WebGLCompositor {
 
 		// Delete programs
 		gl.deleteProgram(this.progBilateral)
+		gl.deleteProgram(this.progSmooth)
 		gl.deleteProgram(this.progBlur)
 		gl.deleteProgram(this.progBlend)
 		gl.deleteProgram(this.progHUD)
@@ -849,10 +926,11 @@ export default class WebGLCompositor {
 		gl.deleteVertexArray(this.vertexArray)
 
 		// Clear references
-		this.texFrame = this.texMask = this.texMaskFiltered = null
+		this.texFrame = this.texMask = this.texMaskFiltered = this.texMaskSmoothed = null
 		this.texBg = this.texBlurred1 = this.texBlurred2 = null
 		this.positionBuffer = this.texCoordBuffer = this.blitBuf = null
-		this.progBilateral = this.progBlur = this.progBlend = this.progBlit = null
+		this.progBilateral = this.progSmooth = this.progBlur = this.progBlend = this.progBlit = null
+		this._smoothedMask = null
 		this.fboMask = this.fboBlur1 = this.fboBlur2 = null
 		this.vertexArray = null
 	}

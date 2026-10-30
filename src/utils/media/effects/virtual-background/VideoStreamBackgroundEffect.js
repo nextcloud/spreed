@@ -255,8 +255,18 @@ export default class VideoStreamBackgroundEffect {
 				this._maskWidth = maskWidth
 				this._maskHeight = maskHeight
 			}
+			// The first mask after a start or a resize is taken as is.
+			if (this._previousMask?.length !== maskData.length) {
+				this._previousMask = new Float32Array(maskData.length)
+				this._previousMask.set(maskData)
+			}
+			const previousMask = this._previousMask
 			for (let i = 0; i < maskData.length; i++) {
-				const v = Math.min(1.0, Math.max(0.0, maskData[i])) // clamp
+				const newVal = Math.min(1.0, Math.max(0.0, maskData[i])) // clamp
+				// Temporal smoothing: follows movement quickly, damps flicker.
+				const k = Math.min(1.0, Math.max(0.3, Math.abs(newVal - previousMask[i]) * 4))
+				const v = previousMask[i] + (newVal - previousMask[i]) * k
+				previousMask[i] = v
 				const gray = Math.round(v * 255)
 				const idx = i * 4
 				this._tempImageData.data[idx] = gray
@@ -790,6 +800,7 @@ export default class VideoStreamBackgroundEffect {
 		}
 
 		this._segmentationMask = null
+		this._previousMask = null
 		this._segmentationMaskCanvas = null
 		this._segmentationMaskCtx = null
 		this._tempCanvas = null
