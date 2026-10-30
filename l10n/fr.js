@@ -1497,7 +1497,7 @@ OC.L10N.register(
     "Decline invitation" : "Décliner l'invitation",
     "Accept invitation" : "Accepter l'invitation",
     "No pending invitations" : "Aucune invitation en attente",
-    "Home" : "Dossier personnel",
+    "Home" : "Accueil",
     "Unread" : "Non lu",
     "Mentions" : "Mentions",
     "Meetings" : "Réunions",

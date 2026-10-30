@@ -2158,6 +2158,7 @@ OC.L10N.register(
     "Open Calendar" : "Åbn kalender",
     "Remove participant {name}" : "Fjern deltager {name}",
     "Would you like to delete this conversation?" : "Vil du slette denne samtale?",
+    "_This conversation will be automatically deleted for everyone after %n hour of inactivity._::_This conversation will be automatically deleted for everyone after %n hours of inactivity._" : ["Denne samtale slettes automatisk for alle efter %n times inaktivitet.","Denne samtale slettes automatisk for alle efter %n timers inaktivitet."],
     "_This conversation will be automatically deleted for everyone after %n minute of inactivity._::_This conversation will be automatically deleted for everyone after %n minutes of inactivity._" : ["Denne samtale slettes automatisk for alle efter %n minuts inaktivitet.","Denne samtale slettes automatisk for alle efter %n minutters inaktivitet."],
     "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["Denne samtale slettes automatisk for alle efter %n dags inaktivitet.","Denne samtale slettes automatisk for alle efter %n dages inaktivitet."],
     "Are you sure you want to delete this conversation?" : "Er du sikker på, at du vil slette denne samtale?",
