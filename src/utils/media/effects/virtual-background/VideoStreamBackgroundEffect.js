@@ -58,7 +58,7 @@ export async function getWasmFileset() {
  */
 export function getModelAssetPath() {
 	return new URL(
-		'./vendor/models/selfie_segmenter.tflite',
+		'./vendor/models/selfie_segmenter_landscape.tflite',
 		import.meta.url,
 	).pathname
 }
