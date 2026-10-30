@@ -124,6 +124,7 @@ describe('formatDateTime', () => {
 
 describe('formatMessageExpiration', () => {
 	it.each([
+		[0, 'Off'],
 		[28800, '8 hours'],
 		[2419200, '4 weeks'],
 		[31536000, '1 year'],

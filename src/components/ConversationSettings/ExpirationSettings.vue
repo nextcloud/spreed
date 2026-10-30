@@ -17,9 +17,10 @@
 				id="moderation_settings_message_expiration"
 				v-model="selectedOption"
 				:inputLabel="t('spreed', 'Set message expiration')"
-				:options="expirationOptions"
+				:options="options"
 				label="label"
-				:clearable="false" />
+				:clearable="false"
+				@search="search = $event" />
 		</template>
 
 		<template v-else>
@@ -33,9 +34,12 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { formatMessageExpiration, messageExpirationOptions } from '../../utils/formattedTime.ts'
+
+// Signed 32-bit INTEGER column in the DB
+const MAX_EXPIRATION_IN_SECONDS = 2147483647
 
 export default {
 	name: 'ExpirationSettings',
@@ -56,31 +60,40 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			search: '',
+		}
+	},
+
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		expirationOptions() {
-			const expirationOptions = [...messageExpirationOptions]
-
-			if (!expirationOptions.some((option) => option.id === this.conversation.messageExpiration)) {
-				expirationOptions.push({
-					id: this.conversation.messageExpiration,
-					label: t('spreed', 'Custom: {expirationTime}', {
-						expirationTime: formatMessageExpiration(this.conversation.messageExpiration),
-					}),
-				})
+		options() {
+			const value = Number(this.search)
+			if (!Number.isInteger(value) || value <= 0) {
+				return messageExpirationOptions
 			}
 
-			return expirationOptions
+			return [
+				{ id: value * 60, label: n('spreed', '%n minute', '%n minutes', value) },
+				{ id: value * 3600, label: n('spreed', '%n hour', '%n hours', value) },
+				{ id: value * 86400, label: n('spreed', '%n day', '%n days', value) },
+				{ id: value * 604800, label: n('spreed', '%n week', '%n weeks', value) },
+				{ id: value * 31536000, label: n('spreed', '%n year', '%n years', value) },
+			].filter((option) => option.id <= MAX_EXPIRATION_IN_SECONDS)
 		},
 
 		selectedOption: {
 			get() {
-				return this.expirationOptions.find((option) => {
+				return messageExpirationOptions.find((option) => {
 					return option.id === this.conversation.messageExpiration
-				}) ?? this.expirationOptions.at(-1)
+				}) ?? {
+					id: this.conversation.messageExpiration,
+					label: formatMessageExpiration(this.conversation.messageExpiration),
+				}
 			},
 
 			set(value) {
