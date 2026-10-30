@@ -359,7 +359,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function joinFederatedCall(string $sessionId, ?int $flags = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
+	public function joinFederatedCall(#[\SensitiveParameter] string $sessionId, ?int $flags = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);
@@ -561,7 +561,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function updateFederatedCallFlags(string $sessionId, int $flags): DataResponse {
+	public function updateFederatedCallFlags(#[\SensitiveParameter] string $sessionId, int $flags): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);
@@ -649,7 +649,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function leaveFederatedCall(string $sessionId): DataResponse {
+	public function leaveFederatedCall(#[\SensitiveParameter] string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $this->room->getToken(), 'action' => 'talkRoomToken']);

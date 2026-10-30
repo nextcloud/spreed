@@ -84,7 +84,7 @@ final class Backup {
 	 * @return array<string, mixed> Content like a forwarded room key, without room and session id
 	 * @throws CryptoException
 	 */
-	public static function decryptSession(#[SensitiveParameter] string $backupKey, array $sessionData): array {
+	public static function decryptSession(#[SensitiveParameter] string $backupKey, #[SensitiveParameter] array $sessionData): array {
 		if (!is_string($sessionData['ephemeral'] ?? null) || !is_string($sessionData['ciphertext'] ?? null) || !is_string($sessionData['mac'] ?? null)) {
 			throw new CryptoException('Incomplete backup session');
 		}

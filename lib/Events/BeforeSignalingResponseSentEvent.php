@@ -30,7 +30,7 @@ class BeforeSignalingResponseSentEvent extends ARoomEvent {
 		return $this->action;
 	}
 
-	public function setSession(array $session): void {
+	public function setSession(#[\SensitiveParameter] array $session): void {
 		$this->session = $session;
 	}
 

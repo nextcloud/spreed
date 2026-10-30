@@ -43,7 +43,7 @@ class TalkSession {
 		return $this->getValue('spreed-session', $token);
 	}
 
-	public function setSessionForRoom(string $token, string $sessionId): void {
+	public function setSessionForRoom(string $token, #[SensitiveParameter] string $sessionId): void {
 		$this->setValue('spreed-session', $token, $sessionId);
 	}
 
@@ -79,7 +79,7 @@ class TalkSession {
 		return $this->getValue('spreed-file-share-token', $roomToken);
 	}
 
-	public function setFileShareTokenForRoom(string $roomToken, string $shareToken): void {
+	public function setFileShareTokenForRoom(string $roomToken, #[SensitiveParameter] string $shareToken): void {
 		$this->setValue('spreed-file-share-token', $roomToken, $shareToken);
 	}
 

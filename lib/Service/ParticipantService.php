@@ -601,7 +601,7 @@ class ParticipantService {
 	/**
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomAsFederatedUser(Room $room, string $actorType, string $actorId, string $sessionId): Participant {
+	public function joinRoomAsFederatedUser(Room $room, string $actorType, string $actorId, #[SensitiveParameter] string $sessionId): Participant {
 		$event = new BeforeFederatedUserJoinedRoomEvent($room, $actorId);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -2402,7 +2402,7 @@ class ParticipantService {
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
-	public function getParticipant(Room $room, ?string $userId, $sessionId = null): Participant {
+	public function getParticipant(Room $room, ?string $userId, #[SensitiveParameter] $sessionId = null): Participant {
 		if (!is_string($userId) || $userId === '') {
 			throw new ParticipantNotFoundException('Not a user');
 		}
@@ -2489,7 +2489,7 @@ class ParticipantService {
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
-	public function getParticipantBySession(Room $room, ?string $sessionId): Participant {
+	public function getParticipantBySession(Room $room, #[SensitiveParameter] ?string $sessionId): Participant {
 		if (!is_string($sessionId) || $sessionId === '' || $sessionId === '0') {
 			throw new ParticipantNotFoundException('Not a user');
 		}

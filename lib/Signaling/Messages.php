@@ -29,7 +29,7 @@ class Messages {
 	/**
 	 * @param string[] $sessionIds
 	 */
-	public function deleteMessages(array $sessionIds): void {
+	public function deleteMessages(#[\SensitiveParameter] array $sessionIds): void {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_internalsignaling')
 			->where($delete->expr()->in('recipient', $delete->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
@@ -45,7 +45,7 @@ class Messages {
 	 * @param string $recipientSessionId
 	 * @param string $message
 	 */
-	public function addMessage(string $senderSessionId, string $recipientSessionId, string $message): void {
+	public function addMessage(#[\SensitiveParameter] string $senderSessionId, #[\SensitiveParameter] string $recipientSessionId, string $message): void {
 		$insert = $this->db->getQueryBuilder();
 		$insert->insert('talk_internalsignaling')
 			->values(
@@ -99,7 +99,7 @@ class Messages {
 	 * @param string $sessionId
 	 * @return list<array{type: string, data: string}>
 	 */
-	public function getAndDeleteMessages(string $sessionId): array {
+	public function getAndDeleteMessages(#[\SensitiveParameter] string $sessionId): array {
 		$messages = [];
 		$time = $this->timeFactory->getTime() - 1;
 
