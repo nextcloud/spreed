@@ -282,19 +282,25 @@ class HistoryImporter implements IHistoryImporter {
 					continue;
 				}
 
+				$lastRead = null;
 				if ($participant->lastRead !== null) {
 					$lastRead = $this->getLastMessageIdUntil($room, $participant->lastRead);
-				} else {
+				} elseif ($attendee === null) {
 					$newestMessageId ??= $this->getNewestMessageId($room);
 					$lastRead = $newestMessageId;
 				}
+				if ($participant->historySince !== null) {
+					// Messages the person may not see never count as unread
+					$beforeHistory = $this->getLastMessageIdUntil($room, $participant->historySince->modify('-1 second'));
+					$lastRead = max($lastRead ?? $attendee?->getLastReadMessage() ?? 0, $beforeHistory);
+				}
 
 				if ($attendee === null) {
-					$attendee = $this->addAttendee($app, $room, $participant, $lastRead);
+					$attendee = $this->addAttendee($app, $room, $participant, (int)$lastRead);
 					$changes['added']++;
 					$accessChanged[$userId] = true;
 				} else {
-					if ($this->updateAttendee($room, $attendee, $participant)) {
+					if ($this->updateAttendee($room, $attendee, $participant, $lastRead)) {
 						$changes['updated']++;
 						$accessChanged[$userId] = true;
 					}
@@ -1416,7 +1422,10 @@ class HistoryImporter implements IHistoryImporter {
 	/**
 	 * @return bool whether something changed
 	 */
-	private function updateAttendee(Room $room, Attendee $attendee, ImportParticipant $participant): bool {
+	/**
+	 * @param ?int $lastReadMessage the new read marker, null to keep it
+	 */
+	private function updateAttendee(Room $room, Attendee $attendee, ImportParticipant $participant, ?int $lastReadMessage): bool {
 		$participantType = $room->getType() === Room::TYPE_ONE_TO_ONE ? Participant::OWNER : $participant->participantType;
 		$attendee->setParticipantType($participantType);
 		$attendee->setHistorySince($participant->historySince?->getTimestamp() ?? 0);
@@ -1431,8 +1440,8 @@ class HistoryImporter implements IHistoryImporter {
 		} elseif ($participant->muted === false && $attendee->getNotificationLevel() === Participant::NOTIFY_NEVER) {
 			$attendee->setNotificationLevel(Participant::NOTIFY_DEFAULT);
 		}
-		if ($participant->lastRead !== null) {
-			$attendee->setLastReadMessage($this->getLastMessageIdUntil($room, $participant->lastRead));
+		if ($lastReadMessage !== null) {
+			$attendee->setLastReadMessage($lastReadMessage);
 		}
 
 		if ($attendee->getUpdatedFields() === []) {

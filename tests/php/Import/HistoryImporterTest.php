@@ -531,6 +531,25 @@ class HistoryImporterTest extends ImportTestCase {
 		$this->assertTrue($bobAttendee->isArchived(), 'unset state keeps the current value');
 	}
 
+	public function testHiddenHistoryIsNeverUnread(): void {
+		$service = $this->createUser('service');
+		$bob = $this->createUser('bob');
+		$room = $this->createGroupRoom($service);
+		$written = $this->importer->importMessages(self::APP, $room, [
+			$this->text('m1', $this->user($service), '2024-01-01T09:00:00Z', 'One'),
+			$this->text('m2', $this->user($service), '2024-01-02T09:00:00Z', 'Two'),
+			$this->text('m3', $this->user($service), '2024-01-05T09:00:00Z', 'Three'),
+		]);
+
+		$this->importer->setParticipants(self::APP, $room, [
+			new ImportParticipant($bob, historySince: new \DateTimeImmutable('2024-01-03T00:00:00Z'), lastRead: new \DateTimeImmutable('2024-01-01T12:00:00Z')),
+		]);
+
+		$attendee = $this->participant($room, $bob)->getAttendee();
+		$this->assertSame($written[1]->id, $attendee->getLastReadMessage());
+		$this->assertSame(1, Server::get(ChatManager::class)->getUnreadCount($this->freshRoom($room), $attendee->getLastReadMessage()));
+	}
+
 	public function testFinishAdvancesReadMarkersOverLaterImports(): void {
 		$service = $this->createUser('service');
 		$alice = $this->createUser('alice');
