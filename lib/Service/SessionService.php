@@ -41,7 +41,7 @@ class SessionService {
 	 * @param string[] $sessionIds
 	 * @param int $lastPing
 	 */
-	public function updateMultipleLastPings(array $sessionIds, int $lastPing): void {
+	public function updateMultipleLastPings(#[\SensitiveParameter] array $sessionIds, int $lastPing): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_sessions')
 			->set('last_ping', $update->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT))
@@ -88,7 +88,7 @@ class SessionService {
 	 * @return Session
 	 * @throws Exception
 	 */
-	public function createSessionForAttendee(Attendee $attendee, string $forceSessionId = ''): Session {
+	public function createSessionForAttendee(Attendee $attendee, #[\SensitiveParameter] string $forceSessionId = ''): Session {
 		$session = new Session();
 		$session->setAttendeeId($attendee->getId());
 		$session->setInCall(Participant::FLAG_DISCONNECTED);
@@ -128,7 +128,7 @@ class SessionService {
 	 * If the resulting session id is longer than the column length it is
 	 * trimmed at the end as needed.
 	 */
-	public function extendSessionIdWithCloudId(string $sessionId, string $invitedCloudId): string {
+	public function extendSessionIdWithCloudId(#[\SensitiveParameter] string $sessionId, string $invitedCloudId): string {
 		// Session id column length is 512, while generated session ids are 255
 		// characters (+ 65 tabId if provided).
 		$sessionId .= '#' . $invitedCloudId;
@@ -140,7 +140,7 @@ class SessionService {
 	 * we add browser/client random generated tab ID to it, so leave the room can revoke the single
 	 * talk session afterwards.
 	 */
-	public function extendSessionIdWithTabId(string $sessionId): string {
+	public function extendSessionIdWithTabId(#[\SensitiveParameter] string $sessionId): string {
 		$tabId = $this->request->getHeader(TalkSession::HEADER_TAB_ID);
 		if (preg_match(TalkSession::HEADER_TAB_ID_REGEX, $tabId)) {
 			return $sessionId . TalkSession::TAB_ID_SEPARATOR . $tabId;

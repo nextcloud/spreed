@@ -25,6 +25,7 @@ abstract class AAttendeeRemovedEvent extends ARoomEvent {
 		Room $room,
 		protected Attendee $attendee,
 		protected string $reason,
+		#[\SensitiveParameter]
 		protected array $sessions,
 	) {
 		parent::__construct($room);

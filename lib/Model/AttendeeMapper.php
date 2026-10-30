@@ -72,7 +72,7 @@ class AttendeeMapper extends QBMapper {
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function getByRemoteIdAndToken(int $id, string $token): Attendee {
+	public function getByRemoteIdAndToken(int $id, #[SensitiveParameter] string $token): Attendee {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())

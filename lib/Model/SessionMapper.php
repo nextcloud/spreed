@@ -28,7 +28,7 @@ class SessionMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findBySessionId(string $sessionId): Session {
+	public function findBySessionId(#[\SensitiveParameter] string $sessionId): Session {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -115,7 +115,7 @@ class SessionMapper extends QBMapper {
 	/**
 	 * @param string[] $sessionIds
 	 */
-	public function resetInCallByIds(array $sessionIds): void {
+	public function resetInCallByIds(#[\SensitiveParameter] array $sessionIds): void {
 		$update = $this->db->getQueryBuilder();
 		$update->update($this->getTableName())
 			->set('in_call', $update->createNamedParameter(Participant::FLAG_DISCONNECTED, IQueryBuilder::PARAM_INT))
@@ -123,7 +123,7 @@ class SessionMapper extends QBMapper {
 		$update->executeStatement();
 	}
 
-	public function createSessionFromRow(array $row): Session {
+	public function createSessionFromRow(#[\SensitiveParameter] array $row): Session {
 		return $this->mapRowToEntity([
 			'id' => $row['s_id'],
 			'session_id' => $row['session_id'],

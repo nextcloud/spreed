@@ -62,7 +62,7 @@ class PublicShareAuthController extends OCSController {
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/publicshareauth', requirements: [
 		'apiVersion' => '(v1)',
 	])]
-	public function createRoom(string $shareToken): DataResponse {
+	public function createRoom(#[\SensitiveParameter] string $shareToken): DataResponse {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
 		} catch (ShareNotFound) {

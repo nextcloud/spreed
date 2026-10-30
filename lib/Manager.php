@@ -343,7 +343,7 @@ class Manager {
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForUser(string $userId, array $sessionIds = [], bool $includeLastMessage = false): array {
+	public function getRoomsForUser(string $userId, #[SensitiveParameter] array $sessionIds = [], bool $includeLastMessage = false): array {
 		return $this->getRoomsForActor(Attendee::ACTOR_USERS, $userId, $sessionIds, $includeLastMessage);
 	}
 
@@ -354,7 +354,7 @@ class Manager {
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForActor(string $actorType, string $actorId, array $sessionIds = [], bool $includeLastMessage = false, array $tokens = []): array {
+	public function getRoomsForActor(string $actorType, string $actorId, #[SensitiveParameter] array $sessionIds = [], bool $includeLastMessage = false, array $tokens = []): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -676,7 +676,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForUserByToken(string $token, ?string $userId, ?string $sessionId = null, bool $includeLastMessage = false, bool $isSIPBridgeRequest = false): Room {
+	public function getRoomForUserByToken(string $token, ?string $userId, #[SensitiveParameter] ?string $sessionId = null, bool $includeLastMessage = false, bool $isSIPBridgeRequest = false): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -775,7 +775,7 @@ class Manager {
 	/**
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByActor(string $token, string $actorType, string $actorId, ?string $sessionId = null, ?string $serverUrl = null): Room {
+	public function getRoomByActor(string $token, string $actorType, string $actorId, #[SensitiveParameter] ?string $sessionId = null, ?string $serverUrl = null): Room {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
@@ -841,6 +841,7 @@ class Manager {
 		string $actorId,
 		#[SensitiveParameter]
 		string $remoteAccess,
+		#[SensitiveParameter]
 		?string $sessionId = null,
 	): Room {
 		return $this->getRoomByAccessToken($token, $actorType, $actorId, $remoteAccess, $sessionId);
@@ -861,6 +862,7 @@ class Manager {
 		string $actorId,
 		#[SensitiveParameter]
 		string $accessToken,
+		#[SensitiveParameter]
 		?string $sessionId = null,
 	): Room {
 		$query = $this->db->getQueryBuilder();
@@ -1065,7 +1067,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForSession(?string $userId, ?string $sessionId): Room {
+	public function getRoomForSession(?string $userId, #[SensitiveParameter] ?string $sessionId): Room {
 		if ($sessionId === '' || $sessionId === '0') {
 			throw new RoomNotFoundException();
 		}

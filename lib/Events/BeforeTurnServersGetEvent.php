@@ -15,7 +15,7 @@ class BeforeTurnServersGetEvent extends Event {
 	 * @param list<array{schemes?: string, server: string, protocols: string, username?: string, password?: string, secret?: string}> $servers
 	 */
 	public function __construct(
-		protected array $servers,
+		#[\SensitiveParameter] protected array $servers,
 	) {
 		parent::__construct();
 	}
@@ -30,7 +30,7 @@ class BeforeTurnServersGetEvent extends Event {
 	/**
 	 * @param list<array{schemes?: string, server: string, protocols: string, username?: string, password?: string, secret?: string}> $servers
 	 */
-	public function setServers(array $servers): void {
+	public function setServers(#[\SensitiveParameter] array $servers): void {
 		$this->servers = $servers;
 	}
 }

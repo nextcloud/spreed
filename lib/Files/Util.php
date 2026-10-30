@@ -79,7 +79,7 @@ class Util {
 		return $this->publicAccessLists[$fileId] === true;
 	}
 
-	public function canGuestAccessFile(string $shareToken): bool {
+	public function canGuestAccessFile(#[\SensitiveParameter] string $shareToken): bool {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
 			if ($share->getPassword() !== null) {

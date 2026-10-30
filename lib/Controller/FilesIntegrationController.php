@@ -169,7 +169,7 @@ class FilesIntegrationController extends OCSController {
 		'apiVersion' => '(v1)',
 		'shareToken' => '.+',
 	])]
-	public function getRoomByShareToken(string $shareToken): DataResponse {
+	public function getRoomByShareToken(#[\SensitiveParameter] string $shareToken): DataResponse {
 		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)
 			|| !$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);

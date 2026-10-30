@@ -252,7 +252,7 @@ class BackendNotifier {
 	 * @param string[] $sessionIds
 	 * @throws \Exception
 	 */
-	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
+	public function roomSessionsRemoved(Room $room, #[\SensitiveParameter] array $sessionIds): void {
 		// TODO Remove once a new HPB is required
 		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
 
@@ -351,7 +351,7 @@ class BackendNotifier {
 	 * @param string[] $sessionIds
 	 * @throws \Exception
 	 */
-	public function switchToRoom(Room $room, string $switchToRoomToken, array $sessionIds): void {
+	public function switchToRoom(Room $room, string $switchToRoomToken, #[\SensitiveParameter] array $sessionIds): void {
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'switchto',
@@ -377,7 +377,7 @@ class BackendNotifier {
 	 * @param string[] $sessionIds
 	 * @throws \Exception
 	 */
-	public function participantsModified(Room $room, array $sessionIds): void {
+	public function participantsModified(Room $room, #[\SensitiveParameter] array $sessionIds): void {
 		// TODO Remove once a new HPB is required
 		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
 
@@ -471,7 +471,7 @@ class BackendNotifier {
 	 * @param bool $changeAll
 	 * @throws \Exception
 	 */
-	public function roomInCallChanged(Room $room, int $flags, array $sessionIds, bool $changeAll = false): void {
+	public function roomInCallChanged(Room $room, int $flags, #[\SensitiveParameter] array $sessionIds, bool $changeAll = false): void {
 		// TODO Remove once a new HPB is required
 		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
 

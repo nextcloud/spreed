@@ -17,6 +17,7 @@ class CallEndedForEveryoneEvent extends ACallEndedForEveryoneEvent {
 		?Participant $actor,
 		\DateTime $oldActiveSince,
 		/** @var string[] */
+		#[\SensitiveParameter]
 		private readonly array $sessionIds = [],
 		/** @var string[] */
 		private readonly array $userIds = [],
