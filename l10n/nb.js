@@ -1019,6 +1019,7 @@ OC.L10N.register(
     "Guest access" : "Gjestetilgang",
     "Allow guests to join this conversation via link" : "Tillat gjester å delta i denne samtalen via kobling",
     "Breakout rooms are not allowed in public conversations." : "Grupperom er ikke tillatt i offentlige samtaler.",
+    "Password protection" : "Passordbeskyttelse",
     "Set a password" : "Sett et passord",
     "Change password" : "Endre passord",
     "Enter new password" : "Angi nytt passord",
