@@ -14,6 +14,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Import\ImportedActorDirectory;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
@@ -63,6 +64,7 @@ class SystemMessageTest extends TestCase {
 	protected FilesMetadataCache&MockObject $filesMetadataCache;
 	protected Authenticator&MockObject $federationAuthenticator;
 	protected IEventDispatcher&MockObject $dispatcher;
+	protected ImportedActorDirectory&MockObject $importedActors;
 	protected IL10N&MockObject $l;
 
 	public function setUp(): void {
@@ -82,6 +84,7 @@ class SystemMessageTest extends TestCase {
 		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
 		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->importedActors = $this->createMock(ImportedActorDirectory::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
 			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
@@ -114,6 +117,7 @@ class SystemMessageTest extends TestCase {
 					$this->filesMetadataCache,
 					$this->federationAuthenticator,
 					$this->dispatcher,
+					$this->importedActors,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -135,6 +139,7 @@ class SystemMessageTest extends TestCase {
 			$this->filesMetadataCache,
 			$this->federationAuthenticator,
 			$this->dispatcher,
+			$this->importedActors,
 		);
 	}
 
@@ -244,6 +249,22 @@ class SystemMessageTest extends TestCase {
 			],
 			['user_added', ['user' => 'user'], 'actor',
 				'You added {user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
+			['user_added', ['user' => 'former', 'actorType' => 'imported'], 'recipient',
+				'{actor} added {user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['type' => 'highlight', 'id' => 'imported/former', 'name' => 'Former member']],
+			],
+			['history_shared', ['user' => 'user'], 'recipient',
+				'{actor} shared the chat history with {user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
+			['history_shared', ['user' => 'user'], 'user',
+				'{actor} shared the chat history with you',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
+			['history_shared', ['user' => 'user'], 'actor',
+				'You shared the chat history with {user}',
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			],
 			['user_removed', ['user' => 'user'], 'recipient',
@@ -1503,6 +1524,19 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame(['type' => 'highlight', 'id' => 'matrix/@bob:example.org', 'name' => 'Bob'], self::invokePrivate($parser, 'getMatrixUser', [$room, '@bob:example.org']));
 		$this->assertSame(['type' => 'highlight', 'id' => 'matrix/@bob:example.org', 'name' => 'Bob'], self::invokePrivate($parser, 'getMatrixUser', [$room, '@bob:example.org']), 'Display name is cached');
 		$this->assertSame(['type' => 'highlight', 'id' => 'matrix/@carol:example.org', 'name' => '@carol:example.org'], self::invokePrivate($parser, 'getMatrixUser', [$room, '@carol:example.org']));
+	}
+
+	public function testGetImportedActor(): void {
+		$this->importedActors->method('getDisplayName')
+			->willReturnMap([
+				['ph-1', 'Dana Departed'],
+				['ph-2', ''],
+			]);
+
+		$parser = $this->getParser();
+		self::invokePrivate($parser, 'l', [$this->l]);
+		$this->assertSame(['type' => 'highlight', 'id' => 'imported/ph-1', 'name' => 'Dana Departed'], self::invokePrivate($parser, 'getActor', [$this->createStub(Room::class), Attendee::ACTOR_IMPORTED, 'ph-1']));
+		$this->assertSame(['type' => 'highlight', 'id' => 'imported/ph-2', 'name' => 'Former member'], self::invokePrivate($parser, 'getImportedActor', ['ph-2']));
 	}
 
 	public static function dataGetUser(): array {

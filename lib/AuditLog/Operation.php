@@ -66,6 +66,11 @@ enum Operation: string {
 	case BRIDGE_DELETED = 'spreed.bridge.deleted';
 	case CALL_PARTICIPANTS_EXPORTED = 'spreed.call_participants.exported';
 
+	// History import
+	case HISTORY_IMPORT_CONVERSATION_CREATED = 'spreed.history_import.conversation_created';
+	case HISTORY_IMPORT_PARTICIPANTS_SET = 'spreed.history_import.participants_set';
+	case HISTORY_IMPORT_MESSAGES_REMOVED = 'spreed.history_import.messages_removed';
+
 	/**
 	 * Short description of when the operation is logged, used for the documentation
 	 */
@@ -108,6 +113,9 @@ enum Operation: string {
 			self::BRIDGE_UPDATED => 'The Matterbridge of a conversation was updated',
 			self::BRIDGE_DELETED => 'The Matterbridge of a conversation was deleted',
 			self::CALL_PARTICIPANTS_EXPORTED => 'The participants list of a call was downloaded',
+			self::HISTORY_IMPORT_CONVERSATION_CREATED => 'A history import created a conversation',
+			self::HISTORY_IMPORT_PARTICIPANTS_SET => 'A history import added, changed or removed participants of a conversation it created',
+			self::HISTORY_IMPORT_MESSAGES_REMOVED => 'A history import removed messages it had imported',
 		};
 	}
 }

@@ -341,4 +341,177 @@ class CommentsManager extends Manager {
 		return $comments;
 	}
 
+	/**
+	 * Inserts a comment of a history import with the values it carries
+	 * (parent, topmost parent, creation time), without the comment events
+	 * and without updating the parent's child information; the importer
+	 * updates that once per batch ({@see self::updateChildrenInformationOf()}).
+	 */
+	public function insertImported(IComment $comment): void {
+		$query = $this->dbConn->getQueryBuilder();
+		$query->insert('comments')
+			->values([
+				'parent_id' => $query->createNamedParameter($comment->getParentId()),
+				'topmost_parent_id' => $query->createNamedParameter($comment->getTopmostParentId()),
+				'children_count' => $query->createNamedParameter($comment->getChildrenCount(), IQueryBuilder::PARAM_INT),
+				'actor_type' => $query->createNamedParameter($comment->getActorType()),
+				'actor_id' => $query->createNamedParameter($comment->getActorId()),
+				'message' => $query->createNamedParameter($comment->getMessage()),
+				'verb' => $query->createNamedParameter($comment->getVerb()),
+				'creation_timestamp' => $query->createNamedParameter($comment->getCreationDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE),
+				'latest_child_timestamp' => $query->createNamedParameter($comment->getLatestChildDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE),
+				'object_type' => $query->createNamedParameter($comment->getObjectType()),
+				'object_id' => $query->createNamedParameter($comment->getObjectId()),
+				'expire_date' => $query->createNamedParameter($comment->getExpireDate(), IQueryBuilder::PARAM_DATETIME_MUTABLE),
+				'reference_id' => $query->createNamedParameter($comment->getReferenceId()),
+				'meta_data' => $query->createNamedParameter(json_encode($comment->getMetaData(), JSON_THROW_ON_ERROR)),
+			]);
+		$query->executeStatement();
+		$comment->setId((string)$query->getLastInsertId());
+	}
+
+	/**
+	 * Updates a comment of a history import without the comment events
+	 */
+	public function updateImported(IComment $comment): void {
+		$query = $this->dbConn->getQueryBuilder();
+		$query->update('comments')
+			->set('parent_id', $query->createNamedParameter($comment->getParentId()))
+			->set('topmost_parent_id', $query->createNamedParameter($comment->getTopmostParentId()))
+			->set('actor_type', $query->createNamedParameter($comment->getActorType()))
+			->set('actor_id', $query->createNamedParameter($comment->getActorId()))
+			->set('message', $query->createNamedParameter($comment->getMessage()))
+			->set('verb', $query->createNamedParameter($comment->getVerb()))
+			->set('creation_timestamp', $query->createNamedParameter($comment->getCreationDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE))
+			->set('meta_data', $query->createNamedParameter(json_encode($comment->getMetaData(), JSON_THROW_ON_ERROR)))
+			->where($query->expr()->eq('id', $query->createNamedParameter((int)$comment->getId(), IQueryBuilder::PARAM_INT)));
+		$query->executeStatement();
+		$this->uncache($comment->getId());
+	}
+
+	/**
+	 * Inserts the reaction row of an imported reaction comment
+	 * ({@see self::insertImported()} first); the summary of the parent is
+	 * updated by {@see self::updateReactionSummary()}
+	 */
+	public function insertImportedReactionRow(IComment $reaction): void {
+		$query = $this->dbConn->getQueryBuilder();
+		$query->insert('reactions')
+			->values([
+				'parent_id' => $query->createNamedParameter((int)$reaction->getParentId(), IQueryBuilder::PARAM_INT),
+				'message_id' => $query->createNamedParameter((int)$reaction->getId(), IQueryBuilder::PARAM_INT),
+				'actor_type' => $query->createNamedParameter($reaction->getActorType()),
+				'actor_id' => $query->createNamedParameter($reaction->getActorId()),
+				'reaction' => $query->createNamedParameter($reaction->getMessage()),
+			]);
+		$query->executeStatement();
+	}
+
+	/**
+	 * Deletes comments of a history import and their reaction rows, without
+	 * the comment events
+	 *
+	 * @param list<int> $ids
+	 */
+	public function deleteImported(array $ids): void {
+		$deleteReactions = $this->dbConn->getQueryBuilder();
+		$deleteReactions->delete('reactions')
+			->where($deleteReactions->expr()->in('message_id', $deleteReactions->createParameter('ids')));
+		$deleteComments = $this->dbConn->getQueryBuilder();
+		$deleteComments->delete('comments')
+			->where($deleteComments->expr()->in('id', $deleteComments->createParameter('ids')));
+
+		foreach (array_chunk($ids, IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$deleteReactions->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$deleteReactions->executeStatement();
+			$deleteComments->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$deleteComments->executeStatement();
+			foreach ($chunk as $id) {
+				$this->uncache((string)$id);
+			}
+		}
+	}
+
+	/**
+	 * Recomputes the reaction summary of messages like the comments manager
+	 * does after a reaction: counts per reaction, most used first, at most 20
+	 *
+	 * @param list<int> $parentIds
+	 */
+	public function updateReactionSummary(array $parentIds): void {
+		if ($parentIds === []) {
+			return;
+		}
+
+		$select = $this->dbConn->getQueryBuilder();
+		$select->select('parent_id', 'reaction')
+			->selectAlias($select->func()->count('id'), 'total')
+			->from('reactions')
+			->where($select->expr()->in('parent_id', $select->createParameter('ids')))
+			->groupBy('parent_id', 'reaction');
+
+		$update = $this->dbConn->getQueryBuilder();
+		$update->update('comments')
+			->set('reactions', $update->createParameter('reactions'))
+			->where($update->expr()->eq('id', $update->createParameter('id')));
+
+		foreach (array_chunk(array_values(array_unique($parentIds)), IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$counts = array_fill_keys($chunk, []);
+			$select->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$result = $select->executeQuery();
+			while ($row = $result->fetchAssociative()) {
+				$counts[(int)$row['parent_id']][(string)$row['reaction']] = (int)$row['total'];
+			}
+			$result->closeCursor();
+
+			foreach ($counts as $parentId => $reactions) {
+				uksort($reactions, static fn (string $a, string $b): int => ($reactions[$b] <=> $reactions[$a]) ?: strcmp($a, $b));
+				$reactions = array_slice($reactions, 0, 20, true);
+				$update->setParameter('reactions', $reactions === [] ? null : json_encode($reactions, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE), $reactions === [] ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR);
+				$update->setParameter('id', $parentId, IQueryBuilder::PARAM_INT);
+				$update->executeStatement();
+				$this->uncache((string)$parentId);
+			}
+		}
+	}
+
+	/**
+	 * Recomputes the child count and newest child time of comments, which
+	 * the comments manager keeps for every comment with replies or reactions
+	 *
+	 * @param list<int> $parentIds
+	 */
+	public function updateChildrenInformationOf(array $parentIds): void {
+		if ($parentIds === []) {
+			return;
+		}
+
+		$select = $this->dbConn->getQueryBuilder();
+		$select->select('parent_id')
+			->selectAlias($select->func()->count('id'), 'children')
+			->selectAlias($select->func()->max('creation_timestamp'), 'latest')
+			->from('comments')
+			->where($select->expr()->in('parent_id', $select->createParameter('ids')))
+			->groupBy('parent_id');
+
+		$update = $this->dbConn->getQueryBuilder();
+		$update->update('comments')
+			->set('children_count', $update->createParameter('children'))
+			->set('latest_child_timestamp', $update->createParameter('latest'))
+			->where($update->expr()->eq('id', $update->createParameter('id')));
+
+		foreach (array_chunk(array_values(array_unique($parentIds)), IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$select->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$result = $select->executeQuery();
+			$rows = $result->fetchAllAssociative();
+			$result->closeCursor();
+			foreach ($rows as $row) {
+				$update->setParameter('children', (int)$row['children'], IQueryBuilder::PARAM_INT);
+				$update->setParameter('latest', $row['latest'], $row['latest'] === null ? IQueryBuilder::PARAM_NULL : IQueryBuilder::PARAM_STR);
+				$update->setParameter('id', (int)$row['parent_id'], IQueryBuilder::PARAM_INT);
+				$update->executeStatement();
+				$this->uncache((string)$row['parent_id']);
+			}
+		}
+	}
 }

@@ -91,6 +91,12 @@ class Attendee extends Entity {
 	public const ACTOR_PHONES = 'phones';
 	/** Matrix users without a linked Nextcloud account, the actor id is the Matrix user id */
 	public const ACTOR_MATRIX = 'matrix';
+	/**
+	 * Authors without an account, written by a history import
+	 * ({@see \OCA\Talk\Import\IHistoryImporter}); never participants, the
+	 * display name is kept by the import
+	 */
+	public const ACTOR_IMPORTED = 'imported';
 
 	// Special actor IDs
 	public const ACTOR_BOT_PREFIX = 'bot-';

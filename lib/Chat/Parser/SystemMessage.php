@@ -16,6 +16,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Import\ImportedActorDirectory;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -85,6 +86,7 @@ class SystemMessage implements IEventListener {
 		private readonly FilesMetadataCache $metadataCache,
 		private readonly Authenticator $federationAuthenticator,
 		private readonly IEventDispatcher $dispatcher,
+		private readonly ImportedActorDirectory $importedActors,
 	) {
 	}
 
@@ -346,7 +348,7 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('An administrator removed the password');
 			}
 		} elseif ($message === 'user_added') {
-			$parsedParameters['user'] = $this->getUser($parameters['user']);
+			$parsedParameters['user'] = $this->getMember($parameters);
 			$parsedMessage = $this->l->t('{actor} added {user}');
 			$systemIsActor = $parsedParameters['actor']['type'] === 'guest'
 				&& 'guest/' . Attendee::ACTOR_ID_SYSTEM === $parsedParameters['actor']['id'];
@@ -374,7 +376,7 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('An administrator added {user}');
 			}
 		} elseif ($message === 'user_removed') {
-			$parsedParameters['user'] = $this->getUser($parameters['user']);
+			$parsedParameters['user'] = $this->getMember($parameters);
 			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You left the conversation');
@@ -393,6 +395,14 @@ class SystemMessage implements IEventListener {
 				} elseif ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator removed {user}');
 				}
+			}
+		} elseif ($message === 'history_shared') {
+			$parsedParameters['user'] = $this->getMember($parameters);
+			$parsedMessage = $this->l->t('{actor} shared the chat history with {user}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You shared the chat history with {user}');
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
+				$parsedMessage = $this->l->t('{actor} shared the chat history with you');
 			}
 		} elseif ($message === 'federated_user_added') {
 			$parsedParameters['federated_user'] = $this->getRemoteUser($room, $parameters['federated_user']);
@@ -1181,8 +1191,31 @@ class SystemMessage implements IEventListener {
 		if ($actorType === Attendee::ACTOR_MATRIX) {
 			return $this->getMatrixUser($room, $actorId);
 		}
+		if ($actorType === Attendee::ACTOR_IMPORTED) {
+			return $this->getImportedActor($actorId);
+		}
 
 		return $this->getUser($actorId);
+	}
+
+	/**
+	 * The member a membership message is about: a user, or a person without
+	 * an account written by a history import
+	 */
+	protected function getMember(array $parameters): array {
+		if (($parameters['actorType'] ?? '') === Attendee::ACTOR_IMPORTED) {
+			return $this->getImportedActor((string)$parameters['user']);
+		}
+		return $this->getUser((string)$parameters['user']);
+	}
+
+	protected function getImportedActor(string $actorId): array {
+		$name = $this->importedActors->getDisplayName($actorId);
+		return [
+			'type' => 'highlight',
+			'id' => Attendee::ACTOR_IMPORTED . '/' . $actorId,
+			'name' => $name !== '' ? $name : $this->l->t('Former member'),
+		];
 	}
 
 	protected function getMatrixUser(Room $room, string $mxid): array {

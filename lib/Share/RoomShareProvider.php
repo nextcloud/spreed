@@ -25,8 +25,10 @@ use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\PublicShareController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Cache\CappedMemoryCache;
+use OCP\Constants;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
@@ -178,6 +180,78 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	}
 
 	/**
+	 * Shares a file into a conversation for a history import, as a room
+	 * share of the file's owner, without the checks and events of a share
+	 * a participant creates: the owner need not be a participant, the
+	 * conversation may be read-only, and no system message is posted.
+	 * The share time is the time of the imported message, so participants
+	 * whose history starts later don't see the file
+	 * ({@see \OCA\Talk\Model\Attendee::getHistorySince()}).
+	 */
+	public function createImportedShare(Room $room, Node $node, string $ownerUid, int $shareTime): IShare {
+		$token = $this->secureRandom->generate(
+			15, // \OC\Share\Constants::TOKEN_LENGTH
+			ISecureRandom::CHAR_HUMAN_READABLE
+		);
+
+		$shareId = $this->addShareToDB(
+			$room->getToken(),
+			$ownerUid,
+			$ownerUid,
+			$node->getType() === FileInfo::TYPE_FOLDER ? 'folder' : 'file',
+			$node->getId(),
+			'/' . $node->getName(),
+			Constants::PERMISSION_READ,
+			$token,
+			null,
+			$room->getPassword(),
+			$shareTime,
+		);
+		$this->roomService->setHasAttachments($room);
+		$this->cleanSharesByIdCache();
+
+		return $this->createShareObject($this->getRawShare($shareId));
+	}
+
+	/**
+	 * Moves the share time of an imported share, see {@see self::createImportedShare()}
+	 */
+	public function setImportedShareTime(int $shareId, int $shareTime): void {
+		$update = $this->dbConnection->getQueryBuilder();
+		$update->update('share')
+			->set('stime', $update->createNamedParameter($shareTime, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($shareId, IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->eq('share_type', $update->createNamedParameter(IShare::TYPE_ROOM)));
+		$update->executeStatement();
+		$this->cleanSharesByIdCache();
+	}
+
+	/**
+	 * File IDs of room shares by share ID
+	 *
+	 * @param list<int> $shareIds
+	 * @return array<int, int>
+	 */
+	public function getFileIdsOfShares(array $shareIds): array {
+		$query = $this->dbConnection->getQueryBuilder();
+		$query->select('id', 'file_source')
+			->from('share')
+			->where($query->expr()->in('id', $query->createParameter('ids')))
+			->andWhere($query->expr()->eq('share_type', $query->createNamedParameter(IShare::TYPE_ROOM)));
+
+		$fileIds = [];
+		foreach (array_chunk(array_values(array_unique($shareIds)), IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$query->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$result = $query->executeQuery();
+			while ($row = $result->fetchAssociative()) {
+				$fileIds[(int)$row['id']] = (int)$row['file_source'];
+			}
+			$result->closeCursor();
+		}
+		return $fileIds;
+	}
+
+	/**
 	 * Add share to the database and return the ID
 	 *
 	 * @param string $shareWith
@@ -190,6 +264,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * @param string $token
 	 * @param \DateTime|null $expirationDate
 	 * @param string $passwordHash
+	 * @param ?int $shareTime Unix time of the share, now when null
 	 * @return int
 	 */
 	private function addShareToDB(
@@ -204,6 +279,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		?\DateTime $expirationDate,
 		#[SensitiveParameter]
 		string $passwordHash,
+		?int $shareTime = null,
 	): int {
 		$insert = $this->dbConnection->getQueryBuilder();
 		$insert->insert('share')
@@ -218,7 +294,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->setValue('permissions', $insert->createNamedParameter($permissions))
 			->setValue('token', $insert->createNamedParameter($token))
 			->setValue('password', $insert->createNamedParameter($passwordHash))
-			->setValue('stime', $insert->createNamedParameter($this->timeFactory->getTime()));
+			->setValue('stime', $insert->createNamedParameter($shareTime ?? $this->timeFactory->getTime()));
 
 		if ($expirationDate !== null) {
 			$insert->setValue('expiration', $insert->createNamedParameter($expirationDate, 'datetime'));
