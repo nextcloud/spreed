@@ -8,6 +8,7 @@ import { useStore } from 'vuex'
 import { SESSION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
+import { useActorStore } from '../stores/actor.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
@@ -44,6 +45,7 @@ export function useActiveSession() {
 	const store = useStore()
 	const token = useGetToken()
 	const tokenStore = useTokenStore()
+	const actorStore = useActorStore()
 	// Without 'session-state' feature support - conversation is always considered active
 	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
 
@@ -68,14 +70,22 @@ export function useActiveSession() {
 		inactiveTimer = setTimeout(setSessionAsInactive, INACTIVE_TIME_MS)
 	}
 
-	// Wait for the token to actually be joined
-	watch(currentJoinedConversation, (joinedToken) => {
+	// Joined conversation has active state by default; a rejoin creates a new session, which is active on the server
+	watch([currentJoinedConversation, () => actorStore.sessionId], ([joinedToken], [previousJoinedToken]) => {
 		if (joinedToken !== token.value || !supportSessionState.value) {
 			return
 		}
-		// Joined conversation has active state by default
+		const isRejoin = joinedToken === previousJoinedToken
+		if (isRejoin && currentState.value !== SESSION.STATE.INACTIVE) {
+			return
+		}
 		currentState.value = SESSION.STATE.ACTIVE
-		if (!isWindowActive()) {
+		if (isWindowActive()) {
+			return
+		}
+		if (isRejoin) {
+			setSessionAsInactive()
+		} else {
 			scheduleSessionAsInactive()
 		}
 	})
