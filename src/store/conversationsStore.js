@@ -1260,12 +1260,8 @@ const actions = {
 	},
 
 	async setMessageExpiration({ commit }, { token, seconds }) {
-		try {
-			await setMessageExpiration(token, seconds)
-			commit('setMessageExpiration', { token, seconds })
-		} catch (error) {
-			console.error('Error while setting conversation message expiration: ', error)
-		}
+		await setMessageExpiration(token, seconds)
+		commit('setMessageExpiration', { token, seconds })
 	},
 
 	async setCallPermissions(context, { token, permissions }) {
