@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
@@ -18,7 +19,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Settings\UserPreference;
 use OCP\Comments\IComment;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 
 /**
  * Unarchive conversations for users who opted in via the
@@ -33,8 +35,8 @@ class ConversationUnarchiveService {
 	public function __construct(
 		private readonly AttendeeMapper $attendeeMapper,
 		private readonly ParticipantService $participantService,
-		private readonly IConfig $serverConfig,
 		private readonly Config $talkConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly UserConverter $userConverter,
 	) {
 	}
@@ -46,7 +48,7 @@ class ConversationUnarchiveService {
 		}
 
 		$userIds = array_map(static fn (Attendee $attendee): string => $attendee->getActorId(), $archivedAttendees);
-		$modes = $this->serverConfig->getUserValueForUsers('spreed', UserPreference::CONVERSATIONS_UNARCHIVE, $userIds);
+		$modes = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, $userIds);
 
 		$senderUserId = $comment->getActorType() === Attendee::ACTOR_USERS ? $comment->getActorId() : null;
 		$mentions = $this->getMentions($comment);

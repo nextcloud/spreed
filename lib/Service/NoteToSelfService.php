@@ -8,11 +8,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -21,7 +22,7 @@ use OCP\Security\ISecureRandom;
 
 class NoteToSelfService {
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IUserConfig $userConfig,
 		private readonly IUserManager $userManager,
 		private readonly Manager $manager,
 		private readonly RoomService $roomService,
@@ -59,7 +60,7 @@ class NoteToSelfService {
 
 		// Prefixing with zz, so that casting to int does not give a random roomId for other requests
 		$randomLock = 'zz' . $this->secureRandom->generate(3);
-		$this->config->setUserValue($userId, 'spreed', 'note_to_self', $randomLock);
+		$this->userConfig->setValueString($userId, Application::APP_ID, 'note_to_self', $randomLock);
 
 		$currentUser = $this->userManager->get($userId);
 		if (!$currentUser instanceof IUser) {
@@ -79,15 +80,15 @@ class NoteToSelfService {
 		);
 
 		try {
-			$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string)$room->getId(), (string)$previousValue);
+			$this->userConfig->setValueString($user->getUID(), Application::APP_ID, 'note_to_self', (string)$room->getId());
 		} catch (PreConditionNotMetException) {
 			// This process didn't win the race for creating the conversation, so fetch the other one
 			$this->roomService->deleteRoom($room);
 
 			// This is a little trick to bypass local caching
-			$values = $this->config->getUserValueForUsers('spreed', 'note_to_self', [$user->getUID()]);
+			$values = $this->userConfig->getValuesByUsers(Application::APP_ID, 'note_to_self', userIds: [$user->getUID()]);
 			if (isset($values[$user->getUID()])) {
-				return $this->manager->getRoomById($values[$user->getUID()]);
+				return $this->manager->getRoomById($values[$user->getUID()]['note_to_self']);
 			}
 
 			// Failed to read parallel note-to-self creation
@@ -113,6 +114,6 @@ class NoteToSelfService {
 	}
 
 	protected function getNoteToSelfConversationId(string $userId): int {
-		return (int)$this->config->getUserValue($userId, 'spreed', 'note_to_self', '0');
+		return $this->userConfig->getValueInt($userId, Application::APP_ID, 'note_to_self', 0);
 	}
 }

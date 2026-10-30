@@ -12,6 +12,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Controller\SettingsController;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -25,6 +26,7 @@ use Test\TestCase;
 class SettingsControllerTest extends TestCase {
 	protected IConfig&MockObject $config;
 	protected IAppConfig&MockObject $appConfig;
+	protected IUserConfig&MockObject $userConfig;
 	protected IGroupManager&MockObject $groupManager;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected SettingsController $controller;
@@ -34,6 +36,7 @@ class SettingsControllerTest extends TestCase {
 
 		$this->config = $this->createMock(IConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->controller = new SettingsController(
@@ -41,6 +44,7 @@ class SettingsControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->config,
 			$this->appConfig,
+			$this->userConfig,
 			$this->groupManager,
 			$this->createMock(BeforePreferenceSetEventListener::class),
 			'admin',

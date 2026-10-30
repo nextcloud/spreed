@@ -128,8 +128,6 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	public function tearDown(): void {
-		$config = \OCP\Server::get(IConfig::class);
-		$config->deleteAppValue('spreed', 'recording_servers');
 		parent::tearDown();
 	}
 

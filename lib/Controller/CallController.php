@@ -8,12 +8,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireFederatedParticipant;
@@ -45,8 +45,8 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
@@ -59,15 +59,14 @@ class CallController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private readonly Manager $manager,
 		private readonly ConsentService $consentService,
 		private readonly ParticipantService $participantService,
 		private readonly PhoneNumberMapper $phoneNumberMapper,
 		private readonly RoomService $roomService,
 		private readonly IUserManager $userManager,
 		private readonly ITimeFactory $timeFactory,
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly Config $talkConfig,
 		private readonly Authenticator $federationAuthenticator,
 		private readonly SIPDialOutService $dialOutService,
@@ -205,7 +204,7 @@ class CallController extends AEnvironmentAwareOCSController {
 
 		$timezone = 'UTC';
 		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$timezone = $this->serverConfig->getUserValue($this->participant->getAttendee()->getActorId(), 'core', 'timezone', 'UTC');
+			$timezone = $this->userConfig->getValueString($this->participant->getAttendee()->getActorId(), Application::APP_ID, 'timezone', 'UTC');
 		}
 
 		try {
