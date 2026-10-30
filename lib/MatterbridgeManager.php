@@ -626,7 +626,7 @@ class MatterbridgeManager {
 
 		// check if current $bridge parts (domain) are still valid before doing anything
 		try {
-			$this->validateParts($bridge); // no return needed, validateParts will throw exception
+			$this->validateParts($bridge['parts']); // no return needed, validateParts will throw exception
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage());
 
@@ -643,8 +643,7 @@ class MatterbridgeManager {
 					->where($query->expr()->eq(
 						'pid',
 						$query->createNamedParameter($bridge['pid'], IQueryBuilder::PARAM_INT)));
-				$result = $query->executeQuery();
-				$result->closeCursor();
+				$query->executeStatement();
 
 			}
 			return $pid; // pid remains unchanged 0, i.e. no process with invalid parts running
