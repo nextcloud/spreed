@@ -20,8 +20,8 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
+use OCP\IAppConfig as IServerAppConfig;
 use OCP\ICertificateManager;
-use OCP\IConfig;
 use OCP\IRequest;
 use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
@@ -38,7 +38,7 @@ class BotController extends OCSController {
 		protected IFactory $l10nFactory,
 		protected LogEntryMapper $logEntryMapper,
 		protected SummaryService $summaryService,
-		protected IConfig $config,
+		protected IServerAppConfig $serverAppConfig,
 		protected LoggerInterface $logger,
 		protected ICertificateManager $certificateManager,
 	) {
@@ -66,7 +66,7 @@ class BotController extends OCSController {
 		$random = $this->request->getHeader('X_NEXTCLOUD_TALK_RANDOM');
 		$server = rtrim($this->request->getHeader('X_NEXTCLOUD_TALK_BACKEND'), '/') . '/';
 
-		$secretData = $this->config->getAppValue('talk_webhook_demo', 'secret_' . sha1($server));
+		$secretData = $this->serverAppConfig->getValueString('talk_webhook_demo', 'secret_' . sha1($server));
 		if ($secretData === '') {
 			$this->logger->warning('No matching secret found for server: ' . $server);
 			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
