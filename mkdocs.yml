@@ -40,6 +40,7 @@ nav:
       - 'Constants': 'constants.md'
       - 'Capabilities': 'capabilities.md'
       - 'PHP events': 'events.md'
+      - 'History import': 'history-import.md'
   - 'API documentation':
       - 'Global API status and headers': 'global.md'
       - 'Conversations management': 'conversation.md'

@@ -171,6 +171,7 @@ Required capability: `conversation-presets`
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 * `deleted_users` - Former logged-in users that got deleted (actor id is hardcoded to `deleted_users` and the display name is empty)
 * `federated_users` - Federated users
+* `imported` - People without an account whose messages were written by a [history import](history-import.md), the actor id is stable per person and the display name is the one of the source
 
 ### Session states
 * `0` - Inactive (Notifications should still be sent, even though the user has this session in the room)

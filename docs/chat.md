@@ -532,8 +532,9 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `guests_disallowed` - {actor} disallowed guests in the conversation
 * `password_set` - {actor} set a password for the conversation
 * `password_removed` - {actor} removed the password for the conversation
-* `user_added` - {actor} added {user} to the conversation
-* `user_removed` - {actor} removed {user} from the conversation
+* `user_added` - {actor} added {user} to the conversation (imported messages may name a person without an account, the parameter `actorType` is then `imported`)
+* `user_removed` - {actor} removed {user} from the conversation (same as `user_added`)
+* `history_shared` - {actor} shared the chat history with {user} (only written by a [history import](history-import.md))
 * `group_added` - {actor} added group {group} to the conversation
 * `group_removed` - {actor} removed group {group} from the conversation
 * `circle_added` - {actor} added circle {circle} to the conversation
