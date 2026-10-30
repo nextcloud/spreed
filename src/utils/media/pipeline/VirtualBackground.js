@@ -9,6 +9,8 @@ import { isSafari } from '../../browserCheck.ts'
 import VideoStreamBackgroundEffect from '../effects/virtual-background/VideoStreamBackgroundEffect.js'
 import TrackSinkSource from './TrackSinkSource.js'
 
+const SOFTWARE_RENDERERS = /swiftshader|llvmpipe|softpipe|software|basic render|microsoft basic/i
+
 /**
  * Processor node to set a virtual background on a video track.
  *
@@ -97,7 +99,11 @@ export default class VirtualBackground extends TrackSinkSource {
 			try {
 				canvas = document.createElement('canvas')
 				gl = canvas.getContext('webgl2')
-				this._webGLSupported = !!gl
+				// Firefox reports the real renderer; Chrome masks it as "WebKit WebGL".
+				const debugInfo = gl?.getExtension('WEBGL_debug_renderer_info')
+				const renderer = gl && (debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER))
+				// A software renderer runs the GPU delegate and the WebGL compositor at about 1 FPS.
+				this._webGLSupported = !!gl && !SOFTWARE_RENDERERS.test(renderer)
 			} catch (e) {
 				this._webGLSupported = false
 			} finally {

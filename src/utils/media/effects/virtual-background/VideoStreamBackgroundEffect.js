@@ -147,13 +147,11 @@ export default class VideoStreamBackgroundEffect {
 			/**
 			 * Loads binaries and create an image segmentation TaskRunner
 			 */
+			// CPU only without a usable GPU: on a hardware GPU it adds main-thread stalls and saves no GPU load.
 			this._imageSegmenter = await ImageSegmenter.createFromOptions(await getWasmFileset(), {
 				baseOptions: {
 					modelAssetPath: getModelAssetPath(),
-					// delegate: 'CPU' was tried as a GPU-load reduction; it
-					// made things worse (no GPU win, added main-thread
-					// stalls). Keeping GPU.
-					delegate: 'GPU',
+					delegate: this._useWebGL ? 'GPU' : 'CPU',
 				},
 				runningMode: 'VIDEO',
 				outputCategoryMask: false,
