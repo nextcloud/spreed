@@ -100,16 +100,21 @@ class Config {
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
 	public const string TOKEN_ENTROPY = 'token_entropy';
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
+	public const string AI_UNREAD_SUMMARY_BATCH_SIZE = 'ai_unread_summary_batch_size';
 	public const string MAX_CALL_DURATION = 'max_call_duration';
+	public const string MINIMUM_SUPPORTED_ANDROID_VERSION = 'minimum_supported_android_version';
+	public const string MINIMUM_SUPPORTED_DESKTOP_VERSION = 'minimum_supported_desktop_version';
+	public const string MINIMUM_SUPPORTED_IOS_VERSION = 'minimum_supported_ios_version';
 	public const string FEATURE_HINTS_HIDDEN = 'feature_hints_hidden';
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 	public const string CHAT_STYLE = 'chat_style';
-	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
+	// The user config falls back to the app config, so they need to use the same name
+	public const string CONVERSATIONS_LIST_STYLE = UserPreference::CONVERSATIONS_LIST_STYLE;
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
 	public const string CHANGELOG = 'changelog';
 	public const string SESSION_PING_LIMIT = 'session_ping_limit';
-	public const string CONVERSATIONS_LIST_STYLES = 'conversations_list_styles';
+	public const string PROJECT_ACCESS_INVALIDATED = 'project_access_invalidated';
 	public const string SIGNALING_TICKET_SECRET = 'signaling_ticket_secret';
 	public const string SIGNALING_TOKEN_ALG = 'signaling_token_alg';
 	public const string SIGNALING_TOKEN_PRIVKEY = 'signaling_token_privkey';
@@ -985,7 +990,7 @@ class Config {
 			}
 		}
 
-		$appSetting = $this->appConfig->getAppValueString(UserPreference::CONVERSATIONS_LIST_STYLE);
+		$appSetting = $this->appConfig->getAppValueString(self::CONVERSATIONS_LIST_STYLE);
 		if (in_array($appSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
 			return $appSetting;
 		}
@@ -1012,7 +1017,7 @@ class Config {
 			}
 		}
 
-		$appSetting = $this->appConfig->getAppValueString(UserPreference::CHAT_STYLE);
+		$appSetting = $this->appConfig->getAppValueString(self::CHAT_STYLE);
 		if (in_array($appSetting, [UserPreference::CHAT_STYLE_SPLIT, UserPreference::CHAT_STYLE_UNIFIED], true)) {
 			return $appSetting;
 		}

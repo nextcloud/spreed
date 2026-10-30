@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
+use OCA\Talk\Config;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Collaboration\Resources\IManager;
 use OCP\Migration\IOutput;
@@ -31,7 +32,7 @@ class ClearResourceAccessCache implements IRepairStep {
 
 	#[\Override]
 	public function run(IOutput $output): void {
-		$invalidatedCache = $this->appConfig->getAppValueInt('project_access_invalidated', 0);
+		$invalidatedCache = $this->appConfig->getAppValueInt(Config::PROJECT_ACCESS_INVALIDATED, 0);
 
 		if ($invalidatedCache === self::INVALIDATIONS) {
 			$output->info('Invalidation not required');
@@ -39,6 +40,6 @@ class ClearResourceAccessCache implements IRepairStep {
 		}
 
 		$this->manager->invalidateAccessCacheForProvider($this->provider);
-		$this->appConfig->setAppValueInt('project_access_invalidated', self::INVALIDATIONS);
+		$this->appConfig->setAppValueInt(Config::PROJECT_ACCESS_INVALIDATED, self::INVALIDATIONS);
 	}
 }

@@ -53,7 +53,7 @@ class RestrictionValidator {
 			throw new FederationRestrictionException(FederationRestrictionException::REASON_CLOUD_ID);
 		}
 
-		if (!$this->appConfig->getAppValueBool('federation_outgoing_enabled')) {
+		if (!$this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED)) {
 			$this->logger->debug('Could not share conversation as outgoing federation is disabled');
 			throw new FederationRestrictionException(FederationRestrictionException::REASON_OUTGOING);
 		}

@@ -2804,7 +2804,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		try {
 			$entity = $this->phoneService->getAccountToCallForPhoneNumber($phoneNumber);
 		} catch (DoesNotExistException) {
-			$dialoutPrefix = $this->appConfig->getAppValueString('sip_bridge_dialout_prefix', '+');
+			$dialoutPrefix = $this->appConfig->getAppValueString(Config::SIP_BRIDGE_DIALOUT_PREFIX);
 
 			if ($dialoutPrefix === '') {
 				$this->logger->info('No account found for direct dial-in with number: ' . $phoneNumber);

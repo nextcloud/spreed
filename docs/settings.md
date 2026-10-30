@@ -70,6 +70,7 @@ Legend:
 
 | Key | Type | Default | Hash | Option | Description |
 |---|---|---|---|---|---|
+| `ai_unread_summary_batch_size` | int | `500` | No |  | Maximum number of unread messages that are summarized with AI in one request |
 | `allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to use Talk (everyone when empty) |
 | `backgrounds_branded_for_guests` | bool | `false` | No |  | Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/` |
 | `backgrounds_default_for_users` | bool | `true` | No |  | Whether users are allowed to use the default virtual backgrounds provided by the releases |
@@ -125,6 +126,10 @@ Legend:
 | `matterbridge_binary` | string | `''` | No |  | Path to the matterbridge binary file |
 | `max_call_duration` | int | `0` | No |  | Maximum duration of a call in seconds, 0 for unlimited. Federated calls will be terminated based on the setting of the host server.<br>Calls are ended via a background job, so system cron should be used and calls will last a bit longer<br>(until the next execution of cron). |
 | `max_gif_size` | int | `3145728` | No |  | Maximum file size for clients to render GIF previews with animation |
+| `minimum_supported_android_version` | string | `''` | No |  | Minimum version of the Android client that is allowed to use Talk (in addition to the minimum version required by the server) |
+| `minimum_supported_desktop_version` | string | `''` | No |  | Minimum version of the Desktop client that is allowed to use Talk (in addition to the minimum version required by the server) |
+| `minimum_supported_ios_version` | string | `''` | No |  | Minimum version of the iOS client that is allowed to use Talk (in addition to the minimum version required by the server) |
+| `project_access_invalidated` | int | `0` | No |  | Set automatically to track which invalidation of the projects access cache was already performed |
 | `recording_consent` | int | `0` | Yes | 🖌️ | Whether users have to agree on being recorded before they can join the call (see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#recording-consent-required) |
 | `recording_servers` | `array{servers: list<array{server: string, verify: bool}>, secret: string}` | `[]` | Yes | 🖌️ | List of recording servers, should be configured via the web interface |
 | `retention_classified_rooms` | int | `604800` | No |  | Retention period of classified conversations in seconds after a call happened (`0` means no-retention) |

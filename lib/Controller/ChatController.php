@@ -1060,7 +1060,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// }
 
 		$currentUser = $this->userManager->get($this->userId);
-		$batchSize = $this->appConfig->getAppValueInt('ai_unread_summary_batch_size', 500);
+		$batchSize = $this->appConfig->getAppValueInt(Config::AI_UNREAD_SUMMARY_BATCH_SIZE, 500);
 		$comments = $this->chatManager->waitForNewMessages($this->room, $fromMessageId, $batchSize, 0, $currentUser, true, false);
 		$this->sharePreloader->preloadShares($comments);
 
