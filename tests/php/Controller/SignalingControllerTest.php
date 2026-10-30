@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Controller;
 
 use OC\AppFramework\Services\AppConfig;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
@@ -91,6 +92,7 @@ class SignalingControllerTest extends TestCase {
 	protected ?Config $config = null;
 	protected IAppConfig $appConfig;
 	protected ?string $userId = null;
+	protected ?IUserConfig $userConfig = null;
 	protected ?ISecureRandom $secureRandom = null;
 	protected ?IEventDispatcher $dispatcher = null;
 
@@ -109,12 +111,13 @@ class SignalingControllerTest extends TestCase {
 		$groupManager = $this->createMock(IGroupManager::class);
 		$this->serverConfig = \OCP\Server::get(IConfig::class);
 		$this->appConfig = $this->getRealAppConfig();
-		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
+		$this->userConfig = \OCP\Server::get(IUserConfig::class);
+		$this->userConfig->setValueString($this->userId, Application::APP_ID, Config::SIGNALING_TICKET_SECRET, 'the-user-ticket-secret');
 		$this->appConfig->setAppValueArray(Config::SIGNALING_SERVERS, ['servers' => [], 'secret' => self::SIGNALING_SECRET]);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $this->appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher, $this->createMock(IFilenameValidator::class));
+		$this->config = new Config($this->serverConfig, $this->appConfig, $this->userConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher, $this->createMock(IFilenameValidator::class));
 		$this->serverSession = $this->createMock(ISession::class);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
@@ -1482,7 +1485,7 @@ class SignalingControllerTest extends TestCase {
 
 	private function setUpSIPBridgeConfig(): void {
 		$this->appConfig = $this->createMock(IAppConfig::class);
-		$this->appConfig->method('getAppValueString')->with(Config::SIP_BRIDGE_SHARED_SECRET)->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->appConfig->setAppValueString(Config::SIP_BRIDGE_SHARED_SECRET, self::SIP_BRIDGE_SECRET);
 		$this->userId = null;
 		$this->recreateSignalingController();
 	}

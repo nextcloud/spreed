@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Config;
@@ -15,10 +16,10 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -28,8 +29,8 @@ use Psr\Log\LoggerInterface;
 
 class SampleConversationsService {
 	public function __construct(
-		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly IUserManager $userManager,
 		private readonly ChatManager $chatManager,
 		private readonly ReactionManager $reactionManager,
@@ -49,12 +50,12 @@ class SampleConversationsService {
 			return;
 		}
 
-		$created = $this->config->getUserValue($userId, 'spreed', 'samples_created');
+		$created = $this->userConfig->getValueString($userId, Application::APP_ID, 'samples_created');
 		if ($created !== '') {
 			return;
 		}
 
-		$this->config->setUserValue($userId, 'spreed', 'samples_created', $this->timeFactory->now()->format(\DateTime::ATOM));
+		$this->userConfig->setValueString($userId, Application::APP_ID, 'samples_created', $this->timeFactory->now()->format(\DateTime::ATOM));
 
 		$user = $this->userManager->get($userId);
 		if (!$user instanceof IUser) {

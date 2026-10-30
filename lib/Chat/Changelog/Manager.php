@@ -8,16 +8,17 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Changelog;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Config;
 use OCA\Talk\Manager as RoomManager;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
 use OCP\IL10N;
-use OCP\PreConditionNotMetException;
 
 class Manager {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IUserConfig $userConfig,
 		private readonly RoomManager $roomManager,
 		private readonly ChatManager $chatManager,
 		private readonly IL10N $l,
@@ -25,7 +26,7 @@ class Manager {
 	}
 
 	public function getChangelogForUser(string $userId): int {
-		return (int)$this->config->getUserValue($userId, 'spreed', 'changelog', '0');
+		return $this->userConfig->getValueInt($userId, Application::APP_ID, Config::CHANGELOG);
 	}
 
 	public function updateChangelog(string $userId): void {
@@ -37,12 +38,7 @@ class Manager {
 			return;
 		}
 
-		try {
-			$this->config->setUserValue($userId, 'spreed', 'changelog', (string)$shouldHaveReceived, (string)$hasReceivedLog);
-		} catch (PreConditionNotMetException) {
-			// Parallel request won the race
-			return;
-		}
+		$this->userConfig->setValueInt($userId, Application::APP_ID, Config::CHANGELOG, $shouldHaveReceived);
 
 		$room = $this->roomManager->getChangelogRoom($userId);
 

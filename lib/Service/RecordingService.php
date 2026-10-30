@@ -23,6 +23,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Settings\UserPreference;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\Constants;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
@@ -31,7 +32,6 @@ use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
@@ -83,8 +83,8 @@ class RecordingService {
 		private readonly Manager $roomManager,
 		private readonly ITimeFactory $timeFactory,
 		private readonly Config $config,
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly RoomService $roomService,
 		private readonly ShareManager $shareManager,
 		private readonly ChatManager $chatManager,
@@ -676,7 +676,7 @@ class RecordingService {
 					'userId' => $owner,
 				]);
 
-				$this->serverConfig->setUserValue($owner, 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
+				$this->userConfig->setValueString($owner, Application::APP_ID, UserPreference::ATTACHMENT_FOLDER, '/');
 			}
 		} catch (NotFoundException) {
 			/** @var Folder */

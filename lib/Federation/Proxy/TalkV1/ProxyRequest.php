@@ -19,6 +19,7 @@ use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Participant;
 use OCA\Talk\Settings\UserPreference;
 use OCP\AppFramework\Http;
+use OCP\Config\IUserConfig;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IConfig;
@@ -30,6 +31,7 @@ use SensitiveParameter;
 class ProxyRequest {
 	public function __construct(
 		private readonly IConfig $config,
+		private readonly IUserConfig $userConfig,
 		private readonly IClientService $clientService,
 		private readonly LoggerInterface $logger,
 		private readonly IFactory $l10nFactory,
@@ -39,11 +41,11 @@ class ProxyRequest {
 	}
 
 	public function overwrittenRemoteTalkHash(string $hash): string {
-		$typingIndicator = $this->config->getUserValue(
+		$typingIndicator = $this->userConfig->getValueInt(
 			$this->userSession->getUser()?->getUID(),
 			Application::APP_ID,
 			UserPreference::TYPING_PRIVACY,
-			Participant::PRIVACY_PRIVATE,
+			Participant::PRIVACY_PRIVATE
 		);
 		return sha1(json_encode([
 			'remoteHash' => $hash,
