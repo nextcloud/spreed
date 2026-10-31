@@ -12,8 +12,6 @@ import { useIntegrationsStore } from './stores/integrations.js'
 import pinia from './stores/pinia.ts'
 import { isSafari } from './utils/browserCheck.ts'
 
-import '@nextcloud/dialogs/style.css'
-
 let appInitialized = false
 let storageMigrated = false
 
