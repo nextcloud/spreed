@@ -1478,6 +1478,12 @@ class RoomService {
 			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();
 
+		// Delete bans
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_bans')
+			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
+
 		// Clear share access cache
 		foreach ($userIds as $userId) {
 			$user = new LazyUser($userId, $this->userManager);
