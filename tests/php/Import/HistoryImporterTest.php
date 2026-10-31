@@ -65,13 +65,16 @@ class HistoryImporterTest extends ImportTestCase {
 
 	public function testReadOnlyAndObjectLink(): void {
 		$service = $this->createUser('service');
+		// Exchange UIDs are longer than the 64 characters of the object ID
+		$uid = '040000008200E00074C5B7101A82E00800000000' . str_repeat('A1B2C3D4', 12) . '#1';
 		$room = $this->importer->ensureConversation(self::APP, $this->prefix . '/meeting', Room::TYPE_GROUP, 'Weekly', 'Notes',
-			new \DateTimeImmutable('2024-01-01T08:00:00Z'), true, Room::OBJECT_TYPE_EVENT, 'uid-1234@example.org', $service);
+			new \DateTimeImmutable('2024-01-01T08:00:00Z'), true, Room::OBJECT_TYPE_EVENT, $uid, $service);
 		$this->rooms[] = $room;
 
 		$this->assertSame(Room::READ_ONLY, $room->getReadOnly());
 		$this->assertSame(Room::OBJECT_TYPE_EVENT, $room->getObjectType());
-		$this->assertSame('uid-1234@example.org', $room->getObjectId());
+		$this->assertSame(hash('sha256', $uid), $room->getObjectId());
+		$this->assertSame($room->getId(), Server::get(Manager::class)->getRoomByObject(Room::OBJECT_TYPE_EVENT, hash('sha256', $uid))->getId());
 		$this->assertSame('Notes', $room->getDescription());
 	}
 
@@ -79,7 +82,8 @@ class HistoryImporterTest extends ImportTestCase {
 		return [
 			'public' => [Room::TYPE_PUBLIC, 'Name', '', '', ImportException::CODE_INVALID],
 			'empty name' => [Room::TYPE_GROUP, ' ', '', '', ImportException::CODE_INVALID],
-			'event with retention id' => [Room::TYPE_GROUP, 'Name', Room::OBJECT_TYPE_EVENT, '1700000000#1700003600', ImportException::CODE_INVALID],
+			'event without uid' => [Room::TYPE_GROUP, 'Name', Room::OBJECT_TYPE_EVENT, '', ImportException::CODE_INVALID],
+			'event uid too long' => [Room::TYPE_GROUP, 'Name', Room::OBJECT_TYPE_EVENT, str_repeat('x', 1025), ImportException::CODE_INVALID],
 			'file without id' => [Room::TYPE_GROUP, 'Name', Room::OBJECT_TYPE_FILE, 'abc', ImportException::CODE_INVALID],
 			'phone' => [Room::TYPE_GROUP, 'Name', Room::OBJECT_TYPE_PHONE_PERSIST, '123', ImportException::CODE_INVALID],
 			'one-to-one name' => [Room::TYPE_ONE_TO_ONE, 'Name', '', '', ImportException::CODE_INVALID],

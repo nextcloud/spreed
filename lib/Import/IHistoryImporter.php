@@ -56,7 +56,7 @@ interface IHistoryImporter {
 	 * again is returned unchanged.
 	 *
 	 * @param \OCA\Talk\Room::TYPE_GROUP|\OCA\Talk\Room::TYPE_ONE_TO_ONE|int $type validated
-	 * @param string $objectType '', \OCA\Talk\Room::OBJECT_TYPE_EVENT (object ID: the event UID) or \OCA\Talk\Room::OBJECT_TYPE_FILE (object ID: the file ID)
+	 * @param string $objectType '', \OCA\Talk\Room::OBJECT_TYPE_EVENT (object ID: the event UID, stored as its SHA-256) or \OCA\Talk\Room::OBJECT_TYPE_FILE (object ID: the file ID)
 	 * @throws ImportException
 	 */
 	public function ensureConversation(string $app, string $importRef, int $type, string $name, string $description,

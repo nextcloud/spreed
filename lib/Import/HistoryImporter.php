@@ -66,6 +66,7 @@ class HistoryImporter implements IHistoryImporter {
 	private const MAX_ACTOR_ID_LENGTH = 64;
 	private const MAX_DISPLAY_NAME_LENGTH = 255;
 	private const MAX_THREAD_TITLE_LENGTH = 200;
+	private const MAX_EVENT_UID_LENGTH = 1024;
 	/** Messages may not be dated later than this many seconds from now */
 	private const MAX_FUTURE_SECONDS = 86400;
 
@@ -137,7 +138,7 @@ class HistoryImporter implements IHistoryImporter {
 		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
 			throw new ImportException(ImportException::CODE_INVALID, 'description is too long');
 		}
-		$this->validateObject($objectType, $objectId);
+		$objectId = $this->getObjectId($objectType, $objectId);
 
 		try {
 			$room = $this->atomic(function () use ($app, $importRef, $type, $name, $description, $created, $readOnly, $objectType, $objectId, $ownerUid): Room {
@@ -1172,26 +1173,29 @@ class HistoryImporter implements IHistoryImporter {
 		}
 	}
 
-	private function validateObject(string $objectType, string $objectId): void {
+	/**
+	 * The object ID to store: the file ID of a file, the SHA-256 of the UID
+	 * of an event
+	 *
+	 * Event UIDs are often longer than the 64 characters of the column
+	 * (Exchange) and may contain "#", which the retention of event
+	 * conversations reads as "start#end"; the hash is always 64 characters.
+	 */
+	private function getObjectId(string $objectType, string $objectId): string {
 		if ($objectType === '' && $objectId === '') {
-			return;
-		}
-		if ($objectId === '' || strlen($objectId) > 64) {
-			throw new ImportException(ImportException::CODE_INVALID, 'object ID must have 1 to 64 characters');
+			return '';
 		}
 		if ($objectType === Room::OBJECT_TYPE_EVENT) {
-			// Event conversations with "start#end" object IDs are deleted
-			// after the event by the retention job (ExpireObjectRooms)
-			if (str_contains($objectId, '#')) {
-				throw new ImportException(ImportException::CODE_INVALID, 'object ID of an event is its UID without "#"');
+			if ($objectId === '' || strlen($objectId) > self::MAX_EVENT_UID_LENGTH || !mb_check_encoding($objectId, 'UTF-8')) {
+				throw new ImportException(ImportException::CODE_INVALID, 'object ID of an event is its UID of 1 to ' . self::MAX_EVENT_UID_LENGTH . ' bytes');
 			}
-			return;
+			return hash('sha256', $objectId);
 		}
 		if ($objectType === Room::OBJECT_TYPE_FILE) {
-			if (!ctype_digit($objectId)) {
+			if (!ctype_digit($objectId) || strlen($objectId) > 20) {
 				throw new ImportException(ImportException::CODE_INVALID, 'object ID of a file is its file ID');
 			}
-			return;
+			return $objectId;
 		}
 		throw new ImportException(ImportException::CODE_INVALID, 'object type must be empty, event or file');
 	}
