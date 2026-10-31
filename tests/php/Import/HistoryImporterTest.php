@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Import;
 
+use OCA\Talk\BackgroundJob\ExpireObjectRooms;
+use OCA\Talk\BackgroundJob\RemoveEmptyRooms;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Import\CanonicalForm;
@@ -151,6 +153,43 @@ class HistoryImporterTest extends ImportTestCase {
 			$this->fail('Expected an ImportException');
 		} catch (ImportException $e) {
 			$this->assertSame(ImportException::CODE_EXISTS, $e->getImportCode());
+		}
+	}
+
+	public function testCleanupJobsKeepImportedConversations(): void {
+		$alice = $this->createUser('alice');
+		$bob = $this->createUser('bob');
+		$service = $this->createUser('service');
+
+		// A one-to-one conversation has no participant until the switch-over
+		$dm = $this->importer->ensureConversation(self::APP, $this->prefix . '/dm', Room::TYPE_ONE_TO_ONE, json_encode([$alice, $bob]), '',
+			new \DateTimeImmutable('2020-01-01T08:00:00Z'), false, '', '', $service);
+		$this->rooms[] = $dm;
+		$this->importer->importMessages(self::APP, $dm, [$this->text('m1', $this->user($alice), '2020-01-01T09:00:00Z', 'Hi')]);
+		$live = Server::get(Manager::class)->createRoom(Room::TYPE_GROUP, 'Empty live room');
+		$this->rooms[] = $live;
+
+		$removeEmpty = Server::get(RemoveEmptyRooms::class);
+		$removeEmpty->callback($this->freshRoom($dm));
+		$removeEmpty->callback($this->freshRoom($live));
+		$this->assertSame($dm->getToken(), $this->freshRoom($dm)->getToken());
+		$this->expectExceptionObjectRoomGone($live);
+
+		// An event conversation the calendar integration gave a "start#end" ID
+		// is not expired by the retention of event conversations
+		$meeting = $this->importer->ensureConversation(self::APP, $this->prefix . '/meeting', Room::TYPE_GROUP, 'Weekly', '',
+			new \DateTimeImmutable('2020-01-01T08:00:00Z'), false, Room::OBJECT_TYPE_EVENT, 'uid-1@example.org', $service);
+		$this->rooms[] = $meeting;
+		Server::get(\OCA\Talk\Service\RoomService::class)->setObject($meeting, Room::OBJECT_TYPE_EVENT, '1577865600#1577869200');
+		self::invokePrivate(Server::get(ExpireObjectRooms::class), 'executeRetention', [Room::OBJECT_TYPE_EVENT, 24 * 3600]);
+		$this->assertSame($meeting->getToken(), $this->freshRoom($meeting)->getToken());
+	}
+
+	private function expectExceptionObjectRoomGone(Room $room): void {
+		try {
+			$this->freshRoom($room);
+			$this->fail('The empty live conversation should be removed');
+		} catch (\OCA\Talk\Exceptions\RoomNotFoundException) {
 		}
 	}
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\Import\ImportRefMapper;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -27,6 +28,8 @@ use Psr\Log\LoggerInterface;
 class RemoveEmptyRooms extends TimedJob {
 
 	protected int $numDeletedRooms = 0;
+	/** @var ?array<int, true> */
+	protected ?array $importedRoomIds = null;
 
 	public function __construct(
 		ITimeFactory $time,
@@ -36,6 +39,7 @@ class RemoveEmptyRooms extends TimedJob {
 		private readonly FederationManager $federationManager,
 		private readonly LoggerInterface $logger,
 		private readonly IUserMountCache $userMountCache,
+		private readonly ImportRefMapper $importRefMapper,
 	) {
 		parent::__construct($time);
 
@@ -47,6 +51,7 @@ class RemoveEmptyRooms extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
+		$this->importedRoomIds = $this->importRefMapper->getImportedRoomIds();
 		$this->manager->forAllRooms($this->callback(...));
 
 		if ($this->numDeletedRooms) {
@@ -58,6 +63,13 @@ class RemoveEmptyRooms extends TimedJob {
 
 	public function callback(Room $room): void {
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
+			return;
+		}
+
+		// A history import keeps conversations without participants until
+		// it sets them (e.g. one-to-one conversations before the switch-over)
+		$this->importedRoomIds ??= $this->importRefMapper->getImportedRoomIds();
+		if (isset($this->importedRoomIds[$room->getId()])) {
 			return;
 		}
 

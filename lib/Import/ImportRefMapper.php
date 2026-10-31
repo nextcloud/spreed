@@ -186,6 +186,26 @@ class ImportRefMapper extends QBMapper {
 	}
 
 	/**
+	 * IDs of the conversations a history import manages, of any app
+	 *
+	 * @return array<int, true>
+	 */
+	public function getImportedRoomIds(): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('object_id')
+			->from($this->getTableName())
+			->where($query->expr()->eq('kind', $query->createNamedParameter(ImportRef::KIND_ROOM)));
+
+		$roomIds = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetchAssociative()) {
+			$roomIds[(int)$row['object_id']] = true;
+		}
+		$result->closeCursor();
+		return $roomIds;
+	}
+
+	/**
 	 * Display names of placeholder actors by their ID, from any importing app
 	 *
 	 * @param list<string> $actorIds

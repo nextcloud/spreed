@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Config;
+use OCA\Talk\Import\ImportRefMapper;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
@@ -26,6 +27,7 @@ class ExpireObjectRooms extends TimedJob {
 		private readonly RoomService $roomService,
 		private readonly LoggerInterface $logger,
 		private readonly IAppConfig $appConfig,
+		private readonly ImportRefMapper $importRefMapper,
 	) {
 		parent::__construct($timeFactory);
 		$this->setInterval(60 * 60);
@@ -65,9 +67,15 @@ class ExpireObjectRooms extends TimedJob {
 		$now = $this->time->getTime();
 		$minimumLastActivity = $now - $retentionSeconds;
 		$rooms = $this->manager->getExpiringRoomsForObjectType($objectType, $minimumLastActivity);
+		$importedRoomIds = $rooms === [] ? [] : $this->importRefMapper->getImportedRoomIds();
 
 		$numDeletedRooms = 0;
 		foreach ($rooms as $room) {
+			if (isset($importedRoomIds[$room->getId()])) {
+				// Imported history is old by nature, it does not expire
+				continue;
+			}
+
 			if ($objectType === Room::OBJECT_TYPE_EVENT) {
 				[, $endTime] = explode('#', $room->getObjectId());
 				// Event time is in the future, so don't even consider deleting
