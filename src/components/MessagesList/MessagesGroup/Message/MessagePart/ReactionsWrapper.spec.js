@@ -144,6 +144,7 @@ describe('ReactionsWrapper.vue', () => {
 			// Assert dropdown contains "You" when you have reacted
 			const summary = wrapper.vm.getReactionSummary('🔥')
 			expect(summary).toContain('You')
+			expect(wrapper.vm.getEmojiTitle('🔥')).toBe(':fire:')
 		})
 
 		test('shows reaction buttons with count but without emoji picker when no react permission', () => {

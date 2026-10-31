@@ -16,6 +16,7 @@
 						:key="reaction"
 						:class="{ active: reactionFilter === reaction, 'all-reactions__button': reaction === '♡' }"
 						variant="tertiary"
+						:title="getEmojiTitle(reaction)"
 						@click="handleTabClick(reaction)">
 						<IconHeartOutline v-if="reaction === '♡'" :size="15" />
 						<span v-else>
@@ -38,7 +39,10 @@
 							disableMenu />
 						<span class="reactions-item__name">{{ item.actorDisplayNameWithFallback }}</span>
 						<span class="reactions-item__emojis">
-							{{ item.reaction?.join('') ?? reactionFilter }}
+							<span
+								v-for="emoji in item.reaction ?? [reactionFilter]"
+								:key="emoji"
+								:title="getEmojiTitle(emoji)">{{ emoji }}</span>
 						</span>
 					</li>
 				</ul>
@@ -57,6 +61,7 @@ import IconHeartOutline from 'vue-material-design-icons/HeartOutline.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import { ATTENDEE, AVATAR } from '../../../../../constants.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.ts'
+import { getEmojiTitle } from '../../../../../utils/emoji.ts'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 
 export default {
@@ -145,6 +150,7 @@ export default {
 
 	methods: {
 		t,
+		getEmojiTitle,
 		closeModal() {
 			this.$emit('close')
 		},
