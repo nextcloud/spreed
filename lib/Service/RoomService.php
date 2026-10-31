@@ -1580,6 +1580,16 @@ class RoomService {
 			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();
 
+		// Delete bot installations
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_bots_conversation')
+			->where($delete->expr()->eq('token', $delete->createNamedParameter($room->getToken())));
+		$delete->executeStatement();
+
+		// AvatarService depends on RoomService, so can not use DI
+		$avatarService = Server::get(AvatarService::class);
+		$avatarService->deleteAvatarFolder($room);
+
 		// Clear share access cache
 		foreach ($userIds as $userId) {
 			$user = new LazyUser($userId, $this->userManager);
