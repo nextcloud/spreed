@@ -44,6 +44,8 @@ use OCP\DB\Types;
  * @method void setMaxVotes(int $maxVotes)
  * @method int getMaxVotes()
  * @psalm-method int<0, max> getMaxVotes()
+ * @method void setExpireDate(?\DateTime $expireDate)
+ * @method \DateTime|null getExpireDate()
  *
  * @psalm-import-type TalkActorTypes from ResponseDefinitions
  * @psalm-import-type TalkPoll from ResponseDefinitions
@@ -68,6 +70,7 @@ class Poll extends Entity {
 	protected int $status = self::STATUS_OPEN;
 	protected int $resultMode = self::MODE_PUBLIC;
 	protected int $maxVotes = self::MAX_VOTES_UNLIMITED;
+	protected ?\DateTime $expireDate = null;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -81,6 +84,7 @@ class Poll extends Entity {
 		$this->addType('status', Types::SMALLINT);
 		$this->addType('resultMode', Types::SMALLINT);
 		$this->addType('maxVotes', Types::INTEGER);
+		$this->addType('expireDate', Types::DATETIME);
 	}
 
 	/**
