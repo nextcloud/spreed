@@ -301,12 +301,24 @@ class AvatarService {
 	}
 
 	public function deleteAvatar(Room $room): void {
+		if ($this->deleteAvatarFolder($room)) {
+			$this->roomService->setAvatar($room, '');
+		}
+	}
+
+	/**
+	 * Delete the stored avatar files without updating the room
+	 *
+	 * @return bool Whether an avatar folder existed
+	 */
+	public function deleteAvatarFolder(Room $room): bool {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
 			$avatarFolder = $folder->getFolder($room->getToken());
 			$avatarFolder->delete();
-			$this->roomService->setAvatar($room, '');
+			return true;
 		} catch (NotFoundException) {
+			return false;
 		}
 	}
 
