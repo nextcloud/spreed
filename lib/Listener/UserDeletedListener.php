@@ -11,6 +11,8 @@ namespace OCA\Talk\Listener;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\ConversationTagService;
 use OCA\Talk\Service\PhoneService;
