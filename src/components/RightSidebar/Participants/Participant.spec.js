@@ -334,6 +334,45 @@ describe('ParticipantItem.vue', () => {
 		})
 	})
 
+	describe('raised hand', () => {
+		/**
+		 * Mount a participant in a call and set the raised hand state in the store
+		 * @param {boolean} state Whether the hand is raised
+		 */
+		async function mountWithRaisedHand(state) {
+			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			const wrapper = mountParticipant(participant)
+			useParticipantActivityStore().setParticipantHandRaised({
+				sessionId: 'session-id-alice',
+				raisedHand: { state, timestamp: Date.now() },
+			})
+			await flushPromises()
+			return wrapper
+		}
+
+		test('highlights the row and shows the status when the hand is raised', async () => {
+			const wrapper = await mountWithRaisedHand(true)
+			expect(wrapper.find('.participant--raised-hand').exists()).toBeTruthy()
+			expect(wrapper.find('.participant__status').text()).toBe('Raised their hand')
+		})
+
+		test('does not highlight the row when the hand is not raised', async () => {
+			const wrapper = await mountWithRaisedHand(false)
+			expect(wrapper.find('.participant--raised-hand').exists()).toBeFalsy()
+		})
+
+		test('removes the highlight when the hand is lowered', async () => {
+			const wrapper = await mountWithRaisedHand(true)
+			expect(wrapper.find('.participant--raised-hand').exists()).toBeTruthy()
+			useParticipantActivityStore().setParticipantHandRaised({
+				sessionId: 'session-id-alice',
+				raisedHand: { state: false, timestamp: null },
+			})
+			await flushPromises()
+			expect(wrapper.find('.participant--raised-hand').exists()).toBeFalsy()
+		})
+	})
+
 	describe('actions', () => {
 		describe('demoting participant', () => {
 			let demoteFromModeratorAction

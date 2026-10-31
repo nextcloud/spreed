@@ -8,7 +8,10 @@
 		:name="computedName"
 		:data-nav-id="participantNavigationId"
 		class="participant"
-		:class="{ 'participant--offline': isOffline }"
+		:class="{
+			'participant--offline': isOffline,
+			'participant--raised-hand': isHandRaised,
+		}"
 		:aria-label="participantAriaLabel"
 		:actions-aria-label="participantSettingsAriaLabel"
 		forceDisplayActions
@@ -50,7 +53,7 @@
 			<!-- Second line: participant status message if applicable -->
 			<span
 				class="participant__status"
-				:class="{ 'participant__status--highlighted': isParticipantSpeaking }"
+				:class="{ 'participant__status--highlighted': isParticipantSpeaking && !isHandRaised }"
 				:title="statusMessage">
 				{{ statusMessage }}
 			</span>
@@ -596,6 +599,10 @@ export default {
 					// Fall through to show the talking time
 						break
 				}
+			}
+
+			if (this.isHandRaised) {
+				return t('spreed', 'Raised their hand')
 			}
 
 			if (this.isSpeakingStatusAvailable) {
@@ -1231,6 +1238,13 @@ export default {
 		}
 	}
 
+	&--raised-hand &__call-state,
+	&--raised-hand &__status,
+	&--raised-hand &__user-badge,
+	&--raised-hand &__user-icon {
+		color: var(--color-warning-text);
+	}
+
 	&--offline &__user-name {
 		color: var(--color-text-maxcontrast);
 	}
@@ -1290,4 +1304,20 @@ export default {
 	color: var(--color-text-error);
 }
 
+</style>
+
+<style lang="scss">
+/*
+ * NcListItem renders its <li> without the scope id of this component,
+ * so scoped styles cannot reach .list-item. A global rule is safe here:
+ * the participant--raised-hand class is set only by this component.
+ */
+.participant--raised-hand > .list-item {
+	background-color: var(--color-warning);
+
+	// NcListItem hover/focus selector is heavier; !important avoids copying its internal :not() chain
+	&:is(:hover, :focus-within, :has(:active), :has(:focus-visible)) {
+		background-color: var(--color-warning-hover) !important;
+	}
+}
 </style>
