@@ -263,4 +263,11 @@ class BanService {
 	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
 		$this->banMapper->updateDisplayNameForActor($actorType, $actorId, $displayName);
 	}
+
+	/**
+	 * Delete bans of the actor and anonymize bans the actor issued as moderator
+	 */
+	public function neutralizeDeletedUser(string $actorType, string $actorId): void {
+		$this->banMapper->neutralizeDeletedUser($actorType, $actorId);
+	}
 }

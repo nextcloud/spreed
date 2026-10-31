@@ -10,6 +10,7 @@ namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\QBMapper;
 use OCP\AppFramework\Db\TTransactional;
+use OCP\Comments\ICommentsManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -74,5 +75,15 @@ class AttachmentMapper extends QBMapper {
 		$this->atomic(static function () use ($query): void {
 			$query->executeStatement();
 		}, $this->db);
+	}
+
+	public function neutralizeDeletedUser(string $actorType, string $actorId): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('actor_type', $update->createNamedParameter(ICommentsManager::DELETED_USER))
+			->set('actor_id', $update->createNamedParameter(ICommentsManager::DELETED_USER))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
 	}
 }

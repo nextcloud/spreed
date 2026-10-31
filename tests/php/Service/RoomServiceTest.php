@@ -19,6 +19,8 @@ use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Ban;
+use OCA\Talk\Model\BanMapper;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
