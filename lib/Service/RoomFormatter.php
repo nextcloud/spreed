@@ -322,7 +322,7 @@ class RoomFormatter {
 					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
 					$this->participantService->updateLastReadMessage($currentParticipant, $lastReadMessage);
 				}
-				if ($room->getLastMessage() && $lastReadMessage === (int)$room->getLastMessage()->getId()) {
+				if ($room->getLastMessageId() > 0 && $lastReadMessage === $room->getLastMessageId()) {
 					// When the last message is the last read message, there are no unread messages,
 					// so we can save the query.
 					$roomData['unreadMessages'] = 0;
