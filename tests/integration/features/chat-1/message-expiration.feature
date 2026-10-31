@@ -81,6 +81,57 @@ Feature: chat-1/message-expiration
       | room | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: Expire poll
+    Given user "participant2" exists
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" set the message expiration to 3 of room "room" with 200 (v4)
+    When user "participant1" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    And user "participant2" votes for options "[1]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-1":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [1] |
+    And user "participant1" sees the following shared summarized overview in room "room" with 200
+      | audio     | 0 |
+      | deckcard  | 0 |
+      | file      | 0 |
+      | location  | 0 |
+      | media     | 0 |
+      | other     | 0 |
+      | poll      | 1 |
+      | voice     | 0 |
+      | recording | 0 |
+      | pinned    | 0 |
+    And wait for 3 seconds
+    And force run "OCA\Talk\BackgroundJob\ExpireChatMessages" background jobs
+    Then user "participant1" sees poll "What is the question?" in room "room" with 404
+    And user "participant1" sees the following shared summarized overview in room "room" with 200
+      | audio     | 0 |
+      | deckcard  | 0 |
+      | file      | 0 |
+      | location  | 0 |
+      | media     | 0 |
+      | other     | 0 |
+      | poll      | 0 |
+      | voice     | 0 |
+      | recording | 0 |
+      | pinned    | 0 |
+
   Scenario: Cannot set message expiration in a former one to one room
     Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)

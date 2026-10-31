@@ -59,6 +59,14 @@ class AttachmentMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
+	public function deleteExpired(\DateTime $dateTime): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->lte('expire_date', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
+
+		$query->executeStatement();
+	}
+
 	public function deleteByMessageId(int $messageId): void {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
