@@ -91,6 +91,14 @@ interface IHistoryImporter {
 	public function setParticipants(string $app, Room $room, array $participants): array;
 
 	/**
+	 * Talk shows a conversation's messages in the order it stored them, so
+	 * the import stops at the first message it refuses (status error): the
+	 * later ones of the request are not written and answer
+	 * {@see ImportException::CODE_HELD_BACK}, so that the importer can send
+	 * them again once the refused one is written or given up. A conflict
+	 * (exists, changed) leaves the stored message in its place and doesn't
+	 * stop the import.
+	 *
 	 * @param list<ImportMessage> $messages in time order, parents before their replies
 	 * @return list<ImportResult> one per message, with the message ID and the canonical hash as stored
 	 * @throws ImportException

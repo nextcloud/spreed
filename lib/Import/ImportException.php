@@ -31,6 +31,11 @@ class ImportException extends \Exception {
 	public const CODE_TOO_LONG = 'too_long';
 	/** A reaction that is not a single emoji */
 	public const CODE_INVALID_REACTION = 'invalid_reaction';
+	/**
+	 * Not written: an earlier message of the request was refused, and a
+	 * message written now would stand before it in the conversation
+	 */
+	public const CODE_HELD_BACK = 'held_back';
 
 	/**
 	 * @param self::CODE_* $importCode

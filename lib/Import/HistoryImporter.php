@@ -400,12 +400,19 @@ class HistoryImporter implements IHistoryImporter {
 		$results = [];
 		$this->atomic(function () use ($app, $room, $messages, $errors, $nodes, &$refs, &$results): void {
 			$batch = new ImportBatch();
+			$refused = false;
 			foreach ($messages as $i => $message) {
-				if (isset($errors[$i])) {
-					$results[$i] = ImportResult::fromException($message->ref, $errors[$i]);
+				if ($refused) {
+					$results[$i] = ImportResult::fromException($message->ref,
+						new ImportException(ImportException::CODE_HELD_BACK, 'an earlier message of the request was refused'));
 					continue;
 				}
-				$results[$i] = $this->importMessage($app, $room, $message, $nodes, $refs, $batch);
+				if (isset($errors[$i])) {
+					$results[$i] = ImportResult::fromException($message->ref, $errors[$i]);
+				} else {
+					$results[$i] = $this->importMessage($app, $room, $message, $nodes, $refs, $batch);
+				}
+				$refused = $results[$i]->status === ImportResult::STATUS_ERROR;
 			}
 
 			$this->refMapper->insertMany($batch->newRefs);

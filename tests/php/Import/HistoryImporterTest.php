@@ -458,36 +458,72 @@ class HistoryImporterTest extends ImportTestCase {
 	public function testInvalidEntriesAreAnsweredOneByOne(): void {
 		$service = $this->createUser('service');
 		$room = $this->createGroupRoom($service);
+		$this->importer->importMessages(self::APP, $room, [$this->text('ok1', $this->user($service), '2024-01-02T09:00:00Z', 'Fine')]);
 
-		$results = $this->importer->importMessages(self::APP, $room, [
-			$this->text('ok1', $this->user($service), '2024-01-02T09:00:00Z', 'Fine'),
-			$this->text('orphan', $this->user($service), '2024-01-02T09:01:00Z', 'Reply', 'never-imported'),
-			$this->text('reaction', $this->user($service), '2024-01-02T09:02:00Z', 'Text', reactions: [
+		foreach ([
+			[$this->text('orphan', $this->user($service), '2024-01-02T09:01:00Z', 'Reply', 'never-imported'), ImportException::CODE_PARENT_MISSING],
+			[$this->text('reaction', $this->user($service), '2024-01-02T09:02:00Z', 'Text', reactions: [
 				new ImportReaction($this->user($service), ':thumbsup:', new \DateTimeImmutable('2024-01-02T09:03:00Z')),
-			]),
-			$this->text('long', $this->user($service), '2024-01-02T09:04:00Z', str_repeat('x', ChatManager::MAX_CHAT_LENGTH + 1)),
-			$this->text('nobody', $this->user($this->prefix . '-nobody'), '2024-01-02T09:05:00Z', 'Who?'),
-			$this->text('noname', $this->placeholder('ph', ''), '2024-01-02T09:06:00Z', 'Who?'),
-			$this->text('future', $this->user($service), '2099-01-01T00:00:00Z', 'Later'),
-			new ImportMessage('sysText', $this->user($service), new \DateTimeImmutable('2024-01-02T09:07:00Z'), 'Text',
-				systemKind: ImportMessage::SYSTEM_USER_ADDED, members: [$this->user($service)]),
-			$this->text('threadReply', $this->user($service), '2024-01-02T09:08:00Z', 'Reply', 'ok1', threadTitle: 'Not allowed'),
-			$this->text('ok2', $this->user($service), '2024-01-02T09:09:00Z', 'Also fine', 'ok1'),
-		]);
+			]), ImportException::CODE_INVALID_REACTION],
+			[$this->text('long', $this->user($service), '2024-01-02T09:04:00Z', str_repeat('x', ChatManager::MAX_CHAT_LENGTH + 1)), ImportException::CODE_TOO_LONG],
+			[$this->text('nobody', $this->user($this->prefix . '-nobody'), '2024-01-02T09:05:00Z', 'Who?'), ImportException::CODE_UNKNOWN_USER],
+			[$this->text('noname', $this->placeholder('ph', ''), '2024-01-02T09:06:00Z', 'Who?'), ImportException::CODE_INVALID],
+			[$this->text('future', $this->user($service), '2099-01-01T00:00:00Z', 'Later'), ImportException::CODE_INVALID],
+			[new ImportMessage('sysText', $this->user($service), new \DateTimeImmutable('2024-01-02T09:07:00Z'), 'Text',
+				systemKind: ImportMessage::SYSTEM_USER_ADDED, members: [$this->user($service)]), ImportException::CODE_INVALID],
+			[$this->text('threadReply', $this->user($service), '2024-01-02T09:08:00Z', 'Reply', 'ok1', threadTitle: 'Not allowed'), ImportException::CODE_INVALID],
+		] as [$message, $code]) {
+			$results = $this->importer->importMessages(self::APP, $room, [$message]);
+			$this->assertSame([[ImportResult::STATUS_ERROR, $code]], array_map(static fn (ImportResult $r): array => [$r->status, $r->errorCode], $results), $message->ref);
+		}
+		$this->assertSame(1, $this->countComments($room));
+	}
 
+	public function testStopsAtTheFirstRefusedEntry(): void {
+		$service = $this->createUser('service');
+		$room = $this->createGroupRoom($service);
+		$ok1 = $this->text('ok1', $this->user($service), '2024-01-02T09:00:00Z', 'Fine');
+		$later = [
+			$this->text('ok2', $this->user($service), '2024-01-02T09:09:00Z', 'Also fine', 'ok1'),
+			$this->text('ok3', $this->user($service), '2024-01-02T09:10:00Z', 'Last'),
+		];
+
+		// A refused message holds the later ones of the request back: written
+		// now, they would stand before it.
+		$results = $this->importer->importMessages(self::APP, $room, [
+			$ok1,
+			$this->text('orphan', $this->user($service), '2024-01-02T09:01:00Z', 'Reply', 'never-imported'),
+			...$later,
+		]);
 		$this->assertSame([
-			['ok', ''],
-			['error', ImportException::CODE_PARENT_MISSING],
-			['error', ImportException::CODE_INVALID_REACTION],
-			['error', ImportException::CODE_TOO_LONG],
-			['error', ImportException::CODE_UNKNOWN_USER],
-			['error', ImportException::CODE_INVALID],
-			['error', ImportException::CODE_INVALID],
-			['error', ImportException::CODE_INVALID],
-			['error', ImportException::CODE_INVALID],
-			['ok', ''],
+			[ImportResult::STATUS_OK, ''],
+			[ImportResult::STATUS_ERROR, ImportException::CODE_PARENT_MISSING],
+			[ImportResult::STATUS_ERROR, ImportException::CODE_HELD_BACK],
+			[ImportResult::STATUS_ERROR, ImportException::CODE_HELD_BACK],
 		], array_map(static fn (ImportResult $r): array => [$r->status, $r->errorCode], $results));
-		$this->assertSame(2, $this->countComments($room));
+		$this->assertSame(1, $this->countComments($room));
+
+		// So does a message refused before it is written (invalid input).
+		$results = $this->importer->importMessages(self::APP, $room, [
+			$this->text('long', $this->user($service), '2024-01-02T09:04:00Z', str_repeat('x', ChatManager::MAX_CHAT_LENGTH + 1)),
+			...$later,
+		]);
+		$this->assertSame([ImportException::CODE_TOO_LONG, ImportException::CODE_HELD_BACK, ImportException::CODE_HELD_BACK],
+			array_map(static fn (ImportResult $r): string => $r->errorCode, $results));
+		$this->assertSame(1, $this->countComments($room));
+
+		// A conflict leaves the stored message in its place and doesn't stop
+		// the request; the held back messages are written when sent again.
+		$results = $this->importer->importMessages(self::APP, $room, [
+			$this->text('ok1', $this->user($service), '2024-01-02T09:00:00Z', 'Other content'),
+			...$later,
+		]);
+		$this->assertSame([
+			[ImportResult::STATUS_CONFLICT, ImportException::CODE_EXISTS],
+			[ImportResult::STATUS_OK, ''],
+			[ImportResult::STATUS_OK, ''],
+		], array_map(static fn (ImportResult $r): array => [$r->status, $r->errorCode], $results));
+		$this->assertSame(3, $this->countComments($room));
 	}
 
 	public function testFilesAreSharedIntoTheConversation(): void {

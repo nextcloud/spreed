@@ -16,6 +16,8 @@ if (interface_exists(\OCA\Talk\Import\IHistoryImporter::class)) {
 * `finish` sets the last message and last activity of the conversation once, after a round of imports.
 * Talk's cleanup jobs never remove a conversation an import created: neither the removal of empty conversations (a one-to-one conversation has no participant until they are set) nor the retention of event conversations, whose imported history is old by nature. Locking inactive conversations (off by default) applies to them too, but counts their inactivity from the time the import last wrote to them (creating them, setting participants, `finish`) instead of from their last message, which is old by nature: the admin's period starts at the switch-over.
 
+Talk shows a conversation's messages in the order it stored them, so `importMessages` stops at the first message it refuses: the later messages of the request are not written and answer the error `held_back`. The importing app sends them again once it has written the refused one, or given up on it. A conflict leaves the stored message where it is and doesn't stop the request.
+
 Everything is keyed by the importing app and its own refs, so every call is safe to repeat: the same ref with the same content is answered without a write. A ref imported with other content is answered with the conflict `exists`, a message that was edited or deleted in Talk with `changed`; neither is overwritten. Messages can be replaced with a new version (text, edit time, author, time and reactions) as long as nobody changed them in Talk, and removed (`removeMessages`), which shows them as deleted.
 
 ## Quiet
