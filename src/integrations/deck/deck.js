@@ -12,8 +12,6 @@ import { SHARED_ITEM } from '../../constants.ts'
 import { postRichObjectToConversation } from '../../services/messagesService.ts'
 import { requestRoomSelection } from '../../utils/requestRoomSelection.js'
 
-import '@nextcloud/dialogs/style.css'
-
 /**
  * @param {object} card The card object given by the deck app
  * @param {object} conversation The conversation object given by the RoomSelector

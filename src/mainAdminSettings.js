@@ -6,7 +6,6 @@
 import { createApp } from 'vue'
 import AdminSettingsApp from './AdminSettingsApp.vue'
 
-import '@nextcloud/dialogs/style.css'
 import './assets/admin-settings.css'
 
 export default createApp(AdminSettingsApp)

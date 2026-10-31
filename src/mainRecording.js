@@ -17,8 +17,6 @@ import {
 	signalingKill,
 } from './utils/webrtc/index.js'
 
-import '@nextcloud/dialogs/style.css'
-
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
 
