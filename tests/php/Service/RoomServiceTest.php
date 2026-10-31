@@ -19,10 +19,15 @@ use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Ban;
+use OCA\Talk\Model\BanMapper;
+use OCA\Talk\Model\BotConversation;
+use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -617,5 +622,54 @@ class RoomServiceTest extends TestCase {
 			'objectType' => 'file',
 			'objectId' => '42',
 		], $auditEvents[0]->getParameters());
+	}
+
+	public function testDeleteRoomDeletesRoomData(): void {
+		$banMapper = new BanMapper(Server::get(IDBConnection::class));
+		$botConversationMapper = new BotConversationMapper(Server::get(IDBConnection::class));
+		$roomId = random_int(1_000_000, 9_000_000);
+		$otherRoomId = $roomId + 1;
+		foreach ([$roomId, $otherRoomId] as $banRoomId) {
+			$ban = new Ban();
+			$ban->setRoomId($banRoomId);
+			$ban->setModeratorActorType(Attendee::ACTOR_USERS);
+			$ban->setModeratorActorId('moderator');
+			$ban->setBannedActorType(Attendee::ACTOR_USERS);
+			$ban->setBannedActorId('banned');
+			$ban->setBannedTime(new \DateTime());
+			$banMapper->insert($ban);
+
+			$bot = new BotConversation();
+			$bot->setBotId(1);
+			$bot->setToken('t' . $banRoomId);
+			$botConversationMapper->insert($bot);
+		}
+
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn($roomId);
+		$room->method('getToken')->willReturn('t' . $roomId);
+		$room->method('getBreakoutRoomMode')->willReturn(BreakoutRoom::MODE_NOT_CONFIGURED);
+		$room->method('isFederatedConversation')->willReturn(false);
+		$this->participantService->method('getParticipantUserIds')->willReturn([]);
+
+		$avatarService = $this->createMock(AvatarService::class);
+		$avatarService->expects($this->once())->method('deleteAvatarFolder')->with($room);
+		$this->overwriteService(AvatarService::class, $avatarService);
+
+		try {
+			$this->service->deleteRoom($room);
+		} finally {
+			$this->restoreService(AvatarService::class);
+		}
+
+		$this->assertSame([], $banMapper->findByRoomId($roomId));
+		$this->assertSame([], $botConversationMapper->findForToken('t' . $roomId));
+
+		$otherBans = $banMapper->findByRoomId($otherRoomId);
+		$this->assertCount(1, $otherBans);
+		$banMapper->delete($otherBans[0]);
+		$otherBots = $botConversationMapper->findForToken('t' . $otherRoomId);
+		$this->assertCount(1, $otherBots);
+		$botConversationMapper->delete($otherBots[0]);
 	}
 }
