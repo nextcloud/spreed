@@ -15,7 +15,8 @@ use OCP\DB\Types;
  * Something a history import wrote, found again by the importing app's ref
  *
  * - room: object ID is the room ID, owner ID the importing account, parent
- *   ID the newest imported message at the last finish()
+ *   ID the newest imported message at the last finish(), details the time
+ *   the import last wrote to it (creation, participants, finish())
  * - message: object ID is the message ID, sha256 the canonical hash as
  *   written, details the IDs of the other comments the message consists of
  * - participant: ref is the user ID, object ID the attendee ID
@@ -91,6 +92,18 @@ class ImportRef extends SnowflakeAwareEntity {
 	 */
 	public static function hashRef(string $kind, int $roomId, string $ref): string {
 		return hash('sha256', $kind . "\n" . $roomId . "\n" . $ref);
+	}
+
+	/**
+	 * Unix time the import last wrote to a conversation, 0 when unknown
+	 */
+	public function getLastWrite(): int {
+		$decoded = json_decode((string)$this->details, true);
+		return is_array($decoded) ? (int)($decoded['lastWrite'] ?? 0) : 0;
+	}
+
+	public function setLastWrite(int $time): void {
+		$this->setDetails(json_encode(['lastWrite' => $time], JSON_THROW_ON_ERROR));
 	}
 
 	/**

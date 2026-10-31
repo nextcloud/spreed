@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Config;
+use OCA\Talk\Import\ImportRefMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
@@ -24,6 +25,7 @@ class LockInactiveRooms extends TimedJob {
 		private readonly RoomService $roomService,
 		private readonly Config $appConfig,
 		private readonly LoggerInterface $logger,
+		private readonly ImportRefMapper $importRefMapper,
 	) {
 		parent::__construct($timeFactory);
 
@@ -45,6 +47,10 @@ class LockInactiveRooms extends TimedJob {
 		$timestamp = $this->time->getTime() - $interval * 60 * 60 * 24;
 		$time = $this->time->getDateTime('@' . $timestamp);
 		$rooms = $this->roomService->getInactiveRooms($time);
+		// Imported history is old: imported conversations are inactive since
+		// the import last wrote to them, not since their last message
+		$lastImportWrites = $rooms === [] ? [] : $this->importRefMapper->getLastWrites(array_map(static fn (Room $room): int => $room->getId(), $rooms));
+		$rooms = array_filter($rooms, static fn (Room $room): bool => !isset($lastImportWrites[$room->getId()]) || $lastImportWrites[$room->getId()] < $timestamp);
 		array_map(function (Room $room) use ($forceLobby): void {
 			$this->roomService->setReadOnly($room, Room::READ_ONLY);
 			$this->logger->debug("Locking room {$room->getId()} due to inactivity");

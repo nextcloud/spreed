@@ -189,6 +189,35 @@ class HistoryImporterTest extends ImportTestCase {
 		$this->assertSame($meeting->getToken(), $this->freshRoom($meeting)->getToken());
 	}
 
+	public function testLastImportWriteIsRecorded(): void {
+		$service = $this->createUser('service');
+		$alice = $this->createUser('alice');
+		$room = $this->createGroupRoom($service);
+		$this->importer->importMessages(self::APP, $room, [$this->text('m1', $this->user($service), '2020-01-02T09:00:00Z', 'Old')]);
+		$mapper = Server::get(\OCA\Talk\Import\ImportRefMapper::class);
+
+		$created = $mapper->getLastWrites([$room->getId()])[$room->getId()];
+		$this->assertEqualsWithDelta(time(), $created, 60);
+
+		$this->setLastWrite($room, 1000);
+		$this->importer->finish(self::APP, $room);
+		$this->assertEqualsWithDelta(time(), $mapper->getLastWrites([$room->getId()])[$room->getId()], 60, 'finish() counts as a write');
+
+		$this->setLastWrite($room, 1000);
+		$this->importer->setParticipants(self::APP, $room, [new ImportParticipant($alice)]);
+		$this->assertEqualsWithDelta(time(), $mapper->getLastWrites([$room->getId()])[$room->getId()], 60, 'the switch-over counts as a write');
+		$this->assertSame([], $mapper->getLastWrites([PHP_INT_MAX]));
+	}
+
+	private function setLastWrite(Room $room, int $time): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_import_refs')
+			->set('details', $update->createNamedParameter(json_encode(['lastWrite' => $time])))
+			->where($update->expr()->eq('kind', $update->createNamedParameter('room')))
+			->andWhere($update->expr()->eq('room_id', $update->createNamedParameter($room->getId())));
+		$update->executeStatement();
+	}
+
 	private function expectExceptionObjectRoomGone(Room $room): void {
 		try {
 			$this->freshRoom($room);

@@ -163,6 +163,7 @@ class HistoryImporter implements IHistoryImporter {
 				$ref->setRoomId($room->getId());
 				$ref->setObjectId($room->getId());
 				$ref->setOwnerId($ownerUid);
+				$ref->setLastWrite($this->timeFactory->getTime());
 				$this->refMapper->insert($ref);
 				$this->roomRefs[$room->getId()] = $ref;
 
@@ -322,6 +323,10 @@ class HistoryImporter implements IHistoryImporter {
 				}
 			}
 		}, $this->db);
+
+		$roomRef = $this->getRoomRef($app, $room);
+		$roomRef->setLastWrite($this->timeFactory->getTime());
+		$this->refMapper->update($roomRef);
 
 		foreach (array_keys($accessChanged) as $userId) {
 			$this->dispatcher->dispatchTyped(new UserShareAccessUpdatedEvent(new LazyUser((string)$userId, $this->userManager)));
@@ -544,8 +549,9 @@ class HistoryImporter implements IHistoryImporter {
 			if ($newestImported > $previousNewest) {
 				$this->advanceReadMarkers($app, $room, $previousNewest, $newestImported);
 				$roomRef->setParentId($newestImported);
-				$this->refMapper->update($roomRef);
 			}
+			$roomRef->setLastWrite($this->timeFactory->getTime());
+			$this->refMapper->update($roomRef);
 		}, $this->db);
 
 		$this->clearChatCaches($room);

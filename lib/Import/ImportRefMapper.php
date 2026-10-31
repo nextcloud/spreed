@@ -206,6 +206,33 @@ class ImportRefMapper extends QBMapper {
 	}
 
 	/**
+	 * When an import last wrote to the given conversations, for those an
+	 * import manages
+	 *
+	 * @param list<int> $roomIds
+	 * @return array<int, int> Unix time by room ID
+	 */
+	public function getLastWrites(array $roomIds): array {
+		if ($roomIds === []) {
+			return [];
+		}
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('kind', $query->createNamedParameter(ImportRef::KIND_ROOM)))
+			->andWhere($query->expr()->in('room_id', $query->createParameter('ids')));
+
+		$lastWrites = [];
+		foreach (array_chunk($roomIds, IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$query->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			foreach ($this->findEntities($query) as $ref) {
+				$lastWrites[$ref->getRoomId()] = max($lastWrites[$ref->getRoomId()] ?? 0, $ref->getLastWrite());
+			}
+		}
+		return $lastWrites;
+	}
+
+	/**
 	 * Display names of placeholder actors by their ID, from any importing app
 	 *
 	 * @param list<string> $actorIds
