@@ -14,6 +14,8 @@ use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\RoomService;
 use OCP\Files\IAppData;
 use OCP\Files\IFilenameValidator;
+use OCP\Files\NotFoundException;
+use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -79,5 +81,34 @@ class AvatarServiceTest extends TestCase {
 		} else {
 			$this->assertEquals($expected, $actual);
 		}
+	}
+
+	public function testDeleteAvatar(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('abcdef');
+
+		$avatarFolder = $this->createMock(ISimpleFolder::class);
+		$avatarFolder->expects($this->once())->method('delete');
+		$folder = $this->createMock(ISimpleFolder::class);
+		$folder->method('getFolder')->with('abcdef')->willReturn($avatarFolder);
+		$this->appData->method('getFolder')->with('room-avatar')->willReturn($folder);
+
+		$this->roomService->expects($this->once())->method('setAvatar')->with($room, '');
+
+		$this->service->deleteAvatar($room);
+	}
+
+	public function testDeleteAvatarWithoutFolder(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('abcdef');
+
+		$folder = $this->createMock(ISimpleFolder::class);
+		$folder->method('getFolder')->willThrowException(new NotFoundException());
+		$this->appData->method('getFolder')->willReturn($folder);
+
+		$this->roomService->expects($this->never())->method('setAvatar');
+
+		$this->service->deleteAvatar($room);
+		$this->assertFalse($this->service->deleteAvatarFolder($room));
 	}
 }
