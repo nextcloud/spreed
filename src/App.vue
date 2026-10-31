@@ -623,6 +623,11 @@ export default {
 </script>
 
 <style lang="scss">
+// Lift toasts above NewMessage input field
+:root {
+	--toast-offset-block-end: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 4);
+}
+
 /* FIXME: remove after https://github.com/nextcloud/nextcloud-vue/issues/2097 is solved */
 .mx-datepicker-main.mx-datepicker-popup {
 	z-index: 10001 !important;
