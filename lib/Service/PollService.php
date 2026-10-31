@@ -281,6 +281,21 @@ class PollService {
 		$this->pollMapper->deleteByRoomId($roomId);
 	}
 
+	public function setExpireDate(Poll $poll, \DateTime $expireDate): void {
+		$poll->setExpireDate($expireDate);
+		$this->pollMapper->update($poll);
+	}
+
+	public function deleteExpired(\DateTime $dateTime): void {
+		$pollIds = $this->pollMapper->getExpiredPollIds($dateTime);
+		if (empty($pollIds)) {
+			return;
+		}
+
+		$this->voteMapper->deleteByPollIds($pollIds);
+		$this->pollMapper->deleteByPollIds($pollIds);
+	}
+
 	public function deleteByPollId(int $pollId): void {
 		$this->voteMapper->deleteByPollId($pollId);
 		$this->pollMapper->deleteByPollId($pollId);

@@ -1081,4 +1081,22 @@ class ChatManagerTest extends TestCase {
 			[[json_encode(['parameters' => ['share' => 1]])], 1],
 		];
 	}
+
+	public function testDeleteExpiredMessages(): void {
+		$now = new \DateTime();
+		$this->timeFactory->method('getDateTime')
+			->willReturn($now);
+
+		$this->commentsManager->expects($this->once())
+			->method('deleteCommentsExpiredAtObject')
+			->with('chat', '');
+		$this->attachmentService->expects($this->once())
+			->method('deleteExpired')
+			->with($now);
+		$this->pollService->expects($this->once())
+			->method('deleteExpired')
+			->with($now);
+
+		$this->chatManager->deleteExpiredMessages();
+	}
 }

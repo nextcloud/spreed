@@ -149,7 +149,11 @@ class PollController extends AEnvironmentAwareOCSController {
 		], JSON_THROW_ON_ERROR);
 
 		try {
-			$this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true, threadId: $threadId);
+			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true, threadId: $threadId);
+			$expireDate = $comment->getExpireDate();
+			if ($expireDate !== null) {
+				$this->pollService->setExpireDate($poll, $expireDate);
+			}
 		} catch (\Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
