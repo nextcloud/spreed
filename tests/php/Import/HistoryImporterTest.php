@@ -256,6 +256,33 @@ class HistoryImporterTest extends ImportTestCase {
 		$this->assertSame($refs, $this->countRows('talk_import_refs'));
 	}
 
+	public function testNumericRefs(): void {
+		// Teams message IDs are numbers; PHP turns them into integer array keys
+		$service = $this->createUser('service');
+		$alice = $this->createUser('alice');
+		$room = $this->createGroupRoom($service);
+		$former = $this->placeholder('42', 'Numeric Placeholder');
+		$messages = [
+			$this->text('1700000000001', $former, '2024-01-02T09:00:00Z', 'Post', threadTitle: 'Post'),
+			$this->text('1700000000002', $this->user($alice), '2024-01-02T09:01:00Z', 'Reply', '1700000000001', reactions: [
+				new ImportReaction($former, '👍', new \DateTimeImmutable('2024-01-02T09:02:00Z')),
+			]),
+		];
+		$written = $this->importer->importMessages(self::APP, $room, $messages);
+		$this->assertSame(['ok', 'ok'], array_map(static fn (ImportResult $r): string => $r->status, $written));
+		$this->assertSame(['1700000000001', '1700000000002'], array_map(static fn (ImportResult $r): string => $r->ref, $written));
+
+		$stats = $this->importer->statMessages(self::APP, $room, ['1700000000001', '1700000000002'], true);
+		$this->assertSame([$written[0]->sha256, $written[1]->sha256], array_map(static fn ($stat): string => $stat->sha256, $stats));
+		$this->assertSame(['1700000000001', '1700000000002'], array_map(static fn ($stat): string => $stat->ref, $stats));
+
+		$newVersion = new ImportMessage('1700000000002', $this->user($alice), new \DateTimeImmutable('2024-01-02T09:01:00Z'), 'Reply, edited',
+			'1700000000001', newVersion: true);
+		$this->assertSame(ImportResult::STATUS_OK, $this->importer->importMessages(self::APP, $room, [$newVersion])[0]->status);
+		$this->assertSame(['1700000000001', '1700000000002'], array_column($this->importer->listMessages(self::APP, $room, '', 10)['entries'], 'ref'));
+		$this->assertSame(ImportResult::STATUS_OK, $this->importer->removeMessages(self::APP, $room, ['1700000000002'])[0]->status);
+	}
+
 	public function testChangedContentIsReportedNotOverwritten(): void {
 		$service = $this->createUser('service');
 		$room = $this->createGroupRoom($service);

@@ -796,7 +796,7 @@ class HistoryImporter implements IHistoryImporter {
 	 * @throws ImportException When more than these changed
 	 */
 	private function updateMessage(Room $room, ImportRef $ref, ImportMessage $message, string $hash, ImportBatch $batch): void {
-		$stored = $this->readStoredMessages($room, [$ref])[(string)$ref->getRef()] ?? null;
+		$stored = $this->readStoredMessages($room, [$ref])[0] ?? null;
 		if ($stored === null
 			|| $stored['parentRef'] !== $message->parentRef
 			|| $stored['systemKind'] !== $message->systemKind
@@ -1007,9 +1007,9 @@ class HistoryImporter implements IHistoryImporter {
 	 */
 	private function computeStoredHashes(Room $room, array $refs): array {
 		$hashes = [];
-		foreach ($this->readStoredMessages($room, $refs) as $ref => $stored) {
-			$hashes[$ref] = CanonicalForm::hash(
-				$ref,
+		foreach ($this->readStoredMessages($room, $refs) as $stored) {
+			$hashes[$stored['ref']] = CanonicalForm::hash(
+				$stored['ref'],
 				$stored['parentRef'],
 				$stored['actorType'],
 				$stored['actorId'],
@@ -1031,7 +1031,7 @@ class HistoryImporter implements IHistoryImporter {
 	 * The fields of the canonical form as Talk stores them now
 	 *
 	 * @param list<ImportRef> $refs
-	 * @return array<string, array{parentRef: string, actorType: string, actorId: string, created: \DateTime, text: string, fileIds: list<int>, reactions: list<array{0: string, 1: string, 2: string}>, systemKind: string, members: list<array{0: string, 1: string}>}>
+	 * @return list<array{ref: string, parentRef: string, actorType: string, actorId: string, created: \DateTime, text: string, fileIds: list<int>, reactions: list<array{0: string, 1: string, 2: string}>, systemKind: string, members: list<array{0: string, 1: string}>}>
 	 */
 	private function readStoredMessages(Room $room, array $refs): array {
 		$commentIds = [];
@@ -1112,7 +1112,8 @@ class HistoryImporter implements IHistoryImporter {
 			}
 
 			$parentId = (int)$main->getParentId();
-			$stored[$key] = [
+			$stored[] = [
+				'ref' => $key,
 				'parentRef' => $parentId !== 0 ? (string)($parentRefs[$parentId]?->getRef() ?? '') : '',
 				'actorType' => $main->getActorType(),
 				'actorId' => $main->getActorId(),
