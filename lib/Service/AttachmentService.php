@@ -92,4 +92,8 @@ class AttachmentService {
 	public function deleteAttachmentsForRoom(Room $room): void {
 		$this->attachmentMapper->deleteByRoomId($room->getId());
 	}
+
+	public function neutralizeDeletedUser(string $actorType, string $actorId): void {
+		$this->attachmentMapper->neutralizeDeletedUser($actorType, $actorId);
+	}
 }

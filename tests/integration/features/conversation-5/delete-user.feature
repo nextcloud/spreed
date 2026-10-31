@@ -74,3 +74,23 @@ Feature: conversation-5/delete-user
       | roomName | public room |
     When user "participant2" is deleted
     Then user "participant1" joins room "public room" with 404 (v4)
+
+  Scenario: delete user who is banned or banned others
+    Given user "participant3" exists
+    Given user "participant4" exists
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" promotes "participant3" in room "room" with 200 (v4)
+    And user "participant2" joins room "room" with 200 (v4)
+    And user "participant4" joins room "room" with 200 (v4)
+    And user "participant3" bans user "participant2" from room "room" with 200 (v1)
+      | internalNote | BannedP2 |
+    And user "participant3" bans user "participant4" from room "room" with 200 (v1)
+      | internalNote | BannedP4 |
+    When user "participant2" is deleted
+    And user "participant3" is deleted
+    Then user "participant1" sees the following bans in room "room" with 200 (v1)
+      | moderatorActorType | moderatorActorId | moderatorDisplayName | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
+      | deleted_users      | deleted_users    |                      | users           | participant4  | participant4-displayname | BannedP4     |
