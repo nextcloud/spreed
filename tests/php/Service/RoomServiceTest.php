@@ -17,6 +17,8 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
+use OCA\Talk\Model\BotConversation;
+use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
