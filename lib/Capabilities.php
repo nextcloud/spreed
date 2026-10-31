@@ -16,6 +16,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
 use OCP\Comments\ICommentsManager;
+use OCP\IAppConfig as IServerAppConfig;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -251,6 +252,7 @@ class Capabilities implements IPublicCapability {
 		private readonly IConfig $serverConfig,
 		private readonly Config $talkConfig,
 		private readonly IAppConfig $appConfig,
+		private readonly IServerAppConfig $serverAppConfig,
 		private readonly ICommentsManager $commentsManager,
 		private readonly IUserSession $userSession,
 		private readonly IAppManager $appManager,
@@ -365,7 +367,7 @@ class Capabilities implements IPublicCapability {
 			'version' => $this->appManager->getAppVersion('spreed'),
 		];
 
-		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
+		if ($this->serverAppConfig->getValueString('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
 			$capabilities['features'][] = 'message-expiration';
 		}
 

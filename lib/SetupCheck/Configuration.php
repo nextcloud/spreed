@@ -11,7 +11,7 @@ namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\IConfig;
+use OCP\IAppConfig as IServerAppConfig;
 use OCP\IL10N;
 use OCP\SetupCheck\ISetupCheck;
 use OCP\SetupCheck\SetupResult;
@@ -22,8 +22,8 @@ use OCP\SetupCheck\SetupResult;
 class Configuration implements ISetupCheck {
 	public function __construct(
 		private readonly IL10N $l10n,
-		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
+		private readonly IServerAppConfig $serverAppConfig,
 	) {
 	}
 
@@ -42,7 +42,7 @@ class Configuration implements ISetupCheck {
 		$errors = $warnings = [];
 		$maxCallDuration = $this->appConfig->getAppValueInt(Config::MAX_CALL_DURATION);
 		if ($maxCallDuration > 0) {
-			if ($this->config->getAppValue('core', 'backgroundjobs_mode', 'ajax') !== 'cron') {
+			if ($this->serverAppConfig->getValueString('core', 'backgroundjobs_mode', 'ajax') !== 'cron') {
 				$errors[] = $this->l10n->t('Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration.');
 			} elseif ($maxCallDuration < 3600) {
 				$warnings[] = $this->l10n->t('Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk.', [$maxCallDuration]);
