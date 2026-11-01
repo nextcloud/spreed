@@ -1139,4 +1139,50 @@ describe('VideoVue.vue', () => {
 			})
 		})
 	})
+
+	describe('raised hand', () => {
+		/**
+		 * @param {object} props Extra props for the component
+		 */
+		function mountVideoVue(props = {}) {
+			return mount(VideoVue, {
+				global: { plugins: [store] },
+				props: {
+					model: callParticipantModel,
+					token: 'theToken',
+					sharedData: {
+						remoteVideoBlocker: {
+							increaseVisibleCounter: vi.fn(),
+						},
+						promoted: false,
+					},
+					...props,
+				},
+			})
+		}
+
+		test('adds the class when the hand is raised', () => {
+			callParticipantModel.set('raisedHand', { state: true, timestamp: 1000 })
+
+			const wrapper = mountVideoVue()
+
+			expect(wrapper.find('.video-container').classes()).toContain('raised-hand')
+		})
+
+		test('does not add the class when the hand is not raised', () => {
+			callParticipantModel.set('raisedHand', { state: false, timestamp: null })
+
+			const wrapper = mountVideoVue()
+
+			expect(wrapper.find('.video-container').classes()).not.toContain('raised-hand')
+		})
+
+		test('does not add the class to the promoted placeholder', () => {
+			callParticipantModel.set('raisedHand', { state: true, timestamp: 1000 })
+
+			const wrapper = mountVideoVue({ placeholderForPromoted: true })
+
+			expect(wrapper.find('.video-container').classes()).not.toContain('raised-hand')
+		})
+	})
 })

@@ -114,8 +114,13 @@
 					<template #icon>
 						<IconAccountMultiplePlusOutline v-if="canExtendOneToOneConversation" :size="20" />
 						<IconAccountMultipleOutline v-else :size="20" />
+						<NcCounterBubble
+							v-if="raisedHandsCount > 0"
+							class="top-bar__raised-hands-badge"
+							:count="raisedHandsCount"
+							aria-hidden="true" />
 					</template>
-					<template v-if="!canExtendOneToOneConversation" #default>
+					<template v-if="!canExtendOneToOneConversation && raisedHandsCount === 0" #default>
 						{{ participantsInCall }}
 					</template>
 				</NcButton>
@@ -177,6 +182,7 @@ import { n, t } from '@nextcloud/l10n'
 import { useIsMobile, useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
@@ -202,6 +208,7 @@ import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManage
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
+import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
 import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
@@ -221,6 +228,7 @@ export default {
 		ConversationIcon,
 		ExtendOneToOneDialog,
 		NcButton,
+		NcCounterBubble,
 		NcPopover,
 		NcRichText,
 		TopBarMenu,
@@ -258,6 +266,7 @@ export default {
 			groupwareStore: useGroupwareStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
+			participantActivityStore: useParticipantActivityStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			CONVERSATION,
 			threadId: useGetThreadId(),
@@ -341,11 +350,23 @@ export default {
 			return this.$store.getters.participantsInCall(this.token) || ''
 		},
 
+		raisedHandsCount() {
+			return Object.keys(this.participantActivityStore.raisedHands).length
+		},
+
 		participantsInCallAriaLabel() {
+			let label
 			if (this.canExtendOneToOneConversation) {
-				return t('spreed', 'Add participants to this call')
+				label = t('spreed', 'Add participants to this call')
+			} else {
+				label = n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 			}
-			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
+
+			if (this.raisedHandsCount > 0) {
+				label += ', ' + n('spreed', '%n raised hand', '%n raised hands', this.raisedHandsCount)
+			}
+
+			return label
 		},
 
 		showCalendarEvents() {
@@ -512,6 +533,18 @@ export default {
 		top: 0;
 		inset-inline-start: 0;
 	}
+}
+
+// Heavier selector than .counter-bubble__counter[data-v] from the library
+.top-bar__participants-button .top-bar__raised-hands-badge {
+	--counter-bubble-height: 16px;
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 1px;
+	padding-inline: var(--default-grid-baseline);
+	font-size: 11px;
+	background-color: var(--color-element-warning);
+	color: var(--color-main-background);
 }
 
 .top-bar__participants-button {
