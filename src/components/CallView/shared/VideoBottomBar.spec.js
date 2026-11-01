@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { nextTick } from 'vue'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
@@ -20,6 +21,7 @@ import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
+import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
@@ -221,6 +223,27 @@ describe('VideoBottomBar.vue', () => {
 
 					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
+				})
+
+				test('indicator shows the position in the raised hands queue', async () => {
+					const participantActivityStore = useParticipantActivityStore()
+					participantActivityStore.setParticipantHandRaised({
+						sessionId: 'session-id-other',
+						raisedHand: { state: true, timestamp: 1 },
+					})
+					participantActivityStore.setParticipantHandRaised({
+						sessionId: 'session-id-participant',
+						raisedHand: { state: true, timestamp: 2 },
+					})
+					componentProps.model.attributes.raisedHand.state = true
+					componentProps.model.attributes.nextcloudSessionId = 'session-id-participant'
+					const wrapper = mountVideoBottomBar(componentProps)
+
+					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('2')
+
+					participantActivityStore.setParticipantHandRaised({ sessionId: 'session-id-other', raisedHand: false })
+					await nextTick()
+					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('1')
 				})
 			})
 		})

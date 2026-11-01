@@ -10,7 +10,8 @@
 		@mouseover.stop="mouseover = true"
 		@mouseleave.stop="mouseover = false">
 		<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
-			<IconHandBackLeft :size="18" fillColor="#ffffff" />
+			<IconHandBackLeft :size="18" />
+			<span v-if="raisedHandOrder" class="raiseHandIndicator__order">{{ raisedHandOrder }}</span>
 		</div>
 
 		<div v-if="!isSidebar" class="bottom-bar">
@@ -101,6 +102,7 @@ import IconMicrophoneOffOutline from '../../../../img/material-icons/microphone-
 import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
+import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
@@ -186,6 +188,7 @@ export default {
 			IconMicrophoneOffOutline,
 			callViewStore: useCallViewStore(),
 			actorStore: useActorStore(),
+			participantActivityStore: useParticipantActivityStore(),
 		}
 	},
 
@@ -203,6 +206,10 @@ export default {
 		// Common indicators
 		showRaiseHandIndicator() {
 			return !this.connectionStateFailedNoRestart && this.model.attributes.raisedHand.state
+		},
+
+		raisedHandOrder() {
+			return this.participantActivityStore.getParticipantRaisedHandOrder([this.model.attributes.nextcloudSessionId])
 		},
 
 		showStopFollowingButton() {
@@ -390,11 +397,16 @@ export default {
 }
 
 .status-indicator {
-	width: var(--default-clickable-area);
+	min-width: var(--default-clickable-area);
 	height: var(--default-clickable-area);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.raiseHandIndicator__order {
+	font-weight: bold;
+	font-variant-numeric: tabular-nums;
 }
 
 .iceFailedIndicator {
@@ -404,7 +416,8 @@ export default {
 .audioIndicator,
 .videoIndicator,
 .screenSharingIndicator,
-.iceFailedIndicator {
+.iceFailedIndicator,
+.raiseHandIndicator {
 	color: #ffffff !important;
 }
 

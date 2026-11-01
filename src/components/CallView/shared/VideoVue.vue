@@ -326,6 +326,7 @@ export default {
 				'video-container-big': this.isBig,
 				'full-page': this.isFullPage,
 				'presenter-overlay': this.isPresenterOverlay,
+				'raised-hand': !this.placeholderForPromoted && this.isHandRaised,
 			}
 		},
 
@@ -454,6 +455,10 @@ export default {
 
 		isSpeaking() {
 			return this.model.attributes.speaking
+		},
+
+		isHandRaised() {
+			return this.model.attributes.raisedHand.state
 		},
 
 		hasVideo() {
@@ -764,6 +769,12 @@ export default {
 .video-container.hover::after {
 	content: '';
 	box-shadow: inset 0 0 0 3px white;
+	cursor: pointer;
+}
+
+.video-container.raised-hand::after {
+	content: '';
+	box-shadow: inset 0 0 0 3px var(--color-element-warning);
 	cursor: pointer;
 }
 
