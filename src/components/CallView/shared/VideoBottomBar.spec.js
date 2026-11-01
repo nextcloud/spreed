@@ -245,6 +245,15 @@ describe('VideoBottomBar.vue', () => {
 					await nextTick()
 					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('1')
 				})
+
+				test('indicator does not show a position when the session is not in the queue', () => {
+					componentProps.model.attributes.raisedHand.state = true
+					componentProps.model.attributes.nextcloudSessionId = 'session-id-participant'
+					const wrapper = mountVideoBottomBar(componentProps)
+
+					expect(wrapper.findComponent(IconHandBackLeft).exists()).toBeTruthy()
+					expect(wrapper.find('.raiseHandIndicator__order').exists()).toBeFalsy()
+				})
 			})
 		})
 

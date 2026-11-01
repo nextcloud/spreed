@@ -380,6 +380,20 @@ describe('ParticipantItem.vue', () => {
 			const wrapper = await mountWithRaisedHand(true)
 			expect(wrapper.find('.participant__raised-hand-order').text()).toBe('2')
 		})
+
+		test('does not show a queue position when the hand is not raised', async () => {
+			const wrapper = await mountWithRaisedHand(false)
+			expect(wrapper.find('.participant__raised-hand-order').exists()).toBeFalsy()
+		})
+
+		test('does not highlight the speaking status when the hand is raised', async () => {
+			const participantActivityStore = useParticipantActivityStore()
+			participantActivityStore.setSpeaking({ attendeeId: participant.attendeeId, isSpeaking: true })
+			const wrapper = await mountWithRaisedHand(true)
+
+			expect(wrapper.find('.participant__status--highlighted').exists()).toBeFalsy()
+			participantActivityStore.purgeSpeakingState()
+		})
 	})
 
 	describe('actions', () => {
