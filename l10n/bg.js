@@ -849,6 +849,7 @@ OC.L10N.register(
     "Permanently delete this conversation." : "Изтриване на разговора за постоянно.",
     "Delete chat messages" : "Изтриване на съобщенията в чата",
     "Permanently delete all the messages in this conversation." : "Изтриване за постоянно на всички съобщения в този разговор.",
+    "_%n minute_::_%n minutes_" : ["%n минути","%n минути"],
     "_%n hour_::_%n hours_" : ["%n часа","%n часа"],
     "_%n day_::_%n days_" : ["%n дни","%n дни"],
     "_%n week_::_%n weeks_" : ["%n седмици","%n седмици"],
