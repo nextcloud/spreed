@@ -2300,6 +2300,8 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} rebaixou {user0} e {user1} de moderadores",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Um administrador rebaixou {user0}, {user1} e mais %n participante de moderadores","Um administrador rebaixou {user0}, {user1} e mais %n de participantes de moderadores","Um administrador rebaixou {user0}, {user1} e mais %n participantes de moderadores"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} rebaixou {user0}, {user1} e mais %n participante de moderadores","{actor} rebaixou {user0}, {user1} e mais %n de participantes de moderadores","{actor} rebaixou {user0}, {user1} e mais %n participantes de moderadores"],
+    "You reacted with {reaction}" : "Você reagiu com {reaction}",
+    "Reacted with {reaction}" : "Reagiu com {reaction}",
     "You:" : "Você:",
     "You: {lastMessage}" : "Você: {lastMessage}",
     "{actor}:" : "{actor}:",

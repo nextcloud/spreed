@@ -2300,6 +2300,8 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor}, {user0} ve {user1} kullanıcılarını sorumluluktan çıkardı",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Bir yönetici, {user0} ve {user1} kullanıcıları ile %n diğer katılımcıyı sorumluluktan çıkardı","Bir yönetici, {user0} ve {user1} kullanıcıları ile %n diğer katılımcıyı sorumluluktan çıkardı"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor}, {user0} ve {user1} kullanıcıları ile %n diğer katılımcıyı sorumluluktan çıkardı","{actor}, {user0} ve {user1} kullanıcıları ile %n diğer katılımcıyı sorumluluktan çıkardı"],
+    "You reacted with {reaction}" : "{reaction} ile tepki verdiniz",
+    "Reacted with {reaction}" : "{reaction} ile tepki verildi",
     "You:" : "Siz:",
     "You: {lastMessage}" : "Siz: {lastMessage}",
     "{actor}:" : "{actor}:",
