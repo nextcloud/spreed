@@ -2298,6 +2298,8 @@
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} degraderade {user0} och {user1} från moderatorer",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["En administratör degraderade {user0}, {user1} och %n ytterligare deltagare från moderatorer","En administratör degraderade {user0}, {user1} och %n fler deltagare från moderatorer"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} degraderade {user0}, {user1} och %n ytterligare deltagare från moderatorer","{actor} degraderade {user0}, {user1} och %n fler deltagare från moderatorer"],
+    "You reacted with {reaction}" : "Du reagerade med {reaction}",
+    "Reacted with {reaction}" : "Reagerade med {reaction}",
     "You:" : "Du:",
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}:" : "{actor}:",

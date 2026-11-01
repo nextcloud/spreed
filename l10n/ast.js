@@ -608,6 +608,7 @@ OC.L10N.register(
     "Error while clearing chat history" : "Hebo un error mentanto se borraba l'historial de la charra",
     "Be careful, these actions cannot be undone." : "Ten curiáu, estes aiciones nun se puen desfacer.",
     "Delete chat messages" : "Desaniciar los mensaxes de la charra",
+    "_%n minute_::_%n minutes_" : ["%n minutu","%n minutos"],
     "_%n hour_::_%n hours_" : ["%n hora","%n hores"],
     "_%n day_::_%n days_" : ["%n día","%n díes"],
     "_%n week_::_%n weeks_" : ["%n selmana","%n selmanes"],

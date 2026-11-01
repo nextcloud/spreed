@@ -885,6 +885,7 @@ OC.L10N.register(
     "TURN included" : "TURN obsaženo",
     "Delete the signaling server account" : "Smazat účet na signalizačním serveru",
     "_%n user_::_%n users_" : ["%n uživatel","%n uživatelé","%n uživatelů","%n uživatelé"],
+    "Edit label" : "Upravit jmenovku",
     "Cancel" : "Zrušit",
     "Save" : "Uložit",
     "Test connection" : "Vyzkoušet připojení",

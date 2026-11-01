@@ -922,6 +922,7 @@
     "Permanently delete this conversation." : "Назаўжды выдаліць гэту размову.",
     "Delete chat messages" : "Выдаліць паведамленні ў чаце",
     "Permanently delete all the messages in this conversation." : "Назаўжды выдаліць усе паведамленні ў гэтай размове.",
+    "_%n minute_::_%n minutes_" : ["%n хвіліну","%n хвіліны","%n хвілін","%n хвілін"],
     "_%n hour_::_%n hours_" : ["%n гадзіну","%n гадзіны","%n гадзін","%n гадзін"],
     "_%n day_::_%n days_" : ["%n дзень","%n дні","%n дзён","%n дзён"],
     "_%n week_::_%n weeks_" : ["%n тыдзень","%n тыдні","%n тыдняў","%n тыдняў"],
