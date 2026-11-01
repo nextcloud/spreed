@@ -346,6 +346,16 @@ describe('VideoBottomBar.vue', () => {
 
 					expect(emit).toHaveBeenCalledWith('switch-screen-to-id', PEER_ID)
 				})
+
+				test('component does nothing if the screen is already in the main area', async () => {
+					componentProps.sharedData.screenVisible = true
+					const wrapper = mountVideoBottomBar(componentProps)
+					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
+					await screenSharingIndicator.trigger('click')
+
+					expect(callViewStore.selectedVideoPeerId).toBe(null)
+					expect(emit).not.toHaveBeenCalled()
+				})
 			})
 
 			describe('following button', () => {

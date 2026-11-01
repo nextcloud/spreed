@@ -12,7 +12,7 @@
 		:class="containerClass"
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
-		@click="$emit('clickVideo')">
+		@click="handleClick">
 		<div
 			v-show="showVideo"
 			:class="videoWrapperClass"
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
@@ -471,22 +472,17 @@ export default {
 		},
 
 		isSharedScreenPromoted() {
-			return this.sharedData.screenVisible && (!this.hasSelectedVideo || this.isSelected)
+			return this.sharedData.screenVisible && !this.hasSelectedVideo
 		},
 
 		showSharedScreen() {
-			// Big screen
+			// Big tile is a selected camera, the screen is shown in the stripe
 			if (this.isBig) {
-				// Always show shared screen if there's one
-				return this.hasSharedScreen
+				return false
 				// Stripe
 			} else if (this.isStripe) {
-				if (this.isSharedScreenPromoted) {
-					return false
-				} else {
-					// Show the shared screen if not selected or promoted
-					return !((this.isSelected) ? this.isSelected : this.isPromoted) && this.hasSharedScreen
-				}
+				// Show the shared screen if it is not in the main area
+				return !this.isSharedScreenPromoted && this.hasSharedScreen
 
 				// Grid
 			} else {
@@ -585,6 +581,16 @@ export default {
 
 	methods: {
 		t,
+
+		handleClick() {
+			// A tile showing a screen brings that screen to the main area
+			if (this.showSharedScreen) {
+				emit('switch-screen-to-id', this.peerId)
+			} else {
+				this.$emit('clickVideo')
+			}
+		},
+
 		_setStream(stream) {
 			if (!stream) {
 				// Do not clear the srcObject of the video element, just leave
