@@ -151,6 +151,55 @@ describe('participantActivityStore', () => {
 				.toStrictEqual({ state: true, timestamp: 1 })
 		})
 
+		it('returns the position in the raised hands queue by timestamp', () => {
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-1',
+				raisedHand: { state: true, timestamp: 3 },
+			})
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-2',
+				raisedHand: { state: true, timestamp: 1 },
+			})
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-3',
+				raisedHand: { state: true, timestamp: null },
+			})
+
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-2'])).toBe(1)
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-1'])).toBe(2)
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-3'])).toBe(3)
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-another'])).toBeNull()
+		})
+
+		it('moves the queue up when a hand is lowered', () => {
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-1',
+				raisedHand: { state: true, timestamp: 1 },
+			})
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-2',
+				raisedHand: { state: true, timestamp: 2 },
+			})
+
+			participantActivityStore.setParticipantHandRaised({ sessionId: 'session-id-1', raisedHand: false })
+
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-1'])).toBeNull()
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-2'])).toBe(1)
+		})
+
+		it('uses the earliest session for the queue position', () => {
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-1',
+				raisedHand: { state: true, timestamp: 1 },
+			})
+			participantActivityStore.setParticipantHandRaised({
+				sessionId: 'session-id-2',
+				raisedHand: { state: true, timestamp: 2 },
+			})
+
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-2', 'session-id-1'])).toBe(1)
+		})
+
 		it('throws if sessionId is empty', () => {
 			expect(() => participantActivityStore.setParticipantHandRaised({
 				sessionId: '',

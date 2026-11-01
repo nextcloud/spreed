@@ -371,6 +371,15 @@ describe('ParticipantItem.vue', () => {
 			await flushPromises()
 			expect(wrapper.find('.participant--raised-hand').exists()).toBeFalsy()
 		})
+
+		test('shows the position in the raised hands queue', async () => {
+			useParticipantActivityStore().setParticipantHandRaised({
+				sessionId: 'session-id-bob',
+				raisedHand: { state: true, timestamp: 1 },
+			})
+			const wrapper = await mountWithRaisedHand(true)
+			expect(wrapper.find('.participant__raised-hand-order').text()).toBe('2')
+		})
 	})
 
 	describe('actions', () => {

@@ -4,7 +4,7 @@
  */
 
 import { defineStore } from 'pinia'
-import { onScopeDispose, reactive } from 'vue'
+import { computed, onScopeDispose, reactive } from 'vue'
 import { useActorStore } from './actor.ts'
 
 type TypingState = {
@@ -237,6 +237,28 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 	}
 
 	/**
+	 * Session IDs with a raised hand, in the order the hands were raised.
+	 */
+	const raisedHandsQueue = computed(() => Object.keys(raisedHands).sort((sessionId1, sessionId2) => {
+		// use MAX_VALUE if not defined to put hands without a timestamp at the end
+		const t1 = raisedHands[sessionId1].timestamp ?? Number.MAX_VALUE
+		const t2 = raisedHands[sessionId2].timestamp ?? Number.MAX_VALUE
+		return t1 - t2
+	}))
+
+	/**
+	 * Get the position of a participant in the raised hands queue, starting at 1.
+	 * If several sessions have a raised hand, the earliest one is used.
+	 *
+	 * @param sessionIds - list of session IDs to look up
+	 * @return the position, or null if no session has a raised hand
+	 */
+	function getParticipantRaisedHandOrder(sessionIds: string[]): number | null {
+		const index = raisedHandsQueue.value.findIndex((sessionId) => sessionIds.includes(sessionId))
+		return index === -1 ? null : index + 1
+	}
+
+	/**
 	 * Set or clear the raised hand state for a participant.
 	 *
 	 * @param payload - the wrapping object.
@@ -276,7 +298,9 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 		purgeSpeakingState,
 
 		raisedHands,
+		raisedHandsQueue,
 		getParticipantRaisedHand,
+		getParticipantRaisedHandOrder,
 		setParticipantHandRaised,
 		purgeRaisedHandsState,
 	}

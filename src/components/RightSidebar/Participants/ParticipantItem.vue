@@ -98,6 +98,7 @@
 				class="participant__call-state"
 				:title="callIcon.title">
 				<component :is="callIcon.icon" :size="callIcon.size" />
+				<span v-if="raisedHandOrder" class="participant__raised-hand-order">{{ raisedHandOrder }}</span>
 			</span>
 
 			<!-- Grant or revoke lobby permissions (inline button) -->
@@ -662,6 +663,14 @@ export default {
 
 			const raisedState = this.participantActivityStore.getParticipantRaisedHand(this.participant.sessionIds)
 			return raisedState.state
+		},
+
+		raisedHandOrder() {
+			if (!this.isHandRaised) {
+				return null
+			}
+
+			return this.participantActivityStore.getParticipantRaisedHandOrder(this.participant.sessionIds)
 		},
 
 		callIcon() {
@@ -1286,7 +1295,13 @@ export default {
 		height: 100%;
 		display: flex;
 		align-items: center;
+		gap: 2px;
 		color: var(--color-text-maxcontrast);
+	}
+
+	&__raised-hand-order {
+		font-weight: bold;
+		font-variant-numeric: tabular-nums;
 	}
 
 	:deep(.list-item-content__actions > .critical) {
