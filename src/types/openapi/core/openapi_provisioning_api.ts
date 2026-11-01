@@ -764,6 +764,8 @@ export interface operations {
                 limit?: number | null;
                 /** @description Offset for searching for groups */
                 offset?: number;
+                /** @description Only return users with this enabled state, or all users if null. Use the `Link` header for the next page offset */
+                enabled?: boolean | null;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -780,6 +782,7 @@ export interface operations {
             /** @description Group users details returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -1026,6 +1029,8 @@ export interface operations {
                 limit?: number | null;
                 /** @description Offset for searching for groups */
                 offset?: number;
+                /** @description Only return users with this enabled state, or all users if null. Use the `Link` header for the next page offset */
+                enabled?: boolean | null;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -1039,6 +1044,7 @@ export interface operations {
             /** @description Users details returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
