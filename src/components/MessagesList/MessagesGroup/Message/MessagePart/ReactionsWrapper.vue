@@ -29,6 +29,7 @@
 			</template>
 
 			<div v-if="hasReactionsLoaded" class="reaction-details">
+				<span v-if="getEmojiTitle(reaction)" class="reaction-details__name">{{ getEmojiTitle(reaction) }}</span>
 				<span>{{ getReactionSummary(reaction) }}
 					<span v-if="reactionsCount(reaction) === 4">
 						{{ remainingReactionsLabel(reaction) }}
@@ -103,6 +104,7 @@ import { ATTENDEE } from '../../../../../constants.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../../../stores/guestName.ts'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { getEmojiTitle } from '../../../../../utils/emoji.ts'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 
 export default {
@@ -201,6 +203,7 @@ export default {
 	methods: {
 		t,
 		n,
+		getEmojiTitle,
 
 		fetchReactions() {
 			if (this.hasOutdatedDetails()) {
@@ -332,6 +335,11 @@ export default {
 .reaction-details {
 	padding: 8px;
 	max-width: 250px;
+
+	&__name {
+		display: block;
+		font-weight: bold;
+	}
 }
 
 .details-loading {
