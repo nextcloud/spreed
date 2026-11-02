@@ -318,16 +318,19 @@ class Config {
 			$userId,
 			Application::APP_ID,
 			UserPreference::RECORDING_FOLDER,
-			$this->getAttachmentFolder($userId) . '/Recording'
+			$this->getAttachmentFolder($userId) . '/Recording',
 		);
 	}
 
 	public function getLiveTranscriptionTargetLanguageId(?string $userId = null): string {
+		if ($userId === null) {
+			return '';
+		}
 		return $this->userConfig->getvalueString(
 			$userId,
 			Application::APP_ID,
 			UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID,
-			''
+			'',
 		);
 	}
 

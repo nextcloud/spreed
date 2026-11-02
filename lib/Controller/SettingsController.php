@@ -63,12 +63,12 @@ class SettingsController extends OCSController {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		if (is_string($value)) {
-			$this->userConfig->setValueString($this->userId, Application::APP_ID, $key, $value);
-		}
-
 		if (is_int($value)) {
 			$this->userConfig->setValueInt($this->userId, Application::APP_ID, $key, $value);
+		}
+
+		if (is_string($value)) {
+			$this->userConfig->setValueString($this->userId, Application::APP_ID, $key, $value);
 		}
 
 		return new DataResponse(null);
