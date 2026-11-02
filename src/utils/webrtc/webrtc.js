@@ -545,6 +545,10 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 			return
 		}
 
+		// A pending reconnection must not join the call again once it was
+		// left, and a new call starts with no failed attempts.
+		resetOwnPeerReconnections()
+
 		clearErrorNotification()
 		Sounds.playLeave(true)
 
@@ -863,6 +867,8 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 				case 'completed':
 					console.debug('Connection established (own peer).', peer.id, peer)
 
+					ownPeerReconnectionAttempts = 0
+
 					break
 				case 'disconnected':
 					console.debug('Disconnected (own peer).', peer.id, peer)
@@ -904,6 +910,64 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		// peerconnection streams.
 		// If flags are undefined the current call flags are used.
 		signaling.forceReconnect(true, flags)
+	}
+
+	// Forced reconnections to recover from a failed connection of the own peer
+	// are delayed with an exponential backoff and stopped after some attempts.
+	// Otherwise a client that can not establish a connection with the MCU (for
+	// example, because its network blocks the TURN server) would leave and join
+	// the call again in a tight loop, and every reconnection also recreates the
+	// connections of all the other participants to the streams of the client.
+	const MAX_OWN_PEER_RECONNECTION_ATTEMPTS = 5
+	let ownPeerReconnectionAttempts = 0
+	let ownPeerReconnectionTimeout = null
+	let ownPeerReconnectionFlags
+	let ownPeerReconnectionErrorHandle = null
+
+	const resetOwnPeerReconnections = function() {
+		clearTimeout(ownPeerReconnectionTimeout)
+		ownPeerReconnectionTimeout = null
+		ownPeerReconnectionAttempts = 0
+		ownPeerReconnectionFlags = undefined
+
+		if (ownPeerReconnectionErrorHandle) {
+			ownPeerReconnectionErrorHandle.hideToast()
+			ownPeerReconnectionErrorHandle = null
+		}
+	}
+
+	const forceReconnectWithBackoff = function(signaling, flags) {
+		if (flags !== undefined) {
+			ownPeerReconnectionFlags = flags
+		}
+
+		if (ownPeerReconnectionTimeout) {
+			return
+		}
+
+		ownPeerReconnectionAttempts++
+		if (ownPeerReconnectionAttempts > MAX_OWN_PEER_RECONNECTION_ATTEMPTS) {
+			if (!ownPeerReconnectionErrorHandle) {
+				console.error('The connection to the media server failed too many times, not reconnecting again')
+				ownPeerReconnectionErrorHandle = showError(t('spreed', 'Could not connect to the call. Please check your network connection and join the call again.'), {
+					timeout: TOAST_PERMANENT_TIMEOUT,
+				})
+			}
+
+			return
+		}
+
+		const delay = Math.min(30000, 2000 * 2 ** (ownPeerReconnectionAttempts - 1))
+		console.debug('The connection to the media server failed, reconnecting in ' + delay + ' ms')
+
+		ownPeerReconnectionTimeout = setTimeout(function() {
+			ownPeerReconnectionTimeout = null
+
+			const flags = ownPeerReconnectionFlags
+			ownPeerReconnectionFlags = undefined
+
+			forceReconnect(signaling, flags)
+		}, delay)
 	}
 
 	/**
@@ -976,6 +1040,15 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 				// one forced reconnection even if there are several peers.
 				// FIXME: despite all of the above this is a dirty and ugly hack
 				// that should be fixed with proper renegotiation.
+				// If the connection already failed the reconnection is delayed
+				// like for any other failed connection, as connecting again is
+				// likely to fail too.
+				if (peer.pc.iceConnectionState === 'failed' || peer.pc.connectionState === 'failed') {
+					forceReconnectWithBackoff(signaling, flags)
+
+					return
+				}
+
 				forceReconnect(signaling, flags)
 			}
 		})
@@ -1358,7 +1431,7 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 
 		// For now assume the connection to the MCU is interrupted on ICE
 		// failures and force a reconnection of all streams.
-		forceReconnect(signaling)
+		forceReconnectWithBackoff(signaling)
 	})
 
 	let localStreamRequestedTimeout = null
