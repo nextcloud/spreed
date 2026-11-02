@@ -976,7 +976,7 @@ class Config {
 	 * User setting falling back to admin defined app config
 	 *
 	 * @param ?string $userId
-	 * @return UserPreference::CONVERSATION_LIST_STYLE_*
+	 * @return UserPreference::CONVERSATIONS_LIST_STYLE_*
 	 */
 	public function getConversationsListStyle(?string $userId): string {
 		if ($userId !== null) {
@@ -986,17 +986,17 @@ class Config {
 				UserPreference::CONVERSATIONS_LIST_STYLE,
 			);
 
-			if (in_array($userSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+			if (in_array($userSetting, [UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT], true)) {
 				return $userSetting;
 			}
 		}
 
 		$appSetting = $this->appConfig->getAppValueString(self::CONVERSATIONS_LIST_STYLE);
-		if (in_array($appSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+		if (in_array($appSetting, [UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT], true)) {
 			return $appSetting;
 		}
 
-		return UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES;
+		return UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES;
 	}
 
 	/**

@@ -13,6 +13,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Settings\UserPreference;
 use OCP\Config\IUserConfig;
 use OCP\Config\ValueType;
 use OCP\IL10N;
@@ -60,7 +61,7 @@ class NoteToSelfService {
 		$randomLock = 1 + (int)$this->secureRandom->generate(5, ISecureRandom::CHAR_DIGITS);
 		// Room IDs are by default positive, turning it negative  so it doesn't coincidentally equal a random roomId for other requests
 		$randomLock *= -1;
-		$this->userConfig->setValueInt($userId, Application::APP_ID, 'note_to_self', $randomLock);
+		$this->userConfig->setValueInt($userId, Application::APP_ID, UserPreference::NOTE_TO_SELF, $randomLock);
 
 		$currentUser = $this->userManager->get($userId);
 		if (!$currentUser instanceof IUser) {
@@ -80,7 +81,7 @@ class NoteToSelfService {
 		);
 
 		// This is a little trick to bypass local caching
-		$values = $this->userConfig->getValuesByUsers(Application::APP_ID, 'note_to_self', ValueType::INT, [$user->getUID()]);
+		$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::NOTE_TO_SELF, ValueType::INT, [$user->getUID()]);
 		$currentRoomId = 0;
 		if (isset($values[$user->getUID()])) {
 			$currentRoomId = $values[$user->getUID()];
@@ -91,15 +92,15 @@ class NoteToSelfService {
 			$this->roomService->deleteRoom($room);
 
 			if ($currentRoomId > 0) {
-				$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, 'note_to_self', $currentRoomId['note_to_self']);
-				return $this->manager->getRoomById($currentRoomId['note_to_self']);
+				$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $currentRoomId[UserPreference::NOTE_TO_SELF]);
+				return $this->manager->getRoomById($currentRoomId[UserPreference::NOTE_TO_SELF]);
 			}
 
 			// Failed to read parallel note-to-self creation
 			throw new RoomNotFoundException('Failed due to parallel requests');
 		}
 
-		$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, 'note_to_self', $room->getId());
+		$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $room->getId());
 
 		$this->roomService->setDescription(
 			$room,
@@ -120,6 +121,6 @@ class NoteToSelfService {
 	}
 
 	protected function getNoteToSelfConversationId(string $userId): int {
-		return $this->userConfig->getValueInt($userId, Application::APP_ID, 'note_to_self');
+		return $this->userConfig->getValueInt($userId, Application::APP_ID, UserPreference::NOTE_TO_SELF);
 	}
 }

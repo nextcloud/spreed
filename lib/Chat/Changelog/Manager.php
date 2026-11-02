@@ -12,6 +12,7 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager as RoomManager;
+use OCA\Talk\Settings\UserPreference;
 use OCP\Config\IUserConfig;
 use OCP\IL10N;
 
@@ -26,7 +27,7 @@ class Manager {
 	}
 
 	public function getChangelogForUser(string $userId): int {
-		return $this->userConfig->getValueInt($userId, Application::APP_ID, Config::CHANGELOG);
+		return $this->userConfig->getValueInt($userId, Application::APP_ID, UserPreference::CHANGELOG);
 	}
 
 	public function updateChangelog(string $userId): void {

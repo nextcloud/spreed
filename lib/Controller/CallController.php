@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\AppInfo\Application;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Config;
@@ -204,7 +203,7 @@ class CallController extends AEnvironmentAwareOCSController {
 
 		$timezone = 'UTC';
 		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$timezone = $this->userConfig->getValueString($this->participant->getAttendee()->getActorId(), Application::APP_ID, 'timezone', 'UTC');
+			$timezone = $this->userConfig->getValueString($this->participant->getAttendee()->getActorId(), 'core', 'timezone', 'UTC');
 		}
 
 		try {

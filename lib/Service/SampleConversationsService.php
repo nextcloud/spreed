@@ -14,6 +14,7 @@ use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Settings\UserPreference;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
@@ -50,12 +51,12 @@ class SampleConversationsService {
 			return;
 		}
 
-		$created = $this->userConfig->getValueString($userId, Application::APP_ID, 'samples_created');
+		$created = $this->userConfig->getValueString($userId, Application::APP_ID, UserPreference::SAMPLES_CREATED);
 		if ($created !== '') {
 			return;
 		}
 
-		$this->userConfig->setValueString($userId, Application::APP_ID, 'samples_created', $this->timeFactory->now()->format(\DateTime::ATOM));
+		$this->userConfig->setValueString($userId, Application::APP_ID, UserPreference::SAMPLES_CREATED, $this->timeFactory->now()->format(\DateTime::ATOM));
 
 		$user = $this->userManager->get($userId);
 		if (!$user instanceof IUser) {

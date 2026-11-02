@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -20,8 +21,8 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
@@ -33,7 +34,7 @@ class SettingsController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private readonly IConfig $config,
+		private readonly ConfigLexicon $configLexicon,
 		private readonly IAppConfig $appConfig,
 		private readonly IUserConfig $userConfig,
 		private readonly IGroupManager $groupManager,
@@ -62,13 +63,20 @@ class SettingsController extends OCSController {
 		if (!$this->preferenceListener->validatePreference($this->userId, $key, $value)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
-
-		if (is_int($value)) {
-			$this->userConfig->setValueInt($this->userId, Application::APP_ID, $key, $value);
+		if ($value === null) {
+			$this->userConfig->deleteUserConfig($this->userId, Application::APP_ID, $key);
+			return new DataResponse(null);
 		}
 
-		if (is_string($value)) {
-			$this->userConfig->setValueString($this->userId, Application::APP_ID, $key, $value);
+		foreach ($this->configLexicon->getTalkUserAppPreferences() as $config) {
+			if ($key === $config->entry->getKey()) {
+				match ($config->entry->getValueType()) {
+					ValueType::INT, ValueType::BOOL, ValueType::FLOAT => $this->userConfig->setValueInt($this->userId, Application::APP_ID, $key, (int)$value),
+					ValueType::STRING => $this->userConfig->setValueString($this->userId, Application::APP_ID, $key, $value),
+					default => $this->userConfig->setValueString($this->userId, Application::APP_ID, $key, (string)$value),
+				};
+				break;
+			}
 		}
 
 		return new DataResponse(null);
