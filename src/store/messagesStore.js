@@ -538,6 +538,18 @@ const actions = {
 				reactionsStore.processReaction(token, message)
 			}
 
+			// One-to-one conversations show reactions as last message
+			if (fromRealtime && conversation?.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+				if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION
+					&& message.id > conversation.lastMessage?.id) {
+					context.commit('updateConversationLastMessage', { token, lastMessage: message })
+				} else if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION_REVOKED
+					&& conversation.lastMessage?.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION) {
+					// Server already rolled back lastMessage, store may not hold that message
+					context.dispatch('fetchConversation', { token })
+				}
+			}
+
 			if ([MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED, MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED].includes(message.systemMessage)) {
 				// update conversation lastMessage, if it was edited or deleted
 				if (message.parent.id === conversation.lastMessage?.id) {
