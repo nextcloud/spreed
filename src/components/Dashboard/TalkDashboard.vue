@@ -46,6 +46,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
+const hasMeetings = isCallEnabled || !!getTalkConfig('local', 'call', 'external-call-service')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
@@ -86,7 +87,7 @@ let actualizeDataInterval: ReturnType<typeof setInterval> | null = null
  */
 async function actualizeData() {
 	await Promise.all([
-		dashboardStore.fetchDashboardEventRooms(),
+		hasMeetings && dashboardStore.fetchDashboardEventRooms(),
 		dashboardStore.fetchUpcomingReminders(),
 	])
 }
@@ -218,13 +219,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</h2>
 			<div class="talk-dashboard__actions">
 				<NcPopover
-					v-if="canStartConversations"
+					v-if="canStartConversations && isCallEnabled"
 					class="talk-dashboard__action"
 					popupRole="dialog">
 					<template #trigger>
-						<NcButton
-							v-if="isCallEnabled"
-							variant="primary">
+						<NcButton variant="primary">
 							<template #icon>
 								<IconVideoOutline />
 							</template>
@@ -290,7 +289,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</div>
 		</div>
 		<div class="talk-dashboard__items">
-			<div class="event-section">
+			<div v-if="hasMeetings" class="event-section">
 				<DashboardSection
 					v-if="!eventsInitialised || eventRooms.length > 0"
 					:title="t('spreed', 'Upcoming meetings')"
