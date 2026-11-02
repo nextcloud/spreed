@@ -35,9 +35,6 @@
 				<directory name="lib"/>
 			</errorLevel>
 			<errorLevel type="suppress">
-				<referencedMethod name="OCP\IConfig::getAppValue"/>
-				<referencedMethod name="OCP\IConfig::setAppValue"/>
-				<referencedMethod name="OCP\IConfig::deleteAppValue"/>
 				<referencedMethod name="OCP\IConfig::getUserValue"/>
 				<referencedMethod name="OCP\IConfig::setUserValue"/>
 				<referencedMethod name="OCP\IConfig::getUserValueForUsers"/>

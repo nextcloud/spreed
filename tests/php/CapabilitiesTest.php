@@ -17,6 +17,7 @@ use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
+use OCP\IAppConfig as IServerAppConfig;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -36,6 +37,7 @@ class CapabilitiesTest extends TestCase {
 	protected IConfig&MockObject $serverConfig;
 	protected Config&MockObject $talkConfig;
 	protected IAppConfig&MockObject $appConfig;
+	protected IServerAppConfig&MockObject $serverAppConfig;
 	protected CommentsManager&MockObject $commentsManager;
 	protected IUserSession&MockObject $userSession;
 	protected IAppManager&MockObject $appManager;
@@ -51,6 +53,7 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->serverAppConfig = $this->createMock(IServerAppConfig::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
@@ -80,6 +83,7 @@ class CapabilitiesTest extends TestCase {
 			$this->serverConfig,
 			$this->talkConfig,
 			$this->appConfig,
+			$this->serverAppConfig,
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
@@ -142,8 +146,8 @@ class CapabilitiesTest extends TestCase {
 			->with(null)
 			->willReturn('');
 
-		$this->serverConfig->expects($this->any())
-			->method('getAppValue')
+		$this->serverAppConfig->expects($this->any())
+			->method('getValueString')
 			->willReturnMap([
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
@@ -383,8 +387,8 @@ class CapabilitiesTest extends TestCase {
 		$this->taskProcessingManager->method('getAvailableTaskTypeIds')
 			->willReturn([TextToTextSummary::ID]);
 
-		$this->serverConfig->expects($this->any())
-			->method('getAppValue')
+		$this->serverAppConfig->expects($this->any())
+			->method('getValueString')
 			->willReturnMap([
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
