@@ -2220,7 +2220,7 @@ OC.L10N.register(
     "Channel password" : "頻道密碼",
     "NickServ nickname" : "NickServ 暱稱",
     "NickServ password" : "NickServ 密碼",
-    "Use TLS" : "Use TLS",
+    "Use TLS" : "使用 TLS",
     "Use SASL" : "使用 SASL",
     "Tenant ID" : "租戶 ID",
     "Client ID" : "客戶端 ID",
