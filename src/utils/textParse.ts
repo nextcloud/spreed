@@ -6,7 +6,7 @@
 import type { ChatMessage, Mention } from '../types/index.ts'
 
 import { getBaseUrl } from '@nextcloud/router'
-import { decodeHTML } from 'entities'
+import { decodeHTMLStrict } from 'entities'
 import { MENTION } from '../constants.ts'
 import { sanitizeFileName } from './fileUpload.ts'
 import { getFileKeys } from './message.ts'
@@ -78,7 +78,7 @@ function parseToSimpleMessage(text: string, parameters: ChatMessage['messagePara
  * @param text The string to parse
  */
 function parseSpecialSymbols(text: string): string {
-	return decodeHTML(text) // decode HTML entities
+	return decodeHTMLStrict(text) // decode HTML entities, strict to keep '&param' in URLs
 		.replace(/^\s+|\s+$/g, '') // remove trailing and leading whitespaces
 		.replace(/\r\n|\n|\r/gm, '\n') // remove line breaks
 }
