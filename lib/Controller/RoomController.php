@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use GuzzleHttp\Exception\ClientException;
+use OCA\Activity\Data;
 use OCA\Circles\Model\Member;
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\AppInfo\Application;
@@ -555,9 +556,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * It will be automatically created when it is currently missing
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Hash: string}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Hash: string}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{X-Nextcloud-Talk-Hash: string}>
 	 *
 	 * 200: Room returned successfully
+	 * 404: Room not found because a parallel request is creating it
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/note-to-self', requirements: [

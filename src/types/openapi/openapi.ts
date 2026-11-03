@@ -12044,6 +12044,21 @@ export interface operations {
                     };
                 };
             };
+            /** @description Room not found because a parallel request is creating it */
+            404: {
+                headers: {
+                    "X-Nextcloud-Talk-Hash"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
         };
     };
     "room-get-participants": {
