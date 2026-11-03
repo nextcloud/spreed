@@ -172,10 +172,11 @@ class Config {
 	 * @return Participant::PRIVACY_*
 	 */
 	public function getUserReadPrivacy(string $userId): int {
-		return match ((int)$this->config->getUserValue(
+		return match ($this->userConfig->getValueInt(
 			$userId,
-			'spreed', UserPreference::READ_STATUS_PRIVACY,
-			(string)Participant::PRIVACY_PUBLIC)) {
+			Application::APP_ID,
+			UserPreference::READ_STATUS_PRIVACY,
+			Participant::PRIVACY_PUBLIC)) {
 			Participant::PRIVACY_PUBLIC => Participant::PRIVACY_PUBLIC,
 			default => Participant::PRIVACY_PRIVATE,
 		};
@@ -185,10 +186,11 @@ class Config {
 	 * @return Participant::PRIVACY_*
 	 */
 	public function getUserTypingPrivacy(string $userId): int {
-		return match ((int)$this->config->getUserValue(
+		return match ($this->userConfig->getValueInt(
 			$userId,
-			'spreed', UserPreference::TYPING_PRIVACY,
-			(string)Participant::PRIVACY_PUBLIC)) {
+			Application::APP_ID,
+			UserPreference::TYPING_PRIVACY,
+			Participant::PRIVACY_PUBLIC)) {
 			Participant::PRIVACY_PUBLIC => Participant::PRIVACY_PUBLIC,
 			default => Participant::PRIVACY_PRIVATE,
 		};
@@ -312,20 +314,23 @@ class Config {
 	}
 
 	public function getRecordingFolder(string $userId): string {
-		return $this->config->getUserValue(
+		return $this->userConfig->getValueString(
 			$userId,
-			'spreed',
+			Application::APP_ID,
 			UserPreference::RECORDING_FOLDER,
-			$this->getAttachmentFolder($userId) . '/Recording'
+			$this->getAttachmentFolder($userId) . '/Recording',
 		);
 	}
 
 	public function getLiveTranscriptionTargetLanguageId(?string $userId = null): string {
-		return $this->config->getUserValue(
+		if ($userId === null) {
+			return '';
+		}
+		return $this->userConfig->getvalueString(
 			$userId,
-			'spreed',
+			Application::APP_ID,
 			UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID,
-			''
+			'',
 		);
 	}
 
@@ -395,7 +400,7 @@ class Config {
 
 	public function getAttachmentFolder(string $userId): string {
 		$defaultAttachmentFolder = $this->appConfig->getAppValueString(self::DEFAULT_ATTACHMENT_FOLDER);
-		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
+		return $this->userConfig->getValueString($userId, Application::APP_ID, UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
 	/**
@@ -730,7 +735,7 @@ class Config {
 		if (empty($userId)) {
 			$secret = $this->appConfig->getAppValueString(self::SIGNALING_TICKET_SECRET);
 		} else {
-			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
+			$secret = $this->userConfig->getValueString($userId, Application::APP_ID, self::SIGNALING_TICKET_SECRET);
 		}
 		if (empty($secret)) {
 			// Create secret lazily on first access.
@@ -739,7 +744,7 @@ class Config {
 			if (empty($userId)) {
 				$this->appConfig->setAppValueString(self::SIGNALING_TICKET_SECRET, $secret);
 			} else {
-				$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
+				$this->userConfig->setValueString($userId, Application::APP_ID, self::SIGNALING_TICKET_SECRET, $secret);
 			}
 		}
 
@@ -914,7 +919,7 @@ class Config {
 		if (empty($userId)) {
 			$secret = $this->appConfig->getAppValueString(self::SIGNALING_TICKET_SECRET);
 		} else {
-			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
+			$secret = $this->userConfig->getValueString($userId, Application::APP_ID, self::SIGNALING_TICKET_SECRET);
 		}
 		if (empty($secret)) {
 			return false;
@@ -948,10 +953,7 @@ class Config {
 	 */
 	public function getCallsStartWithoutMedia(?string $userId): bool {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_MEDIA);
-			if ($userSetting === 'yes' || $userSetting === 'no') {
-				return $userSetting === 'yes';
-			}
+			return $this->userConfig->getValueBool($userId, Application::APP_ID, UserPreference::CALLS_START_WITHOUT_MEDIA);
 		}
 
 		return $this->appConfig->getAppValueBool(self::CALLS_START_WITHOUT_MEDIA);
@@ -965,8 +967,7 @@ class Config {
 	 */
 	public function getBlurVirtualBackground(?string $userId): bool {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::BLUR_VIRTUAL_BACKGROUND);
-			return $userSetting === 'yes';
+			return $this->userConfig->getValueBool($userId, Application::APP_ID, UserPreference::BLUR_VIRTUAL_BACKGROUND);
 		}
 		return false;
 	}
@@ -975,27 +976,27 @@ class Config {
 	 * User setting falling back to admin defined app config
 	 *
 	 * @param ?string $userId
-	 * @return UserPreference::CONVERSATION_LIST_STYLE_*
+	 * @return UserPreference::CONVERSATIONS_LIST_STYLE_*
 	 */
 	public function getConversationsListStyle(?string $userId): string {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue(
+			$userSetting = $this->userConfig->getValueString(
 				$userId,
-				'spreed',
+				Application::APP_ID,
 				UserPreference::CONVERSATIONS_LIST_STYLE,
 			);
 
-			if (in_array($userSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+			if (in_array($userSetting, [UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT], true)) {
 				return $userSetting;
 			}
 		}
 
 		$appSetting = $this->appConfig->getAppValueString(self::CONVERSATIONS_LIST_STYLE);
-		if (in_array($appSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+		if (in_array($appSetting, [UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT], true)) {
 			return $appSetting;
 		}
 
-		return UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES;
+		return UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES;
 	}
 
 	/**
@@ -1006,9 +1007,9 @@ class Config {
 	 */
 	public function getChatStyle(?string $userId): string {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue(
+			$userSetting = $this->userConfig->getValueString(
 				$userId,
-				'spreed',
+				Application::APP_ID,
 				UserPreference::CHAT_STYLE,
 			);
 
@@ -1033,9 +1034,9 @@ class Config {
 	 */
 	public function getConversationsSortOrder(?string $userId): string {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue(
+			$userSetting = $this->userConfig->getValueString(
 				$userId,
-				'spreed',
+				Application::APP_ID,
 				UserPreference::CONVERSATIONS_SORT_ORDER,
 			);
 
@@ -1055,9 +1056,9 @@ class Config {
 	 */
 	public function getConversationsGroupMode(?string $userId): string {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue(
+			$userSetting = $this->userConfig->getValueString(
 				$userId,
-				'spreed',
+				Application::APP_ID,
 				UserPreference::CONVERSATIONS_GROUP_MODE,
 			);
 
@@ -1081,9 +1082,9 @@ class Config {
 	 */
 	public function getConversationsUnarchive(?string $userId): string {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue(
+			$userSetting = $this->userConfig->getValueString(
 				$userId,
-				'spreed',
+				Application::APP_ID,
 				UserPreference::CONVERSATIONS_UNARCHIVE,
 			);
 
@@ -1107,9 +1108,9 @@ class Config {
 	 */
 	public function getConversationsTagsShowUnread(?string $userId): string {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue(
+			$userSetting = $this->userConfig->getValueString(
 				$userId,
-				'spreed',
+				Application::APP_ID,
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD,
 			);
 

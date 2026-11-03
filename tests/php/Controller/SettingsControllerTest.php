@@ -9,38 +9,42 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Controller;
 
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Controller\SettingsController;
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
+use OCP\Server;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SettingsControllerTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected ConfigLexicon $configLexicon;
 	protected IAppConfig&MockObject $appConfig;
+	protected IUserConfig&MockObject $userConfig;
 	protected IGroupManager&MockObject $groupManager;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected SettingsController $controller;
 
 	public function setUp(): void {
 		parent::setUp();
-
-		$this->config = $this->createMock(IConfig::class);
+		$this->configLexicon = Server::get(ConfigLexicon::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->controller = new SettingsController(
 			'spreed',
 			$this->createMock(IRequest::class),
-			$this->config,
+			$this->configLexicon,
 			$this->appConfig,
+			$this->userConfig,
 			$this->groupManager,
 			$this->createMock(BeforePreferenceSetEventListener::class),
 			'admin',

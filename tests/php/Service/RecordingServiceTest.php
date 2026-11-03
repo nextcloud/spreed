@@ -30,6 +30,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\Constants;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
@@ -38,7 +39,6 @@ use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Files\IUserFolder;
 use OCP\Files\NotFoundException;
-use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
@@ -62,8 +62,8 @@ class RecordingServiceTest extends TestCase {
 	protected ParticipantService&MockObject $participantService;
 	protected IRootFolder&MockObject $rootFolder;
 	protected Config&MockObject $config;
-	protected IConfig&MockObject $serverConfig;
 	protected IAppConfig&MockObject $appConfig;
+	protected IUserConfig&MockObject $userConfig;
 	protected IManager&MockObject $notificationManager;
 	protected Manager&MockObject $roomManager;
 	protected ITimeFactory&MockObject $timeFactory;
@@ -90,8 +90,8 @@ class RecordingServiceTest extends TestCase {
 		$this->roomManager = $this->createMock(Manager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->config = $this->createMock(Config::class);
-		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->shareManager = $this->createMock(ShareManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
@@ -112,8 +112,8 @@ class RecordingServiceTest extends TestCase {
 			$this->roomManager,
 			$this->timeFactory,
 			$this->config,
-			$this->serverConfig,
 			$this->appConfig,
+			$this->userConfig,
 			$this->roomService,
 			$this->shareManager,
 			$this->chatManager,

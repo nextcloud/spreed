@@ -14,6 +14,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -29,6 +30,7 @@ class AdminSettingsTest extends TestCase {
 	protected Config&MockObject $talkConfig;
 	protected IConfig&MockObject $serverConfig;
 	protected IAppConfig&MockObject $appConfig;
+	protected IUserConfig&MockObject $userConfig;
 	protected IInitialState&MockObject $initialState;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected IGroupManager&MockObject $groupManager;
@@ -45,6 +47,7 @@ class AdminSettingsTest extends TestCase {
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->initialState = $this->createMock(IInitialState::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
@@ -67,6 +70,7 @@ class AdminSettingsTest extends TestCase {
 				$this->talkConfig,
 				$this->serverConfig,
 				$this->appConfig,
+				$this->userConfig,
 				$this->initialState,
 				$this->cacheFactory,
 				$this->groupManager,
@@ -83,6 +87,7 @@ class AdminSettingsTest extends TestCase {
 				$this->talkConfig,
 				$this->serverConfig,
 				$this->appConfig,
+				$this->userConfig,
 				$this->initialState,
 				$this->cacheFactory,
 				$this->groupManager,

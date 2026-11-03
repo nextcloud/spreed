@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 use GuzzleHttp\Exception\ClientException;
 use OCA\Circles\Model\Member;
 use OCA\DAV\CalDAV\TimezoneService;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
@@ -202,7 +203,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->userId !== null) {
 			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
-			$values[] = $this->userConfig->getValueString($this->userId, 'spreed', UserPreference::ATTACHMENT_FOLDER);
+			$values[] = $this->userConfig->getValueString($this->userId, Application::APP_ID, UserPreference::ATTACHMENT_FOLDER);
 			$values[] = $this->userConfig->getValueString($this->userId, 'theming', 'userCacheBuster', '0');
 		} else {
 			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_GUESTS);

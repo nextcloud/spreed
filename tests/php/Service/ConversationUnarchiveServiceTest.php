@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Service;
 
 use OC\Comments\Comment;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
@@ -21,7 +22,8 @@ use OCA\Talk\Service\ConversationUnarchiveService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Settings\UserPreference;
 use OCP\Comments\IComment;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -29,8 +31,8 @@ use Test\TestCase;
 class ConversationUnarchiveServiceTest extends TestCase {
 	protected AttendeeMapper&MockObject $attendeeMapper;
 	protected ParticipantService&MockObject $participantService;
-	protected IConfig&MockObject $serverConfig;
 	protected Config&MockObject $talkConfig;
+	protected IUserConfig&MockObject $userConfig;
 	protected UserConverter&MockObject $userConverter;
 	protected ConversationUnarchiveService $service;
 
@@ -39,14 +41,14 @@ class ConversationUnarchiveServiceTest extends TestCase {
 
 		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
-		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->userConverter = $this->createMock(UserConverter::class);
 		$this->service = new ConversationUnarchiveService(
 			$this->attendeeMapper,
 			$this->participantService,
-			$this->serverConfig,
 			$this->talkConfig,
+			$this->userConfig,
 			$this->userConverter,
 		);
 	}
@@ -90,8 +92,8 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		$this->attendeeMapper->method('getArchivedActorsByType')
 			->with(42, Attendee::ACTOR_USERS)
 			->willReturn([]);
-		$this->serverConfig->expects($this->never())
-			->method('getUserValueForUsers');
+		$this->userConfig->expects($this->never())
+			->method('getValuesByUsers');
 		$this->participantService->expects($this->never())
 			->method('unarchiveAttendeesByIds');
 
@@ -135,8 +137,8 @@ class ConversationUnarchiveServiceTest extends TestCase {
 				$this->createAttendee(1, 'alice'),
 				$this->createAttendee(2, 'bob'),
 			]);
-		$this->serverConfig->method('getUserValueForUsers')
-			->with('spreed', UserPreference::CONVERSATIONS_UNARCHIVE, ['alice', 'bob'])
+		$this->userConfig->method('getValuesByUsers')
+			->with(Application::APP_ID, UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, ['alice', 'bob'])
 			->willReturn($modes);
 
 		$parent = null;
@@ -164,7 +166,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	public function testOwnMessageKeepsArchived(string $mode): void {
 		$this->attendeeMapper->method('getArchivedActorsByType')
 			->willReturn([$this->createAttendee(1, 'alice'), $this->createAttendee(2, 'bob')]);
-		$this->serverConfig->method('getUserValueForUsers')
+		$this->userConfig->method('getValuesByUsers')
 			->willReturn(['alice' => $mode, 'bob' => $mode]);
 
 		// Only bob is unarchived, even when the sender mentions themselves
@@ -194,7 +196,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	public function testParsedMentions(string $message, array $expectedAttendeeIds): void {
 		$this->attendeeMapper->method('getArchivedActorsByType')
 			->willReturn([$this->createAttendee(2, 'bob')]);
-		$this->serverConfig->method('getUserValueForUsers')
+		$this->userConfig->method('getValuesByUsers')
 			->willReturn(['bob' => UserPreference::CONVERSATIONS_UNARCHIVE_MENTION]);
 
 		$this->participantService->expects($this->once())
@@ -232,7 +234,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	public function testSharedObject(string $mode, array $message, array $expectedAttendeeIds): void {
 		$this->attendeeMapper->method('getArchivedActorsByType')
 			->willReturn([$this->createAttendee(2, 'bob')]);
-		$this->serverConfig->method('getUserValueForUsers')
+		$this->userConfig->method('getValuesByUsers')
 			->willReturn(['bob' => $mode]);
 
 		$this->participantService->expects($this->once())

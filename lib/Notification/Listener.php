@@ -22,6 +22,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
@@ -43,6 +45,7 @@ class Listener implements IEventListener {
 
 	public function __construct(
 		private readonly IConfig $serverConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly IDBConnection $connection,
 		private readonly IManager $notificationManager,
 		private readonly Notifier $notificationProvider,
@@ -304,7 +307,7 @@ class Listener implements IEventListener {
 			} else {
 				$fallbackLang = $this->serverConfig->getSystemValueString('default_language', 'en');
 				/** @psalm-var array<string, string> $userLanguages */
-				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', array_map(strval(...), array_keys($users)));
+				$userLanguages = $this->userConfig->getValuesByUsers('core', 'lang', ValueType::STRING, array_map(strval(...), array_keys($users)));
 			}
 		}
 

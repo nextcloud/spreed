@@ -16,6 +16,7 @@ use OCA\Talk\Command\Stun\Delete as StunDelete;
 use OCA\Talk\Command\Turn\Add as TurnAdd;
 use OCA\Talk\Command\Turn\Delete as TurnDelete;
 use OCA\Talk\Config\AppConfigEntry;
+use OCA\Talk\Config\UserPreferenceEntry;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Signaling\Manager as SignalingManager;
@@ -346,8 +347,8 @@ PROMPT;
 				enumType: UserPreference::CHAT_STYLE_SPLIT . '|' . UserPreference::CHAT_STYLE_UNIFIED,
 			),
 			new AppConfigEntry(
-				new Entry(Config::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, definition: 'Default conversation list style when not overwritten by the user'),
-				enumType: UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES . '|' . UserPreference::CONVERSATION_LIST_STYLE_COMPACT,
+				new Entry(Config::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES, definition: 'Default conversation list style when not overwritten by the user'),
+				enumType: UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES . '|' . UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT,
 			),
 			new AppConfigEntry(
 				new Entry(Config::HIDE_SIGNALING_WARNING, ValueType::BOOL, false, definition: 'Flag that allows to suppress the warning that an HPB should be configured'),
@@ -424,13 +425,91 @@ PROMPT;
 		return array_map(static fn (AppConfigEntry $config): Entry => $config->entry, $this->getTalkAppConfigs());
 	}
 
+	public function getTalkUserAppPreferences(): array {
+		return [
+			new UserPreferenceEntry(
+				new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether sounds are played when participants join or leave a call'),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Chat style of the user, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#chat-style'),
+				provisionable: true,
+				enumType: UserPreference::CHAT_STYLE_SPLIT . '|' . UserPreference::CHAT_STYLE_UNIFIED,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER, definition: 'When archived conversations are unarchived automatically, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversations-unarchive-mode'),
+				provisionable: true,
+				enumType: UserPreference::CONVERSATIONS_UNARCHIVE_NEVER . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_MENTION . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS, definition: 'Which unread conversations are shown in collapsed tag sections, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversations-tags-show-unread-mode'),
+				provisionable: true,
+				enumType: UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::ATTACHMENT_FOLDER, ValueType::STRING),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::BLUR_VIRTUAL_BACKGROUND, ValueType::BOOL, false),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CALLS_START_WITHOUT_MEDIA, ValueType::BOOL, false),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CONVERSATIONS_LIST_STYLE, ValueType::STRING, Config::CONVERSATIONS_LIST_STYLE),
+				provisionable: true,
+				enumType: UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES . '|' . UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::TYPING_PRIVACY, ValueType::INT, 0),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::READ_STATUS_PRIVACY, ValueType::INT, 0),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::RECORDING_FOLDER, ValueType::STRING),
+				provisionable: false,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID, ValueType::STRING, ''),
+				provisionable: true,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CONVERSATIONS_SORT_ORDER, ValueType::STRING, UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY),
+				provisionable: true,
+				enumType: UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY . '|' . UserPreference::CONVERSATIONS_SORT_ORDER_ALPHABETICAL,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CONVERSATIONS_GROUP_MODE, ValueType::STRING, UserPreference::CONVERSATIONS_GROUP_MODE_NONE),
+				provisionable: true,
+				enumType: UserPreference::CONVERSATIONS_GROUP_MODE_GROUP_FIRST . '|' . UserPreference::CONVERSATIONS_GROUP_MODE_PRIVATE_FIRST . '|' . UserPreference::CONVERSATIONS_GROUP_MODE_NONE,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::NOTE_TO_SELF, ValueType::INT, 0, definition: 'internal roomId for room for notes to self'),
+				provisionable: false,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::CHANGELOG, ValueType::INT, 0),
+				provisionable: false,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::SAMPLES_CREATED, ValueType::STRING, ''),
+				provisionable: false,
+			),
+			new UserPreferenceEntry(
+				new Entry(UserPreference::SIGNALING_TICKET_SECRET, ValueType::STRING, ''),
+				provisionable: false,
+			),
+		];
+	}
+
 	#[\Override]
 	public function getUserConfigs(): array {
-		return [
-			new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether sounds are played when participants join or leave a call'),
-			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT, definition: 'Chat style of the user, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#chat-style'),
-			new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER, definition: 'When archived conversations are unarchived automatically, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversations-unarchive-mode'),
-			new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS, definition: 'Which unread conversations are shown in collapsed tag sections, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversation-tags-show-unread-mode'),
-		];
+		return array_map(static fn (UserPreferenceEntry $config): Entry => $config->entry, $this->getTalkUserAppPreferences());
 	}
 }

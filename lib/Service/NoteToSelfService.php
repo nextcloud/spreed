@@ -8,20 +8,22 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
-use OCP\IConfig;
+use OCA\Talk\Settings\UserPreference;
+use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 
 class NoteToSelfService {
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IUserConfig $userConfig,
 		private readonly IUserManager $userManager,
 		private readonly Manager $manager,
 		private readonly RoomService $roomService,
@@ -34,15 +36,13 @@ class NoteToSelfService {
 
 	public function ensureNoteToSelfExistsForUser(string $userId): Room {
 		$noteToSelfId = $this->getNoteToSelfConversationId($userId);
-
-		if ($noteToSelfId !== 0) {
+		if ($noteToSelfId > 0) {
 			try {
 				return $this->manager->getRoomById($noteToSelfId);
 			} catch (RoomNotFoundException) {
 				// Fall through and recreate it …
 			}
 		}
-
 		$currentUser = $this->userManager->get($userId);
 		if (!$currentUser instanceof IUser) {
 			throw new \InvalidArgumentException('User not found');
@@ -53,13 +53,15 @@ class NoteToSelfService {
 
 	public function initialCreateNoteToSelfForUser(string $userId): void {
 		$noteToSelfId = $this->getNoteToSelfConversationId($userId);
-		if ($noteToSelfId !== 0) {
+		if ($noteToSelfId > 0) {
 			return;
 		}
 
-		// Prefixing with zz, so that casting to int does not give a random roomId for other requests
-		$randomLock = 'zz' . $this->secureRandom->generate(3);
-		$this->config->setUserValue($userId, 'spreed', 'note_to_self', $randomLock);
+		// Creating a random roomId token for 'note_to_self', roomIds are \d, so casting the resulting string to int
+		$randomLock = 1 + (int)$this->secureRandom->generate(5, ISecureRandom::CHAR_DIGITS);
+		// Room IDs are by default positive, turning it negative  so it doesn't coincidentally equal a random roomId for other requests
+		$randomLock *= -1;
+		$this->userConfig->setValueInt($userId, Application::APP_ID, UserPreference::NOTE_TO_SELF, $randomLock);
 
 		$currentUser = $this->userManager->get($userId);
 		if (!$currentUser instanceof IUser) {
@@ -69,30 +71,36 @@ class NoteToSelfService {
 		$this->createNoteToSelfConversation($currentUser, $randomLock);
 	}
 
-	protected function createNoteToSelfConversation(IUser $user, string|int $previousValue): Room {
+	protected function createNoteToSelfConversation(IUser $user, int $previousValue): Room {
 		$room = $this->roomService->createConversation(
 			Room::TYPE_NOTE_TO_SELF,
 			$this->l->t('Note to self'),
 			$user,
 			Room::OBJECT_TYPE_NOTE_TO_SELF,
-			$user->getUID()
+			$user->getUID(),
 		);
 
-		try {
-			$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string)$room->getId(), (string)$previousValue);
-		} catch (PreConditionNotMetException) {
+		// This is a little trick to bypass local caching
+		$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::NOTE_TO_SELF, ValueType::INT, [$user->getUID()]);
+		$currentRoomId = 0;
+		if (isset($values[$user->getUID()])) {
+			$currentRoomId = $values[$user->getUID()];
+		}
+
+		if ($currentRoomId !== $previousValue) {
 			// This process didn't win the race for creating the conversation, so fetch the other one
 			$this->roomService->deleteRoom($room);
 
-			// This is a little trick to bypass local caching
-			$values = $this->config->getUserValueForUsers('spreed', 'note_to_self', [$user->getUID()]);
-			if (isset($values[$user->getUID()])) {
-				return $this->manager->getRoomById($values[$user->getUID()]);
+			if ($currentRoomId > 0) {
+				$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $currentRoomId[UserPreference::NOTE_TO_SELF]);
+				return $this->manager->getRoomById($currentRoomId[UserPreference::NOTE_TO_SELF]);
 			}
 
 			// Failed to read parallel note-to-self creation
 			throw new RoomNotFoundException('Failed due to parallel requests');
 		}
+
+		$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $room->getId());
 
 		$this->roomService->setDescription(
 			$room,
@@ -104,7 +112,7 @@ class NoteToSelfService {
 		$participant = $this->participantService->getParticipantByActor(
 			$room,
 			Attendee::ACTOR_USERS,
-			$user->getUID()
+			$user->getUID(),
 		);
 
 		$this->participantService->updateFavoriteStatus($participant, true);
@@ -113,6 +121,6 @@ class NoteToSelfService {
 	}
 
 	protected function getNoteToSelfConversationId(string $userId): int {
-		return (int)$this->config->getUserValue($userId, 'spreed', 'note_to_self', '0');
+		return $this->userConfig->getValueInt($userId, Application::APP_ID, UserPreference::NOTE_TO_SELF);
 	}
 }
