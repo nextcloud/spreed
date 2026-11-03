@@ -111,7 +111,7 @@ class AvatarService {
 			'image/jpeg',
 			'image/png',
 		];
-		if (!in_array($mimeType, $allowedMimeTypes)) {
+		if (!in_array($mimeType, $allowedMimeTypes, true)) {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 		}
 
