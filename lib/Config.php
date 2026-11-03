@@ -1221,9 +1221,9 @@ class Config implements IAppConfig {
 	 * @param string $value
 	 * @return void
 	 * @throws \Exception
-	 * @depecated
 	 */
 	#[\Override]
+	#[\Deprecated(message: 'Always use the typed setters')]
 	public function setAppValue(string $key, string $value): void {
 		throw new \Exception('Deprecated');
 	}
@@ -1292,9 +1292,9 @@ class Config implements IAppConfig {
 	 * @param string $default
 	 * @return string
 	 * @throws \Exception
-	 * @deprecated
 	 */
 	#[\Override]
+	#[\Deprecated(message: 'Always use the typed getters')]
 	public function getAppValue(string $key, string $default = ''): string {
 		throw new \Exception('Deprecated');
 	}
