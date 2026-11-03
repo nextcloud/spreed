@@ -25,10 +25,11 @@ use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\PreConditionNotMetException;
 use OCP\Security\ISecureRandom;
 use SensitiveParameter;
 
-class Config {
+class Config implements IAppConfig {
 	public const ALLOWED_BACKEND_TIMEOFFSET = 45;
 	public const SIGNALING_INTERNAL = 'internal';
 	public const SIGNALING_EXTERNAL = 'external';
@@ -217,7 +218,7 @@ class Config {
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
-		$allowedGroups = $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_FEDERATION, lazy: true);
+		$allowedGroups = $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_FEDERATION);
 		if (empty($allowedGroups)) {
 			return true;
 		}
@@ -1167,5 +1168,241 @@ class Config {
 
 	public function getPlaySoundsDefaultForGuests(): bool {
 		return $this->appConfig->getAppValueBool(self::GUESTS_PLAY_SOUNDS);
+	}
+
+	/**
+	 * @return array<array-key, string>
+	 */
+	#[\Override]
+	public function getAppKeys(): array {
+		return $this->appConfig->getAppKeys();
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool|null $lazy
+	 * @return bool
+	 */
+	#[\Override]
+	public function hasAppKey(string $key, ?bool $lazy = false): bool {
+		return $this->appConfig->hasAppKey($key);
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool|null $lazy
+	 * @return bool
+	 */
+	#[\Override]
+	public function isSensitive(string $key, ?bool $lazy = false): bool {
+		return $this->appConfig->isSensitive($key, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @return bool
+	 */
+	#[\Override]
+	public function isLazy(string $key): bool {
+		return $this->appConfig->isLazy($key);
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool $filtered
+	 * @return array<string, array<array-key, mixed>|scalar>
+	 */
+	#[\Override]
+	public function getAllAppValues(string $key = '', bool $filtered = false): array {
+		return $this->appConfig->getAllAppValues($key, $filtered);
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $value
+	 * @return void
+	 * @throws \Exception
+	 */
+	#[\Override]
+	#[\Deprecated(message: 'Always use the typed setters')]
+	public function setAppValue(string $key, string $value): void {
+		throw new \Exception('Deprecated');
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $value
+	 * @param bool $lazy
+	 * @param bool $sensitive
+	 * @return bool
+	 */
+	#[\Override]
+	public function setAppValueString(string $key, string $value, bool $lazy = false, bool $sensitive = false): bool {
+		return $this->appConfig->setAppValueString($key, $value, $lazy, $sensitive);
+	}
+
+	/**
+	 * @param string $key
+	 * @param int $value
+	 * @param bool $lazy
+	 * @param bool $sensitive
+	 * @return bool
+	 */
+	#[\Override]
+	public function setAppValueInt(string $key, int $value, bool $lazy = false, bool $sensitive = false): bool {
+		return $this->appConfig->setAppValueInt($key, $value, $lazy, $sensitive);
+	}
+
+	/**
+	 * @param string $key
+	 * @param float $value
+	 * @param bool $lazy
+	 * @param bool $sensitive
+	 * @return bool
+	 */
+	#[\Override]
+	public function setAppValueFloat(string $key, float $value, bool $lazy = false, bool $sensitive = false): bool {
+		return	$this->appConfig->setAppValueFloat($key, $value, $lazy, $sensitive);
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool $value
+	 * @param bool $lazy
+	 * @return bool
+	 */
+	#[\Override]
+	public function setAppValueBool(string $key, bool $value, bool $lazy = false): bool {
+		return $this->appConfig->setAppValueBool($key, $value, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @param array $value
+	 * @param bool $lazy
+	 * @param bool $sensitive
+	 * @return bool
+	 */
+	#[\Override]
+	public function setAppValueArray(string $key, array $value, bool $lazy = false, bool $sensitive = false): bool {
+		return $this->appConfig->setAppValueArray($key, $value, $lazy, $sensitive);
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $default
+	 * @return string
+	 * @throws \Exception
+	 */
+	#[\Override]
+	#[\Deprecated(message: 'Always use the typed getters')]
+	public function getAppValue(string $key, string $default = ''): string {
+		throw new \Exception('Deprecated');
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $default
+	 * @param bool $lazy
+	 * @return string
+	 */
+	#[\Override]
+	public function getAppValueString(string $key, string $default = '', bool $lazy = false): string {
+		return $this->appConfig->getAppValueString($key, $default, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @param int $default
+	 * @param bool $lazy
+	 * @return int
+	 */
+	#[\Override]
+	public function getAppValueInt(string $key, int $default = 0, bool $lazy = false): int {
+		return $this->appConfig->getAppValueInt($key, $default, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @param float $default
+	 * @param bool $lazy
+	 * @return float
+	 */
+	#[\Override]
+	public function getAppValueFloat(string $key, float $default = 0, bool $lazy = false): float {
+		return $this->appConfig->getAppValueFloat($key, $default, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @param bool $default
+	 * @param bool $lazy
+	 * @return bool
+	 */
+	#[\Override]
+	public function getAppValueBool(string $key, bool $default = false, bool $lazy = false): bool {
+		return $this->appConfig->getAppValueBool($key, $default, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @param array $default
+	 * @param bool $lazy
+	 * @return array
+	 */
+	#[\Override]
+	public function getAppValueArray(string $key, array $default = [], bool $lazy = false): array {
+		return $this->appConfig->getAppValueArray($key, $default, $lazy);
+	}
+
+	/**
+	 * @param string $key
+	 * @return void
+	 */
+	#[\Override]
+	public function deleteAppValue(string $key): void {
+		$this->appConfig->deleteAppValue($key);
+	}
+
+	/**
+	 * @return void
+	 */
+	#[\Override]
+	public function deleteAppValues(): void {
+		$this->appConfig->deleteAppValues();
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $key
+	 * @param string $value
+	 * @param string|null $preCondition
+	 * @return void
+	 * @throws PreConditionNotMetException
+	 */
+	#[\Override]
+	public function setUserValue(string $userId, string $key, string $value, ?string $preCondition = null): void {
+		$this->appConfig->setUserValue($userId, $key, $value, $preCondition);
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $key
+	 * @param mixed $default
+	 * @return string
+	 */
+	#[\Override]
+	public function getUserValue(string $userId, string $key, string $default = ''): string {
+		return $this->appConfig->getUserValue($userId, $key, $default);
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $key
+	 * @return void
+	 */
+	#[\Override]
+	public function deleteUserValue(string $userId, string $key): void {
+		$this->appConfig->deleteUserValue($userId, $key);
 	}
 }
