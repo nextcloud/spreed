@@ -1203,6 +1203,10 @@ class Manager {
 		return $room;
 	}
 
+	/**
+	 * @param bool $dispatchEvents false for a history import, which writes the
+	 *                             conversation without telling anybody
+	 */
 	public function createRoom(
 		int $type,
 		string $name = '',
@@ -1221,6 +1225,7 @@ class Manager {
 		?int $mentionPermissions = null,
 		?string $description = null,
 		?int $attributes = null,
+		bool $dispatchEvents = true,
 	): Room {
 		$token = $this->getNewToken();
 		$row = [
@@ -1304,8 +1309,10 @@ class Manager {
 		$row['r_id'] = $insert->getLastInsertId();
 		$room = $this->createRoomObjectFromData($row);
 
-		$event = new RoomCreatedEvent($room);
-		$this->dispatcher->dispatchTyped($event);
+		if ($dispatchEvents) {
+			$event = new RoomCreatedEvent($room);
+			$this->dispatcher->dispatchTyped($event);
+		}
 
 		return $room;
 	}

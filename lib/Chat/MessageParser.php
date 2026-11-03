@@ -10,6 +10,7 @@ namespace OCA\Talk\Chat;
 
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Import\ImportedActorDirectory;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -40,6 +41,7 @@ class MessageParser {
 		private readonly IUserManager $userManager,
 		private readonly ParticipantService $participantService,
 		private readonly BotService $botService,
+		private readonly ImportedActorDirectory $importedActors,
 	) {
 	}
 
@@ -207,6 +209,8 @@ class MessageParser {
 				$this->guestNames[$cacheKey] = $displayName;
 			}
 			$displayName = $this->guestNames[$cacheKey];
+		} elseif ($actorType === Attendee::ACTOR_IMPORTED) {
+			$displayName = $this->importedActors->getDisplayName($actorId);
 		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			if (isset($this->federatedUsersNames[$actorId])) {
 				$displayName = $this->federatedUsersNames[$actorId];

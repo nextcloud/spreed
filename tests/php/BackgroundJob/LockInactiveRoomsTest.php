@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\BackgroundJob;
 
 use OCA\Talk\BackgroundJob\LockInactiveRooms;
 use OCA\Talk\Config;
+use OCA\Talk\Import\ImportRefMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -22,6 +23,7 @@ class LockInactiveRoomsTest extends TestCase {
 	protected RoomService&MockObject $roomService;
 	private Config&MockObject $appConfig;
 	protected LoggerInterface&MockObject $logger;
+	protected ImportRefMapper&MockObject $importRefMapper;
 	private LockInactiveRooms $job;
 
 	public function setUp(): void {
@@ -31,11 +33,45 @@ class LockInactiveRoomsTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->appConfig = $this->createMock(Config::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->importRefMapper = $this->createMock(ImportRefMapper::class);
 		$this->job = new LockInactiveRooms($this->timeFactory,
 			$this->roomService,
 			$this->appConfig,
-			$this->logger
+			$this->logger,
+			$this->importRefMapper,
 		);
+	}
+
+	public function testImportedRoomsAreInactiveSinceTheImportLastWrote(): void {
+		$now = 1_800_000_000;
+		$days = 30;
+		$rooms = [
+			$this->createConfiguredMock(Room::class, ['getId' => 1, 'getReadOnly' => 0, 'getType' => Room::TYPE_GROUP]),
+			$this->createConfiguredMock(Room::class, ['getId' => 2, 'getReadOnly' => 0, 'getType' => Room::TYPE_GROUP]),
+			$this->createConfiguredMock(Room::class, ['getId' => 3, 'getReadOnly' => 0, 'getType' => Room::TYPE_ONE_TO_ONE]),
+		];
+
+		$this->appConfig->method('getInactiveLockTime')->willReturn($days);
+		$this->appConfig->method('enableLobbyOnLockedRooms')->willReturn(false);
+		$this->timeFactory->method('getTime')->willReturn($now);
+		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime('@' . ($now - $days * 86400)));
+		$this->roomService->method('getInactiveRooms')->willReturn($rooms);
+		// Room 2 was switched over yesterday, room 3 two months ago, room 1 is not imported
+		$this->importRefMapper->expects(self::once())
+			->method('getLastWrites')
+			->with([1, 2, 3])
+			->willReturn([2 => $now - 86400, 3 => $now - 60 * 86400]);
+
+		$locked = [];
+		$this->roomService->expects(self::exactly(2))
+			->method('setReadOnly')
+			->willReturnCallback(function (Room $room, int $state) use (&$locked): bool {
+				$locked[] = $room->getId();
+				return true;
+			});
+
+		$this->job->run('t');
+		$this->assertSame([1, 3], $locked);
 	}
 
 	public function testNotEnabled(): void {

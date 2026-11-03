@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Model\ThreadAttendee;
@@ -267,6 +268,51 @@ class ThreadService {
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId)));
 		$this->cache->remove(self::CACHE_PREFIX . $roomId . '/' . $threadId);
 		return (bool)$query->executeStatement();
+	}
+
+	/**
+	 * Recounts replies, last reply and last activity of threads from their
+	 * messages, for messages written without updating the thread one by one
+	 *
+	 * @param list<int> $threadIds
+	 */
+	public function recountThreads(Room $room, array $threadIds): void {
+		if ($threadIds === []) {
+			return;
+		}
+
+		$select = $this->connection->getQueryBuilder();
+		$select->select('topmost_parent_id')
+			->selectAlias($select->func()->count('id'), 'replies')
+			->selectAlias($select->func()->max('id'), 'last_id')
+			->selectAlias($select->func()->max('creation_timestamp'), 'last_time')
+			->from('comments')
+			->where($select->expr()->in('topmost_parent_id', $select->createParameter('ids')))
+			->andWhere($select->expr()->in('verb', $select->createNamedParameter([ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED], IQueryBuilder::PARAM_STR_ARRAY)))
+			->groupBy('topmost_parent_id');
+
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_threads')
+			->set('num_replies', $update->createParameter('replies'))
+			->set('last_message_id', $update->createParameter('last_id'))
+			->set('last_activity', $update->createParameter('last_time'))
+			->where($update->expr()->eq('id', $update->createParameter('id')))
+			->andWhere($update->expr()->eq('room_id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+
+		foreach (array_chunk($threadIds, IQueryBuilder::MAX_IN_PARAMETERS) as $chunk) {
+			$select->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$result = $select->executeQuery();
+			$rows = $result->fetchAllAssociative();
+			$result->closeCursor();
+			foreach ($rows as $row) {
+				$update->setParameter('replies', (int)$row['replies'], IQueryBuilder::PARAM_INT);
+				$update->setParameter('last_id', (int)$row['last_id'], IQueryBuilder::PARAM_INT);
+				$update->setParameter('last_time', (string)$row['last_time']);
+				$update->setParameter('id', (int)$row['topmost_parent_id'], IQueryBuilder::PARAM_INT);
+				$update->executeStatement();
+			}
+		}
+		$this->cache->clear(self::CACHE_PREFIX . $room->getId() . '/');
 	}
 
 	public function deleteByRoom(Room $room): void {

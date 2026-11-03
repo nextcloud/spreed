@@ -86,6 +86,8 @@ use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\FloatingCall\FloatingCallPluginLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
+use OCA\Talk\Import\HistoryImporter;
+use OCA\Talk\Import\IHistoryImporter;
 use OCA\Talk\Listener\AddMissingIndicesListener;
 use OCA\Talk\Listener\AuditLogListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
@@ -191,6 +193,7 @@ class Application extends App implements IBootstrap {
 		$context->registerMiddleWare(ParameterOutOfRangeMiddleware::class);
 		$context->registerCapability(Capabilities::class);
 		$context->registerConfigLexicon(ConfigLexicon::class);
+		$context->registerServiceAlias(IHistoryImporter::class, HistoryImporter::class);
 
 		// Listeners to load the UI and integrate it into other apps
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);

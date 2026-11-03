@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\BackgroundJob;
 
 use OCA\Talk\BackgroundJob\RemoveEmptyRooms;
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\Import\ImportRefMapper;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -29,6 +30,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 	protected FederationManager&MockObject $federationManager;
 	protected LoggerInterface&MockObject $loggerInterface;
 	protected IUserMountCache&MockObject $userMountCache;
+	protected ImportRefMapper&MockObject $importRefMapper;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -40,6 +42,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->federationManager = $this->createMock(FederationManager::class);
 		$this->loggerInterface = $this->createMock(LoggerInterface::class);
 		$this->userMountCache = $this->createMock(IUserMountCache::class);
+		$this->importRefMapper = $this->createMock(ImportRefMapper::class);
 	}
 
 	public function getBackgroundJob(): RemoveEmptyRooms {
@@ -51,7 +54,31 @@ class RemoveEmptyRoomsTest extends TestCase {
 			$this->federationManager,
 			$this->loggerInterface,
 			$this->userMountCache,
+			$this->importRefMapper,
 		);
+	}
+
+	public function testKeepsImportedConversations(): void {
+		$this->importRefMapper->method('getImportedRoomIds')
+			->willReturn([42 => true]);
+		$this->participantService->method('getNumberOfActors')
+			->willReturn(0);
+		$this->roomService->expects($this->once())
+			->method('deleteRoom')
+			->with($this->callback(static fn (Room $room): bool => $room->getId() === 23));
+
+		$imported = $this->createMock(Room::class);
+		$imported->method('getId')->willReturn(42);
+		$imported->method('getType')->willReturn(Room::TYPE_ONE_TO_ONE);
+		$imported->method('getObjectType')->willReturn('');
+		$live = $this->createMock(Room::class);
+		$live->method('getId')->willReturn(23);
+		$live->method('getType')->willReturn(Room::TYPE_GROUP);
+		$live->method('getObjectType')->willReturn('');
+
+		$backgroundJob = $this->getBackgroundJob();
+		$backgroundJob->callback($imported);
+		$backgroundJob->callback($live);
 	}
 
 	public function testDoDeleteRoom(): void {
