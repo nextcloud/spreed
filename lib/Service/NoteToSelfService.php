@@ -74,16 +74,8 @@ class NoteToSelfService {
 	}
 
 	protected function createNoteToSelfConversation(IUser $user): Room {
-		// The Nextcloud locking mechanism is used for files and written to the files_lock table,
-		// and all files must be in files/ . All lockKeys outside of that scope can be used for other locking
-		// mechanisms. Here it is used to avoid creating multiple rooms note_to_self when web requests end up in a
-		// race condition. The namespace used is the appId, the preference name, and the hash of the user ID.
-		// Because the field is limited to 64 bytes, the hash is truncated at the end, should the constants ever change
-		// and exceed the 64-character limit with the 40 characters of the sha1 hash. Namespaces are divided by a slash
-		// like for files / folders, but as this is only to avoid race conditions and not for actual files, no files are
-		// created and cannot be assigned, leaked to others or clash with existing files.
-		$lockNamespace = Application::APP_ID . '/' . UserPreference::NOTE_TO_SELF . '/';
-		$lockKey = $lockNamespace . strrev(mb_substr(strrev(sha1($user->getUID())), 0, 64 - mb_strlen($lockNamespace)));
+		$lockNamespace = 'talk' . '/' . UserPreference::NOTE_TO_SELF . '/';
+		$lockKey = mb_substr($lockNamespace . $user->getUID(), 0, 64);
 
 		$retries = 3;
 		while (true) {
@@ -100,7 +92,7 @@ class NoteToSelfService {
 		try {
 			// This is a little trick to bypass local caching
 			$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::NOTE_TO_SELF, ValueType::INT, [$user->getUID()]);
-			// explicit type conversion for psalm  to realize the valie is typed as int as above and never mixed.
+			// explicit type conversion for psalm to realize the value is typed as int as above and never mixed.
 			$currentRoomId = (int)($values[$user->getUID()] ?? 0);
 
 			if ($currentRoomId > 0) {

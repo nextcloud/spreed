@@ -42,8 +42,8 @@ class Manager {
 			return;
 		}
 
-		$lockNamespace = Application::APP_ID . '/' . UserPreference::CHANGELOG . '/';
-		$lockKey = $lockNamespace . strrev(mb_substr(strrev(sha1($userId)), 0, 64 - mb_strlen($lockNamespace)));
+		$lockNamespace = 'talk' . '/' . UserPreference::CHANGELOG . '/';
+		$lockKey = mb_substr($lockNamespace . $userId, 0, 64);
 		try {
 			$this->lockingProvider->acquireLock($lockKey, ILockingProvider::LOCK_EXCLUSIVE);
 		} catch (LockedException) {
@@ -52,7 +52,7 @@ class Manager {
 
 		try {
 			$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::CHANGELOG, ValueType::INT, [$userId]);
-			// explicit type conversion for psalm  to realize the valie is typed as int as above and never mixed.
+			// explicit type conversion for psalm to realize the value is typed as int as above and never mixed.
 			$hasReceivedLog = (int)($values[$userId] ?? 0);
 			if ($hasReceivedLog === $shouldHaveReceived) {
 				return;
