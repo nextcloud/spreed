@@ -401,8 +401,13 @@ class Notifier implements INotifier {
 			$notification->addParsedAction($shareAction);
 			$notification->addParsedAction($dismissAction);
 		} elseif (isset($parameters['taskId'])) {
+			if ($notification->getSubject() === 'transcript_failed') {
+				$label = $l->t('Retry transcription');
+			} else {
+				$label = $l->t('Retry summary');
+			}
 			$retryAction = $notification->createAction()
-				->setParsedLabel($l->t('Retry'))
+				->setParsedLabel($label)
 				->setPrimary(true)
 				->setLink(
 					$this->url->linkToOCSRouteAbsolute(
