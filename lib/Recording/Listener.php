@@ -156,7 +156,7 @@ class Listener implements IEventListener {
 			if (!$isRetry && $this->recordingService->retryTask($task)) {
 				return;
 			}
-			$this->recordingService->notifyAboutFailedTranscript($task->getUserId(), $roomToken, $fileId, $aiType);
+			$this->recordingService->notifyAboutFailedTranscript($task->getUserId(), $roomToken, $fileId, $aiType, (int)$task->getId());
 		}
 	}
 

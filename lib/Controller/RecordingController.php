@@ -554,6 +554,38 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Retry a failed transcription or summary of a call recording
+	 *
+	 * @param int $taskId ID of the failed task
+	 * @psalm-param non-negative-int $taskId
+	 * @param int $timestamp Timestamp of the notification to be dismissed
+	 * @psalm-param non-negative-int $timestamp
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 *
+	 * 200: Task rescheduled successfully
+	 * 400: Retrying the task is not possible
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/retry', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function retryTask(int $taskId, int $timestamp): DataResponse {
+		try {
+			$this->recordingService->retryFailedTask(
+				$this->getRoom(),
+				$this->participant,
+				$taskId,
+				$timestamp,
+			);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse(null);
+	}
+
+	/**
 	 * Share the recorded file to the chat
 	 *
 	 * @param int $fileId ID of the file
