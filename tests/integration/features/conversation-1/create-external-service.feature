@@ -86,3 +86,48 @@ Feature: conversation-1/create-external-service
       | roomName | room |
       | owner | participant1 |
     Then user "participant1" is participant of the following rooms (v4)
+
+  Scenario: External call service syncs the participants of a room
+    Given user "participant2" exists
+    Given user "participant3" exists
+    Given the following "spreed" app config is set
+      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_auth_user | nextcloud |
+      | external_call_service_iframe_field | targetUrl |
+    Given external call server is started
+    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+      | users  | participant2 |
+      | emails | test@example.tld |
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId                                                          | participantType |
+      | users      | participant1                                                     | 1               |
+      | users      | participant2                                                     | 3               |
+      | emails     | SHA256(test@example.tld)                                         | 4               |
+    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+      | users  | participant2,participant3 |
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+      | users      | participant3 | 3               |
+    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+      | users  | |
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+    When external call service syncs participants of room "room" as "participant2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 404 (v4)
+      | users  | participant2 |
+    When external call service syncs participants of room "room" as "participant1" with secret "bbbbbbbbbb" with 401 (v4)
+      | users  | participant2 |
+    When external call service creates room "room2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room2 |
+      | owner | participant1 |
+    When external call service syncs participants of room "room2" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 400 (v4)
+      | users  | participant2 |
