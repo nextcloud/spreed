@@ -160,6 +160,7 @@ class ListenerTest extends TestCase {
 	#[\PHPUnit\Framework\Attributes\DataProvider('dataTaskFailed')]
 	public function testTaskFailed(string $customId, array $input, ?bool $retryScheduled, bool $notify, string $aiType, int $fileId): void {
 		$task = new Task('type', $input, 'spreed', 'owner', $customId);
+		$task->setId(7);
 
 		if ($retryScheduled === null) {
 			$this->recordingService->expects($this->never())->method('retryTask');
@@ -170,7 +171,7 @@ class ListenerTest extends TestCase {
 		}
 		$this->recordingService->expects($notify ? $this->once() : $this->never())
 			->method('notifyAboutFailedTranscript')
-			->with('owner', 'abc123', $fileId, $aiType);
+			->with('owner', 'abc123', $fileId, $aiType, 7);
 
 		$this->listener->handle(new TaskFailedEvent($task, 'error'));
 	}
