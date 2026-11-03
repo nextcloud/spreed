@@ -55,6 +55,7 @@ class RecordingService {
 
 	public const APPCONFIG_PREFIX = 'recording/';
 	public const APPCONFIG_UPLOAD_PREFIX = 'recupload/';
+	public const RETRY_SUFFIX = '/retry';
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
@@ -534,6 +535,31 @@ class RecordingService {
 			->setUser($attendee->getActorId())
 			->setSubject('record_file_store_fail');
 		$this->notificationManager->notify($notification);
+	}
+
+	/**
+	 * Reschedule a failed transcription or summary task once,
+	 * in case the failure was temporary
+	 *
+	 * @return bool Whether the retry was scheduled
+	 */
+	public function retryTask(Task $task): bool {
+		$retry = new Task(
+			$task->getTaskTypeId(),
+			$task->getInput(),
+			$task->getAppId(),
+			$task->getUserId(),
+			$task->getCustomId() . self::RETRY_SUFFIX,
+		);
+
+		try {
+			$this->taskProcessingManager->scheduleTask($retry);
+			$this->logger->debug('Rescheduled failed call recording task ' . $task->getCustomId());
+			return true;
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to reschedule the call recording task', ['exception' => $e]);
+			return false;
+		}
 	}
 
 	public function notifyAboutFailedTranscript(string $owner, string $roomToken, int $recordingFileId, string $aiType): void {
