@@ -408,6 +408,28 @@ class Notifier implements INotifier {
 		if ($notification->getSubject() !== 'transcript_failed' && $notification->getSubject() !== 'summary_failed') {
 			$notification->addParsedAction($shareAction);
 			$notification->addParsedAction($dismissAction);
+		} elseif (isset($parameters['taskId'])) {
+			if ($notification->getSubject() === 'transcript_failed') {
+				$label = $l->t('Retry transcription');
+			} else {
+				$label = $l->t('Retry summary');
+			}
+			$retryAction = $notification->createAction()
+				->setParsedLabel($label)
+				->setPrimary(true)
+				->setLink(
+					$this->url->linkToOCSRouteAbsolute(
+						'spreed.Recording.retryTask',
+						[
+							'apiVersion' => 'v1',
+							'taskId' => $parameters['taskId'],
+							'timestamp' => $notification->getDateTime()->getTimestamp(),
+							'token' => $room->getToken(),
+						]
+					),
+					IAction::TYPE_POST
+				);
+			$notification->addParsedAction($retryAction);
 		}
 
 		return $notification;

@@ -17,6 +17,8 @@ use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\IUserSession;
+use OCP\TaskProcessing\Events\TaskFailedEvent;
+use OCP\TaskProcessing\Task;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -143,5 +145,34 @@ class ListenerTest extends TestCase {
 
 		$this->listener->handle(new BeforeNodeCreatedEvent($node));
 		$this->listener->handle(new NodeWrittenEvent($node));
+	}
+
+	public static function dataTaskFailed(): array {
+		return [
+			'transcript retried' => ['call/transcription/abc123', ['input' => 42], true, false, 'transcript', 42],
+			'summary retried' => ['call/summary/abc123/42', ['input' => 'text'], true, false, 'summary', 42],
+			'transcript retry failed to schedule' => ['call/transcription/abc123', ['input' => 42], false, true, 'transcript', 42],
+			'transcript retry failed' => ['call/transcription/abc123/retry', ['input' => 42], null, true, 'transcript', 42],
+			'summary retry failed' => ['call/summary/abc123/42/retry', ['input' => 'text'], null, true, 'summary', 42],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataTaskFailed')]
+	public function testTaskFailed(string $customId, array $input, ?bool $retryScheduled, bool $notify, string $aiType, int $fileId): void {
+		$task = new Task('type', $input, 'spreed', 'owner', $customId);
+		$task->setId(7);
+
+		if ($retryScheduled === null) {
+			$this->recordingService->expects($this->never())->method('retryTask');
+		} else {
+			$this->recordingService->expects($this->once())->method('retryTask')
+				->with($task)
+				->willReturn($retryScheduled);
+		}
+		$this->recordingService->expects($notify ? $this->once() : $this->never())
+			->method('notifyAboutFailedTranscript')
+			->with('owner', 'abc123', $fileId, $aiType, 7);
+
+		$this->listener->handle(new TaskFailedEvent($task, 'error'));
 	}
 }

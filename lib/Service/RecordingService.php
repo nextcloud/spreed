@@ -44,6 +44,7 @@ use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\Exception\Exception;
+use OCP\TaskProcessing\Exception\NotFoundException as TaskNotFoundException;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
 use OCP\TaskProcessing\TaskTypes\AudioToText;
@@ -57,6 +58,7 @@ class RecordingService {
 
 	public const APPCONFIG_PREFIX = 'recording/';
 	public const APPCONFIG_UPLOAD_PREFIX = 'recupload/';
+	public const RETRY_SUFFIX = '/retry';
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
@@ -549,7 +551,74 @@ class RecordingService {
 		$this->notificationManager->notify($notification);
 	}
 
-	public function notifyAboutFailedTranscript(string $owner, string $roomToken, int $recordingFileId, string $aiType): void {
+	/**
+	 * Reschedule a failed transcription or summary task once,
+	 * in case the failure was temporary
+	 *
+	 * @return bool Whether the retry was scheduled
+	 */
+	public function retryTask(Task $task): bool {
+		$customId = (string)$task->getCustomId();
+		if (!str_ends_with($customId, self::RETRY_SUFFIX)) {
+			$customId .= self::RETRY_SUFFIX;
+		}
+
+		$retry = new Task(
+			$task->getTaskTypeId(),
+			$task->getInput(),
+			$task->getAppId(),
+			$task->getUserId(),
+			$customId,
+		);
+
+		try {
+			$this->taskProcessingManager->scheduleTask($retry);
+			$this->logger->debug('Rescheduled failed call recording task ' . $task->getCustomId());
+			return true;
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to reschedule the call recording task', ['exception' => $e]);
+			return false;
+		}
+	}
+
+	/**
+	 * Manually retry a failed transcription or summary task of the participant
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function retryFailedTask(Room $room, Participant $participant, int $taskId, int $timestamp): void {
+		try {
+			$task = $this->taskProcessingManager->getTask($taskId);
+		} catch (TaskNotFoundException|Exception) {
+			throw new InvalidArgumentException('task');
+		}
+
+		$customId = (string)$task->getCustomId();
+		if (str_ends_with($customId, self::RETRY_SUFFIX)) {
+			$customId = substr($customId, 0, -strlen(self::RETRY_SUFFIX));
+		}
+		if ($customId === 'call/transcription/' . $room->getToken()) {
+			$subject = 'transcript_failed';
+		} elseif (str_starts_with($customId, 'call/summary/' . $room->getToken() . '/')) {
+			$subject = 'summary_failed';
+		} else {
+			throw new InvalidArgumentException('task');
+		}
+
+		if ($task->getAppId() !== Application::APP_ID
+			|| $task->getUserId() !== $participant->getAttendee()->getActorId()
+			|| $task->getStatus() !== Task::STATUS_FAILED) {
+			throw new InvalidArgumentException('task');
+		}
+
+		if (!$this->retryTask($task)) {
+			throw new InvalidArgumentException('schedule');
+		}
+
+		$this->notificationDismiss($room, $participant, $timestamp, $subject);
+	}
+
+	public function notifyAboutFailedTranscript(string $owner, string $roomToken, int $recordingFileId, string $aiType, int $taskId): void {
 		$userFolder = $this->rootFolder->getUserFolder($owner);
 		$recordingNodes = $userFolder->getById($recordingFileId);
 
@@ -588,6 +657,7 @@ class RecordingService {
 			->setUser($attendee->getActorId())
 			->setSubject($aiType === 'transcript' ? 'transcript_failed' : 'summary_failed', [
 				'objectId' => $recording->getId(),
+				'taskId' => $taskId,
 			]);
 		$this->notificationManager->notify($notification);
 	}
