@@ -143,7 +143,7 @@ Legend:
 | `signaling_ticket_secret` | string | `''` | Yes |  | Secret used to secure the signaling tickets for guests (255 character random string) |
 | `signaling_token_alg` | string<br>`ES256`, `ES384`, `RS256`, `RS384`, `RS512` or `EdDSA` | `ES256` | Yes |  | Algorithm for the signaling tickets |
 | `signaling_token_privkey` | string | `''` | No |  | Private key for the signaling ticket creation by the server |
-| `signaling_token_pubkey` | string | `''` | Yes | 💻 | Public key for the signaling ticket creation by the server |
+| `signaling_token_pubkey` | string | `''` | No | 💻 | Public key for the signaling ticket creation by the server |
 | `sip_bridge_dialin_info` | string | `''` | Yes | 🖌️ | Additional information added in the SIP dial-in invitation mail and sidebar |
 | `sip_bridge_dialout` | bool | `false` | No | 🖌️ | SIP dial-out is allowed when a SIP bridge is configured |
 | `sip_bridge_dialout_anonymous` | bool | `false` | No | 🖌️ | When set to true, all out-going SIP calls will be anonymous calls (CLIR) |

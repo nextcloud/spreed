@@ -402,7 +402,7 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::SIGNALING_TOKEN_PRIVKEY, ValueType::STRING, '', definition: 'Private key for the signaling ticket creation by the server', flags: IAppConfig::FLAG_SENSITIVE)),
 			new AppConfigEntry(
 				new Entry(Config::SIGNALING_TOKEN_PUBKEY, ValueType::STRING, '', definition: 'Public key for the signaling ticket creation by the server'),
-				hash: true,
+				hash: false,
 				occCommands: [SignalingVerifyKeys::class],
 			),
 			new AppConfigEntry(
