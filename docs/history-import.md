@@ -28,6 +28,15 @@ The importer writes through the comments manager and the mappers, not through th
 
 A participant with a history start (`history_since` of the attendee) does not see messages from before that time: the chat, message context, search, shared items, threads, reactions, notifications, reference previews and the parents and thread titles of later replies leave them out, and room shares of files from that time are not shared with them. Imports use it for people who were added to a chat without its earlier history.
 
+## History read
+
+Apps that export a person's data to another system (for example a move away from this server, or a copy the person keeps) use `OCA\Talk\Import\IHistoryReader`, found like the importer with `interface_exists()` and the server container. It reads the conversations a person is a participant of and their messages as that person sees them:
+
+* `conversations` pages through the person's conversations by ID: token, the name the person sees, type, number of participants and messages, last activity and the person's history start (`historySince`, null for the whole history). Conversations hosted on another server (federation) are not listed: their messages live there.
+* `messages` pages through a conversation's messages by message ID, oldest first: the rich text in the person's language with its parameters (mentions, files, polls), the actor, time, the message replied to, reactions as counts per emoji, the kind of a system message and the time of the last edit. Messages from before the history start, expired messages and messages only others see are left out; a reply to a message the person can't see has no parent. Deleted messages are listed without text, parameters or reactions. With `wholeHistory` (an export of the organisation that has its own legal basis) the history start is not applied.
+
+Reading is quiet: it queries the comments table and the mappers instead of the live chat's services, so no read marker, unread counter, notification, session, last activity or activity entry changes. The only event is the message parsing Talk's own chat dispatches. File parameters come from the file cache, without setting up anybody's file system. The reader checks only that the person is a participant: the calling app authorizes the read.
+
 ## Canonical form
 
 `statMessages` answers the SHA-256 of what Talk holds for a message. The importing app computes the same hash from its source to check that a message arrived unchanged. The canonical form is ten values, each JSON-encoded without escaping slashes or non-ASCII characters, joined with a line feed:

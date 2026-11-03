@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Import;
 
 /**
- * An import request or entry Talk refuses. The code says why; the message
- * names the field and never contains message content.
+ * An import or read request or entry Talk refuses. The code says why; the
+ * message names the field and never contains message content.
  */
 class ImportException extends \Exception {
 	/** Input fails validation */
@@ -36,6 +36,8 @@ class ImportException extends \Exception {
 	 * message written now would stand before it in the conversation
 	 */
 	public const CODE_HELD_BACK = 'held_back';
+	/** A read of a conversation that doesn't exist or that the person is not in ({@see IHistoryReader}) */
+	public const CODE_NOT_FOUND = 'not_found';
 
 	/**
 	 * @param self::CODE_* $importCode
