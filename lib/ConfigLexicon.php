@@ -244,9 +244,9 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::GRID_VIDEOS_LIMIT_ENFORCED, ValueType::BOOL, false, definition: 'Whether the number of grid videos should be enforced')),
 			new AppConfigEntry(new Entry(Config::GUESTS_PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether guests hear the join and leave sounds by default')),
 			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE, ValueType::STRING, '', definition: 'URL of the external service endpoint. `{meetingId}` is replaced with the conversation\'s `objectId` when Talk makes the request')),
-			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret used for two purposes:' . PHP_EOL . 'as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.' . PHP_EOL . 'Minimum 64 characters, `a-zA-Z0-9` recommended')),
+			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret used for two purposes:' . PHP_EOL . 'as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.' . PHP_EOL . 'Minimum 64 characters, `a-zA-Z0-9` recommended', flags: IAppConfig::FLAG_SENSITIVE)),
 			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_USER, ValueType::STRING, '', definition: 'HTTP Basic Auth username used when Talk calls the external service')),
-			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service')),
+			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service', flags: IAppConfig::FLAG_SENSITIVE)),
 			new AppConfigEntry(
 				new Entry(Config::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::ARRAY, [], definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe.' . PHP_EOL . 'Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
 				arrayType: 'list<string>',
