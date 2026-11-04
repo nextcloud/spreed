@@ -1199,7 +1199,11 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 			peer.pc.getStats(track).then(function(stats) {
 				let result = false
 				stats.forEach(function(statsReport) {
-					if (result || statsReport.mediaType !== mediaType || !Object.hasOwn(statsReport, 'bytesReceived')) {
+					// statsReport.mediaType is legacy, missing in Safari 17+ and Firefox
+					if (result
+						|| statsReport.type !== 'inbound-rtp'
+						|| (statsReport.kind ?? statsReport.mediaType) !== mediaType
+						|| !Object.hasOwn(statsReport, 'bytesReceived')) {
 						return
 					}
 
