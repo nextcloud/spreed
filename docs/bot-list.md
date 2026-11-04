@@ -80,6 +80,16 @@ A simple "text in, text out" bot to help with repeating questions and tasks
 * [Link to source code](https://github.com/nextcloud/command_bot)
 * [Link to installation documentation](https://github.com/nextcloud/command_bot#command-bot-for-nextcloud-talk)
 
+### Magic 8-Ball
+
+A Nextcloud app bot that answers questions with classic Magic 8-Ball wisdom 🎱. Ask a question using the `/8ball <question>` slash command in any Talk conversation and receive one of the 20 traditional answers.
+
+![Screenshot showing the Magic 8-Ball bot responding to a question](botscreenshots/magic-8ball.png)
+
+* License: MIT
+* [Link to source code](https://github.com/miaulalala/magic_8ball_bot)
+* [Link to installation documentation](https://github.com/miaulalala/magic_8ball_bot#readme)
+
 ### Stable Diffusion
 
 Uses [SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo) for fast image generation. Usage example: `@image cinematic portrait of fluffy cat with black eyes`
