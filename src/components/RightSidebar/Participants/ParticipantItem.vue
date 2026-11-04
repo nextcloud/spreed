@@ -1323,9 +1323,10 @@ export default {
 
 <style lang="scss">
 /*
- * NcListItem renders its <li> without the scope id of this component,
- * so scoped styles cannot reach .list-item. A global rule is safe here:
- * the participant--raised-hand class is set only by this component.
+ * Override NcListItem styles to highlight participants with a raised hand.
+ * This block is not scoped because :deep does not work here:
+ * NcVNodes returns an array, so <li> is not a root element and does not get the data-v
+ * attribute of this component.
  */
 .participant--raised-hand > .list-item {
 	background-color: var(--color-warning);
