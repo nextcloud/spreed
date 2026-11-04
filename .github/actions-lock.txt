@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 dfb0baf2977822a54a45530bafbade45 appstore-build-publish.yml
 19ab9c47c8d96de93f37fab242c398cc block-unconventional-commits.yml
-eb315872141ae5af4da49644fc9390f7 command-openapi.yml
+7ff4d060237bc7853a95788fb6816e8f command-openapi.yml
 e6351c608939c31ae1e32923aa82aa10 dependabot-approve-merge.yml
 2581a67c5bcdcd570427e6d51db767d7 fixup.yml
 4276208e79e34e2c23756469acecde13 lint-eslint.yml
