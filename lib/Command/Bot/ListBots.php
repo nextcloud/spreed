@@ -78,7 +78,6 @@ class ListBots extends Base {
 			if (!$output->isVerbose()) {
 				unset($botData['url']);
 				unset($botData['url_hash']);
-				unset($botData['secret']);
 				unset($botData['last_error_date']);
 				unset($botData['last_error_message']);
 			}

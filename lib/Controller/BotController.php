@@ -399,7 +399,6 @@ class BotController extends AEnvironmentAwareOCSController {
 		$bots = $this->botServerMapper->getAllBots();
 		foreach ($bots as $bot) {
 			$botData = $bot->jsonSerialize();
-			unset($botData['secret']);
 
 			if (!$this->botService->isAppForBotEnabled($bot)) {
 				$botData['state'] = Bot::STATE_UNAVAILABLE;
