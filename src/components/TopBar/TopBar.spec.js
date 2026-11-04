@@ -13,7 +13,6 @@ import router from '../../__mocks__/router.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
-import { useTokenStore } from '../../stores/token.ts'
 
 const TOKEN = 'XXTOKENXX'
 
@@ -34,7 +33,7 @@ describe('TopBar.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				actorId: `actor-${attendeeId}`,
 				inCall,
-				sessionIds: [`session-${attendeeId}`],
+				sessionIds: [`session-${attendeeId}`, `session-${attendeeId}-second`],
 			},
 		})
 	}
@@ -81,7 +80,6 @@ describe('TopBar.vue', () => {
 	beforeEach(async () => {
 		setActivePinia(createPinia())
 		activityStore = useParticipantActivityStore()
-		useTokenStore().token = TOKEN
 
 		const conversation = {
 			token: TOKEN,
@@ -103,66 +101,33 @@ describe('TopBar.vue', () => {
 		await router.isReady()
 	})
 
-	describe('without raised hands', () => {
-		test('shows no badge', async () => {
-			const wrapper = await mountTopBar()
+	test('shows only the participants count without raised hands', async () => {
+		const wrapper = await mountTopBar()
 
-			expect(findButton(wrapper).exists()).toBe(true)
-			expect(findBadge(wrapper).exists()).toBe(false)
-		})
-
-		test('shows the number of participants in call', async () => {
-			const wrapper = await mountTopBar()
-
-			expect(findButton(wrapper).text()).toBe('2')
-		})
-
-		test('describes only the participants in the label', async () => {
-			const wrapper = await mountTopBar()
-
-			expect(findButton(wrapper).attributes('aria-label')).toBe('2 participants in call')
-		})
+		expect(findBadge(wrapper).exists()).toBe(false)
+		expect(findButton(wrapper).find('.button-vue__text').text()).toBe('2')
+		expect(findButton(wrapper).attributes('aria-label')).toBe('2 participants in call')
 	})
 
-	describe('with raised hands', () => {
-		beforeEach(() => {
-			raiseHand('session-1')
-		})
+	test('shows raised hands next to the participants count', async () => {
+		raiseHand('session-1')
 
-		test('shows the exact number of raised hands in the badge', async () => {
-			const wrapper = await mountTopBar()
+		const wrapper = await mountTopBar()
 
-			expect(findBadge(wrapper).text()).toBe('1')
-		})
+		expect(findBadge(wrapper).text()).toBe('1')
+		expect(findButton(wrapper).find('.button-vue__text').text()).toBe('2')
+		expect(findButton(wrapper).attributes('aria-label')).toBe('2 participants in call, 1 raised hand')
+	})
 
-		test('counts every raised hand', async () => {
-			raiseHand('session-2')
-			raiseHand('session-3')
+	test('counts participants, not sessions', async () => {
+		raiseHand('session-1')
+		raiseHand('session-1-second')
+		raiseHand('session-2')
+		// The third participant is disconnected
+		raiseHand('session-3')
 
-			const wrapper = await mountTopBar()
+		const wrapper = await mountTopBar()
 
-			expect(findBadge(wrapper).text()).toBe('3')
-		})
-
-		test('hides the number of participants in call', async () => {
-			const wrapper = await mountTopBar()
-
-			// Only the badge is left, the participants count ("2") is not shown
-			expect(findButton(wrapper).text()).toBe('1')
-		})
-
-		test('adds raised hands to the label', async () => {
-			const wrapper = await mountTopBar()
-
-			expect(findButton(wrapper).attributes('aria-label')).toBe('2 participants in call, 1 raised hand')
-		})
-
-		test('uses the plural form for several raised hands', async () => {
-			raiseHand('session-2')
-
-			const wrapper = await mountTopBar()
-
-			expect(findButton(wrapper).attributes('aria-label')).toBe('2 participants in call, 2 raised hands')
-		})
+		expect(findBadge(wrapper).text()).toBe('2')
 	})
 })

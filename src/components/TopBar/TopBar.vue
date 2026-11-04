@@ -120,7 +120,7 @@
 							:count="raisedHandsCount"
 							aria-hidden="true" />
 					</template>
-					<template v-if="!canExtendOneToOneConversation && raisedHandsCount === 0" #default>
+					<template v-if="!canExtendOneToOneConversation" #default>
 						{{ participantsInCall }}
 					</template>
 				</NcButton>
@@ -351,19 +351,24 @@ export default {
 		},
 
 		raisedHandsCount() {
-			return Object.keys(this.participantActivityStore.raisedHands).length
+			return this.$store.getters.participantsList(this.token)
+				.filter((participant) => participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+					&& this.participantActivityStore.getParticipantRaisedHand(participant.sessionIds).state)
+				.length
 		},
 
 		participantsInCallAriaLabel() {
 			let label
 			if (this.canExtendOneToOneConversation) {
-				label = t('spreed', 'Add participants to this call')
+				return t('spreed', 'Add participants to this call')
 			} else {
 				label = n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 			}
 
 			if (this.raisedHandsCount > 0) {
-				label += ', ' + n('spreed', '%n raised hand', '%n raised hands', this.raisedHandsCount)
+				const participantsRaisedHand = n('spreed', '%n raised hand', '%n raised hands', this.raisedHandsCount)
+				// TRANSLATORS joined string for participant counter, e.g. '5 participants in call, 1 raised hand'
+				label = t('spreed', '{participantsInCall}, {participantsRaisedHand}', { participantsInCall: label, participantsRaisedHand }, { escape: false })
 			}
 
 			return label
@@ -535,16 +540,20 @@ export default {
 	}
 }
 
+.top-bar__participants-button :deep(.button-vue__icon) {
+	position: relative;
+}
+
 // Heavier selector than .counter-bubble__counter[data-v] from the library
 .top-bar__participants-button .top-bar__raised-hands-badge {
 	--counter-bubble-height: 16px;
 	position: absolute;
 	inset-block-start: 0;
-	inset-inline-end: 1px;
+	inset-inline-end: 0;
 	padding-inline: var(--default-grid-baseline);
-	font-size: 11px;
+	font-size: var(--font-size-small);
 	background-color: var(--color-element-warning);
-	color: var(--color-main-background);
+	color: #000;
 }
 
 .top-bar__participants-button {
