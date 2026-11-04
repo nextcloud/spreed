@@ -33,6 +33,7 @@ use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Share\Events\BeforeShareCreatedEvent;
 use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\IShare;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -715,7 +716,15 @@ class ListenerTest extends TestCase {
 		return $share;
 	}
 
-	public function testFixMimeTypeSkippedForAttachmentRoute(): void {
+	public static function dataAttachmentRoutes(): array {
+		return [
+			['ocs.spreed.chat.postattachmenttoroom'],
+			['ocs.spreed.chat.postattachmentstoroom'],
+		];
+	}
+
+	#[DataProvider('dataAttachmentRoutes')]
+	public function testFixMimeTypeSkippedForAttachmentRoute(string $route): void {
 		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
 		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
@@ -725,8 +734,30 @@ class ListenerTest extends TestCase {
 		$this->participantService->expects($this->once())->method('ensureOneToOneRoomIsFilled')->with($room);
 		$this->chatManager->expects($this->never())->method('addSystemMessage');
 
-		$listener = $this->makeListenerWithRoute('ocs.spreed.chat.postattachmenttoroom');
+		$listener = $this->makeListenerWithRoute($route);
 		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	public static function dataShareExpiration(): array {
+		return [
+			['ocs.spreed.chat.postattachmenttoroom', false],
+			['ocs.spreed.chat.postattachmentstoroom', false],
+			['ocs.spreed.chat.probeattachmentfolder', false],
+			['ocs.spreed.filesintegration.getroombyfileid', true],
+		];
+	}
+
+	#[DataProvider('dataShareExpiration')]
+	public function testShareExpiration(string $route, bool $expires): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
+		$room = $this->createStub(Room::class);
+		$room->method('getMessageExpiration')->willReturn(3600);
+		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
+
+		$share->expects($expires ? $this->once() : $this->never())->method('setExpirationDate');
+
+		$listener = $this->makeListenerWithRoute($route);
+		self::invokePrivate($listener, 'handle', [new BeforeShareCreatedEvent($share)]);
 	}
 
 	public function testFixMimeTypeSkippedForProbeRoute(): void {

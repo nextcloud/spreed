@@ -48,10 +48,16 @@ use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
+use OCP\Files\FileInfo;
+use OCP\Files\Folder;
+use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
@@ -99,6 +105,7 @@ class ChatControllerTest extends TestCase {
 	private IAppConfig&MockObject $appConfig;
 	private LoggerInterface&MockObject $logger;
 	private ConversationFolderService&MockObject $conversationFolderService;
+	private INotificationManager&MockObject $notificationManager;
 	private Config&MockObject $talkConfig;
 	protected SendService&MockObject $sendService;
 	protected SyncService&MockObject $syncService;
@@ -149,6 +156,7 @@ class ChatControllerTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->scheduledMessageService = $this->createMock(ScheduledMessageService::class);
 		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
+		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->sendService = $this->createMock(SendService::class);
 		$this->syncService = $this->createMock(SyncService::class);
@@ -206,6 +214,7 @@ class ChatControllerTest extends TestCase {
 			$this->logger,
 			$this->scheduledMessageService,
 			$this->conversationFolderService,
+			$this->notificationManager,
 			$this->talkConfig,
 			$this->sendService,
 			$this->syncService,
@@ -1354,5 +1363,182 @@ class ChatControllerTest extends TestCase {
 		$expected = new DataResponse($expected, Http::STATUS_OK);
 
 		$this->assertEquals($expected, $response);
+	}
+
+	/**
+	 * @param array<string, string> $paths Map of file path to file name, paths ending in '/' are folders, paths outside 'Draft/' are in another folder
+	 */
+	private function mockAttachmentFolders(array $paths): void {
+		$this->talkConfig->method('isConversationSubfoldersEnabled')->willReturn(true);
+		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime());
+
+		$draftFolder = $this->createMock(Folder::class);
+		$draftFolder->method('getId')->willReturn(1);
+		$otherFolder = $this->createMock(Folder::class);
+		$otherFolder->method('getId')->willReturn(2);
+		$subfolder = $this->createMock(Folder::class);
+		$this->conversationFolderService->method('getOrCreateSubfolder')->willReturn($subfolder);
+		$this->conversationFolderService->method('getOrCreateDraftFolder')->willReturn($draftFolder);
+
+		$nodes = [];
+		foreach (array_keys($paths) as $id => $path) {
+			$node = $this->createMock(File::class);
+			$node->method('getId')->willReturn($id + 100);
+			$node->method('getName')->willReturn($paths[$path]);
+			$node->method('getType')->willReturn(str_ends_with($path, '/') ? FileInfo::TYPE_FOLDER : FileInfo::TYPE_FILE);
+			$node->method('getParent')->willReturn(str_starts_with($path, 'Draft/') ? $draftFolder : $otherFolder);
+			$node->method('getMimeType')->willReturn('text/plain');
+			$nodes[$path] = $node;
+		}
+		$this->conversationFolderService->method('getFileNode')
+			->willReturnCallback(fn (string $uid, string $path) => $nodes[$path] ?? throw new NotFoundException());
+		$this->conversationFolderService->method('finalizeUploadedFile')
+			->willReturnCallback(fn (Folder $folder, Node $node, string $name) => ['node' => $node, 'from' => $node->getName(), 'to' => $name]);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($this->createStub(Participant::class));
+	}
+
+	private static function fileSharedMessage(int $fileId, array $metaData): string {
+		return json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$fileId, 'metaData' => $metaData + ['mimeType' => 'text/plain']]]);
+	}
+
+	public static function dataPostAttachmentsToRoomFileCount(): array {
+		return [[0], [ChatController::MAX_ATTACHMENTS_PER_REQUEST + 1]];
+	}
+
+	#[DataProvider('dataPostAttachmentsToRoomFileCount')]
+	public function testPostAttachmentsToRoomFileCount(int $count): void {
+		$this->talkConfig->method('isConversationSubfoldersEnabled')->willReturn(true);
+		$this->conversationFolderService->expects($this->never())->method('getOrCreateSubfolder');
+
+		$response = $this->controller->postAttachmentsToRoom(array_fill(0, $count, ['filePath' => 'Draft/a.txt']));
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+	}
+
+	public function testPostAttachmentsToRoom(): void {
+		$this->mockAttachmentFolders(['Draft/a' => 'a.txt', 'Draft/b' => 'b.txt']);
+		$this->notificationManager->expects($this->once())->method('defer')->willReturn(true);
+		$this->notificationManager->expects($this->once())->method('flush');
+
+		$posted = [];
+		$this->chatManager->method('addSystemMessage')
+			->willReturnCallback(function ($room, $participant, $actorType, $actorId, $message, $dateTime, $sendNotifications, $referenceId) use (&$posted) {
+				$posted[] = [$message, $referenceId];
+				return $this->createMock(IComment::class);
+			});
+		$this->threadService->expects($this->never())->method('createThread');
+
+		$response = $this->controller->postAttachmentsToRoom([
+			['filePath' => 'Draft/a', 'referenceId' => 'ref-a', 'fileName' => 'renamed.txt'],
+			['filePath' => 'Draft/missing', 'referenceId' => 'ref-missing'],
+			['filePath' => 'Draft/b', 'referenceId' => 'ref-b'],
+			['filePath' => 'Draft/a', 'referenceId' => 'ref-duplicate'],
+		], json_encode(['caption' => ' Caption ', 'replyTo' => 1, 'threadTitle' => 'Thread']));
+
+		$this->assertEquals(new DataResponse(['results' => [
+			['referenceId' => 'ref-a', 'status' => 'posted', 'renames' => [['a.txt' => 'renamed.txt']]],
+			['referenceId' => 'ref-missing', 'status' => 'failed', 'error' => 'file'],
+			['referenceId' => 'ref-b', 'status' => 'posted', 'renames' => [['b.txt' => 'b.txt']]],
+			['referenceId' => 'ref-duplicate', 'status' => 'failed', 'error' => 'duplicate'],
+		]], Http::STATUS_OK), $response);
+		$this->assertSame([
+			[self::fileSharedMessage(100, []), 'ref-a'],
+			[self::fileSharedMessage(101, ['caption' => 'Caption']), 'ref-b'],
+		], $posted);
+	}
+
+	public function testPostAttachmentsToRoomPostsCaptionWhenLastFileFails(): void {
+		$this->mockAttachmentFolders(['Draft/a' => 'a.txt', 'Draft/b' => 'b.txt']);
+
+		$this->chatManager->expects($this->exactly(2))->method('addSystemMessage')
+			->willReturnCallback(function ($room, $participant, $actorType, $actorId, $message) {
+				if (str_contains($message, 'Caption')) {
+					throw new \RuntimeException();
+				}
+				return $this->createMock(IComment::class);
+			});
+		$this->chatManager->expects($this->once())->method('sendMessage')
+			->with($this->room, $this->anything(), Attendee::ACTOR_USERS, $this->userId, 'Caption');
+
+		$response = $this->controller->postAttachmentsToRoom([
+			['filePath' => 'Draft/a'],
+			['filePath' => 'Draft/b'],
+		], json_encode(['caption' => 'Caption']));
+
+		$this->assertSame(['posted', 'failed'], array_column($response->getData()['results'], 'status'));
+	}
+
+	public function testPostAttachmentsToRoomPostsNoCaptionWhenNoFileWasPosted(): void {
+		$this->mockAttachmentFolders(['Draft/a' => 'a.txt']);
+		$this->chatManager->method('addSystemMessage')->willThrowException(new \RuntimeException());
+		$this->chatManager->expects($this->never())->method('sendMessage');
+
+		$response = $this->controller->postAttachmentsToRoom([['filePath' => 'Draft/missing'], ['filePath' => 'Draft/a']], json_encode(['caption' => 'Caption']));
+
+		$this->assertSame(['failed', 'failed'], array_column($response->getData()['results'], 'status'));
+	}
+
+	public static function dataPostAttachmentToRoomErrors(): array {
+		return [
+			'not found' => ['Draft/missing', Http::STATUS_NOT_FOUND],
+			'not a file' => ['Draft/folder/', Http::STATUS_BAD_REQUEST],
+			'not in draft' => ['Other/a', Http::STATUS_UNPROCESSABLE_ENTITY],
+			'post fails' => ['Draft/a', Http::STATUS_INTERNAL_SERVER_ERROR],
+		];
+	}
+
+	#[DataProvider('dataPostAttachmentToRoomErrors')]
+	public function testPostAttachmentToRoomErrors(string $filePath, int $status): void {
+		$this->mockAttachmentFolders(['Draft/a' => 'a.txt', 'Draft/folder/' => 'folder', 'Other/a' => 'a.txt']);
+		$this->chatManager->method('addSystemMessage')->willThrowException(new \RuntimeException());
+		$this->chatManager->expects($this->never())->method('sendMessage');
+
+		$response = $this->controller->postAttachmentToRoom($filePath, 'ref', json_encode(['caption' => 'Caption']));
+
+		$this->assertSame($status, $response->getStatus());
+		$this->assertArrayHasKey('error', $response->getData());
+	}
+
+	public function testPostAttachmentsToRoomStartsOneThread(): void {
+		$this->mockAttachmentFolders(['Draft/a' => 'a.txt', 'Draft/b' => 'b.txt']);
+		$this->controller->setParticipant($participant = $this->createStub(Participant::class));
+		$participant->method('getAttendee')->willReturn(new Attendee());
+
+		$threadIds = [];
+		$this->chatManager->method('addSystemMessage')
+			->willReturnCallback(function ($room, $participant, $actorType, $actorId, $message, $dateTime, $sendNotifications, $referenceId, $replyTo, $shouldSkipLastMessageUpdate, $silent, $threadId = 0) use (&$threadIds) {
+				if (str_contains($message, 'file_shared')) {
+					$threadIds[] = $threadId;
+				}
+				$comment = $this->createMock(IComment::class);
+				$comment->method('getId')->willReturn((string)(count($threadIds) + 41));
+				return $comment;
+			});
+		$this->threadService->expects($this->once())->method('createThread')
+			->with($this->room, 42, 'Thread')
+			->willReturnCallback(function () {
+				$thread = new Thread();
+				$thread->setId(42);
+				return $thread;
+			});
+
+		$this->controller->postAttachmentsToRoom([
+			['filePath' => 'Draft/a'],
+			['filePath' => 'Draft/b'],
+		], json_encode(['threadTitle' => 'Thread']));
+
+		$this->assertSame([Thread::THREAD_NONE, 42], $threadIds);
+	}
+
+	public function testPostAttachmentToRoomWithInvalidReplyToStartsNoThread(): void {
+		$this->mockAttachmentFolders(['Draft/a' => 'a.txt']);
+		$this->chatManager->method('getComment')->willThrowException(new NotFoundException());
+		$this->chatManager->expects($this->once())->method('addSystemMessage')
+			->willReturn($this->createMock(IComment::class));
+		$this->threadService->expects($this->never())->method('createThread');
+
+		$response = $this->controller->postAttachmentToRoom('Draft/a', '', json_encode(['replyTo' => 999, 'threadTitle' => 'Thread']));
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 	}
 }

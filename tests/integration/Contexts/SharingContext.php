@@ -134,6 +134,59 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * Post several files in one request. A file name starting with "home:" is
+	 * posted from the user's home instead of the Draft folder.
+	 */
+	#[When('/^user "([^"]*)" posts files "([^"]*)" from conversation folder of room "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsFilesFromConversationFolder(string $user, string $fileNamesCsv, string $room, int $statusCode, ?TableNode $body = null): void {
+		$this->currentUser = $user;
+
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token, false);
+
+		$files = [];
+		foreach ($fileNamesCsv === '' ? [] : array_map('trim', explode(',', $fileNamesCsv)) as $index => $fileName) {
+			$files[] = [
+				'filePath' => str_starts_with($fileName, 'home:') ? substr($fileName, 5) : $draftPath . '/' . $fileName,
+				'referenceId' => 'ref-' . $index,
+			];
+		}
+
+		$talkMetaData = [];
+		if ($body instanceof TableNode) {
+			foreach ($body->getRowsHash() as $key => $value) {
+				if ($key === 'talkMetaData.replyTo' || $key === 'talkMetaData.threadId') {
+					$value = FeatureContext::getMessageIdForText($value);
+				}
+				if (str_starts_with($key, 'talkMetaData.')) {
+					$talkMetaData[substr($key, 13)] = $value;
+				}
+			}
+		}
+
+		$this->sendingToTalkEndpoint($token, 'attachments', ['json' => [
+			'files' => $files,
+			'talkMetaData' => !empty($talkMetaData) ? json_encode($talkMetaData) : '',
+		]]);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	#[Then('/^the last attachments response has the following results$/')]
+	public function theLastAttachmentsResponseHasTheFollowingResults(TableNode $tableNode): void {
+		$body = $this->response->getBody();
+		$body->rewind();
+		$data = json_decode($body->getContents(), true, flags: JSON_THROW_ON_ERROR);
+
+		$results = array_map(static fn (array $result): array => [
+			'referenceId' => $result['referenceId'],
+			'status' => $result['status'],
+			'error' => $result['error'] ?? '',
+		], $data['ocs']['data']['results']);
+
+		\PHPUnit\Framework\Assert::assertEquals($tableNode->getColumnsHash(), $results);
+	}
+
+	/**
 	 * Call the probe endpoint for a room and store the response.
 	 * $fileNames is a comma-separated list of desired filenames.
 	 */
@@ -1134,19 +1187,23 @@ class SharingContext implements Context {
 	 * POST to the Talk attachment endpoint (OCS v2).
 	 */
 	private function sendingToTalkAttachmentEndpoint(string $token, string $filePath, array $talkMetaData, string $fileName = '', bool $allowUpdate = false): void {
-		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/chat/' . $token . '/attachment?format=json';
+		$this->sendingToTalkEndpoint($token, 'attachment', ['form_params' => [
+			'filePath' => $filePath,
+			'fileName' => $fileName,
+			'referenceId' => '',
+			'talkMetaData' => !empty($talkMetaData) ? json_encode($talkMetaData) : '',
+			'allowUpdate' => $allowUpdate,
+		]]);
+	}
+
+	/**
+	 * POST to a Talk chat endpoint (OCS v2).
+	 */
+	private function sendingToTalkEndpoint(string $token, string $endpoint, array $options): void {
+		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/chat/' . $token . '/' . $endpoint . '?format=json';
 		$client = new Client();
-		$options = [
-			'auth' => [$this->currentUser, $this->regularUserPassword],
-			'headers' => ['OCS_APIREQUEST' => 'true'],
-			'form_params' => [
-				'filePath' => $filePath,
-				'fileName' => $fileName,
-				'referenceId' => '',
-				'talkMetaData' => !empty($talkMetaData) ? json_encode($talkMetaData) : '',
-				'allowUpdate' => $allowUpdate,
-			],
-		];
+		$options['auth'] = [$this->currentUser, $this->regularUserPassword];
+		$options['headers'] = ['OCS_APIREQUEST' => 'true'];
 		try {
 			$this->response = $client->request('POST', $fullUrl, $options);
 			$this->responseBody = null;

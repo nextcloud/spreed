@@ -12,6 +12,14 @@ namespace OCA\Talk;
 /**
  * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
  *
+ * @psalm-type TalkAttachmentResult = array{
+ *     referenceId: string,
+ *     status: 'posted'|'failed',
+ *     // Why the file was not posted: not found, not a file, not in the Draft folder, listed twice, or posting it failed
+ *     error?: 'file'|'type'|'folder'|'duplicate'|'post',
+ *     renames?: list<array<string, string>>,
+ * }
+ *
  * @psalm-type TalkConversationTag = array{
  *     // SnowflakeID
  *     id: numeric-string,
