@@ -195,7 +195,7 @@ class BotController extends OCSController {
 		return new DataResponse();
 	}
 
-	protected function postAgenda(string $server, string $secret, string $random, array $data, string $lang): void {
+	protected function postAgenda(string $server, #[\SensitiveParameter] string $secret, string $random, array $data, string $lang): void {
 		$agenda = $this->summaryService->agenda($server, $data['target']['id'], $lang);
 		if ($agenda !== null) {
 			$body = [
@@ -208,7 +208,7 @@ class BotController extends OCSController {
 		}
 	}
 
-	protected function sendResponse(string $server, string $secret, array $body, array $data): void {
+	protected function sendResponse(string $server, #[\SensitiveParameter] string $secret, array $body, array $data): void {
 		$jsonBody = json_encode($body, JSON_THROW_ON_ERROR);
 
 		$random = bin2hex(random_bytes(32));
@@ -241,7 +241,7 @@ class BotController extends OCSController {
 		}
 	}
 
-	protected function sendReaction(string $server, string $secret, array $data): void {
+	protected function sendReaction(string $server, #[\SensitiveParameter] string $secret, array $data): void {
 		$body = [
 			'reaction' => '👍',
 		];
@@ -277,7 +277,7 @@ class BotController extends OCSController {
 		}
 	}
 
-	protected function removeReaction(string $server, string $secret, array $data): void {
+	protected function removeReaction(string $server, #[\SensitiveParameter] string $secret, array $data): void {
 		$body = [
 			'reaction' => '👍',
 		];
