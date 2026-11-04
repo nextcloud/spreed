@@ -168,7 +168,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			}
 
 			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
-				|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
+				|| (!$room->isFederatedConversation() && $this->hasUnreadMention($attendee))) {
 				return true;
 			}
 
@@ -225,7 +225,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			}
 
 			if (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
-				|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
+				|| (!$room->isFederatedConversation() && $this->hasUnreadMention($attendee))) {
 				// Really mentioned
 				$mentions[] = $room;
 				continue;
@@ -291,7 +291,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
 			$subtitle = $this->l10n->t('Call in progress');
 		} elseif (($room->isFederatedConversation() && $attendee->getLastMentionMessage())
-			|| (!$room->isFederatedConversation() && $attendee->getLastMentionMessage() > $attendee->getLastReadMessage())) {
+			|| (!$room->isFederatedConversation() && $this->hasUnreadMention($attendee))) {
 			$subtitle = $this->l10n->t('You were mentioned');
 		}
 
@@ -325,6 +325,15 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		}
 
 		return str_replace($placeholders, $replacements, $message->getMessage());
+	}
+
+	/**
+	 * last_mention_message is 0 when there is no mention, while last_read_message
+	 * can be negative ({@see ChatManager::UNREAD_FIRST_MESSAGE}, {@see ChatManager::UNREAD_MIGRATION}).
+	 */
+	protected function hasUnreadMention(Attendee $attendee): bool {
+		$lastMention = $attendee->getLastMentionMessage();
+		return $lastMention > 0 && $lastMention > $attendee->getLastReadMessage();
 	}
 
 	protected function sortRooms(Room $roomA, Room $roomB): int {
