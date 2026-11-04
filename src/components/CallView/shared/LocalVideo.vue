@@ -56,10 +56,9 @@
 		<div class="bottom-bar">
 			<NcButton
 				v-if="isBig"
-				variant="tertiary"
-				class="bottom-bar__button"
+				variant="secondary"
 				@click="handleStopFollowing">
-				{{ stopFollowingLabel }}
+				{{ t('spreed', 'Stop following') }}
 			</NcButton>
 		</div>
 	</div>
@@ -175,10 +174,6 @@ export default {
 	},
 
 	computed: {
-		stopFollowingLabel() {
-			return t('spreed', 'Back')
-		},
-
 		isNotConnected() {
 			// When there is no sender participant (when the MCU is not used, or
 			// if it is used but no peer object has been set yet) the local
@@ -472,16 +467,6 @@ export default {
 
 	&--big {
 		justify-content: center;
-	}
-
-	& &__button {
-		opacity: 0.8;
-		background-color: var(--color-background-dark);
-
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
 	}
 }
 
