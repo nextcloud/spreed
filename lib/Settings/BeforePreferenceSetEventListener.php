@@ -80,13 +80,13 @@ class BeforePreferenceSetEventListener implements IEventListener {
 		}
 
 		if (!isset($provisionableUserPreferences[$key]->enumType)) {
-			if ($provisionableUserPreferences[$key]->entry->getValueType() === ValueType::BOOL && !empty($value) && !in_array($value, ['true', 'false', 1, 0, '1', '0', 'yes', 'no'], true)) {
+			if ($provisionableUserPreferences[$key]->entry->getValueType() === ValueType::BOOL && !empty($value) && !in_array(mb_strtolower($value), ['true', 'false', 1, 0, '1', '0', 'yes', 'no'], true)) {
 				return false; // $key must be boolean but no valid value castable to bool was given
 			}
 			return true; // $key can be provisioned, and doesn't have restrictions on possible values
 		}
 
-		if (!empty($value) && in_array($value, explode('|', $provisionableUserPreferences[$key]->enumType), true)) {
+		if (!empty($value) && in_array(mb_strtolower($value), explode('|', mb_strtolower($provisionableUserPreferences[$key]->enumType)), true)) {
 			return true; // $value matches the enumType
 		}
 
