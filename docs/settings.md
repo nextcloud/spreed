@@ -98,12 +98,12 @@ Legend:
 | `enable_matterbridge` | bool | `false` | Yes | 🖌️ | Whether the Matterbridge integration is enabled and can be configured |
 | `experiments_guests` | int | `0` | Yes |  | Bit flag of experiments that should be enabled for guests on this server<br>See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments |
 | `experiments_users` | int | `0` | Yes |  | Bit flag of experiments that should be enabled for logged-in users on this server<br>See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments |
-| `external_call_service` | string | `''` | No |  | URL of the external service endpoint. `{meetingId}` is replaced with the conversation's `objectId` when Talk makes the request |
-| `external_call_service_auth_password` | string | `''` | No |  | HTTP Basic Auth password used when Talk calls the external service |
-| `external_call_service_auth_user` | string | `''` | No |  | HTTP Basic Auth username used when Talk calls the external service |
+| `external_call_service` | string | `''` | Yes |  | URL of the external service endpoint. `{meetingId}` is replaced with the conversation's `objectId` when Talk makes the request |
+| `external_call_service_auth_password` | string | `''` | Yes |  | HTTP Basic Auth password used when Talk calls the external service |
+| `external_call_service_auth_user` | string | `''` | Yes |  | HTTP Basic Auth username used when Talk calls the external service |
 | `external_call_service_frame_origins` | `list<string>` | `[]` | No |  | JSON array of scheme+host(+port) origins that may be loaded in the iframe.<br>Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone |
-| `external_call_service_iframe_field` | string | `''` | No |  | JSON field name in the external service response that contains the iframe URL |
-| `external_call_service_shared_secret` | string | `''` | No |  | Shared secret used for two purposes:<br>as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.<br>Minimum 64 characters, `a-zA-Z0-9` recommended |
+| `external_call_service_iframe_field` | string | `''` | Yes |  | JSON field name in the external service response that contains the iframe URL |
+| `external_call_service_shared_secret` | string | `''` | Yes |  | Shared secret used for two purposes:<br>as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.<br>Minimum 64 characters, `a-zA-Z0-9` recommended |
 | `feature_hints_hidden` | int | `0` | Yes |  | Feature hints that should be hidden. Set to `999999` to hide all. |
 | `federation_allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of local group ids that are allowed to use federated features (everyone when empty) |
 | `federation_enabled` | bool | `false` | Yes | 🖌️ | Whether or not federation with this instance is allowed |
@@ -116,8 +116,8 @@ Legend:
 | `guests_play_sounds` | bool | `true` | No |  | Whether guests hear the join and leave sounds by default |
 | `has_feature_changed_users` | bool | `false` | No |  | Set automatically when the High-performance backend supports the `changed-users` feature, so only the affected users are sent in room updates |
 | `hide_signaling_warning` | bool | `false` | No | 🖌️ | Flag that allows to suppress the warning that an HPB should be configured |
-| `hosted_signaling_server_account` | `array<string, mixed>` | `[]` | No | 🖌️ | Account information of the hosted signaling server |
-| `hosted_signaling_server_account_id` | string | `''` | No |  | Account identifier of the hosted signaling server |
+| `hosted_signaling_server_account` | `array<string, mixed>` | `[]` | Yes | 🖌️ | Account information of the hosted signaling server |
+| `hosted_signaling_server_account_id` | string | `''` | Yes |  | Account identifier of the hosted signaling server |
 | `hosted_signaling_server_nonce` | string | `''` | No |  | Temporary nonce while configuring the hosted signaling server |
 | `inactivity_enable_lobby` | bool | `false` | No |  | Additionally enable the lobby for inactive rooms so they can only be read by moderators. |
 | `inactivity_lock_after_days` | int | `0` | No |  | A duration (in days) after which rooms are locked. Calculated from the last activity in the room. |
