@@ -121,44 +121,23 @@ describe('ParticipantsTab.vue', () => {
 	test('lists raised hands in queue order and removes them from the regular list', async () => {
 		addParticipant(1, 'Alice')
 		addParticipant(2, 'Bob')
-		addParticipant(3, 'Carol')
+		addParticipant(3, 'Carol', { sessionIds: ['session-3a', 'session-3b'] })
 		addParticipant(4, 'Dave')
-		// Queue order (Carol, Alice) differs from the alphabetical and the insertion order
+		addParticipant(5, 'Eve', { inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED })
+		// Queue order (Carol, Alice) differs from the alphabetical and the insertion order.
+		// Carol is shown once, at the place of her earliest session.
 		raiseHand('session-1', 2000)
-		raiseHand('session-3', 1000)
+		raiseHand('session-3a', 1000)
+		raiseHand('session-3b', 3000)
+		// Eve left the call, so her hand is ignored
+		raiseHand('session-5', 500)
 
 		const wrapper = await mountTab()
 
 		expect(getCaptions(wrapper)).toEqual(['Raised hands', 'Participants'])
 		expect(getRaisedHandNames(wrapper)).toEqual(['Carol', 'Alice'])
-		expect(getVirtualListNames(wrapper)).toHaveLength(2)
-		expect(getVirtualListNames(wrapper)).toEqual(expect.arrayContaining(['Bob', 'Dave']))
-	})
-
-	test('ignores a raised hand of a participant who left the call', async () => {
-		addParticipant(1, 'Alice')
-		addParticipant(2, 'Bob', { inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED })
-		raiseHand('session-1', 1000)
-		raiseHand('session-2', 500)
-
-		const wrapper = await mountTab()
-
-		expect(getRaisedHandNames(wrapper)).toEqual(['Alice'])
-		expect(getVirtualListNames(wrapper)).toEqual(['Bob'])
-	})
-
-	test('shows a participant with several raised sessions once', async () => {
-		addParticipant(1, 'Alice', { sessionIds: ['session-1a', 'session-1b'] })
-		addParticipant(2, 'Bob')
-		raiseHand('session-1a', 1000)
-		raiseHand('session-1b', 3000)
-		raiseHand('session-2', 2000)
-
-		const wrapper = await mountTab()
-
-		// Alice takes the place of her earliest session
-		expect(getRaisedHandNames(wrapper)).toEqual(['Alice', 'Bob'])
-		expect(getVirtualListNames(wrapper)).toEqual([])
+		expect(getVirtualListNames(wrapper)).toHaveLength(3)
+		expect(getVirtualListNames(wrapper)).toEqual(expect.arrayContaining(['Bob', 'Dave', 'Eve']))
 	})
 
 	test('hides the "Participants" caption when everybody raised a hand', async () => {
@@ -171,16 +150,5 @@ describe('ParticipantsTab.vue', () => {
 
 		expect(getCaptions(wrapper)).toEqual(['Raised hands'])
 		expect(getVirtualListNames(wrapper)).toEqual([])
-	})
-
-	test('shows the "Participants" caption when somebody has no raised hand', async () => {
-		addParticipant(1, 'Alice')
-		addParticipant(2, 'Bob')
-		raiseHand('session-1', 1000)
-
-		const wrapper = await mountTab()
-
-		expect(getCaptions(wrapper)).toEqual(['Raised hands', 'Participants'])
-		expect(getVirtualListNames(wrapper)).toEqual(['Bob'])
 	})
 })

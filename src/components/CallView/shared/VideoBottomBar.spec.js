@@ -225,8 +225,15 @@ describe('VideoBottomBar.vue', () => {
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 				})
 
-				test('indicator shows the position in the raised hands queue', async () => {
+				test('indicator shows the position only when the session is in the raised hands queue', async () => {
 					const participantActivityStore = useParticipantActivityStore()
+					componentProps.model.attributes.raisedHand.state = true
+					componentProps.model.attributes.nextcloudSessionId = 'session-id-participant'
+					const wrapper = mountVideoBottomBar(componentProps)
+
+					expect(wrapper.findComponent(IconHandBackLeft).exists()).toBeTruthy()
+					expect(wrapper.find('.raiseHandIndicator__order').exists()).toBeFalsy()
+
 					participantActivityStore.setParticipantHandRaised({
 						sessionId: 'session-id-other',
 						raisedHand: { state: true, timestamp: 1 },
@@ -235,24 +242,12 @@ describe('VideoBottomBar.vue', () => {
 						sessionId: 'session-id-participant',
 						raisedHand: { state: true, timestamp: 2 },
 					})
-					componentProps.model.attributes.raisedHand.state = true
-					componentProps.model.attributes.nextcloudSessionId = 'session-id-participant'
-					const wrapper = mountVideoBottomBar(componentProps)
-
+					await nextTick()
 					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('2')
 
 					participantActivityStore.setParticipantHandRaised({ sessionId: 'session-id-other', raisedHand: false })
 					await nextTick()
 					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('1')
-				})
-
-				test('indicator does not show a position when the session is not in the queue', () => {
-					componentProps.model.attributes.raisedHand.state = true
-					componentProps.model.attributes.nextcloudSessionId = 'session-id-participant'
-					const wrapper = mountVideoBottomBar(componentProps)
-
-					expect(wrapper.findComponent(IconHandBackLeft).exists()).toBeTruthy()
-					expect(wrapper.find('.raiseHandIndicator__order').exists()).toBeFalsy()
 				})
 			})
 		})

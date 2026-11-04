@@ -125,9 +125,11 @@ describe('TopBar.vue', () => {
 		raiseHand('session-2')
 		// The third participant is disconnected
 		raiseHand('session-3')
+		// The participants list is not loaded in embedded calls
+		raiseHand('session-unknown')
 
 		const wrapper = await mountTopBar()
 
-		expect(findBadge(wrapper).text()).toBe('2')
+		expect(findBadge(wrapper).text()).toBe('3')
 	})
 })

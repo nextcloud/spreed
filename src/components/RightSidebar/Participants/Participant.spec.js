@@ -350,39 +350,35 @@ describe('ParticipantItem.vue', () => {
 			return wrapper
 		}
 
-		test('highlights the row and shows the status when the hand is raised', async () => {
+		test('highlights the row and shows the status and the queue position when the hand is raised', async () => {
+			useParticipantActivityStore().setParticipantHandRaised({
+				sessionId: 'session-id-bob',
+				raisedHand: { state: true, timestamp: 1 },
+			})
 			const wrapper = await mountWithRaisedHand(true)
 			expect(wrapper.find('.participant--raised-hand').exists()).toBeTruthy()
 			expect(wrapper.find('.participant__status').text()).toBe('Raised their hand')
+			expect(wrapper.find('.participant__raised-hand-order').text()).toBe('2')
 		})
 
-		test('does not highlight the row when the hand is not raised', async () => {
+		test('shows no highlight and no queue position before the hand is raised and after it is lowered', async () => {
 			const wrapper = await mountWithRaisedHand(false)
 			expect(wrapper.find('.participant--raised-hand').exists()).toBeFalsy()
-		})
+			expect(wrapper.find('.participant__raised-hand-order').exists()).toBeFalsy()
 
-		test('removes the highlight when the hand is lowered', async () => {
-			const wrapper = await mountWithRaisedHand(true)
+			useParticipantActivityStore().setParticipantHandRaised({
+				sessionId: 'session-id-alice',
+				raisedHand: { state: true, timestamp: Date.now() },
+			})
+			await flushPromises()
 			expect(wrapper.find('.participant--raised-hand').exists()).toBeTruthy()
+
 			useParticipantActivityStore().setParticipantHandRaised({
 				sessionId: 'session-id-alice',
 				raisedHand: { state: false, timestamp: null },
 			})
 			await flushPromises()
 			expect(wrapper.find('.participant--raised-hand').exists()).toBeFalsy()
-		})
-
-		test('shows the position in the raised hands queue', async () => {
-			useParticipantActivityStore().setParticipantHandRaised({
-				sessionId: 'session-id-bob',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-			const wrapper = await mountWithRaisedHand(true)
-			expect(wrapper.find('.participant__raised-hand-order').text()).toBe('2')
-		})
-
-		test('does not show a queue position when the hand is not raised', async () => {
-			const wrapper = await mountWithRaisedHand(false)
 			expect(wrapper.find('.participant__raised-hand-order').exists()).toBeFalsy()
 		})
 

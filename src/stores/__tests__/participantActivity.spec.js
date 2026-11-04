@@ -151,7 +151,7 @@ describe('participantActivityStore', () => {
 				.toStrictEqual({ state: true, timestamp: 1 })
 		})
 
-		it('returns the position in the raised hands queue by timestamp', () => {
+		it('returns the position in the raised hands queue by timestamp and moves it up when a hand is lowered', () => {
 			participantActivityStore.setParticipantHandRaised({
 				sessionId: 'session-id-1',
 				raisedHand: { state: true, timestamp: 3 },
@@ -169,22 +169,11 @@ describe('participantActivityStore', () => {
 			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-1'])).toBe(2)
 			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-3'])).toBe(3)
 			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-another'])).toBeNull()
-		})
 
-		it('moves the queue up when a hand is lowered', () => {
-			participantActivityStore.setParticipantHandRaised({
-				sessionId: 'session-id-1',
-				raisedHand: { state: true, timestamp: 1 },
-			})
-			participantActivityStore.setParticipantHandRaised({
-				sessionId: 'session-id-2',
-				raisedHand: { state: true, timestamp: 2 },
-			})
+			participantActivityStore.setParticipantHandRaised({ sessionId: 'session-id-2', raisedHand: false })
 
-			participantActivityStore.setParticipantHandRaised({ sessionId: 'session-id-1', raisedHand: false })
-
-			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-1'])).toBeNull()
-			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-2'])).toBe(1)
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-2'])).toBeNull()
+			expect(participantActivityStore.getParticipantRaisedHandOrder(['session-id-1'])).toBe(1)
 		})
 
 		it('uses the earliest session for the queue position', () => {

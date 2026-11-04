@@ -1161,28 +1161,13 @@ describe('VideoVue.vue', () => {
 			})
 		}
 
-		test('adds the class when the hand is raised', () => {
-			callParticipantModel.set('raisedHand', { state: true, timestamp: 1000 })
-
-			const wrapper = mountVideoVue()
-
-			expect(wrapper.find('.video-container').classes()).toContain('raised-hand')
-		})
-
-		test('does not add the class when the hand is not raised', () => {
+		test('adds the class only when the hand is raised and the tile is not a placeholder', () => {
 			callParticipantModel.set('raisedHand', { state: false, timestamp: null })
+			expect(mountVideoVue().find('.video-container').classes()).not.toContain('raised-hand')
 
-			const wrapper = mountVideoVue()
-
-			expect(wrapper.find('.video-container').classes()).not.toContain('raised-hand')
-		})
-
-		test('does not add the class to the promoted placeholder', () => {
 			callParticipantModel.set('raisedHand', { state: true, timestamp: 1000 })
-
-			const wrapper = mountVideoVue({ placeholderForPromoted: true })
-
-			expect(wrapper.find('.video-container').classes()).not.toContain('raised-hand')
+			expect(mountVideoVue().find('.video-container').classes()).toContain('raised-hand')
+			expect(mountVideoVue({ placeholderForPromoted: true }).find('.video-container').classes()).not.toContain('raised-hand')
 		})
 	})
 })
