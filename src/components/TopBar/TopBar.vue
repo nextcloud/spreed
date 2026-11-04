@@ -351,10 +351,22 @@ export default {
 		},
 
 		raisedHandsCount() {
-			return this.$store.getters.participantsList(this.token)
-				.filter((participant) => participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
-					&& this.participantActivityStore.getParticipantRaisedHand(participant.sessionIds).state)
-				.length
+			const participantBySessionId = new Map()
+			for (const participant of this.$store.getters.participantsList(this.token)) {
+				for (const sessionId of participant.sessionIds) {
+					participantBySessionId.set(sessionId, participant)
+				}
+			}
+
+			const people = new Set()
+			for (const sessionId of Object.keys(this.participantActivityStore.raisedHands)) {
+				const participant = participantBySessionId.get(sessionId)
+				if (participant?.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+					// The participants list is not loaded in embedded calls, so count the session itself
+					people.add(participant?.attendeeId ?? sessionId)
+				}
+			}
+			return people.size
 		},
 
 		participantsInCallAriaLabel() {
