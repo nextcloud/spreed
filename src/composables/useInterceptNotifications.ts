@@ -61,9 +61,9 @@ export function useInterceptNotifications() {
 				}
 
 				const conversationRouteLocationRaw = event.action.url.substring(conversationRouteIndex)
-				await router.push(conversationRouteLocationRaw)
-
+				// Must be set before the first await, the notifications app checks it right after emitting
 				event.cancelAction = true
+				await router.push(conversationRouteLocationRaw)
 				break
 			}
 			case 'POST': {
