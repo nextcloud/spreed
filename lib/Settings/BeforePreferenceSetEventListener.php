@@ -10,10 +10,12 @@ namespace OCA\Talk\Settings;
 
 use OCA\Files_Sharing\SharedStorage;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Config\BeforePreferenceSetEvent;
+use OCP\Config\ValueType;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Folder;
@@ -30,6 +32,7 @@ class BeforePreferenceSetEventListener implements IEventListener {
 		private readonly IRootFolder $rootFolder,
 		private readonly ParticipantService $participantService,
 		private readonly LoggerInterface $logger,
+		private readonly ConfigLexicon $configLexicon,
 	) {
 	}
 
@@ -59,13 +62,6 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			return $this->validateAttachmentFolder($userId, $value);
 		}
 
-		// "boolean" yes/no
-		if ($key === UserPreference::CALLS_START_WITHOUT_MEDIA
-			|| $key === UserPreference::PLAY_SOUNDS
-			|| $key === UserPreference::BLUR_VIRTUAL_BACKGROUND) {
-			return $value === 'yes' || $value === 'no';
-		}
-
 		// "privacy" 0/1
 		if ($key === UserPreference::TYPING_PRIVACY
 			|| $key === UserPreference::READ_STATUS_PRIVACY) {
@@ -77,45 +73,21 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			return $valid;
 		}
 
-		// "list-style" 'two-lines' / 'compact'
-		if ($key === UserPreference::CONVERSATIONS_LIST_STYLE) {
-			return $value === UserPreference::CONVERSATIONS_LIST_STYLE_TWO_LINES || $value === UserPreference::CONVERSATIONS_LIST_STYLE_COMPACT;
-		}
-		if ($key === UserPreference::CHAT_STYLE) {
-			return $value === UserPreference::CHAT_STYLE_SPLIT || $value === UserPreference::CHAT_STYLE_UNIFIED;
-		}
-		if ($key === UserPreference::CONVERSATIONS_SORT_ORDER) {
-			return $value === UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY || $value === UserPreference::CONVERSATIONS_SORT_ORDER_ALPHABETICAL;
-		}
-		if ($key === UserPreference::CONVERSATIONS_GROUP_MODE) {
-			return in_array($value, [
-				UserPreference::CONVERSATIONS_GROUP_MODE_NONE,
-				UserPreference::CONVERSATIONS_GROUP_MODE_GROUP_FIRST,
-				UserPreference::CONVERSATIONS_GROUP_MODE_PRIVATE_FIRST,
-			], true);
+		$provisionableUserPreferences = $this->configLexicon->getProvisionableUserPreferences();
+
+		if (!isset($provisionableUserPreferences[$key])) {
+			return false; // $key cannot be provisioned according to ConfigLexicon
 		}
 
-		if ($key === UserPreference::CONVERSATIONS_UNARCHIVE) {
-			return in_array($value, [
-				UserPreference::CONVERSATIONS_UNARCHIVE_NEVER,
-				UserPreference::CONVERSATIONS_UNARCHIVE_MENTION,
-				UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
-			], true);
+		if (!isset($provisionableUserPreferences[$key]->enumType)) {
+			if ($provisionableUserPreferences[$key]->entry->getValueType() === ValueType::BOOL && !empty($value) && !in_array($value, ['true', 'false', 1, 0, '1', '0', 'yes', 'no'], true)) {
+				return false; // $key must be boolean but no valid value castable to bool was given
+			}
+			return true; // $key can be provisioned, and doesn't have restrictions on possible values
 		}
 
-		if ($key === UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD) {
-			return in_array($value, [
-				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER,
-				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION,
-				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
-			], true);
-		}
-
-		if ($key === UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID) {
-			// Accept any value, as it will be used for both local and federated
-			// instances and therefore the valid values might change depending
-			// on the instance.
-			return true;
+		if (!empty($value) && in_array($value, explode('|', $provisionableUserPreferences[$key]->enumType), true)) {
+			return true; // $value matches the enumType
 		}
 
 		return false;
