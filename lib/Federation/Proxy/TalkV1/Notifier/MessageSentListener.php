@@ -20,6 +20,7 @@ use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Webinary;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -95,7 +96,12 @@ class MessageSentListener implements IEventListener {
 		];
 
 		$participants = $this->participantService->getParticipantsByActorType($event->getRoom(), Attendee::ACTOR_FEDERATED_USERS);
+		$lobbyActive = $event->getRoom()->getLobbyState() !== Webinary::LOBBY_NONE;
 		foreach ($participants as $participant) {
+			if ($lobbyActive && !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				continue;
+			}
+
 			$attendee = $participant->getAttendee();
 			$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
 
