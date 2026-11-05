@@ -5,6 +5,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.13 – 2026-11-05
+### Changed
+- Update translations
+
+### Fixed
+- fix(notifications): open conversation from notification action without page reload
+  [#20164](https://github.com/nextcloud/spreed/pull/20164)
+- fix(lobby): Skip content during lobby
+  [#20148](https://github.com/nextcloud/spreed/pull/20148)
+- fix: do not encode query params as special characters
+  [#20119](https://github.com/nextcloud/spreed/pull/20119)
+- fix(Matterbridge): fix a regression in the additional validation of the bridge parts
+  [#20057](https://github.com/nextcloud/spreed/pull/20057)
+- fix(dashboard): add password protection to instant meeting
+  [#20021](https://github.com/nextcloud/spreed/pull/20021)
+- fix(email-invites): Require password after email got removed
+  [#19955](https://github.com/nextcloud/spreed/pull/19955)
+- fix(admin): Limit certificate check to configured hosts
+  [#19922](https://github.com/nextcloud/spreed/pull/19922)
+- fix(sharing): Scope share child permission updates to userroom shares
+  [#19865](https://github.com/nextcloud/spreed/pull/19865)
+
 ## 23.0.12 – 2026-10-15
 ### Changed
 - Update dependencies

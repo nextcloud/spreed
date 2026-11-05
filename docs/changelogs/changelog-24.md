@@ -5,6 +5,42 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.7 – 2026-11-05
+### Added
+- feat(external-call): Allow the service to set the participant list
+  [#20063](https://github.com/nextcloud/spreed/pull/20063)
+
+### Changed
+- Update translations
+
+### Fixed
+- fix(notifications): open conversation from notification action without page reload
+  [#20165](https://github.com/nextcloud/spreed/pull/20165)
+- fix(sharing): Remove file from shared folder on message delete
+  [#20151](https://github.com/nextcloud/spreed/pull/20151)
+- fix(lobby): Skip content during lobby
+  [#20149](https://github.com/nextcloud/spreed/pull/20149)
+- fix(dashboard): Don't treat "no mention" as unread when the read marker is negative
+  [#20136](https://github.com/nextcloud/spreed/pull/20136)
+- fix: do not encode query params as special characters
+  [#20120](https://github.com/nextcloud/spreed/pull/20120)
+- fix(expiration): Improve shown expiration time
+  [#20067](https://github.com/nextcloud/spreed/pull/20067)
+- fix(Matterbridge): fix a regression in the additional validation of the bridge parts
+  [#20058](https://github.com/nextcloud/spreed/pull/20058)
+- fix: Mark session as inactive again after rejoin
+  [#20042](https://github.com/nextcloud/spreed/pull/20042)
+- fix(dashboard): add password protection to instant meeting
+  [#20022](https://github.com/nextcloud/spreed/pull/20022)
+- fix(reminder): Add "Next weekend" option to message reminders
+  [#19950](https://github.com/nextcloud/spreed/pull/19950)
+- fix(admin): Limit certificate check to configured hosts
+  [#19923](https://github.com/nextcloud/spreed/pull/19923)
+- fix(attachment): Fix "Download file" option for guests when "conversation folder" is used
+  [#19910](https://github.com/nextcloud/spreed/pull/19910)
+- fix(sharing): Scope share child permission updates to userroom shares
+  [#19864](https://github.com/nextcloud/spreed/pull/19864)
+
 ## 24.0.6 – 2026-10-15
 ### Changed
 - Update dependencies

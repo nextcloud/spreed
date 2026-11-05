@@ -5,6 +5,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.12 – 2026-11-05
+### Change
+- Update translations
+
+### Fixed
+- fix(sipbridge): Authenticate internal request from SIP Bridge
+  [#18116](https://github.com/nextcloud/spreed/pull/18116)
+- fix(sharing): Scope share child permission updates to userroom shares
+  [#20055](https://github.com/nextcloud/spreed/pull/20055)
+
 ## 21.1.11 – 2026-04-30
 ### Changed
 - Update dependencies
