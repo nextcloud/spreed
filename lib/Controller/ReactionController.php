@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Chat\HistoryVisibility;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
@@ -79,6 +80,10 @@ class ReactionController extends AEnvironmentAwareOCSController {
 			return $proxy->react($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
 		}
 
+		if ($this->isBeforeHistory($messageId)) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
 		try {
 			if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 				$this->matrixSendService->addReaction($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
@@ -142,6 +147,10 @@ class ReactionController extends AEnvironmentAwareOCSController {
 			return $proxy->delete($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
 		}
 
+		if ($this->isBeforeHistory($messageId)) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
 		try {
 			if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
 				$this->matrixSendService->removeReaction($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
@@ -197,14 +206,33 @@ class ReactionController extends AEnvironmentAwareOCSController {
 
 		try {
 			// Verify that messageId is part of the room
-			$this->reactionManager->getCommentToReact($this->getRoom(), (string)$messageId);
+			$comment = $this->reactionManager->getCommentToReact($this->getRoom(), (string)$messageId);
 		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+		if (!HistoryVisibility::isVisible($this->getParticipant(), $comment)) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId, $reaction);
 
 		return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
+	}
+
+	/**
+	 * Whether the message is from before the history the participant may see
+	 */
+	protected function isBeforeHistory(int $messageId): bool {
+		if ($this->getParticipant()->getHistorySince() === null) {
+			return false;
+		}
+		try {
+			$comment = $this->reactionManager->getCommentToReact($this->getRoom(), (string)$messageId);
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException) {
+			// Answered by the action itself
+			return false;
+		}
+		return !HistoryVisibility::isVisible($this->getParticipant(), $comment);
 	}
 
 	/**

@@ -76,6 +76,8 @@ use OCP\DB\Types;
  * @method int getHiddenPinnedId()
  * @method void setHasScheduledMessages(int $scheduledMessages)
  * @method int getHasScheduledMessages()
+ * @method void setHistorySince(int $historySince)
+ * @method int getHistorySince()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -155,6 +157,8 @@ class Attendee extends Entity {
 	protected ?string $tagIds = null;
 	protected int $hiddenPinnedId = 0;
 	protected int $hasScheduledMessages = 0;
+	/** Unix time of the first message the attendee may read, 0 for the whole history */
+	protected int $historySince = 0;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -189,6 +193,7 @@ class Attendee extends Entity {
 		$this->addType('tagIds', Types::STRING);
 		$this->addType('hiddenPinnedId', Types::BIGINT);
 		$this->addType('hasScheduledMessages', Types::INTEGER);
+		$this->addType('historySince', Types::BIGINT);
 
 	}
 

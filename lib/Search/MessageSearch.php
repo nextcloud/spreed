@@ -143,6 +143,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	 */
 	public function performSearch(IUser $user, ISearchQuery $query, string $title, array $rooms, bool $isCurrentMessageSearch = false): SearchResult {
 		$roomMap = [];
+		$notBeforeByRoomId = [];
 		foreach ($rooms as $room) {
 			if (!$isCurrentMessageSearch
 				&& $room->getType() === Room::TYPE_CHANGELOG) {
@@ -167,6 +168,15 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			}
 
 			$roomMap[(string)$room->getId()] = $room;
+
+			try {
+				$historySince = $this->participantService->getParticipant($room, $user->getUID(), false)->getHistorySince();
+			} catch (ParticipantNotFoundException) {
+				$historySince = null;
+			}
+			if ($historySince !== null) {
+				$notBeforeByRoomId[(string)$room->getId()] = $historySince;
+			}
 		}
 
 		if (empty($roomMap)) {
@@ -204,7 +214,8 @@ class MessageSearch implements IProvider, IFilteringProvider {
 			$actorType,
 			$actorId,
 			$offset,
-			$query->getLimit()
+			$query->getLimit(),
+			$notBeforeByRoomId,
 		);
 
 		$result = [];

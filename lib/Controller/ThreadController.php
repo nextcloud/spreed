@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\HistoryVisibility;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
@@ -83,7 +84,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			return $proxy->getRecentActiveThreads($this->room, $this->participant, $limit);
 		}
 
-		$threads = $this->threadService->getRecentByRoomId($this->room, $limit);
+		$threads = $this->threadService->getRecentByRoomId($this->room, $limit, $this->participant->getHistorySince());
 		$list = $this->prepareListOfThreads($threads);
 		return new DataResponse($list);
 	}
@@ -167,7 +168,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
+			$thread = $this->findVisibleThread($threadId);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
 		}
@@ -212,7 +213,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
+			$thread = $this->findVisibleThread($threadId);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
 		}
@@ -268,6 +269,22 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * A thread of the conversation whose first message the participant may see
+	 *
+	 * @throws DoesNotExistException
+	 */
+	protected function findVisibleThread(int $threadId): Thread {
+		$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
+		if ($this->participant->getHistorySince() !== null) {
+			$root = $this->chatManager->getMessagesById([$threadId])[$threadId] ?? null;
+			if ($root === null || !HistoryVisibility::isVisible($this->participant, $root)) {
+				throw new DoesNotExistException('Thread started before the history the participant may see');
+			}
+		}
+		return $thread;
+	}
+
+	/**
 	 * @param list<Thread> $threads
 	 * @param ?list<ThreadAttendee> $attendees
 	 * @return list<TalkThreadInfo>
@@ -308,6 +325,11 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			}
 
 			$first = $comments[$thread->getId()] ?? null;
+			if ($participant->getHistorySince() !== null
+				&& ($first === null || !HistoryVisibility::isVisible($participant, $first))) {
+				// The thread started before the history the participant may see
+				continue;
+			}
 			if ($first !== null) {
 				$firstMessage = $this->messageParser->createMessage($room, $participant, $first, $this->l);
 				$this->messageParser->parseMessage($firstMessage);
@@ -381,7 +403,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$thread = $this->threadService->findByThreadId($this->room->getId(), $messageId);
+			$thread = $this->findVisibleThread($messageId);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}

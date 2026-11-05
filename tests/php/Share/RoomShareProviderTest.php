@@ -480,9 +480,9 @@ class RoomShareProviderTest extends TestCase {
 	 */
 	#[DataProvider('dataGetSharedWithByPathWithoutUserRoomShare')]
 	public function testGetSharedWithByPathWithoutUserRoomShare(array $shares, array $expected): void {
-		$this->manager->method('getRoomTokensWithAttachmentsForUser')
+		$this->manager->method('getRoomsWithAttachmentsForUser')
 			->with('alice')
-			->willReturn(['token123']);
+			->willReturn(['token123' => 0]);
 		$this->config->method('getAttachmentFolder')
 			->with('alice')
 			->willReturn('/Talk');

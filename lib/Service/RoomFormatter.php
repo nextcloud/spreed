@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\HistoryVisibility;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
@@ -496,6 +497,13 @@ class RoomFormatter {
 			try {
 				$thread = $this->threadService->findByThreadId($room->getId(), (int)$lastMessage->getTopmostParentId());
 			} catch (DoesNotExistException) {
+			}
+		}
+		if ($thread !== null && $participant->getHistorySince() !== null) {
+			// No title of a thread that started before the history the participant may see
+			$root = $this->chatManager->getMessagesById([$thread->getId()])[$thread->getId()] ?? null;
+			if ($root === null || !HistoryVisibility::isVisible($participant, $root)) {
+				$thread = null;
 			}
 		}
 		return $message->toArray($responseFormat, $thread);
