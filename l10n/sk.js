@@ -394,6 +394,8 @@ OC.L10N.register(
     "The summary for the call in {call} was uploaded to {file}." : "Zhrnutie hovoru {call} bolo nahrané do {file}.",
     "Failed to summarize call recording" : "Nepodarilo sa vytvoriť zhrnutie záznamu hovoru",
     "The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration." : "Serveru sa nepodarilo zhrnúť nahrávku v súbore {file} pre hovor v {call}. Prosím, kontaktujte administráciu.",
+    "Retry transcription" : "Znova skúsiť prepis",
+    "Retry summary" : "Znova skúsiť vytvoriť súhrn",
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} ťa pozval, aby si sa pripojil k miestnosti {roomName} na {remoteServer}",
     "Accept" : "Prijať",
     "Decline" : "Zahodiť",
