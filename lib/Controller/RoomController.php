@@ -204,13 +204,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($this->userId !== null) {
 			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
 			$values[] = $this->userConfig->getValueString($this->userId, Application::APP_ID, UserPreference::ATTACHMENT_FOLDER);
-			$values[] = $this->userConfig->getValueString($this->userId, 'theming', 'userCacheBuster', '0');
+			$values[] = $this->userConfig->getValueInt($this->userId, 'theming', 'userCacheBuster');
 		} else {
 			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_GUESTS);
 		}
 		$values[] = $this->config->getSystemValueString('version');
 		$values[] = $this->appConfig->getAppValueString('installed_version');
-		$values[] = $this->serverAppConfig->getValueString('theming', 'cachebuster', '1');
+		$values[] = $this->serverAppConfig->getValueInt('theming', 'cachebuster');
 
 		foreach ($this->configLexicon->getTalkAppConfigs() as $config) {
 			$key = $config->entry->getKey();
