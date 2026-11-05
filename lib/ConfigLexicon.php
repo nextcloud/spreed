@@ -368,6 +368,7 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::CHANGELOG, ValueType::BOOL, true, definition: 'Whether the changelog conversation is updated with new features on major releases')),
 			new AppConfigEntry(new Entry(Config::SESSION_PING_LIMIT, ValueType::INT, 200, definition: 'Number of sessions the HPB can ping in a single request', rename: 'session-ping-limit')),
 			new AppConfigEntry(new Entry(Config::PROJECT_ACCESS_INVALIDATED, ValueType::INT, 0, definition: 'Set automatically to track which invalidation of the projects access cache was already performed')),
+			new AppConfigEntry(new Entry(Config::EXPENSIVE_REPAIR_PERFORMED, ValueType::INT, 0, definition: 'Set automatically to track which expensive repair steps were already performed')),
 			new AppConfigEntry(
 				new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT, ValueType::ARRAY, [], definition: 'Account information of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account'),
 				hash: true,

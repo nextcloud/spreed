@@ -8,8 +8,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Migration;
 
+use OCA\Talk\Config;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Poll;
+use OCA\Talk\SetupCheck\ExpensiveRepairSteps;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -25,6 +28,7 @@ class CleanupExpiredMessageLeftovers implements IRepairStepExpensive {
 
 	public function __construct(
 		private readonly IDBConnection $connection,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 
@@ -37,6 +41,7 @@ class CleanupExpiredMessageLeftovers implements IRepairStepExpensive {
 	public function run(IOutput $output): void {
 		$this->deleteAttachmentsOfExpiredMessages($output);
 		$this->copyExpireDateFromMessages();
+		$this->appConfig->setAppValueInt(Config::EXPENSIVE_REPAIR_PERFORMED, ExpensiveRepairSteps::VERSION);
 	}
 
 	private function deleteAttachmentsOfExpiredMessages(IOutput $output): void {

@@ -116,6 +116,7 @@ class Config implements IAppConfig {
 	public const string CHANGELOG = 'changelog';
 	public const string SESSION_PING_LIMIT = 'session_ping_limit';
 	public const string PROJECT_ACCESS_INVALIDATED = 'project_access_invalidated';
+	public const string EXPENSIVE_REPAIR_PERFORMED = 'expensive_repair_performed';
 	public const string SIGNALING_TICKET_SECRET = 'signaling_ticket_secret';
 	public const string SIGNALING_TOKEN_ALG = 'signaling_token_alg';
 	public const string SIGNALING_TOKEN_PRIVKEY = 'signaling_token_privkey';

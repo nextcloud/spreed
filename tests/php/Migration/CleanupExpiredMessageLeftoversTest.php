@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Migration;
 
+use OCA\Talk\Config;
 use OCA\Talk\Migration\CleanupExpiredMessageLeftovers;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\AttachmentMapper;
@@ -17,7 +18,9 @@ use OCA\Talk\Model\PollMapper;
 use OCA\Talk\Model\Vote;
 use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Service\PollService;
+use OCA\Talk\SetupCheck\ExpensiveRepairSteps;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\ICommentsManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -156,7 +159,12 @@ class CleanupExpiredMessageLeftoversTest extends TestCase {
 		$draftPoll = $this->createPoll($this->roomId, Poll::STATUS_DRAFT);
 		$otherRoomPoll = $this->createPoll($this->otherRoomId);
 
-		$repairStep = new CleanupExpiredMessageLeftovers($this->connection);
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig->expects($this->once())
+			->method('setAppValueInt')
+			->with(Config::EXPENSIVE_REPAIR_PERFORMED, ExpensiveRepairSteps::VERSION);
+
+		$repairStep = new CleanupExpiredMessageLeftovers($this->connection, $appConfig);
 		$repairStep->run($this->createMock(IOutput::class));
 
 		$this->assertSame($expireDate->format('Y-m-d H:i:s'), $this->findAttachment($expiringPollAttachment->getId())['expire_date'] ?? null);
