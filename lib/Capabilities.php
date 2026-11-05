@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Guests\UserBackend;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
@@ -364,7 +365,7 @@ class Capabilities implements IPublicCapability {
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,
-			'version' => $this->appManager->getAppVersion('spreed'),
+			'version' => $user instanceof IUser ? $this->appManager->getAppVersion(Application::APP_ID) : Application::APP_ID,
 		];
 
 		if ($this->serverAppConfig->getValueString('core', 'backgroundjobs_mode', 'ajax') === 'cron') {

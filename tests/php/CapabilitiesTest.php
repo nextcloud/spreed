@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\Unit;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
@@ -292,7 +293,7 @@ class CapabilitiesTest extends TestCase {
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
-				'version' => '1.2.3',
+				'version' => Application::APP_ID,
 			],
 		], $capabilities->getCapabilities());
 	}
