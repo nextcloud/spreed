@@ -92,6 +92,7 @@
 			<step>OCA\Talk\Migration\FixLastReadMessageZero</step>
 			<step>OCA\Talk\Migration\RegenerateSignalingKeys</step>
 			<step>OCA\Talk\Migration\FixHasFederationFlag</step>
+			<step>OCA\Talk\Migration\CleanupExpiredMessageLeftovers</step>
 		</post-migration>
 	</repair-steps>
 
