@@ -5,6 +5,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.13 – 2026-11-05
+### Changed
+- Update translations
+- chore: fix strictness to in_array call
+  [#20130](https://github.com/nextcloud/spreed/pull/20130)
+- ci: Add release relay job
+  [#20048](https://github.com/nextcloud/spreed/pull/20048)
+- chore: Add test for shared picture in last message
+  [#19917](https://github.com/nextcloud/spreed/pull/19917)
+
+### Fixed
+- fix(notifications): open conversation from notification action without page reload
+  [#20164](https://github.com/nextcloud/spreed/pull/20164)
+- fix: Enable "encodedInsertableStreams" on browsers supporting it.
+  [#20156](https://github.com/nextcloud/spreed/pull/20156)
+- fix(lobby): Skip content during lobby
+  [#20148](https://github.com/nextcloud/spreed/pull/20148)
+- fix(call): detect received media with the standard stats property
+  [#20143](https://github.com/nextcloud/spreed/pull/20143)
+- fix: do not encode query params as special characters
+  [#20119](https://github.com/nextcloud/spreed/pull/20119)
+- fix(Matterbridge): fix a regression in the additional validation of the bridge parts
+  [#20057](https://github.com/nextcloud/spreed/pull/20057)
+- fix(dashboard): add password protection to instant meeting
+  [#20021](https://github.com/nextcloud/spreed/pull/20021)
+- fix(debugging): Don't log chat-relay comments in debug log
+  [#20015](https://github.com/nextcloud/spreed/pull/20015)
+- fix(chat): Keep actions on screen for tall messages
+  [#19959](https://github.com/nextcloud/spreed/pull/19959)
+- fix(email-invites): Require password after email got removed
+  [#19955](https://github.com/nextcloud/spreed/pull/19955)
+- fix(build): do not bundle node-polyfill for crypto
+  [#19938](https://github.com/nextcloud/spreed/pull/19938)
+- fix(virtual-bg): fallback to previous background while loading
+  [#19935](https://github.com/nextcloud/spreed/pull/19935)
+- fix(admin): Limit certificate check to configured hosts
+  [#19922](https://github.com/nextcloud/spreed/pull/19922)
+- fix(sharing): Scope share child permission updates to userroom shares
+  [#19865](https://github.com/nextcloud/spreed/pull/19865)
+
 ## 23.0.12 – 2026-10-15
 ### Changed
 - Update dependencies
