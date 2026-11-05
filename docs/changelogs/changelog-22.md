@@ -5,6 +5,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.20 – 2026-11-05
+### Changed
+- Update translations
+
+### Fixed
+- fix(sharing): Scope share child permission updates to userroom shares
+  [#20054](https://github.com/nextcloud/spreed/pull/20054)
+- fix(Matterbridge): fix a regression in the additional validation of the bridge parts
+  [#20060](https://github.com/nextcloud/spreed/pull/20060)
+
 ## 22.0.19 – 2026-10-15
 ### Changed
 - Update dependencies
