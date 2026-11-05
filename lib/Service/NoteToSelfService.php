@@ -19,7 +19,8 @@ use OCP\Config\ValueType;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\ISecureRandom;
+use OCP\Lock\ILockingProvider;
+use OCP\Lock\LockedException;
 
 class NoteToSelfService {
 	public function __construct(
@@ -29,7 +30,7 @@ class NoteToSelfService {
 		private readonly RoomService $roomService,
 		private readonly AvatarService $avatarService,
 		private readonly ParticipantService $participantService,
-		private readonly ISecureRandom $secureRandom,
+		private readonly ILockingProvider $lockingProvider,
 		private readonly IL10N $l,
 	) {
 	}
@@ -38,7 +39,10 @@ class NoteToSelfService {
 		$noteToSelfId = $this->getNoteToSelfConversationId($userId);
 		if ($noteToSelfId > 0) {
 			try {
-				return $this->manager->getRoomById($noteToSelfId);
+				$room = $this->manager->getRoomById($noteToSelfId);
+				if ($room->getObjectType() === Room::OBJECT_TYPE_NOTE_TO_SELF && $room->getObjectId() === $userId) {
+					return $room;
+				}
 			} catch (RoomNotFoundException) {
 				// Fall through and recreate it …
 			}
@@ -48,7 +52,7 @@ class NoteToSelfService {
 			throw new \InvalidArgumentException('User not found');
 		}
 
-		return $this->createNoteToSelfConversation($currentUser, $noteToSelfId);
+		return $this->createNoteToSelfConversation($currentUser);
 	}
 
 	public function initialCreateNoteToSelfForUser(string $userId): void {
@@ -57,67 +61,82 @@ class NoteToSelfService {
 			return;
 		}
 
-		// Creating a random roomId token for 'note_to_self', roomIds are \d, so casting the resulting string to int
-		$randomLock = 1 + (int)$this->secureRandom->generate(5, ISecureRandom::CHAR_DIGITS);
-		// Room IDs are by default positive, turning it negative  so it doesn't coincidentally equal a random roomId for other requests
-		$randomLock *= -1;
-		$this->userConfig->setValueInt($userId, Application::APP_ID, UserPreference::NOTE_TO_SELF, $randomLock);
-
 		$currentUser = $this->userManager->get($userId);
 		if (!$currentUser instanceof IUser) {
 			throw new \InvalidArgumentException('User not found');
 		}
 
-		$this->createNoteToSelfConversation($currentUser, $randomLock);
+		try {
+			$this->createNoteToSelfConversation($currentUser);
+		} catch (RoomNotFoundException) {
+			// another request is creating it, avoid race conditions and double creation
+		}
 	}
 
-	protected function createNoteToSelfConversation(IUser $user, int $previousValue): Room {
-		$room = $this->roomService->createConversation(
-			Room::TYPE_NOTE_TO_SELF,
-			$this->l->t('Note to self'),
-			$user,
-			Room::OBJECT_TYPE_NOTE_TO_SELF,
-			$user->getUID(),
-		);
+	protected function createNoteToSelfConversation(IUser $user): Room {
+		$lockNamespace = 'talk' . '/' . UserPreference::NOTE_TO_SELF . '/';
+		$lockKey = mb_substr($lockNamespace . $user->getUID(), 0, 64);
 
-		// This is a little trick to bypass local caching
-		$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::NOTE_TO_SELF, ValueType::INT, [$user->getUID()]);
-		$currentRoomId = 0;
-		if (isset($values[$user->getUID()])) {
-			$currentRoomId = $values[$user->getUID()];
+		$retries = 3;
+		while (true) {
+			try {
+				$this->lockingProvider->acquireLock($lockKey, ILockingProvider::LOCK_EXCLUSIVE);
+				break;
+			} catch (LockedException) {
+				if (!$retries--) {
+					throw new RoomNotFoundException('Failed due to parallel requests');
+				}
+			}
+			usleep(200000);
 		}
-
-		if ($currentRoomId !== $previousValue) {
-			// This process didn't win the race for creating the conversation, so fetch the other one
-			$this->roomService->deleteRoom($room);
+		try {
+			// This is a little trick to bypass local caching
+			$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::NOTE_TO_SELF, ValueType::INT, [$user->getUID()]);
+			// explicit type conversion for psalm to realize the value is typed as int as above and never mixed.
+			$currentRoomId = (int)($values[$user->getUID()] ?? 0);
 
 			if ($currentRoomId > 0) {
-				$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $currentRoomId[UserPreference::NOTE_TO_SELF]);
-				return $this->manager->getRoomById($currentRoomId[UserPreference::NOTE_TO_SELF]);
+				// This process didn't win the race for creating the conversation, so fetch the other one
+				try {
+					$fetchedRoom = $this->manager->getRoomById($currentRoomId);
+					if ($fetchedRoom->getObjectId() === $user->getUID() && $fetchedRoom->getObjectType() === Room::OBJECT_TYPE_NOTE_TO_SELF) {
+						$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $currentRoomId);
+						return $fetchedRoom;
+					}
+				} catch (RoomNotFoundException) {
+					// fall through to creation below
+				}
 			}
 
-			// Failed to read parallel note-to-self creation
-			throw new RoomNotFoundException('Failed due to parallel requests');
+			$room = $this->roomService->createConversation(
+				Room::TYPE_NOTE_TO_SELF,
+				$this->l->t('Note to self'),
+				$user,
+				Room::OBJECT_TYPE_NOTE_TO_SELF,
+				$user->getUID(),
+			);
+
+			$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $room->getId());
+
+			$this->roomService->setDescription(
+				$room,
+				$this->l->t('A place for your private notes, thoughts and ideas'),
+			);
+
+			$this->avatarService->setAvatarFromEmoji($room, '📝', '0082c9');
+
+			$participant = $this->participantService->getParticipantByActor(
+				$room,
+				Attendee::ACTOR_USERS,
+				$user->getUID(),
+			);
+
+			$this->participantService->updateFavoriteStatus($participant, true);
+
+			return $room;
+		} finally {
+			$this->lockingProvider->releaseLock($lockKey, ILockingProvider::LOCK_EXCLUSIVE);
 		}
-
-		$this->userConfig->setValueInt($user->getUID(), Application::APP_ID, UserPreference::NOTE_TO_SELF, $room->getId());
-
-		$this->roomService->setDescription(
-			$room,
-			$this->l->t('A place for your private notes, thoughts and ideas'),
-		);
-
-		$this->avatarService->setAvatarFromEmoji($room, '📝', '0082c9');
-
-		$participant = $this->participantService->getParticipantByActor(
-			$room,
-			Attendee::ACTOR_USERS,
-			$user->getUID(),
-		);
-
-		$this->participantService->updateFavoriteStatus($participant, true);
-
-		return $room;
 	}
 
 	protected function getNoteToSelfConversationId(string $userId): int {

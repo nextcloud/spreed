@@ -10,11 +10,13 @@ namespace OCA\Talk\Chat\Changelog;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Config;
 use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Settings\UserPreference;
 use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
 use OCP\IL10N;
+use OCP\Lock\ILockingProvider;
+use OCP\Lock\LockedException;
 
 class Manager {
 
@@ -22,6 +24,7 @@ class Manager {
 		private readonly IUserConfig $userConfig,
 		private readonly RoomManager $roomManager,
 		private readonly ChatManager $chatManager,
+		private readonly ILockingProvider $lockingProvider,
 		private readonly IL10N $l,
 	) {
 	}
@@ -39,20 +42,39 @@ class Manager {
 			return;
 		}
 
-		$this->userConfig->setValueInt($userId, Application::APP_ID, Config::CHANGELOG, $shouldHaveReceived);
-
-		$room = $this->roomManager->getChangelogRoom($userId);
-
-		if ($hasReceivedLog === 0) {
-			// Only post the last 3 entries
-			$logs = array_slice($logs, -3);
+		$lockNamespace = 'talk' . '/' . UserPreference::CHANGELOG . '/';
+		$lockKey = mb_substr($lockNamespace . $userId, 0, 64);
+		try {
+			$this->lockingProvider->acquireLock($lockKey, ILockingProvider::LOCK_EXCLUSIVE);
+		} catch (LockedException) {
+			return;
 		}
 
-		foreach ($logs as $key => $changelog) {
-			if ($key < $hasReceivedLog || $changelog === '') {
-				continue;
+		try {
+			$values = $this->userConfig->getValuesByUsers(Application::APP_ID, UserPreference::CHANGELOG, ValueType::INT, [$userId]);
+			// explicit type conversion for psalm to realize the value is typed as int as above and never mixed.
+			$hasReceivedLog = (int)($values[$userId] ?? 0);
+			if ($hasReceivedLog === $shouldHaveReceived) {
+				return;
 			}
-			$this->chatManager->addChangelogMessage($room, $changelog);
+
+			$this->userConfig->setValueInt($userId, Application::APP_ID, UserPreference::CHANGELOG, $shouldHaveReceived);
+
+			$room = $this->roomManager->getChangelogRoom($userId);
+
+			if ($hasReceivedLog === 0) {
+				// Only post the last 3 entries
+				$logs = array_slice($logs, -3);
+			}
+
+			foreach ($logs as $key => $changelog) {
+				if ($key < $hasReceivedLog || $changelog === '') {
+					continue;
+				}
+				$this->chatManager->addChangelogMessage($room, $changelog);
+			}
+		} finally {
+			$this->lockingProvider->releaseLock($lockKey, ILockingProvider::LOCK_EXCLUSIVE);
 		}
 	}
 
