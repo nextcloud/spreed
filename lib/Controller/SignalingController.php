@@ -457,6 +457,10 @@ class SignalingController extends OCSController {
 							break;
 						}
 					} elseif ($decodedMessage['type'] === 'offer' || $decodedMessage['type'] === 'answer') {
+						if (!in_array($decodedMessage['roomType'] ?? null, ['video', 'screen'], true)
+								|| !is_string($decodedMessage['payload']['sdp'] ?? null)) {
+							break;
+						}
 						if (!($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) && $decodedMessage['roomType'] === 'video'
 								&& $this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'audio')) {
 							break;
