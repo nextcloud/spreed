@@ -565,4 +565,79 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->expectException(\RuntimeException::class);
 		$this->service->getOrCreateDraftFolder($subfolder);
 	}
+
+	public function testGetOrCreateDeletedFolderCreatesWhenMissing(): void {
+		$convFolder = $this->createMock(Folder::class);
+		$subfolder = $this->createMock(Folder::class);
+		$deletedFolder = $this->createStub(Folder::class);
+
+		$subfolder->method('getParent')->willReturn($convFolder);
+		$convFolder->method('get')->with('Deleted')->willThrowException(new NotFoundException('Deleted'));
+		$convFolder->expects($this->once())->method('newFolder')->with('Deleted')->willReturn($deletedFolder);
+
+		$this->assertSame($deletedFolder, $this->service->getOrCreateDeletedFolder($subfolder));
+	}
+
+	// -------------------------------------------------------------------------
+	// moveToDeletedFolder
+	// -------------------------------------------------------------------------
+
+	private function makeAttachmentInSubfolder(string $sharedWith): array {
+		$convFolder = $this->createMock(Folder::class);
+		$subfolder = $this->createMock(Folder::class);
+		$subfolder->method('getParent')->willReturn($convFolder);
+
+		$file = $this->createMock(Node::class);
+		$file->method('getType')->willReturn(FileInfo::TYPE_FILE);
+		$file->method('getParent')->willReturn($subfolder);
+		$file->method('getName')->willReturn('photo.jpg');
+		$file->method('getPath')->willReturn('/alice/files/Talk/Room-tok/Alice-alice/photo.jpg');
+
+		$userFolder = $this->makeUserFolderMock();
+		$userFolder->method('getFirstNodeById')->with(42)->willReturn($file);
+		$this->rootFolder->method('getUserFolder')->with('alice')->willReturn($userFolder);
+
+		$share = $this->createMock(IShare::class);
+		$share->method('getSharedWith')->willReturn($sharedWith);
+		$this->shareManager->method('getSharesBy')
+			->with('alice', IShare::TYPE_ROOM, $subfolder, false, -1)
+			->willReturn([$share]);
+
+		return [$convFolder, $file];
+	}
+
+	public function testMoveToDeletedFolderMovesSharedAttachment(): void {
+		[$convFolder, $file] = $this->makeAttachmentInSubfolder('tok');
+
+		$deletedFolder = $this->createMock(Folder::class);
+		$deletedFolder->method('get')->with('photo.jpg')->willThrowException(new NotFoundException());
+		$deletedFolder->method('getPath')->willReturn('/alice/files/Talk/Room-tok/Deleted');
+		$convFolder->method('get')->with('Deleted')->willReturn($deletedFolder);
+
+		$file->expects($this->once())
+			->method('move')
+			->with('/alice/files/Talk/Room-tok/Deleted/photo.jpg')
+			->willReturn($file);
+
+		$this->service->moveToDeletedFolder('alice', 'tok', 42);
+	}
+
+	public function testMoveToDeletedFolderSkipsWhenParentNotSharedWithRoom(): void {
+		[$convFolder, $file] = $this->makeAttachmentInSubfolder('other');
+
+		$convFolder->expects($this->never())->method('get');
+		$file->expects($this->never())->method('move');
+
+		$this->service->moveToDeletedFolder('alice', 'tok', 42);
+	}
+
+	public function testMoveToDeletedFolderSkipsMissingFile(): void {
+		$userFolder = $this->makeUserFolderMock();
+		$userFolder->method('getFirstNodeById')->with(42)->willReturn(null);
+		$this->rootFolder->method('getUserFolder')->with('alice')->willReturn($userFolder);
+
+		$this->shareManager->expects($this->never())->method('getSharesBy');
+
+		$this->service->moveToDeletedFolder('alice', 'tok', 42);
+	}
 }
