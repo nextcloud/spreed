@@ -5,6 +5,56 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.7 – 2026-11-05
+### Added
+- feat(external-call): Allow the service to set the participant list
+  [#20062](https://github.com/nextcloud/spreed/pull/20062)
+- feat(reaction): Mark one-to-one unread on reactions
+  [#20064](https://github.com/nextcloud/spreed/pull/20064)
+
+### Changed
+- Update translations
+
+### Fixed
+- fix(notifications): open conversation from notification action without page reload
+  [#20166](https://github.com/nextcloud/spreed/pull/20166)
+- fix(sharing): Remove file from shared folder on message delete
+  [#20152](https://github.com/nextcloud/spreed/pull/20152)
+- fix(lobby): Skip content during lobby
+  [#20150](https://github.com/nextcloud/spreed/pull/20150)
+- fix(recording): Retry transcript and summary
+  [#20137](https://github.com/nextcloud/spreed/pull/20137)
+- fix(dashboard): Don't treat "no mention" as unread when the read marker is negative
+  [#20135](https://github.com/nextcloud/spreed/pull/20135)
+- fix(dashboard): Hide "Scheduled meetings" when calls are disabled
+  [#20122](https://github.com/nextcloud/spreed/pull/20122)
+- fix: do not encode query params as special characters
+  [#20121](https://github.com/nextcloud/spreed/pull/20121)
+- fix(expiration): Improve shown expiration time
+  [#20068](https://github.com/nextcloud/spreed/pull/20068)
+- fix(Matterbridge): fix a regression in the additional validation of the bridge parts
+  [#20059](https://github.com/nextcloud/spreed/pull/20059)
+- fix: Mark session as inactive again after rejoin
+  [#20043](https://github.com/nextcloud/spreed/pull/20043)
+- fix(classified): Change expiration to 7 days
+  [#20029](https://github.com/nextcloud/spreed/pull/20029)
+- fix(dashboard): add password protection to instant meeting
+  [#20023](https://github.com/nextcloud/spreed/pull/20023)
+- fix(reminder): Add "Next weekend" option to message reminders
+  [#19951](https://github.com/nextcloud/spreed/pull/19951)
+- fix: return from listener if no federated participants
+  [#19930](https://github.com/nextcloud/spreed/pull/19930)
+- fix(recording): Remove "Place and time" from summary
+  [#19929](https://github.com/nextcloud/spreed/pull/19929)
+- fix(attachments): Fix share preview for email attendees in private conversations
+  [#19928](https://github.com/nextcloud/spreed/pull/19928)
+- fix(admin): Limit certificate check to configured hosts
+  [#19924](https://github.com/nextcloud/spreed/pull/19924)
+- fix(attachment): Fix "Download file" option for guests when "conversation folder" is used
+  [#19911](https://github.com/nextcloud/spreed/pull/19911)
+- fix(conversations): load list in non-leader tab without cache
+  [#19862](https://github.com/nextcloud/spreed/pull/19862)
+
 ## 25.0.6 – 2026-10-15
 ### Added
 - feat: user option to show unread conversations in collapsed tags
