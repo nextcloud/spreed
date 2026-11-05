@@ -22,7 +22,7 @@ use Override;
 /**
  * Store the expiration of the chat message on attachments and polls,
  * so they can be cleaned up together with the message.
- * Existing entries are handled by the CleanupExpiredMessageLeftovers repair step.
+ * Existing entries are handled by the {@see CleanupExpiredMessageLeftovers} repair step.
  */
 #[AddColumn(table: 'talk_attachments', name: 'expire_date', type: ColumnType::DATETIME)]
 #[AddIndex(table: 'talk_attachments', type: IndexType::INDEX, description: 'index on expire date')]
