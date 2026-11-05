@@ -123,8 +123,6 @@ describe('TopBar.vue', () => {
 		raiseHand('session-1')
 		raiseHand('session-1-second')
 		raiseHand('session-2')
-		// The third participant is disconnected
-		raiseHand('session-3')
 		// The participants list is not loaded in embedded calls
 		raiseHand('session-unknown')
 

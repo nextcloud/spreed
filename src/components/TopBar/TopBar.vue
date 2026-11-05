@@ -351,39 +351,27 @@ export default {
 		},
 
 		raisedHandsCount() {
-			const participantBySessionId = new Map()
-			for (const participant of this.$store.getters.participantsList(this.token)) {
-				for (const sessionId of participant.sessionIds) {
-					participantBySessionId.set(sessionId, participant)
-				}
-			}
-
-			const people = new Set()
-			for (const sessionId of Object.keys(this.participantActivityStore.raisedHands)) {
-				const participant = participantBySessionId.get(sessionId)
-				if (participant?.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
-					// The participants list is not loaded in embedded calls, so count the session itself
-					people.add(participant?.attendeeId ?? sessionId)
-				}
-			}
-			return people.size
+			const people = Object.keys(this.participantActivityStore.raisedHands).map((sessionId) => {
+				// The participants list is not loaded in embedded calls, so count the session itself
+				return this.$store.getters.getParticipantBySessionId(this.token, sessionId)?.attendeeId ?? sessionId
+			})
+			return new Set(people).size
 		},
 
 		participantsInCallAriaLabel() {
-			let label
 			if (this.canExtendOneToOneConversation) {
 				return t('spreed', 'Add participants to this call')
-			} else {
-				label = n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 			}
+
+			const participantsInCall = n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
 
 			if (this.raisedHandsCount > 0) {
 				const participantsRaisedHand = n('spreed', '%n raised hand', '%n raised hands', this.raisedHandsCount)
 				// TRANSLATORS joined string for participant counter, e.g. '5 participants in call, 1 raised hand'
-				label = t('spreed', '{participantsInCall}, {participantsRaisedHand}', { participantsInCall: label, participantsRaisedHand }, { escape: false })
+				return t('spreed', '{participantsInCall}, {participantsRaisedHand}', { participantsInCall, participantsRaisedHand }, { escape: false })
 			}
 
-			return label
+			return participantsInCall
 		},
 
 		showCalendarEvents() {
@@ -565,7 +553,7 @@ export default {
 	padding-inline: var(--default-grid-baseline);
 	font-size: var(--font-size-small);
 	background-color: var(--color-element-warning);
-	color: #000;
+	color: var(--color-warning);
 }
 
 .top-bar__participants-button {
