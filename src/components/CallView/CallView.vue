@@ -196,7 +196,6 @@ import { callParticipantCollection, localCallParticipantModel, localMediaModel }
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
 import { animateTilePromotion } from './Grid/tilePromotionTransition.ts'
-import { setUpSpeakerSimulation, tearDownSpeakerSimulation } from './speakerSimulation.ts'
 import { useActiveSpeakers } from './useActiveSpeakers.ts'
 import { useWakeLock } from './useWakeLock.ts'
 
@@ -677,13 +676,15 @@ export default {
 		subscribe('switch-screen-to-id', this._switchScreenToId)
 
 		if (OC.debug) {
-			setUpSpeakerSimulation(this.token)
+			// Separate chunk, loaded only in debug mode
+			import('./speakerSimulation.ts').then(({ setUpSpeakerSimulation }) => setUpSpeakerSimulation(this.token))
 		}
 	},
 
 	beforeUnmount() {
 		if (OC.debug) {
-			tearDownSpeakerSimulation()
+			// Resolves after the import in mounted(), so the teardown runs after the setup
+			import('./speakerSimulation.ts').then(({ tearDownSpeakerSimulation }) => tearDownSpeakerSimulation())
 		}
 
 		this.debounceFetchPeers.clear?.()
