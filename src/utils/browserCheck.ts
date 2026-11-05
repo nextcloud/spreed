@@ -100,7 +100,7 @@ export function supportsEncodedTransform() {
 /**
  * Check if the browser supports insertable streams (i.e. Chromium).
  */
-export function supportsInsertableStreams() {
+function detectInsertableStreams() {
 	if (!(window.RTCRtpReceiver && 'createEncodedStreams' in RTCRtpReceiver.prototype && window.RTCRtpSender && 'createEncodedStreams' in RTCRtpSender.prototype)) {
 		return false
 	}
@@ -114,4 +114,14 @@ export function supportsInsertableStreams() {
 	} catch {
 		return false
 	}
+}
+
+let insertableStreamsSupported: boolean | undefined
+
+/**
+ * Cached result of detectInsertableStreams(), it can't change on the same page.
+ */
+export function supportsInsertableStreams() {
+	insertableStreamsSupported ??= detectInsertableStreams()
+	return insertableStreamsSupported
 }
