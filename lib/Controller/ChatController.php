@@ -52,6 +52,7 @@ use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
+use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -1633,6 +1634,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 			try {
 				$participant = $this->participantService->getParticipant($room, $this->userId);
 			} catch (ParticipantNotFoundException) {
+				continue;
+			}
+
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE
+				&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 				continue;
 			}
 
