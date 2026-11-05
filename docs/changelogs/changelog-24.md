@@ -34,11 +34,9 @@ All notable changes to this project will be documented in this file.
   [#20022](https://github.com/nextcloud/spreed/pull/20022)
 - fix(reminder): Add "Next weekend" option to message reminders
   [#19950](https://github.com/nextcloud/spreed/pull/19950)
-- fix(virtual-bg): fallback to previous background while loading
-  [#19936](https://github.com/nextcloud/spreed/pull/19936)
 - fix(admin): Limit certificate check to configured hosts
   [#19923](https://github.com/nextcloud/spreed/pull/19923)
-- fix(attachment): Fix "Download file" option for guests when "conversation folder" is in use
+- fix(attachment): Fix "Download file" option for guests when "conversation folder" is used
   [#19910](https://github.com/nextcloud/spreed/pull/19910)
 - fix(sharing): Scope share child permission updates to userroom shares
   [#19864](https://github.com/nextcloud/spreed/pull/19864)
