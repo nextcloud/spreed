@@ -10,10 +10,12 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Model\Bot;
 use OCP\EventDispatcher\Event;
+use SensitiveParameter;
 
 class BotInstallEvent extends Event {
 	public function __construct(
 		private readonly string $name,
+		#[SensitiveParameter]
 		private readonly string $secret,
 		private readonly string $url,
 		private readonly string $description = '',

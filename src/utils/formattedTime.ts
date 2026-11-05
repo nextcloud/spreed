@@ -75,6 +75,31 @@ const messageExpirationOptions: { id: number, label: string }[] = [
 ]
 
 /**
+ * Formats a message expiration duration (in seconds) with the largest unit that fits exactly
+ *
+ * @param seconds the duration in seconds
+ */
+function formatMessageExpiration(seconds: number): string {
+	const option = messageExpirationOptions.find((option) => option.id === seconds)
+	if (option) {
+		return option.label
+	}
+
+	if (seconds % 31536000 === 0) {
+		return n('spreed', '%n year', '%n years', seconds / 31536000)
+	} else if (seconds % 604800 === 0) {
+		return n('spreed', '%n week', '%n weeks', seconds / 604800)
+	} else if (seconds % 86400 === 0) {
+		return n('spreed', '%n day', '%n days', seconds / 86400)
+	} else if (seconds % 3600 === 0) {
+		return n('spreed', '%n hour', '%n hours', seconds / 3600)
+	} else if (seconds % 60 === 0) {
+		return n('spreed', '%n minute', '%n minutes', seconds / 60)
+	}
+	return n('spreed', '%n second', '%n seconds', seconds)
+}
+
+/**
  * Calculates the future relative time string given the time (ms)
  *
  * @param time the time in ms
@@ -168,6 +193,7 @@ function getRelativeDay(
 export {
 	convertToUnix,
 	formatDateTime,
+	formatMessageExpiration,
 	formattedTime,
 	futureRelativeTime,
 	getDiffInDays,

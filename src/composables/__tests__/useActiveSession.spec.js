@@ -5,7 +5,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { SESSION } from '../../constants.ts'
 
@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
 	token: { current: null },
 	isInCall: { current: null },
 	joinedConversation: { current: null },
+	actorStore: { current: null },
 }))
 
 vi.mock('vuex', async () => {
@@ -27,6 +28,9 @@ vi.mock('../useIsInCall.js', () => ({
 }))
 vi.mock('../useJoinedConversation.ts', () => ({
 	useJoinedConversation: () => mocks.joinedConversation.current,
+}))
+vi.mock('../../stores/actor.ts', () => ({
+	useActorStore: () => mocks.actorStore.current,
 }))
 vi.mock('../../services/participantsService.js', () => ({
 	setSessionState: vi.fn(),
@@ -90,6 +94,7 @@ describe('useActiveSession', () => {
 		mocks.token.current = ref('XXTOKENXX')
 		mocks.isInCall.current = ref(false)
 		mocks.joinedConversation.current = ref(null)
+		mocks.actorStore.current = reactive({ sessionId: 'session-1' })
 		useStore.mockReturnValue({ dispatch: vi.fn() })
 		await mountActiveSession()
 	})
@@ -198,5 +203,70 @@ describe('useActiveSession', () => {
 
 		expect(setSessionState).toHaveBeenCalledWith('YYTOKENYY', SESSION.STATE.INACTIVE)
 		expect(useIsSessionActive().value).toBe(false)
+	})
+
+	describe('rejoining the conversation with a new session', () => {
+		beforeEach(async () => {
+			mocks.joinedConversation.current.value = 'XXTOKENXX'
+			await flushPromises()
+		})
+
+		test('marks the new session as inactive right away when it was inactive before', async () => {
+			blurWindow()
+			await runInactiveTimer()
+			setSessionState.mockClear()
+
+			mocks.actorStore.current.sessionId = 'session-2'
+			await flushPromises()
+
+			expect(setSessionState).toHaveBeenCalledExactlyOnceWith('XXTOKENXX', SESSION.STATE.INACTIVE)
+			expect(useIsSessionActive().value).toBe(false)
+		})
+
+		test('keeps counting down when the session was still active before', async () => {
+			blurWindow()
+
+			mocks.actorStore.current.sessionId = 'session-2'
+			await flushPromises()
+
+			expect(setSessionState).not.toHaveBeenCalled()
+			expect(useIsSessionActive().value).toBe(true)
+
+			await runInactiveTimer()
+
+			expect(setSessionState).toHaveBeenCalledExactlyOnceWith('XXTOKENXX', SESSION.STATE.INACTIVE)
+		})
+
+		test('follows the new session when the window is active again', async () => {
+			// console.error is set up to fail the test otherwise
+			const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+			blurWindow()
+			await runInactiveTimer()
+			// Marking as active failed, so the client still has the old session as inactive
+			setSessionState.mockImplementationOnce(() => Promise.reject(new Error('Network Error')))
+			focusWindow()
+			await flushPromises()
+			expect(useIsSessionActive().value).toBe(false)
+			setSessionState.mockClear()
+
+			mocks.actorStore.current.sessionId = 'session-2'
+			await flushPromises()
+
+			expect(setSessionState).not.toHaveBeenCalled()
+			expect(useIsSessionActive().value).toBe(true)
+			consoleError.mockRestore()
+		})
+
+		test('ignores a new session of a conversation that is not joined yet', async () => {
+			blurWindow()
+			await runInactiveTimer()
+			setSessionState.mockClear()
+
+			mocks.token.current.value = 'YYTOKENYY'
+			mocks.actorStore.current.sessionId = 'session-2'
+			await flushPromises()
+
+			expect(setSessionState).not.toHaveBeenCalled()
+		})
 	})
 })

@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
 	convertToUnix,
 	formatDateTime,
+	formatMessageExpiration,
 	formattedTime,
 	futureRelativeTime,
 	getRelativeDay,
@@ -119,5 +120,22 @@ describe('formatDateTime', () => {
 	it.each(LOCALIZED_TEST_CASES)('should return datetime with specified format %s', (format, output) => {
 		const result = formatDateTime(TIME, format)
 		expect(result).toBe(output)
+	})
+})
+
+describe('formatMessageExpiration', () => {
+	it.each([
+		[0, 'Off'],
+		[28800, '8 hours'],
+		[2419200, '4 weeks'],
+		[31536000, '1 year'],
+		[63072000, '2 years'],
+		[1209600, '2 weeks'],
+		[172800, '2 days'],
+		[7200, '2 hours'],
+		[1800, '30 minutes'],
+		[90, '90 seconds'],
+	])('should format %d seconds as %s', (seconds, output) => {
+		expect(formatMessageExpiration(seconds)).toBe(output)
 	})
 })

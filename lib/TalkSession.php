@@ -10,6 +10,7 @@ namespace OCA\Talk;
 
 use OCP\IRequest;
 use OCP\ISession;
+use SensitiveParameter;
 
 class TalkSession {
 	public const HEADER_TAB_ID = 'x-nextcloud-talk-session-tab-id';
@@ -90,7 +91,7 @@ class TalkSession {
 		return $this->getValue('spreed-password', $token, false);
 	}
 
-	public function setPasswordForRoom(string $token, string $password): void {
+	public function setPasswordForRoom(string $token, #[SensitiveParameter] string $password): void {
 		$this->setValue('spreed-password', $token, $password, false);
 	}
 

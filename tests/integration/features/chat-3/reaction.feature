@@ -203,3 +203,46 @@ Feature: chat-3/reaction
       | actorType     | actorId       | actorDisplayName | reaction |
       | deleted_users | deleted_users |                  | 👎       |
       | deleted_users | deleted_users |                  | 👍       |
+
+  Scenario: Reaction marks one-to-one conversation unread
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant2" reads message "Message 1" in room "room" with 200
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | Message 1   | 0              |
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | Message 1   | 0              |
+    When user "participant2" react with "👍" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant2 | participant2-displayname | 👍       |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | 👍          | 1              |
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | 👍          | 0              |
+    When user "participant2" delete react with "👍" on message "Message 1" to room "room" with 200
+      | actorType | actorId | actorDisplayName | reaction |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | Message 1   | 0              |
+    And user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 1    | Message 1   | 0              |
+
+  Scenario: Reaction does not mark group conversation unread
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    When user "participant2" react with "👍" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant2 | participant2-displayname | 👍       |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | lastMessage | unreadMessages |
+      | room | 3    | Message 1   | 0              |

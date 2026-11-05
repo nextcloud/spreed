@@ -74,11 +74,16 @@ jobs:
           fi
           rm version.php
 
-      - name: Set up php8.3
+      - name: Get php version
+        id: versions
+        if: steps.freeze.outputs.active != 'true' && steps.checkout.outcome == 'success'
+        uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
+
+      - name: Set up php${{ steps.versions.outputs.php-min }}
         if: steps.freeze.outputs.active != 'true' && steps.checkout.outcome == 'success'
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
-          php-version: 8.3
+          php-version: ${{ steps.versions.outputs.php-min }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: none

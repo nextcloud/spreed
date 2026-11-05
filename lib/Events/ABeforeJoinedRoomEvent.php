@@ -9,12 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
+use SensitiveParameter;
 
 abstract class ABeforeJoinedRoomEvent extends ARoomEvent {
 	protected bool $cancelJoin = false;
 
 	public function __construct(
 		Room $room,
+		#[SensitiveParameter]
 		protected string $password,
 		protected bool $passedPasswordProtection,
 	) {

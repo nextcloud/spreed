@@ -165,6 +165,21 @@ export function useConversationInfo({
 			}
 		}
 
+		if (lastMessage.value.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION) {
+			const reaction = lastMessage.value.actorId === item.value.actorId && lastMessage.value.actorType === item.value.actorType
+				? t('spreed', 'You reacted with {reaction}', { reaction: lastMessage.value.message }, { escape: false, sanitize: false })
+				// TRANSLATORS The second person in one-to-one conversation has reacted with emoji '{reaction}'
+				: t('spreed', 'Reacted with {reaction}', {
+						reaction: lastMessage.value.message,
+					}, { escape: false, sanitize: false })
+			return {
+				actor: null,
+				icon: null,
+				message: reaction,
+				title: reaction,
+			}
+		}
+
 		if (shortLastChatMessageAuthor.value === '') {
 			return {
 				actor: null,

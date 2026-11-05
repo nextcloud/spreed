@@ -73,6 +73,7 @@ use OCP\Security\IHasher;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type TalkRoom from ResponseDefinitions
@@ -145,6 +146,7 @@ class RoomService {
 		?IUser $owner = null,
 		string $objectType = '',
 		string $objectId = '',
+		#[SensitiveParameter]
 		string $password = '',
 		int $readOnly = Room::READ_WRITE,
 		int $listable = Room::LISTABLE_NONE,
@@ -773,7 +775,7 @@ class RoomService {
 	/**
 	 * @throws PasswordException|TypeException
 	 */
-	public function makePublicWithPassword(Room $room, string $password): void {
+	public function makePublicWithPassword(Room $room, #[SensitiveParameter] string $password): void {
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return;
 		}
@@ -1078,7 +1080,7 @@ class RoomService {
 	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
 	 * @throws PasswordException
 	 */
-	public function setPassword(Room $room, string $password): void {
+	public function setPassword(Room $room, #[SensitiveParameter] string $password): void {
 		if ($room->getType() !== Room::TYPE_PUBLIC) {
 			throw new PasswordException(PasswordException::REASON_TYPE);
 		}
@@ -1116,7 +1118,7 @@ class RoomService {
 	/**
 	 * @return array{result: ?bool, url: string}
 	 */
-	public function verifyPassword(Room $room, string $password): array {
+	public function verifyPassword(Room $room, #[SensitiveParameter] string $password): array {
 		$event = new RoomPasswordVerifyEvent($room, $password);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -1571,6 +1573,22 @@ class RoomService {
 		$delete->delete('talk_attendees')
 			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();
+
+		// Delete bans
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_bans')
+			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
+
+		// Delete bot installations
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_bots_conversation')
+			->where($delete->expr()->eq('token', $delete->createNamedParameter($room->getToken())));
+		$delete->executeStatement();
+
+		// AvatarService depends on RoomService, so can not use DI
+		$avatarService = Server::get(AvatarService::class);
+		$avatarService->deleteAvatarFolder($room);
 
 		// Clear share access cache
 		foreach ($userIds as $userId) {

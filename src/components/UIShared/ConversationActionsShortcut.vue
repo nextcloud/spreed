@@ -59,9 +59,17 @@ const descriptionLabel = computed(() => {
 	if (expirationDuration.value === 0) {
 		return t('spreed', 'Would you like to delete this conversation?')
 	}
-	if (isClassified.value) {
+	if (isClassified.value && expirationDuration.value! % 86400 !== 0) {
 		// Classified conversations are auto-deleted for everyone after a call;
-		// the server value is in seconds, shown to the user in minutes
+		// the server value is in seconds, shown in days or hours when possible, otherwise in minutes
+		if (expirationDuration.value! % 3600 === 0) {
+			return n(
+				'spreed',
+				'This conversation will be automatically deleted for everyone after %n hour of inactivity.',
+				'This conversation will be automatically deleted for everyone after %n hours of inactivity.',
+				expirationDuration.value! / 3600,
+			)
+		}
 		const retentionMinutes = Math.round(expirationDuration.value! / 60)
 		return n(
 			'spreed',
@@ -74,7 +82,7 @@ const descriptionLabel = computed(() => {
 		'spreed',
 		'This conversation will be automatically deleted for everyone after %n day of inactivity.',
 		'This conversation will be automatically deleted for everyone after %n days of inactivity.',
-		expirationDuration.value!,
+		isClassified.value ? expirationDuration.value! / 86400 : expirationDuration.value!,
 	)
 })
 

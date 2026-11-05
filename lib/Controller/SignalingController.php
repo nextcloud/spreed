@@ -46,6 +46,7 @@ use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type TalkSignalingFederationSettings from ResponseDefinitions
@@ -454,6 +455,10 @@ class SignalingController extends OCSController {
 							break;
 						}
 					} elseif ($decodedMessage['type'] === 'offer' || $decodedMessage['type'] === 'answer') {
+						if (!in_array($decodedMessage['roomType'] ?? null, ['video', 'screen'], true)
+								|| !is_string($decodedMessage['payload']['sdp'] ?? null)) {
+							break;
+						}
 						if (!($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) && $decodedMessage['roomType'] === 'video'
 								&& $this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'audio')) {
 							break;
@@ -767,7 +772,7 @@ class SignalingController extends OCSController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}}, array{}>
 	 */
-	private function backendAuth(array $auth): DataResponse {
+	private function backendAuth(#[SensitiveParameter] array $auth): DataResponse {
 		$params = $auth['params'];
 		$userId = $params['userid'];
 		if (!$this->talkConfig->validateSignalingTicket($userId, $params['ticket'])) {

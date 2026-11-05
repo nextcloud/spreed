@@ -19,28 +19,25 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasLobbyEnabled" class="app-settings-subsection">
-			<form
-				:disabled="lobbyTimerFieldDisabled"
-				@submit.prevent="saveLobbyTimer">
-				<span class="icon-calendar-dark" />
-				<div>
-					<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
+			<form @submit.prevent="saveLobbyTimer(editedLobbyTimer)">
+				<div class="lobby_timer--row">
+					<NcDateTimePickerNative
+						id="moderation_settings_lobby_timer_field"
+						v-model="editedLobbyTimer"
+						class="lobby_timer--picker"
+						:disabled="lobbyTimerFieldDisabled"
+						type="datetime-local"
+						:min="new Date()"
+						:label="t('spreed', 'Meeting start time')"
+						clearable
+						@trailingButtonClick="lobbyTimer && saveLobbyTimer(null)" />
+					<NcButton
+						type="submit"
+						variant="primary"
+						:disabled="lobbyTimerFieldDisabled || !isLobbyTimerDirty">
+						{{ t('spreed', 'Save') }}
+					</NcButton>
 				</div>
-				<NcDateTimePicker
-					id="moderation_settings_lobby_timer_field"
-					v-model="lobbyTimer"
-					aria-describedby="moderation_settings_lobby_timer_hint"
-					:defaultValue="defaultLobbyTimer"
-					:placeholder="t('spreed', 'Start time (optional)')"
-					:disabled="lobbyTimerFieldDisabled"
-					type="datetime"
-					valueType="timestamp"
-					format="yyyy-MM-dd HH:mm"
-					:minuteStep="5"
-					:inputClass="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
-					v-bind="dateTimePickerAttrs"
-					confirm
-					clearable />
 				<div class="lobby_timer--timezone">
 					{{ getTimeZone }}
 				</div>
@@ -89,7 +86,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcDateTimePicker from '@nextcloud/vue/components/NcDateTimePicker'
+import NcDateTimePickerNative from '@nextcloud/vue/components/NcDateTimePickerNative'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
@@ -110,7 +107,7 @@ export default {
 		ImportEmailsDialog,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NcDateTimePicker,
+		NcDateTimePickerNative,
 		NcNoteCard,
 	},
 
@@ -132,6 +129,8 @@ export default {
 			isLobbyStateLoading: false,
 			isLobbyTimerLoading: false,
 			isImportEmailsDialogOpen: false,
+			// Local buffer so typing doesn't save on every keystroke; committed by the Save button
+			editedLobbyTimer: null,
 		}
 	},
 
@@ -160,40 +159,22 @@ export default {
 			return hasTalkFeature(this.token, 'email-csv-import')
 		},
 
-		defaultLobbyTimer() {
-			let date = new Date()
-			// strip minutes and seconds
-			date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), 0, 0, 0)
-			// add one hour to reach the next hour
-			return new Date(date.getTime() + 3600000)
-		},
-
-		lobbyTimer: {
-			get() {
-				// A timestamp of 0 means that there is no lobby, but it would be
-				// interpreted as the Unix epoch by the DateTimePicker.
-				if (this.conversation.lobbyTimer === 0) {
-					return undefined
-				}
-
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				return this.conversation.lobbyTimer * 1000
-			},
-
-			set(value) {
-				this.saveLobbyTimer(value)
-			},
-		},
-
-		dateTimePickerAttrs() {
-			return {
-				firstDayOfWeek: window.firstDay + 1, // Provided by server
-				lang: {
-					days: window.dayNamesShort, // Provided by server
-					months: window.monthNamesShort, // Provided by server
-				},
+		lobbyTimer() {
+			// A timestamp of 0 means that there is no lobby, but it would be
+			// interpreted as the Unix epoch by the DateTimePicker.
+			if (this.conversation.lobbyTimer === 0) {
+				return undefined
 			}
+
+			// PHP timestamp is second-based; JavaScript timestamp is
+			// millisecond based.
+			return this.conversation.lobbyTimer * 1000
+		},
+
+		isLobbyTimerDirty() {
+			const edited = this.editedLobbyTimer ? this.editedLobbyTimer.getTime() : 0
+			const saved = this.lobbyTimer || 0
+			return edited !== saved
 		},
 
 		showRelativeTime() {
@@ -216,6 +197,15 @@ export default {
 
 		canCreatePollDrafts() {
 			return hasTalkFeature(this.token, 'talk-polls-drafts')
+		},
+	},
+
+	watch: {
+		lobbyTimer: {
+			immediate: true,
+			handler(value) {
+				this.editedLobbyTimer = value ? new Date(value) : null
+			},
 		},
 	},
 
@@ -256,15 +246,20 @@ export default {
 
 <style lang="scss" scoped>
 .lobby_timer {
+	&--row {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--default-grid-baseline);
+		flex-wrap: wrap;
+	}
+	&--picker {
+		max-width: 260px;
+	}
 	&--relative {
 		color: var(--color-text-maxcontrast);
 	}
 	&--timezone {
 		padding-top: 4px;
 	}
-}
-
-:deep(.mx-input) {
-	margin: 0;
 }
 </style>

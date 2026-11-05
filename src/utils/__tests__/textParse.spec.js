@@ -202,6 +202,11 @@ describe('textParse', () => {
 			expect(parseSpecialSymbols(input)).toBe(output)
 		})
 
+		it('keeps entity-like sequences without semicolon', () => {
+			const input = 'https://example.com/some.html?a=b&param=c&copy=d'
+			expect(parseSpecialSymbols(input)).toBe(input)
+		})
+
 		it('removes trailing and leading whitespaces', () => {
 			const input = '   Hello   '
 			const output = 'Hello'

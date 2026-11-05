@@ -4,8 +4,6 @@
 -->
 
 <script setup lang="ts">
-import type { ComponentPublicInstance } from 'vue'
-
 import { t } from '@nextcloud/l10n'
 import { computed, h } from 'vue'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
@@ -45,7 +43,7 @@ const deviceOptions = computed<NcSelectOption[]>(() => {
 })
 const deviceOptionsAvailable = computed(() => deviceOptions.value.length > 1)
 
-const deviceIcon = computed<ComponentPublicInstance | null>(() => {
+const deviceIcon = computed(() => {
 	switch (props.kind) {
 		case 'audioinput': return IconMicrophoneOutline
 		case 'audiooutput': return h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, size: 20 })

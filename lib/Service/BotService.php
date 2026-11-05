@@ -43,6 +43,7 @@ use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type InvocationData from BotInvokeEvent
@@ -491,7 +492,7 @@ class BotService {
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	public function validateBotParameters(string $name, string $secret, string $url, string $description): void {
+	public function validateBotParameters(string $name, #[SensitiveParameter] string $secret, string $url, string $description): void {
 		$nameLength = strlen($name);
 		if ($nameLength === 0 || $nameLength > 64) {
 			throw new \InvalidArgumentException('The provided name is too short or too long (min. 1 char, max. 64 chars)');

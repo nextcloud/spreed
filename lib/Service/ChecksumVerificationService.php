@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Exceptions\UnauthorizedException;
+use SensitiveParameter;
 
 class ChecksumVerificationService {
 	/**
@@ -27,7 +28,7 @@ class ChecksumVerificationService {
 	 * @return bool True if the request is from the backend and valid, false if not from SIP bridge
 	 * @throws UnauthorizedException when the request tried to authenticate as backend but is not valid
 	 */
-	public function validateRequest(string $random, string $checksum, string $secret, string $data): bool {
+	public function validateRequest(string $random, #[SensitiveParameter] string $checksum, #[SensitiveParameter] string $secret, string $data): bool {
 		if ($random === '' && $checksum === '') {
 			return false;
 		}

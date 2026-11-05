@@ -9,9 +9,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Events;
 
 use OCP\EventDispatcher\Event;
+use SensitiveParameter;
 
 class BotUninstallEvent extends Event {
 	public function __construct(
+		#[SensitiveParameter]
 		private readonly string $secret,
 		private readonly string $url,
 	) {

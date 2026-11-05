@@ -117,7 +117,7 @@ import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outli
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
-import { messageExpirationOptions } from '../../utils/formattedTime.ts'
+import { formatMessageExpiration } from '../../utils/formattedTime.ts'
 import generatePassword from '../../utils/generatePassword.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
@@ -139,9 +139,7 @@ const presetIcons = {
  * @param seconds
  */
 function formatExpiration(seconds) {
-	const duration = messageExpirationOptions.find((option) => option.id === seconds)?.label
-		?? t('spreed', 'Custom expiration time')
-	return t('spreed', 'Message expiration set: {duration}', { duration })
+	return t('spreed', 'Message expiration set: {duration}', { duration: formatMessageExpiration(seconds) })
 }
 
 /**

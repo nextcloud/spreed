@@ -49,7 +49,7 @@ class ExpireObjectRooms extends TimedJob {
 			$this->executeRetention(Room::OBJECT_TYPE_INSTANT_MEETING, $instantMeetingRetention * 24 * 3600);
 		}
 
-		// Classified conversations are deleted shortly (default 1 hour) after a
+		// Classified conversations are deleted (default 7 days) after a
 		// call happened, unless a moderator kept them (object_type is then
 		// "classified_persist" and no longer matched here).
 		$classifiedRetention = $this->appConfig->getAppValueInt(Config::RETENTION_CLASSIFIED_ROOMS);

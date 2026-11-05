@@ -37,6 +37,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import { hasUnreadMentions } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
+import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
@@ -45,7 +46,9 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
+const hasMeetings = isCallEnabled || !!getTalkConfig('local', 'call', 'external-call-service')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
+const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const isDirectionRTL = isRTL()
 const isDarkTheme = useIsDarkTheme()
@@ -84,7 +87,7 @@ let actualizeDataInterval: ReturnType<typeof setInterval> | null = null
  */
 async function actualizeData() {
 	await Promise.all([
-		dashboardStore.fetchDashboardEventRooms(),
+		hasMeetings && dashboardStore.fetchDashboardEventRooms(),
 		dashboardStore.fetchUpcomingReminders(),
 	])
 }
@@ -150,14 +153,16 @@ const filteredConversations = computed(() => {
  */
 async function startMeeting() {
 	try {
+		const password = forcePasswordProtection ? await generatePassword() : undefined
 		const conversation = await store.dispatch('createGroupConversation', {
 			// TRANSLATORS: Section header for meeting-related settings; also a static name fallback for instant meeting conversation
 			roomName: conversationName.value || t('spreed', 'Meeting'),
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
 			objectId: convertToUnix(new Date()).toString(),
+			password,
 		})
-		await copyConversationLinkToClipboard(conversation.token)
+		await copyConversationLinkToClipboard(conversation.token, undefined, undefined, password)
 		await router.push({
 			name: 'conversation',
 			params: { token: conversation.token },
@@ -214,13 +219,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</h2>
 			<div class="talk-dashboard__actions">
 				<NcPopover
-					v-if="canStartConversations"
+					v-if="canStartConversations && isCallEnabled"
 					class="talk-dashboard__action"
 					popupRole="dialog">
 					<template #trigger>
-						<NcButton
-							v-if="isCallEnabled"
-							variant="primary">
+						<NcButton variant="primary">
 							<template #icon>
 								<IconVideoOutline />
 							</template>
@@ -286,7 +289,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</div>
 		</div>
 		<div class="talk-dashboard__items">
-			<div class="event-section">
+			<div v-if="hasMeetings" class="event-section">
 				<DashboardSection
 					v-if="!eventsInitialised || eventRooms.length > 0"
 					:title="t('spreed', 'Upcoming meetings')"

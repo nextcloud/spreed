@@ -10,7 +10,7 @@ Feature: conversation-4/presets
       | forced       | forced       | []         |
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
-      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":3600} |
+      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":604800} |
       | channel      | Channel      | {"listable":1,"permissions":257} |
       | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
     And the following "spreed" app config is set
@@ -24,7 +24,7 @@ Feature: conversation-4/presets
       | forced       | forced       | {"listable":0,"messageExpiration":7200,"sipEnabled":1} |
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
-      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":3600} |
+      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":604800} |
       | channel      | Channel      | {"listable":1,"permissions":257} |
       | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
 
@@ -36,7 +36,7 @@ Feature: conversation-4/presets
       | forced       | forced       | []         |
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
-      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":3600} |
+      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":604800} |
       | channel      | Channel      | {"listable":1,"permissions":257} |
       | announcement | Announcement | {"listable":0,"permissions":257} |
       | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
@@ -47,7 +47,7 @@ Feature: conversation-4/presets
       | forced       | forced       | []         |
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
-      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":3600} |
+      | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":604800} |
       | channel      | Channel      | {"listable":1,"permissions":257} |
       | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
 

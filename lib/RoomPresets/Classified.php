@@ -42,8 +42,8 @@ readonly class Classified extends APreset {
 			Parameter::LISTABLE->value => Room::LISTABLE_NONE,
 			// No SIP dial-in/out
 			Parameter::SIP_ENABLED->value => Webinary::SIP_DISABLED,
-			// Messages expire after one hour by default
-			Parameter::MESSAGE_EXPIRATION->value => 3600,
+			// Messages expire after 7 days by default
+			Parameter::MESSAGE_EXPIRATION->value => 604800,
 		];
 	}
 }

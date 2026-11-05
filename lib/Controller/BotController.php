@@ -48,6 +48,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 /**
  * @psalm-import-type TalkBot from ResponseDefinitions
@@ -82,7 +83,7 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @return Bot
 	 * @throws \InvalidArgumentException When the request could not be linked with a bot
 	 */
-	protected function getBotFromHeaders(string $token, string $message, string $random, string $checksum, int $requiredFeature = Bot::FEATURE_RESPONSE): Bot {
+	protected function getBotFromHeaders(string $token, string $message, string $random, #[SensitiveParameter] string $checksum, int $requiredFeature = Bot::FEATURE_RESPONSE): Bot {
 		if (empty($random) || strlen($random) < 32) {
 			$this->logger->error('Invalid Random received from bot response');
 			throw new \InvalidArgumentException('Invalid Random received from bot response', Http::STATUS_BAD_REQUEST);

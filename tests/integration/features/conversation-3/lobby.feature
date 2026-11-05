@@ -31,6 +31,24 @@ Feature: conversation-3/lobby
     And user "participant3" sets lobby state for room "room" to "non moderators" with 403 (v4)
     And user "participant3" sets lobby state for room "room" to "no lobby" with 403 (v4)
 
+  Scenario: chat relay does not send message content while the lobby is active
+    Given signaling server is started
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And reset signaling server requests
+    When user "participant1" sends message "Without lobby" to room "room" with 201
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true,"comment":[]}}}} |
+    And user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
+    And reset signaling server requests
+    When user "participant1" sends message "With lobby" to room "room" with 201
+    Then signaling server received the following requests
+      | token | data |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+
   Scenario: set lobby state in public room
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |

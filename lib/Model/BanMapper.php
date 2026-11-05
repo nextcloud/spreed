@@ -10,6 +10,7 @@ namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\Comments\ICommentsManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -93,6 +94,23 @@ class BanMapper extends QBMapper {
 			->set('banned_displayname', $update->createNamedParameter($displayName))
 			->where($update->expr()->eq('banned_actor_type', $update->createNamedParameter($actorType)))
 			->andWhere($update->expr()->eq('banned_actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+	}
+
+	public function neutralizeDeletedUser(string $actorType, string $actorId): void {
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete($this->getTableName())
+			->where($delete->expr()->eq('banned_actor_type', $delete->createNamedParameter($actorType)))
+			->andWhere($delete->expr()->eq('banned_actor_id', $delete->createNamedParameter($actorId)));
+		$delete->executeStatement();
+
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('moderator_displayname', $update->createNamedParameter(''))
+			->set('moderator_actor_type', $update->createNamedParameter(ICommentsManager::DELETED_USER))
+			->set('moderator_actor_id', $update->createNamedParameter(ICommentsManager::DELETED_USER))
+			->where($update->expr()->eq('moderator_actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('moderator_actor_id', $update->createNamedParameter($actorId)));
 		$update->executeStatement();
 	}
 }
