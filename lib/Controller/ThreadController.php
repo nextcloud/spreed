@@ -24,6 +24,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -112,6 +113,13 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		foreach ($results as $roomId => $data) {
 			if (!isset($rooms[$roomId])) {
 				continue;
+			}
+
+			if ($rooms[$roomId]->getLobbyState() !== Webinary::LOBBY_NONE) {
+				$participant = $this->participantService->getParticipant($rooms[$roomId], $this->userId);
+				if (!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+					continue;
+				}
 			}
 
 			foreach ($data as $threadData) {
