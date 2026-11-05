@@ -11,6 +11,7 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Config as TalkConfig;
 use OCA\Talk\Room;
 use OCP\Constants;
+use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IFilenameValidator;
 use OCP\Files\IRootFolder;
@@ -128,15 +129,52 @@ class ConversationFolderService {
 	 * @throws \RuntimeException if the Draft path exists but is not a directory
 	 */
 	public function getOrCreateDraftFolder(Folder $subfolder): Folder {
+		return $this->getOrCreateSiblingFolder($subfolder, 'Draft');
+	}
+
+	/**
+	 * Returns the folder for attachments of deleted messages, a non-shared
+	 * sibling of the user subfolder (e.g. Talk/Group Chat-abc123/Deleted/).
+	 *
+	 * @throws \RuntimeException if the Deleted path exists but is not a directory
+	 */
+	public function getOrCreateDeletedFolder(Folder $subfolder): Folder {
+		return $this->getOrCreateSiblingFolder($subfolder, 'Deleted');
+	}
+
+	private function getOrCreateSiblingFolder(Folder $subfolder, string $name): Folder {
 		$convFolder = $subfolder->getParent();
 		try {
-			$draft = $convFolder->get('Draft');
-			if (!$draft instanceof Folder) {
-				throw new \RuntimeException('Draft path inside conversation folder is not a directory');
+			$folder = $convFolder->get($name);
+			if (!$folder instanceof Folder) {
+				throw new \RuntimeException($name . ' path inside conversation folder is not a directory');
 			}
-			return $draft;
+			return $folder;
 		} catch (NotFoundException) {
-			return $convFolder->newFolder('Draft');
+			return $convFolder->newFolder($name);
+		}
+	}
+
+	/**
+	 * Move an attachment out of the room-shared user subfolder into the
+	 * non-shared Deleted folder, so only the owner can still access it.
+	 * Does nothing when the file is no longer inside a folder shared with the room.
+	 *
+	 * @throws \OCP\Files\NotPermittedException
+	 */
+	public function moveToDeletedFolder(string $ownerId, string $token, int $fileId): void {
+		$node = $this->rootFolder->getUserFolder($ownerId)->getFirstNodeById($fileId);
+		if ($node === null || $node->getType() !== FileInfo::TYPE_FILE) {
+			return;
+		}
+
+		$parent = $node->getParent();
+		$shares = $this->shareManager->getSharesBy($ownerId, IShare::TYPE_ROOM, $parent, false, -1);
+		foreach ($shares as $share) {
+			if ($share->getSharedWith() === $token) {
+				$this->finalizeUploadedFile($this->getOrCreateDeletedFolder($parent), $node, $node->getName());
+				return;
+			}
 		}
 	}
 

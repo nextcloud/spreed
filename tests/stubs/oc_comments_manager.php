@@ -7,6 +7,7 @@
 
 namespace OC\Comments;
 
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -14,6 +15,7 @@ use OCP\IUser;
 class Manager implements \OCP\Comments\ICommentsManager {
 	/** @var IDBConnection */
 	protected $dbConn;
+	protected ITimeFactory $timeFactory;
 
 	protected function normalizeDatabaseData(array $data): array {
 	}
