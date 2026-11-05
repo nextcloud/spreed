@@ -22,6 +22,10 @@ All notable changes to this project will be documented in this file.
   [#20021](https://github.com/nextcloud/spreed/pull/20021)
 - fix(email-invites): Require password after email got removed
   [#19955](https://github.com/nextcloud/spreed/pull/19955)
+- fix(email-invites): Require password after email got removed
+  [#19955](https://github.com/nextcloud/spreed/pull/19955)
+- fix(virtual-bg): fallback to previous background while loading
+  [#19935](https://github.com/nextcloud/spreed/pull/19935)
 - fix(admin): Limit certificate check to configured hosts
   [#19922](https://github.com/nextcloud/spreed/pull/19922)
 - fix(sharing): Scope share child permission updates to userroom shares
