@@ -8,17 +8,9 @@ All notable changes to this project will be documented in this file.
 ## 21.1.12 – 2026-11-05
 ### Changed
 - Update translations
-- chore(workflows): adjust TS check steps names for CI ruleset
-  [#17880](https://github.com/nextcloud/spreed/pull/17880)
-- chore: Fix trademark link
-  [#19209](https://github.com/nextcloud/spreed/pull/19209)
-- ci: Add release relay job
-  [#20046](https://github.com/nextcloud/spreed/pull/20046)
 
 ### Fixed
-- fix(release): Fix changelog extraction without version argument
-  [#17917](https://github.com/nextcloud/spreed/pull/17917)
-- fix(signaling): allow SIP bridge to access getSettings without a user session
+- fix(sipbridge): Authenticate internal request from SIP Bridge
   [#18116](https://github.com/nextcloud/spreed/pull/18116)
 - fix(sharing): Scope share child permission updates to userroom shares
   [#20055](https://github.com/nextcloud/spreed/pull/20055)
