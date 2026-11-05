@@ -8,10 +8,6 @@ All notable changes to this project will be documented in this file.
 ## 20.1.12 – 2026-11-05
 ### Changed
 - Update translations
-- ci(integration): Fix guests app checkout
-  [#17833](https://github.com/nextcloud/spreed/pull/17833)
-- chore: Fix trademark link
-  [#19208](https://github.com/nextcloud/spreed/pull/19208)
 
 ### Fixed
 - fix(federation): Don't try to federate when it's disabled

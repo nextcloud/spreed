@@ -8,8 +8,6 @@ All notable changes to this project will be documented in this file.
 ## 22.0.20 – 2026-11-05
 ### Changed
 - Update translations
-- ci: Add release relay job
-  [#20047](https://github.com/nextcloud/spreed/pull/20047)
 
 ### Fixed
 - fix(sharing): Scope share child permission updates to userroom shares

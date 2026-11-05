@@ -12,55 +12,31 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Update translations
-- chore: fix strictness to in_array call
-  [#20131](https://github.com/nextcloud/spreed/pull/20131)
-- ci: Add release relay job
-  [#20049](https://github.com/nextcloud/spreed/pull/20049)
-- chore: Add test for shared picture in last message
-  [#19918](https://github.com/nextcloud/spreed/pull/19918)
 
 ### Fixed
 - fix(notifications): open conversation from notification action without page reload
   [#20165](https://github.com/nextcloud/spreed/pull/20165)
-- fix: Enable "encodedInsertableStreams" on browsers supporting it.
-  [#20157](https://github.com/nextcloud/spreed/pull/20157)
 - fix(sharing): Remove file from shared folder on message delete
   [#20151](https://github.com/nextcloud/spreed/pull/20151)
 - fix(lobby): Skip content during lobby
   [#20149](https://github.com/nextcloud/spreed/pull/20149)
-- fix(call): detect received media with the standard stats property
-  [#20144](https://github.com/nextcloud/spreed/pull/20144)
 - fix(dashboard): Don't treat "no mention" as unread when the read marker is negative
   [#20136](https://github.com/nextcloud/spreed/pull/20136)
 - fix: do not encode query params as special characters
   [#20120](https://github.com/nextcloud/spreed/pull/20120)
-- fix(deletion): Clean up after deletion
-  [#20091](https://github.com/nextcloud/spreed/pull/20091)
 - fix(expiration): Improve shown expiration time
   [#20067](https://github.com/nextcloud/spreed/pull/20067)
 - fix(Matterbridge): fix a regression in the additional validation of the bridge parts
   [#20058](https://github.com/nextcloud/spreed/pull/20058)
 - fix: Mark session as inactive again after rejoin
   [#20042](https://github.com/nextcloud/spreed/pull/20042)
-- fix(tags): Escape tagId which is `[0-9]+` only to satisfy static code…
-  [#20026](https://github.com/nextcloud/spreed/pull/20026)
 - fix(dashboard): add password protection to instant meeting
   [#20022](https://github.com/nextcloud/spreed/pull/20022)
-- fix(debugging): Don't log chat-relay comments in debug log
-  [#20016](https://github.com/nextcloud/spreed/pull/20016)
-- fix(chat): Keep actions on screen for tall messages
-  [#19958](https://github.com/nextcloud/spreed/pull/19958)
 - fix(reminder): Add "Next weekend" option to message reminders
   [#19950](https://github.com/nextcloud/spreed/pull/19950)
-- fix(build): do not bundle node-polyfill for crypto
-  [#19939](https://github.com/nextcloud/spreed/pull/19939)
-- fix(virtual-bg): fallback to previous background while loading
-  [#19936](https://github.com/nextcloud/spreed/pull/19936)
-- fix(a11y): add missing aria-labels
-  [#19933](https://github.com/nextcloud/spreed/pull/19933)
 - fix(admin): Limit certificate check to configured hosts
   [#19923](https://github.com/nextcloud/spreed/pull/19923)
-- fix(attachment): Fix "Download file" option for guests when "conversa…
+- fix(attachment): Fix "Download file" option for guests when "conversation folder" is used
   [#19910](https://github.com/nextcloud/spreed/pull/19910)
 - fix(sharing): Scope share child permission updates to userroom shares
   [#19864](https://github.com/nextcloud/spreed/pull/19864)
