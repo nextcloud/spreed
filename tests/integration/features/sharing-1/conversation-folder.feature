@@ -152,6 +152,36 @@ Feature: sharing-1/conversation-folder
       | permissions | 1                        |
       | path        | REGEXP /^\/Talk\/.+\/participant1-dis-participant1$/ |
 
+  Scenario: Deleting the message moves the attachment to the non-shared Deleted folder
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" uploads file "test.txt" with content "Hello!" to conversation folder for room "group room" with name "room"
+    And user "participant1" posts file "test.txt" from conversation folder of room "group room" with name "room" with 200 (v1)
+    And user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |
+    And user "participant2" gets file "participant1-dis-participant1/test.txt" in conversation folder of room "group room" with 200
+    When user "participant1" deletes message "shared::file::test.txt" from room "group room" with 200
+    Then user "participant2" gets file "participant1-dis-participant1/test.txt" in conversation folder of room "group room" with 404
+    And user "participant1" gets file "participant1-dis-participant1/test.txt" in conversation folder of room "group room" with 404
+    And user "participant1" gets file "Deleted/test.txt" in conversation folder of room "group room" with 200
+
+  Scenario: Expired message moves the attachment to the non-shared Deleted folder
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" set the message expiration to 3 of room "group room" with 200 (v4)
+    And user "participant1" uploads file "test.txt" with content "Hello!" to conversation folder for room "group room" with name "room"
+    And user "participant1" posts file "test.txt" from conversation folder of room "group room" with name "room" with 200 (v1)
+    And user "participant2" gets file "participant1-dis-participant1/test.txt" in conversation folder of room "group room" with 200
+    When wait for 3 seconds
+    And force run "OCA\Talk\BackgroundJob\ExpireChatMessages" background jobs
+    Then user "participant2" gets file "participant1-dis-participant1/test.txt" in conversation folder of room "group room" with 404
+    And user "participant1" gets file "Deleted/test.txt" in conversation folder of room "group room" with 200
+
   Scenario: Posting file outside conversation folder is rejected
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2    |

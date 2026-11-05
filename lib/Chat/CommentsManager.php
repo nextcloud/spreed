@@ -55,6 +55,54 @@ class CommentsManager extends Manager {
 	}
 
 	/**
+	 * Expired chat messages with a shared object, together with the token of their room
+	 *
+	 * @return list<array{token: string, comment: IComment}>
+	 * @throws Exception
+	 */
+	public function getExpiredObjectSharedMessages(): array {
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('*')
+			->from('comments')
+			->where($query->expr()->lte('expire_date', $query->createNamedParameter($this->timeFactory->getDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE)))
+			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter('chat')))
+			->andWhere($query->expr()->eq('verb', $query->createNamedParameter(ChatManager::VERB_OBJECT_SHARED)));
+
+		$comments = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			$comments[] = $this->getCommentFromData($row);
+		}
+		$result->closeCursor();
+
+		if ($comments === []) {
+			return [];
+		}
+
+		$roomIds = array_values(array_unique(array_map(static fn (IComment $comment): int => (int)$comment->getObjectId(), $comments)));
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('id', 'token')
+			->from('talk_rooms')
+			->where($query->expr()->in('id', $query->createNamedParameter($roomIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$tokens = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			$tokens[(int)$row['id']] = (string)$row['token'];
+		}
+		$result->closeCursor();
+
+		$messages = [];
+		foreach ($comments as $comment) {
+			$token = $tokens[(int)$comment->getObjectId()] ?? null;
+			if ($token !== null) {
+				$messages[] = ['token' => $token, 'comment' => $comment];
+			}
+		}
+		return $messages;
+	}
+
+	/**
 	 * FIXME: TEMPORARY method until https://github.com/nextcloud/server/pull/53896 is merged
 	 *
 	 * @param string $objectType the object type, e.g. 'files'
