@@ -392,6 +392,8 @@
     "The summary for the call in {call} was uploaded to {file}." : "{call} aramasının özeti {file} dosyasına yüklendi.",
     "Failed to summarize call recording" : "Arama kaydı özetlenemedi",
     "The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration." : "Sunucu {call} aramasının kaydından {file} özet dosyasını oluşturamadı. Lütfen yönetim ile görüşün.",
+    "Retry transcription" : "Yazıya dönüştürmeyi yeniden dene",
+    "Retry summary" : "Özetlemeyi yeniden dene",
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} sizi {remoteServer} üzerindeki {roomName} grubuna katılmaya davet etti",
     "Accept" : "Kabul et",
     "Decline" : "Reddet",
