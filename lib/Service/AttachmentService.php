@@ -29,6 +29,7 @@ class AttachmentService {
 		$attachment->setActorId($comment->getActorId());
 		$attachment->setMessageId((int)$comment->getId());
 		$attachment->setMessageTime($comment->getCreationDateTime()->getTimestamp());
+		$attachment->setExpireDate($comment->getExpireDate());
 		$attachment->setObjectType($attachmentType);
 		$this->attachmentMapper->insert($attachment);
 	}
@@ -40,6 +41,7 @@ class AttachmentService {
 		$attachment->setActorId($comment->getActorId());
 		$attachment->setMessageId((int)$comment->getId());
 		$attachment->setMessageTime($comment->getCreationDateTime()->getTimestamp());
+		$attachment->setExpireDate($comment->getExpireDate());
 
 		if ($messageType === 'object_shared') {
 			$objectType = $parameters['objectType'] ?? '';
@@ -83,6 +85,10 @@ class AttachmentService {
 	 */
 	public function getAttachmentsByType(Room $room, string $objectType, int $offset, int $limit): array {
 		return $this->attachmentMapper->getAttachmentsByType($room->getId(), $objectType, $offset, $limit);
+	}
+
+	public function deleteExpired(\DateTime $dateTime): void {
+		$this->attachmentMapper->deleteExpired($dateTime);
 	}
 
 	public function deleteAttachmentByMessageId(int $messageId): void {

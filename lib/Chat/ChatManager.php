@@ -1382,11 +1382,14 @@ class ChatManager {
 	}
 
 	public function deleteExpiredMessages(): void {
+		$now = $this->timeFactory->getDateTime();
 		foreach ($this->commentsManager->getExpiredObjectSharedMessages() as ['token' => $token, 'comment' => $comment]) {
 			$this->moveConversationFolderAttachment($comment, $token, json_decode($comment->getMessage(), true) ?? []);
 		}
 
 		$this->commentsManager->deleteCommentsExpiredAtObject('chat', '');
+		$this->attachmentService->deleteExpired($now);
+		$this->pollService->deleteExpired($now);
 	}
 
 	public function fileOfMessageExists(string $message): bool {

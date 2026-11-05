@@ -55,6 +55,36 @@ class PollMapper extends QBMapper {
 		return $this->findEntity($query);
 	}
 
+	/**
+	 * @return list<int>
+	 */
+	public function getExpiredPollIds(\DateTime $dateTime): array {
+		$query = $this->db->getQueryBuilder();
+
+		$query->select('id')
+			->from($this->getTableName())
+			->where($query->expr()->lte('expire_date', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
+
+		$result = $query->executeQuery();
+		$ids = array_map('intval', $result->fetchFirstColumn());
+		$result->closeCursor();
+
+		return $ids;
+	}
+
+	/**
+	 * @param list<int> $pollIds
+	 */
+	public function deleteByPollIds(array $pollIds): void {
+		$query = $this->db->getQueryBuilder();
+
+		$query->delete($this->getTableName());
+		foreach (array_chunk($pollIds, IQueryBuilder::MAX_IN_PARAMETERS) as $ids) {
+			$query->where($query->expr()->in('id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+			$query->executeStatement();
+		}
+	}
+
 	public function deleteByRoomId(int $roomId): void {
 		$query = $this->db->getQueryBuilder();
 

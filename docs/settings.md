@@ -96,6 +96,7 @@ Legend:
 | `default_permissions` | int | `246` | Yes |  | Default permissions for non-moderators<br>(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags) |
 | `delete_one_to_one_conversations` | bool | `false` | No |  | Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves |
 | `enable_matterbridge` | bool | `false` | Yes | 🖌️ | Whether the Matterbridge integration is enabled and can be configured |
+| `expensive_repair_performed` | int | `0` | No |  | Set automatically to track which expensive repair steps were already performed |
 | `experiments_guests` | int | `0` | Yes |  | Bit flag of experiments that should be enabled for guests on this server<br>See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments |
 | `experiments_users` | int | `0` | Yes |  | Bit flag of experiments that should be enabled for logged-in users on this server<br>See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments |
 | `external_call_service` | string | `''` | Yes |  | URL of the external service endpoint. `{meetingId}` is replaced with the conversation's `objectId` when Talk makes the request |

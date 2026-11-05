@@ -129,6 +129,7 @@ use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\SetupCheck\BackgroundBlurLoading;
 use OCA\Talk\SetupCheck\Configuration;
+use OCA\Talk\SetupCheck\ExpensiveRepairSteps;
 use OCA\Talk\SetupCheck\FederationLockCache;
 use OCA\Talk\SetupCheck\HighPerformanceBackend;
 use OCA\Talk\SetupCheck\NotifyPush;
@@ -418,6 +419,7 @@ class Application extends App implements IBootstrap {
 		$context->registerSetupCheck(RecordingBackend::class);
 		$context->registerSetupCheck(SIPConfiguration::class);
 		$context->registerSetupCheck(BackgroundBlurLoading::class);
+		$context->registerSetupCheck(ExpensiveRepairSteps::class);
 	}
 
 	#[\Override]
