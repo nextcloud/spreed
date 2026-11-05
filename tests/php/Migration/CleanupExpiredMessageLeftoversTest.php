@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Migration;
 
-use OCA\Talk\Migration\Version26000Date20261031120000;
+use OCA\Talk\Migration\CleanupExpiredMessageLeftovers;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\AttachmentMapper;
 use OCA\Talk\Model\Attendee;
@@ -27,7 +27,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Test\TestCase;
 
 #[Group('DB')]
-class Version26000Date20261031120000Test extends TestCase {
+class CleanupExpiredMessageLeftoversTest extends TestCase {
 	protected IDBConnection $connection;
 	protected ICommentsManager $commentsManager;
 	protected AttachmentMapper $attachmentMapper;
@@ -142,11 +142,13 @@ class Version26000Date20261031120000Test extends TestCase {
 		}
 	}
 
-	public function testPostSchemaChange(): void {
+	public function testRun(): void {
 		$expireDate = new \DateTime('+1 hour');
 
 		$expiringPoll = $this->createPoll($this->roomId);
 		$expiringPollAttachment = $this->createAttachment($this->roomId, $this->createMessage($this->pollMessage($expiringPoll), $expireDate), Attachment::TYPE_POLL);
+		$permanentPoll = $this->createPoll($this->roomId);
+		$permanentPollAttachment = $this->createAttachment($this->roomId, $this->createMessage($this->pollMessage($permanentPoll), null), Attachment::TYPE_POLL);
 		$permanentFile = $this->createAttachment($this->roomId, $this->createMessage('file', null), Attachment::TYPE_FILE);
 		$expiredPoll = $this->createPoll($this->roomId);
 		$expiredPollAttachment = $this->createAttachment($this->roomId, $this->createExpiredMessageId(), Attachment::TYPE_POLL);
@@ -154,13 +156,15 @@ class Version26000Date20261031120000Test extends TestCase {
 		$draftPoll = $this->createPoll($this->roomId, Poll::STATUS_DRAFT);
 		$otherRoomPoll = $this->createPoll($this->otherRoomId);
 
-		$migration = new Version26000Date20261031120000($this->connection);
-		$migration->postSchemaChange($this->createMock(IOutput::class), static fn () => null, []);
+		$repairStep = new CleanupExpiredMessageLeftovers($this->connection);
+		$repairStep->run($this->createMock(IOutput::class));
 
 		$this->assertSame($expireDate->format('Y-m-d H:i:s'), $this->findAttachment($expiringPollAttachment->getId())['expire_date'] ?? null);
 		$this->assertSame($expireDate->getTimestamp(), $this->findPoll($expiringPoll)?->getExpireDate()?->getTimestamp());
 		$this->assertCount(1, $this->voteMapper->findByPollId($expiringPoll->getId()));
 
+		$this->assertSame(['expire_date' => null], $this->findAttachment($permanentPollAttachment->getId()));
+		$this->assertNull($this->findPoll($permanentPoll)?->getExpireDate());
 		$this->assertSame(['expire_date' => null], $this->findAttachment($permanentFile->getId()));
 
 		$this->assertNull($this->findAttachment($expiredPollAttachment->getId()));
