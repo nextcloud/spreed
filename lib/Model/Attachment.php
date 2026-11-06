@@ -24,6 +24,8 @@ use OCP\DB\Types;
  * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
+ * @method void setExpireDate(?\DateTime $expireDate)
+ * @method \DateTime|null getExpireDate()
  */
 class Attachment extends Entity {
 	public const TYPE_AUDIO = 'audio';
@@ -58,6 +60,9 @@ class Attachment extends Entity {
 	/** @var string */
 	protected $actorId;
 
+	/** @var ?\DateTime */
+	protected $expireDate;
+
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
 		$this->addType('messageId', Types::BIGINT);
@@ -65,6 +70,7 @@ class Attachment extends Entity {
 		$this->addType('objectType', Types::STRING);
 		$this->addType('actorType', Types::STRING);
 		$this->addType('actorId', Types::STRING);
+		$this->addType('expireDate', Types::DATETIME);
 	}
 
 	/**

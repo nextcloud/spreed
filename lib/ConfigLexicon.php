@@ -184,6 +184,7 @@ PROMPT;
 			new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)'),
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
+			new Entry(Config::EXPENSIVE_REPAIR_PERFORMED, ValueType::INT, 0, definition: 'Set automatically to track which expensive repair steps were already performed'),
 		];
 	}
 
