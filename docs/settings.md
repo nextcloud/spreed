@@ -130,6 +130,7 @@ Legend:
 | `minimum_supported_android_version` | string | `''` | No |  | Minimum version of the Android client that is allowed to use Talk (in addition to the minimum version required by the server) |
 | `minimum_supported_desktop_version` | string | `''` | No |  | Minimum version of the Desktop client that is allowed to use Talk (in addition to the minimum version required by the server) |
 | `minimum_supported_ios_version` | string | `''` | No |  | Minimum version of the iOS client that is allowed to use Talk (in addition to the minimum version required by the server) |
+| `mobile_preload_chat` | bool | `true` | Yes |  | Whether mobile clients should preload the chat messages of conversations |
 | `project_access_invalidated` | int | `0` | No |  | Set automatically to track which invalidation of the projects access cache was already performed |
 | `recording_consent` | int | `0` | Yes | 🖌️ | Whether users have to agree on being recorded before they can join the call (see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#recording-consent-required) |
 | `recording_servers` | `array{servers: list<array{server: string, verify: bool}>, secret: string}` | `[]` | Yes | 🖌️ | List of recording servers, should be configured via the web interface |

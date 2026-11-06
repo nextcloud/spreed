@@ -101,6 +101,7 @@ class Config implements IAppConfig {
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
 	public const string TOKEN_ENTROPY = 'token_entropy';
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
+	public const string MOBILE_PRELOAD_CHAT = 'mobile_preload_chat';
 	public const string AI_UNREAD_SUMMARY_BATCH_SIZE = 'ai_unread_summary_batch_size';
 	public const string MAX_CALL_DURATION = 'max_call_duration';
 	public const string MINIMUM_SUPPORTED_ANDROID_VERSION = 'minimum_supported_android_version';

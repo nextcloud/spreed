@@ -329,6 +329,10 @@ PROMPT;
 			new AppConfigEntry(new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)')),
 			new AppConfigEntry(new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort')),
 			new AppConfigEntry(new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI')),
+			new AppConfigEntry(
+				new Entry(Config::MOBILE_PRELOAD_CHAT, ValueType::BOOL, true, definition: 'Whether mobile clients should preload the chat messages of conversations'),
+				hash: true,
+			),
 			new AppConfigEntry(new Entry(Config::AI_UNREAD_SUMMARY_BATCH_SIZE, ValueType::INT, 500, definition: 'Maximum number of unread messages that are summarized with AI in one request')),
 			new AppConfigEntry(
 				new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call'),

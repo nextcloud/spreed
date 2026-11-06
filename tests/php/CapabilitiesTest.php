@@ -155,6 +155,7 @@ class CapabilitiesTest extends TestCase {
 		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
 				['enable_matterbridge', false],
+				['mobile_preload_chat', true],
 				['sip_bridge_dialout', false],
 				['sip_bridge_dialout_anonymous', false],
 				['federation_enabled', false],
@@ -247,6 +248,7 @@ class CapabilitiesTest extends TestCase {
 						'summary-threshold' => 100,
 						'style' => 'split',
 						'matterbridge-enabled' => false,
+						'mobile-preload-chat' => true,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -401,6 +403,7 @@ class CapabilitiesTest extends TestCase {
 				['sip_bridge_dialout', false],
 				['sip_bridge_dialout_anonymous', false],
 				['enable_matterbridge', false],
+				['mobile_preload_chat', true],
 				['federation_enabled', false],
 				['federation_incoming_enabled', true],
 				['federation_outgoing_enabled', true],
@@ -498,6 +501,7 @@ class CapabilitiesTest extends TestCase {
 						'summary-threshold' => 100,
 						'style' => 'split',
 						'matterbridge-enabled' => false,
+						'mobile-preload-chat' => true,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,

@@ -256,6 +256,8 @@ export type components = {
                     style: "split" | "unified";
                     /** @description Whether Matterbridge is enabled */
                     "matterbridge-enabled": boolean;
+                    /** @description Whether mobile clients should preload the chat messages of conversations */
+                    "mobile-preload-chat": boolean;
                 };
                 conversations: {
                     /** @description Whether the user can create conversations */
