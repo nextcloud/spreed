@@ -14,6 +14,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Signaling\RoomPropertiesHelper;
 use OCA\Talk\Webinary;
 use OCP\EventDispatcher\IEventDispatcher;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -29,15 +30,15 @@ class RoomPropertiesHelperTest extends TestCase {
 		$this->helper = new RoomPropertiesHelper($this->dispatcher, $this->roomService);
 	}
 
-	private function createRoomMock(string $displayName = 'Room name'): Room&MockObject {
+	private function createRoomMock(string $displayName = 'Room name', ?\DateTime $lobbyTimer = null, ?\DateTime $activeSince = null): Room&MockObject {
 		$room = $this->createMock(Room::class);
 		$room->method('getDisplayName')->willReturnCallback(fn (string $userId) => $displayName);
 		$room->method('getType')->willReturn(Room::TYPE_GROUP);
 		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NONE);
-		$room->method('getLobbyTimer')->willReturn(null);
+		$room->method('getLobbyTimer')->willReturn($lobbyTimer);
 		$room->method('getReadOnly')->willReturn(Room::READ_WRITE);
 		$room->method('getListable')->willReturn(Room::LISTABLE_NONE);
-		$room->method('getActiveSince')->willReturn(null);
+		$room->method('getActiveSince')->willReturn($activeSince);
 		$room->method('getSIPEnabled')->willReturn(Webinary::SIP_DISABLED);
 		$room->method('getDescription')->willReturn('A description');
 		return $room;
@@ -112,5 +113,22 @@ class RoomPropertiesHelperTest extends TestCase {
 			->with($room);
 
 		$this->helper->getPropertiesForSignaling($room, 'alice');
+	}
+
+	public static function dataGetPropertiesForSignalingTimestamps(): array {
+		return [
+			'not set' => [null, null, 0, 0],
+			'set' => [new \DateTime('@1729500000'), new \DateTime('@1729400000'), 1729500000, 1729400000],
+		];
+	}
+
+	#[DataProvider('dataGetPropertiesForSignalingTimestamps')]
+	public function testGetPropertiesForSignalingTimestamps(?\DateTime $lobbyTimer, ?\DateTime $activeSince, int $expectedLobbyTimer, int $expectedActiveSince): void {
+		$room = $this->createRoomMock(lobbyTimer: $lobbyTimer, activeSince: $activeSince);
+
+		$properties = $this->helper->getPropertiesForSignaling($room, 'alice');
+
+		$this->assertSame($expectedLobbyTimer, $properties['lobby-timer']);
+		$this->assertSame($expectedActiveSince, $properties['active-since']);
 	}
 }

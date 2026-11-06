@@ -434,13 +434,13 @@ trait RecordingTrait {
 				}
 			}
 
-			$matched = preg_match('/"active-since":\{"date":"ACTIVE_SINCE\(\)","timezone_type":3,"timezone":"UTC"}/', $request['data'], $matches);
+			$matched = preg_match('/"active-since":ACTIVE_SINCE\(\)/', $request['data'], $matches);
 			if ($matched) {
-				$matched = preg_match('/"active-since":\{"date":"([\d\- :.]+)","timezone_type":3,"timezone":"UTC"}/', $actual['data'], $matches);
+				$matched = preg_match('/"active-since":(\d+)/', $actual['data'], $matches);
 				if ($matched) {
 					$request['data'] = str_replace(
-						'ACTIVE_SINCE()',
-						$matches[1],
+						'"active-since":ACTIVE_SINCE()',
+						$matches[0],
 						$request['data']
 					);
 				}
