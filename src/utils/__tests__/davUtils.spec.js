@@ -22,8 +22,8 @@ describe('davUtils', () => {
 
 	describe('generatePreviewUrl', () => {
 		it.each([
-			[123, { x: 32, y: 32 }, '/core/preview?fileId=123&x=32&y=32&a=1'],
-			['123', { x: -1, y: 384 }, '/core/preview?fileId=123&x=-1&y=384&a=1'],
+			[123, { x: 32, y: 32 }, '/core/preview?fileId=123&x=32&y=32&a=true'],
+			['123', { x: -1, y: 384 }, '/core/preview?fileId=123&x=-1&y=384&a=true'],
 		])('generates preview link for %s and %o', (fileId, size, expected) => {
 			expect(generatePreviewUrl(fileId, size)).toBe(generateUrl(expected))
 		})
@@ -31,10 +31,10 @@ describe('davUtils', () => {
 
 	describe('generatePublicSharePreviewUrl', () => {
 		it.each([
-			['https://nextcloud.ltd/index.php/s/TOKEN', 'photo 1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=&x=-1&y=384&a=1'],
-			['https://nextcloud.ltd/index.php/s/TOKEN/', 'photo 1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=&x=-1&y=384&a=1'],
-			['https://nextcloud.ltd/index.php/s/TOKEN', '/photo 1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=%2Fphoto%201.jpg&x=-1&y=384&a=1'],
-			['https://nextcloud.ltd/index.php/s/TOKEN?path=%2FMedia', '/Media/#1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=%2FMedia%2F%231.jpg&x=-1&y=384&a=1'],
+			['https://nextcloud.ltd/index.php/s/TOKEN', 'photo 1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=&x=-1&y=384&a=true'],
+			['https://nextcloud.ltd/index.php/s/TOKEN/', 'photo 1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=&x=-1&y=384&a=true'],
+			['https://nextcloud.ltd/index.php/s/TOKEN', '/photo 1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=%2Fphoto%201.jpg&x=-1&y=384&a=true'],
+			['https://nextcloud.ltd/index.php/s/TOKEN?path=%2FMedia', '/Media/#1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=%2FMedia%2F%231.jpg&x=-1&y=384&a=true'],
 		])('generates preview link for %s and %s', (link, path, expected) => {
 			expect(generatePublicSharePreviewUrl(link, path, { x: -1, y: 384 })).toBe(generateUrl(expected))
 		})
