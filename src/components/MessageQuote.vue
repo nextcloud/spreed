@@ -21,7 +21,7 @@ import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
-import { generatePreviewUrl, generatePublicSharePreviewUrl } from '../utils/davUtils.ts'
+import { generatePreviewUrl, generatePublicSharePreviewUrl, isFederatedShareLink } from '../utils/davUtils.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 import { parseToSimpleMessage } from '../utils/textParse.ts'
 
@@ -112,7 +112,7 @@ const filePreview = computed(() => {
 	if (fileData) {
 		return {
 			alt: fileData.name,
-			src: actorStore.userId === null
+			src: actorStore.userId === null || isFederatedShareLink(fileData.link)
 				? generatePublicSharePreviewUrl(fileData.link!, fileData.path!, { x: 32, y: 32 })
 				: generatePreviewUrl(fileData.id, { x: 32, y: 32 }),
 		}

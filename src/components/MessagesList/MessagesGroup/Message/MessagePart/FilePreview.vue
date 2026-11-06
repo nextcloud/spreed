@@ -126,7 +126,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
-import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
+import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl, isFederatedShareLink } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
@@ -448,9 +448,13 @@ export default {
 			return this.previewImageUrl
 		},
 
+		usePublicShareLink() {
+			return this.actorStore.userId === null || isFederatedShareLink(this.file.link)
+		},
+
 		directImageUrl() {
 			// return direct image
-			if (this.actorStore.userId === null) {
+			if (this.usePublicShareLink) {
 				// guest mode, use public link download URL
 				return generatePublicShareDownloadUrl(this.file.link, this.file.path)
 			} else {
@@ -462,7 +466,7 @@ export default {
 		previewImageUrl() {
 			// use preview provider URL to render a smaller preview
 			const previewSize = Math.ceil(384 * window.devicePixelRatio)
-			if (this.actorStore.userId === null) {
+			if (this.usePublicShareLink) {
 				return generatePublicSharePreviewUrl(this.file.link, this.file.path, { x: -1, y: previewSize })
 			} else {
 				return generatePreviewUrl(this.file.id, { x: -1, y: previewSize })
@@ -470,7 +474,8 @@ export default {
 		},
 
 		isViewerAvailable() {
-			return OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
+			// The viewer can not open files of a federated host
+			return !isFederatedShareLink(this.file.link) && OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
 		},
 
 		isVoiceMessage() {

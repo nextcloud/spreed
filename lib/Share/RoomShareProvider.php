@@ -32,6 +32,7 @@ use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -63,6 +64,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 	public const TALK_FOLDER = '/Talk';
 	public const TALK_FOLDER_PLACEHOLDER = '/{TALK_PLACEHOLDER}';
+	public const FEDERATION_AUTH_PARAMETER = 'talkFederationAuth';
+	private const SESSION_FEDERATION_AUTH = 'talk-federation-share-auth';
 
 	private CappedMemoryCache $sharesByIdCache;
 
@@ -82,6 +85,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		private readonly ISession $session,
 		private readonly IUserSession $userSession,
 		private readonly TalkSession $talkSession,
+		private readonly IRequest $request,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -1130,16 +1134,71 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			throw new ShareNotFound();
 		}
 
-		if ($room->getType() !== Room::TYPE_PUBLIC && $this->getCurrentParticipant($room) === null) {
-			throw new ShareNotFound();
+		$share = $this->createShareObject($data);
+		if ($room->getType() === Room::TYPE_PUBLIC && !$share->isPasswordProtected()) {
+			return $share;
 		}
 
-		$share = $this->createShareObject($data);
+		if ($this->getCurrentParticipant($room) === null && !$this->isFederationAuthenticated($room, $token)) {
+			if ($room->getType() !== Room::TYPE_PUBLIC) {
+				throw new ShareNotFound();
+			}
+			return $share;
+		}
+
 		if ($share->isPasswordProtected()) {
-			$this->markAuthenticatedForParticipant($share, $room);
+			$this->markShareAuthenticated($share);
 		}
 
 		return $share;
+	}
+
+	/**
+	 * Federated users have no session on this server, so their share links
+	 * carry a signature derived from the attendee's federation access token.
+	 */
+	public function getFederationAuthValue(Attendee $attendee, string $shareToken): string {
+		return $attendee->getId() . '.' . hash_hmac('sha256', $shareToken, (string)$attendee->getAccessToken());
+	}
+
+	/**
+	 * The signature is remembered in the session so follow-up requests of the
+	 * public share page work, but it is re-validated against the attendee each time.
+	 */
+	private function isFederationAuthenticated(Room $room, string $shareToken): bool {
+		$stored = $this->session->get(self::SESSION_FEDERATION_AUTH);
+		if (!is_array($stored)) {
+			$stored = [];
+		}
+
+		$value = $this->request->getParam(self::FEDERATION_AUTH_PARAMETER) ?? $stored[$shareToken] ?? null;
+		if (!is_string($value) || !str_contains($value, '.')) {
+			return false;
+		}
+
+		[$attendeeId] = explode('.', $value, 2);
+		try {
+			$attendee = $this->participantService->getParticipantByAttendeeId($room, (int)$attendeeId)->getAttendee();
+		} catch (ParticipantNotFoundException) {
+			return false;
+		}
+
+		if ($attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS
+			|| !$attendee->getAccessToken()
+			|| !hash_equals($this->getFederationAuthValue($attendee, $shareToken), $value)) {
+			return false;
+		}
+
+		if (($stored[$shareToken] ?? null) !== $value) {
+			$stored[$shareToken] = $value;
+			$reopened = $this->session->reopen();
+			$this->session->set(self::SESSION_FEDERATION_AUTH, $stored);
+			if ($reopened) {
+				$this->session->close();
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -1174,11 +1233,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * marked as authenticated in the session the same way the public share
 	 * password form does it.
 	 */
-	private function markAuthenticatedForParticipant(IShare $share, Room $room): void {
-		if ($this->getCurrentParticipant($room) === null) {
-			return;
-		}
-
+	private function markShareAuthenticated(IShare $share): void {
 		$allowedTokens = json_decode($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND) ?? '[]', true);
 		if (!is_array($allowedTokens)) {
 			$allowedTokens = [];

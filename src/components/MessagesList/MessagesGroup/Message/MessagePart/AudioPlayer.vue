@@ -26,7 +26,7 @@ import { generateRemoteUrl } from '@nextcloud/router'
 import { inject } from 'vue'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
-import { generatePublicShareDownloadUrl } from '../../../../../utils/davUtils.ts'
+import { generatePublicShareDownloadUrl, isFederatedShareLink } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 
 export default {
@@ -110,7 +110,7 @@ export default {
 				return this.localUrl
 			}
 			const userId = this.actorStore.userId
-			if (userId === null) {
+			if (userId === null || isFederatedShareLink(this.link)) {
 				// guest mode, use public link download URL
 				return generatePublicShareDownloadUrl(this.link, this.path)
 			} else {

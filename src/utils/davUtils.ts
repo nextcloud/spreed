@@ -39,6 +39,33 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
 	return url.href
 }
 
+const FEDERATION_AUTH_PARAMETER = 'talkFederationAuth'
+
+/**
+ * Parse a public share link
+ * Links of federated conversations point to the host server and carry an authentication parameter
+ *
+ * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH?path=/Media
+ */
+function parsePublicShareLink(shareLink: string) {
+	const url = new URL(shareLink)
+	const token = url.pathname.split('/').filter(Boolean).at(-1)
+	const federationAuth = url.searchParams.get(FEDERATION_AUTH_PARAMETER)
+	const baseUrl = federationAuth
+		? url.origin + url.pathname.slice(0, url.pathname.lastIndexOf('/s/')).replace(/\/index\.php$/, '')
+		: undefined
+	return { token, federationAuth, baseUrl }
+}
+
+/**
+ * Whether the link is a public share link of a federated conversation
+ *
+ * @param shareLink - The public share link
+ */
+export function isFederatedShareLink(shareLink: string | undefined): boolean {
+	return !!shareLink && new URL(shareLink).searchParams.has(FEDERATION_AUTH_PARAMETER)
+}
+
 /**
  * Generate a public WebDAV download link for a public share
  *
@@ -47,8 +74,9 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
  * @return The download link, e.g., https://nextcloud.ltd/public.php/dav/files/CBeNTiJz5JeT2CH/Media/photo.jpg
  */
 export function generatePublicShareDownloadUrl(shareLink: string, path: string = '') {
-	const token = new URL(shareLink).pathname.split('/').filter(Boolean).at(-1)
-	return getBaseUrl() + '/public.php/dav/files/' + token + (path.startsWith('/') ? encodePath(path) : '')
+	const { token, federationAuth, baseUrl } = parsePublicShareLink(shareLink)
+	const url = (baseUrl ?? getBaseUrl()) + '/public.php/dav/files/' + token + (path.startsWith('/') ? encodePath(path) : '')
+	return federationAuth ? url + '?' + FEDERATION_AUTH_PARAMETER + '=' + encodeURIComponent(federationAuth) : url
 }
 
 /**
@@ -79,11 +107,12 @@ export function generatePreviewUrl(fileId: string | number, { x, y }: { x: numbe
  * @return The preview link, e.g., https://nextcloud.ltd/index.php/apps/files_sharing/publicpreview/CBeNTiJz5JeT2CH?file=%2FMedia%2Fphoto.jpg&x=-1&y=384&a=1
  */
 export function generatePublicSharePreviewUrl(shareLink: string, path: string, { x, y }: { x: number, y: number }) {
-	const token = new URL(shareLink).pathname.split('/').filter(Boolean).at(-1)
-	return generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x={x}&y={y}&a=1', {
+	const { token, federationAuth, baseUrl } = parsePublicShareLink(shareLink)
+	const url = generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x={x}&y={y}&a=1', {
 		token,
 		file: path.startsWith('/') ? path : '',
 		x,
 		y,
-	})
+	}, baseUrl ? { baseURL: baseUrl } : undefined)
+	return federationAuth ? url + '&' + FEDERATION_AUTH_PARAMETER + '=' + encodeURIComponent(federationAuth) : url
 }
