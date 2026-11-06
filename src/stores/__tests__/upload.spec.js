@@ -8,6 +8,7 @@ import { getUploader } from '@nextcloud/upload'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ATTENDEE } from '../../constants.ts'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.ts'
 import { postAttachment, probeAttachmentFolder, shareFile } from '../../services/filesSharingServices.ts'
@@ -66,6 +67,7 @@ describe('fileUploadStore', () => {
 	let uploadStore
 
 	beforeEach(() => {
+		BrowserStorage.clear()
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 		settingsStore = useSettingsStore()
@@ -688,6 +690,49 @@ describe('fileUploadStore', () => {
 			const uploads = uploadStore.getInitialisedUploads('upload-id1')
 			expect(uploads[0][1].file.name).toBe('20210427_153000.png')
 			expect(uploads[1][1].file.name).toBe('20210425_153000.txt')
+		})
+	})
+
+	describe('upload choices', () => {
+		test('default to standard quality and view-only', () => {
+			expect(uploadStore.skipCompression).toBe(false)
+			expect(uploadStore.allowUpdate).toBe(false)
+		})
+
+		test('restore the last choices from browser storage', () => {
+			BrowserStorage.setItem('skipCompression', 'true')
+			BrowserStorage.setItem('allowUpdate', 'true')
+			setActivePinia(createPinia())
+			uploadStore = useUploadStore()
+
+			expect(uploadStore.skipCompression).toBe(true)
+			expect(uploadStore.allowUpdate).toBe(true)
+		})
+
+		test('save the choices to browser storage', () => {
+			uploadStore.updateSkipCompression(true)
+			uploadStore.updateAllowUpdate(true)
+
+			expect(uploadStore.skipCompression).toBe(true)
+			expect(uploadStore.allowUpdate).toBe(true)
+			expect(BrowserStorage.getItem('skipCompression')).toBe('true')
+			expect(BrowserStorage.getItem('allowUpdate')).toBe('true')
+		})
+
+		test('keep the choices when the upload is discarded', () => {
+			uploadStore.initialiseUpload({
+				uploadId: 'upload-id1',
+				token: 'XXTOKENXX',
+				files: [{ name: 'pngimage.png', type: 'image/png', size: 123, lastModified: Date.UTC(2021, 3, 27, 15, 30, 0) }],
+			})
+			uploadStore.updateSkipCompression(true)
+			uploadStore.updateAllowUpdate(true)
+
+			uploadStore.discardUpload('upload-id1')
+
+			expect(uploadStore.currentUploadId).not.toBeDefined()
+			expect(uploadStore.skipCompression).toBe(true)
+			expect(uploadStore.allowUpdate).toBe(true)
 		})
 	})
 })
