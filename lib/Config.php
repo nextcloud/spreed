@@ -40,6 +40,8 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const EXPENSIVE_REPAIR_PERFORMED = 'expensive_repair_performed';
+
 	/**
 	 * 1. Call recording, …
 	 */

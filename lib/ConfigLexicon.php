@@ -28,6 +28,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(UserPreference::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES),
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false),
+			new Entry(Config::EXPENSIVE_REPAIR_PERFORMED, ValueType::INT, 0, definition: 'Set automatically to track which expensive repair steps were already performed'),
 		];
 	}
 
