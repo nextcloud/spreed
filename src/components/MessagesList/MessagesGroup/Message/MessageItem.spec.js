@@ -148,6 +148,14 @@ describe('MessageItem.vue', () => {
 			const message = wrapper.findComponent(NcRichText)
 			expect(message.exists()).toBeTruthy()
 			expect(message.text()).toBe('🌧️')
+			expect(message.attributes('title')).toBe(':rain_cloud:')
+		})
+
+		test('does not set an emoji title on regular text', () => {
+			messageProps.message.message = 'test 🌧️'
+			const wrapper = mountMessage(messageProps)
+
+			expect(wrapper.findComponent(NcRichText).attributes('title')).toBeUndefined()
 		})
 
 		describe('call button', () => {
