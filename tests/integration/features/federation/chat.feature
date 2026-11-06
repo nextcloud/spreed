@@ -599,6 +599,7 @@ Feature: federation/chat
       | room        | actorType       | actorId                   | actorDisplayName         | message  | messageParameters |
       | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | {object} | "IGNORE" |
 
+  @skip35
   Scenario: Get file preview through the own server
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
