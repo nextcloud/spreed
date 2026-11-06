@@ -77,6 +77,7 @@ class Config {
 	public const string CREATE_SAMPLES = 'create_samples';
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
+	public const string EXPENSIVE_REPAIR_PERFORMED = 'expensive_repair_performed';
 
 	/**
 	 * 1. Call recording, …
