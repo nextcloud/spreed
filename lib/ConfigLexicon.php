@@ -528,4 +528,14 @@ PROMPT;
 	public function getUserConfigs(): array {
 		return array_map(static fn (UserPreferenceEntry $config): Entry => $config->entry, $this->getTalkUserAppPreferences());
 	}
+
+	public function getProvisionableUserPreferences(): array {
+		$provisionableUserPreferences = [];
+		foreach ($this->getTalkUserAppPreferences() as $config) {
+			if ($config->provisionable) {
+				$provisionableUserPreferences[$config->entry->getKey()] = $config;
+			}
+		}
+		return $provisionableUserPreferences;
+	}
 }
