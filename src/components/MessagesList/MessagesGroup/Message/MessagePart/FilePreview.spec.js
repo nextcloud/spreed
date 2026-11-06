@@ -114,7 +114,7 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl.searchParams.get('fileId')).toBe('123')
 			expect(imageUrl.searchParams.get('x')).toBe('-1')
 			expect(imageUrl.searchParams.get('y')).toBe('384')
-			expect(imageUrl.searchParams.get('a')).toBe('1')
+			expect(imageUrl.searchParams.get('a')).toBe('true')
 
 			expect(wrapper.find('.loading').exists()).toBe(false)
 		})
@@ -133,7 +133,7 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl.searchParams.has('fileId')).toBe(false)
 			expect(imageUrl.searchParams.get('x')).toBe('-1')
 			expect(imageUrl.searchParams.get('y')).toBe('384')
-			expect(imageUrl.searchParams.get('a')).toBe('1')
+			expect(imageUrl.searchParams.get('a')).toBe('true')
 
 			expect(wrapper.find('.loading').exists()).toBe(false)
 		})
