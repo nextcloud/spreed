@@ -6,6 +6,7 @@
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl, getBaseUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
+import { canView, getViewer } from '@nextcloud/viewer'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -27,6 +28,11 @@ vi.mock('vuex', () => ({
 	})),
 }))
 
+vi.mock('@nextcloud/viewer', () => ({
+	canView: vi.fn(),
+	getViewer: vi.fn(),
+}))
+
 describe('FilePreview.vue', () => {
 	let props
 	let oldPixelRatio
@@ -41,6 +47,12 @@ describe('FilePreview.vue', () => {
 		oldPixelRatio = window.devicePixelRatio
 
 		actorStore.userId = 'current-user-id'
+
+		canView.mockReturnValue(false)
+		getViewer.mockReturnValue({
+			open: vi.fn().mockResolvedValue({ addEventListener: vi.fn() }),
+			close: vi.fn(),
+		})
 
 		props = {
 			token: 'TOKEN',
@@ -102,7 +114,7 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl.searchParams.get('fileId')).toBe('123')
 			expect(imageUrl.searchParams.get('x')).toBe('-1')
 			expect(imageUrl.searchParams.get('y')).toBe('384')
-			expect(imageUrl.searchParams.get('a')).toBe('1')
+			expect(imageUrl.searchParams.get('a')).toBe('true')
 
 			expect(wrapper.find('.loading').exists()).toBe(false)
 		})
@@ -121,7 +133,7 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl.searchParams.has('fileId')).toBe(false)
 			expect(imageUrl.searchParams.get('x')).toBe('-1')
 			expect(imageUrl.searchParams.get('y')).toBe('384')
-			expect(imageUrl.searchParams.get('a')).toBe('1')
+			expect(imageUrl.searchParams.get('a')).toBe('true')
 
 			expect(wrapper.find('.loading').exists()).toBe(false)
 		})
@@ -360,27 +372,8 @@ describe('FilePreview.vue', () => {
 		})
 
 		describe('triggering viewer', () => {
-			let oldViewer
-
-			beforeEach(() => {
-				oldViewer = OCA.Viewer
-			})
-			afterEach(() => {
-				if (oldViewer) {
-					OCA.Viewer = oldViewer
-				} else {
-					delete OCA.Viewer
-				}
-			})
-
 			test('opens viewer when clicking if viewer available', async () => {
-				OCA.Viewer = {
-					open: vi.fn(),
-					availableHandlers: [{
-						mimes: ['image/png', 'image/jpeg'],
-					}],
-					mimetypes: ['image/png', 'image/jpeg'],
-				}
+				canView.mockReturnValue(true)
 
 				const wrapper = mountFilePreview()
 
@@ -388,27 +381,22 @@ describe('FilePreview.vue', () => {
 
 				await wrapper.find('a').trigger('click')
 
-				expect(OCA.Viewer.open).toHaveBeenCalledWith(expect.objectContaining({
-					list: [{
+				expect(getViewer().open).toHaveBeenCalledWith(
+					[expect.objectContaining({
 						basename: 'test.jpg',
-						etag: '1872ade88f3013edeb33decd74a4f947',
-						fileid: 123,
-						filename: '/path/to/test.jpg',
-						hasPreview: true,
 						mime: 'image/jpeg',
-						permissions: 'CKGWD',
-					}],
-					path: '/path/to/test.jpg',
-				}))
+						attributes: expect.objectContaining({
+							etag: '1872ade88f3013edeb33decd74a4f947',
+							hasPreview: true,
+						}),
+					})],
+					expect.objectContaining({ basename: 'test.jpg' }),
+					expect.any(Object),
+				)
 			})
 
 			test('does not open viewer when clicking if no mime handler available', async () => {
-				OCA.Viewer = {
-					open: vi.fn(),
-					availableHandlers: [{
-						mimes: ['image/png'],
-					}],
-				}
+				canView.mockReturnValue(false)
 
 				const wrapper = mountFilePreview()
 
@@ -416,11 +404,11 @@ describe('FilePreview.vue', () => {
 
 				await wrapper.find('a').trigger('click')
 
-				expect(OCA.Viewer.open).not.toHaveBeenCalled()
+				expect(getViewer().open).not.toHaveBeenCalled()
 			})
 
 			test('does not open viewer when clicking if viewer is not available', async () => {
-				delete OCA.Viewer
+				canView.mockReturnValue(false)
 				const wrapper = mountFilePreview()
 
 				await wrapper.find('img').trigger('load')
@@ -436,13 +424,7 @@ describe('FilePreview.vue', () => {
 					props.file.path = 'path/to/test.mp4'
 
 					// viewer needs to be available
-					OCA.Viewer = {
-						open: vi.fn(),
-						availableHandlers: [{
-							mimes: ['video/mp4', 'image/jpeg', 'image/png', 'image/gif'],
-						}],
-						mimetypes: ['video/mp4', 'image/jpeg', 'image/png', 'image/gif'],
-					}
+					canView.mockReturnValue(true)
 				})
 
 				/**
@@ -495,7 +477,7 @@ describe('FilePreview.vue', () => {
 				})
 
 				test('does not render play icon if viewer not available', async () => {
-					delete OCA.Viewer
+					canView.mockReturnValue(false)
 					await testPlayButtonVisible(false)
 				})
 

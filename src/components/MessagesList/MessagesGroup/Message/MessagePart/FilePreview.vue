@@ -119,7 +119,7 @@ import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 import AudioPlayer from './AudioPlayer.vue'
-import { useViewer } from '../../../../../composables/useViewer.js'
+import { useViewer } from '../../../../../composables/useViewer.ts'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -213,11 +213,12 @@ export default {
 	emits: ['removeFile'],
 
 	setup() {
-		const { openViewer } = useViewer('talk')
+		const { openViewer, canOpenInViewer } = useViewer('talk')
 		const sharedItemsStore = useSharedItemsStore()
 
 		return {
 			openViewer,
+			canOpenInViewer,
 			sharedItemsStore,
 			actorStore: useActorStore(),
 			uploadStore: useUploadStore(),
@@ -470,7 +471,7 @@ export default {
 		},
 
 		isViewerAvailable() {
-			return OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
+			return this.canOpenInViewer(this.file)
 		},
 
 		isVoiceMessage() {
@@ -643,7 +644,7 @@ export default {
 				list = this.viewerList
 			}
 
-			this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
+			this.openViewer(list, this.file, loadMore)
 		},
 	},
 }
