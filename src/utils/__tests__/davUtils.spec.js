@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { generateUrl, getBaseUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl, getBaseUrl } from '@nextcloud/router'
 import { describe, expect, it } from 'vitest'
-import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl, isFederatedShareLink } from '../davUtils.ts'
+import { generateMessageFileContentUrl, generateMessageFilePreviewUrl, generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl, isFederatedShareLink } from '../davUtils.ts'
 
 describe('davUtils', () => {
 	describe('generatePublicShareDownloadUrl', () => {
@@ -55,10 +55,19 @@ describe('davUtils', () => {
 		])('generates preview link for %s and %s', (link, path, expected) => {
 			expect(generatePublicSharePreviewUrl(link, path, { x: -1, y: 384 })).toBe(generateUrl(expected))
 		})
+	})
 
-		it('generates federated preview link on the host server', () => {
-			expect(generatePublicSharePreviewUrl('https://host.ltd/nc/index.php/s/TOKEN?talkFederationAuth=42.abc', '/photo.jpg', { x: -1, y: 384 }))
-				.toBe(generateUrl('/apps/files_sharing/publicpreview/TOKEN?file=%2Fphoto.jpg&x=-1&y=384&a=1', {}, { baseURL: 'https://host.ltd/nc' }) + '&talkFederationAuth=42.abc')
+	describe('generateMessageFilePreviewUrl', () => {
+		it('generates the proxied preview link', () => {
+			expect(generateMessageFilePreviewUrl('token', 42, { x: -1, y: 384 }))
+				.toBe(generateOcsUrl('/apps/spreed/api/v1/chat/token/42/file/preview?x=-1&y=384'))
+		})
+	})
+
+	describe('generateMessageFileContentUrl', () => {
+		it('generates the proxied content link', () => {
+			expect(generateMessageFileContentUrl('token', '42'))
+				.toBe(generateOcsUrl('/apps/spreed/api/v1/chat/token/42/file/content'))
 		})
 	})
 })

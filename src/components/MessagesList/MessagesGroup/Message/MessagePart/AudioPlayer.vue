@@ -26,7 +26,7 @@ import { generateRemoteUrl } from '@nextcloud/router'
 import { inject } from 'vue'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
-import { generatePublicShareDownloadUrl, isFederatedShareLink } from '../../../../../utils/davUtils.ts'
+import { generateMessageFileContentUrl, generatePublicShareDownloadUrl, isFederatedShareLink } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 
 export default {
@@ -59,6 +59,14 @@ export default {
 		 * the audio before upload
 		 */
 		localUrl: {
+			type: String,
+			default: '',
+		},
+
+		/**
+		 * Conversation token.
+		 */
+		token: {
 			type: String,
 			default: '',
 		},
@@ -110,7 +118,9 @@ export default {
 				return this.localUrl
 			}
 			const userId = this.actorStore.userId
-			if (userId === null || isFederatedShareLink(this.link)) {
+			if (isFederatedShareLink(this.link)) {
+				return generateMessageFileContentUrl(this.token, this.messageId)
+			} else if (userId === null) {
 				// guest mode, use public link download URL
 				return generatePublicShareDownloadUrl(this.link, this.path)
 			} else {

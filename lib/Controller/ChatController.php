@@ -63,10 +63,12 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
@@ -75,10 +77,13 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
 use OCP\Files\FileInfo;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException as FileNotFoundException;
 use OCP\IL10N;
+use OCP\IPreview;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
@@ -152,6 +157,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		private readonly Config $talkConfig,
 		private readonly SendService $matrixSendService,
 		private readonly SyncService $matrixSyncService,
+		private readonly IRootFolder $rootFolder,
+		private readonly IPreview $previewManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -1357,6 +1364,119 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		return $this->prepareCommentsAsDataResponse(array_merge($commentsHistory, $commentsFuture));
+	}
+
+	/**
+	 * Get the preview of the file shared with a chat message
+	 *
+	 * Allows federated users to load previews from their own server
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @param int $x Width of the preview
+	 * @param int $y Height of the preview
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'file'}, array{}>
+	 *
+	 * 200: Preview returned
+	 * 404: Message has no file or no preview is available
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/{messageId}/file/preview', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function getMessageFilePreview(int $messageId, int $x = -1, int $y = -1): FileDisplayResponse|DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->getMessageFile($this->room, $this->participant, $messageId, 'preview', ['x' => $x, 'y' => $y]);
+		}
+
+		$file = $this->getFileOfMessage($messageId);
+		if ($file === null) {
+			return new DataResponse(['error' => 'file'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$preview = $this->previewManager->getPreview($file, $x, $y, true);
+		} catch (FileNotFoundException|\InvalidArgumentException) {
+			return new DataResponse(['error' => 'file'], Http::STATUS_NOT_FOUND);
+		}
+
+		$response = new FileDisplayResponse($preview, Http::STATUS_OK, ['Content-Type' => $preview->getMimeType()]);
+		$response->cacheFor(60 * 60 * 24, false, true);
+		return $response;
+	}
+
+	/**
+	 * Get the content of the media file shared with a chat message
+	 *
+	 * Allows federated users to play audio and show GIFs from their own server
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'file'}, array{}>
+	 *
+	 * 200: File content returned
+	 * 404: Message has no media file or downloading is not allowed
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/{messageId}/file/content', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function getMessageFileContent(int $messageId): FileDisplayResponse|DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->getMessageFile($this->room, $this->participant, $messageId, 'content');
+		}
+
+		$file = $this->getFileOfMessage($messageId, true);
+		if ($file === null) {
+			return new DataResponse(['error' => 'file'], Http::STATUS_NOT_FOUND);
+		}
+
+		return new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => $file->getMimeType()]);
+	}
+
+	/**
+	 * The message is parsed for the current participant, so only files they
+	 * can see in the chat are returned.
+	 */
+	protected function getFileOfMessage(int $messageId, bool $mediaOnly = false): ?File {
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException) {
+			return null;
+		}
+
+		$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+		$this->messageParser->parseMessage($message);
+		$parameter = $message->getMessageParameters()['file'] ?? null;
+		if (!$message->getVisibility() || !is_array($parameter) || ($parameter['type'] ?? '') !== 'file') {
+			return null;
+		}
+
+		if ($mediaOnly && (($parameter['hide-download'] ?? 'no') === 'yes'
+			|| !preg_match('/^(image|audio|video)\//', (string)($parameter['mimetype'] ?? '')))) {
+			return null;
+		}
+
+		$file = $this->rootFolder->getFirstNodeById((int)$parameter['id']);
+		return $file instanceof File ? $file : null;
 	}
 
 	/**

@@ -6,7 +6,7 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { defaultRemoteURL } from '@nextcloud/files/dav'
 import { encodePath } from '@nextcloud/paths'
-import { generateUrl, getBaseUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl, getBaseUrl } from '@nextcloud/router'
 
 /**
  * Generate a WebDAV url to a user files
@@ -107,12 +107,36 @@ export function generatePreviewUrl(fileId: string | number, { x, y }: { x: numbe
  * @return The preview link, e.g., https://nextcloud.ltd/index.php/apps/files_sharing/publicpreview/CBeNTiJz5JeT2CH?file=%2FMedia%2Fphoto.jpg&x=-1&y=384&a=1
  */
 export function generatePublicSharePreviewUrl(shareLink: string, path: string, { x, y }: { x: number, y: number }) {
-	const { token, federationAuth, baseUrl } = parsePublicShareLink(shareLink)
-	const url = generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x={x}&y={y}&a=1', {
+	const token = new URL(shareLink).pathname.split('/').filter(Boolean).at(-1)
+	return generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x={x}&y={y}&a=1', {
 		token,
 		file: path.startsWith('/') ? path : '',
 		x,
 		y,
-	}, baseUrl ? { baseURL: baseUrl } : undefined)
-	return federationAuth ? url + '&' + FEDERATION_AUTH_PARAMETER + '=' + encodeURIComponent(federationAuth) : url
+	})
+}
+
+/**
+ * Generate a preview link for the file of a chat message
+ * Used in federated conversations, where the own server proxies the preview from the host
+ *
+ * @param token - The conversation token
+ * @param messageId - The message id
+ * @param size - The preview size, both -1 for the largest preview
+ * @param size.x - The preview width, -1 to keep the aspect ratio
+ * @param size.y - The preview height, -1 to keep the aspect ratio
+ */
+export function generateMessageFilePreviewUrl(token: string, messageId: string | number, { x, y }: { x: number, y: number }) {
+	return generateOcsUrl('/apps/spreed/api/v1/chat/{token}/{messageId}/file/preview?x={x}&y={y}', { token, messageId, x, y })
+}
+
+/**
+ * Generate a content link for the media file of a chat message
+ * Used in federated conversations, where the own server proxies the file from the host
+ *
+ * @param token - The conversation token
+ * @param messageId - The message id
+ */
+export function generateMessageFileContentUrl(token: string, messageId: string | number) {
+	return generateOcsUrl('/apps/spreed/api/v1/chat/{token}/{messageId}/file/content', { token, messageId })
 }
