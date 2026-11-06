@@ -61,14 +61,24 @@ jobs:
 
       - name: Build comment
         run: |
+          breaking=$(grep -vE '^# API Changelog|^## API Changes$|^No (changes detected|changelog changes)$' oasdiff-breaking.md | sed 's/^### /#### /; /./,$!d' | cat -s)
           {
             echo '<!-- openapi-diff -->'
             echo '## OpenAPI changes'
             echo
             echo '### Breaking changes'
-            sed '1d; /^## API Changes$/d; s/^### /#### /' oasdiff-breaking.md | cat -s
             echo
-            cat oasdiff-diff.md
+            if [ -n "$(echo "$breaking" | tr -d '[:space:]')" ]; then echo "$breaking"; else echo 'None'; fi
+            echo
+            # Deeply nested lists stop indenting on GitHub, so section bodies go into code blocks
+            awk '
+              function flush() { sub(/\n+$/, "\n", body); if (body != "") printf "```\n%s```\n\n", body; body = "" }
+              /^### / { flush(); print; print ""; next }
+              /^-+$/ { next }
+              /^[[:space:]]*$/ { if (body != "") body = body "\n"; next }
+              { sub(/ +$/, ""); body = body $0 "\n" }
+              END { flush() }
+            ' oasdiff-diff.md
           } > "$RUNNER_TEMP/body.md"
           # Comment body limit is 65536 characters
           cp "$RUNNER_TEMP/body.md" "$GITHUB_STEP_SUMMARY"
