@@ -8,7 +8,7 @@ import type { ChatMessage, Conversation } from '../types/index.ts'
 
 import { getCanonicalLocale, t } from '@nextcloud/l10n'
 import { computed, ref, toRef } from 'vue'
-import { CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
 import { futureRelativeTime, getDiffInDays, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
@@ -166,12 +166,19 @@ export function useConversationInfo({
 		}
 
 		if (lastMessage.value.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION) {
-			const reaction = lastMessage.value.actorId === item.value.actorId && lastMessage.value.actorType === item.value.actorType
-				? t('spreed', 'You reacted with {reaction}', { reaction: lastMessage.value.message }, { escape: false, sanitize: false })
+			let reaction
+			if (lastMessage.value.actorId === item.value.actorId && lastMessage.value.actorType === item.value.actorType) {
+				reaction = t('spreed', 'You reacted with {reaction}', { reaction: lastMessage.value.message }, { escape: false, sanitize: false })
+			} else if (lastMessage.value.actorType === ATTENDEE.ACTOR_TYPE.BOTS) {
+				// TRANSLATORS A bot in one-to-one conversation has reacted with emoji '{reaction}'
+				reaction = t('spreed', '{actor} reacted with {reaction}', {
+					actor: getDisplayNameWithFallback(lastMessage.value.actorDisplayName, lastMessage.value.actorType),
+					reaction: lastMessage.value.message,
+				}, { escape: false, sanitize: false })
+			} else {
 				// TRANSLATORS The second person in one-to-one conversation has reacted with emoji '{reaction}'
-				: t('spreed', 'Reacted with {reaction}', {
-						reaction: lastMessage.value.message,
-					}, { escape: false, sanitize: false })
+				reaction = t('spreed', 'Reacted with {reaction}', { reaction: lastMessage.value.message }, { escape: false, sanitize: false })
+			}
 			return {
 				actor: null,
 				icon: null,

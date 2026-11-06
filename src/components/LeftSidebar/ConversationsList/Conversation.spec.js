@@ -180,6 +180,16 @@ describe('ConversationItem.vue', () => {
 				await testConversationLabel(item, 'Reacted with 👍')
 			})
 
+			test('displays bot last reaction with display name in one to one conversations', async () => {
+				item.type = CONVERSATION.TYPE.ONE_TO_ONE
+				item.lastMessage.actorType = ATTENDEE.ACTOR_TYPE.BOTS
+				item.lastMessage.actorDisplayName = 'Helper bot'
+				item.lastMessage.message = '👍'
+				item.lastMessage.systemMessage = MESSAGE.SYSTEM_TYPE.REACTION
+
+				await testConversationLabel(item, 'Helper bot reacted with 👍')
+			})
+
 			test('displays last message without author in one to one conversations', async () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
 				await testConversationLabel(item, 'hello')
