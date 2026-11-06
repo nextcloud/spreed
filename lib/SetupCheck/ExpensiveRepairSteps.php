@@ -16,7 +16,7 @@ use OCP\SetupCheck\ISetupCheck;
 use OCP\SetupCheck\SetupResult;
 
 class ExpensiveRepairSteps implements ISetupCheck {
-	public const int VERSION = 1;
+	public const VERSION = 1;
 
 	public function __construct(
 		private readonly IAppConfig $appConfig,
