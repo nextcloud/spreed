@@ -392,6 +392,8 @@
     "The summary for the call in {call} was uploaded to {file}." : "{call} 通話的摘要已上傳至 {file}。",
     "Failed to summarize call recording" : "通話錄音文字摘要失敗",
     "The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration." : "伺服器無法為 {call} 中的通話在 {file} 處建立摘要。請聯絡管理員。",
+    "Retry transcription" : "重試轉錄",
+    "Retry summary" : "重試摘要",
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} 邀請您加入在 {remoteServer} 上的 {roomName}",
     "Accept" : "接受",
     "Decline" : "婉拒",

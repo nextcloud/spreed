@@ -394,6 +394,8 @@ OC.L10N.register(
     "The summary for the call in {call} was uploaded to {file}." : "The summary for the call in {call} was uploaded to {file}.",
     "Failed to summarize call recording" : "Failed to summarize call recording",
     "The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration." : "The server failed to summarize the recording at {file} for the call in {call}. Please reach out to the administration.",
+    "Retry transcription" : "Retry transcription",
+    "Retry summary" : "Retry summary",
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} invited you to join {roomName} on {remoteServer}",
     "Accept" : "Accept",
     "Decline" : "Decline",
