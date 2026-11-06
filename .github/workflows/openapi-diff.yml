@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: OpenAPI diff
+
+on:
+  pull_request:
+    paths:
+      - 'openapi-full.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openapi-diff-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  openapi-diff:
+    runs-on: ubuntu-latest-low
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Fetch base commit
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: git fetch --depth=1 origin "$BASE_SHA"
+
+      - name: Annotate breaking changes
+        uses: oasdiff/oasdiff-action/breaking@9e56cf8b3aff7edb326d5767d3d23f96127e20c3 # v0.1.21
+        with:
+          base: '${{ github.event.pull_request.base.sha }}:openapi-full.json'
+          revision: 'HEAD:openapi-full.json'
+          review: false
+
+      - name: List breaking changes
+        uses: oasdiff/oasdiff-action/changelog@9e56cf8b3aff7edb326d5767d3d23f96127e20c3 # v0.1.21
+        with:
+          base: '${{ github.event.pull_request.base.sha }}:openapi-full.json'
+          revision: 'HEAD:openapi-full.json'
+          level: WARN
+          format: markdown
+          output-to-file: oasdiff-breaking.md
+          review: false
+
+      - name: List all changes
+        uses: oasdiff/oasdiff-action/diff@9e56cf8b3aff7edb326d5767d3d23f96127e20c3 # v0.1.21
+        with:
+          base: '${{ github.event.pull_request.base.sha }}:openapi-full.json'
+          revision: 'HEAD:openapi-full.json'
+          format: markdown
+          output-to-file: oasdiff-diff.md
+
+      - name: Build comment
+        run: |
+          {
+            echo '<!-- openapi-diff -->'
+            echo '## OpenAPI changes'
+            echo
+            echo '### Breaking changes'
+            sed '1d; /^## API Changes$/d; s/^### /#### /' oasdiff-breaking.md | cat -s
+            echo
+            cat oasdiff-diff.md
+          } > "$RUNNER_TEMP/body.md"
+          # Comment body limit is 65536 characters
+          cp "$RUNNER_TEMP/body.md" "$GITHUB_STEP_SUMMARY"
+          if [ "$(wc -c < "$RUNNER_TEMP/body.md")" -gt 60000 ]; then
+            head -c 60000 "$GITHUB_STEP_SUMMARY" > "$RUNNER_TEMP/body.md"
+            printf '\n\n…truncated, see the workflow summary for the full diff.\n' >> "$RUNNER_TEMP/body.md"
+          fi
+
+      # Fork PRs only get a read-only token, they rely on the workflow summary
+      - name: Post or update comment
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          id=$(gh api --paginate "repos/$REPO/issues/$PR/comments" --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- openapi-diff -->"))) | .id' | head -n1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -F "body=@$RUNNER_TEMP/body.md" > /dev/null
+          else
+            gh pr comment "$PR" --repo "$REPO" --body-file "$RUNNER_TEMP/body.md"
+          fi
