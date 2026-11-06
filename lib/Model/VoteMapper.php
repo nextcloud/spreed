@@ -74,7 +74,7 @@ class VoteMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 
 		$query->delete($this->getTableName());
-		foreach (array_chunk($pollIds, IQueryBuilder::MAX_IN_PARAMETERS) as $ids) {
+		foreach (array_chunk($pollIds, 1000) as $ids) {
 			$query->where($query->expr()->in('poll_id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 			$query->executeStatement();
 		}

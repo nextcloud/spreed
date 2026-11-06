@@ -125,7 +125,7 @@ class CleanupExpiredMessageLeftovers implements IRepairStepExpensive {
 		$result->closeCursor();
 
 		$expiredPollIds = array_values(array_diff($pollIds, $referencedPollIds));
-		foreach (array_chunk($expiredPollIds, IQueryBuilder::MAX_IN_PARAMETERS) as $ids) {
+		foreach (array_chunk($expiredPollIds, 1000) as $ids) {
 			$delete = $this->connection->getQueryBuilder();
 			$delete->delete('talk_poll_votes')
 				->where($delete->expr()->in('poll_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
