@@ -7,6 +7,7 @@ import { cloneDeep } from 'es-toolkit'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionText from '@nextcloud/vue/components/NcActionText'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 
 // helpers
@@ -55,6 +56,23 @@ function findNcButton(wrapper, text) {
 	const items = (Array.isArray(text))
 		? buttons.filter((button) => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
 		: buttons.filter((button) => button.text() === text || button.vm.ariaLabel === text)
+	if (!items.length) {
+		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
+	}
+	return items[0]
+}
+
+/**
+ *
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcCheckboxRadioSwitch
+ * @param {string | Array<string>} text or array of possible texts to look for NcCheckboxRadioSwitch
+ * @return {import('@vue/test-utils').Wrapper}
+ */
+function findNcCheckboxRadioSwitch(wrapper, text) {
+	const checkboxes = wrapper.findAllComponents(NcCheckboxRadioSwitch)
+	const items = (Array.isArray(text))
+		? checkboxes.filter((checkbox) => text.includes(checkbox.text()))
+		: checkboxes.filter((checkbox) => checkbox.text() === text)
 	if (!items.length) {
 		return wrapper.findComponent({ name: 'VTU__return-error-wrapper' }) // Returns ErrorWrapper
 	}
@@ -137,6 +155,7 @@ export {
 	findNcActionButton,
 	findNcActionText,
 	findNcButton,
+	findNcCheckboxRadioSwitch,
 	findNcListItems,
 	generateOCSErrorResponse,
 	generateOCSResponse,
