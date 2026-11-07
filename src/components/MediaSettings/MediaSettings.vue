@@ -218,6 +218,12 @@
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch
+						v-if="showStartRecordingOption && isRecordingFromStart"
+						v-model="isRecordingAudioOnly"
+						class="checkbox">
+						{{ t('spreed', 'Record audio only') }}
+					</NcCheckboxRadioSwitch>
 					<!-- Notify call option-->
 					<NcCheckboxRadioSwitch
 						v-if="showNotifyCallOption"
@@ -239,6 +245,7 @@
 						class="action-button"
 						isMediaSettings
 						:isRecordingFromStart="isRecordingFromStart"
+						:isRecordingAudioOnly="isRecordingAudioOnly"
 						:disabled="disabledCallButton"
 						:recordingConsentGiven="recordingConsentGiven"
 						:silentCall="!notifyCall" />
@@ -431,6 +438,7 @@ export default {
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
 			isRecordingFromStart: false,
+			isRecordingAudioOnly: false,
 			isPublicShareAuthSidebar: false,
 			isMirrored: false,
 			skipBlurVirtualBackground: false,
@@ -795,6 +803,7 @@ export default {
 			this.isPublicShareAuthSidebar = false
 			this.isDeviceCheck = false
 			this.isRecordingFromStart = false
+			this.isRecordingAudioOnly = false
 			this.isMirrored = false
 			// Update devices preferences
 			this.updatePreferences('audioinput')
