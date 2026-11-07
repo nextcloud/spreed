@@ -60,8 +60,8 @@ describe('PollViewer.vue', () => {
 		const wrapper = mountPollViewer()
 		await nextTick()
 
-		wrapper.vm.checked = ['0', '2']
-		await nextTick()
+		await wrapper.find('input[value="0"]').setValue(true)
+		await wrapper.find('input[value="2"]').setValue(true)
 
 		pollsStore.addPoll({
 			token: TOKEN,
@@ -77,8 +77,7 @@ describe('PollViewer.vue', () => {
 		const wrapper = mountPollViewer()
 		await nextTick()
 
-		wrapper.vm.checked = ['0']
-		await nextTick()
+		await wrapper.find('input[value="0"]').setValue(true)
 
 		pollsStore.addPoll({
 			token: TOKEN,
