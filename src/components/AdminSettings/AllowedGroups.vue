@@ -10,6 +10,9 @@
 			{{ t('spreed', 'When at least one group is selected, only people of the listed groups can be part of conversations.') }}
 		</p>
 		<p class="settings-hint">
+			{{ t('spreed', 'Only the listed groups can be added to conversations as a group.') }}
+		</p>
+		<p class="settings-hint">
 			{{ t('spreed', 'Guests can still join public conversations.') }}
 		</p>
 		<p class="settings-hint">
