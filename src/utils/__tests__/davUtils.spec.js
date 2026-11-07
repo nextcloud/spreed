@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { generateUrl, getBaseUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl, getBaseUrl } from '@nextcloud/router'
 import { describe, expect, it } from 'vitest'
-import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../davUtils.ts'
+import { generateMessageFileContentUrl, generateMessageFilePreviewUrl, generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl, isFederatedShareLink } from '../davUtils.ts'
 
 describe('davUtils', () => {
 	describe('generatePublicShareDownloadUrl', () => {
@@ -17,6 +17,23 @@ describe('davUtils', () => {
 			['https://nextcloud.ltd/index.php/s/TOKEN?path=%2FMedia', '/Media/#1.jpg', '/public.php/dav/files/TOKEN/Media/%231.jpg'],
 		])('generates download link for %s and %s', (link, path, expected) => {
 			expect(generatePublicShareDownloadUrl(link, path)).toBe(getBaseUrl() + expected)
+		})
+
+		it.each([
+			['https://host.ltd/index.php/s/TOKEN?talkFederationAuth=42.abc', '/photo 1.jpg', 'https://host.ltd/public.php/dav/files/TOKEN/photo%201.jpg?talkFederationAuth=42.abc'],
+			['https://host.ltd/nc/s/TOKEN?path=%2FMedia&talkFederationAuth=42.abc', '/Media/#1.jpg', 'https://host.ltd/nc/public.php/dav/files/TOKEN/Media/%231.jpg?talkFederationAuth=42.abc'],
+		])('generates federated download link for %s and %s', (link, path, expected) => {
+			expect(generatePublicShareDownloadUrl(link, path)).toBe(expected)
+		})
+	})
+
+	describe('isFederatedShareLink', () => {
+		it.each([
+			[undefined, false],
+			['https://nextcloud.ltd/index.php/s/TOKEN', false],
+			['https://host.ltd/index.php/s/TOKEN?talkFederationAuth=42.abc', true],
+		])('detects %s', (link, expected) => {
+			expect(isFederatedShareLink(link)).toBe(expected)
 		})
 	})
 
@@ -37,6 +54,20 @@ describe('davUtils', () => {
 			['https://nextcloud.ltd/index.php/s/TOKEN?path=%2FMedia', '/Media/#1.jpg', '/apps/files_sharing/publicpreview/TOKEN?file=%2FMedia%2F%231.jpg&x=-1&y=384&a=1'],
 		])('generates preview link for %s and %s', (link, path, expected) => {
 			expect(generatePublicSharePreviewUrl(link, path, { x: -1, y: 384 })).toBe(generateUrl(expected))
+		})
+	})
+
+	describe('generateMessageFilePreviewUrl', () => {
+		it('generates the proxied preview link', () => {
+			expect(generateMessageFilePreviewUrl('token', 42, { x: -1, y: 384 }))
+				.toBe(generateOcsUrl('/apps/spreed/api/v1/chat/token/42/file/preview?x=-1&y=384'))
+		})
+	})
+
+	describe('generateMessageFileContentUrl', () => {
+		it('generates the proxied content link', () => {
+			expect(generateMessageFileContentUrl('token', '42'))
+				.toBe(generateOcsUrl('/apps/spreed/api/v1/chat/token/42/file/content'))
 		})
 	})
 })

@@ -3162,6 +3162,16 @@ class FeatureContext implements Context {
 		Assert::assertMatchesRegularExpression($pattern, $fileLink, 'File link does not match expected pattern');
 	}
 
+	#[When('/^user "([^"]*)" gets the file (preview|content) of message "([^"]*)" in room "([^"]*)" with (\d+)(?: as "([^"]*)")?$/')]
+	public function userGetsTheFileOfMessage(string $user, string $type, string $message, string $identifier, int $statusCode, string $mimeType = ''): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/file/' . $type . ($type === 'preview' ? '?x=32&y=32' : ''));
+		$this->assertStatusCode($this->response, $statusCode);
+		if ($mimeType !== '') {
+			Assert::assertSame($mimeType, $this->response->getHeaderLine('Content-Type'));
+		}
+	}
+
 	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|pinned|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSharedMediaInRoom(string $user, string $objectType, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
