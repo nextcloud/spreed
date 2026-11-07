@@ -126,9 +126,17 @@ async function connectSignaling(token) {
 	if (!signaling) {
 		signaling = Signaling.createConnection(settings)
 		signaling.on('updateSettings', async function() {
-			const settings = await getSignalingSettings(token)
+			let settings = await getSignalingSettings(token)
+			// The signaling connection waits for the updated settings, so the
+			// request is retried until it succeeds, unless the settings were
+			// meanwhile set in some other way.
+			for (let delay = 1000; !settings && signaling?._pendingUpdateSettingsPromise; delay = Math.min(delay * 2, 30000)) {
+				console.debug('Failed to get updated settings, retrying in ' + delay + ' ms')
+				await new Promise((resolve) => setTimeout(resolve, delay))
+				settings = await getSignalingSettings(token)
+			}
 			console.debug('Received updated settings', settings)
-			signaling.setSettings(settings)
+			signaling?.setSettings(settings)
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
@@ -210,6 +218,43 @@ function setupWebRtc() {
 	})
 }
 
+// Minimum time (in seconds) that the TURN credentials must still be valid to
+// join a call with them.
+const MIN_TURN_CREDENTIALS_VALIDITY = 3600
+
+/**
+ * Update the STUN and TURN servers if the TURN credentials expire soon.
+ *
+ * The credentials of the TURN servers are valid only for a limited time (the
+ * expiration time is the first part of the user name, as defined by the TURN
+ * REST API), but the signaling settings are fetched only when the conversation
+ * is joined, so they could have already expired when joining a call in a page
+ * that was open for a long time.
+ *
+ * @param {string} token The token of the conversation of the call
+ * @return {Promise<void>}
+ */
+async function refreshIceServersIfExpiring(token) {
+	const username = signaling?.settings?.turnservers?.[0]?.username
+	const expiration = Number.parseInt(String(username ?? '').split(':')[0], 10)
+	if (!expiration || expiration - Date.now() / 1000 > MIN_TURN_CREDENTIALS_VALIDITY) {
+		return
+	}
+
+	try {
+		const response = await fetchSignalingSettings({ token }, {})
+		const { stunservers, turnservers } = response.data.ocs.data
+
+		signaling.settings.stunservers = stunservers
+		signaling.settings.turnservers = turnservers
+		if (webRtc) {
+			webRtc.webrtc.config.peerConnectionConfig.iceServers = [].concat(stunservers || [], turnservers || [])
+		}
+	} catch (exception) {
+		console.warn('Failed to update the TURN servers before joining the call', exception)
+	}
+}
+
 /**
  * Join the given conversation on the respective signaling server with the given sessionId
  *
@@ -242,6 +287,8 @@ async function signalingJoinConversation(token, sessionId) {
 async function signalingJoinCall(token, flags, silent, recordingConsent, silentFor, options = {}) {
 	if (tokensInSignaling[token]) {
 		pendingJoinCallToken = token
+
+		await refreshIceServersIfExpiring(token)
 
 		setupWebRtc()
 
