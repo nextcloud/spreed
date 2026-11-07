@@ -469,6 +469,13 @@ export default {
 			}
 		}
 
+		&.message--highlighted {
+			animation: none;
+
+			.message-body {
+				animation: highlight-animation 5s 1;
+			}
+		}
 	}
 	// END Split view
 
@@ -500,8 +507,8 @@ export default {
 }
 
 @keyframes highlight-animation {
-	0% { background-color: var(--color-background-hover); }
-	50% { background-color: var(--color-background-hover); }
+	0% { background-color: var(--message-body-hover, var(--color-background-hover)); }
+	50% { background-color: var(--message-body-hover, var(--color-background-hover)); }
 	100% { background-color: rgba(var(--color-background-hover), 0); }
 }
 
