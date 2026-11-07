@@ -14,6 +14,7 @@ import router from '../../__mocks__/router.js'
 import { ATTENDEE, POLL } from '../../constants.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { usePollsStore } from '../../stores/polls.ts'
+import { findNcCheckboxRadioSwitch } from '../../test-helpers.js'
 
 describe('PollViewer.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -60,8 +61,8 @@ describe('PollViewer.vue', () => {
 		const wrapper = mountPollViewer()
 		await nextTick()
 
-		wrapper.vm.checked = ['0', '2']
-		await nextTick()
+		await findNcCheckboxRadioSwitch(wrapper, 'Option A').find('input').setValue(true)
+		await findNcCheckboxRadioSwitch(wrapper, 'Option C').find('input').setValue(true)
 
 		pollsStore.addPoll({
 			token: TOKEN,
@@ -69,16 +70,16 @@ describe('PollViewer.vue', () => {
 		})
 		await nextTick()
 
-		expect(wrapper.vm.modalPage).toBe('voting')
-		expect(wrapper.vm.voteToSubmit).toEqual(['0', '2'])
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option A').find('input').element.checked).toBe(true)
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option B').find('input').element.checked).toBe(false)
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option C').find('input').element.checked).toBe(true)
 	})
 
 	it('shows the results when the poll is closed', async () => {
 		const wrapper = mountPollViewer()
 		await nextTick()
 
-		wrapper.vm.checked = ['0']
-		await nextTick()
+		await findNcCheckboxRadioSwitch(wrapper, 'Option A').find('input').setValue(true)
 
 		pollsStore.addPoll({
 			token: TOKEN,
@@ -86,7 +87,7 @@ describe('PollViewer.vue', () => {
 		})
 		await nextTick()
 
-		expect(wrapper.vm.modalPage).toBe('results')
-		expect(wrapper.vm.voteToSubmit).toEqual([])
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option A').exists()).toBe(false)
+		expect(wrapper.text()).toContain('Final results')
 	})
 })
