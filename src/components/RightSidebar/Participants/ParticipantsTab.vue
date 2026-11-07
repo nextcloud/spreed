@@ -42,12 +42,19 @@
 			:value="searchText"
 			@select="addParticipants" />
 
-		<ParticipantsListVirtual
-			v-if="!isSearching"
-			:key="token"
-			class="h-100"
-			:participants="participants"
-			:loading="!participantsInitialised" />
+		<template v-if="!isSearching">
+			<template v-if="raisedHandParticipants.length">
+				<NcAppNavigationCaption :name="t('spreed', 'Raised hands')" />
+				<ParticipantsList class="raised-hands" :items="raisedHandParticipants" />
+				<NcAppNavigationCaption v-if="otherParticipants.length" :name="t('spreed', 'Participants')" />
+			</template>
+
+			<ParticipantsListVirtual
+				:key="token"
+				class="h-100"
+				:participants="otherParticipants"
+				:loading="!participantsInitialised" />
+		</template>
 
 		<div v-else class="scroller h-100">
 			<template v-if="isOneToOneConversation">
@@ -110,7 +117,7 @@ import { useGetParticipants } from '../../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
-import { ATTENDEE, CONVERSATION } from '../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import {
 	getTalkConfig,
 	hasTalkFeature,
@@ -119,6 +126,7 @@ import {
 import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
+import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import CancelableRequest from '../../../utils/CancelableRequest.ts'
 import { isClassifiedConversation } from '../../../utils/conversation.ts'
@@ -175,6 +183,7 @@ export default {
 			isInCall,
 			cancelableGetParticipants,
 			sidebarStore: useSidebarStore(),
+			participantActivityStore: useParticipantActivityStore(),
 			token: useGetToken(),
 		}
 	},
@@ -198,6 +207,33 @@ export default {
 
 		participants() {
 			return this.$store.getters.participantsList(this.token).slice().sort(this.sortParticipants)
+		},
+
+		raisedHandParticipants() {
+			const participantBySessionId = new Map()
+			for (const participant of this.participants) {
+				if (participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+					continue
+				}
+				for (const sessionId of participant.sessionIds) {
+					participantBySessionId.set(sessionId, participant)
+				}
+			}
+
+			// The queue is already sorted. A Set keeps only the earliest session of a participant.
+			const raisedHandParticipants = new Set()
+			for (const sessionId of this.participantActivityStore.raisedHandsQueue) {
+				const participant = participantBySessionId.get(sessionId)
+				if (participant) {
+					raisedHandParticipants.add(participant)
+				}
+			}
+			return [...raisedHandParticipants]
+		},
+
+		otherParticipants() {
+			const raisedHandParticipants = new Set(this.raisedHandParticipants)
+			return this.participants.filter((participant) => !raisedHandParticipants.has(participant))
 		},
 
 		filteredParticipants() {
@@ -450,6 +486,13 @@ export default {
 }
 
 .scroller {
+	overflow-y: auto;
+}
+
+// Keep the main list visible when many hands are raised
+.raised-hands {
+	flex-shrink: 0;
+	max-height: 50%;
 	overflow-y: auto;
 }
 

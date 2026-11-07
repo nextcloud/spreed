@@ -15,7 +15,6 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionButtonGroup from '@nextcloud/vue/components/NcActionButtonGroup'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
-import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
 import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
@@ -69,7 +68,7 @@ const raiseHandButtonLabel = computed(() => {
 		: t('spreed', 'Lower hand (R)')
 })
 
-const actionsLabel = computed(() => hasReactionSupport.value ? t('spreed', 'Send a reaction') : raiseHandButtonLabel.value)
+const actionsLabel = computed(() => hasReactionSupport.value ? t('spreed', 'Raise hand or send a reaction') : raiseHandButtonLabel.value)
 const actionsVariant = computed(() => isHandRaised.value ? 'primary' : 'tertiary')
 
 /**
@@ -170,7 +169,7 @@ watch(() => props.localMediaModel.attributes.speaking, (speaking: boolean) => {
 		class="reaction">
 		<template #icon>
 			<IconHandBackLeft v-if="isHandRaised" :size="18" />
-			<IconEmoticonOutline v-else :size="20" />
+			<IconHandBackLeftOutline v-else :size="18" />
 		</template>
 
 		<NcActionButtonGroup
