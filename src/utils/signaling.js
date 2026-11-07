@@ -824,6 +824,10 @@ Signaling.Standalone.prototype.connect = function() {
 					case 'no_such_room':
 						console.error('An error occurred getting the room for user')
 						break
+					case 'already_joined':
+						// Answer to joining a room again, handled in
+						// "joinResponseReceived".
+						break
 					default:
 						console.error('Ignore unknown error: %s', JSON.stringify(data.error))
 						this._trigger('error', [data.error])
@@ -1307,6 +1311,35 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		return
 	}
 
+	// The signaling server rejects joining a room that the session has joined
+	// already, but the room is joined nevertheless.
+	const alreadyJoined = data.type === 'error' && data.error.code === 'already_joined'
+
+	if (data.type === 'error' && !alreadyJoined) {
+		// The room was not joined (for example, the signaling server could not
+		// get an answer from Nextcloud in time), so it must not be treated as
+		// joined: the call would be joined, but without being able to send or
+		// receive any media. Joining is tried again a few times, and then
+		// again with a new session, as when the join is rejected.
+		this._joinRoomFailedAttempts = (this._joinRoomFailedAttempts || 0) + 1
+		console.error('Joining the room failed: ' + data.error.code + ' (' + data.error.message + ')')
+
+		if (this._joinRoomFailedAttempts > 3) {
+			this._joinRoomFailedAttempts = 0
+			this.processErrorNoSuchRoom()
+			return
+		}
+
+		setTimeout(() => {
+			if (this.connected && this.currentRoomToken === token && this.signalingRoomJoined !== token) {
+				this._joinRoomSuccess(token, this.nextcloudSessionId)
+			}
+		}, 1000 * 2 ** (this._joinRoomFailedAttempts - 1))
+
+		return
+	}
+
+	this._joinRoomFailedAttempts = 0
 	this._rejoinRoomAfterInvalidSession = null
 	this.signalingRoomJoined = token
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
