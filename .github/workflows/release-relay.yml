@@ -1,0 +1,38 @@
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Notify release-relay on release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    name: Dispatch release to release-relay
+    runs-on: ubuntu-latest
+
+    # Only allowed to run on nextcloud-releases repositories
+    if: ${{ github.repository_owner == 'nextcloud-releases' }}
+
+    steps:
+      - name: Check actor permission
+        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v3.0
+        with:
+          require: write
+
+      - name: Dispatch to release-relay
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697  # v4.0.1
+        with:
+          token: ${{ secrets.DISPATCH_PAT }}
+          repository: nextcloud-gmbh/release-relay
+          event-type: app-tagged
+          client-payload: '{"app": "${{ github.repository }}", "tag": "${{ github.event.release.tag_name }}"}'
