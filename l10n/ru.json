@@ -819,6 +819,8 @@
     "Talk configuration values" : "Параметры конфигурации приложения «Конференции»",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "Ограничение длительности вызова работает только с системным cron. Включите системный cron или удалите параметр `max_call_duration`.",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "Малые значения `max_call_duration` (сейчас — %d) соблюдаются неточно: фоновая задача запускается только раз в 5 минут. Используйте их на свой страх и риск.",
+    "Repair steps" : "Шаги восстановления",
+    "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "На крупных серверах шаги восстановления «Конференций» выполняются долго, поэтому при обновлении они не запускаются автоматически. Чтобы выполнить их, используйте команду `occ maintenance:repair --include-expensive`.",
     "Federation" : "Федерация",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "При включённой федерации в «Конференциях» настоятельно рекомендуется настроить «memcache.locking».",
     "High-performance backend" : "Высокопроизводительный сервер",

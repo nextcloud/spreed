@@ -821,6 +821,8 @@ OC.L10N.register(
     "Talk configuration values" : "Talk kõnerakenduse seadistused",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "Kõne maksimumkestuse jõustamine toimib vaid siis, kui kasutusel on süstmne cron. Seega palun võta cron kasutusele või eemalda seadistustest „max_call_duration“.",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "Väga väikesed kõne maksimumkestused („max_call_duration“, praeguse väärtusega %d) pole tegelikkuses jõustatavad. Taustateenus, mis seda kontrollib, käivitub vaid iga 5 minuti järel, seega palun arvesta sellega.",
+    "Repair steps" : "Paranduse sammud",
+    "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "Kõnerakendusel on olemas paranduse sammud, mis mahukamate serverite puhul võib selleks kuluda aega ja seetõttu toiming jääb uuendamisel automaatselt tegemata. Vajaliku ümberkolimise jaoks käivita halduskäsk „occ maintenance:repair --include-expensive“.",
     "Federation" : "Liitpilv",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Kui kõnerakendus on liitpilvele avatud, siis me soovitame, et seadistad „memcache.locking“ tingimuse.",
     "High-performance backend" : "Suure jõudlusega taustateenus",

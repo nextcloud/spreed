@@ -821,6 +821,8 @@ OC.L10N.register(
     "Talk configuration values" : "Talk 設定值",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "僅系統 cron 支援強制通話持續時間。請啟用系統 cron 或移除 `max_call_duration` 設定。",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "因為技術限制，較小的 `max_call_duration` 值（目前設定為 %d）無法強制執行。背景作業每5分鐘執行一次，因此使用請自負風險。",
+    "Repair steps" : "修復步驟",
+    "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "Talk 中的某些修復步驟在較大的站台上會耗費較長時間，因此不會在升級過程中自動執行。請使用指令 `occ maintenance:repair --include-expensive` 來執行這些步驟。",
     "Federation" : "聯邦",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "強烈建議在啟用聯盟 Talk 時設定「memcache.locking」。",
     "High-performance backend" : "高效能後端",
