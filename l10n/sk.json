@@ -819,6 +819,8 @@
     "Talk configuration values" : "Konfiguračné hodnoty aplikácie Talk",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "Vynútenie trvania hovoru je podporované iba systémovým cronom. Povoľte systémový cron alebo odstráňte konfiguráciu `max_call_duration`.",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "Malé hodnoty „max_call_duration“ (momentálne nastavené na %d) nie sú vynútiteľné z dôvodu technických obmedzení. Úloha na pozadí sa vykonáva iba každých 5 minút, takže použitie na vlastné riziko.",
+    "Repair steps" : "Kroky opravy",
+    "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "Aplikácia Talk obsahuje kroky opravy, ktoré vo väčších inštanciách trvajú dlho, a preto sa počas aktualizácií nevykonávajú automaticky. Na ich vykonanie použite príkaz `occ maintenance:repair --include-expensive`.",
     "Federation" : "Združovanie",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Dôrazne sa odporúča nakonfigurovať \"memcache.locking\", keď je zapnutá Talk Federation.",
     "High-performance backend" : "Vysoko výkonná podporná vrstva",

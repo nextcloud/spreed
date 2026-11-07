@@ -819,6 +819,8 @@
     "Talk configuration values" : "Konuş yapılandırma değerleri",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "Yalnızca sistem zamanlanmış görevi ile bir arama süresi dayatılabilir. Lütfen sistem zamanlanmış görevini açın ya da `max_call_duration` yapılandırmasını kaldırın.",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "Küçük `max_call_duration` değerleri (şu anda %d olarak ayarlanmış) teknik sınırlamalar nedeniyle zorunlu kılınamaz. Arka plan görevi yalnızca her 5 dakikada bir yürütülür. Buradaki riski kabul ederek kullanın.",
+    "Repair steps" : "Onarım adımları",
+    "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "Daha büyük kopyalarda Konuş onarım adımları uzun zaman alır. Bu nedenle yükseltmeler sırasında otomatik olarak yapılmazlar. Bunları yapmak için `occ maintenance:repair --include-expensive` komutunu yürütün.",
     "Federation" : "Birlik",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Konuş birleştirme özelliği açıldığında \"memcache.locking\" yapılandırmasının ayarlanması önemle önerilir.",
     "High-performance backend" : "Yüksek başarımlı arka uç",
