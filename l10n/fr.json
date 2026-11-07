@@ -819,6 +819,8 @@
     "Talk configuration values" : "Valeurs de configuration de Talk",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "Le forçage d'une durée d'appel n'est pris en charge qu'avec le système cron. Veuillez activer le système cron ou supprimer la configuration `max_call_duration`.",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "Les petites valeurs `max_call_duration` (actuellement définies sur %d) ne sont pas applicables en raison de limitations techniques. La tâche en arrière-plan n'est exécutée que toutes les 5 minutes, utilisez-la donc à vos risques et périls.",
+    "Repair steps" : "Étapes de réparation",
+    "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "Talk dispose d'étapes de réparation qui prennent beaucoup de temps sur les instances les plus volumineuses, elles ne sont donc pas effectuées automatiquement lors des mises à niveau. Utilisez la commande `occ maintenance:repair --include-expensive` pour les effectuer.",
     "Federation" : "Fédération",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Il est fortement recommandé de configurer \"memcache.locking\" lorsque Talk Federation est activé.",
     "High-performance backend" : "Serveur haute performance",
