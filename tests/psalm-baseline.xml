@@ -130,6 +130,8 @@
 			'actorDisplayName' => $this->getDisplayName(),
 			'status' => $this->getStatus(),
 			'resultMode' => $this->getResultMode(),
+			'showVotersBeforeClosing' => $this->getShowVotersBeforeClosing(),
+			'showResultsBeforeVoting' => $this->getShowResultsBeforeVoting(),
 			'maxVotes' => $this->getMaxVotes(),
 		]]]></code>
     </LessSpecificReturnStatement>

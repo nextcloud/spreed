@@ -32,7 +32,7 @@ class PollService {
 	/**
 	 * @throws PollPropertyException
 	 */
-	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): Poll {
+	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes, bool $draft, bool $showVotersBeforeClosing = false, bool $showResultsBeforeVoting = false): Poll {
 		$poll = new Poll();
 		$poll->setRoomId($roomId);
 		$poll->setActorType($actorType);
@@ -42,6 +42,8 @@ class PollService {
 		$poll->setOptions($options);
 		$poll->setVotes(json_encode([]));
 		$poll->setResultMode($resultMode);
+		$poll->setShowVotersBeforeClosing($showVotersBeforeClosing && $resultMode === Poll::MODE_PUBLIC);
+		$poll->setShowResultsBeforeVoting($showResultsBeforeVoting);
 		$poll->setMaxVotes($maxVotes);
 		if ($draft) {
 			$poll->setStatus(Poll::STATUS_DRAFT);

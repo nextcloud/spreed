@@ -69,6 +69,8 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
 	 * @param int $threadId Thread id which this poll should be posted into (also requires `threads` capability)
+	 * @param bool $showVotersBeforeClosing Whether voters can see who voted for each option before a public poll closes (requires `talk-polls-live-voters` capability)
+	 * @param bool $showResultsBeforeVoting Whether results are visible before voting, including hidden polls (requires `talk-polls-results-before-voting` capability)
 	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
 	 * 200: Draft created successfully
@@ -86,11 +88,11 @@ class PollController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes, bool $draft = false, int $threadId = 0): DataResponse {
+	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes, bool $draft = false, int $threadId = 0, bool $showVotersBeforeClosing = false, bool $showResultsBeforeVoting = false): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
-			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft);
+			return $proxy->createPoll($this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $draft, $showVotersBeforeClosing, $showResultsBeforeVoting);
 		}
 
 		if (($this->room->getType() !== Room::TYPE_GROUP
@@ -116,6 +118,8 @@ class PollController extends AEnvironmentAwareOCSController {
 				$resultMode,
 				$maxVotes,
 				$draft,
+				$showVotersBeforeClosing,
+				$showResultsBeforeVoting,
 			);
 		} catch (PollPropertyException $e) {
 			$this->logger->error('Error creating poll', ['exception' => $e]);
@@ -173,6 +177,8 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @param 0|1 $resultMode Mode how the results will be shown
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
+	 * @param bool $showVotersBeforeClosing Whether voters can see who voted for each option before a public poll closes (requires `talk-polls-live-voters` capability)
+	 * @param bool $showResultsBeforeVoting Whether results are visible before voting, including hidden polls (requires `talk-polls-results-before-voting` capability)
 	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
 	 * 200: Draft modified successfully
@@ -192,11 +198,11 @@ class PollController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 		'pollId' => '\d+',
 	])]
-	public function updateDraftPoll(int $pollId, string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+	public function updateDraftPoll(int $pollId, string $question, array $options, int $resultMode, int $maxVotes, bool $showVotersBeforeClosing = false, bool $showResultsBeforeVoting = false): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
-			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes);
+			return $proxy->updateDraftPoll($pollId, $this->room, $this->participant, $question, $options, $resultMode, $maxVotes, $showVotersBeforeClosing, $showResultsBeforeVoting);
 		}
 
 		if ($this->room->getType() !== Room::TYPE_GROUP
@@ -224,6 +230,8 @@ class PollController extends AEnvironmentAwareOCSController {
 			$poll->setQuestion($question);
 			$poll->setOptions($options);
 			$poll->setResultMode($resultMode);
+			$poll->setShowVotersBeforeClosing($showVotersBeforeClosing && $resultMode === Poll::MODE_PUBLIC);
+			$poll->setShowResultsBeforeVoting($showResultsBeforeVoting);
 			$poll->setMaxVotes($maxVotes);
 		} catch (PollPropertyException $e) {
 			$this->logger->error('Error modifying poll', ['exception' => $e]);
@@ -313,12 +321,8 @@ class PollController extends AEnvironmentAwareOCSController {
 		}
 
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
-		$detailedVotes = [];
-		if ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
-			$detailedVotes = $this->pollService->getVotes($poll);
-		}
 
-		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
 	/**
@@ -465,14 +469,9 @@ class PollController extends AEnvironmentAwareOCSController {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
-		$detailedVotes = [];
-		if ($poll->getResultMode() === Poll::MODE_PUBLIC) {
-			$detailedVotes = $this->pollService->getVotes($poll);
-		}
-
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
 
-		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
 	/**
@@ -542,10 +541,11 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @return TalkPoll
 	 * @throws JsonException
 	 */
-	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
+	protected function renderPoll(Poll $poll, array $votedSelf = []): array {
 		$data = $poll->renderAsPoll();
 
-		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
+		$canSeeSummary = $poll->getShowResultsBeforeVoting()
+			|| (!empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC);
 
 		if (!$canSeeSummary && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
@@ -557,8 +557,11 @@ class PollController extends AEnvironmentAwareOCSController {
 			} else {
 				$data['numVoters'] = 0;
 			}
-		} elseif ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
-			$data['details'] = array_values(array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes));
+		} elseif ($poll->getResultMode() === Poll::MODE_PUBLIC
+			&& ($poll->getStatus() === Poll::STATUS_CLOSED
+				|| ($poll->getStatus() === Poll::STATUS_OPEN && $canSeeSummary && $poll->getShowVotersBeforeClosing()))) {
+			$detailedVotes = $this->pollService->getVotes($poll);
+			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
 		}
 
 		$data['votedSelf'] = array_values(array_map(static fn (Vote $vote) => $vote->getOptionId(), $votedSelf));

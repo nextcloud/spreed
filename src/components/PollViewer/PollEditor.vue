@@ -48,6 +48,8 @@ defineExpose({
 })
 
 const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
+const supportLiveVoters = hasTalkFeature(props.token, 'talk-polls-live-voters')
+const supportResultsBeforeVoting = hasTalkFeature(props.token, 'talk-polls-results-before-voting')
 
 const store = useStore()
 const pollsStore = usePollsStore()
@@ -64,6 +66,8 @@ const pollForm = reactive<createPollParams>({
 	options: ['', ''],
 	resultMode: POLL.MODE.PUBLIC,
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
+	showVotersBeforeClosing: false,
+	showResultsBeforeVoting: false,
 })
 
 const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter((option) => Boolean(option)).length >= 2)
@@ -86,6 +90,9 @@ const showWhoVoted = computed({
 	},
 	set(value) {
 		pollForm.resultMode = value ? POLL.MODE.PUBLIC : POLL.MODE.HIDDEN
+		if (!value) {
+			pollForm.showVotersBeforeClosing = false
+		}
 	},
 })
 
@@ -177,6 +184,8 @@ function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean, action?
 			options: [...draft.options],
 			resultMode: draft.resultMode,
 			maxVotes: draft.maxVotes,
+			showVotersBeforeClosing: draft.showVotersBeforeClosing ?? false,
+			showResultsBeforeVoting: draft.showResultsBeforeVoting ?? false,
 		})
 	}
 }
@@ -337,6 +346,19 @@ function goBack() {
 		<div class="poll-editor__settings">
 			<NcCheckboxRadioSwitch v-model="showWhoVoted" type="checkbox">
 				{{ t('spreed', 'Show names on voted options') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch
+				v-if="supportLiveVoters"
+				v-model="pollForm.showVotersBeforeClosing"
+				:disabled="!showWhoVoted"
+				type="checkbox">
+				{{ t('spreed', 'Show names before the poll ends') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch
+				v-if="supportResultsBeforeVoting"
+				v-model="pollForm.showResultsBeforeVoting"
+				type="checkbox">
+				{{ t('spreed', 'Show results before voting') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-model="isMultipleAnswer" type="checkbox">
 				{{ t('spreed', 'Multiple answers') }}

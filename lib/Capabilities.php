@@ -114,6 +114,8 @@ class Capabilities implements IPublicCapability {
 		'edit-messages-note-to-self',
 		'archived-conversations-v2',
 		'talk-polls-drafts',
+		'talk-polls-live-voters',
+		'talk-polls-results-before-voting',
 		'download-call-participants',
 		'email-csv-import',
 		'conversation-creation-password',

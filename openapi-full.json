@@ -1847,7 +1847,7 @@
                         "properties": {
                             "details": {
                                 "type": "array",
-                                "description": "Detailed list who voted for which option (only available for public closed polls)",
+                                "description": "Detailed voters: available for public closed polls, or with showVotersBeforeClosing after voting or when showResultsBeforeVoting is enabled",
                                 "items": {
                                     "$ref": "#/components/schemas/PollVote"
                                 }
@@ -1855,7 +1855,7 @@
                             "numVoters": {
                                 "type": "integer",
                                 "format": "int64",
-                                "description": "The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators)",
+                                "description": "Number of unique voters (visible when results are available, or to the creator and moderators)",
                                 "minimum": 0
                             },
                             "votedSelf": {
@@ -1868,7 +1868,7 @@
                             },
                             "votes": {
                                 "type": "object",
-                                "description": "Map with `'option-' + optionId` => number of votes (only available when the actor voted on public poll or the poll is closed)",
+                                "description": "Map with `'option-' + optionId` => number of votes (visible after voting on public polls, after closing, or when showResultsBeforeVoting is enabled)",
                                 "additionalProperties": {
                                     "type": "integer",
                                     "format": "int64"
@@ -1889,6 +1889,8 @@
                     "options",
                     "question",
                     "resultMode",
+                    "showVotersBeforeClosing",
+                    "showResultsBeforeVoting",
                     "status"
                 ],
                 "properties": {
@@ -1937,6 +1939,14 @@
                             1
                         ],
                         "description": "Result mode of the poll (see [Constants - Poll mode](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-mode))"
+                    },
+                    "showVotersBeforeClosing": {
+                        "type": "boolean",
+                        "description": "Whether voters can see who voted for each option before a public poll closes"
+                    },
+                    "showResultsBeforeVoting": {
+                        "type": "boolean",
+                        "description": "Whether results are visible before voting, including hidden polls"
                     },
                     "status": {
                         "type": "integer",
@@ -19208,6 +19218,16 @@
                                         "format": "int64",
                                         "default": 0,
                                         "description": "Thread id which this poll should be posted into (also requires `threads` capability)"
+                                    },
+                                    "showVotersBeforeClosing": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Whether voters can see who voted for each option before a public poll closes (requires `talk-polls-live-voters` capability)"
+                                    },
+                                    "showResultsBeforeVoting": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Whether results are visible before voting, including hidden polls (requires `talk-polls-results-before-voting` capability)"
                                     }
                                 }
                             }
@@ -19418,6 +19438,16 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "description": "Number of maximum votes per voter"
+                                    },
+                                    "showVotersBeforeClosing": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Whether voters can see who voted for each option before a public poll closes (requires `talk-polls-live-voters` capability)"
+                                    },
+                                    "showResultsBeforeVoting": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Whether results are visible before voting, including hidden polls (requires `talk-polls-results-before-voting` capability)"
                                     }
                                 }
                             }

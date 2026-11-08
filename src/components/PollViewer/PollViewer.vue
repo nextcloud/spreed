@@ -30,6 +30,11 @@
 							{{ pollSummaryText }}
 						</span>
 					</div>
+					<div v-if="isPollOpen && isPollPublic && poll.showVotersBeforeClosing" class="poll-modal__summary">
+						{{ poll.showResultsBeforeVoting
+							? t('spreed', 'You can see who voted for each option before voting')
+							: t('spreed', 'After voting, you can see who voted for each option before the poll ends') }}
+					</div>
 				</div>
 
 				<!-- options -->
@@ -46,15 +51,18 @@
 				</div>
 
 				<!-- results -->
-				<div v-else-if="modalPage === 'results'" class="results__options">
+				<div v-if="modalPage === 'results' || (isPollOpen && poll.showResultsBeforeVoting)" class="results__options">
+					<h3 v-if="modalPage === 'voting'">
+						{{ t('spreed', 'Current results') }}
+					</h3>
 					<div
 						v-for="(option, index) in poll.options"
 						:key="index"
 						class="results__option">
 						<div class="results__option-title">
 							<p>{{ option }}</p>
-							<p v-if="hasVotesToDisplay" class="percentage">
-								{{ votePercentage[index] + '%' }}
+							<p class="percentage">
+								{{ n('spreed', '%n vote', '%n votes', voteCounts[index]) }} ({{ votePercentage[index] }}%)
 							</p>
 						</div>
 						<div
@@ -70,7 +78,6 @@
 							</p>
 						</div>
 						<NcProgressBar
-							v-if="hasVotesToDisplay"
 							class="results__option-progress"
 							:value="votePercentage[index]"
 							size="medium" />
@@ -236,6 +243,8 @@ export default {
 			options: poll.value.options,
 			resultMode: poll.value.resultMode,
 			maxVotes: poll.value.maxVotes,
+			showVotersBeforeClosing: poll.value.showVotersBeforeClosing ?? false,
+			showResultsBeforeVoting: poll.value.showResultsBeforeVoting ?? false,
 		}))
 		const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
@@ -331,13 +340,12 @@ export default {
 			return this.isPollOpen && this.selfIsOwnerOrModerator
 		},
 
-		hasVotesToDisplay() {
-			return Object.keys(Object(this.poll?.votes)).length !== 0
+		voteCounts() {
+			return (this.poll?.options ?? []).map((_option, index) => this.poll?.votes?.['option-' + index] ?? 0)
 		},
 
 		votePercentage() {
-			const votes = Object.keys(Object(this.poll?.options)).map((index) => this.poll?.votes['option-' + index] ?? 0)
-			return calculateVotePercentage(votes, this.poll.numVoters)
+			return calculateVotePercentage(this.voteCounts, this.poll.numVoters)
 		},
 
 		pollChipVariant() {
@@ -356,8 +364,14 @@ export default {
 			}
 		},
 
-		id(value) {
-			this.pollsStore.hidePollToast(value)
+		id: {
+			immediate: true,
+			handler(value) {
+				if (value) {
+					this.pollsStore.hidePollToast(value)
+					this.getPollData()
+				}
+			},
 		},
 
 		isInCall(value) {
@@ -393,12 +407,10 @@ export default {
 		t,
 		n,
 		getPollData() {
-			if (!this.poll) {
-				this.pollsStore.getPollData({
-					token: this.token,
-					pollId: this.id,
-				})
-			}
+			this.pollsStore.getPollData({
+				token: this.token,
+				pollId: this.id,
+			})
 		},
 
 		setVoteData() {
