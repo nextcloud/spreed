@@ -270,13 +270,7 @@ export type components = {
         Capabilities: {
             files: {
                 windows_compatible_filenames: boolean;
-                $comment: string | null;
                 bigfilechunking: boolean;
-                blacklisted_files: Record<string, never>[];
-                forbidden_filenames: string[];
-                forbidden_filename_basenames: string[];
-                forbidden_filename_characters: string[];
-                forbidden_filename_extensions: string[];
                 chunked_upload: {
                     /** Format: int64 */
                     max_size: number;
@@ -309,6 +303,16 @@ export type components = {
             message?: string;
             totalitems?: string;
             itemsperpage?: string;
+        };
+        PublicCapabilities: {
+            files: {
+                $comment: string | null;
+                blacklisted_files: Record<string, never>[];
+                forbidden_filenames: string[];
+                forbidden_filename_basenames: string[];
+                forbidden_filename_characters: string[];
+                forbidden_filename_extensions: string[];
+            };
         };
         Template: {
             templateType: string;
