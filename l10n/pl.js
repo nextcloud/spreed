@@ -895,6 +895,7 @@ OC.L10N.register(
     "_%n user_::_%n users_" : ["%n użytkownik","%n użytkowników","%n użytkowników","%n użytkowników"],
     "Cancel" : "Anuluj",
     "Save" : "Zapisz",
+    "Test connection" : "Testuj połączenia",
     "Remove" : "Usuń",
     "Installed version: {version}" : "Zainstalowana wersja: {version}",
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}Nextcloud App Store{linkend}." : "Możesz zainstalować Matterbridge, aby połączyć Nextcloud Talk z innymi usługami. Odwiedź {linkstart1}stronę GitHub{linkend}, aby uzyskać więcej informacji. Pobieranie i instalowanie aplikacji może chwilę potrwać. W przypadku przekroczenia limitu czasu, zainstaluj ją ręcznie z {linkstart2}Nextcloud App Store{linkend}.",
