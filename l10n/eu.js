@@ -1175,6 +1175,7 @@ OC.L10N.register(
     "This conversation has been locked" : "Elkarrizketa hau blokeatu da",
     "No permission to post messages in this conversation" : "Ez duzu baimenik mezuak argitaratzeko elkarrizketa honetan",
     "Send message silently" : "Bidali mezua modu isilean",
+    "Send message" : "Bidali mezua",
     "Send without notification" : "Bidali jakinarazpenik gabe",
     "File to share" : "Partekatzeko fitxategia",
     "Add emoji" : "Gehitu emojia",

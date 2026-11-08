@@ -821,7 +821,7 @@ OC.L10N.register(
     "Talk configuration values" : "Talk Einstellungswerte",
     "Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration." : "Das Erzwingen einer Anrufdauer wird nur mit System-Cron unterstützt. Bitte System-Cron aktivieren oder die Konfiguration `max_call_duration` entfernen.",
     "Small `max_call_duration` values (currently set to %d) are not enforceable due to technical limitations. The background job is only executed every 5 minutes, so use at own risk." : "Kleine `max_call_duration`-Werte (derzeit auf %d) sind aufgrund technischer Beschränkungen nicht durchsetzbar. Die Hintergrundaufgabe wird nur alle 5 Minuten ausgeführt, die Verwendung erfolgt also auf eigene Gefahr.",
-    "Repair steps" : "Reparaturschritt",
+    "Repair steps" : "Reparaturschritte",
     "Talk has repair steps that take a long time on larger instances, so they are not performed automatically during upgrades. Use the command `occ maintenance:repair --include-expensive` to perform them." : "Reparaturschritte von Talk sind bei größeren Instanzen sehr zeitaufwendig und werden bei Upgrades nicht automatisch durchgeführt. Den Befehl `occ maintenance:repair --include-expensive` verwenden, um sie auszuführen.",
     "Federation" : "Federation",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Es wird dringend empfohlen, \"memcache.locking\" einzurichten, wenn Talk-Federation aktiviert ist.",
