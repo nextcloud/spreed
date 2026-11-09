@@ -11,8 +11,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IWebhookCompatibleEvent;
 
-abstract class AMessageSentEvent extends ARoomEvent {
+abstract class AMessageSentEvent extends ARoomEvent implements IWebhookCompatibleEvent {
 	public function __construct(
 		Room $room,
 		protected IComment $comment,
@@ -39,5 +40,15 @@ abstract class AMessageSentEvent extends ARoomEvent {
 
 	public function getParent(): ?IComment {
 		return $this->parent;
+	}
+
+	#[\Override]
+	public function getWebhookSerializable(): array {
+		return [
+			'comment' => $this->comment,
+			'participant' => $this->participant,
+			'silent' => $this->silent,
+			'parent' => $this->parent,
+		];
 	}
 }
