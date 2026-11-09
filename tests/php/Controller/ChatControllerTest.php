@@ -1249,6 +1249,58 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
+	private function setUpReadMarker(int $lastMessageId, int $lastReadMessage = 0): Participant {
+		$attendee = new Attendee();
+		$attendee->setLastReadMessage($lastReadMessage);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn($attendee);
+		$this->room->method('getLastMessageId')->willReturn($lastMessageId);
+
+		$this->chatManager->expects($this->never())->method('getComment');
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		return $participant;
+	}
+
+	public static function dataReadMarkerWhenPolling(): array {
+		return [
+			'not moving' => [23, 23, false],
+			'regular message' => [23, 20, true],
+			'beyond last message' => [35, 20, false],
+		];
+	}
+
+	#[DataProvider('dataReadMarkerWhenPolling')]
+	public function testReadMarkerWhenPolling(int $lastKnownMessageId, int $lastReadMessage, bool $expectUpdate): void {
+		$participant = $this->setUpReadMarker(30, $lastReadMessage);
+		$this->participantService->expects($expectUpdate ? $this->once() : $this->never())
+			->method('updateLastReadMessage')
+			->with($participant, $lastKnownMessageId);
+		$this->chatManager->method('waitForNewMessages')->willReturn([]);
+
+		$this->controller->receiveMessages(1, 100, $lastKnownMessageId);
+	}
+
+	public static function dataSetReadMarker(): array {
+		return [
+			'last message' => [null, 30, 30],
+			'regular message' => [20, 30, 20],
+			'beyond last message' => [35, 30, 30],
+			'beyond last message in empty conversation' => [5101812, 0, ChatManager::UNREAD_FIRST_MESSAGE],
+		];
+	}
+
+	#[DataProvider('dataSetReadMarker')]
+	public function testSetReadMarker(?int $lastReadMessage, int $lastMessageId, int $expected): void {
+		$participant = $this->setUpReadMarker($lastMessageId);
+		$this->participantService->expects($this->once())
+			->method('updateLastReadMessage')
+			->with($participant, $expected);
+
+		$this->controller->setReadMarker($lastReadMessage);
+	}
+
 	public function testWaitForNewMessagesOfMatrixConversation(): void {
 		$participant = $this->createStub(Participant::class);
 		$testUser = $this->createMock(IUser::class);
