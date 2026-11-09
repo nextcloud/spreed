@@ -168,7 +168,9 @@ class ChatController {
 			],
 		);
 
-		if ($lookIntoFuture && $setReadMarker) {
+		// Without a new message the offset is unverified, last_message holds the host's newest id
+		if ($lookIntoFuture && $setReadMarker
+			&& ($proxy->getHeader('X-Chat-Last-Given') || $lastKnownMessageId <= $room->getLastMessageId())) {
 			$this->participantService->updateUnreadInfoForProxyParticipant($participant,
 				0,
 				false,
