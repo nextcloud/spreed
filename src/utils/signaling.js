@@ -641,6 +641,13 @@ function Standalone(settings, urls) {
 	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
+	this.pageUnloading = false
+	window.addEventListener('pagehide', () => {
+		this.pageUnloading = true
+	})
+	window.addEventListener('pageshow', () => {
+		this.pageUnloading = false
+	})
 	this.connect()
 	Signaling.Base.prototype._trigger.call(this, 'settingsUpdated', [settings])
 }
@@ -752,7 +759,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionError.hideToast()
 			this.signalingConnectionError = null
 		}
-		if (this.socket === event.target) {
+		if (this.socket === event.target && !this.pageUnloading) {
 			console.debug('Reconnecting socket as the connection was closed unexpected')
 			this.reconnect()
 		}
