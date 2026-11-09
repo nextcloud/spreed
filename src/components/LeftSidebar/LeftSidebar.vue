@@ -422,7 +422,7 @@
 						<template #icon>
 							<IconCogOutline :size="20" />
 						</template>
-						{{ t('spreed', 'App settings') }}
+						{{ t('spreed', 'Talk settings') }}
 					</LeftSidebarButton>
 				</div>
 			</div>

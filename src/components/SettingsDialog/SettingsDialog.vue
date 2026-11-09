@@ -6,7 +6,7 @@
 <template>
 	<NcAppSettingsDialog
 		v-model:open="showSettings"
-		:name="t('spreed', 'App settings')"
+		:name="t('spreed', 'Talk settings')"
 		showNavigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection
