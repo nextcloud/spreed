@@ -40,10 +40,11 @@ class AttachmentMapper extends QBMapper {
 	}
 
 	/**
+	 * @param int $notBefore Unix time; only attachments of messages from this time on
 	 * @return list<Attachment>
 	 * @throws \OCP\DB\Exception
 	 */
-	public function getAttachmentsByType(int $roomId, string $objectType, int $offset, int $limit): array {
+	public function getAttachmentsByType(int $roomId, string $objectType, int $offset, int $limit, int $notBefore = 0): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -54,6 +55,10 @@ class AttachmentMapper extends QBMapper {
 
 		if ($offset > 0) {
 			$query->andWhere($query->expr()->lt('message_id', $query->createNamedParameter($offset)));
+		}
+
+		if ($notBefore > 0) {
+			$query->andWhere($query->expr()->gte('message_time', $query->createNamedParameter($notBefore, IQueryBuilder::PARAM_INT)));
 		}
 
 		return $this->findEntities($query);

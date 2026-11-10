@@ -2192,6 +2192,26 @@ class ParticipantService {
 	}
 
 	/**
+	 * Users of the conversation whose history starts after the time
+	 * ({@see Attendee::getHistorySince()})
+	 *
+	 * @return list<string>
+	 */
+	public function getUserIdsWithHistoryAfter(Room $room, int $time): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('actor_id')
+			->from('talk_attendees')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->gt('history_since', $query->createNamedParameter($time, IQueryBuilder::PARAM_INT)));
+
+		$result = $query->executeQuery();
+		$userIds = array_map(strval(...), $result->fetchFirstColumn());
+		$result->closeCursor();
+		return $userIds;
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getParticipantUserIdsAndFederatedUserCloudIds(Room $room, ?\DateTime $maxLastJoined = null): array {

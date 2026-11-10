@@ -81,10 +81,11 @@ class AttachmentService {
 	 * @param string $objectType
 	 * @param int $offset
 	 * @param int $limit
+	 * @param ?\DateTimeInterface $notBefore Only attachments of messages from this time on ({@see \OCA\Talk\Participant::getHistorySince()})
 	 * @return Attachment[]
 	 */
-	public function getAttachmentsByType(Room $room, string $objectType, int $offset, int $limit): array {
-		return $this->attachmentMapper->getAttachmentsByType($room->getId(), $objectType, $offset, $limit);
+	public function getAttachmentsByType(Room $room, string $objectType, int $offset, int $limit, ?\DateTimeInterface $notBefore = null): array {
+		return $this->attachmentMapper->getAttachmentsByType($room->getId(), $objectType, $offset, $limit, $notBefore?->getTimestamp() ?? 0);
 	}
 
 	public function deleteExpired(\DateTime $dateTime): void {

@@ -467,12 +467,14 @@ class Manager {
 	}
 
 	/**
-	 * @param string $userId
-	 * @return string[]
+	 * Conversations of the user that have attachments, with the time of
+	 * the first message the user may read in each (0 for the whole history)
+	 *
+	 * @return array<string, int> history start by conversation token
 	 */
-	public function getRoomTokensWithAttachmentsForUser(string $userId): array {
+	public function getRoomsWithAttachmentsForUser(string $userId): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('r.token')
+		$query->select('r.token', 'a.history_since')
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_rooms', 'r', $query->expr()->eq('a.room_id', 'r.id'))
 			->where($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
@@ -480,18 +482,18 @@ class Manager {
 			->andWhere($query->expr()->eq('r.has_attachments', $query->createNamedParameter(Attachment::ATTACHMENTS_ATLEAST_ONE)));
 
 		$result = $query->executeQuery();
-		$roomTokens = [];
+		$rooms = [];
 		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
 			}
 
-			$roomTokens[] = $row['token'];
+			$rooms[(string)$row['token']] = (int)$row['history_since'];
 		}
 		$result->closeCursor();
 
-		return $roomTokens;
+		return $rooms;
 	}
 
 	public function isUserAttendeeInRoom(string $userId, string $token): bool {

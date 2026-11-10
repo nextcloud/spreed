@@ -83,6 +83,18 @@ class Participant {
 	}
 
 	/**
+	 * Time of the first message the participant may read, null when the
+	 * whole history is visible
+	 */
+	public function getHistorySince(): ?\DateTimeImmutable {
+		$historySince = $this->attendee->getHistorySince();
+		if ($historySince <= 0) {
+			return null;
+		}
+		return new \DateTimeImmutable('@' . $historySince);
+	}
+
+	/**
 	 * Participant type an attendee gets when they are promoted
 	 *
 	 * Guests are promoted to their guest equivalent, so requesting
