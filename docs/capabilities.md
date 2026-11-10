@@ -245,3 +245,4 @@
 * `config => chat => mobile-preload-chat` (local) - Whether mobile clients should preload the chat messages of conversations
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)
 * `mute-conversations` - Whether conversations can be muted for a given time
+* `federation-signaling-auth` (local) - Whether federated signaling is sending the join auth params to the clients and the HPB should not allow joining without
