@@ -1006,11 +1006,17 @@ describe('participantsStore', () => {
 	})
 
 	describe('leaving conversation', () => {
+		beforeEach(() => {
+			testStoreConfig.actions.flushLastReadMessage = vi.fn()
+			store = createStore(testStoreConfig)
+		})
+
 		test('leaves conversation', async () => {
 			leaveConversation.mockResolvedValue()
 
 			await store.dispatch('leaveConversation', { token: TOKEN })
 
+			expect(testStoreConfig.actions.flushLastReadMessage).toHaveBeenCalled()
 			expect(leaveCall).not.toHaveBeenCalled()
 			expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
 		})

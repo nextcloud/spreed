@@ -1034,6 +1034,8 @@ const actions = {
 		try {
 			talkHashStore.clearMaintenanceMode()
 			modifiedSince = modifiedSince || 0
+			// Server must know pending read markers, otherwise the list restores old unread counters
+			await dispatch('flushLastReadMessage')
 			const response = await fetchConversations({
 				modifiedSince,
 				includeStatus: true,

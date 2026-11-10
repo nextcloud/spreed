@@ -917,7 +917,7 @@ export default {
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
 			if (this.isSticky && this.isChatEndReached) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
-				this.$store.dispatch('clearLastReadMessage', { token: this.token })
+				this.$store.dispatch('clearLastReadMessage', { token: this.token, throttled: true })
 				return
 			}
 
@@ -947,7 +947,7 @@ export default {
 			// we don't update visually here, it will update the next time the
 			// user focuses back on the conversation. See refreshReadMarkerPosition().
 			console.debug('updateLastReadMessage token=' + this.token + ' messageId=' + messageId)
-			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId, updateVisually: false })
+			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId, updateVisually: false, throttled: true })
 		},
 
 		/**
