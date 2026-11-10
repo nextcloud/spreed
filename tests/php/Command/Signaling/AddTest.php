@@ -44,8 +44,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server cannot be empty.</error>'));
@@ -66,8 +68,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Secret cannot be empty.</error>'));
@@ -88,8 +92,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with(Config::SIGNALING_SERVERS)
@@ -115,8 +121,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with(Config::SIGNALING_SERVERS)

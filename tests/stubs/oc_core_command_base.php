@@ -37,6 +37,8 @@ namespace OC\Core\Command {
 
 		protected function writeArrayInOutputFormat(InputInterface $input, OutputInterface $output, iterable $items, string $prefix = '  - '): void {
 		}
+		public function getHelper(string $name): mixed {
+		}
 
 		protected function writeTableInOutputFormat(InputInterface $input, OutputInterface $output, array $items): void {
 		}
