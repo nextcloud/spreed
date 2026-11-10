@@ -5,48 +5,21 @@
 
 <script setup lang="ts">
 import { showError } from '@nextcloud/dialogs'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import { useAdminSettingsState } from '../../composables/useAdminSettingsState.ts'
 import { setAppConfig } from '../../services/appConfigService.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../services/EventBus.ts'
+
+const { hasFeatureJoinFeatures, hasSIPBridge } = useAdminSettingsState()
 
 const loading = ref(false)
 const isE2EECallsEnabled = ref(!!getTalkConfig('local', 'call', 'end-to-end-encryption'))
-const hasFeatureJoinFeatures = ref(false)
-const hasSIPBridge = ref(!!loadState<string>('spreed', 'sip_bridge_shared_secret', ''))
 
 const canEnableE2EECalls = computed(() => hasFeatureJoinFeatures.value || !hasSIPBridge.value)
-
-EventBus.on('signaling-server-connected', updateSignalingDetails)
-EventBus.on('sip-settings-updated', updateSipDetails)
-
-onBeforeUnmount(() => {
-	EventBus.off('signaling-server-connected', updateSignalingDetails)
-	EventBus.off('sip-settings-updated', updateSipDetails)
-})
-
-/**
- * Update the features of the tested signaling server
- *
- * @param signaling - signaling server connection
- */
-function updateSignalingDetails(signaling: unknown) {
-	hasFeatureJoinFeatures.value = (signaling as { hasFeature: (feature: string) => boolean }).hasFeature('join-features')
-}
-
-/**
- * Update whether a SIP bridge is configured
- *
- * @param settings - SIP bridge settings
- */
-function updateSipDetails(settings: unknown) {
-	hasSIPBridge.value = !!(settings as { sharedSecret: string }).sharedSecret
-}
 
 /**
  * Enable or disable end-to-end encrypted calls
