@@ -1244,6 +1244,14 @@ Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessi
 			roomid: this.settings.federation.roomId,
 			token: this.settings.federation.helloAuthParams.token,
 		}
+
+		if (this.settings.federation.joinAuthParams?.token) {
+			// Forward joinAuthParams if existing
+			message.room.federation.auth = {
+				version: '1.0',
+				token: this.settings.federation.joinAuthParams.token,
+			}
+		}
 	}
 
 	this.doSend(message, function(data) {
