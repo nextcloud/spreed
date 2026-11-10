@@ -925,6 +925,8 @@ const actions = {
 	 * @param {string} data.token - conversation token.
 	 */
 	async leaveConversation(context, { token }) {
+		context.dispatch('flushLastReadMessage', { token })
+
 		const actorStore = useActorStore()
 		if (context.getters.isInCall(token)) {
 			await context.dispatch('leaveCall', {
