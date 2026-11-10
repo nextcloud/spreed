@@ -204,8 +204,11 @@ export const useSessionStore = defineStore('session', {
 
 				// If we can not find an attendeeId for session - participant is missing from the list
 				if (!session.attendeeId) {
-					console.debug('Possible orphan session: %s', JSON.stringify(user))
-					hasUnknownSessions = true
+					// Internal clients (recording server) are never in the participants list
+					if (!('internal' in user && user.internal)) {
+						console.debug('Possible orphan session: %s', JSON.stringify(user))
+						hasUnknownSessions = true
+					}
 					continue
 				}
 
