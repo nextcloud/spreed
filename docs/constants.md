@@ -102,7 +102,7 @@ Required capability: `conversation-presets`
 * `4` Classified - Locked down conversation for confidential topics: everything that could carry the content or metadata to non-participants is disallowed, no object can be bound (it is reserved for the automatic deletion, see the `classified` object type) and the conversation is forced sensitive for everyone (set at creation via the `classified` preset, requires capability `classified-conversations`)
 * `8` Channel - Broadcast conversation: calls are disallowed for everyone (including moderators) and the participants list is only available to moderators, always set together with `32` Hidden participants (set at creation via the `channel` preset, requires capability `announcement-preset`)
 * `16` Announcement - Limited to administrators, a channel that additionally can not be left by non-moderators and notifies all participants about every message by default. Always set together with `8` Channel and `32` Hidden participants, so all channel restrictions apply as well (set at creation via the `announcement` preset, requires capability `announcement-preset`)
-* `32` Hidden participants - The participants list is only available to moderators (set at creation via the `webinar`, `presentation`, `channel` and `announcement` presets, requires capability `hidden-participants`)
+* `32` Hidden participants - The participants list is only available to moderators and system messages about participants being added, removed, promoted or demoted and joining or leaving the call are replaced with `hidden_participant_activity` for non-moderators (set at creation via the `webinar`, `presentation`, `channel` and `announcement` presets, requires capability `hidden-participants`)
 
 ## Participants
 

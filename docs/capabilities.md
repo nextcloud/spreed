@@ -244,4 +244,4 @@
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `config => chat => mobile-preload-chat` (local) - Whether mobile clients should preload the chat messages of conversations
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)
-* `hidden-participants` - Whether the participants list of conversations with the `32` hidden participants attribute (set by the `webinar`, `presentation`, `channel` and `announcement` presets) is only available to moderators
+* `hidden-participants` - Bitflag 32 of room attributes hides the participants list and activity of conversations from non-moderators (`webinar`, `presentation`, `channel` and `announcement` presets)

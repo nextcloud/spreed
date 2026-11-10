@@ -37,3 +37,38 @@ Feature: conversation-4/hidden-participants
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
       | users     | participant2 | 3               |
+
+  Scenario: Participant and call join messages are only shown to moderators
+    Given user "participant1" creates room "presentation" (v4)
+      | roomType | 2            |
+      | roomName | presentation |
+      | preset   | presentation |
+    And user "participant1" adds user "participant2" to room "presentation" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "presentation" with 200 (v4)
+    And user "participant1" demotes "participant2" in room "presentation" with 200 (v4)
+    And user "participant1" joins room "presentation" with 200 (v4)
+    And user "participant1" joins call "presentation" with 200 (v4)
+    And user "participant2" joins room "presentation" with 200 (v4)
+    And user "participant2" joins call "presentation" with 200 (v4)
+    And user "participant2" leaves call "presentation" with 200 (v4)
+    And user "participant1" ends call "presentation" with 200 (v4)
+    Then user "participant1" sees the following system messages in room "presentation" with 200
+      | room         | actorType | actorId      | systemMessage        |
+      | presentation | users     | participant1 | call_ended_everyone  |
+      | presentation | users     | participant2 | call_left            |
+      | presentation | users     | participant2 | call_joined          |
+      | presentation | users     | participant1 | call_started         |
+      | presentation | users     | participant1 | moderator_demoted    |
+      | presentation | users     | participant1 | moderator_promoted   |
+      | presentation | users     | participant1 | user_added           |
+      | presentation | users     | participant1 | conversation_created |
+    And user "participant2" sees the following system messages in room "presentation" with 200
+      | room         | actorType | actorId      | systemMessage               | messageParameters |
+      | presentation | users     | participant1 | call_ended_everyone         | "IGNORE"          |
+      | presentation | guests    | system       | hidden_participant_activity | []                |
+      | presentation | guests    | system       | hidden_participant_activity | []                |
+      | presentation | users     | participant1 | call_started                | "IGNORE"          |
+      | presentation | guests    | system       | hidden_participant_activity | []                |
+      | presentation | guests    | system       | hidden_participant_activity | []                |
+      | presentation | guests    | system       | hidden_participant_activity | []                |
+      | presentation | users     | participant1 | conversation_created        | "IGNORE"          |

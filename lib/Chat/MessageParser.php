@@ -83,7 +83,7 @@ class MessageParser {
 	 *                              E.g. path is only the file name and preview generation is estimated by
 	 *                              mimetype only. This is done to prevent a filesystem setup.
 	 */
-	public function parseMessage(Message $message, bool $allowInaccurate = false): void {
+	public function parseMessage(Message $message, bool $allowInaccurate = false, bool $forceContent = false): void {
 		$message->setMessage($message->getComment()->getMessage(), []);
 
 		$verb = $message->getComment()->getVerb();
@@ -94,7 +94,7 @@ class MessageParser {
 		$this->setMessageActor($message);
 		$this->setLastEditInfo($message);
 
-		$event = new MessageParseEvent($message->getRoom(), $message, $allowInaccurate);
+		$event = new MessageParseEvent($message->getRoom(), $message, $allowInaccurate, $forceContent);
 		$this->dispatcher->dispatchTyped($event);
 	}
 

@@ -257,6 +257,7 @@ export const MESSAGE = {
 		GUEST_MODERATOR_PROMOTED: 'guest_moderator_promoted',
 		GUESTS_ALLOWED: 'guests_allowed',
 		GUESTS_DISALLOWED: 'guests_disallowed',
+		HIDDEN_PARTICIPANT_ACTIVITY: 'hidden_participant_activity',
 		HISTORY_CLEARED: 'history_cleared',
 		LISTABLE_ALL: 'listable_all',
 		LISTABLE_NONE: 'listable_none',

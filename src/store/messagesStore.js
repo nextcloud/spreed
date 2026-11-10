@@ -1227,7 +1227,7 @@ const actions = {
 			}
 		})
 
-		if (conversation?.lastMessage && lastMessage.id > conversation.lastMessage.id) {
+		if (conversation?.lastMessage && lastMessage && lastMessage.id > conversation.lastMessage.id) {
 			// only increase the counter if the conversation store was out of sync with the message list
 			if (countNewMessages > 0) {
 				context.commit('updateUnreadMessages', {
