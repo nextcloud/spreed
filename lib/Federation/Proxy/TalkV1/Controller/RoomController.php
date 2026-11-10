@@ -75,10 +75,12 @@ class RoomController {
 	 * 404: Room not found
 	 */
 	public function joinFederatedRoom(Room $room, Participant $participant): DataResponse {
-		$options = [
-			'sessionId' => $participant->getSession()->getSessionId(),
-		];
 
+		if ($participant->getSession() instanceof Session) {
+			$options = [
+				'sessionId' => $participant->getSession()->getSessionId() ?? '',
+			];
+		}
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
