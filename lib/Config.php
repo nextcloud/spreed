@@ -940,6 +940,22 @@ class Config implements IAppConfig {
 		return hash_equals($hash, substr($ticket, $lastColon + 1));
 	}
 
+	public function getFederationSignalingAuthTicket(string $hostSignalingServer, string $hostNextcloudServer): string {
+		$timestamp = $this->timeFactory->getTime();
+		$data = [
+			'iss' => $this->urlGenerator->getAbsoluteURL(''),
+			'iat' => $timestamp,
+			'exp' => $timestamp + 60,  // Valid for 1 minute.
+			'sub' => $hostSignalingServer,
+			'nc' => $hostNextcloudServer,
+		];
+
+		$alg = $this->getSignalingTokenAlgorithm();
+		$secret = $this->getSignalingTokenPrivateKey($alg);
+		$token = JWT::encode($data, $secret, $alg);
+		return $token;
+	}
+
 	public function getGridVideosLimit(): int {
 		return $this->appConfig->getAppValueInt(self::GRID_VIDEOS_LIMIT);
 	}
