@@ -40,30 +40,6 @@
 			@update:modelValue="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
-
-		<template v-if="hasSignalingServers">
-			<h3>
-				{{ t('spreed', 'End-to-end encrypted calls') }}
-				<small>{{ t('spreed', 'Beta') }}</small>
-			</h3>
-
-			<NcCheckboxRadioSwitch
-				v-model="isE2EECallsEnabled"
-				type="switch"
-				:disabled="loading || !canEnableE2EECalls"
-				@update:modelValue="updateE2EECallsEnabled">
-				{{ t('spreed', 'Enable encryption') }}
-			</NcCheckboxRadioSwitch>
-
-			<NcNoteCard
-				v-if="!canEnableE2EECalls"
-				type="warning"
-				:text="t('spreed', 'End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge.')" />
-			<NcNoteCard
-				v-else
-				type="warning"
-				:text="t('spreed', 'Mobile clients do not support end-to-end encrypted calls at the moment.')" />
-		</template>
 	</section>
 </template>
 
@@ -71,10 +47,7 @@
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../services/EventBus.ts'
 
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },
@@ -85,16 +58,8 @@ export default {
 	name: 'GeneralSettings',
 
 	components: {
-		NcNoteCard,
 		NcCheckboxRadioSwitch,
 		NcSelect,
-	},
-
-	props: {
-		hasSignalingServers: {
-			type: Boolean,
-			required: true,
-		},
 	},
 
 	data() {
@@ -108,10 +73,6 @@ export default {
 
 			conversationsFiles: parseInt(loadState('spreed', 'conversations_files')) === 1,
 			conversationsFilesPublicShares: parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
-
-			hasFeatureJoinFeatures: false,
-			isE2EECallsEnabled: getTalkConfig('local', 'call', 'end-to-end-encryption'),
-			hasSIPBridge: !!loadState('spreed', 'sip_bridge_shared_secret'),
 		}
 	},
 
@@ -123,45 +84,16 @@ export default {
 		isConversationsFilesPublicSharesChecked() {
 			return this.conversationsFilesPublicShares
 		},
-
-		canEnableE2EECalls() {
-			return this.hasFeatureJoinFeatures || !this.hasSIPBridge
-		},
 	},
 
 	mounted() {
 		this.loading = true
 		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('spreed', 'default_group_notification')) - 1]
 		this.loading = false
-
-		EventBus.on('signaling-server-connected', this.updateSignalingDetails)
-		EventBus.on('sip-settings-updated', this.updateSipDetails)
-	},
-
-	beforeUnmount() {
-		EventBus.off('signaling-server-connected', this.updateSignalingDetails)
-		EventBus.off('sip-settings-updated', this.updateSipDetails)
 	},
 
 	methods: {
 		t,
-
-		updateSignalingDetails(signaling) {
-			this.hasFeatureJoinFeatures = signaling.hasFeature('join-features')
-		},
-
-		updateSipDetails(settings) {
-			this.hasSIPBridge = !!settings.sharedSecret
-		},
-
-		updateE2EECallsEnabled(value) {
-			this.loading = true
-			OCP.AppConfig.setValue('spreed', 'call_end_to_end_encryption', value ? '1' : '0', {
-				success: () => {
-					this.loading = false
-				},
-			})
-		},
 
 		saveDefaultGroupNotification() {
 			this.loadingDefaultGroupNotification = true
@@ -213,13 +145,6 @@ export default {
 h3 {
 	margin-top: 24px;
 	font-weight: 600;
-}
-
-small {
-	color: var(--color-favorite);
-	border: 1px solid var(--color-favorite);
-	border-radius: 16px;
-	padding: 0 9px;
 }
 
 .default-group-notification {
