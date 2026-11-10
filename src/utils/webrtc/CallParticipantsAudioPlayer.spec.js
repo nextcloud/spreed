@@ -712,4 +712,138 @@ describe('CallParticipantsAudioPlayer', () => {
 			expect(callParticipantsAudioPlayer._audioElements.size).toBe(0)
 		})
 	})
+
+	describe('autoplay recovery', () => {
+		let playSpy
+
+		/**
+		 * Flushes pending microtasks so the "play()" rejection handler runs.
+		 */
+		function flushPromises() {
+			return new Promise((resolve) => setTimeout(resolve))
+		}
+
+		beforeEach(() => {
+			// jsdom does not implement "play()"; mock it to control its result.
+			playSpy = vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockResolvedValue()
+		})
+
+		test('plays the element when a stream with available audio is added', () => {
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = true
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+
+			expect(playSpy).toHaveBeenCalledTimes(1)
+		})
+
+		test('plays the screen element, which is always unmuted', () => {
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.set('screen', new MediaStreamMock('screen1'))
+
+			expect(playSpy).toHaveBeenCalledTimes(1)
+		})
+
+		test('does not play a muted stream element', () => {
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = false
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+
+			expect(playSpy).not.toHaveBeenCalled()
+		})
+
+		test('plays the element when audio becomes available', () => {
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = false
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+
+			expect(playSpy).not.toHaveBeenCalled()
+
+			callParticipantModel.set('audioAvailable', true)
+
+			expect(playSpy).toHaveBeenCalledTimes(1)
+		})
+
+		test('retries playback on a user gesture when autoplay is blocked', async () => {
+			const addEventListenerSpy = vi.spyOn(document, 'addEventListener')
+			playSpy.mockRejectedValueOnce(new DOMException('blocked', 'NotAllowedError'))
+
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = true
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+
+			await flushPromises()
+
+			expect(playSpy).toHaveBeenCalledTimes(1)
+			expect(addEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function), expect.objectContaining({ capture: true }))
+
+			document.dispatchEvent(new Event('mousedown'))
+
+			expect(playSpy).toHaveBeenCalledTimes(2)
+		})
+
+		test('does not arm a gesture listener for other playback errors', async () => {
+			const addEventListenerSpy = vi.spyOn(document, 'addEventListener')
+			playSpy.mockRejectedValueOnce(new DOMException('boom', 'AbortError'))
+
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = true
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+
+			await flushPromises()
+
+			expect(addEventListenerSpy).not.toHaveBeenCalledWith('mousedown', expect.any(Function), expect.anything())
+		})
+
+		test('arms the gesture listener only once for several blocked elements', async () => {
+			const addEventListenerSpy = vi.spyOn(document, 'addEventListener')
+			playSpy.mockRejectedValue(new DOMException('blocked', 'NotAllowedError'))
+
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = true
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+			callParticipantModel.set('screen', new MediaStreamMock('screen1'))
+
+			await flushPromises()
+
+			expect(addEventListenerSpy).toHaveBeenCalledTimes(3)
+		})
+
+		test('removes the gesture listener on destroy', async () => {
+			const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener')
+			playSpy.mockRejectedValueOnce(new DOMException('blocked', 'NotAllowedError'))
+
+			const callParticipantModel = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel)
+
+			callParticipantModel.attributes.audioAvailable = true
+
+			callParticipantModel.set('stream', new MediaStreamMock('stream1'))
+
+			await flushPromises()
+
+			callParticipantsAudioPlayer.destroy()
+
+			expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function), expect.objectContaining({ capture: true }))
+		})
+	})
 })
