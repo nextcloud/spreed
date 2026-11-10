@@ -20,7 +20,7 @@ Feature: conversation-4/announcement
       | preset      | channel |
     Then user "participant2" is participant of the following rooms (v4)
       | id      | type | participantType | attributes |
-      | channel | 2    | 1               | 8          |
+      | channel | 2    | 1               | 40         |
 
   Scenario: An announcement inherits all restrictions of a channel
     Given user "participant1" creates room "announcement" (v4)
@@ -30,13 +30,13 @@ Feature: conversation-4/announcement
       | permissions | 257          |
       | preset      | announcement |
     And user "participant1" adds user "participant2" to room "announcement" with 200 (v4)
-    # Attributes 8 (channel) and 16 (announcement) are both set, so all channel restrictions apply
+    # Attributes 8 (channel), 16 (announcement) and 32 (hidden participants) are set, so all channel restrictions apply
     Then user "participant1" is participant of the following rooms (v4)
       | id           | type | participantType | attributes | listable | permissions |
-      | announcement | 2    | 1               | 24         | 0        | LAVPMR      |
+      | announcement | 2    | 1               | 56         | 0        | LAVPMR      |
     Then user "participant2" is participant of the following rooms (v4)
       | id           | type | participantType | attributes | listable | permissions |
-      | announcement | 2    | 3               | 24         | 0        | CR          |
+      | announcement | 2    | 3               | 56         | 0        | CR          |
     # Inherited from the channel: no calls and no participants list for non-moderators
     And user "participant1" joins room "announcement" with 200 (v4)
     And user "participant2" joins room "announcement" with 200 (v4)

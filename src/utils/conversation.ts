@@ -38,6 +38,18 @@ export function isChannelConversation(conversation: Conversation | undefined): b
 }
 
 /**
+ * Check if the participants list is only available to moderators
+ * (HIDDEN_PARTICIPANTS attribute bit is set)
+ * Feature is supported with `hidden-participants` capability,
+ * channels from servers without it always hide the participants.
+ *
+ * @param conversation conversation object
+ */
+export function hasHiddenParticipants(conversation: Conversation | undefined): boolean {
+	return Boolean(conversation && conversation.attributes & (CONVERSATION.ATTRIBUTE.CHANNEL | CONVERSATION.ATTRIBUTE.HIDDEN_PARTICIPANTS))
+}
+
+/**
  * Check if the conversation is synced with a Matrix room
  *
  * @param conversation conversation object

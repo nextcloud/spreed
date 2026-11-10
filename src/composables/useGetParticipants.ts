@@ -17,7 +17,7 @@ import { CONVERSATION } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSessionStore } from '../stores/session.ts'
-import { isChannelConversation } from '../utils/conversation.ts'
+import { hasHiddenParticipants } from '../utils/conversation.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
@@ -176,7 +176,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 	 */
 	async function cancelableGetParticipants() {
 		if (fetchingParticipants || token.value === '' || isInLobby.value || !isModeratorOrUser.value
-			|| (isChannelConversation(conversation.value) && !store.getters.isModerator)) {
+			|| (hasHiddenParticipants(conversation.value) && !store.getters.isModerator)) {
 			return
 		}
 

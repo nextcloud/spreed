@@ -168,7 +168,7 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
-import { isChannelConversation } from '../../utils/conversation.ts'
+import { hasHiddenParticipants, isChannelConversation } from '../../utils/conversation.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
@@ -377,7 +377,7 @@ export default {
 				&& (!this.isOneToOne || this.isInCall)
 				&& !this.isNoteToSelf
 				&& !this.isChangelog
-				&& (!isChannelConversation(this.conversation) || this.$store.getters.isModerator)
+				&& (!hasHiddenParticipants(this.conversation) || this.$store.getters.isModerator)
 		},
 
 		showSharedItemsTab() {

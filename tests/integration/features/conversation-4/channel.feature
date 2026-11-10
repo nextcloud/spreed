@@ -12,14 +12,14 @@ Feature: conversation-4/channel
       | permissions | 257     |
       | preset      | channel |
     And user "participant1" adds user "participant2" to room "channel" with 200 (v4)
-    # Attribute 8 (channel) is set and calls are stripped for the moderator
+    # Attributes 8 (channel) and 32 (hidden participants) are set and calls are stripped for the moderator
     Then user "participant1" is participant of the following rooms (v4)
       | id      | type | participantType | attributes | listable | permissions |
-      | channel | 2    | 1               | 8          | 1        | LAVPMR      |
+      | channel | 2    | 1               | 40         | 1        | LAVPMR      |
     # Everybody else can only react
     Then user "participant2" is participant of the following rooms (v4)
       | id      | type | participantType | attributes | listable | permissions |
-      | channel | 2    | 3               | 8          | 1        | CR          |
+      | channel | 2    | 3               | 40         | 1        | CR          |
 
   Scenario: Calls are not possible in a channel
     Given user "participant1" creates room "channel" (v4)

@@ -73,7 +73,9 @@ use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
+use OCA\Talk\RoomPresets\Presentation;
 use OCA\Talk\RoomPresets\VoiceRoom;
+use OCA\Talk\RoomPresets\Webinar;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
@@ -875,7 +877,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$attributes |= RoomAttributes::CLASSIFIED->value;
 		}
 		if ($preset === Channel::getIdentifier()) {
-			$attributes |= RoomAttributes::CHANNEL->value;
+			$attributes |= RoomAttributes::CHANNEL->value | RoomAttributes::HIDDEN_PARTICIPANTS->value;
 		}
 		if ($preset === Announcement::getIdentifier()) {
 			if (!$this->groupManager->isAdmin($actorUserId)) {
@@ -885,7 +887,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 			// Announcements are channels with additional restrictions,
 			// so all channel restrictions apply to them as well.
-			$attributes |= RoomAttributes::CHANNEL->value | RoomAttributes::ANNOUNCEMENT->value;
+			$attributes |= RoomAttributes::CHANNEL->value | RoomAttributes::ANNOUNCEMENT->value | RoomAttributes::HIDDEN_PARTICIPANTS->value;
+		}
+		if ($preset === Webinar::getIdentifier() || $preset === Presentation::getIdentifier()) {
+			// The audience can be enormous, so the participants list is only available to moderators
+			$attributes |= RoomAttributes::HIDDEN_PARTICIPANTS->value;
 		}
 
 		try {
@@ -1449,8 +1455,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
-		if ($this->room->isChannel() && !$this->participant->hasModeratorPermissions()) {
-			// The participants list of a channel can be enormous, so it is only
+		if ($this->room->hasHiddenParticipants() && !$this->participant->hasModeratorPermissions()) {
+			// The participants list can be enormous, so it is only
 			// available to moderators. Everyone else has to use the search instead.
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
@@ -1482,7 +1488,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
-		if ($this->room->isChannel() && !$this->participant->hasModeratorPermissions()) {
+		if ($this->room->hasHiddenParticipants() && !$this->participant->hasModeratorPermissions()) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
