@@ -35,6 +35,9 @@ namespace OC\Core\Command {
 		public function getDefinition(): InputDefinition {
 		}
 
+		public function getHelper(string $name): mixed {
+		}
+
 		protected function writeArrayInOutputFormat(InputInterface $input, OutputInterface $output, array $items, string $prefix = '  - '): void {
 		}
 

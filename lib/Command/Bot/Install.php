@@ -15,10 +15,12 @@ use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 class Install extends Base {
 	public function __construct(
@@ -42,7 +44,7 @@ class Install extends Base {
 			->addArgument(
 				'secret',
 				InputArgument::REQUIRED,
-				'Secret used to validate API calls (min. 40 chars, max. 128 chars)'
+				'Secret used to validate API calls (min. 40 chars, max. 128 chars).'
 			)
 			->addArgument(
 				'url',
@@ -71,6 +73,12 @@ class Install extends Base {
 				. ' - reaction: The bot is notified about adding and removing of reactions' . "\n"
 				. ' - none: When all features should be disabled for the bot'
 			)
+			->addOption(
+				'password-from-env',
+				null,
+				InputOption::VALUE_NONE,
+				'Read secret from environment variable NC_PASS/OC_PASS or interactively from prompt if environment variable is not set.'
+			)
 		;
 	}
 
@@ -80,6 +88,11 @@ class Install extends Base {
 		$url = $input->getArgument('url');
 		$description = $input->getArgument('description') ?? '';
 		$noSetup = $input->getOption('no-setup');
+		$passwordFromEnv = $input->getOption('password-from-env');
+
+		if ($passwordFromEnv) {
+			$output->writeln('<info>Secret given as command line argument will be ignored because --password-from-env was passed</info>');
+		}
 
 		if (!empty($input->getOption('feature'))) {
 			$featureFlags = Bot::featureLabelsToFlags($input->getOption('feature'));
@@ -90,6 +103,31 @@ class Install extends Base {
 			$featureFlags = Bot::FEATURE_EVENT;
 		} else {
 			$featureFlags = Bot::FEATURE_WEBHOOK + Bot::FEATURE_RESPONSE;
+		}
+
+		if ($passwordFromEnv) {
+			$secret = getenv('NC_PASS') ?: getenv('OC_PASS');
+			$secret = $secret ? trim($secret) : '';
+		}
+
+		if (empty($secret) && $passwordFromEnv && $input->isInteractive()) {
+			/** @var QuestionHelper $helper */
+			$helper = $this->getHelper('question');
+
+			$question = new Question('Enter secret: ');
+			$question->setHidden(true);
+			$secret = $helper->ask($input, $output, $question);
+
+			$question = new Question('Confirm secret: ');
+			$question->setHidden(true);
+			$confirmSecret = $helper->ask($input, $output, $question);
+
+			if ($secret !== $confirmSecret) {
+				$output->writeln('<error>Secrets did not match!</error>');
+				return 1;
+			}
+
+			$secret = $secret ? trim($secret) : '';
 		}
 
 		if ($featureFlags & Bot::FEATURE_EVENT

@@ -53,6 +53,8 @@ class AddTest extends TestCase {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
 					return false;
+				} elseif ($arg === 'password-from-env') {
+					return false;
 				}
 				throw new \Exception();
 			});
@@ -82,6 +84,8 @@ class AddTest extends TestCase {
 				if ($arg === 'secret') {
 					return '';
 				} elseif ($arg === 'generate-secret') {
+					return false;
+				} elseif ($arg === 'password-from-env') {
 					return false;
 				}
 				throw new \Exception();
@@ -113,6 +117,8 @@ class AddTest extends TestCase {
 					return null;
 				} elseif ($arg === 'generate-secret') {
 					return true;
+				} elseif ($arg === 'password-from-env') {
+					return false;
 				}
 				throw new \Exception();
 			});
@@ -161,6 +167,8 @@ class AddTest extends TestCase {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
 					return true;
+				} elseif ($arg === 'password-from-env') {
+					return false;
 				}
 				throw new \Exception();
 			});
@@ -190,6 +198,8 @@ class AddTest extends TestCase {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
+					return false;
+				} elseif ($arg === 'password-from-env') {
 					return false;
 				}
 				throw new \Exception();
@@ -221,6 +231,8 @@ class AddTest extends TestCase {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
 					return false;
+				} elseif ($arg === 'password-from-env') {
+					return false;
 				}
 				throw new \Exception();
 			});
@@ -250,6 +262,8 @@ class AddTest extends TestCase {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
+					return false;
+				} elseif ($arg === 'password-from-env') {
 					return false;
 				}
 				throw new \Exception();
@@ -294,6 +308,8 @@ class AddTest extends TestCase {
 				if ($arg === 'secret') {
 					return 'my-test-secret-2';
 				} elseif ($arg === 'generate-secret') {
+					return false;
+				} elseif ($arg === 'password-from-env') {
 					return false;
 				}
 				throw new \Exception();
@@ -352,6 +368,8 @@ class AddTest extends TestCase {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
 					return false;
+				} elseif ($arg === 'password-from-env') {
+					return false;
 				}
 				throw new \Exception();
 			});
@@ -392,6 +410,8 @@ class AddTest extends TestCase {
 				if ($arg === 'secret') {
 					return 'my-test-secret';
 				} elseif ($arg === 'generate-secret') {
+					return false;
+				} elseif ($arg === 'password-from-env') {
 					return false;
 				}
 				throw new \Exception();

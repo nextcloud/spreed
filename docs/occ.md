@@ -6,12 +6,12 @@ Install a new bot on the server
 
 ### Usage
 
-* `talk:bot:install [--output [OUTPUT]] [--no-setup] [-f|--feature FEATURE] [--] <name> <secret> <url> [<description>]`
+* `talk:bot:install [--output [OUTPUT]] [--no-setup] [-f|--feature FEATURE] [--password-from-env] [--] <name> <secret> <url> [<description>]`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `name` | The name under which the messages will be posted (min. 1 char, max. 64 chars) | yes | no | *Required* |
-| `secret` | Secret used to validate API calls (min. 40 chars, max. 128 chars) | yes | no | *Required* |
+| `secret` | Secret used to validate API calls (min. 40 chars, max. 128 chars). | yes | no | *Required* |
 | `url` | Webhook endpoint to post messages to (max. 4000 chars) | yes | no | *Required* |
 | `description` | Optional description shown in the admin settings (max. 4000 chars) | no | no | `NULL` |
 
@@ -20,6 +20,7 @@ Install a new bot on the server
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
 | `--no-setup` | Prevent moderators from setting up the bot in a conversation | no | no | no | `false` |
 | `--feature\|-f` | Specify the list of features for the bot - webhook: The bot receives posted chat messages as webhooks - response: The bot can post messages and reactions as a response - event: The bot reads posted messages from local events - reaction: The bot is notified about adding and removing of reactions - none: When all features should be disabled for the bot | yes | yes | yes | *Required* |
+| `--password-from-env` | Read secret from environment variable NC_PASS/OC_PASS or interactively from prompt if environment variable is not set. | no | no | no | `false` |
 
 ## talk:bot:create
 
@@ -503,16 +504,18 @@ Add an external signaling server.
 
 ### Usage
 
-* `talk:signaling:add [--verify] [--] <server> <secret>`
+* `talk:signaling:add [--verify] [--skip-verify] [--password-from-env] [--] <server> [<secret>]`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `server` | A server string, ex. wss://signaling.example.org | yes | no | *Required* |
-| `secret` | A shared secret string. | yes | no | *Required* |
+| `secret` | A shared secret string. | no | no | `NULL` |
 
 | Options | Description | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--verify` | Validate SSL certificate if set. | no | no | no | `false` |
+| `--verify` | DEPRECATED: added servers are verified by default. use --skip-verify to disable it. | no | no | no | `false` |
+| `--skip-verify` | Do not validate SSL certificate if set. | no | no | no | `false` |
+| `--password-from-env` | Read secret from environment variable NC_PASS or interactively from prompt if environment variable is not set. | no | no | no | `false` |
 
 ## talk:signaling:delete
 
@@ -593,7 +596,7 @@ Add a TURN server.
 
 ### Usage
 
-* `talk:turn:add [--secret SECRET] [--generate-secret] [--] <schemes> <server> <protocols>`
+* `talk:turn:add [--secret SECRET] [--generate-secret] [--password-from-env] [--] <schemes> <server> <protocols>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -605,6 +608,7 @@ Add a TURN server.
 |---|---|---|---|---|---|
 | `--secret` | A shard secret string | yes | yes | no | *Required* |
 | `--generate-secret` | Generate secret if set. | no | no | no | `false` |
+| `--password-from-env` | Read secret from environment variable NC_PASS or interactively from prompt if environment variable is not set. | no | no | no | `false` |
 
 ## talk:turn:delete
 
