@@ -722,6 +722,10 @@ namespace OCA\Talk;
  *     server: string,
  *     // URL of the Nextcloud server for federation
  *     nextcloudServer: string,
+ *     // Authentication parameters for the federation join request
+ *     joinAuthParams?: array{
+ *         token: string,
+ *     },
  *     // Authentication parameters for the hello request
  *     helloAuthParams: array{
  *         token: string,
