@@ -4180,6 +4180,10 @@ export type components = {
             server: string;
             /** @description URL of the Nextcloud server for federation */
             nextcloudServer: string;
+            /** @description Authentication parameters for the federation join request */
+            joinAuthParams?: {
+                token: string;
+            };
             /** @description Authentication parameters for the hello request */
             helloAuthParams: {
                 token: string;
