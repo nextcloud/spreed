@@ -737,6 +737,8 @@
     "Total errors count" : "エラーの総数",
     "Find more bots" : "他のボットを探す",
     "Could not save the setting" : "設定を保存できませんでした",
+    "Enable encryption" : "暗号化を有効にする",
+    "End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge." : "構成されたSIPブリッジでのエンドツーエンドの暗号化通話には、新しいバージョンの高性能バックエンドとSIPブリッジが必要です。",
     "Beta" : "ベータ",
     "Permissions" : "アクセス権限",
     "@-mentions only" : "@で直接会話",
@@ -748,8 +750,6 @@
     "Integration into other apps" : "他のアプリへの統合",
     "Allow conversations on files" : "ファイルでの会話を許可する",
     "Allow conversations on public shares for files" : "公開共有ファイルでの会話を許可する",
-    "Enable encryption" : "暗号化を有効にする",
-    "End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge." : "構成されたSIPブリッジでのエンドツーエンドの暗号化通話には、新しいバージョンの高性能バックエンドとSIPブリッジが必要です。",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "上のボタンをクリックすると、フォーム内の情報がStruktur AGのサーバーに送信されます。詳細については、{linkstart}spreed.eu{linkend}をご覧ください。",
     "Pending" : "保留中",
     "Error" : "エラー",
@@ -1393,8 +1393,8 @@
     "Settings for participant \"{user}\"" : "参加者\"{user}\"の設定",
     "Participant \"{user}\"" : "参加者 \"{user}\"",
     "Call rejected" : "通話拒否",
-    "{time} talking time" : "{time} 通話時間",
     "Raised their hand" : "手を上げる",
+    "{time} talking time" : "{time} 通話時間",
     "Joined with video" : "ビデオで参加",
     "Joined via phone" : "電話で参加",
     "Joined with audio" : "オーディオで参加",
@@ -1523,7 +1523,6 @@
     "Raise hand (R)" : "挙手 (R)",
     "Lower hand" : "手を下げる (r)",
     "Lower hand (R)" : "手を下げる (R)",
-    "Send a reaction" : "リアクションを送信",
     "React with {reaction}" : "{reaction} で反応する",
     "All tasks done!" : "すべてのタスクが完了しました!",
     "_%n participant in call_::_%n participants in call_" : ["%n 人が通話に参加"],
@@ -1830,6 +1829,7 @@
     "{time} talking …" : "{time} 話しています…",
     "Searching …" : "検索しています…",
     "Always shown if recording consent is required" : "録音の同意が必要な場合は常に表示されます",
+    "Send a reaction" : "リアクションを送信",
     "Search …" : "検索…"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
