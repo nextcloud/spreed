@@ -6,6 +6,7 @@
 import type { ChatMessage, Conversation } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
+import { getBaseUrl } from '@nextcloud/router'
 import { ATTENDEE, CONVERSATION, MENTION, MESSAGE } from '../constants.ts'
 
 /**
@@ -148,34 +149,86 @@ function selfMentionType(actorType: string) {
  * Returns whether the actor is message author
  *
  * @param message Chat message
+ * @param conversation Current conversation
  */
-function authorIsActor(message: ChatMessage) {
-	return selfMentionId(message.actorId, message.actorType) === message.messageParameters.actor.id
-		&& selfMentionType(message.actorType) === message.messageParameters.actor.type
+function authorIsActor(message: ChatMessage, conversation: Conversation) {
+	const actor = message.messageParameters.actor
+	if (conversation.remoteServer && actor.type === MENTION.TYPE.USER) {
+		// Relayed actorType and actorId are in the local view, parameters stay in the host's view
+		if (actor.server === getBaseUrl()) {
+			return message.actorType === ATTENDEE.ACTOR_TYPE.USERS && message.actorId === actor.id
+		}
+		const server = toCloudIdServer(actor.server || conversation.remoteServer)
+		return message.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS && message.actorId === `${actor.id}@${server}`
+	}
+
+	if (message.actorType === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS) {
+		// Federated authors have the actorId 'user@server', while the actor parameter
+		// is a user with the separate `server` field (from the host's point of view)
+		return actor.type === MENTION.TYPE.USER
+			&& 'server' in actor && !!actor.server
+			&& message.actorId === `${actor.id}@${actor.server}`
+	}
+
+	return selfMentionId(message.actorId, message.actorType) === actor.id
+		&& selfMentionType(message.actorType) === actor.type
+		&& !('server' in actor && actor.server)
+}
+
+/**
+ * Returns server URL as in cloud ids (only https:// is stripped)
+ *
+ * @param url server URL
+ */
+function toCloudIdServer(url: string) {
+	return url.replace(/^https:\/\//, '')
+}
+
+/**
+ * Returns whether the parameter is current user, as seen from the host of a federated conversation
+ *
+ * @param parameter Rich object parameter
+ * @param conversation Current conversation
+ */
+function selfIsFederatedParameter(parameter: ChatMessage['messageParameters'][string], conversation: Conversation) {
+	return parameter.type === MENTION.TYPE.USER
+		&& parameter.id === conversation.actorId
+		&& parameter.server === getBaseUrl()
 }
 
 /**
  * Returns whether the actor is current user (You)
  *
  * @param message Chat message
- * @param selfActorId Current user id
- * @param selfActorType Current user type
+ * @param conversation Current conversation
  */
-function selfIsActor(message: ChatMessage, selfActorId: string, selfActorType: string) {
-	return message.messageParameters.actor.id === selfActorId
-		&& message.messageParameters.actor.type === selfMentionType(selfActorType)
+function selfIsActor(message: ChatMessage, conversation: Conversation) {
+	const actor = message.messageParameters.actor
+	// Relayed messages are in the host's view, where current user is federated
+	if (conversation.remoteServer) {
+		return selfIsFederatedParameter(actor, conversation)
+	}
+
+	return actor.id === conversation.actorId
+		&& actor.type === selfMentionType(conversation.actorType)
+		&& !actor.server
 }
 
 /**
  * Returns whether the affected user is current user (you)
  *
  * @param message Chat message
- * @param selfActorId Current user id
- * @param selfActorType Current user type
+ * @param conversation Current conversation
  */
-function selfIsUser(message: ChatMessage, selfActorId: string, selfActorType: string) {
-	return message.messageParameters.user.id === selfMentionId(selfActorId, selfActorType)
-		&& message.messageParameters.user.type === selfMentionType(selfActorType)
+function selfIsUser(message: ChatMessage, conversation: Conversation) {
+	const user = message.messageParameters.user
+	if (conversation.remoteServer) {
+		return selfIsFederatedParameter(user, conversation)
+	}
+
+	return user.id === selfMentionId(conversation.actorId, conversation.actorType)
+		&& user.type === selfMentionType(conversation.actorType)
+		&& !user.server
 }
 
 /**
@@ -299,7 +352,7 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 	switch (message.systemMessage) {
 		case MESSAGE.SYSTEM_TYPE.CALL_STARTED: {
 			if (callIsSilent(message)) {
-				if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+				if (selfIsActor(message, conversation)) {
 					return conversationIsOneToOne(conversation.type)
 						? t('spreed', 'Outgoing silent call')
 						: t('spreed', 'You started a silent call')
@@ -309,7 +362,7 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 						: t('spreed', '{actor} started a silent call')
 				}
 			} else {
-				if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+				if (selfIsActor(message, conversation)) {
 					return conversationIsOneToOne(conversation.type)
 						? t('spreed', 'Outgoing call')
 						: t('spreed', 'You started a call')
@@ -321,12 +374,12 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 			}
 		}
 		case MESSAGE.SYSTEM_TYPE.CALL_JOINED: {
-			return selfIsActor(message, conversation.actorId, conversation.actorType)
+			return selfIsActor(message, conversation)
 				? t('spreed', 'You joined the call')
 				: t('spreed', '{actor} joined the call')
 		}
 		case MESSAGE.SYSTEM_TYPE.CALL_LEFT: {
-			return selfIsActor(message, conversation.actorId, conversation.actorType)
+			return selfIsActor(message, conversation)
 				? t('spreed', 'You left the call')
 				: t('spreed', '{actor} left the call')
 		}
@@ -339,9 +392,9 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 		}
 		case MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED:
 		case MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_PROMOTED: {
-			if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+			if (selfIsActor(message, conversation)) {
 				return t('spreed', 'You promoted {user} to moderator')
-			} else if (selfIsUser(message, conversation.actorId, conversation.actorType)) {
+			} else if (selfIsUser(message, conversation)) {
 				return cliIsActor(message)
 					? t('spreed', 'An administrator promoted you to moderator')
 					: t('spreed', '{actor} promoted you to moderator')
@@ -352,9 +405,9 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 		}
 		case MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED:
 		case MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_DEMOTED: {
-			if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+			if (selfIsActor(message, conversation)) {
 				return t('spreed', 'You demoted {user} from moderator')
-			} else if (selfIsUser(message, conversation.actorId, conversation.actorType)) {
+			} else if (selfIsUser(message, conversation)) {
 				return cliIsActor(message)
 					? t('spreed', 'An administrator demoted you from moderator')
 					: t('spreed', '{actor} demoted you from moderator')
@@ -370,7 +423,7 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 			throw new Error()
 		}
 		case MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED: {
-			return selfIsActor(message, conversation.actorId, conversation.actorType)
+			return selfIsActor(message, conversation)
 				? t('spreed', 'You cleared the history of the conversation')
 				: t('spreed', '{actor} cleared the history of the conversation')
 		}
@@ -378,17 +431,17 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 			return t('spreed', 'Someone voted on the poll {poll}')
 		}
 		case MESSAGE.SYSTEM_TYPE.POLL_CLOSED: {
-			return selfIsActor(message, conversation.actorId, conversation.actorType)
+			return selfIsActor(message, conversation)
 				? t('spreed', 'You ended the poll {poll}')
 				: t('spreed', '{actor} ended the poll {poll}')
 		}
 		case MESSAGE.SYSTEM_TYPE.RECORDING_STARTED: {
-			return selfIsActor(message, conversation.actorId, conversation.actorType)
+			return selfIsActor(message, conversation)
 				? t('spreed', 'You started the video recording')
 				: t('spreed', '{actor} started the video recording')
 		}
 		case MESSAGE.SYSTEM_TYPE.RECORDING_STOPPED: {
-			return selfIsActor(message, conversation.actorId, conversation.actorType)
+			return selfIsActor(message, conversation)
 				? t('spreed', 'You stopped the video recording')
 				: t('spreed', '{actor} stopped the video recording')
 		}
@@ -407,9 +460,9 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
  * @return localized string
  */
 export function tryLocalizeDeletedMessage(message: ChatMessage, conversation: Conversation): string {
-	if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+	if (selfIsActor(message, conversation)) {
 		return t('spreed', 'Message deleted by you')
-	} else if (authorIsActor(message)) {
+	} else if (authorIsActor(message, conversation)) {
 		return t('spreed', 'Message deleted by author')
 	} else {
 		return t('spreed', 'Message deleted by {actor}')
