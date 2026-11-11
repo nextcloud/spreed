@@ -688,6 +688,8 @@
     "Last error" : "Апошняя памылка",
     "Total errors count" : "Усяго памылак",
     "Find more bots" : "Знайсці больш ботаў",
+    "End-to-end encrypted calls" : "Скразное шыфраванне выклікаў",
+    "Enable encryption" : "Уключыць шыфраванне",
     "Beta" : "Бэта",
     "Permissions" : "Дазволы",
     "All messages" : "Усе паведамленні",
@@ -696,8 +698,6 @@
     "General settings" : "Агульныя налады",
     "Default notification settings" : "Прадвызначаныя налады апавяшчэнняў",
     "Integration into other apps" : "Інтэграцыя ў іншыя праграмы",
-    "End-to-end encrypted calls" : "Скразное шыфраванне выклікаў",
-    "Enable encryption" : "Уключыць шыфраванне",
     "Pending" : "У чаканні",
     "Error" : "Памылка",
     "Blocked" : "Заблакіраваны",
@@ -1464,7 +1464,6 @@
     "Raise hand (R)" : "Падняць руку (R)",
     "Lower hand" : "Апусціць руку",
     "Lower hand (R)" : "Апусціць руку (R)",
-    "Send a reaction" : "Адправіць рэакцыю",
     "React with {reaction}" : "Адрэагаваць з {reaction}",
     "All tasks done!" : "Усе заданні выкананы!",
     "_{done} of %n task_::_{done} of %n tasks_" : ["{done} з %n задання","{done} з %n заданняў","{done} з %n заданняў","{done} з %n заданняў"],
@@ -1763,6 +1762,7 @@
     "Ringing …" : "Выклік …",
     "Searching …" : "Пошук …",
     "Search messages …" : "Пошук паведамленняў …",
+    "Send a reaction" : "Адправіць рэакцыю",
     "Search …" : "Пошук ...",
     "Failed to connect. Retrying …" : "Не атрымалася злучыцца. Паўторная спроба…"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"

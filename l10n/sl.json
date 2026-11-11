@@ -677,6 +677,7 @@
     "Total errors count" : "Skupno število napak",
     "Find more bots" : "Poišči več botov",
     "Could not save the setting" : "Ni mogoče shraniti nastavitev",
+    "Enable encryption" : "Omogoči šifriranje",
     "Beta" : "Preizkusno",
     "Permissions" : "Dovoljenja",
     "General settings" : "Splošne nastavitve",
@@ -686,7 +687,6 @@
     "Integration into other apps" : "Združevanje z drugimi programi",
     "Allow conversations on files" : "Dovoli pogovore pri datotekah",
     "Allow conversations on public shares for files" : "Dovoli pogovore na javnih povezavah pri datotekah",
-    "Enable encryption" : "Omogoči šifriranje",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "S klikom na potrditveni gumb bodo podatki poslani na strežnik Struktur AG. Več podrobnosti je zbranih na povezavi  {linkstart}spreed.eu{linkend}.",
     "Pending" : "Na čakanju",
     "Error" : "Napaka",
@@ -1242,8 +1242,8 @@
     "Participant \"{user}\"" : "Uporabnik »{user}«",
     "owner" : "lastnik",
     "Call rejected" : "Klic je zavrnjen",
-    "{time} talking time" : "{time} pogovora",
     "Raised their hand" : "Dvigne roko",
+    "{time} talking time" : "{time} pogovora",
     "Joined with video" : "Povezano z videom",
     "Joined via phone" : "Povezano pred telefona",
     "Joined with audio" : "Povezano z zvokom",
@@ -1352,7 +1352,6 @@
     "Raise hand (R)" : "Dvigni roko (R)",
     "Lower hand" : "Spusti roko",
     "Lower hand (R)" : "Spusti roko (R)",
-    "Send a reaction" : "Pošlji odziv",
     "React with {reaction}" : "Odzovi se z {reaction}",
     "_%n participant in call_::_%n participants in call_" : ["Sodeluje %n udeleženec","Sodelujeta %n udeleženca","Sodelujejo %n udeleženci","Sodeluje %n udeležencev"],
     "You are not allowed to enable screensharing" : "Ni ustreznih dovoljenj za omogočanje prikaza zaslonske slike",
@@ -1606,6 +1605,7 @@
     "Ringing …" : "Zvoni na drugi strani ...",
     "{time} talking …" : "{time} pogovora …",
     "Searching …" : "Poteka iskanje ...",
+    "Send a reaction" : "Pošlji odziv",
     "Search …" : "Poišči …"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }
