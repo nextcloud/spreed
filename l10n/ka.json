@@ -683,6 +683,7 @@
     "Last error" : "Last error",
     "Total errors count" : "Total errors count",
     "Find more bots" : "Find more bots",
+    "Enable encryption" : "Enable encryption",
     "Beta" : "Beta",
     "Permissions" : "Permissions",
     "All messages" : "All messages",
@@ -695,7 +696,6 @@
     "Integration into other apps" : "Integration into other apps",
     "Allow conversations on files" : "Allow conversations on files",
     "Allow conversations on public shares for files" : "Allow conversations on public shares for files",
-    "Enable encryption" : "Enable encryption",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}.",
     "Pending" : "Pending",
     "Error" : "შეცდომა",
@@ -1238,8 +1238,8 @@
     "bot" : "bot",
     "guest" : "guest",
     "Call rejected" : "Call rejected",
-    "{time} talking time" : "{time} talking time",
     "Raised their hand" : "Raised their hand",
+    "{time} talking time" : "{time} talking time",
     "Joined with video" : "Joined with video",
     "Joined via phone" : "Joined via phone",
     "Joined with audio" : "Joined with audio",
@@ -1349,7 +1349,6 @@
     "Raise hand (R)" : "Raise hand (R)",
     "Lower hand" : "Lower hand",
     "Lower hand (R)" : "Lower hand (R)",
-    "Send a reaction" : "Send a reaction",
     "React with {reaction}" : "React with {reaction}",
     "_%n participant in call_::_%n participants in call_" : ["%n participant in call","%n participants in call"],
     "You are not allowed to enable screensharing" : "You are not allowed to enable screensharing",
@@ -1625,6 +1624,7 @@
     "Ringing …" : "Ringing …",
     "{time} talking …" : "{time} talking …",
     "Searching …" : "ძებნა …",
+    "Send a reaction" : "Send a reaction",
     "Search …" : "Search …"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }
