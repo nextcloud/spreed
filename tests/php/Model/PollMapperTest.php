@@ -16,6 +16,7 @@ use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Service\PollService;
 use OCP\IDBConnection;
 use OCP\Server;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Test\TestCase;
 
@@ -96,5 +97,39 @@ class PollMapperTest extends TestCase {
 		} catch (\Exception) {
 			return null;
 		}
+	}
+
+	public static function liveVoterSettings(): array {
+		return [
+			[Poll::MODE_PUBLIC, true, false, true],
+			[Poll::MODE_PUBLIC, false, false, false],
+			[Poll::MODE_HIDDEN, true, false, false],
+			[Poll::MODE_PUBLIC, true, true, true],
+		];
+	}
+
+	#[DataProvider('liveVoterSettings')]
+	public function testLiveVoterSettingIsPersisted(int $mode, bool $enabled, bool $draft, bool $expected): void {
+		$poll = $this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, $draft, $enabled);
+		$stored = $this->pollMapper->getPollByRoomIdAndPollId($this->roomId, $poll->getId());
+		$this->assertSame($expected, $stored->getShowVotersBeforeClosing());
+		$this->assertSame($expected, $stored->renderAsDraft()['showVotersBeforeClosing']);
+	}
+
+	public static function resultPreviewSettings(): array {
+		return [
+			[Poll::MODE_PUBLIC, true, false],
+			[Poll::MODE_HIDDEN, true, false],
+			[Poll::MODE_PUBLIC, false, false],
+			[Poll::MODE_HIDDEN, true, true],
+		];
+	}
+
+	#[DataProvider('resultPreviewSettings')]
+	public function testResultPreviewIsPersisted(int $mode, bool $enabled, bool $draft): void {
+		$poll = $this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, $draft, false, $enabled);
+		$stored = $this->pollMapper->getPollByRoomIdAndPollId($this->roomId, $poll->getId());
+		$this->assertSame($enabled, $stored->getShowResultsBeforeVoting());
+		$this->assertSame($enabled, $stored->renderAsDraft()['showResultsBeforeVoting']);
 	}
 }

@@ -2,6 +2,26 @@
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
+With the `talk-polls-live-voters` capability, public polls can opt into showing
+voter names before the poll closes. Pass the optional boolean
+`showVotersBeforeClosing` when creating a poll or creating/updating a draft.
+It defaults to `false` and is ignored for hidden polls (`resultMode = 1`).
+Existing polls keep their previous behavior. While an opted-in public poll is
+open, voters can see who voted for each option after casting their own
+vote, or before voting when `showResultsBeforeVoting` is also enabled.
+Withdrawing the vote hides these details again unless result previews are enabled. Once a public poll is
+closed, all participants can see the voter details as before. Hidden polls
+never expose names.
+
+With `talk-polls-results-before-voting`, the optional boolean
+`showResultsBeforeVoting` allows all participants to see counts and percentages
+before voting. It defaults to `false` and works independently of `resultMode`
+and `showVotersBeforeClosing`, including on hidden polls. It does not grant
+access to voter names by itself: those remain hidden until closing unless
+`showVotersBeforeClosing` is also enabled on a public poll. With both settings
+enabled, names are visible before voting as well. The setting is
+preserved in drafts and can be changed when editing a draft.
+
 ## Create a poll in a conversation
 
 * Federation capability: `federation-v1`
@@ -13,7 +33,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 |--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `question`   | string       | The question of the poll                                                                                                                                                                                                       |
 | `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
-| `resultMode` | int          | The result and voting mode of the poll, `0` means participants can immediatelly see the result and who voted for which option. `1` means the result is hidden until the poll is closed and then only the summary is published. |
+| `resultMode` | int          | `0`: Results are visible after voting; names are shown after closing, or after voting when `showVotersBeforeClosing` is enabled. `1`: Only the summary is published after closing, without names. |
+| `showVotersBeforeClosing` | bool | Optional, defaults to `false`. Show names to voters before closing a public poll. Requires `talk-polls-live-voters`. |
+| `showResultsBeforeVoting` | bool | Optional, defaults to `false`. Show counts and percentages before voting, including hidden polls. Requires `talk-polls-results-before-voting`. |
 | `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
 
 * Response:
@@ -41,7 +63,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 |--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `question`   | string       | The question of the poll                                                                                                                                                                                                       |
 | `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
-| `resultMode` | int          | The result and voting mode of the poll, `0` means participants can immediatelly see the result and who voted for which option. `1` means the result is hidden until the poll is closed and then only the summary is published. |
+| `resultMode` | int          | `0`: Results are visible after voting; names are shown after closing, or after voting when `showVotersBeforeClosing` is enabled. `1`: Only the summary is published after closing, without names. |
+| `showVotersBeforeClosing` | bool | Optional, defaults to `false`. Show names to voters before closing a public poll. Requires `talk-polls-live-voters`. |
+| `showResultsBeforeVoting` | bool | Optional, defaults to `false`. Show counts and percentages before voting, including hidden polls. Requires `talk-polls-results-before-voting`. |
 | `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
 
 * Response:
@@ -130,7 +154,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 | `id`               | int      | ID of the poll                                                                                                                                          |
 | `question`         | string   | The question of the poll                                                                                                                                |
 | `options`          | string[] | The options participants can vote for                                                                                                                   |
-| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (only available for when the actor voted on public poll or the poll is closed)                       |
+| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (available after voting on public polls, after closing, or when `showResultsBeforeVoting` is enabled) |
 | `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))                                                           |
 | `actorId`          | string   | Actor ID identifying the poll author                                                                                                                    |
 | `actorDisplayName` | string   | Display name of the poll author                                                                                                                         |
@@ -138,8 +162,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 | `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                                                                           |
 | `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                                                                                      |
 | `votedSelf`        | int[]    | Array of option ids the participant voted for                                                                                                           |
-| `numVoters`        | int      | The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators) |
-| `details`          | array[]  | Detailed list who voted for which option (only available for public closed polls), see [Details](#details) below                                        |
+| `numVoters`        | int      | The number of unique voters (available when results are visible, or to the creator and moderators) |
+| `showVotersBeforeClosing` | bool | Whether names are visible to voters before closing a public poll |
+| `showResultsBeforeVoting` | bool | Whether counts and percentages are visible before voting |
+| `details`          | array[]  | Who voted for each option: available for public closed polls, or with `showVotersBeforeClosing` after voting or when result previews are enabled. See [Details](#details). |
 
 ### Details
 

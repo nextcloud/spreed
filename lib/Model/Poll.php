@@ -41,6 +41,10 @@ use OCP\DB\Types;
  * @method void setResultMode(int $resultMode)
  * @method int getResultMode()
  * @psalm-method self::MODE_* getResultMode()
+ * @method void setShowVotersBeforeClosing(bool $showVotersBeforeClosing)
+ * @method bool getShowVotersBeforeClosing()
+ * @method void setShowResultsBeforeVoting(bool $showResultsBeforeVoting)
+ * @method bool getShowResultsBeforeVoting()
  * @method void setMaxVotes(int $maxVotes)
  * @method int getMaxVotes()
  * @psalm-method int<0, max> getMaxVotes()
@@ -69,6 +73,8 @@ class Poll extends Entity {
 	protected ?string $displayName = null;
 	protected int $status = self::STATUS_OPEN;
 	protected int $resultMode = self::MODE_PUBLIC;
+	protected bool $showVotersBeforeClosing = false;
+	protected bool $showResultsBeforeVoting = false;
 	protected int $maxVotes = self::MAX_VOTES_UNLIMITED;
 	protected ?\DateTime $expireDate = null;
 
@@ -83,6 +89,8 @@ class Poll extends Entity {
 		$this->addType('displayName', Types::STRING);
 		$this->addType('status', Types::SMALLINT);
 		$this->addType('resultMode', Types::SMALLINT);
+		$this->addType('showVotersBeforeClosing', Types::BOOLEAN);
+		$this->addType('showResultsBeforeVoting', Types::BOOLEAN);
 		$this->addType('maxVotes', Types::INTEGER);
 		$this->addType('expireDate', Types::DATETIME);
 	}
@@ -121,6 +129,8 @@ class Poll extends Entity {
 			'actorDisplayName' => $this->getDisplayName(),
 			'status' => $this->getStatus(),
 			'resultMode' => $this->getResultMode(),
+			'showVotersBeforeClosing' => $this->getShowVotersBeforeClosing(),
+			'showResultsBeforeVoting' => $this->getShowResultsBeforeVoting(),
 			'maxVotes' => $this->getMaxVotes(),
 		];
 	}

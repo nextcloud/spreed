@@ -47,6 +47,14 @@ function validatePollForm(jsonObject: unknown): requiredPollParams {
 		throw new Error('Invalid parsed value: maxVotes')
 	}
 
+	if (typedObject.showVotersBeforeClosing !== undefined && typeof typedObject.showVotersBeforeClosing !== 'boolean') {
+		throw new Error('Invalid parsed value: showVotersBeforeClosing')
+	}
+
+	if (typedObject.showResultsBeforeVoting !== undefined && typeof typedObject.showResultsBeforeVoting !== 'boolean') {
+		throw new Error('Invalid parsed value: showResultsBeforeVoting')
+	}
+
 	if (!isStringArray(typedObject.options)) {
 		throw new Error('Invalid parsed value: options')
 	}
@@ -56,6 +64,8 @@ function validatePollForm(jsonObject: unknown): requiredPollParams {
 		options: [...typedObject.options],
 		resultMode: typedObject.resultMode,
 		maxVotes: typedObject.maxVotes,
+		showVotersBeforeClosing: typedObject.resultMode === 0 && typedObject.showVotersBeforeClosing === true,
+		showResultsBeforeVoting: typedObject.showResultsBeforeVoting === true,
 	}
 }
 

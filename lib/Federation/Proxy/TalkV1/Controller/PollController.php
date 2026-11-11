@@ -142,7 +142,7 @@ class PollController {
 	 *
 	 * @see \OCA\Talk\Controller\PollController::createPoll()
 	 */
-	public function createPoll(Room $room, Participant $participant, string $question, array $options, int $resultMode, int $maxVotes, bool $draft): DataResponse {
+	public function createPoll(Room $room, Participant $participant, string $question, array $options, int $resultMode, int $maxVotes, bool $draft, bool $showVotersBeforeClosing = false, bool $showResultsBeforeVoting = false): DataResponse {
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
@@ -153,6 +153,8 @@ class PollController {
 				'resultMode' => $resultMode,
 				'maxVotes' => $maxVotes,
 				'draft' => $draft,
+				'showVotersBeforeClosing' => $showVotersBeforeClosing,
+				'showResultsBeforeVoting' => $showResultsBeforeVoting,
 			],
 		);
 
@@ -182,7 +184,7 @@ class PollController {
 	 *
 	 * @see \OCA\Talk\Controller\PollController::createPoll()
 	 */
-	public function updateDraftPoll(int $pollId, Room $room, Participant $participant, string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+	public function updateDraftPoll(int $pollId, Room $room, Participant $participant, string $question, array $options, int $resultMode, int $maxVotes, bool $showVotersBeforeClosing = false, bool $showResultsBeforeVoting = false): DataResponse {
 		$proxy = $this->proxy->post(
 			$participant->getAttendee()->getInvitedCloudId(),
 			$participant->getAttendee()->getAccessToken(),
@@ -191,7 +193,9 @@ class PollController {
 				'question' => $question,
 				'options' => $options,
 				'resultMode' => $resultMode,
-				'maxVotes' => $maxVotes
+				'maxVotes' => $maxVotes,
+				'showVotersBeforeClosing' => $showVotersBeforeClosing,
+				'showResultsBeforeVoting' => $showResultsBeforeVoting,
 			],
 		);
 

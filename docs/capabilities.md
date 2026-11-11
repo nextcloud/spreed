@@ -241,6 +241,8 @@
 * `config => conversations => tags-show-unread` (local) - User selected mode when unread conversations are shown in collapsed conversation tags (`never`, `mention` or `always`)
 
 ## 26
+* `talk-polls-results-before-voting` - Whether polls can show vote counts and percentages before voting, independently of voter name visibility
+* `talk-polls-live-voters` - Whether public polls can show who voted for each option before closing, after voting or when result previews are enabled
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `config => chat => mobile-preload-chat` (local) - Whether mobile clients should preload the chat messages of conversations
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)

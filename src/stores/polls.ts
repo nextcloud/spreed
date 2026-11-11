@@ -69,7 +69,7 @@ export const usePollsStore = defineStore('polls', {
 			}
 
 			if (this.polls[token][poll.id]) {
-				this.polls[token][poll.id] = { ...this.polls[token][poll.id], ...poll }
+				this.polls[token][poll.id] = { ...this.polls[token][poll.id], ...poll, details: poll.details }
 			} else {
 				this.polls[token][poll.id] = poll
 			}

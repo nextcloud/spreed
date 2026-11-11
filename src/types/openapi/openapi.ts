@@ -3051,16 +3051,16 @@ export type components = {
             callId?: string | null;
         };
         Poll: components["schemas"]["PollDraft"] & {
-            /** @description Detailed list who voted for which option (only available for public closed polls) */
+            /** @description Detailed voters: available for public closed polls, or with showVotersBeforeClosing after voting or when showResultsBeforeVoting is enabled */
             details?: components["schemas"]["PollVote"][];
             /**
              * Format: int64
-             * @description The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators)
+             * @description Number of unique voters (visible when results are available, or to the creator and moderators)
              */
             numVoters?: number;
             /** @description Array of option ids the participant voted for */
             votedSelf?: number[];
-            /** @description Map with `'option-' + optionId` => number of votes (only available when the actor voted on public poll or the poll is closed) */
+            /** @description Map with `'option-' + optionId` => number of votes (visible after voting on public polls, after closing, or when showResultsBeforeVoting is enabled) */
             votes?: {
                 [key: string]: number;
             };
@@ -3092,6 +3092,10 @@ export type components = {
              * @enum {integer}
              */
             resultMode: 0 | 1;
+            /** @description Whether voters can see who voted for each option before a public poll closes */
+            showVotersBeforeClosing: boolean;
+            /** @description Whether results are visible before voting, including hidden polls */
+            showResultsBeforeVoting: boolean;
             /**
              * Format: int64
              * @description Status of the poll (see [Constants - Poll status](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-status))
@@ -10209,6 +10213,16 @@ export interface operations {
                      * @default 0
                      */
                     threadId?: number;
+                    /**
+                     * @description Whether voters can see who voted for each option before a public poll closes (requires `talk-polls-live-voters` capability)
+                     * @default false
+                     */
+                    showVotersBeforeClosing?: boolean;
+                    /**
+                     * @description Whether results are visible before voting, including hidden polls (requires `talk-polls-results-before-voting` capability)
+                     * @default false
+                     */
+                    showResultsBeforeVoting?: boolean;
                 };
             };
         };
@@ -10295,6 +10309,16 @@ export interface operations {
                      * @description Number of maximum votes per voter
                      */
                     maxVotes: number;
+                    /**
+                     * @description Whether voters can see who voted for each option before a public poll closes (requires `talk-polls-live-voters` capability)
+                     * @default false
+                     */
+                    showVotersBeforeClosing?: boolean;
+                    /**
+                     * @description Whether results are visible before voting, including hidden polls (requires `talk-polls-results-before-voting` capability)
+                     * @default false
+                     */
+                    showResultsBeforeVoting?: boolean;
                 };
             };
         };
