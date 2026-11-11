@@ -86,6 +86,7 @@ export const CONVERSATION = {
 		CLASSIFIED: 4,
 		CHANNEL: 8,
 		ANNOUNCEMENT: 16,
+		TEAM: 32,
 	},
 
 	PRESET: {
@@ -97,6 +98,7 @@ export const CONVERSATION = {
 		CLASSIFIED: 'classified',
 		CHANNEL: 'channel',
 		ANNOUNCEMENT: 'announcement',
+		TEAM: 'team',
 	},
 
 	STATE: {
@@ -157,6 +159,7 @@ export const CONVERSATION = {
 		CLASSIFIED: 'classified',
 		CLASSIFIED_PERSIST: 'classified_persist',
 		MATRIX: 'matrix',
+		TEAM: 'team',
 		DEFAULT: '',
 	},
 

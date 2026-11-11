@@ -17,6 +17,7 @@ use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Presentation;
+use OCA\Talk\RoomPresets\Team;
 use OCA\Talk\RoomPresets\VoiceRoom;
 use OCA\Talk\RoomPresets\Webinar;
 use OCP\AppFramework\Services\IAppConfig;
@@ -45,6 +46,7 @@ class RoomPresetFactory {
 			Presentation::class,
 			Classified::class,
 			Channel::class,
+			Team::class,
 		];
 
 		if ($this->userId !== null && $this->groupManager->isAdmin($this->userId)) {

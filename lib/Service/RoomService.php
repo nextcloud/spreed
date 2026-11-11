@@ -230,6 +230,7 @@ class RoomService {
 			$objectTypes[] = Room::OBJECT_TYPE_NOTE_TO_SELF;
 			$objectTypes[] = Room::OBJECT_TYPE_SAMPLE;
 			$objectTypes[] = Room::OBJECT_TYPE_VIDEO_VERIFICATION;
+			$objectTypes[] = Room::OBJECT_TYPE_TEAM;
 
 			if ($this->config->getExternalCallService() !== null) {
 				$objectTypes[] = Room::OBJECT_TYPE_EXTERNAL_CALL;

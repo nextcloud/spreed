@@ -289,6 +289,9 @@ class AvatarService {
 		if ($room->isChannel()) {
 			return __DIR__ . '/../../img/icon-conversation-channel-' . $colorTone . '.svg';
 		}
+		if ($room->isTeam()) {
+			return __DIR__ . '/../../img/icon-conversation-channel-' . $colorTone . '.svg';
+		}
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return __DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg';
 		}

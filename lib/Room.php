@@ -41,6 +41,7 @@ class Room {
 	public const OBJECT_TYPE_INSTANT_MEETING = 'instant_meeting';
 	public const OBJECT_TYPE_MATRIX = 'matrix';
 	public const OBJECT_TYPE_NOTE_TO_SELF = 'note_to_self';
+	public const OBJECT_TYPE_TEAM = 'team';
 	/**
 	 * @deprecated No longer used for new conversations
 	 */
@@ -509,5 +510,9 @@ class Room {
 	 */
 	public function isAnnouncement(): bool {
 		return ($this->attributes & RoomAttributes::ANNOUNCEMENT->value) === RoomAttributes::ANNOUNCEMENT->value;
+	}
+
+	public function isTeam(): bool {
+		return ($this->attributes & RoomAttributes::TEAM->value) === RoomAttributes::TEAM->value;
 	}
 }

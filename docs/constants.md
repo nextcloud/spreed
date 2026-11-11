@@ -25,6 +25,7 @@
 | `classified`            | No             | Classified conversation queued for automatic deletion after a call (retention `retention_classified_rooms`) | Unix timestamp of the call that queued the deletion                               |
 | `classified_persist`    | No             | Classified conversation a moderator kept (unbound), so it is no longer auto-deleted | Unix timestamp of when it was kept                                                |
 | `matrix`                | No             | Conversation mirroring a Matrix room of a linked Matrix account              | Internal id of the mirrored Matrix room                                           |
+| `team`                  | Yes            | Conversation of a team, participants, roles and settings are kept in sync with the team (needs the Teams app) | Team ID (single ID of the circle)                                                 |
 
 ### Read-only states
 * `0` Read-write
@@ -102,6 +103,7 @@ Required capability: `conversation-presets`
 * `4` Classified - Locked down conversation for confidential topics: everything that could carry the content or metadata to non-participants is disallowed, no object can be bound (it is reserved for the automatic deletion, see the `classified` object type) and the conversation is forced sensitive for everyone (set at creation via the `classified` preset, requires capability `classified-conversations`)
 * `8` Channel - Broadcast conversation: calls are disallowed for everyone (including moderators) and the participants list is only available to moderators (set at creation via the `channel` preset, requires capability `announcement-preset`)
 * `16` Announcement - Limited to administrators, a channel that additionally can not be left by non-moderators and notifies all participants about every message by default. Always set together with `8` Channel, so all channel restrictions apply as well (set at creation via the `announcement` preset, requires capability `announcement-preset`)
+* `32` Team - Team room (object type `team`): a room that is linked to a circles team, also set on the copies of federated participants, so clients can show it as team room there as well
 
 ## Participants
 
