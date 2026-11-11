@@ -15,9 +15,9 @@ Feature: integration/reference
       | message-id  | Message 1                                         |
     When user "participant1" sets lobby state for room "group room" to "non moderators" with 200 (v4)
     Then user "participant2" resolves reference to message "Message 1" in room "group room" with 200
-      | title       | group room |
-      | description |            |
-      | message-id  |            |
+      | title       | Message in private conversation |
+      | description |                                 |
+      | message-id  |                                 |
     When user "participant1" promotes "participant2" in room "group room" with 200 (v4)
     Then user "participant2" resolves reference to message "Message 1" in room "group room" with 200
       | title       | Message of participant1-displayname in group room |
