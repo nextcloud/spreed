@@ -19,7 +19,6 @@ use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
-use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;

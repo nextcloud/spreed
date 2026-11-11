@@ -18,7 +18,6 @@ use OCA\Talk\Exceptions\ReactionOutOfContextException;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
-use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
@@ -39,7 +38,6 @@ class ReactionManager {
 		private readonly Notifier $notifier,
 		private readonly IEventDispatcher $dispatcher,
 		private readonly ITimeFactory $timeFactory,
-		private readonly RoomService $roomService,
 	) {
 	}
 
@@ -81,10 +79,6 @@ class ReactionManager {
 		$this->dispatcher->dispatchTyped($event);
 
 		$this->commentsManager->save($comment);
-
-		if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
-			$this->roomService->setLastMessage($chat, $comment);
-		}
 
 		$event = new ReactionAddedEvent($chat, $parentMessage, $actorType, $actorId, $actorDisplayName, $reaction, $comment);
 		$this->dispatcher->dispatchTyped($event);
@@ -128,20 +122,6 @@ class ReactionManager {
 		);
 		$comment->setVerb(ChatManager::VERB_REACTION_DELETED);
 		$this->commentsManager->save($comment);
-
-		if ($chat->getType() === Room::TYPE_ONE_TO_ONE && $chat->getLastMessageId() === (int)$comment->getId()) {
-			try {
-				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
-					$chat,
-					(int)$comment->getId(),
-					[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
-					true,
-				);
-				$this->roomService->setLastMessage($chat, $previousMessage);
-			} catch (NotFoundException) {
-				// No previous chat message, keep the deleted reaction as last message
-			}
-		}
 
 		$revokedComment = $this->chatManager->addSystemMessage(
 			$chat,
