@@ -962,7 +962,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: Room or owner not found
 	 */
 	#[PublicPage]
-	#[OpenAPI]
 	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
