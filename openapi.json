@@ -2535,6 +2535,18 @@
                         "type": "string",
                         "description": "URL of the Nextcloud server for federation"
                     },
+                    "joinAuthParams": {
+                        "type": "object",
+                        "description": "Authentication parameters for the federation join request",
+                        "required": [
+                            "token"
+                        ],
+                        "properties": {
+                            "token": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "helloAuthParams": {
                         "type": "object",
                         "description": "Authentication parameters for the hello request",
