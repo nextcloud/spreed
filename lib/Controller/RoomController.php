@@ -743,10 +743,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			$actorUserId = $owner;
 
-			if (!in_array($roomType, [
-				Room::TYPE_GROUP,
-				Room::TYPE_PUBLIC,
-			], true)) {
+			if ($objectType !== Room::OBJECT_TYPE_EXTERNAL_CALL
+				|| !in_array($roomType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 				return new DataResponse(['error' => CreationException::REASON_OBJECT_TYPE], Http::STATUS_BAD_REQUEST);
 			}
 			$allowInternalTypes = true;
