@@ -525,6 +525,7 @@ OC.L10N.register(
     "Enabled" : "Activada",
     "Disabled" : "Desactivat",
     "Name" : "Nom",
+    "Enable encryption" : "Activar lo chiframent",
     "Beta" : "Bèta",
     "Permissions" : "Autorizacions",
     "All messages" : "Totes los messatges",
@@ -536,7 +537,6 @@ OC.L10N.register(
     "Integration into other apps" : "Integracion dins d’autras aplicacions",
     "Allow conversations on files" : "Permetre las conversacions suls fichièrs",
     "Allow conversations on public shares for files" : "Permetre las conversacions suls partiment de fichièrs",
-    "Enable encryption" : "Activar lo chiframent",
     "Pending" : "En espèra",
     "Error" : "Error",
     "Blocked" : "Blocat",
@@ -945,7 +945,6 @@ OC.L10N.register(
     "Raise hand (R)" : "Levar la man (R)",
     "Lower hand" : "Baissar la man",
     "Lower hand (R)" : "Baissar la man (R)",
-    "Send a reaction" : "Enviar una reaccion",
     "React with {reaction}" : "Reagir amb {reaction}",
     "You are not allowed to enable screensharing" : "Avètz pas l'autorizacion per activar lo partiment d’ecran",
     "No screensharing" : "Cap de partiment d’ecran",
@@ -1125,6 +1124,7 @@ OC.L10N.register(
     "Send" : "Enviar",
     "Submit vote" : "Enviar lo vòt",
     "Searching …" : "Recèrca…",
+    "Send a reaction" : "Enviar una reaccion",
     "Search …" : "Recercar..."
 },
 "nplurals=2; plural=(n > 1);");

@@ -632,6 +632,7 @@ OC.L10N.register(
     "State" : "Estado",
     "Name" : "Nombre",
     "Could not save the setting" : "No se pudo guardar la configuración",
+    "Enable encryption" : "Habilitar encripción",
     "Beta" : "Beta",
     "Permissions" : "Permisos",
     "All messages" : "Todos los mensajes",
@@ -644,7 +645,6 @@ OC.L10N.register(
     "Integration into other apps" : "Integración en otras aplicaciones",
     "Allow conversations on files" : "Permitir conversaciones en archivos",
     "Allow conversations on public shares for files" : "Permitir conversaciones en comparticiones públicas para archivos",
-    "Enable encryption" : "Habilitar encripción",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "Haciendo clic en el botón de arriba, la información del formulario se envía a los servidores de Struktur AG. Puedes encontrar más información en {linkstart}spreed.eu{linkend}.",
     "Pending" : "Pendiente",
     "Error" : "Error",
@@ -1204,7 +1204,6 @@ OC.L10N.register(
     "Raise hand (R)" : "Levantar la mano (R)",
     "Lower hand" : "Bajar la mano",
     "Lower hand (R)" : "Bajar la mano (R)",
-    "Send a reaction" : "Enviar una reacción",
     "React with {reaction}" : "Reaccionar con {reaction}",
     "_%n participant in call_::_%n participants in call_" : ["%n participante en llamada","%n participantes en llamada","%n participantes en llamada"],
     "You are not allowed to enable screensharing" : "No tienes permiso para activar el intercambio de pantallas",
@@ -1429,6 +1428,7 @@ OC.L10N.register(
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Resultados de la encuesta • %n voto","Resultados de la encuesta • %n votos","Resultados de la encuesta • %n votos"],
     "Submit vote" : "Enviar voto",
     "Searching …" : "Buscando …",
+    "Send a reaction" : "Enviar una reacción",
     "Search …" : "Buscar..."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

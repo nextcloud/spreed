@@ -619,6 +619,7 @@
     "State" : "Състояние",
     "Name" : "Име",
     "Could not save the setting" : "Настройката не можа да бъде запазена ",
+    "Enable encryption" : "Активиране на криптирането",
     "Beta" : "Бета",
     "Permissions" : "Права",
     "All messages" : "Всички съобщения",
@@ -631,7 +632,6 @@
     "Integration into other apps" : "Интегриране в други приложения",
     "Allow conversations on files" : "Разрешаване на разговори за файлове",
     "Allow conversations on public shares for files" : "Разрешаване на разговори за публични споделяния на файлове",
-    "Enable encryption" : "Активиране на криптирането",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "С натискане на горния бутон, информацията във формуляра се изпраща към сървърите на Struktur AG. Можете да намерите допълнителна информация на {linkstart}spreed.eu{linkend}.",
     "Pending" : "Чакащо",
     "Error" : "Грешка",
@@ -1164,7 +1164,6 @@
     "Raise hand (R)" : "Вдигане на ръка (R)",
     "Lower hand" : "Сваляне на ръка",
     "Lower hand (R)" : "Сваляне на ръка (R)",
-    "Send a reaction" : "Изпращане на реакция",
     "React with {reaction}" : "Реагирайте с {reaction}",
     "_%n participant in call_::_%n participants in call_" : ["%n участници в разговора","%n участници в разговора"],
     "You are not allowed to enable screensharing" : "Нямате право да активирате споделянето на екрана",
@@ -1390,6 +1389,7 @@
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Резултати от анкетата • %n гласа","Резултати от анкетата • %n гласа"],
     "Submit vote" : "Изпращане на гласуване",
     "Searching …" : "Търсене ...",
+    "Send a reaction" : "Изпращане на реакция",
     "Search …" : "Търсене …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

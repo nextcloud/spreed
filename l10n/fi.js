@@ -544,6 +544,7 @@ OC.L10N.register(
     "Total errors count" : "Virheitä yhteensä",
     "Find more bots" : "Etsi lisää botteja",
     "Could not save the setting" : "Asetusta ei voitu tallentaa",
+    "Enable encryption" : "Käytä salausta",
     "Beta" : "Beta",
     "Select groups …" : "Valitse ryhmät …",
     "Permissions" : "Oikeudet",
@@ -555,7 +556,6 @@ OC.L10N.register(
     "Integration into other apps" : "Integraatio muihin sovelluksiin",
     "Allow conversations on files" : "Salli keskustelut tiedostoista",
     "Allow conversations on public shares for files" : "Salli keskustelut tiedostojen julkisissa jaoissa",
-    "Enable encryption" : "Käytä salausta",
     "Pending" : "Odottaa",
     "Error" : "Virhe",
     "Blocked" : "Estetty",
@@ -1167,7 +1167,6 @@ OC.L10N.register(
     "Raise hand (R)" : "Nosta käsi (R)",
     "Lower hand" : "Laske käsi",
     "Lower hand (R)" : "Laske käsi (R)",
-    "Send a reaction" : "Lähetä reaktio",
     "React with {reaction}" : "Reagoi käyttäen {reaction}",
     "_%n participant in call_::_%n participants in call_" : ["%n osallistuja puhelussa","%n osallistujaa puhelussa"],
     "You are not allowed to enable screensharing" : "Sinulla ei ole oikeutta ottaa näytönjakamista käyttöön",
@@ -1373,6 +1372,7 @@ OC.L10N.register(
     "Ringing …" : "Soitetaan…",
     "Searching …" : "Haetaan…",
     "Always shown if recording consent is required" : "Näytetään aina, jos tarvitaan suostumus äänitykseen",
+    "Send a reaction" : "Lähetä reaktio",
     "Search …" : "Hae…"
 },
 "nplurals=2; plural=(n != 1);");
