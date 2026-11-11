@@ -1336,6 +1336,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
+	/**
+	 * Only works for guests, as for users the basic auth credentials would be
+	 * sent along and the password form is not shown.
+	 */
+	#[When('/^user "([^"]*)" authenticates last share with password "([^"]*)" with (\d+)$/')]
+	public function userAuthenticatesLastShareWithPassword(string $user, string $password, int $statusCode): void {
+		$shareToken = $this->sharingContext->getLastShareToken();
+		$url = $this->baseUrl . 'index.php/s/' . $shareToken . '/authenticate/showShare';
+
+		$this->setCurrentUser($user);
+		$this->sendRequestFullUrl('GET', $url, headers: ['Accept' => 'text/html']);
+		$this->assertStatusCode($this->response, 200);
+		$requestToken = $this->extractRequestTokenFromResponse($this->response);
+
+		$this->sendRequestFullUrl('POST', $url, [
+			'password' => $password,
+			'requesttoken' => $requestToken,
+		], ['Accept' => 'text/html'], ['allow_redirects' => false]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" creates the password request room for last share with (\d+) \((v1)\)$/')]
 	public function userCreatesThePasswordRequestRoomForLastShare(string $user, int $statusCode, string $apiVersion): void {
 		$shareToken = $this->sharingContext->getLastShareToken();
