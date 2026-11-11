@@ -8,10 +8,12 @@ import type { ViewerSession } from '@nextcloud/viewer'
 import type { File as TalkFile, TemplateFile } from '../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
+import { subscribe } from '@nextcloud/event-bus'
 import { File } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { generateRemoteUrl } from '@nextcloud/router'
 import { canView, getViewer } from '@nextcloud/viewer'
+import { reactive } from 'vue'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { generatePublicShareDownloadUrl } from '../utils/davUtils.ts'
@@ -25,6 +27,26 @@ type FileAPIMap = {
 type ViewerFileData = Omit<NodeData, 'source' | 'root' | 'owner'> & {
 	path: string | null | undefined
 	link: string | undefined
+}
+
+// Etags of files saved in the Viewer, newer than the ones in loaded messages
+// Rotation emits the node with its old etag (kept by Viewer on purpose), so rotated previews refresh only on reload
+const savedEtags = reactive(new Map<string, string>())
+
+subscribe('files:node:updated', (node) => {
+	if (node.fileid !== undefined && node.attributes.etag) {
+		savedEtags.set(String(node.fileid), node.attributes.etag)
+	}
+})
+
+/**
+ * Get the latest known etag of a file
+ *
+ * @param fileId file id
+ * @param etag etag from the message
+ */
+export function getFileEtag(fileId: string | number, etag?: string): string | undefined {
+	return savedEtags.get(String(fileId)) ?? etag
 }
 
 /**
@@ -79,7 +101,7 @@ function getFileData(fileAPI: keyof FileAPIMap, file: TemplateFile | TalkFile): 
 		size: file.size === undefined ? undefined : Number(file.size),
 		permissions: file.permissions === undefined ? undefined : Number(file.permissions),
 		attributes: {
-			etag: file.etag,
+			etag: getFileEtag(file.id, file.etag),
 			hasPreview: file['preview-available'] === 'yes',
 		},
 		path: file.path,

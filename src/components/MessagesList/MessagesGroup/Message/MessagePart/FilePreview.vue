@@ -119,7 +119,7 @@ import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 import AudioPlayer from './AudioPlayer.vue'
-import { useViewer } from '../../../../../composables/useViewer.ts'
+import { getFileEtag, useViewer } from '../../../../../composables/useViewer.ts'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -464,9 +464,9 @@ export default {
 			// use preview provider URL to render a smaller preview
 			const previewSize = Math.ceil(384 * window.devicePixelRatio)
 			if (this.actorStore.userId === null) {
-				return generatePublicSharePreviewUrl(this.file.link, this.file.path, { x: -1, y: previewSize })
+				return generatePublicSharePreviewUrl(this.file.link, this.file.path, { x: -1, y: previewSize, etag: getFileEtag(this.file.id, this.file.etag) })
 			} else {
-				return generatePreviewUrl(this.file.id, { x: -1, y: previewSize })
+				return generatePreviewUrl(this.file.id, { x: -1, y: previewSize, etag: getFileEtag(this.file.id, this.file.etag) })
 			}
 		},
 
