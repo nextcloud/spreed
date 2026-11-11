@@ -6,7 +6,7 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { defaultRemoteURL } from '@nextcloud/files/dav'
 import { encodePath } from '@nextcloud/paths'
-import { generateUrl, getBaseUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl, getBaseUrl } from '@nextcloud/router'
 
 /**
  * Generate a WebDAV url to a user files
@@ -39,6 +39,33 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
 	return url.href
 }
 
+const FEDERATION_AUTH_PARAMETER = 'talkFederationAuth'
+
+/**
+ * Parse a public share link
+ * Links of federated conversations point to the host server and carry an authentication parameter
+ *
+ * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH?path=/Media
+ */
+function parsePublicShareLink(shareLink: string) {
+	const url = new URL(shareLink)
+	const token = url.pathname.split('/').filter(Boolean).at(-1)
+	const federationAuth = url.searchParams.get(FEDERATION_AUTH_PARAMETER)
+	const baseUrl = federationAuth
+		? url.origin + url.pathname.slice(0, url.pathname.lastIndexOf('/s/')).replace(/\/index\.php$/, '')
+		: undefined
+	return { token, federationAuth, baseUrl }
+}
+
+/**
+ * Whether the link is a public share link of a federated conversation
+ *
+ * @param shareLink - The public share link
+ */
+export function isFederatedShareLink(shareLink: string | undefined): boolean {
+	return !!shareLink && new URL(shareLink).searchParams.has(FEDERATION_AUTH_PARAMETER)
+}
+
 /**
  * Generate a public WebDAV download link for a public share
  *
@@ -47,8 +74,9 @@ export function generateUserFolderUrl(filepath: string, userid: string | undefin
  * @return The download link, e.g., https://nextcloud.ltd/public.php/dav/files/CBeNTiJz5JeT2CH/Media/photo.jpg
  */
 export function generatePublicShareDownloadUrl(shareLink: string, path: string = '') {
-	const token = new URL(shareLink).pathname.split('/').filter(Boolean).at(-1)
-	return getBaseUrl() + '/public.php/dav/files/' + token + (path.startsWith('/') ? encodePath(path) : '')
+	const { token, federationAuth, baseUrl } = parsePublicShareLink(shareLink)
+	const url = (baseUrl ?? getBaseUrl()) + '/public.php/dav/files/' + token + (path.startsWith('/') ? encodePath(path) : '')
+	return federationAuth ? url + '?' + FEDERATION_AUTH_PARAMETER + '=' + encodeURIComponent(federationAuth) : url
 }
 
 /**
@@ -86,4 +114,29 @@ export function generatePublicSharePreviewUrl(shareLink: string, path: string, {
 		x,
 		y,
 	})
+}
+
+/**
+ * Generate a preview link for the file of a chat message
+ * Used in federated conversations, where the own server proxies the preview from the host
+ *
+ * @param token - The conversation token
+ * @param messageId - The message id
+ * @param size - The preview size, both -1 for the largest preview
+ * @param size.x - The preview width, -1 to keep the aspect ratio
+ * @param size.y - The preview height, -1 to keep the aspect ratio
+ */
+export function generateMessageFilePreviewUrl(token: string, messageId: string | number, { x, y }: { x: number, y: number }) {
+	return generateOcsUrl('/apps/spreed/api/v1/chat/{token}/{messageId}/file/preview?x={x}&y={y}', { token, messageId, x, y })
+}
+
+/**
+ * Generate a content link for the media file of a chat message
+ * Used in federated conversations, where the own server proxies the file from the host
+ *
+ * @param token - The conversation token
+ * @param messageId - The message id
+ */
+export function generateMessageFileContentUrl(token: string, messageId: string | number) {
+	return generateOcsUrl('/apps/spreed/api/v1/chat/{token}/{messageId}/file/content', { token, messageId })
 }

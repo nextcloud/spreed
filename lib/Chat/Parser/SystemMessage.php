@@ -599,8 +599,6 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
-				} elseif ($currentActorType === Attendee::ACTOR_FEDERATED_USERS) {
-					$parsedMessage = $this->l->t('File shares are currently not supported in federated conversations');
 				}
 				$parsedMessage = '*' . $parsedMessage . '*';
 
@@ -897,8 +895,6 @@ class SystemMessage implements IEventListener {
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
-		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-			throw new ShareNotFound();
 		} else {
 			$node = $this->rootFolder->getFirstNodeById($nodeId);
 			if (!$node instanceof Node) {
@@ -919,7 +915,7 @@ class SystemMessage implements IEventListener {
 			// Leading slash marks the path as relative to the folder share of the link
 			$path = rtrim($pathInShare, '/') . '/' . $name;
 
-			$params = ['token' => $shareToken];
+			$params = $this->getPublicShareLinkParameters($participant, $shareToken);
 			if ($pathInShare !== '/' && $pathInShare !== '') {
 				$params['path'] = $pathInShare;
 			}
@@ -967,8 +963,7 @@ class SystemMessage implements IEventListener {
 	 * to the file's parent directory (suitable as the `path` query parameter on
 	 * the /s/<token> URL).
 	 *
-	 * Returns [null, ''] when no matching share is found (e.g. in non-public
-	 * rooms where the token would be rejected by ShareManager anyway).
+	 * Returns [null, ''] when no matching share is found.
 	 *
 	 * @return array{0: ?string, 1: string}
 	 */
@@ -1008,6 +1003,14 @@ class SystemMessage implements IEventListener {
 		}
 
 		return [$shareToken, $dir];
+	}
+
+	private function getPublicShareLinkParameters(?Participant $participant, string $shareToken): array {
+		$params = ['token' => $shareToken];
+		if ($participant?->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$params[RoomShareProvider::FEDERATION_AUTH_PARAMETER] = $this->shareProvider->getFederationAuthValue($participant->getAttendee(), $shareToken);
+		}
+		return $params;
 	}
 
 	/**
@@ -1066,8 +1069,6 @@ class SystemMessage implements IEventListener {
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
-		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-			throw new ShareNotFound();
 		} else {
 			if ($allowInaccurate) {
 				$node = $share->getNodeCacheEntry();
@@ -1080,9 +1081,7 @@ class SystemMessage implements IEventListener {
 			$size = $node->getSize();
 			$path = $name;
 
-			$url = $this->url->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', [
-				'token' => $share->getToken(),
-			]);
+			$url = $this->url->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', $this->getPublicShareLinkParameters($participant, $share->getToken()));
 		}
 
 		$fileId = $node->getId();

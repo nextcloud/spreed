@@ -29,6 +29,7 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
@@ -52,6 +53,7 @@ class RoomShareProviderTest extends TestCase {
 	protected IUserSession&MockObject $userSession;
 	protected TalkSession&MockObject $talkSession;
 	protected Memory $session;
+	protected IRequest&MockObject $request;
 	protected RoomShareProvider $provider;
 	protected Config&MockObject $config;
 
@@ -71,6 +73,7 @@ class RoomShareProviderTest extends TestCase {
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->session = new Memory();
+		$this->request = $this->createMock(IRequest::class);
 
 		$shareManager = $this->createMock(IShareManager::class);
 		$shareManager->method('newShare')
@@ -96,6 +99,7 @@ class RoomShareProviderTest extends TestCase {
 			$this->session,
 			$this->userSession,
 			$this->talkSession,
+			$this->request,
 		);
 	}
 
@@ -341,6 +345,81 @@ class RoomShareProviderTest extends TestCase {
 		$this->assertSame($hash, $share->getPassword());
 		$this->assertNull($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND));
 		$this->assertNull($this->session->get('public_link_authenticated'));
+	}
+
+	protected function mockFederatedAttendee(string $actorType = Attendee::ACTOR_FEDERATED_USERS): Attendee {
+		$attendee = Attendee::fromRow([
+			'id' => 42,
+			'actor_type' => $actorType,
+			'actor_id' => 'alice@remote.example',
+			'access_token' => 'accesstoken',
+		]);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn($attendee);
+
+		$this->participantService->method('getParticipant')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->participantService->method('getParticipantBySession')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->participantService->method('getParticipantByAttendeeId')
+			->willReturnCallback(fn (Room $room, int $attendeeId) => $attendeeId === 42 ? $participant : throw new ParticipantNotFoundException());
+
+		return $attendee;
+	}
+
+	public function testGetShareByTokenInGroupRoomForFederatedUser(): void {
+		$this->mockRoom('', Room::TYPE_GROUP);
+		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
+		$attendee = $this->mockFederatedAttendee();
+
+		$this->request->method('getParam')
+			->with(RoomShareProvider::FEDERATION_AUTH_PARAMETER)
+			->willReturnOnConsecutiveCalls($this->provider->getFederationAuthValue($attendee, 'sharetoken'), null);
+
+		$this->assertSame('sharetoken', $this->provider->getShareByToken('sharetoken')->getToken());
+		// Follow-up requests of the share page are authenticated by the session
+		$this->assertSame('sharetoken', $this->provider->getShareByToken('sharetoken')->getToken());
+	}
+
+	public function testGetShareByTokenWithRoomPasswordForFederatedUser(): void {
+		$hash = Server::get(IHasher::class)->hash('secret');
+		$this->mockRoom($hash);
+		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken', $hash);
+		$attendee = $this->mockFederatedAttendee();
+
+		$this->request->method('getParam')
+			->willReturn($this->provider->getFederationAuthValue($attendee, 'sharetoken'));
+
+		$this->provider->getShareByToken('sharetoken');
+
+		$this->assertSame(
+			['sharetoken' => $hash],
+			json_decode($this->session->get(PublicShareController::DAV_AUTHENTICATED_FRONTEND), true),
+		);
+	}
+
+	public static function dataGetShareByTokenInGroupRoomForInvalidFederationAuth(): array {
+		return [
+			'missing' => [null, Attendee::ACTOR_FEDERATED_USERS],
+			'malformed' => ['abc', Attendee::ACTOR_FEDERATED_USERS],
+			'wrong signature' => ['42.' . hash_hmac('sha256', 'sharetoken', 'wrongtoken'), Attendee::ACTOR_FEDERATED_USERS],
+			'other share' => ['42.' . hash_hmac('sha256', 'othertoken', 'accesstoken'), Attendee::ACTOR_FEDERATED_USERS],
+			'unknown attendee' => ['23.' . hash_hmac('sha256', 'sharetoken', 'accesstoken'), Attendee::ACTOR_FEDERATED_USERS],
+			'not federated' => ['42.' . hash_hmac('sha256', 'sharetoken', 'accesstoken'), Attendee::ACTOR_USERS],
+		];
+	}
+
+	#[DataProvider('dataGetShareByTokenInGroupRoomForInvalidFederationAuth')]
+	public function testGetShareByTokenInGroupRoomForInvalidFederationAuth(?string $value, string $actorType): void {
+		$this->mockRoom('', Room::TYPE_GROUP);
+		$this->createShare(IShare::TYPE_ROOM, 'roomtoken', null, 'sharetoken');
+		$this->mockFederatedAttendee($actorType);
+
+		$this->request->method('getParam')
+			->willReturn($value);
+
+		$this->expectException(ShareNotFound::class);
+		$this->provider->getShareByToken('sharetoken');
 	}
 
 	public static function dataGetShareByTokenWithRoomPasswordForParticipant(): array {

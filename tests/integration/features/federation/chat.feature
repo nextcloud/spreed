@@ -599,6 +599,37 @@ Feature: federation/chat
       | room        | actorType       | actorId                   | actorDisplayName         | message  | messageParameters |
       | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | {object} | "IGNORE" |
 
+  @skip35
+  Scenario: Get file preview through the own server
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And using server "LOCAL"
+    And user "participant1" shares "welcome.txt" with room "room" with OCS 100
+    When user "participant1" sends message "Message 1" to room "room" with 201
+    And using server "REMOTE"
+    Then user "participant2" sees the following messages in room "LOCAL::room" with 200
+      | room        | actorType       | actorId                   | actorDisplayName         | message   | messageParameters |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | Message 1 | []                |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | {file}    | "IGNORE"          |
+    And user "participant2" gets the file preview of message "shared::file::welcome.txt" in room "LOCAL::room" with 200 as "image/png"
+    # Content is only served for media files
+    And user "participant2" gets the file content of message "shared::file::welcome.txt" in room "LOCAL::room" with 404
+    # Not a file message
+    And user "participant2" gets the file preview of message "Message 1" in room "LOCAL::room" with 404
+    # Not a participant
+    And user "participant3" gets the file preview of message "shared::file::welcome.txt" in room "LOCAL::room" with 404
+    And using server "LOCAL"
+    And user "participant3" gets the file preview of message "shared::file::welcome.txt" in room "room" with 404
+
   @skip32
   Scenario: Pin handling as a federated user
     Given user "participant1" creates room "room" (v4)

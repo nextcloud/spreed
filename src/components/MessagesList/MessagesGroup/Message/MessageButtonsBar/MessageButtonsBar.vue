@@ -473,7 +473,7 @@ import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
-import { generatePublicShareDownloadUrl, generateUserFileUrl, generateUserFolderUrl } from '../../../../../utils/davUtils.ts'
+import { generatePublicShareDownloadUrl, generateUserFileUrl, generateUserFolderUrl, isFederatedShareLink } from '../../../../../utils/davUtils.ts'
 import { convertToUnix, formatDateTime, ONE_DAY_IN_MS } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
@@ -687,11 +687,16 @@ export default {
 		},
 
 		linkToFileDownload() {
-			return getCurrentUser()
-				? (this.isSharedFolder
-						? generateUserFolderUrl(this.messageFile.path)
-						: generateUserFileUrl(this.messageFile.path))
-				: generatePublicShareDownloadUrl(this.messageFile.link, this.messageFile.path) + (this.isSharedFolder ? '?accept=zip' : '')
+			if (getCurrentUser() && !isFederatedShareLink(this.messageFile.link)) {
+				return this.isSharedFolder
+					? generateUserFolderUrl(this.messageFile.path)
+					: generateUserFileUrl(this.messageFile.path)
+			}
+			const url = new URL(generatePublicShareDownloadUrl(this.messageFile.link, this.messageFile.path))
+			if (this.isSharedFolder) {
+				url.searchParams.append('accept', 'zip')
+			}
+			return url.href
 		},
 
 		isCurrentGuest() {

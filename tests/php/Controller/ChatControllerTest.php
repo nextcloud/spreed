@@ -42,13 +42,18 @@ use OCA\Talk\Share\Helper\Preloader;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
+use OCP\Files\IRootFolder;
+use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IL10N;
+use OCP\IPreview;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -102,6 +107,8 @@ class ChatControllerTest extends TestCase {
 	private Config&MockObject $talkConfig;
 	protected SendService&MockObject $sendService;
 	protected SyncService&MockObject $syncService;
+	protected IRootFolder&MockObject $rootFolder;
+	protected IPreview&MockObject $previewManager;
 
 	protected Room&MockObject $room;
 
@@ -152,6 +159,8 @@ class ChatControllerTest extends TestCase {
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->sendService = $this->createMock(SendService::class);
 		$this->syncService = $this->createMock(SyncService::class);
+		$this->rootFolder = $this->createMock(IRootFolder::class);
+		$this->previewManager = $this->createMock(IPreview::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -209,6 +218,8 @@ class ChatControllerTest extends TestCase {
 			$this->talkConfig,
 			$this->sendService,
 			$this->syncService,
+			$this->rootFolder,
+			$this->previewManager,
 		);
 	}
 
@@ -223,6 +234,78 @@ class ChatControllerTest extends TestCase {
 		$comment->method('getParentId')->willReturn('0');
 
 		return $comment;
+	}
+
+	protected function mockFileMessage(bool $visible, array $parameters): File&MockObject {
+		$comment = $this->createMock(IComment::class);
+		$this->chatManager->method('getComment')
+			->with($this->room, '42')
+			->willReturn($comment);
+
+		$message = $this->createMock(Message::class);
+		$message->method('getVisibility')->willReturn($visible);
+		$message->method('getMessageParameters')->willReturn($parameters);
+		$this->messageParser->method('createMessage')
+			->with($this->room, $this->anything(), $comment, $this->l)
+			->willReturn($message);
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($message);
+
+		$file = $this->createMock(File::class);
+		$file->method('getMimeType')->willReturn('audio/ogg');
+		$file->method('getName')->willReturn('voice.ogg');
+		$file->method('getMTime')->willReturn(1700000000);
+		$this->rootFolder->method('getFirstNodeById')
+			->with(23)
+			->willReturn($file);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($this->createMock(Participant::class));
+		return $file;
+	}
+
+	public static function dataGetMessageFileContent(): array {
+		$file = ['type' => 'file', 'id' => '23', 'mimetype' => 'audio/ogg', 'hide-download' => 'no'];
+		return [
+			'media file' => [true, ['actor' => [], 'file' => $file], true],
+			'not visible' => [false, ['actor' => [], 'file' => $file], false],
+			'no file' => [true, ['actor' => []], false],
+			'not a file' => [true, ['file' => ['type' => 'deck-card', 'id' => '23']], false],
+			'hidden download' => [true, ['file' => array_merge($file, ['hide-download' => 'yes'])], false],
+			'no media' => [true, ['file' => array_merge($file, ['mimetype' => 'text/html'])], false],
+		];
+	}
+
+	#[DataProvider('dataGetMessageFileContent')]
+	public function testGetMessageFileContent(bool $visible, array $parameters, bool $found): void {
+		$this->mockFileMessage($visible, $parameters);
+
+		$response = $this->controller->getMessageFileContent(42);
+
+		if ($found) {
+			$this->assertInstanceOf(FileDisplayResponse::class, $response);
+			$this->assertSame('audio/ogg', $response->getHeaders()['Content-Type']);
+		} else {
+			$this->assertInstanceOf(DataResponse::class, $response);
+			$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+		}
+	}
+
+	public function testGetMessageFilePreview(): void {
+		$file = $this->mockFileMessage(true, ['file' => ['type' => 'file', 'id' => '23', 'mimetype' => 'text/plain', 'hide-download' => 'yes']]);
+
+		$preview = $this->createMock(ISimpleFile::class);
+		$preview->method('getMimeType')->willReturn('image/png');
+		$this->previewManager->expects($this->once())
+			->method('getPreview')
+			->with($file, 64, 32, true)
+			->willReturn($preview);
+
+		$response = $this->controller->getMessageFilePreview(42, 64, 32);
+
+		$this->assertInstanceOf(FileDisplayResponse::class, $response);
+		$this->assertSame('image/png', $response->getHeaders()['Content-Type']);
 	}
 
 	public function testSendMessageByUser(): void {

@@ -16,7 +16,6 @@ import type {
 
 import { isCancel } from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
 import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { START_LOCATION, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -719,13 +718,6 @@ export function useGetMessagesProvider() {
 		if (isFileShareMessage(message) || (message.parent && 'messageParameters' in message.parent && isFileShareMessage(message.parent))) {
 			tryPollNewMessages()
 			return
-		}
-
-		// Patch for federated conversations: disable unsupported file shares
-		if (conversation?.remoteServer && isFileShareMessage(message)
-			&& [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_VIDEO, MESSAGE.TYPE.RECORD_AUDIO].includes(message.messageType)) {
-			message.message = '*' + t('spreed', 'File shares are currently not supported in federated conversations') + '*'
-			delete message.messageParameters.file
 		}
 
 		chatStore.processChatBlocks(token, [message], { mergeBy: chatStore.getLastKnownId(token) })

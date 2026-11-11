@@ -737,7 +737,15 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'parseMessage', [$chatMessage, false]);
 	}
 
-	public function testGetFileFromShareForGuest(): void {
+	public static function dataGetFileFromShareForGuest(): array {
+		return [
+			'guest' => [Attendee::ACTOR_GUESTS, ['token' => 'token']],
+			'federated user' => [Attendee::ACTOR_FEDERATED_USERS, ['token' => 'token', RoomShareProvider::FEDERATION_AUTH_PARAMETER => 'AUTH']],
+		];
+	}
+
+	#[DataProvider('dataGetFileFromShareForGuest')]
+	public function testGetFileFromShareForGuest(string $actorType, array $linkParameters): void {
 		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
@@ -763,7 +771,7 @@ class SystemMessageTest extends TestCase {
 		$share->expects($this->once())
 			->method('getNode')
 			->willReturn($node);
-		$share->expects($this->once())
+		$share->expects($this->atLeastOnce())
 			->method('getToken')
 			->willReturn('token');
 
@@ -774,9 +782,7 @@ class SystemMessageTest extends TestCase {
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
-			->with('files_sharing.sharecontroller.showShare', [
-				'token' => 'token',
-			])
+			->with('files_sharing.sharecontroller.showShare', $linkParameters)
 			->willReturn('absolute-link');
 
 		$this->previewManager->expects($this->once())
@@ -789,7 +795,15 @@ class SystemMessageTest extends TestCase {
 			->with($node)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
+		$attendee = Attendee::fromRow([
+			'actor_type' => $actorType,
+			'actor_id' => 'actor-id',
+		]);
 		$participant = $this->createStub(Participant::class);
+		$participant->method('getAttendee')->willReturn($attendee);
+		$this->shareProvider->method('getFederationAuthValue')
+			->with($attendee, 'token')
+			->willReturn('AUTH');
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -1226,7 +1240,15 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]);
 	}
 
-	public function testGetFileFromNodeIdForGuest(): void {
+	public static function dataGetFileFromNodeIdForGuest(): array {
+		return [
+			'guest' => [Attendee::ACTOR_GUESTS, ['token' => 'SHARETOKEN']],
+			'federated user' => [Attendee::ACTOR_FEDERATED_USERS, ['token' => 'SHARETOKEN', RoomShareProvider::FEDERATION_AUTH_PARAMETER => 'AUTH']],
+		];
+	}
+
+	#[DataProvider('dataGetFileFromNodeIdForGuest')]
+	public function testGetFileFromNodeIdForGuest(string $actorType, array $linkParameters): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getToken')->willReturn('ROOMTOKEN');
 
@@ -1286,14 +1308,17 @@ class SystemMessageTest extends TestCase {
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
-			->with('files_sharing.sharecontroller.showShare', ['token' => 'SHARETOKEN'])
+			->with('files_sharing.sharecontroller.showShare', $linkParameters)
 			->willReturn('absolute-link');
 
 		$participant = $this->createMock(Participant::class);
 		$attendee = Attendee::fromRow([
-			'actor_type' => 'guests',
-			'actor_id' => 'guest-hash',
+			'actor_type' => $actorType,
+			'actor_id' => 'actor-id',
 		]);
+		$this->shareProvider->method('getFederationAuthValue')
+			->with($attendee, 'SHARETOKEN')
+			->willReturn('AUTH');
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);

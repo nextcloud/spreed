@@ -22,6 +22,8 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\FileDisplayResponse;
+use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\ICache;
 use OCP\ICacheFactory;
 
@@ -250,6 +252,50 @@ class ChatController {
 		$data = $this->userConverter->convertMessages($room, $data);
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * @param 'preview'|'content' $type
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'file'}, array{}>
+	 *
+	 * 200: File returned
+	 * 404: Message has no file or the host could not be reached
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::getMessageFilePreview()
+	 * @see \OCA\Talk\Controller\ChatController::getMessageFileContent()
+	 */
+	public function getMessageFile(Room $room, Participant $participant, int $messageId, string $type, array $parameters = []): FileDisplayResponse|DataResponse {
+		try {
+			// ponytail: whole file is buffered in memory, fine for previews, GIFs and voice messages
+			$proxy = $this->proxy->get(
+				$participant->getAttendee()->getInvitedCloudId(),
+				$participant->getAttendee()->getAccessToken(),
+				$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/' . $messageId . '/file/' . $type,
+				$parameters,
+			);
+		} catch (CannotReachRemoteException) {
+			return new DataResponse(['error' => 'file'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($proxy->getStatusCode() !== Http::STATUS_OK) {
+			if ($proxy->getStatusCode() !== Http::STATUS_NOT_FOUND) {
+				$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode(), (string)$proxy->getBody());
+			}
+			return new DataResponse(['error' => 'file'], Http::STATUS_NOT_FOUND);
+		}
+
+		$file = new InMemoryFile((string)$messageId, (string)$proxy->getBody());
+		// Only serve media, the content is controlled by the remote server
+		$mimeType = $file->getMimeType();
+		if ($mimeType === 'image/svg+xml' || !preg_match('/^(image|audio|video)\//', $mimeType)) {
+			return new DataResponse(['error' => 'file'], Http::STATUS_NOT_FOUND);
+		}
+
+		$response = new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => $mimeType]);
+		if ($type === 'preview') {
+			$response->cacheFor(60 * 60 * 24, false, true);
+		}
+		return $response;
 	}
 
 	/**

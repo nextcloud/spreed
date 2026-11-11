@@ -21,7 +21,7 @@ import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
-import { generatePreviewUrl, generatePublicSharePreviewUrl } from '../utils/davUtils.ts'
+import { generateMessageFilePreviewUrl, generatePreviewUrl, generatePublicSharePreviewUrl, isFederatedShareLink } from '../utils/davUtils.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 import { parseToSimpleMessage } from '../utils/textParse.ts'
 
@@ -110,11 +110,17 @@ const filePreview = computed(() => {
 
 	const fileData = Object.values(message.messageParameters).find((param) => param.type === 'file' && param['preview-available'] === 'yes')
 	if (fileData) {
+		let src
+		if (isFederatedShareLink(fileData.link)) {
+			src = generateMessageFilePreviewUrl(message.token, message.id, { x: 32, y: 32 })
+		} else if (actorStore.userId === null) {
+			src = generatePublicSharePreviewUrl(fileData.link!, fileData.path!, { x: 32, y: 32 })
+		} else {
+			src = generatePreviewUrl(fileData.id, { x: 32, y: 32 })
+		}
 		return {
 			alt: fileData.name,
-			src: actorStore.userId === null
-				? generatePublicSharePreviewUrl(fileData.link!, fileData.path!, { x: 32, y: 32 })
-				: generatePreviewUrl(fileData.id, { x: 32, y: 32 }),
+			src,
 		}
 	} else {
 		return undefined
