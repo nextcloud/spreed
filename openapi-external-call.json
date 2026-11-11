@@ -1,0 +1,2267 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "spreed-external-call",
+        "version": "0.0.1",
+        "description": "Chat, video & audio-conferencing using WebRTC",
+        "license": {
+            "name": "AGPL-3.0-or-later"
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basic_auth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "bearer_auth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "BaseMessage": {
+                "type": "object",
+                "required": [
+                    "actorDisplayName",
+                    "actorId",
+                    "actorType",
+                    "expirationTimestamp",
+                    "message",
+                    "messageParameters",
+                    "messageType",
+                    "systemMessage"
+                ],
+                "properties": {
+                    "actorDisplayName": {
+                        "type": "string",
+                        "description": "Display name of the message author (can be empty for type `deleted_users` and `guests`)"
+                    },
+                    "actorId": {
+                        "type": "string",
+                        "description": "Actor id of the message author"
+                    },
+                    "actorType": {
+                        "type": "string",
+                        "description": "See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages)"
+                    },
+                    "expirationTimestamp": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Unix time stamp when the message expires and should be removed from the clients UI without further note or warning (only available with `message-expiration` capability)"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))"
+                    },
+                    "messageParameters": {
+                        "type": "object",
+                        "description": "Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RichObjectParameter"
+                        }
+                    },
+                    "messageType": {
+                        "type": "string",
+                        "description": "Currently known types are `comment`, `comment_deleted`, `system` and `command`"
+                    },
+                    "systemMessage": {
+                        "type": "string",
+                        "description": "Empty for normal chat message or the type of the system message (untranslated)"
+                    }
+                }
+            },
+            "Capabilities": {
+                "type": "object",
+                "required": [
+                    "features",
+                    "features-local",
+                    "config",
+                    "config-local",
+                    "version"
+                ],
+                "properties": {
+                    "features": {
+                        "type": "array",
+                        "description": "List of features available on the server",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    },
+                    "features-local": {
+                        "type": "array",
+                        "description": "List of features only available locally (not for federated conversations)",
+                        "items": {
+                            "type": "string"
+                        },
+                        "minItems": 1
+                    },
+                    "config": {
+                        "type": "object",
+                        "required": [
+                            "attachments",
+                            "call",
+                            "chat",
+                            "conversations",
+                            "federation",
+                            "matrix",
+                            "previews",
+                            "signaling",
+                            "experiments",
+                            "feature-hints",
+                            "permissions"
+                        ],
+                        "properties": {
+                            "attachments": {
+                                "type": "object",
+                                "required": [
+                                    "allowed",
+                                    "conversation-subfolders"
+                                ],
+                                "properties": {
+                                    "allowed": {
+                                        "type": "boolean",
+                                        "description": "Whether file sharing is allowed in conversations"
+                                    },
+                                    "folder": {
+                                        "type": "string",
+                                        "description": "User's attachment folder (only available for logged in users)"
+                                    },
+                                    "conversation-subfolders": {
+                                        "type": "boolean",
+                                        "description": "Whether per-conversation subfolders are used for attachments"
+                                    }
+                                }
+                            },
+                            "call": {
+                                "type": "object",
+                                "required": [
+                                    "enabled",
+                                    "breakout-rooms",
+                                    "recording",
+                                    "recording-consent",
+                                    "supported-reactions",
+                                    "predefined-backgrounds",
+                                    "predefined-backgrounds-v2",
+                                    "can-upload-background",
+                                    "sip-enabled",
+                                    "sip-dialout-enabled",
+                                    "default-phone-region",
+                                    "can-enable-sip",
+                                    "start-without-media",
+                                    "max-duration",
+                                    "blur-virtual-background",
+                                    "end-to-end-encryption",
+                                    "live-transcription",
+                                    "live-translation",
+                                    "live-transcription-target-language-id",
+                                    "play-sounds",
+                                    "grid-limit",
+                                    "grid-limit-enforced"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether calls are enabled"
+                                    },
+                                    "breakout-rooms": {
+                                        "type": "boolean",
+                                        "description": "Whether breakout rooms are enabled"
+                                    },
+                                    "recording": {
+                                        "type": "boolean",
+                                        "description": "Whether call recording is enabled"
+                                    },
+                                    "recording-consent": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Whether recording consent is required (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required))"
+                                    },
+                                    "supported-reactions": {
+                                        "type": "array",
+                                        "description": "List of supported reaction emojis during calls",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "predefined-backgrounds": {
+                                        "type": "array",
+                                        "description": "List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg`",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "predefined-backgrounds-v2": {
+                                        "type": "array",
+                                        "description": "List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg`",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "can-upload-background": {
+                                        "type": "boolean",
+                                        "description": "Whether the user can upload custom virtual backgrounds"
+                                    },
+                                    "sip-enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether SIP is enabled on the server"
+                                    },
+                                    "sip-dialout-enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether SIP dial-out is enabled on the server"
+                                    },
+                                    "default-phone-region": {
+                                        "type": "string",
+                                        "description": "Default phone region of the server"
+                                    },
+                                    "can-enable-sip": {
+                                        "type": "boolean",
+                                        "description": "Whether the user can enable SIP for conversations"
+                                    },
+                                    "start-without-media": {
+                                        "type": "boolean",
+                                        "description": "Whether calls start without media by default"
+                                    },
+                                    "max-duration": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum duration of a call in seconds, `0` means unlimited"
+                                    },
+                                    "blur-virtual-background": {
+                                        "type": "boolean",
+                                        "description": "Whether the blur virtual background is available"
+                                    },
+                                    "end-to-end-encryption": {
+                                        "type": "boolean",
+                                        "description": "Whether end-to-end encryption is available"
+                                    },
+                                    "live-transcription": {
+                                        "type": "boolean",
+                                        "description": "Whether live transcription is available"
+                                    },
+                                    "live-translation": {
+                                        "type": "boolean",
+                                        "description": "Whether live translation is available"
+                                    },
+                                    "live-transcription-target-language-id": {
+                                        "type": "string",
+                                        "description": "The default target language for live transcription"
+                                    },
+                                    "play-sounds": {
+                                        "type": "boolean",
+                                        "description": "Whether to play sounds for call events"
+                                    },
+                                    "grid-limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum number of participants shown in the grid view"
+                                    },
+                                    "grid-limit-enforced": {
+                                        "type": "boolean",
+                                        "description": "Whether the grid limit is enforced by the server"
+                                    },
+                                    "external-call-service": {
+                                        "type": "string",
+                                        "description": "URL of an external call service if one is used"
+                                    }
+                                }
+                            },
+                            "chat": {
+                                "type": "object",
+                                "required": [
+                                    "max-length",
+                                    "read-privacy",
+                                    "has-translation-providers",
+                                    "has-translation-task-providers",
+                                    "typing-privacy",
+                                    "summary-threshold",
+                                    "style",
+                                    "matterbridge-enabled",
+                                    "mobile-preload-chat"
+                                ],
+                                "properties": {
+                                    "max-length": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum length of a chat message"
+                                    },
+                                    "read-privacy": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Read privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-read-status-privacy))"
+                                    },
+                                    "has-translation-providers": {
+                                        "type": "boolean",
+                                        "description": "Whether translation providers are available"
+                                    },
+                                    "has-translation-task-providers": {
+                                        "type": "boolean",
+                                        "description": "Whether translation task providers are available"
+                                    },
+                                    "typing-privacy": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Typing privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-typing-privacy))"
+                                    },
+                                    "summary-threshold": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Minimum number of chat messages before a summary can be generated",
+                                        "minimum": 1
+                                    },
+                                    "style": {
+                                        "type": "string",
+                                        "enum": [
+                                            "split",
+                                            "unified"
+                                        ],
+                                        "description": "Chat message rendering style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#chat-style))"
+                                    },
+                                    "matterbridge-enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether Matterbridge is enabled"
+                                    },
+                                    "mobile-preload-chat": {
+                                        "type": "boolean",
+                                        "description": "Whether mobile clients should preload the chat messages of conversations"
+                                    }
+                                }
+                            },
+                            "conversations": {
+                                "type": "object",
+                                "required": [
+                                    "can-create",
+                                    "force-passwords",
+                                    "list-style",
+                                    "description-length",
+                                    "retention-event",
+                                    "retention-phone",
+                                    "retention-instant-meetings",
+                                    "retention-classified",
+                                    "sort-order",
+                                    "group-mode",
+                                    "unarchive",
+                                    "tags-show-unread"
+                                ],
+                                "properties": {
+                                    "can-create": {
+                                        "type": "boolean",
+                                        "description": "Whether the user can create conversations"
+                                    },
+                                    "force-passwords": {
+                                        "type": "boolean",
+                                        "description": "Whether passwords are enforced for public conversations"
+                                    },
+                                    "list-style": {
+                                        "type": "string",
+                                        "enum": [
+                                            "two-lines",
+                                            "compact"
+                                        ],
+                                        "description": "Conversation list style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-list-style))"
+                                    },
+                                    "description-length": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum length of a conversation description",
+                                        "minimum": 1
+                                    },
+                                    "retention-event": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Retention period for event conversations in seconds, `0` means no retention",
+                                        "minimum": 0
+                                    },
+                                    "retention-phone": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Retention period for phone conversations in seconds, `0` means no retention",
+                                        "minimum": 0
+                                    },
+                                    "retention-instant-meetings": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Retention period for instant meetings in seconds, `0` means no retention",
+                                        "minimum": 0
+                                    },
+                                    "retention-classified": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Retention period for classified conversations after a call in seconds, `0` means no retention",
+                                        "minimum": 0
+                                    },
+                                    "sort-order": {
+                                        "type": "string",
+                                        "enum": [
+                                            "activity",
+                                            "alphabetical"
+                                        ],
+                                        "description": "User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))"
+                                    },
+                                    "group-mode": {
+                                        "type": "string",
+                                        "enum": [
+                                            "none",
+                                            "group-first",
+                                            "private-first"
+                                        ],
+                                        "description": "User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))"
+                                    },
+                                    "unarchive": {
+                                        "type": "string",
+                                        "enum": [
+                                            "never",
+                                            "mention",
+                                            "always"
+                                        ],
+                                        "description": "User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))"
+                                    },
+                                    "tags-show-unread": {
+                                        "type": "string",
+                                        "enum": [
+                                            "never",
+                                            "mention",
+                                            "always"
+                                        ],
+                                        "description": "User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))"
+                                    }
+                                }
+                            },
+                            "federation": {
+                                "type": "object",
+                                "required": [
+                                    "enabled",
+                                    "incoming-enabled",
+                                    "outgoing-enabled",
+                                    "only-trusted-servers"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether federation is enabled"
+                                    },
+                                    "incoming-enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether incoming federation is enabled"
+                                    },
+                                    "outgoing-enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether outgoing federation is enabled"
+                                    },
+                                    "only-trusted-servers": {
+                                        "type": "boolean",
+                                        "description": "Whether only trusted servers are allowed for federation"
+                                    }
+                                }
+                            },
+                            "matrix": {
+                                "type": "object",
+                                "required": [
+                                    "enabled"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean",
+                                        "description": "Whether Matrix accounts can be linked"
+                                    }
+                                }
+                            },
+                            "previews": {
+                                "type": "object",
+                                "required": [
+                                    "max-gif-size"
+                                ],
+                                "properties": {
+                                    "max-gif-size": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum GIF file size in bytes for previews"
+                                    }
+                                }
+                            },
+                            "signaling": {
+                                "type": "object",
+                                "required": [
+                                    "session-ping-limit",
+                                    "mode"
+                                ],
+                                "properties": {
+                                    "session-ping-limit": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum number of sessions that can be pinged in a single request"
+                                    },
+                                    "mode": {
+                                        "type": "string",
+                                        "enum": [
+                                            "internal",
+                                            "external"
+                                        ],
+                                        "description": "Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))"
+                                    },
+                                    "hello-v2-token-key": {
+                                        "type": "string",
+                                        "description": "Public key for hello v2 authentication"
+                                    }
+                                }
+                            },
+                            "experiments": {
+                                "type": "object",
+                                "required": [
+                                    "enabled"
+                                ],
+                                "properties": {
+                                    "enabled": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Bit-flag of enabled experiments",
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "feature-hints": {
+                                "type": "object",
+                                "required": [
+                                    "current",
+                                    "hidden"
+                                ],
+                                "properties": {
+                                    "current": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
+                                    },
+                                    "hidden": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "permissions": {
+                                "type": "object",
+                                "required": [
+                                    "max-default",
+                                    "max-custom",
+                                    "default"
+                                ],
+                                "properties": {
+                                    "max-default": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                                    },
+                                    "max-custom": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Maximum custom permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                                    },
+                                    "default": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Server default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "config-local": {
+                        "type": "object",
+                        "description": "Map of config keys that are only available locally (not for federated conversations)",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Version of the Talk app"
+                    }
+                }
+            },
+            "ChatMessage": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/BaseMessage"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "id",
+                            "isReplyable",
+                            "markdown",
+                            "reactions",
+                            "referenceId",
+                            "timestamp",
+                            "token"
+                        ],
+                        "properties": {
+                            "deleted": {
+                                "type": "boolean",
+                                "enum": [
+                                    true
+                                ],
+                                "description": "Set to `true` when the message was deleted"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "ID of the comment"
+                            },
+                            "isReplyable": {
+                                "type": "boolean",
+                                "description": "True if the user can post a reply to this message (only available with `chat-replies` capability)"
+                            },
+                            "markdown": {
+                                "type": "boolean",
+                                "description": "Whether the message should be rendered as markdown or shown as plain text"
+                            },
+                            "reactions": {
+                                "type": "object",
+                                "description": "An array map with relation between reaction emoji and total count of reactions with this emoji",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "reactionsSelf": {
+                                "type": "array",
+                                "description": "When the user reacted this is the list of emojis the user reacted with",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "referenceId": {
+                                "type": "string",
+                                "description": "A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability). For grouped file uploads support, expected format is `{sha256(uploadId)}-{order}`, matching /^[a-f0-9]{60}-[0-9]{3}$/"
+                            },
+                            "timestamp": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Timestamp in seconds and UTC time zone"
+                            },
+                            "token": {
+                                "type": "string",
+                                "description": "Conversation token"
+                            },
+                            "lastEditActorDisplayName": {
+                                "type": "string",
+                                "description": "Display name of the last editing author (only available with `edit-messages` capability and when the message was actually edited)"
+                            },
+                            "lastEditActorId": {
+                                "type": "string",
+                                "description": "Actor id of the last editing author (only available with `edit-messages` capability and when the message was actually edited)"
+                            },
+                            "lastEditActorType": {
+                                "type": "string",
+                                "description": "Actor type of the last editing author - See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages) (only available with `edit-messages` capability and when the message was actually edited)"
+                            },
+                            "lastEditTimestamp": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Unix time stamp when the message was last edited (only available with `edit-messages` capability and when the message was actually edited)"
+                            },
+                            "silent": {
+                                "type": "boolean",
+                                "description": "Whether the message was sent silently (only available with `silent-send-state` capability)"
+                            },
+                            "threadId": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Thread ID if this message is part of a thread"
+                            },
+                            "isThread": {
+                                "type": "boolean",
+                                "description": "Whether this message is the root of a thread"
+                            },
+                            "threadTitle": {
+                                "type": "string",
+                                "description": "Title of the thread if this message is the root of a thread"
+                            },
+                            "threadReplies": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "Number of replies in the thread if this message is the root of a thread"
+                            },
+                            "metaData": {
+                                "$ref": "#/components/schemas/ChatMessageMetaData",
+                                "description": "Additional metadata of the message"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ChatMessageMetaData": {
+                "type": "object",
+                "properties": {
+                    "pinnedActorType": {
+                        "type": "string",
+                        "description": "Actor type of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedActorId": {
+                        "type": "string",
+                        "description": "Actor ID of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedActorDisplayName": {
+                        "type": "string",
+                        "description": "Display name of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedAt": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp when the message was pinned - Required capability: `pinned-messages`"
+                    },
+                    "pinnedUntil": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`"
+                    },
+                    "threadId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
+                    },
+                    "threadTitle": {
+                        "type": "string",
+                        "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
+                    },
+                    "replyToMessageId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id"
+                    },
+                    "replyToConversationToken": {
+                        "type": "string",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token."
+                    },
+                    "replyToConversationName": {
+                        "type": "string",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name"
+                    },
+                    "replyToActorDisplayName": {
+                        "type": "string",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name"
+                    }
+                }
+            },
+            "ChatProxyMessage": {
+                "$ref": "#/components/schemas/BaseMessage"
+            },
+            "InvitationList": {
+                "type": "object",
+                "properties": {
+                    "users": {
+                        "type": "array",
+                        "description": "List of user ids that could not be invited",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "federated_users": {
+                        "type": "array",
+                        "description": "List of federated user ids that could not be invited",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "description": "List of group ids that could not be invited",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "emails": {
+                        "type": "array",
+                        "description": "List of email addresses that could not be invited",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "phones": {
+                        "type": "array",
+                        "description": "List of phone numbers that could not be invited",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "teams": {
+                        "type": "array",
+                        "description": "List of team ids that could not be invited",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "OCSMeta": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "statuscode"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "statuscode": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "totalitems": {
+                        "type": "string"
+                    },
+                    "itemsperpage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicCapabilities": {
+                "type": "object",
+                "properties": {
+                    "spreed": {
+                        "$ref": "#/components/schemas/Capabilities"
+                    }
+                }
+            },
+            "RichObjectParameter": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Object type (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Object id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Visible name"
+                    },
+                    "server": {
+                        "type": "string",
+                        "description": "Server URL for federated users"
+                    },
+                    "link": {
+                        "type": "string",
+                        "description": "URL of the object"
+                    },
+                    "call-type": {
+                        "type": "string",
+                        "enum": [
+                            "one2one",
+                            "group",
+                            "public"
+                        ],
+                        "description": "Type of the call"
+                    },
+                    "icon-url": {
+                        "type": "string",
+                        "description": "URL of the icon"
+                    },
+                    "message-id": {
+                        "type": "string",
+                        "description": "ID of a message that this object refers to"
+                    },
+                    "boardname": {
+                        "type": "string",
+                        "description": "Name of the Deck board"
+                    },
+                    "stackname": {
+                        "type": "string",
+                        "description": "Name of the Deck stack"
+                    },
+                    "size": {
+                        "type": "string",
+                        "description": "File size in bytes"
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Path of the file (for guests: relative to the folder share of the `link` when starting with a slash)"
+                    },
+                    "mimetype": {
+                        "type": "string",
+                        "description": "Mimetype of the file"
+                    },
+                    "preview-available": {
+                        "type": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "description": "Whether a preview is available for the file"
+                    },
+                    "hide-download": {
+                        "type": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "description": "Whether the download should be hidden for the file"
+                    },
+                    "mtime": {
+                        "type": "string",
+                        "description": "Modification time of the file as UNIX timestamp"
+                    },
+                    "latitude": {
+                        "type": "string",
+                        "description": "Latitude of a location"
+                    },
+                    "longitude": {
+                        "type": "string",
+                        "description": "Longitude of a location"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the object"
+                    },
+                    "thumb": {
+                        "type": "string",
+                        "description": "URL of a thumbnail"
+                    },
+                    "website": {
+                        "type": "string",
+                        "description": "Website URL"
+                    },
+                    "visibility": {
+                        "type": "string",
+                        "enum": [
+                            "0",
+                            "1"
+                        ],
+                        "description": "Visibility of the object"
+                    },
+                    "assignable": {
+                        "type": "string",
+                        "enum": [
+                            "0",
+                            "1"
+                        ],
+                        "description": "Whether the object is assignable"
+                    },
+                    "conversation": {
+                        "type": "string",
+                        "description": "Conversation token"
+                    },
+                    "etag": {
+                        "type": "string",
+                        "description": "ETag of the object for caching"
+                    },
+                    "permissions": {
+                        "type": "string",
+                        "description": "Permissions for the file"
+                    },
+                    "width": {
+                        "type": "string",
+                        "description": "Width of the object (e.g. image, video)"
+                    },
+                    "height": {
+                        "type": "string",
+                        "description": "Height of the object (e.g. image, video)"
+                    },
+                    "blurhash": {
+                        "type": "string",
+                        "description": "Blurhash of the image"
+                    }
+                }
+            },
+            "Room": {
+                "type": "object",
+                "required": [
+                    "actorId",
+                    "actorType",
+                    "attendeeId",
+                    "attendeePermissions",
+                    "attendeePin",
+                    "avatarVersion",
+                    "breakoutRoomMode",
+                    "breakoutRoomStatus",
+                    "callFlag",
+                    "callPermissions",
+                    "callRecording",
+                    "callStartTime",
+                    "canDeleteConversation",
+                    "canEnableSIP",
+                    "canLeaveConversation",
+                    "canStartCall",
+                    "defaultPermissions",
+                    "description",
+                    "displayName",
+                    "hasCall",
+                    "hasPassword",
+                    "id",
+                    "isCustomAvatar",
+                    "isFavorite",
+                    "lastActivity",
+                    "lastCommonReadMessage",
+                    "lastPing",
+                    "lastReadMessage",
+                    "listable",
+                    "liveTranscriptionLanguageId",
+                    "lobbyState",
+                    "lobbyTimer",
+                    "mentionPermissions",
+                    "messageExpiration",
+                    "name",
+                    "notificationCalls",
+                    "notificationLevel",
+                    "objectId",
+                    "objectType",
+                    "participantFlags",
+                    "participantType",
+                    "permissions",
+                    "readOnly",
+                    "recordingConsent",
+                    "sessionId",
+                    "sipEnabled",
+                    "token",
+                    "type",
+                    "unreadMention",
+                    "unreadMentionDirect",
+                    "unreadMessages",
+                    "isArchived",
+                    "isImportant",
+                    "isSensitive",
+                    "tagIds",
+                    "lastPinnedId",
+                    "hiddenPinnedId",
+                    "hasScheduledMessages",
+                    "attributes"
+                ],
+                "properties": {
+                    "actorId": {
+                        "type": "string",
+                        "description": "The unique identifier for the given actor type"
+                    },
+                    "invitedActorId": {
+                        "type": "string",
+                        "description": "The cloud id of the invited user"
+                    },
+                    "actorType": {
+                        "type": "string",
+                        "description": "Actor type of the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-types))"
+                    },
+                    "attendeeId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Unique attendee id"
+                    },
+                    "attendeePermissions": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Dedicated permissions for the current participant, if not `Custom` this are not the resulting permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                    },
+                    "attendeePin": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute)"
+                    },
+                    "avatarVersion": {
+                        "type": "string",
+                        "description": "Version of conversation avatar used to easier expiration of the avatar in case a moderator updates it, since the avatar endpoint should be cached for 24 hours. (only available with `avatar` capability)"
+                    },
+                    "breakoutRoomMode": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Breakout room configuration mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#breakout-room-modes)) (only available with `breakout-rooms-v1` capability)"
+                    },
+                    "breakoutRoomStatus": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Breakout room status (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#breakout-room-status)) (only available with `breakout-rooms-v1` capability)"
+                    },
+                    "callFlag": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Combined flag of all participants in the current call (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag), only available with `conversation-call-flags` capability)"
+                    },
+                    "callPermissions": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Call permissions, if not `Custom` this are not the resulting permissions, if set they will reset after the end of the call (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                    },
+                    "callRecording": {
+                        "type": "integer",
+                        "format": "int64",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ],
+                        "description": "Type of call recording (see [Constants - Call recording status](https://nextcloud-talk.readthedocs.io/en/latest/constants#call-recording-status)) (only available with `recording-v1` capability)"
+                    },
+                    "callStartTime": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp when the call was started (only available with `recording-v1` capability)"
+                    },
+                    "canDeleteConversation": {
+                        "type": "boolean",
+                        "description": "Flag if the user can delete the conversation for everyone (not possible without moderator permissions or in one-to-one conversations)"
+                    },
+                    "canEnableSIP": {
+                        "type": "boolean",
+                        "description": "Whether the given user can enable SIP for this conversation. Note that when the token is not-numeric only, SIP can not be enabled even if the user is permitted and a moderator of the conversation"
+                    },
+                    "canLeaveConversation": {
+                        "type": "boolean",
+                        "description": "Flag if the user can leave the conversation (not possible for the last user with moderator permissions)"
+                    },
+                    "canStartCall": {
+                        "type": "boolean",
+                        "description": "Flag if the user can start a new call in this conversation (joining is always possible) (only available with `start-call-flag` capability)"
+                    },
+                    "defaultPermissions": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Default permissions for new participants (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the conversation (can also be empty) (only available with `room-description` capability)"
+                    },
+                    "displayName": {
+                        "type": "string",
+                        "description": "`name` if non-empty, otherwise it falls back to a list of participants"
+                    },
+                    "hasCall": {
+                        "type": "boolean",
+                        "description": "Flag if the conversation has an active call"
+                    },
+                    "hasPassword": {
+                        "type": "boolean",
+                        "description": "Flag if the conversation has a password"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identifier of the conversation"
+                    },
+                    "isCustomAvatar": {
+                        "type": "boolean",
+                        "description": "Flag if the conversation has a custom avatar (only available with `avatar` capability)"
+                    },
+                    "isFavorite": {
+                        "type": "boolean",
+                        "description": "Flag if the conversation is favorited by the user"
+                    },
+                    "lastActivity": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp of the last activity in the conversation, in seconds and UTC time zone"
+                    },
+                    "lastCommonReadMessage": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)"
+                    },
+                    "lastMessage": {
+                        "$ref": "#/components/schemas/RoomLastMessage",
+                        "description": "Last message in a conversation if available, otherwise empty. **Note:** Even when given the message will not contain the `parent` or `reactionsSelf` attribute due to performance reasons"
+                    },
+                    "lastPing": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp of the user's session making the request"
+                    },
+                    "lastReadMessage": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "ID of the last read message in a room (only available with `chat-read-marker` capability)"
+                    },
+                    "listable": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Listable scope for the room (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#listable-scope)) (only available with `listable-rooms` capability)"
+                    },
+                    "liveTranscriptionLanguageId": {
+                        "type": "string",
+                        "description": "ID of the language to use for live transcriptions in the room,"
+                    },
+                    "lobbyState": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Webinar lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability) (See [Webinar lobby states](https://nextcloud-talk.readthedocs.io/en/latest/constants#webinar-lobby-states))"
+                    },
+                    "lobbyTimer": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)"
+                    },
+                    "mentionPermissions": {
+                        "type": "integer",
+                        "format": "int64",
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "description": "Whether all participants can mention using `@all` or only moderators (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#mention-permissions)) (only available with `mention-permissions` capability)"
+                    },
+                    "messageExpiration": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The message expiration time in seconds in this chat. Zero if disabled. (only available with `message-expiration` capability)"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the conversation (can also be empty)"
+                    },
+                    "notificationCalls": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The call notification level for the user (see [Participant call notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-call-notification-levels))"
+                    },
+                    "notificationLevel": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The notification level for the user (See [Participant notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-notification-levels))"
+                    },
+                    "objectId": {
+                        "type": "string",
+                        "description": "See [Object types](https://nextcloud-talk.readthedocs.io/en/latest/constants#object-types) documentation for explanation"
+                    },
+                    "objectType": {
+                        "type": "string",
+                        "description": "The type of object that the conversation is associated with (See [Object types](https://nextcloud-talk.readthedocs.io/en/latest/constants#object-types))"
+                    },
+                    "participantFlags": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "\"In call\" flags of the user's session making the request (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag)) (only available with `in-call-flags` capability)"
+                    },
+                    "participantType": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Permissions level of the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-types))"
+                    },
+                    "permissions": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Combined final permissions for the current participant, permissions are picked in order of attendee then call then default and the first which is `Custom` will apply (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
+                    },
+                    "readOnly": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Read-only state for the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#read-only-states)) (only available with `read-only-rooms` capability)"
+                    },
+                    "recordingConsent": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Whether recording consent is required before joining a call (Only 0 and 1 will be returned, see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required)) (only available with `recording-consent` capability)"
+                    },
+                    "remoteServer": {
+                        "type": "string"
+                    },
+                    "remoteToken": {
+                        "type": "string"
+                    },
+                    "sessionId": {
+                        "type": "string",
+                        "description": "`'0'` if not connected, otherwise an up to 512 character long string that is the identifier of the user's session making the request. Should only be used to pre-check if the user joined already with this session, but this might be outdated by the time of usage, so better check via [Get list of participants in a conversation](https://nextcloud-talk.readthedocs.io/en/latest/participant/#get-list-of-participants-in-a-conversation)"
+                    },
+                    "sipEnabled": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "SIP enable status (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#sip-states))"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status"
+                    },
+                    "statusClearAt": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true,
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
+                    },
+                    "statusIcon": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
+                    },
+                    "statusMessage": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
+                    },
+                    "token": {
+                        "type": "string",
+                        "description": "Token identifier of the conversation which is used for further interaction"
+                    },
+                    "type": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "See list of conversation types in the [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-types)"
+                    },
+                    "unreadMention": {
+                        "type": "boolean",
+                        "description": "Flag if the user was mentioned since their last visit"
+                    },
+                    "unreadMentionDirect": {
+                        "type": "boolean",
+                        "description": "Flag if the user was mentioned directly (ignoring `@all` mentions) since their last visit (only available with `direct-mention-flag` capability)"
+                    },
+                    "unreadMessages": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Number of unread chat messages in the conversation (only available with `chat-v2` capability)"
+                    },
+                    "isArchived": {
+                        "type": "boolean",
+                        "description": "Flag if the conversation is archived by the user (only available with `archived-conversations-v2` capability)"
+                    },
+                    "isImportant": {
+                        "type": "boolean",
+                        "description": "Required capability: `important-conversations`"
+                    },
+                    "isSensitive": {
+                        "type": "boolean",
+                        "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "tagIds": {
+                        "type": "array",
+                        "description": "IDs of the custom tags this conversation is marked with (only available with `conversation-tags` capability)",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "lastPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
+                    },
+                    "hiddenPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
+                    },
+                    "hasScheduledMessages": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `scheduled-messages` (local)"
+                    },
+                    "attributes": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details"
+                    }
+                }
+            },
+            "RoomLastMessage": {
+                "anyOf": [
+                    {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ChatProxyMessage"
+                    }
+                ]
+            },
+            "RoomWithInvalidInvitations": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Room"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "invalidParticipants"
+                        ],
+                        "properties": {
+                            "invalidParticipants": {
+                                "$ref": "#/components/schemas/InvitationList",
+                                "description": "List of participants that could not be invited grouped by source type"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room": {
+            "post": {
+                "operationId": "room-create-room",
+                "summary": "Create a room with a user, a group or a circle",
+                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.\nThe endpoint can also be used unauthenticated by an external call service by signing the request with the configured shared secret via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the random seed and the `$owner` user ID).",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "roomType": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Type of the room"
+                                    },
+                                    "invite": {
+                                        "type": "string",
+                                        "deprecated": true,
+                                        "default": "",
+                                        "description": "User, group, … ID to invite Deprecated: Use the `$participants` array instead"
+                                    },
+                                    "roomName": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "deprecated": true,
+                                        "default": "",
+                                        "description": "Source of the invite ID ('circles' to create a room with a circle, etc.) Deprecated: Use the `$participants` array instead"
+                                    },
+                                    "objectType": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Type of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})"
+                                    },
+                                    "objectId": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "ID of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "The room password (only available with `conversation-creation-password` capability) (Ignored if `$roomType` is not {@see Room::TYPE_PUBLIC})"
+                                    },
+                                    "readOnly": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "listable": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "description": "Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "messageExpiration": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)",
+                                        "minimum": 0
+                                    },
+                                    "lobbyState": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "lobbyTimer": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)",
+                                        "minimum": 0
+                                    },
+                                    "sipEnabled": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2
+                                        ],
+                                        "description": "Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "permissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Default permissions for participants (only available with `conversation-creation-all` capability)",
+                                        "minimum": 0,
+                                        "maximum": 511
+                                    },
+                                    "recordingConsent": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "mentionPermissions": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ],
+                                        "description": "Who can mention at-all in the chat (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "emoji": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability)",
+                                        "minLength": 1
+                                    },
+                                    "avatarColor": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)",
+                                        "minLength": 1
+                                    },
+                                    "participants": {
+                                        "$ref": "#/components/schemas/InvitationList",
+                                        "default": [],
+                                        "description": "List of participants to add grouped by type (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "owner": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored."
+                                    },
+                                    "preset": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Identifier of the preset that was used (only available with `conversation-preset` capability)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-checksum",
+                        "in": "header",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Room already existed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Room created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Room created successfully but not all participants could be added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoomWithInvalidInvitations"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Room type invalid or missing or invalid password",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "avatar",
+                                                                "classified",
+                                                                "description",
+                                                                "invite",
+                                                                "listable",
+                                                                "lobby",
+                                                                "lobby-timer",
+                                                                "mention-permissions",
+                                                                "message-expiration",
+                                                                "name",
+                                                                "object",
+                                                                "object-id",
+                                                                "object-type",
+                                                                "owner",
+                                                                "password",
+                                                                "permissions",
+                                                                "preset",
+                                                                "read-only",
+                                                                "recording-consent",
+                                                                "sip-enabled",
+                                                                "type"
+                                                            ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Missing permissions to create room",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "avatar",
+                                                                "classified",
+                                                                "description",
+                                                                "invite",
+                                                                "listable",
+                                                                "lobby",
+                                                                "lobby-timer",
+                                                                "mention-permissions",
+                                                                "message-expiration",
+                                                                "name",
+                                                                "object",
+                                                                "object-id",
+                                                                "object-type",
+                                                                "owner",
+                                                                "password",
+                                                                "permissions",
+                                                                "preset",
+                                                                "read-only",
+                                                                "recording-consent",
+                                                                "sip-enabled",
+                                                                "type"
+                                                            ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User, group or other target to invite was not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "avatar",
+                                                                "classified",
+                                                                "description",
+                                                                "invite",
+                                                                "listable",
+                                                                "lobby",
+                                                                "lobby-timer",
+                                                                "mention-permissions",
+                                                                "message-expiration",
+                                                                "name",
+                                                                "object",
+                                                                "object-id",
+                                                                "object-type",
+                                                                "owner",
+                                                                "password",
+                                                                "permissions",
+                                                                "preset",
+                                                                "read-only",
+                                                                "recording-consent",
+                                                                "sip-enabled",
+                                                                "type"
+                                                            ]
+                                                        },
+                                                        "message": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Request not authenticated (missing user session or invalid external call service secret)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "auth"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
+            "put": {
+                "operationId": "room-sync-participants",
+                "summary": "Synchronize the participants of a conversation with the given list",
+                "description": "Only available for the external call service. Participants missing from the list are removed (except owners), participants new in the list are added.",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "participants": {
+                                        "$ref": "#/components/schemas/InvitationList",
+                                        "default": [],
+                                        "description": "List of participants the conversation should have grouped by type"
+                                    },
+                                    "owner": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User ID of an owner of the conversation that will be used as actor"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Token of the room",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-checksum",
+                        "in": "header",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Participants synchronized successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Participants synchronized but not all participants could be added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoomWithInvalidInvitations"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Room is not an external call service conversation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "owner",
+                                                                "room",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Owner is not an owner of the conversation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "owner",
+                                                                "room",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Room or owner not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "owner",
+                                                                "room",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid external call service secret",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "auth"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": []
+}
