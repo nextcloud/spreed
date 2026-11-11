@@ -336,6 +336,16 @@ Feature: conversation-2/files
     When user "guest" joins room "file last share room" with 200 (v4)
     And user "guest" is participant of room "file last share room" (v4)
 
+  Scenario: guest can join the room of a file shared by link and protected by password
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+    And user "guest" gets the room for last share with 404 (v1)
+    And user "guest" authenticates last share with password "123456" with 303
+    And user "guest" gets the room for last share with 200 (v1)
+    When user "guest" joins room "file last share room" with 200 (v4)
+    Then user "guest" is participant of room "file last share room" (v4)
+    And user "guest2" gets the room for last share with 404 (v1)
+
 
 
   Scenario: owner of a shared file is not removed from its room after leaving it
