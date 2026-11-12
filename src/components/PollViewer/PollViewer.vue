@@ -368,7 +368,12 @@ export default {
 
 		poll: {
 			immediate: true,
-			handler(value) {
+			handler(value, oldValue) {
+				if (value && oldValue && value.id === oldValue.id && value.status === oldValue.status
+					&& value.votedSelf?.toString() === oldValue.votedSelf?.toString()) {
+					return
+				}
+
 				if (!value) {
 					this.modalPage = ''
 				} else if (this.isPollClosed || (this.isPollPublic && this.selfHasVoted)) {
