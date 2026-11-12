@@ -259,6 +259,7 @@ OC.L10N.register(
     "Password request: %s" : "Барање за лозинка: %s",
     "Deleted user (%s)" : "Избришан корисник (%s)",
     "Location" : "Локација",
+    " and " : " и ",
     "Share to chat" : "Сподели во разговор",
     "Dismiss notification" : "Отфрли известување",
     "Call recording now available" : "Снимањето не е достапно",
