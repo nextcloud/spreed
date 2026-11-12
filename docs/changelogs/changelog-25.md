@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - feat(reference): Improve reference widget layout
   [#20293](https://github.com/nextcloud/spreed/pull/20293)
+- feat(call): move from checkbox to split button
+  [#20300](https://github.com/nextcloud/spreed/pull/20300)
 
 ### Changed
 - Update translations
