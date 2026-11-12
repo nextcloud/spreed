@@ -25,7 +25,6 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useJoinCall } from '../../composables/useJoinCall.ts'
 import { CALL, CONVERSATION } from '../../constants.ts'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -41,8 +40,6 @@ const props = defineProps<{
 	disabled?: boolean
 	/** Whether the component is used in MediaSettings or not (click directly starts a call) */
 	isMediaSettings?: boolean
-	/** Whether the call should trigger a notifications and sound for other participants or not */
-	silentCall?: boolean
 	/** Whether to trigger recording to start with the call */
 	isRecordingFromStart?: boolean
 	/** Pass through of recording consent */
@@ -102,7 +99,6 @@ const startCallButtonDisabled = computed(() => {
 })
 const showSplitStartCallButton = computed(() => {
 	return showStartCallButton.value
-		&& !props.isMediaSettings
 		&& !isPhoneRoom.value
 		&& !hasExternalCallService(conversation.value)
 		&& !hasCall.value
@@ -124,7 +120,7 @@ const startCallLabel = computed(() => {
 	if (isJoiningCall.value) {
 		return t('spreed', 'Connecting …')
 	}
-	return props.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
+	return t('spreed', 'Start call')
 })
 const startCallTitle = computed(() => {
 	if (isNextcloudTalkHashDirty.value) {
@@ -153,12 +149,12 @@ watch(token, (newValue, oldValue) => {
 /**
  * Start or join the call
  *
- * @param silent - force a silent start, bypassing the `silentCall` prop
+ * @param silent - whether to start the call silently
  */
 async function handleJoinCall(silent?: boolean) {
 	loading.value = true
 	await joinCall(token.value, {
-		silent: hasCall.value ? true : (silent ?? props.silentCall),
+		silent: hasCall.value ? true : silent,
 		recordingConsent: props.recordingConsentGiven,
 		shouldStartRecording: props.isRecordingFromStart,
 	})
@@ -168,7 +164,7 @@ async function handleJoinCall(silent?: boolean) {
 /**
  * Run pre-checks before starting/joining the call
  *
- * @param silent Whether to pre-set silent flag upon click, or force a silent start
+ * @param silent Whether to start the call silently
  */
 function handleClick(silent?: boolean) {
 	if (hasExternalCallService(conversation.value)) {
@@ -180,14 +176,8 @@ function handleClick(silent?: boolean) {
 	// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 	soundsStore.initAudioObjects()
 
-	if (silent === true) {
-		BrowserStorage.setItem('silentCall_' + token.value, 'true')
-	} else if (silent === false) {
-		BrowserStorage.removeItem('silentCall_' + token.value)
-	}
-
 	if (props.isMediaSettings || isPhoneRoom.value) {
-		handleJoinCall()
+		handleJoinCall(silent)
 		return
 	}
 
@@ -269,7 +259,6 @@ async function handleExternalCall() {
 		<template #icon>
 			<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
 			<IconPhoneDialOutline v-else-if="isPhoneRoom" :size="20" />
-			<IconPhoneOutline v-else-if="silentCall" :size="20" />
 			<IconPhone v-else :size="20" />
 		</template>
 		<template v-if="showButtonText" #default>
