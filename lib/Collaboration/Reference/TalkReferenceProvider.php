@@ -152,15 +152,17 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		 * Title is the conversation name
 		 * Description the conversation description
 		 */
-		$roomName = $room->getDisplayName($this->userId);
+		$roomName = $room->isClassified() ? $this->l->t('Private conversation') : $room->getDisplayName($this->userId);
 		$title = $roomName;
 		$description = '';
 		$messageId = null;
+		$messageData = [];
 
-		if ($participant instanceof Participant
-			|| $this->roomManager->isRoomListableByUser($room, $this->userId)) {
-			$description = $room->getDescription();
-		}
+		// Same condition as the avatar endpoint, e.g. public conversations are found by token but not listed.
+		// Classified conversations never expose their description or avatar.
+		$canSeeDetails = !$room->isClassified()
+			&& ($participant instanceof Participant
+				|| $this->roomManager->isRoomListableByUser($room, $this->userId));
 
 		/**
 		 * If linking to a comment and the user is already a participant
@@ -175,8 +177,6 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 				} catch (NotFoundException) {
 					throw new RoomNotFoundException();
 				}
-				$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
-				$this->messageParser->parseMessage($message, true);
 			} else {
 				try {
 					$proxy = $this->proxyCacheMessageMapper->findById($room, (int)$messageId);
@@ -186,7 +186,25 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 				} catch (DoesNotExistException) {
 					throw new RoomNotFoundException();
 				}
+			}
+		}
+
+		if (!empty($referenceMatch['message']) && ($messageId === null || $room->isClassified())) {
+			// The message can not be seen, or must not leave the classified conversation.
+			// Still render it as a message, so it is not mistaken for a conversation link.
+			$title = $roomName = $this->l->t('Message in private conversation');
+			$canSeeDetails = false;
+			if ($messageId !== null) {
+				$messageData = ['message-id' => $messageId];
+			}
+		} elseif ($messageId !== null) {
+			if (isset($comment)) {
+				$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
+				$this->messageParser->parseMessage($message, true);
+				$timestamp = $comment->getCreationDateTime()->getTimestamp();
+			} else {
 				$message = $this->messageParser->createMessageFromProxyCache($room, $participant, $proxy, $this->l);
+				$timestamp = $proxy->getCreationDatetime()?->getTimestamp() ?? 0;
 			}
 
 			$placeholders = $replacements = [];
@@ -214,6 +232,10 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 				}
 			} elseif ($displayName === '') {
 				$titleLine = $this->l->t('Message of a deleted user in {conversation}');
+			} elseif ($message->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				// Same as the chat: show the server of the cloud ID behind the display name
+				$server = substr($message->getActorId(), strrpos($message->getActorId(), '@') + 1);
+				$displayName .= ' (' . $server . ')';
 			}
 
 			$title = str_replace(
@@ -221,25 +243,40 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 				[$displayName, $title],
 				$titleLine
 			);
+
+			$messageData = [
+				'message-id' => $messageId,
+				'actor-type' => $message->getActorType(),
+				'actor-id' => $message->getActorId(),
+				'actor-display-name' => $displayName,
+				'timestamp' => (string)$timestamp,
+			];
+		} elseif ($canSeeDetails) {
+			$description = $room->getDescription();
 		}
 
 		$reference->setTitle($title);
 		$reference->setDescription($description);
 		$reference->setUrl($this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
-		$reference->setImageUrl($this->avatarService->getAvatarUrl($room));
 
 		$referenceData = [
 			'id' => $room->getToken(),
 			'name' => $roomName,
 			'link' => $reference->getUrl(),
 			'call-type' => $this->getRoomType($room),
+			'description' => $description,
 		];
 
-		if ($messageId) {
-			$referenceData['message-id'] = $messageId;
+		if ($canSeeDetails) {
+			$reference->setImageUrl($this->avatarService->getAvatarUrl($room));
+			$referenceData['avatar-version'] = $this->avatarService->getAvatarVersion($room);
+
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+				$referenceData['user-id'] = $room->getSecondParticipant($this->userId);
+			}
 		}
 
-		$reference->setRichObject('call', $referenceData);
+		$reference->setRichObject('call', array_merge($referenceData, $messageData));
 	}
 
 	/**

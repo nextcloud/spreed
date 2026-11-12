@@ -387,6 +387,17 @@ export type importEmailsResponse = ApiResponse<operations['room-import-emails-as
 
 // Chats
 export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
+// Rich object of a 'call' reference (TalkReferenceProvider)
+export type CallReference = Pick<RichObjectParameter, 'id' | 'name' | 'call-type' | 'message-id'> & {
+	link: string
+	description?: string
+	'avatar-version'?: string
+	'user-id'?: string
+	'actor-type'?: string
+	'actor-id'?: string
+	'actor-display-name'?: string
+	timestamp?: string
+}
 export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
 	etag: string
 	permissions: string
