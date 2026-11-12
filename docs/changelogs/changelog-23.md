@@ -5,6 +5,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.14 – 2026-11-12
+### Added
+- feat(external-call): Allow the service to set the participant list
+  [#20285](https://github.com/nextcloud/spreed/pull/20285)
+
+### Changed
+- Update translations
+
+### Fixed
+- fix: Verify read marker before setting
+  [#20290](https://github.com/nextcloud/spreed/pull/20290)
+- fix(session): Skip internal sessions in orphan check
+  [#20263](https://github.com/nextcloud/spreed/pull/20263)
+- fix(webrtc): Fix Firefox simulcast race condition
+  [#20257](https://github.com/nextcloud/spreed/pull/20257)
+- fix(AdminSettings): do not rely on Report.toJSON() for CSP violations
+  [#20243](https://github.com/nextcloud/spreed/pull/20243)
+
 ## 23.0.13 – 2026-11-05
 ### Changed
 - Update translations
