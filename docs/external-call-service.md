@@ -92,6 +92,25 @@ Only `roomType = 2` (group) and `roomType = 3` (public) are allowed when using t
 
 Requests with an invalid secret are brute-force protected (`talkExternalCallServiceSecret` action).
 
+## External service → Talk: synchronizing participants
+
+The external service can replace the participant list of an existing conversation. Only conversations with `objectType = external_call` are supported. Participants missing from the list are removed (owners are always kept), participants new in the list are added.
+
+* Method: `PUT`
+* Endpoint: `/ocs/v2.php/apps/spreed/api/v4/room/{token}/participants`
+* Authentication: same `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers as for creating a conversation
+* `owner` (string, required): user ID of an owner of the conversation, used as the actor
+* `participants` (object): same format as `participants` when creating a conversation, e.g. `{"users": ["alice"], "emails": ["bob@example.tld"]}`
+
+| Status             | Meaning                                                                                 |
+|--------------------|-----------------------------------------------------------------------------------------|
+| `200 OK`           | Participants synchronized                                                               |
+| `202 Accepted`     | Participants synchronized, but some could not be added (listed in `invalidParticipants`) |
+| `400 Bad Request`  | Conversation does not have `objectType = external_call`                                 |
+| `401 Unauthorized` | Invalid checksum                                                                        |
+| `403 Forbidden`    | `owner` is not an owner of the conversation                                             |
+| `404 Not Found`    | Conversation or `owner` not found                                                       |
+
 ## Talk → iframe communication
 
 The iframe URL is loaded in a sandboxed `<iframe>` with the following attributes:
