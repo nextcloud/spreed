@@ -65,8 +65,9 @@ clean-dev: clean
 	rm -rf vendor
 
 create-tag:
-	git tag -a v$(version) -m "Tagging the $(version) release."
+	git tag -s -a v$(version) -m "Tagging the $(version) release."
 	git push origin v$(version)
+	git push releases v$(version)
 
 appstore:
 	rm -rf $(build_dir)

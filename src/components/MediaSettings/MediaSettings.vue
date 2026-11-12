@@ -218,20 +218,6 @@
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch
-						v-if="showStartRecordingOption && isRecordingFromStart"
-						v-model="isRecordingAudioOnly"
-						class="checkbox">
-						{{ t('spreed', 'Record audio only') }}
-					</NcCheckboxRadioSwitch>
-					<!-- Notify call option-->
-					<NcCheckboxRadioSwitch
-						v-if="showNotifyCallOption"
-						v-model="notifyCall"
-						class="checkbox"
-						@update:modelValue="setNotifyCall">
-						{{ t('spreed', 'Notify all participants about this call') }}
-					</NcCheckboxRadioSwitch>
 
 					<NcButton
 						v-if="showUpdateChangesButton"
@@ -247,8 +233,7 @@
 						:isRecordingFromStart="isRecordingFromStart"
 						:isRecordingAudioOnly="isRecordingAudioOnly"
 						:disabled="disabledCallButton"
-						:recordingConsentGiven="recordingConsentGiven"
-						:silentCall="!notifyCall" />
+						:recordingConsentGiven="recordingConsentGiven" />
 				</div>
 			</div>
 		</div>
@@ -433,7 +418,6 @@ export default {
 			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
-			notifyCall: true,
 			updatedBackground: undefined,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
@@ -568,11 +552,6 @@ export default {
 			return this.isBeforeJoinCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
-		showNotifyCallOption() {
-			return !this.hasCall && !this.isPublicShareAuthSidebar
-				&& this.isBeforeJoinCall && !this.isVoiceRoom
-		},
-
 		showStartRecordingOption() {
 			return !this.hasCall && this.canModerateRecording && this.isBeforeJoinCall
 		},
@@ -678,7 +657,6 @@ export default {
 					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				}
-				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
@@ -843,14 +821,6 @@ export default {
 				this.videoOn = false
 			}
 			this.videoDeviceStateChanged = true
-		},
-
-		setNotifyCall(value) {
-			if (!value) {
-				BrowserStorage.setItem('silentCall_' + this.token, 'true')
-			} else {
-				BrowserStorage.removeItem('silentCall_' + this.token)
-			}
 		},
 
 		closeModalAndApplySettings() {

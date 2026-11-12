@@ -81,6 +81,7 @@ describe('MessageItem.vue', () => {
 
 		actorStore.actorId = 'user-id-1'
 		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
+		actorStore.userId = 'user-id-1'
 		tokenStore.token = TOKEN
 		testStoreConfig = cloneDeep(storeConfig)
 		testStoreConfig.modules.conversationsStore.getters.conversation

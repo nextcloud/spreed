@@ -1058,11 +1058,7 @@ class ChatManager {
 		$key = $chat->getId() . '-' . $chat->getLastMessageId() . '-' . $lastReadMessage;
 		$unreadCount = $this->unreadCountCache->get($key);
 		if ($unreadCount === null) {
-			$verbs = [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED];
-			if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
-				$verbs[] = self::VERB_REACTION;
-			}
-			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, $verbs);
+			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED]);
 			$this->unreadCountCache->set($key, $unreadCount, 1800);
 		}
 		return $unreadCount;

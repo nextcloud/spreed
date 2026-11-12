@@ -696,6 +696,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[PublicPage]
+	#[OpenAPI]
+	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
@@ -742,10 +744,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			$actorUserId = $owner;
 
-			if (!in_array($roomType, [
-				Room::TYPE_GROUP,
-				Room::TYPE_PUBLIC,
-			], true)) {
+			if ($objectType !== Room::OBJECT_TYPE_EXTERNAL_CALL
+				|| !in_array($roomType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 				return new DataResponse(['error' => CreationException::REASON_OBJECT_TYPE], Http::STATUS_BAD_REQUEST);
 			}
 			$allowInternalTypes = true;
@@ -960,6 +960,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: Room or owner not found
 	 */
 	#[PublicPage]
+	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
