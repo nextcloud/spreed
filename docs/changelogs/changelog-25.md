@@ -5,6 +5,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.8 – 2026-11-12
+### Added
+- feat(reference): Improve reference widget layout
+  [#20293](https://github.com/nextcloud/spreed/pull/20293)
+- feat(call): move from checkbox to split button
+  [#20300](https://github.com/nextcloud/spreed/pull/20300)
+
+### Changed
+- Update translations
+
+### Fixed
+- fix: Verify read marker before setting
+  [#20288](https://github.com/nextcloud/spreed/pull/20288)
+- fix(PollViewer): keep selected options when another participant votes
+  [#20284](https://github.com/nextcloud/spreed/pull/20284)
+- fix(sharing-sidebar): Fix session handling when checking share password authentication
+  [#20271](https://github.com/nextcloud/spreed/pull/20271)
+- fix(webrtc): Fix Firefox simulcast race condition
+  [#20259](https://github.com/nextcloud/spreed/pull/20259)
+- fix(AdminSettings): do not rely on Report.toJSON() for CSP violations
+  [#20245](https://github.com/nextcloud/spreed/pull/20245)
+- fix(polls): Expire polls and votes when message expiration is on
+  [#20179](https://github.com/nextcloud/spreed/pull/20179)
+
 ## 25.0.7 – 2026-11-05
 ### Added
 - feat(external-call): Allow the service to set the participant list
