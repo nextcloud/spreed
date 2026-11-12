@@ -30,20 +30,20 @@ class Add extends Base {
 	protected function configure(): void {
 		$this
 			->setName('talk:signaling:add')
-			->setDescription('Add an external signaling server.')
+			->setDescription('Set an external signaling server. Only one can be set. For load balancing, use the signaling server\'s builtin load balancing')
 			->addArgument(
 				'server',
 				InputArgument::REQUIRED,
-				'A server string, ex. wss://signaling.example.org'
+				'The server string, ex. wss://signaling.example.org',
 			)->addArgument(
 				'secret',
 				InputArgument::OPTIONAL,
-				'A shared secret string.'
+				'The shared secret string.'
 			)->addOption(
 				'verify',
 				null,
 				InputOption::VALUE_NONE,
-				'DEPRECATED: added servers are verified by default. use --skip-verify to disable it.'
+				'DEPRECATED: the server is verified by default. use --skip-verify to disable it.'
 			)->addOption(
 				'skip-verify',
 				null,
@@ -111,20 +111,17 @@ class Add extends Base {
 		}
 
 		$signaling_servers = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
+
 		if (empty($signaling_servers)) {
 			$servers = [];
 		} else {
 			$servers = $signaling_servers['servers'];
 		}
-		$server = mb_strtolower(trim($server));
-		if (in_array($server, array_column($servers, 'server'), true)) {
-			$output->writeln('<info>Server ' . $server . ' already exists.</info>');
-			return 1;
-		}
 		$servers[] = [
 			'server' => $server,
 			'verify' => $verify,
 		];
+
 		$signaling = [
 			'servers' => $servers,
 			'secret' => $secret,
