@@ -29,17 +29,26 @@
 
 			<!-- Call recording -->
 			<template v-if="canModerateRecording">
-				<NcActionButton
-					v-if="!isRecording && !isStartingRecording && isInCall"
-					closeAfterClick
-					@click="startRecording">
-					<template #icon>
-						<NcIconSvgWrapper
-							:svg="IconScreenRecordOutline"
-							:size="20" />
-					</template>
-					{{ t('spreed', 'Start recording') }}
-				</NcActionButton>
+				<template v-if="!isRecording && !isStartingRecording && isInCall">
+					<NcActionButton
+						closeAfterClick
+						@click="startRecording">
+						<template #icon>
+							<NcIconSvgWrapper
+								:svg="IconScreenRecordOutline"
+								:size="20" />
+						</template>
+						{{ t('spreed', 'Start recording') }}
+					</NcActionButton>
+					<NcActionButton
+						closeAfterClick
+						@click="startRecordingAudio">
+						<template #icon>
+							<IconMicrophoneOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Start audio-only recording') }}
+					</NcActionButton>
+				</template>
 				<NcActionButton
 					v-else-if="isStartingRecording && isInCall"
 					closeAfterClick
@@ -172,6 +181,7 @@ import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
+import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
@@ -212,6 +222,7 @@ export default {
 		IconFullscreen,
 		IconFullscreenExit,
 		IconMagnify,
+		IconMicrophoneOutline,
 		IconStop,
 		IconVideoOutline,
 	},
@@ -364,6 +375,13 @@ export default {
 			this.$store.dispatch('startCallRecording', {
 				token: this.token,
 				callRecording: CALL.RECORDING.VIDEO,
+			})
+		},
+
+		startRecordingAudio() {
+			this.$store.dispatch('startCallRecording', {
+				token: this.token,
+				callRecording: CALL.RECORDING.AUDIO,
 			})
 		},
 

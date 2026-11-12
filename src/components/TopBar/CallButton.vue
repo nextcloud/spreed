@@ -42,6 +42,8 @@ const props = defineProps<{
 	isMediaSettings?: boolean
 	/** Whether to trigger recording to start with the call */
 	isRecordingFromStart?: boolean
+	/** Whether to record only audio when starting recording with the call */
+	isRecordingAudioOnly?: boolean
 	/** Pass through of recording consent */
 	recordingConsentGiven?: boolean
 	/** Whether to use text on button (e.g. at sidebar) */
@@ -157,6 +159,7 @@ async function handleJoinCall(silent?: boolean) {
 		silent: hasCall.value ? true : silent,
 		recordingConsent: props.recordingConsentGiven,
 		shouldStartRecording: props.isRecordingFromStart,
+		recordingAudioOnly: props.isRecordingAudioOnly,
 	})
 	loading.value = false
 }

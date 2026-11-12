@@ -54,12 +54,14 @@ export function useJoinCall() {
 	 * @param options.silent - whether to join the call silently (no notifications)
 	 * @param options.recordingConsent - whether to join the call with recording consent
 	 * @param options.shouldStartRecording - whether to start the recording together with the call (requires recording backend)
+	 * @param options.recordingAudioOnly - whether to record only audio
 	 * @param options.directCall - whether to join call with video off
 	 */
 	async function joinCall(token: string, {
 		silent = false,
 		recordingConsent = false,
 		shouldStartRecording = false,
+		recordingAudioOnly = false,
 		directCall = false,
 	} = {}) {
 		const conversation = vuexStore.getters.conversation(token)
@@ -108,7 +110,7 @@ export function useJoinCall() {
 			// Do not wait for async operation
 			vuexStore.dispatch('startCallRecording', {
 				token,
-				callRecording: CALL.RECORDING.VIDEO,
+				callRecording: recordingAudioOnly ? CALL.RECORDING.AUDIO : CALL.RECORDING.VIDEO,
 			})
 		}
 
