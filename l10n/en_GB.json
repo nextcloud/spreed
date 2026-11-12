@@ -2294,8 +2294,6 @@
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} demoted {user0} and {user1} from moderators",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["An administrator demoted {user0}, {user1} and %n more participant from moderators","An administrator demoted {user0}, {user1} and %n more participants from moderators"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} demoted {user0}, {user1} and %n more participant from moderators","{actor} demoted {user0}, {user1} and %n more participants from moderators"],
-    "You reacted with {reaction}" : "You reacted with {reaction}",
-    "Reacted with {reaction}" : "Reacted with {reaction}",
     "You:" : "You:",
     "You: {lastMessage}" : "You: {lastMessage}",
     "{actor}:" : "{actor}:",
