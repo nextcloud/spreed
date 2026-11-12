@@ -140,7 +140,8 @@ export function useViewer<T extends keyof FileAPIMap>(fileAPI: T) {
 			...nodeData,
 			source,
 			root,
-			owner: userId ?? null,
+			// Talk has no owner data
+			owner: null,
 		})
 	}
 
