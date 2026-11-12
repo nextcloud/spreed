@@ -42,11 +42,6 @@ class Install extends Base {
 				'The name under which the messages will be posted (min. 1 char, max. 64 chars)'
 			)
 			->addArgument(
-				'secret',
-				InputArgument::REQUIRED,
-				'Secret used to validate API calls (min. 40 chars, max. 128 chars).'
-			)
-			->addArgument(
 				'url',
 				InputArgument::REQUIRED,
 				'Webhook endpoint to post messages to (max. 4000 chars)'
@@ -55,6 +50,11 @@ class Install extends Base {
 				'description',
 				InputArgument::OPTIONAL,
 				'Optional description shown in the admin settings (max. 4000 chars)'
+			)
+			->addArgument(
+				'secret',
+				InputArgument::OPTIONAL,
+				'Secret used to validate API calls (min. 40 chars, max. 128 chars).'
 			)
 			->addOption(
 				'no-setup',
@@ -77,20 +77,20 @@ class Install extends Base {
 				'password-from-env',
 				null,
 				InputOption::VALUE_NONE,
-				'Read secret from environment variable NC_PASS/OC_PASS or interactively from prompt if environment variable is not set.'
+				'Read secret from environment variable NC_PASS or interactively from prompt if environment variable is not set.'
 			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$name = $input->getArgument('name');
-		$secret = $input->getArgument('secret');
+		$secret = $input->getArgument('secret') ?? '';
 		$url = $input->getArgument('url');
 		$description = $input->getArgument('description') ?? '';
 		$noSetup = $input->getOption('no-setup');
 		$passwordFromEnv = $input->getOption('password-from-env');
 
-		if ($passwordFromEnv) {
+		if ($passwordFromEnv && !empty($secret)) {
 			$output->writeln('<info>Secret given as command line argument will be ignored because --password-from-env was passed</info>');
 		}
 
@@ -106,7 +106,7 @@ class Install extends Base {
 		}
 
 		if ($passwordFromEnv) {
-			$secret = getenv('NC_PASS') ?: getenv('OC_PASS');
+			$secret = getenv('NC_PASS') ?: '';
 			$secret = $secret ? trim($secret) : '';
 		}
 
