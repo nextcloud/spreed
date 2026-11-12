@@ -63,7 +63,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 import { useFileTemplates } from '../../composables/useFileTemplates.ts'
-import { useViewer } from '../../composables/useViewer.js'
+import { useViewer } from '../../composables/useViewer.ts'
 import { createNewFile } from '../../services/filesSharingServices.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useUploadStore } from '../../stores/upload.ts'
@@ -231,7 +231,7 @@ export default {
 
 			this.loading = false
 
-			this.openViewer(filePath, [fileData], fileData)
+			this.openViewer([fileData], fileData)
 
 			this.closeModal()
 		},
