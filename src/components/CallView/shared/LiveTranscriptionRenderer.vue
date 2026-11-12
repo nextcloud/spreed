@@ -335,6 +335,13 @@ export default {
 		 *        lines of the block.
 		 */
 		scrollToBlockAndLine(block: number, line: number) {
+			const scrollToBlockLineBoundaries = this.$refs.transcriptBlocks![block].getLineBoundaries()
+			const scrollToLineLineBoundaries = scrollToBlockLineBoundaries[line]
+			// No layout, e.g. when the transcript is hidden
+			if (!scrollToLineLineBoundaries) {
+				return
+			}
+
 			this.lastScrolledToBlockAndLine = {
 				block,
 				line,
@@ -344,8 +351,6 @@ export default {
 			const transcriptTop = transcriptBoundaries.top
 			const transcriptHeight = transcriptBoundaries.bottom - transcriptBoundaries.top
 
-			const scrollToBlockLineBoundaries = this.$refs.transcriptBlocks![block].getLineBoundaries()
-			const scrollToLineLineBoundaries = scrollToBlockLineBoundaries[line]
 			const scrollToLineHeight = scrollToLineLineBoundaries.bottom - scrollToLineLineBoundaries.top
 
 			const scrollToLineRelativeLineBoundaries = {
