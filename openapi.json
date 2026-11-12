@@ -915,6 +915,14 @@
                         "type": "string",
                         "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
                     },
+                    "actorRole": {
+                        "type": "string",
+                        "enum": [
+                            "owner",
+                            "moderator"
+                        ],
+                        "description": "Role of the author at the time of posting. If missing, the author was a regular participant, the conversation has no ranks or the message predates it"
+                    },
                     "replyToMessageId": {
                         "type": "integer",
                         "format": "int64",
