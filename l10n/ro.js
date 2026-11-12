@@ -2292,8 +2292,6 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} le-a retras lui {user0} și lui {user1} rolul de moderator",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Un administrator le-a retras lui {user0}, lui {user1} și încă %n participant rolul de moderator","Un administrator le-a retras lui {user0}, lui {user1} și încă %n participanți rolul de moderator","Un administrator le-a retras lui {user0}, lui {user1} și încă %n de participanți rolul de moderator"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} le-a retras lui {user0}, lui {user1} și încă %n participant rolul de moderator","{actor} le-a retras lui {user0}, lui {user1} și încă %n participanți rolul de moderator","{actor} le-a retras lui {user0}, lui {user1} și încă %n de participanți rolul de moderator"],
-    "You reacted with {reaction}" : "Ai reacționat cu {reaction}",
-    "Reacted with {reaction}" : "A reacționat cu {reaction}",
     "You:" : "Tu:",
     "You: {lastMessage}" : "Tu: {lastMessage}",
     "{actor}:" : "{actor}:",

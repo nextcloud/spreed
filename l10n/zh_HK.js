@@ -2296,8 +2296,6 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} 已將 {user0} 與 {user1} 由主持人降級",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["管理員已將 {user0}、{user1} 與 %n 個其他參與者由主持人降級"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} 已將 {user0}、{user1} 與 %n 個其他參與者由主持人降級"],
-    "You reacted with {reaction}" : "你已以 {reaction} 作出反應",
-    "Reacted with {reaction}" : "你已以 {reaction} 作出反應",
     "You:" : "您：",
     "You: {lastMessage}" : "您：{lastMessage}",
     "{actor}:" : "{actor}：",
