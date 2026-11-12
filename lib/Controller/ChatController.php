@@ -985,7 +985,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$attendee = $this->participant->getAttendee();
 		if ($lookIntoFuture && $setReadMarker === 1
-			&& $lastKnownMessageId > $attendee->getLastReadMessage()) {
+			&& $lastKnownMessageId > $attendee->getLastReadMessage()
+			&& $this->isValidReadMarker($lastKnownMessageId)) {
 			$this->participantService->updateLastReadMessage($this->participant, $lastKnownMessageId);
 		}
 
@@ -1878,6 +1879,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * A marker beyond every message can never be lowered by polling again, and clients seed their offset from it.
+	 */
+	private function isValidReadMarker(int $messageId): bool {
+		return $messageId <= $this->room->getLastMessageId() || $this->room->isFederatedConversation();
+	}
+
+	/**
 	 * @throws DoesNotExistException
 	 * @throws CannotReachRemoteException
 	 */
@@ -1974,6 +1982,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	])]
 	public function setReadMarker(?int $lastReadMessage = null): DataResponse {
 		$setToMessage = $lastReadMessage ?? $this->room->getLastMessageId();
+		if (!$this->isValidReadMarker($setToMessage)) {
+			$setToMessage = $this->room->getLastMessageId();
+		}
 		if ($setToMessage === 0) {
 			/**
 			 * Frontend and Desktop don't get chat context with ID 0,
