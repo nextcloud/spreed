@@ -4,31 +4,31 @@
  */
 
 import { shallowMount } from '@vue/test-utils'
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import TranscriptBlock from './TranscriptBlock.vue'
 
 describe('TranscriptBlock.vue', () => {
+	const props = {
+		token: 'theToken',
+		model: {
+			attributes: {
+				peerId: 'thePeerId',
+				actorId: 'theActorId',
+				actorType: 'theActorType',
+				userId: 'theUserId',
+				name: 'The user name',
+			},
+		},
+		chunks: [],
+		rightToLeft: false,
+	}
+
 	describe('remove last chunk from lines', () => {
 		let wrapper
 		let lines
 
 		beforeEach(() => {
-			wrapper = shallowMount(TranscriptBlock, {
-				props: {
-					token: 'theToken',
-					model: {
-						attributes: {
-							peerId: 'thePeerId',
-							actorId: 'theActorId',
-							actorType: 'theActorType',
-							userId: 'theUserId',
-							name: 'The user name',
-						},
-					},
-					chunks: [],
-					rightToLeft: false,
-				},
-			})
+			wrapper = shallowMount(TranscriptBlock, { props })
 
 			lines = wrapper.vm.$data.lines
 		})
@@ -189,6 +189,50 @@ describe('TranscriptBlock.vue', () => {
 					},
 				])
 			})
+		})
+	})
+
+	describe('update lines without layout', () => {
+		let wrapper
+		let lines
+		let getClientRects
+
+		beforeEach(() => {
+			getClientRects = vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([])
+
+			const chunks = [
+				{ message: 'first', languageId: 'en', final: true },
+				{ message: 'second', languageId: 'en', final: true },
+				{ message: 'third', languageId: 'en', final: false },
+			]
+			wrapper = shallowMount(TranscriptBlock, { props: { ...props, chunks } })
+
+			lines = wrapper.vm.$data.lines
+		})
+
+		afterEach(() => {
+			vi.restoreAllMocks()
+		})
+
+		test('hidden from the start', () => {
+			wrapper.vm.updateLines()
+
+			expect(lines.length).toBe(0)
+		})
+
+		test('hidden after lines were detected', () => {
+			getClientRects.mockReturnValue([{ top: 0, bottom: 10 }])
+			wrapper.vm.updateLines()
+			getClientRects.mockReturnValue([])
+
+			wrapper.vm.updateLines()
+
+			expect(lines).toEqual([
+				{
+					firstChunkIndex: 0,
+					lastChunkIndex: 1,
+				},
+			])
 		})
 	})
 })
