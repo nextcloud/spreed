@@ -178,6 +178,12 @@ export default function SimpleWebRTC(opts) {
 		self.webrtc.config.peerConnectionConfig.iceServers = self.webrtc.config.peerConnectionConfig.iceServers.concat(args)
 		self.emit('turnservers', args)
 	})
+	connection.on('settingsUpdated', function(settings) {
+		// The credentials of the TURN servers expire, so new connections must
+		// use the servers from the updated settings; they replace the current
+		// ones.
+		self.webrtc.config.peerConnectionConfig.iceServers = [].concat(settings.stunservers || [], settings.turnservers || [])
+	})
 
 	this.webrtc.on('iceFailed', function(/* peer */) {
 		// local ice failure
