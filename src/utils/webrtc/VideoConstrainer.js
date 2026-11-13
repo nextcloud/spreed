@@ -34,11 +34,33 @@ function VideoConstrainer(trackConstrainer) {
 	// least once.
 	this._currentQuality = undefined
 
+	// The last quality requested through `applyConstraints`.
+	this._lastRequestedQuality = undefined
+
+	// The track the constraints were last applied to.
+	this._constrainedTrack = null
+
 	this._knownValidConstraintsForQuality = {}
+
+	this._handleOutputTrackSetBound = this._handleOutputTrackSet.bind(this)
+	this._trackConstrainer.on('outputTrackSet', this._handleOutputTrackSetBound)
 }
 VideoConstrainer.prototype = {
 
+	destroy() {
+		this._trackConstrainer.off('outputTrackSet', this._handleOutputTrackSetBound)
+	},
+
+	_handleOutputTrackSet(trackConstrainer, trackId, track) {
+		// Same track is re-emitted after each applyConstraints
+		if (track && track !== this._constrainedTrack && this._lastRequestedQuality !== undefined) {
+			this.applyConstraints(this._lastRequestedQuality)
+		}
+	},
+
 	async applyConstraints(quality) {
+		this._lastRequestedQuality = quality
+
 		if (this._pendingApplyConstraintsCount) {
 			console.debug('Deferring applying constraints for quality ' + quality)
 
@@ -72,12 +94,17 @@ VideoConstrainer.prototype = {
 	},
 
 	async _applyConstraints(quality) {
-		if (quality === this._currentQuality) {
+		const track = this._trackConstrainer.getOutputTrack()
+		if (!track || track.kind !== 'video') {
+			console.warn('No video track to adjust its quality found')
 			return
 		}
 
-		if (!this._trackConstrainer.getOutputTrack() || this._trackConstrainer.getOutputTrack().kind !== 'video') {
-			console.warn('No video track to adjust its quality found')
+		if (track !== this._constrainedTrack) {
+			// New source track, constraints known for the previous one may not fit
+			this._constrainedTrack = track
+			this._knownValidConstraintsForQuality = {}
+		} else if (quality === this._currentQuality) {
 			return
 		}
 
