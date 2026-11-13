@@ -38,7 +38,7 @@ import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import CancelableRequest from '../utils/CancelableRequest.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
-import { isHiddenSystemMessage, isTemporaryId } from '../utils/message.ts'
+import { isHiddenSystemMessage, isLinkShareMessage, isTemporaryId } from '../utils/message.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -538,6 +538,14 @@ const actions = {
 				reactionsStore.processReaction(token, message)
 			}
 
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED) {
+				if (isLinkShareMessage(message.parent)) {
+					sharedItemsStore.addSharedItemFromMessage(token, message.parent, SHARED_ITEM.TYPES.LINK)
+				} else {
+					sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id, SHARED_ITEM.TYPES.LINK)
+				}
+			}
+
 			if ([MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED, MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED].includes(message.systemMessage)) {
 				// update conversation lastMessage, if it was edited or deleted
 				if (message.parent.id === conversation.lastMessage?.id) {
@@ -700,6 +708,8 @@ const actions = {
 				if (message.messageParameters?.object?.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 					EventBus.emit('talk:poll-added', { token, message })
 				}
+			} else if (isLinkShareMessage(message)) {
+				sharedItemsStore.addSharedItemFromMessage(token, message, SHARED_ITEM.TYPES.LINK)
 			}
 		}
 	},
