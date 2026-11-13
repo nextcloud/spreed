@@ -5,6 +5,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { throttle } from 'es-toolkit/function'
 import { cloneDeep } from 'es-toolkit/object'
 import {
 	ATTENDEE,
@@ -39,6 +40,22 @@ import CancelableRequest from '../utils/CancelableRequest.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { isHiddenSystemMessage, isTemporaryId } from '../utils/message.ts'
+
+// Per-token throttle: busy chats (e.g. call joins) otherwise POST read marker per message
+const readMarkerThrottles = {}
+
+/**
+ * Returns the read marker throttle wait for a conversation
+ *
+ * @param {object} conversation the conversation object
+ * @return {number} wait in milliseconds
+ */
+function getReadMarkerThrottleWait(conversation) {
+	if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+		return 0
+	}
+	return (conversation.attributes & (CONVERSATION.ATTRIBUTE.CHANNEL | CONVERSATION.ATTRIBUTE.ANNOUNCEMENT)) ? 30_000 : 10_000
+}
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -903,9 +920,25 @@ const actions = {
 		const actorStore = useActorStore()
 		if (actorStore.userId) {
 			// only update on server side if there's an actual user, not guest
-			const response = await updateLastReadMessage(token, id)
-			context.dispatch('addConversation', response.data.ocs.data)
+			// Wait is fixed until the conversation is left, attribute changes apply on next visit
+			readMarkerThrottles[token] ??= throttle(async (context, lastReadMessage) => {
+				const response = await updateLastReadMessage(token, lastReadMessage)
+				context.dispatch('addConversation', response.data.ocs.data)
+			}, getReadMarkerThrottleWait(conversation))
+			readMarkerThrottles[token](context, id)
 		}
+	},
+
+	/**
+	 * Sends a pending throttled read marker of the conversation right away
+	 *
+	 * @param {object} context unused
+	 * @param {object} data the wrapping object
+	 * @param {string} data.token the conversation token
+	 */
+	flushLastReadMessage(context, { token }) {
+		readMarkerThrottles[token]?.flush()
+		delete readMarkerThrottles[token]
 	},
 
 	/**
