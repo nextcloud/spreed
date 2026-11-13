@@ -712,4 +712,87 @@ describe('CallParticipantsAudioPlayer', () => {
 			expect(callParticipantsAudioPlayer._audioElements.size).toBe(0)
 		})
 	})
+
+	describe('mixed audio', () => {
+		/**
+		 * Mock of AudioContext with just the methods used by
+		 * CallParticipantsAudioPlayer; it starts suspended.
+		 */
+		class AudioContextMock extends EventTarget {
+			constructor() {
+				super()
+				this.state = 'suspended'
+				this.resume = vi.fn(() => {
+					this.state = 'running'
+					return Promise.resolve()
+				})
+				this.close = vi.fn(() => {
+					this.state = 'closed'
+					return Promise.resolve()
+				})
+			}
+
+			createMediaStreamDestination() {
+				return { stream: new MediaStreamMock('destination') }
+			}
+
+			createMediaStreamSource() {
+				return { connect: vi.fn(), disconnect: vi.fn() }
+			}
+		}
+
+		let mixedAudioPlayer
+		let play
+
+		beforeEach(() => {
+			vi.stubGlobal('AudioContext', AudioContextMock)
+			play = vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+
+			mixedAudioPlayer = new CallParticipantsAudioPlayer(callParticipantCollection, true)
+		})
+
+		afterEach(() => {
+			mixedAudioPlayer?.destroy()
+			vi.unstubAllGlobals()
+			vi.restoreAllMocks()
+		})
+
+		test.each(['pointerup', 'touchend', 'mousedown', 'keydown'])('resumes the audio on %s', (eventName) => {
+			expect(mixedAudioPlayer._audioElement.paused).toBe(true)
+
+			document.dispatchEvent(new Event(eventName))
+
+			expect(mixedAudioPlayer._audioContext.resume).toHaveBeenCalledTimes(1)
+			expect(play).toHaveBeenCalledTimes(1)
+		})
+
+		test('does not resume the audio on user gestures after being destroyed', () => {
+			const audioContext = mixedAudioPlayer._audioContext
+			mixedAudioPlayer.destroy()
+			mixedAudioPlayer = null
+
+			// A closed context would not be resumed anyway, so it is set as
+			// suspended again to check that the listeners were removed.
+			audioContext.state = 'suspended'
+			for (const eventName of ['visibilitychange', 'pointerdown', 'pointerup', 'touchend', 'mousedown', 'keydown']) {
+				document.dispatchEvent(new Event(eventName))
+			}
+
+			expect(audioContext.resume).not.toHaveBeenCalled()
+			expect(play).not.toHaveBeenCalled()
+		})
+
+		test('plays the audio again after replacing its source', () => {
+			const callParticipantModel1 = new CallParticipantModelStub('peerId1')
+			callParticipantModel1.attributes.audioAvailable = true
+			addCallParticipantModel(callParticipantModel1)
+			callParticipantModel1.set('stream', new MediaStreamMock('stream1'))
+			expect(play).not.toHaveBeenCalled()
+
+			callParticipantModel1.set('audioAvailable', false)
+
+			expect(mixedAudioPlayer._audioElement.srcObject.id).toBe('destination')
+			expect(play).toHaveBeenCalledTimes(1)
+		})
+	})
 })
