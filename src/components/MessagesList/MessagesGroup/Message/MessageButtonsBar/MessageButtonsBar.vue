@@ -75,6 +75,16 @@
 						</template>
 						{{ editedDateTime }}
 					</NcActionText>
+					<!-- Expiring message timestamp -->
+					<NcActionText
+						v-if="message.expirationTimestamp"
+						class="label-timestamp"
+						:name="expirationLabel">
+						<template #icon>
+							<IconDeleteClockOutline :size="20" />
+						</template>
+						{{ expirationDateTime }}
+					</NcActionText>
 					<NcActionText
 						v-if="isMessagePinned"
 						class="label-timestamp"
@@ -447,6 +457,7 @@ import IconClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
@@ -513,6 +524,7 @@ export default {
 		IconClockEditOutline,
 		IconClockOutline,
 		IconContentCopy,
+		IconDeleteClockOutline,
 		IconDotsHorizontal,
 		IconTrashCanOutline,
 		IconEmoticonOutline,
@@ -618,6 +630,9 @@ export default {
 				// Fallback for the desktop client when connecting to Talk 17
 				?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0)
 
+		// TRANSLATORS: Label in the message menu, followed by the date and time when the expiring message is deleted
+		const expirationLabel = t('spreed', 'Expires')
+
 		return {
 			IconFileDownload,
 			messageActions,
@@ -640,6 +655,7 @@ export default {
 			sharedItemsStore,
 			supportPinMessage,
 			PIN_DURATION_OPTIONS,
+			expirationLabel,
 		}
 	},
 
@@ -728,6 +744,10 @@ export default {
 
 		editedDateTime() {
 			return formatDateTime(this.message.lastEditTimestamp * 1000, 'shortDateWithTime')
+		},
+
+		expirationDateTime() {
+			return formatDateTime(this.message.expirationTimestamp * 1000, 'shortDateWithTime')
 		},
 
 		customReminderDateTime: {
