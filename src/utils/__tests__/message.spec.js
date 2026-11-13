@@ -173,6 +173,10 @@ describe('getMessageLinks', () => {
 		['See [docs](https://docs.tld/a_(b)) and https://c.tld', ['https://docs.tld/a_(b)', 'https://c.tld']],
 		['[a](https://a.tld) [b](https://a.tld) https://a.tld', ['https://a.tld']],
 		['[a](ftp://a.tld)', []],
+		['Inline `https://a.tld` and `[b](https://b.tld)` code', []],
+		['```\nhttps://a.tld\n```\n~~~\n[b](https://b.tld)\n~~~', []],
+		['`code`https://a.tld', []],
+		['```\ncode https://a.tld\n```\nhttps://b.tld `c` https://c.tld', ['https://b.tld', 'https://c.tld']],
 	])('returns links of %j', (text, expected) => {
 		expect(getMessageLinks(text)).toEqual(expected)
 	})

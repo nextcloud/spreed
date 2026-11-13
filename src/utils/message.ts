@@ -240,6 +240,8 @@ const FILE_KEY_REGEX = /^file(?:-\d+)?$/
  * Matches a file-sharing rich object parameter key ('{file}', '{file-1}', '{file-2}', …)
  */
 const FILE_PLACEHOLDERS_REGEX = /^\s*(?:\{file(?:-\d+)?\}\s*)+$/
+// Markdown code blocks and inline code, see ChatManager::MARKDOWN_CODE_REGEX_NO_MODIFIERS
+const MARKDOWN_CODE_REGEX = /^```.*?^```|^~~~.*?^~~~|`[^`\n]*`/gms
 // First alternative: copy of URL_PATTERN from @nextcloud/vue (src/components/NcRichText/helpers.ts, not exported) and
 // IURLGenerator::URL_REGEX on the server. The trailing lookahead lets links separated by a single space both match.
 // Second alternative: markdown links like [text](https://example.tld), see AttachmentService::MARKDOWN_LINK_REGEX
@@ -285,12 +287,14 @@ export function isFileShareMessage(message: Pick<ChatMessage, 'messageParameters
 }
 
 /**
- * Returns the unique links in the given text, plain and markdown links
+ * Returns the unique links in the given text, plain and markdown links, outside of code
  *
  * @param text message text
  */
 export function getMessageLinks(text: string): string[] {
-	return [...new Set([...text.matchAll(URL_REGEX)].map((match) => match[1] ?? match[2]))]
+	// Replace code with a non-whitespace character, so it does not create new link boundaries
+	const textWithoutCode = text.replace(MARKDOWN_CODE_REGEX, '`')
+	return [...new Set([...textWithoutCode.matchAll(URL_REGEX)].map((match) => match[1] ?? match[2]))]
 }
 
 /**

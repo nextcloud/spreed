@@ -80,6 +80,8 @@ class AttachmentService {
 	}
 
 	public function containsLink(string $message): bool {
+		// Replace code with a non-whitespace character, so it does not create new link boundaries
+		$message = preg_replace('/' . ChatManager::MARKDOWN_CODE_REGEX_NO_MODIFIERS . '/sm', '`', $message) ?? $message;
 		return preg_match(IURLGenerator::URL_REGEX, $message) === 1
 			|| preg_match(self::MARKDOWN_LINK_REGEX, $message) === 1;
 	}
