@@ -367,6 +367,7 @@ Feature: sharing-1/delete
       | audio     | 0 |
       | deckcard  | 0 |
       | file      | 1 |
+      | link      | 0 |
       | location  | 0 |
       | media     | 0 |
       | other     | 0 |
@@ -380,6 +381,7 @@ Feature: sharing-1/delete
       | audio     | 0 |
       | deckcard  | 0 |
       | file      | 0 |
+      | link      | 0 |
       | location  | 0 |
       | media     | 0 |
       | other     | 0 |

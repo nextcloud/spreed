@@ -474,6 +474,10 @@ class ChatManager {
 				}
 			}
 
+			if ($verb === self::VERB_MESSAGE) {
+				$this->attachmentService->updateLinkAttachment($chat, $comment, false);
+			}
+
 			if (!$fromScheduledMessage && $participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
 			}
@@ -767,6 +771,8 @@ class ChatManager {
 
 		$wasSilent = $metaData[Message::METADATA_SILENT] ?? false;
 
+		$hadLink = $this->attachmentService->containsLink($comment->getMessage());
+
 		if (!$wasSilent) {
 			$mentionsBefore = $comment->getMentions();
 			$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
@@ -778,6 +784,9 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
+		if ($comment->getVerb() === self::VERB_MESSAGE) {
+			$this->attachmentService->updateLinkAttachment($chat, $comment, $hadLink);
+		}
 		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'edited', Operation::MESSAGE_EDITED);
 		$this->referenceManager->invalidateCache($chat->getToken());
 

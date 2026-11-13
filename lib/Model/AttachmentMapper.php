@@ -75,6 +75,15 @@ class AttachmentMapper extends QBMapper {
 		$query->executeStatement();
 	}
 
+	public function deleteByMessageIdAndType(int $messageId, string $objectType): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('message_id', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter($objectType)));
+
+		$query->executeStatement();
+	}
+
 	public function deleteByRoomId(int $roomId): void {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())

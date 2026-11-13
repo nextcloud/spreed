@@ -207,6 +207,7 @@ Required capability: `conversation-presets`
 * `audio` - Shared audio file
 * `deckcard` - Shared deck card
 * `file` - Shared files not falling into any other category
+* `link` - Chat messages containing a link
 * `location` - Shared geo location
 * `media` - Shared files with mimetype starting with image or video
 * `other` - Shared objects not falling into any other category

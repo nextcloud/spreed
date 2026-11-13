@@ -14,6 +14,7 @@ use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\AttachmentMapper;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
+use OCP\IURLGenerator;
 
 class AttachmentService {
 
@@ -74,6 +75,19 @@ class AttachmentService {
 		}
 
 		$this->attachmentMapper->insert($attachment);
+	}
+
+	public function containsLink(string $message): bool {
+		return preg_match(IURLGenerator::URL_REGEX, $message) === 1;
+	}
+
+	public function updateLinkAttachment(Room $room, IComment $comment, bool $hadLink): void {
+		$hasLink = $this->containsLink($comment->getMessage());
+		if ($hasLink && !$hadLink) {
+			$this->createAttachmentEntryGeneric($room, $comment, Attachment::TYPE_LINK);
+		} elseif (!$hasLink && $hadLink) {
+			$this->attachmentMapper->deleteByMessageIdAndType((int)$comment->getId(), Attachment::TYPE_LINK);
+		}
 	}
 
 	/**

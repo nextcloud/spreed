@@ -110,6 +110,7 @@ Feature: chat-1/message-expiration
       | audio     | 0 |
       | deckcard  | 0 |
       | file      | 0 |
+      | link      | 0 |
       | location  | 0 |
       | media     | 0 |
       | other     | 0 |
@@ -124,6 +125,7 @@ Feature: chat-1/message-expiration
       | audio     | 0 |
       | deckcard  | 0 |
       | file      | 0 |
+      | link      | 0 |
       | location  | 0 |
       | media     | 0 |
       | other     | 0 |
