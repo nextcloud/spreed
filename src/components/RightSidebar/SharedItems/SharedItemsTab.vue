@@ -34,6 +34,7 @@ import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.ts'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
+import { getMessageLinks } from '../../../utils/message.ts'
 import {
 	sharedItemButtonTitle,
 	sharedItemsOrder,
@@ -87,6 +88,9 @@ watch([token, () => props.active, () => sidebarStore.show], ([token, isActive, i
  * @param items
  */
 function hasMore(type: string, items: ShareItemsType) {
+	if (type === SHARED_ITEM.TYPES.LINK) {
+		return Object.values(items).flatMap((item) => getMessageLinks(item.message)).length > limit(type)
+	}
 	return Object.values(items).length > limit(type)
 }
 
