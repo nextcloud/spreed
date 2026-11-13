@@ -46,7 +46,7 @@ class MessageParser {
 	public function createMessage(Room $room, ?Participant $participant, IComment $comment, IL10N $l): Message {
 		$message = new Message($room, $participant, $comment, $l);
 		$metaData = $this->addPinnedActorDisplayNameInfo($message, $comment->getMetaData() ?? []);
-		$message->setMetaData($metaData);
+		$message->setMetaData($this->addActorRole($room, $metaData));
 		return $message;
 	}
 
@@ -70,7 +70,7 @@ class MessageParser {
 			$metaData = json_decode((string)$proxy->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
 			if (is_array($metaData)) {
 				$metaData = $this->addPinnedActorDisplayNameInfo($message, $metaData);
-				$message->setMetaData($metaData);
+				$message->setMetaData($this->addActorRole($room, $metaData));
 			}
 		} catch (\JsonException) {
 		}
@@ -131,6 +131,27 @@ class MessageParser {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Rank is only marked in conversations that actually have ranks. Both
+	 * participants of a one-to-one conversation are owners by design.
+	 */
+	protected function addActorRole(Room $room, array $metaData): array {
+		if (!isset($metaData[Message::METADATA_ACTOR_PARTICIPANT_TYPE])
+			|| in_array($room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER, Room::TYPE_CHANGELOG, Room::TYPE_NOTE_TO_SELF], true)) {
+			return $metaData;
+		}
+
+		$role = match ((int)$metaData[Message::METADATA_ACTOR_PARTICIPANT_TYPE]) {
+			Participant::OWNER => Message::ACTOR_ROLE_OWNER,
+			Participant::MODERATOR, Participant::GUEST_MODERATOR => Message::ACTOR_ROLE_MODERATOR,
+			default => null,
+		};
+		if ($role !== null) {
+			$metaData[Message::METADATA_ACTOR_ROLE] = $role;
+		}
+		return $metaData;
 	}
 
 	protected function addPinnedActorDisplayNameInfo(Message $message, array $metaData): array {

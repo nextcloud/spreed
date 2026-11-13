@@ -766,8 +766,10 @@ class ListenerTest extends TestCase {
 		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
 		$this->mockLoggedInUser('alice');
+		$participant = new Participant($room, Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']), null);
+		$this->participantService->method('getParticipant')->with($room, 'alice')->willReturn($participant);
 
-		$this->chatManager->expects($this->once())->method('addSystemMessage');
+		$this->chatManager->expects($this->once())->method('addSystemMessage')->with($room, $participant, Attendee::ACTOR_USERS, 'alice');
 
 		$listener = $this->makeListenerWithRoute('ocs.spreed.filesintegration.getroombyfileid');
 		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
@@ -784,8 +786,10 @@ class ListenerTest extends TestCase {
 		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
 		$this->mockLoggedInUser('alice');
+		$participant = new Participant($room, Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']), null);
+		$this->participantService->method('getParticipant')->with($room, 'alice')->willReturn($participant);
 
-		$this->chatManager->expects($this->once())->method('addSystemMessage');
+		$this->chatManager->expects($this->once())->method('addSystemMessage')->with($room, $participant, Attendee::ACTOR_USERS, 'alice');
 
 		$listener = $this->makeListenerWithRoute('ocs.spreed.filesintegration.getroombyfileid');
 		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);

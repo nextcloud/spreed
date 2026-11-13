@@ -934,6 +934,31 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $actual);
 	}
 
+	public static function dataGetActorParticipantTypeMetaData(): array {
+		return [
+			'owner' => [Participant::OWNER, 'alice', [Message::METADATA_ACTOR_PARTICIPANT_TYPE => Participant::OWNER]],
+			'user' => [Participant::USER, 'alice', [Message::METADATA_ACTOR_PARTICIPANT_TYPE => Participant::USER]],
+			'no participant' => [null, 'alice', []],
+			'participant is not the actor' => [Participant::OWNER, 'bob', []],
+		];
+	}
+
+	#[DataProvider('dataGetActorParticipantTypeMetaData')]
+	public function testGetActorParticipantTypeMetaData(?int $participantType, string $actorId, array $expected): void {
+		$participant = null;
+		if ($participantType !== null) {
+			$attendee = Attendee::fromRow([
+				'actor_type' => Attendee::ACTOR_USERS,
+				'actor_id' => 'alice',
+				'participant_type' => $participantType,
+			]);
+			$participant = new Participant($this->createMock(Room::class), $attendee, null);
+		}
+
+		$actual = self::invokePrivate($this->chatManager, 'getActorParticipantTypeMetaData', [$participant, Attendee::ACTOR_USERS, $actorId]);
+		$this->assertSame($expected, $actual);
+	}
+
 	public static function dataAddConversationNotify(): array {
 		return [
 			[

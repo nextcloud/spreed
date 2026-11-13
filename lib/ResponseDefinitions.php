@@ -208,6 +208,8 @@ namespace OCA\Talk;
  *     threadId?: int,
  *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
  *     threadTitle?: string,
+ *     // Role of the author at the time of posting. If missing, the author was a regular participant, the conversation has no ranks or the message predates it
+ *     actorRole?: 'owner'|'moderator',
  *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
  *     replyToMessageId?: int,
  *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token.
