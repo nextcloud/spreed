@@ -31,6 +31,7 @@ class Attachment extends Entity {
 	public const TYPE_AUDIO = 'audio';
 	public const TYPE_DECK_CARD = 'deckcard';
 	public const TYPE_FILE = 'file';
+	public const TYPE_LINK = 'link';
 	public const TYPE_LOCATION = 'location';
 	public const TYPE_MEDIA = 'media';
 	public const TYPE_OTHER = 'other';

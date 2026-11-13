@@ -143,6 +143,7 @@ class Capabilities implements IPublicCapability {
 		'matrix-rooms',
 		'mute-conversations',
 		'federation-signaling-auth',
+		'shared-items-link',
 	];
 
 	public const CONDITIONAL_FEATURES = [
