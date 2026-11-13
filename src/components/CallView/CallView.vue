@@ -61,9 +61,9 @@
 						:showVideoOverlay="showVideoOverlay"
 						:sharedData="localSharedData"
 						isBig />
-					<!-- Remote or selected screen -->
+					<!-- Remote screen -->
 					<ScreenShare
-						v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
+						v-else-if="showRemoteScreen && shownRemoteScreenCallParticipantModel"
 						:key="`screen-${shownRemoteScreenPeerId}`"
 						:token="token"
 						:callParticipantModel="shownRemoteScreenCallParticipantModel"
@@ -341,7 +341,6 @@ export default {
 				&& !this.showLocalVideo
 				&& !this.showLocalScreen
 				&& !this.showRemoteScreen
-				&& !this.showSelectedScreen
 				&& this.promotedSpeakerModels.length > 0
 		},
 
@@ -367,13 +366,13 @@ export default {
 			if (!this.showPromotedArea
 				|| this.showLocalVideo
 				|| this.showLocalScreen
-				|| this.showRemoteScreen
-				|| this.showSelectedScreen) {
+				|| this.showRemoteScreen) {
 				return []
 			}
 
 			if (this.showSelectedVideo) {
-				return this.selectedCallParticipantModel
+				// A selected sharer stays in the stripe to show their screen
+				return this.selectedCallParticipantModel && !this.selectedCallParticipantModel.attributes.screen
 					? [this.selectedCallParticipantModel.attributes.nextcloudSessionId]
 					: []
 			}
@@ -442,12 +441,9 @@ export default {
 			})
 		},
 
-		hasSelectedScreen() {
-			return this.selectedVideoPeerId !== null && this.screens.includes(this.selectedVideoPeerId)
-		},
-
+		// A selected sharer shows their camera, their screen moves to the stripe
 		hasSelectedVideo() {
-			return this.selectedVideoPeerId !== null && !this.screens.includes(this.selectedVideoPeerId)
+			return this.selectedVideoPeerId !== null
 		},
 
 		// Whether the promoted video covers the whole call view, with the stripe
@@ -456,7 +452,7 @@ export default {
 		// nobody in it yet.
 		showFullPage() {
 			return this.callParticipantModels.length <= 1
-				&& !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
+				&& !(this.showLocalScreen || this.showRemoteScreen)
 		},
 
 		hasLocalVideo() {
@@ -478,10 +474,6 @@ export default {
 			return this.hasSelectedVideo && !this.showLocalVideo
 		},
 
-		showSelectedScreen() {
-			return this.hasSelectedScreen && !this.showLocalVideo
-		},
-
 		// Shows the local video if selected
 		showLocalVideo() {
 			return this.hasLocalVideo && this.selectedVideoPeerId === 'local'
@@ -495,7 +487,7 @@ export default {
 		// Show somebody else's screen. This will show the screen of the last
 		// person that shared it.
 		showRemoteScreen() {
-			return this.shownRemoteScreenPeerId !== null && !this.showSelectedVideo && !this.showSelectedScreen
+			return this.shownRemoteScreenPeerId !== null && !this.showSelectedVideo
 		},
 
 		shownRemoteScreenPeerId() {
@@ -503,15 +495,7 @@ export default {
 				return null
 			}
 
-			if (this.screens.includes(this.selectedVideoPeerId)) {
-				return this.selectedVideoPeerId
-			}
-
-			if (!this.hasSelectedScreen) {
-				return this.screens[0]
-			}
-
-			return null
+			return this.screens[0]
 		},
 
 		shownRemoteScreenCallParticipantModel() {
@@ -530,7 +514,7 @@ export default {
 			}
 
 			return (this.showLocalScreen && this.hasLocalVideo)
-				|| ((this.showRemoteScreen || this.showSelectedScreen)
+				|| (this.showRemoteScreen
 					&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
 		},
 
