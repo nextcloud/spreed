@@ -240,6 +240,9 @@ const FILE_KEY_REGEX = /^file(?:-\d+)?$/
  * Matches a file-sharing rich object parameter key ('{file}', '{file-1}', '{file-2}', …)
  */
 const FILE_PLACEHOLDERS_REGEX = /^\s*(?:\{file(?:-\d+)?\}\s*)+$/
+// Copy of URL_PATTERN from @nextcloud/vue (src/components/NcRichText/helpers.ts, not exported) and
+// IURLGenerator::URL_REGEX on the server. The trailing lookahead lets links separated by a single space both match.
+const URL_REGEX = /(\s|^)(https?:\/\/)([-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|$)/gim
 
 /**
  * Returns all keys of files shared with the message ('file', 'file-1', …)
@@ -278,6 +281,27 @@ export function getFilePreviewKeys(message: Pick<ChatMessage, 'messageParameters
  */
 export function isFileShareMessage(message: Pick<ChatMessage, 'messageParameters'>): boolean {
 	return getFileKeys(message).length > 0
+}
+
+/**
+ * Returns the links in the given text, matching the server side IURLGenerator::URL_REGEX
+ *
+ * @param text message text
+ */
+export function getMessageLinks(text: string): string[] {
+	return [...text.matchAll(URL_REGEX)].map((match) => match[2] + match[3])
+}
+
+/**
+ * Returns whether the given message is a plain chat message containing a link
+ *
+ * @param message Chat message
+ */
+export function isLinkShareMessage(message: Pick<ChatMessage, 'message' | 'messageType' | 'messageParameters'>): boolean {
+	return message.messageType === MESSAGE.TYPE.COMMENT
+		&& !message.messageParameters?.object
+		&& !isFileShareMessage(message)
+		&& getMessageLinks(message.message).length > 0
 }
 
 /**

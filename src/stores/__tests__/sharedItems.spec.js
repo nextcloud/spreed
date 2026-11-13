@@ -45,7 +45,11 @@ describe('sharedItemsStore', () => {
 		sharedItemsStore = useSharedItemsStore()
 		sharedItemsOrder.forEach((type, index) => {
 			const message = { id: 100 + index, message: type, messageParameters: {} }
-			message.messageParameters = requiresObject(type) ? { object: {} } : { file: {} }
+			if (type === SHARED_ITEM.TYPES.LINK) {
+				message.message = 'https://nextcloud.com'
+			} else {
+				message.messageParameters = requiresObject(type) ? { object: {} } : { file: {} }
+			}
 			payloadOverview[type] = [message]
 			result[type] = { [100 + index]: message }
 		})

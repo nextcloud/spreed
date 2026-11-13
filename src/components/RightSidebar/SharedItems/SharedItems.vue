@@ -43,6 +43,19 @@
 				</p>
 			</div>
 
+			<div
+				v-else-if="isLink"
+				class="shared-items__other shared-items__link">
+				<a
+					v-for="link in getMessageLinks(item.message)"
+					:key="link"
+					:href="link"
+					target="_blank"
+					rel="noopener noreferrer">
+					{{ link }}
+				</a>
+			</div>
+
 			<FilePreview
 				v-else
 				:token="token"
@@ -61,6 +74,7 @@ import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/Fi
 import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import PinnedMessageItem from '../PinnedMessages/PinnedMessageItem.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
+import { getMessageLinks } from '../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'))
 
@@ -125,6 +139,10 @@ export default {
 			return this.type === SHARED_ITEM.TYPES.OTHER
 		},
 
+		isLink() {
+			return this.type === SHARED_ITEM.TYPES.LINK
+		},
+
 		isMedia() {
 			return this.type === SHARED_ITEM.TYPES.MEDIA
 		},
@@ -136,6 +154,10 @@ export default {
 		hasListLayout() {
 			return !this.isMedia && (this.tabView || (!this.isLocation && !this.isDeckCard && !this.isPoll))
 		},
+	},
+
+	methods: {
+		getMessageLinks,
 	},
 }
 </script>
@@ -158,6 +180,13 @@ export default {
 	&__location {
 		height: 150px;
 		margin-block: var(--default-grid-baseline);
+	}
+
+	&__link a {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	&__other {

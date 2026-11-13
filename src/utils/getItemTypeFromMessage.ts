@@ -6,7 +6,7 @@
 import type { ChatMessage, PinnedChatMessage } from '../types/index.ts'
 
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
-import { isFileShareMessage } from '../utils/message.ts'
+import { getMessageLinks, isFileShareMessage } from '../utils/message.ts'
 
 /**
  * Derives item type from message object for preview rendering
@@ -60,6 +60,10 @@ export function isValidSharedItem(type: string, message: ChatMessage | PinnedCha
 	// Pinned messages have a different structure
 	if (type === SHARED_ITEM.TYPES.PINNED) {
 		return true
+	}
+
+	if (type === SHARED_ITEM.TYPES.LINK) {
+		return getMessageLinks(message.message).length > 0
 	}
 
 	// Items that require messageParameters.object

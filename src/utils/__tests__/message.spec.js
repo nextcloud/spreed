@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
-import { tryLocalizeDeletedMessage, tryLocalizeSystemMessage } from '../message.ts'
+import { getMessageLinks, isLinkShareMessage, tryLocalizeDeletedMessage, tryLocalizeSystemMessage } from '../message.ts'
 
 // Host's local "admin" and a federated "admin" from another instance
 const LOCAL_ADMIN = { type: 'user', id: 'admin', name: 'admin', 'mention-id': 'admin' }
@@ -158,5 +158,32 @@ describe('tryLocalizeSystemMessage', () => {
 			const message = moderatorPromoted(bob, HOST_ADMIN)
 			expect(tryLocalizeSystemMessage(message, federatedConversation)).not.toMatch(/\byou\b/)
 		})
+	})
+})
+
+describe('getMessageLinks', () => {
+	it.each([
+		['No link', []],
+		['https://nextcloud.com', ['https://nextcloud.com']],
+		['Visit http://example.tld/path?x=1 now', ['http://example.tld/path?x=1']],
+		['https://a.tld https://b.tld\nhttps://c.tld', ['https://a.tld', 'https://b.tld', 'https://c.tld']],
+		['nohttps://nextcloud.com', []],
+		['ftp://nextcloud.com', []],
+	])('returns links of %j', (text, expected) => {
+		expect(getMessageLinks(text)).toEqual(expected)
+	})
+})
+
+describe('isLinkShareMessage', () => {
+	const link = 'See https://nextcloud.com'
+
+	it.each([
+		[{ message: link, messageType: MESSAGE.TYPE.COMMENT, messageParameters: [] }, true],
+		[{ message: 'No link', messageType: MESSAGE.TYPE.COMMENT, messageParameters: [] }, false],
+		[{ message: link, messageType: MESSAGE.TYPE.SYSTEM, messageParameters: [] }, false],
+		[{ message: link, messageType: MESSAGE.TYPE.COMMENT, messageParameters: { file: { type: 'file', id: '1', name: 'a' } } }, false],
+		[{ message: link, messageType: MESSAGE.TYPE.COMMENT, messageParameters: { object: { type: 'geo-location', id: '1', name: 'a' } } }, false],
+	])('checks %j', (message, expected) => {
+		expect(isLinkShareMessage(message)).toBe(expected)
 	})
 })

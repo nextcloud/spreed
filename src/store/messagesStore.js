@@ -38,7 +38,7 @@ import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import CancelableRequest from '../utils/CancelableRequest.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
-import { isHiddenSystemMessage, isTemporaryId } from '../utils/message.ts'
+import { isHiddenSystemMessage, isLinkShareMessage, isTemporaryId } from '../utils/message.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -467,6 +467,7 @@ const actions = {
 		const sharedItemsStore = useSharedItemsStore()
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
+		const chatStore = useChatStore()
 
 		const conversation = context.getters.conversation(token)
 
@@ -536,6 +537,16 @@ const actions = {
 				sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id)
 			} else {
 				reactionsStore.processReaction(token, message)
+			}
+
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED) {
+				if (!isLinkShareMessage(message.parent)) {
+					sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id, SHARED_ITEM.TYPES.LINK)
+				} else if (chatStore.hasMessage(token, { messageId: message.parent.id })
+					|| sharedItemsStore.sharedItems(token)[SHARED_ITEM.TYPES.LINK]?.[message.parent.id]) {
+					// Skip unloaded messages, they would break pagination of shared items
+					sharedItemsStore.addSharedItemFromMessage(token, message.parent, SHARED_ITEM.TYPES.LINK)
+				}
 			}
 
 			if ([MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED, MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED].includes(message.systemMessage)) {
@@ -700,6 +711,8 @@ const actions = {
 				if (message.messageParameters?.object?.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 					EventBus.emit('talk:poll-added', { token, message })
 				}
+			} else if (isLinkShareMessage(message)) {
+				sharedItemsStore.addSharedItemFromMessage(token, message, SHARED_ITEM.TYPES.LINK)
 			}
 		}
 	},
