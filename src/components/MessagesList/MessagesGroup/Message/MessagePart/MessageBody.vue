@@ -74,6 +74,7 @@
 				:text="renderedMessage"
 				:arguments="richParameters"
 				:class="{ 'single-emoji': isSingleEmoji }"
+				:title="singleEmojiTitle"
 				autolink
 				dir="auto"
 				:interactive="message.markdown && isEditable"
@@ -221,6 +222,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { getEmojiTitle } from '../../../../../utils/emoji.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import {
 	getFileKeys,
@@ -481,6 +483,13 @@ export default {
 			const trimmedMessage = this.renderedMessage.trim()
 			const emojiMatches = trimmedMessage.match(regex)
 			return emojiMatches !== null && emojiMatches.length === 1 && emojiMatches[0] === trimmedMessage
+		},
+
+		singleEmojiTitle() {
+			if (!this.isSingleEmoji) {
+				return undefined
+			}
+			return getEmojiTitle(this.renderedMessage.trim())
 		},
 
 		showLoadingIcon() {
