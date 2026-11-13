@@ -75,6 +75,28 @@ type PerformSharePayload = {
 	allowUpdate?: boolean
 }
 
+/**
+ * Get the share permission choice: browser storage, then admin config, then view-only
+ */
+function getAllowUpdate(): boolean {
+	const storedValue = BrowserStorage.getItem('allowUpdate')
+	if (storedValue !== null) {
+		return storedValue === 'true'
+	}
+	return getTalkConfig('local', 'attachments', 'allow-update') ?? false
+}
+
+/**
+ * Get the image quality choice: browser storage, then admin config, then standard quality
+ */
+function getSkipCompression(): boolean {
+	const storedValue = BrowserStorage.getItem('skipCompression')
+	if (storedValue !== null) {
+		return storedValue === 'true'
+	}
+	return getTalkConfig('local', 'attachments', 'skip-compression') ?? false
+}
+
 export const useUploadStore = defineStore('upload', () => {
 	const actorStore = useActorStore()
 	const chatExtrasStore = useChatExtrasStore()
@@ -92,8 +114,8 @@ export const useUploadStore = defineStore('upload', () => {
 	/**
 	 * The user's choices for uploads, kept in browser storage across uploads
 	 */
-	const allowUpdate = ref(BrowserStorage.getItem('allowUpdate') === 'true')
-	const skipCompression = ref(BrowserStorage.getItem('skipCompression') === 'true')
+	const allowUpdate = ref(getAllowUpdate())
+	const skipCompression = ref(getSkipCompression())
 
 	/**
 	 * Update the share permission choice and keep it in storage
