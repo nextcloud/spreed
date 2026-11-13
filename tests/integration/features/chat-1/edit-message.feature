@@ -243,3 +243,7 @@ Feature: chat-1/edit-message
       | room | users     | participant1 | participant1-displayname | Added https://example.tld | []                |
     And user "participant1" deletes message "Added https://example.tld" from room "room" with 200
     Then user "participant1" sees the following shared link in room "room" with 200
+    And user "participant1" sends message "See [Docs](https://docs.nextcloud.com)" to room "room" with 201
+    Then user "participant1" sees the following shared link in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message                                | messageParameters |
+      | room | users     | participant1 | participant1-displayname | See [Docs](https://docs.nextcloud.com) | []                |

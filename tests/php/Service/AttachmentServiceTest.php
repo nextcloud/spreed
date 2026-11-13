@@ -35,6 +35,10 @@ class AttachmentServiceTest extends TestCase {
 			["Line\nhttps://nextcloud.com\nnext", true],
 			['nohttps://nextcloud.com', false],
 			['ftp://nextcloud.com', false],
+			['[Nextcloud](https://nextcloud.com)', true],
+			['See [the docs](https://docs.nextcloud.com/server/latest/(admin)) here', true],
+			['[Nextcloud](ftp://nextcloud.com)', false],
+			['[Nextcloud]', false],
 		];
 	}
 

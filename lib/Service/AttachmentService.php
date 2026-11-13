@@ -17,6 +17,8 @@ use OCP\Comments\IComment;
 use OCP\IURLGenerator;
 
 class AttachmentService {
+	/** Markdown links like [text](https://example.tld), using the URL part of IURLGenerator::URL_REGEX */
+	private const MARKDOWN_LINK_REGEX = '/\[[^\]\n]*\]\(https?:\/\/[-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*\)/i';
 
 	public function __construct(
 		private readonly AttachmentMapper $attachmentMapper,
@@ -78,7 +80,8 @@ class AttachmentService {
 	}
 
 	public function containsLink(string $message): bool {
-		return preg_match(IURLGenerator::URL_REGEX, $message) === 1;
+		return preg_match(IURLGenerator::URL_REGEX, $message) === 1
+			|| preg_match(self::MARKDOWN_LINK_REGEX, $message) === 1;
 	}
 
 	public function updateLinkAttachment(Room $room, IComment $comment, bool $hadLink): void {
