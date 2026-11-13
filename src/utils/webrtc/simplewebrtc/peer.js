@@ -356,6 +356,18 @@ function mungeSdpForSimulcasting(sdp) {
 }
 /* eslint-enable */
 
+// Firefox caps VP8/VP9 max-fs at ~QHD (12288); raise it to fit the shared screen
+/**
+ * @param {string} sdp the SDP string to munge
+ * @param {MediaStreamTrack} [track] the screen video track
+ * @return {string} the updated SDP string
+ */
+function mungeSdpForScreenMaxFs(sdp, track) {
+	const { width = 0, height = 0 } = track?.getSettings() ?? {}
+	const screenMaxFs = Math.ceil(width / 16) * Math.ceil(height / 16)
+	return sdp.replace(/max-fs=(\d+)/g, (match, maxFs) => 'max-fs=' + Math.max(maxFs, screenMaxFs))
+}
+
 Peer.prototype.offer = async function(options) {
 	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
 	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
@@ -403,6 +415,12 @@ Peer.prototype.offer = async function(options) {
 			} else if (adapter.browserDetails.browser !== 'firefox') {
 				console.debug('Simulcast can only be enabled on Chrome or Firefox')
 			}
+		}
+
+		// SDP munging only needed for Firefox screensharing (for screens above QHD)
+		if (this.type === 'screen' && adapter.browserDetails.browser === 'firefox') {
+			console.debug('Raising VP8/9 max-fs for Firefox screensharing')
+			offer.sdp = mungeSdpForScreenMaxFs(offer.sdp, this.parent.localScreen?.getVideoTracks()[0])
 		}
 
 		this.pc.setLocalDescription(offer).then(function() {
