@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { getBaseUrl } from '@nextcloud/router'
 import { describe, expect, it } from 'vitest'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
-import { getMessageLinks, isLinkShareMessage, tryLocalizeDeletedMessage, tryLocalizeSystemMessage } from '../message.ts'
+import { getMessageLinks, isInstanceLink, isLinkShareMessage, tryLocalizeDeletedMessage, tryLocalizeSystemMessage } from '../message.ts'
 
 // Host's local "admin" and a federated "admin" from another instance
 const LOCAL_ADMIN = { type: 'user', id: 'admin', name: 'admin', 'mention-id': 'admin' }
@@ -193,5 +194,18 @@ describe('isLinkShareMessage', () => {
 		[{ message: link, messageType: MESSAGE.TYPE.COMMENT, messageParameters: { object: { type: 'geo-location', id: '1', name: 'a' } } }, false],
 	])('checks %j', (message, expected) => {
 		expect(isLinkShareMessage(message)).toBe(expected)
+	})
+})
+
+describe('isInstanceLink', () => {
+	const baseUrl = getBaseUrl()
+
+	it.each([
+		[baseUrl, true],
+		[baseUrl + '/index.php/apps/files', true],
+		[baseUrl + '.example.tld/path', false],
+		['https://nextcloud.example.tld/apps/files', false],
+	])('checks %s', (link, expected) => {
+		expect(isInstanceLink(link)).toBe(expected)
 	})
 })

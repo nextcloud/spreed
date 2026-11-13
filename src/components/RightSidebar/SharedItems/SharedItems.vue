@@ -50,9 +50,11 @@
 					v-for="link in getMessageLinks(item.message)"
 					:key="link"
 					:href="link"
+					:title="link"
+					:class="{ 'shared-items__link-internal': isInstanceLink(link) }"
 					target="_blank"
 					rel="noopener noreferrer">
-					{{ link }}
+					<span class="shared-items__link-text">{{ link }}</span>
 				</a>
 			</div>
 
@@ -74,7 +76,7 @@ import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/Fi
 import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import PinnedMessageItem from '../PinnedMessages/PinnedMessageItem.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
-import { getMessageLinks } from '../../../utils/message.ts'
+import { getMessageLinks, isInstanceLink } from '../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'))
 
@@ -158,6 +160,7 @@ export default {
 
 	methods: {
 		getMessageLinks,
+		isInstanceLink,
 	},
 }
 </script>
@@ -182,11 +185,23 @@ export default {
 		margin-block: var(--default-grid-baseline);
 	}
 
-	&__link a {
-		display: block;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+	&__link {
+		min-width: 0;
+
+		a {
+			display: flex;
+			gap: var(--default-grid-baseline);
+		}
+
+		a.shared-items__link-internal::after {
+			content: none;
+		}
+
+		&-text {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 	}
 
 	&__other {
