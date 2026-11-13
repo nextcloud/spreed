@@ -468,7 +468,6 @@ export default {
 				border: 1px solid var(--color-border-dark);
 			}
 		}
-
 	}
 	// END Split view
 
@@ -494,15 +493,12 @@ export default {
 
 }
 
-.message--highlighted {
+.message--highlighted .message-body {
 	animation: highlight-animation 5s 1;
-	border-radius: 8px;
 }
 
 @keyframes highlight-animation {
-	0% { background-color: var(--color-background-hover); }
-	50% { background-color: var(--color-background-hover); }
-	100% { background-color: rgba(var(--color-background-hover), 0); }
+	0%, 50% { background-color: var(--message-body-hover, var(--color-background-hover)); }
 }
 
 .message-buttons-bar-wrapper {
