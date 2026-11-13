@@ -573,6 +573,12 @@ class FeatureContext implements Context {
 						$data['lobbyTimer'] = 'GREATER_THAN_ZERO';
 					}
 				}
+				if (isset($expectedRoom['muteUntil'])) {
+					$data['muteUntil'] = (int)$room['muteUntil'];
+					if ($expectedRoom['muteUntil'] === 'GREATER_THAN_ZERO' && $room['muteUntil'] > 0) {
+						$data['muteUntil'] = 'GREATER_THAN_ZERO';
+					}
+				}
 				if (isset($expectedRoom['breakoutRoomMode'])) {
 					$data['breakoutRoomMode'] = (int)$room['breakoutRoomMode'];
 				}
@@ -5676,6 +5682,26 @@ class FeatureContext implements Context {
 		sort($expectedIds);
 		sort($actual);
 		Assert::assertSame($expectedIds, $actual);
+	}
+
+	#[When('/^user "([^"]*)" mutes room "([^"]*)" until OFFSET\((\d+)\) with (\d+) \((v4)\)$/')]
+	public function userMutesConversationUntil(string $user, string $identifier, int $muteUntil, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/mute', [
+				'muteUntil' => time() + $muteUntil,
+			],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[When('/^user "([^"]*)" unmutes room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userUnmutesConversationUntil(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/mute',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	public function sendRequestFullUrl(string $verb, string $fullUrl, TableNode|array|string|null $body = null, array $headers = [], array $options = []): void {
