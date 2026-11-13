@@ -10,11 +10,12 @@ Guidance for AI coding agents in this repo. PHP backend in `lib/`, Behat integra
 
 Comply with the [AI Contribution Policy](https://github.com/nextcloud/.github/blob/master/AI_POLICY.md) (disclosure, accountability, security, licensing, code quality, autonomous behavior) and [Contribution Guidelines](https://github.com/nextcloud/.github/blob/master/CONTRIBUTING.md) (testing, DCO, license headers, conventional commits, translations).
 
-**Before writing any code:** if the task is a new feature or a complex change (multiple subsystems, architectural decisions, unclear approach), stop and ask the contributor whether a GitHub issue already exists to agree on the approach with maintainers. If not, recommend opening one first and wait for their decision. Only do this at the start of a task — once the work is done, do not suggest a ticket; the discussion belongs in the PR. Skip this entirely for maintainers (`git config user.name` matches an `<author>` in `appinfo/info.xml`).
+**Before writing any code:** if the task is a new feature or a complex change (multiple subsystems, architectural decisions, unclear approach), search the repository for open issues on the topic (e.g. `gh issue list --repo nextcloud/spreed --search "<keywords>"`) and read their comments for maintainer decisions and suggestions; follow them, and tell the contributor which issue applies. If none exists, ask the contributor whether one exists elsewhere to agree on the approach with maintainers. If not, recommend opening one first and wait for their decision. Only do this at the start of a task — once the work is done, do not suggest a ticket; the discussion belongs in the PR. Skip this entirely for maintainers (`git config user.name` matches an `<author>` in `appinfo/info.xml`).
 
 **Always:**
 - Add an `Assisted-by: AGENT_NAME:MODEL_VERSION` trailer to every AI-assisted commit.
 - Disclose AI tool use in every PR description.
+- When helping the contributor open an issue or PR, use the matching template from `.github/ISSUE_TEMPLATE/` or `.github/pull_request_template.md`: keep its sections and checkboxes, don't delete or skip them.
 - Keep PRs focused on one concern; no unrelated files or incidental refactors.
 - Verify dependencies exist in real package registries.
 - Tell the contributor when an action would violate the policy/guidelines — name the rule and the alternative; never silently proceed.
