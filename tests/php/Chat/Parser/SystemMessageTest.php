@@ -737,6 +737,56 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'parseMessage', [$chatMessage, false]);
 	}
 
+	public static function dataParseMessageHiddenParticipants(): array {
+		return [
+			'participant' => ['user_added', true, false, true],
+			'participant call joined' => ['call_joined', true, false, true],
+			'participant call left' => ['call_left', true, false, true],
+			'participant promoted' => ['moderator_promoted', true, false, true],
+			'no participant' => ['group_added', true, null, true],
+			'participant call started' => ['call_started', true, false, false],
+			'participant call ended everyone' => ['call_ended_everyone', true, false, false],
+			'moderator' => ['user_added', true, true, false],
+			'regular room' => ['user_added', false, false, false],
+		];
+	}
+
+	#[DataProvider('dataParseMessageHiddenParticipants')]
+	public function testParseMessageHiddenParticipants(string $message, bool $hiddenParticipants, ?bool $isModerator, bool $expectedHidden): void {
+		$comment = $this->createStub(IComment::class);
+		$room = $this->createStub(Room::class);
+		$room->method('hasHiddenParticipants')->willReturn($hiddenParticipants);
+
+		$participant = null;
+		if ($isModerator !== null) {
+			$participant = $this->createStub(Participant::class);
+			$participant->method('hasModeratorPermissions')->willReturn($isModerator);
+			$participant->method('getAttendee')->willReturn(Attendee::fromRow([
+				'actor_type' => Attendee::ACTOR_USERS,
+				'actor_id' => 'recipient',
+			]));
+		}
+
+		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getGroup']);
+		$parser->method('getActorFromComment')->willReturn(['id' => 'actor', 'type' => 'user']);
+		$parser->method('getUser')->willReturn(['id' => 'user', 'type' => 'user']);
+		$parser->method('getGroup')->willReturn(['id' => 'group', 'type' => 'user-group']);
+
+		$chatMessage = new Message($room, $participant, $comment, $this->l);
+		$chatMessage->setMessage(json_encode(['message' => $message, 'parameters' => ['user' => 'user', 'group' => 'group', 'duration' => 42, 'users' => ['actor'], 'guests' => 0]]), []);
+
+		self::invokePrivate($parser, 'parseMessage', [$chatMessage, false]);
+		$this->assertTrue($chatMessage->getVisibility());
+		if ($expectedHidden) {
+			$this->assertSame(SystemMessage::HIDDEN_PARTICIPANT_ACTIVITY, $chatMessage->getMessageRaw());
+			$this->assertSame('', $chatMessage->getMessage());
+			$this->assertSame([], $chatMessage->getMessageParameters());
+			$this->assertSame(Attendee::ACTOR_ID_SYSTEM, $chatMessage->getActorId());
+		} else {
+			$this->assertSame($message, $chatMessage->getMessageRaw());
+		}
+	}
+
 	public function testGetFileFromShareForGuest(): void {
 		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);

@@ -510,4 +510,8 @@ class Room {
 	public function isAnnouncement(): bool {
 		return ($this->attributes & RoomAttributes::ANNOUNCEMENT->value) === RoomAttributes::ANNOUNCEMENT->value;
 	}
+
+	public function hasHiddenParticipants(): bool {
+		return ($this->attributes & RoomAttributes::HIDDEN_PARTICIPANTS->value) === RoomAttributes::HIDDEN_PARTICIPANTS->value;
+	}
 }

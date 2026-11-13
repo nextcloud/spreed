@@ -139,6 +139,7 @@ class Capabilities implements IPublicCapability {
 		'bot-features-api',
 		'classified-conversations',
 		'announcement-preset',
+		'hidden-participants',
 		'promote-demote-owner',
 		'matrix-rooms',
 	];

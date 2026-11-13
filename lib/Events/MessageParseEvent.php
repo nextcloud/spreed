@@ -16,6 +16,7 @@ class MessageParseEvent extends ARoomEvent {
 		Room $room,
 		private readonly Message $message,
 		private readonly bool $allowInaccurate,
+		private readonly bool $forceContent,
 	) {
 		parent::__construct($room);
 	}
@@ -26,5 +27,9 @@ class MessageParseEvent extends ARoomEvent {
 
 	public function allowInaccurate(): bool {
 		return $this->allowInaccurate;
+	}
+
+	public function forceContent(): bool {
+		return $this->forceContent;
 	}
 }

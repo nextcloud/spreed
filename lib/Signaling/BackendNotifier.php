@@ -599,16 +599,25 @@ class BackendNotifier {
 	 *
 	 * @param Room $room
 	 * @param array $message
+	 * @param list<int> $recipientParticipants
 	 * @throws \Exception
 	 */
-	public function sendRoomMessage(Room $room, array $message): void {
-		$start = microtime(true);
-		$this->backendRequest($room, [
+	public function sendRoomMessage(Room $room, array $message, array $recipientParticipants = []): void {
+		$data = [
 			'type' => 'message',
 			'message' => [
 				'data' => $message,
 			],
-		]);
+		];
+
+		if (!empty($recipientParticipants)) {
+			$data['message']['recipients'] = [
+				'participantTypes' => $recipientParticipants,
+			];
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 
 		// Don't log chat messages to not leak the content

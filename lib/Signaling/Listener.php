@@ -11,6 +11,7 @@ namespace OCA\Talk\Signaling;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AMessageSentEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
@@ -599,6 +600,17 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		$chatRelayRecipientTypes = [];
+		if ($message->getMessageRaw() === SystemMessage::HIDDEN_PARTICIPANT_ACTIVITY) {
+			// Send censored chat-relay to non-moderators
+			$this->externalSignaling->sendRoomMessage($room, $data, Participant::PARTICIPANT_TYPES_NON_MODERATOR);
+
+			// Prepare the message again for moderators
+			$chatRelayRecipientTypes = Participant::PARTICIPANT_TYPES_MODERATOR;
+			$message = $this->messageParser->createMessage($event->getRoom(), null, $comment, $l10n);
+			$this->messageParser->parseMessage($message, forceContent: true);
+		}
+
 		$data['chat']['comment'] = $message->toArray('json', $thread);
 		$data['chat']['comment']['lastCommonRead'] = $this->participantService->getLastCommonReadChatMessage($room);
 
@@ -639,7 +651,7 @@ class Listener implements IEventListener {
 			$data['chat']['comment']['threadInfo']['attendee'] = ['notificationLevel' => 0];
 			$data['chat']['comment']['threadInfo']['first'] = $thread->toArray($room);
 			$data['chat']['comment']['threadInfo']['last'] = null;
-			$this->externalSignaling->sendRoomMessage($room, $data);
+			$this->externalSignaling->sendRoomMessage($room, $data, $chatRelayRecipientTypes);
 			return;
 		}
 
@@ -650,7 +662,7 @@ class Listener implements IEventListener {
 			$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
 		}
 
-		$this->externalSignaling->sendRoomMessage($room, $data);
+		$this->externalSignaling->sendRoomMessage($room, $data, $chatRelayRecipientTypes);
 	}
 
 	protected function notifyReactionSent(AReactionEvent $event): void {

@@ -15,4 +15,5 @@ enum RoomAttributes: int {
 	case CLASSIFIED = 4;
 	case CHANNEL = 8;
 	case ANNOUNCEMENT = 16;
+	case HIDDEN_PARTICIPANTS = 32;
 }

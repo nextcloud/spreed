@@ -11,6 +11,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
@@ -66,7 +67,8 @@ class MessageSentListener implements IEventListener {
 			return;
 		}
 
-		if (!$chatMessage->getVisibility()) {
+		if (!$chatMessage->getVisibility()
+			|| $chatMessage->getMessageRaw() === SystemMessage::HIDDEN_PARTICIPANT_ACTIVITY) {
 			return;
 		}
 

@@ -560,6 +560,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Creating a poll is an `object_shared` with a poll object
 * `poll_voted` - Someone voted on the poll {poll}
 * `poll_closed` - {actor} closed the poll {poll}
+* `hidden_participant_activity` - Empty placeholder by the system actor, replacing participant and call join/leave messages for non-moderators in conversations with hidden participants (see conversation attribute `32`), clients should not show it
 * `message_expiration_enabled` - {actor} set the message expiration to 3 hours
 * `message_expiration_disabled` - {actor} disabled message expiration
 * `breakout_rooms_started` - {actor} started breakout rooms

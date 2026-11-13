@@ -51,6 +51,37 @@ use Sabre\VObject\Reader;
  * @template-implements IEventListener<Event>
  */
 class SystemMessage implements IEventListener {
+	/**
+	 * Replaces {@see self::PARTICIPANT_LIST_MESSAGES} for non-moderators when
+	 * the participants list is hidden. The message is kept instead of hiding it,
+	 * so pages of the chat history are never empty.
+	 */
+	public const string HIDDEN_PARTICIPANT_ACTIVITY = 'hidden_participant_activity';
+
+	/**
+	 * Only shown to moderators when the participants list is hidden
+	 */
+	public const array PARTICIPANT_LIST_MESSAGES = [
+		'call_joined',
+		'call_left',
+		'user_added',
+		'user_removed',
+		'federated_user_added',
+		'federated_user_removed',
+		'group_added',
+		'group_removed',
+		'circle_added',
+		'circle_removed',
+		'phone_added',
+		'phone_removed',
+		'owner_promoted',
+		'owner_demoted',
+		'moderator_promoted',
+		'moderator_demoted',
+		'guest_moderator_promoted',
+		'guest_moderator_demoted',
+	];
+
 	protected ?IL10N $l = null;
 
 	/**
@@ -96,7 +127,7 @@ class SystemMessage implements IEventListener {
 
 		if ($event->getMessage()->getMessageType() === ChatManager::VERB_SYSTEM) {
 			try {
-				$this->parseMessage($event->getMessage(), $event->allowInaccurate());
+				$this->parseMessage($event->getMessage(), $event->allowInaccurate(), $event->forceContent());
 				// Disabled so we can parse mentions in captions: $event->stopPropagation();
 			} catch (\OutOfBoundsException) {
 				// Unknown message, ignore
@@ -115,7 +146,7 @@ class SystemMessage implements IEventListener {
 	 * @param Message $chatMessage
 	 * @throws \OutOfBoundsException
 	 */
-	protected function parseMessage(Message $chatMessage, $allowInaccurate): void {
+	protected function parseMessage(Message $chatMessage, bool $allowInaccurate, bool $forceContent): void {
 		$this->l = $chatMessage->getL10n();
 		$comment = $chatMessage->getComment();
 		$room = $chatMessage->getRoom();
@@ -125,10 +156,20 @@ class SystemMessage implements IEventListener {
 		}
 
 		$message = $data['message'];
+		$participant = $chatMessage->getParticipant();
+
+		if (!$forceContent
+			&& $room->hasHiddenParticipants()
+			&& in_array($message, self::PARTICIPANT_LIST_MESSAGES, true)
+			&& !$participant?->hasModeratorPermissions()) {
+			$chatMessage->setActor(Attendee::ACTOR_GUESTS, Attendee::ACTOR_ID_SYSTEM, '');
+			$chatMessage->setMessage('', [], self::HIDDEN_PARTICIPANT_ACTIVITY);
+			return;
+		}
+
 		$parameters = $data['parameters'];
 		$parsedParameters = ['actor' => $this->getActorFromComment($room, $comment)];
 
-		$participant = $chatMessage->getParticipant();
 		if ($participant === null) {
 			$currentActorType = null;
 			$currentActorId = null;

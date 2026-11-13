@@ -15,12 +15,24 @@ use OCP\IGroupManager;
 use OCP\Server;
 
 class Participant {
-	public const OWNER = 1;
-	public const MODERATOR = 2;
-	public const USER = 3;
-	public const GUEST = 4;
-	public const USER_SELF_JOINED = 5;
-	public const GUEST_MODERATOR = 6;
+	public const int OWNER = 1;
+	public const int MODERATOR = 2;
+	public const int USER = 3;
+	public const int GUEST = 4;
+	public const int USER_SELF_JOINED = 5;
+	public const int GUEST_MODERATOR = 6;
+
+	public const array PARTICIPANT_TYPES_MODERATOR = [
+		self::OWNER,
+		self::MODERATOR,
+		self::GUEST_MODERATOR,
+	];
+
+	public const array PARTICIPANT_TYPES_NON_MODERATOR = [
+		self::USER,
+		self::GUEST,
+		self::USER_SELF_JOINED,
+	];
 
 	public const FLAG_DISCONNECTED = 0;
 	public const FLAG_IN_CALL = 1;
