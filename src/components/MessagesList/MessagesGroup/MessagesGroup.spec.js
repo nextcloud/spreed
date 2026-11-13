@@ -8,6 +8,8 @@ import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
+import IconCrownOutline from 'vue-material-design-icons/CrownOutline.vue'
+import IconShieldOutline from 'vue-material-design-icons/ShieldOutline.vue'
 import MessageItem from './Message/MessageItem.vue'
 import MessagesGroup from './MessagesGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
@@ -198,6 +200,57 @@ describe('MessagesGroup.vue', () => {
 			actorType: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
 			actorDisplayName: 'Federated Actor',
 			actorDisplayNameWithFallback: 'Federated Actor',
+		})
+	})
+
+	describe('role of the author', () => {
+		/**
+		 * @param {string|undefined} actorRole Role stored in the message meta data
+		 */
+		function mountWithAuthor(actorRole) {
+			return shallowMount(MessagesGroup, {
+				global: {
+					plugins: [store],
+					provide: { 'messagesList:isSplitViewEnabled': false },
+				},
+				props: {
+					token: TOKEN,
+					previousMessageId: 90,
+					nextMessageId: 200,
+					messages: [{
+						id: 100,
+						token: TOKEN,
+						actorId: 'actor-1',
+						actorDisplayName: 'Alice',
+						actorType: ATTENDEE.ACTOR_TYPE.USERS,
+						message: 'first',
+						messageType: MESSAGE.TYPE.COMMENT,
+						messageParameters: {},
+						systemMessage: '',
+						timestamp: 100,
+						isReplyable: true,
+						...(actorRole ? { metaData: { actorRole } } : {}),
+					}],
+				},
+			})
+		}
+
+		test('renders a crown for an owner', () => {
+			const wrapper = mountWithAuthor('owner')
+			expect(wrapper.findComponent(IconCrownOutline).exists()).toBeTruthy()
+			expect(wrapper.findComponent(IconShieldOutline).exists()).toBeFalsy()
+		})
+
+		test('renders a shield for a moderator', () => {
+			const wrapper = mountWithAuthor('moderator')
+			expect(wrapper.findComponent(IconShieldOutline).exists()).toBeTruthy()
+			expect(wrapper.findComponent(IconCrownOutline).exists()).toBeFalsy()
+		})
+
+		test('renders no icon without a role', () => {
+			const wrapper = mountWithAuthor(undefined)
+			expect(wrapper.findComponent(IconCrownOutline).exists()).toBeFalsy()
+			expect(wrapper.findComponent(IconShieldOutline).exists()).toBeFalsy()
 		})
 	})
 })

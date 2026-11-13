@@ -484,6 +484,11 @@ export type components = {
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
             /**
+             * @description Role of the author at the time of posting. If missing, the author was a regular participant, the conversation has no ranks or the message predates it
+             * @enum {string}
+             */
+            actorRole?: "owner" | "moderator";
+            /**
              * Format: int64
              * @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
              */

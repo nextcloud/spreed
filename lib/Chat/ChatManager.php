@@ -199,6 +199,7 @@ class ChatManager {
 		if ($chat->getMentionPermissions() === Room::MENTION_PERMISSIONS_EVERYONE || $participant?->hasModeratorPermissions()) {
 			$metadata[Message::METADATA_CAN_MENTION_ALL] = true;
 		}
+		$metadata = array_merge($metadata, $this->getActorParticipantTypeMetaData($participant, $actorType, $actorId));
 		$comment->setMetaData($metadata);
 
 		$this->setMessageExpiration($chat, $comment);
@@ -449,6 +450,7 @@ class ChatManager {
 		if ($threadId !== Thread::THREAD_NONE) {
 			$metadata[Message::METADATA_THREAD_ID] = $threadId;
 		}
+		$metadata = array_merge($metadata, $this->getActorParticipantTypeMetaData($participant, $actorType, $actorId));
 		$comment->setMetaData(array_merge($metadata, $extraMetaData));
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
@@ -524,6 +526,22 @@ class ChatManager {
 		}
 
 		return $comment;
+	}
+
+	/**
+	 * Snapshot of the author's participant type at the time of posting, so
+	 * the role can be rendered without access to the participant list.
+	 *
+	 * @return array<string, int>
+	 */
+	protected function getActorParticipantTypeMetaData(?Participant $participant, string $actorType, string $actorId): array {
+		if ($participant === null
+			|| $participant->getAttendee()->getActorType() !== $actorType
+			|| $participant->getAttendee()->getActorId() !== $actorId) {
+			return [];
+		}
+
+		return [Message::METADATA_ACTOR_PARTICIPANT_TYPE => $participant->getAttendee()->getParticipantType()];
 	}
 
 	private function setMessageExpiration(Room $room, IComment $comment): void {
