@@ -47,7 +47,7 @@
 				v-else-if="isLink"
 				class="shared-items__other shared-items__link">
 				<a
-					v-for="link in getMessageLinks(item.message)"
+					v-for="link in linksToDisplay[item.id]"
 					:key="link"
 					:href="link"
 					:title="link"
@@ -122,7 +122,32 @@ export default {
 
 	computed: {
 		itemsToDisplay() {
-			return Object.values(this.items).reverse().slice(0, this.limit)
+			const items = Object.values(this.items).reverse()
+			if (this.isLink) {
+				return items.filter((item) => this.linksToDisplay[item.id])
+			}
+			return items.slice(0, this.limit)
+		},
+
+		// The limit applies to the number of links, not messages
+		linksToDisplay() {
+			if (!this.isLink) {
+				return {}
+			}
+
+			const linksToDisplay = {}
+			let remaining = this.limit ?? Infinity
+			for (const item of Object.values(this.items).reverse()) {
+				if (remaining <= 0) {
+					break
+				}
+				const links = getMessageLinks(item.message).slice(0, remaining)
+				if (links.length) {
+					linksToDisplay[item.id] = links
+					remaining -= links.length
+				}
+			}
+			return linksToDisplay
 		},
 
 		isLocation() {
@@ -159,7 +184,6 @@ export default {
 	},
 
 	methods: {
-		getMessageLinks,
 		isInstanceLink,
 	},
 }
