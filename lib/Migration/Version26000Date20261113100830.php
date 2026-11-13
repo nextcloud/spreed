@@ -12,10 +12,13 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\Migration\Attributes\AddColumn;
+use OCP\Migration\Attributes\ColumnType;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
+#[AddColumn(table: 'talk_attendees', name: 'mute_until', type: ColumnType::BIGINT)]
 class Version26000Date20261113100830 extends SimpleMigrationStep {
 
 	/**
