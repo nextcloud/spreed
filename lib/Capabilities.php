@@ -188,6 +188,8 @@ class Capabilities implements IPublicCapability {
 			'allowed',
 			'folder',
 			'conversation-subfolders',
+			'allow-update',
+			'skip-compression',
 		],
 		'call' => [
 			'predefined-backgrounds',
@@ -287,6 +289,8 @@ class Capabilities implements IPublicCapability {
 					'allowed' => $user instanceof IUser && $user->getBackendClassName() !== UserBackend::class,
 					// 'folder' => string,
 					'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
+					'allow-update' => $this->appConfig->getAppValueBool(Config::ATTACHMENTS_ALLOW_UPDATE),
+					'skip-compression' => $this->appConfig->getAppValueBool(Config::ATTACHMENTS_SKIP_COMPRESSION),
 				],
 				'call' => [
 					'enabled' => $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) !== Room::START_CALL_NOONE,

@@ -809,6 +809,10 @@ namespace OCA\Talk;
  *             folder?: string,
  *             // Whether per-conversation subfolders are used for attachments
  *             'conversation-subfolders': bool,
+ *             // Whether shared files are editable by default
+ *             'allow-update': bool,
+ *             // Whether images are uploaded in original quality by default
+ *             'skip-compression': bool,
  *         },
  *         call: array{
  *             // Whether calls are enabled
