@@ -50,7 +50,7 @@ class AttachmentMapper extends QBMapper {
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
 			->setMaxResults($limit)
-			->orderBy('id', 'DESC');
+			->orderBy('message_id', 'DESC');
 
 		if ($offset > 0) {
 			$query->andWhere($query->expr()->lt('message_id', $query->createNamedParameter($offset)));
