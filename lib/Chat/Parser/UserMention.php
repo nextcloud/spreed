@@ -270,7 +270,7 @@ class UserMention implements IEventListener {
 	 * Replace mentions only outside of markdown code blocks and inline code.
 	 */
 	protected function replaceOutsideCode(string $message, string $search, string $replacement): string {
-		$pattern = '/^```.*?^```|^~~~.*?^~~~|`[^`\n]*`|' . preg_quote($search, '/') . '/sm';
+		$pattern = '/' . ChatManager::MARKDOWN_CODE_REGEX_NO_MODIFIERS . '|' . preg_quote($search, '/') . '/sm';
 		return preg_replace_callback($pattern, static fn (array $match): string => ($match[0] === $search) ? $replacement : $match[0], $message) ?? $message;
 	}
 
