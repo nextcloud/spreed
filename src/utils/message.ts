@@ -240,9 +240,10 @@ const FILE_KEY_REGEX = /^file(?:-\d+)?$/
  * Matches a file-sharing rich object parameter key ('{file}', '{file-1}', '{file-2}', …)
  */
 const FILE_PLACEHOLDERS_REGEX = /^\s*(?:\{file(?:-\d+)?\}\s*)+$/
-// Copy of URL_PATTERN from @nextcloud/vue (src/components/NcRichText/helpers.ts, not exported) and
+// First alternative: copy of URL_PATTERN from @nextcloud/vue (src/components/NcRichText/helpers.ts, not exported) and
 // IURLGenerator::URL_REGEX on the server. The trailing lookahead lets links separated by a single space both match.
-const URL_REGEX = /(\s|^)(https?:\/\/)([-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|$)/gim
+// Second alternative: markdown links like [text](https://example.tld), see AttachmentService::MARKDOWN_LINK_REGEX
+const URL_REGEX = /(?:(?:\s|^)(https?:\/\/[-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|$))|(?:\[[^\]\n]*\]\((https?:\/\/[-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)\))/gim
 
 /**
  * Returns all keys of files shared with the message ('file', 'file-1', …)
@@ -284,12 +285,12 @@ export function isFileShareMessage(message: Pick<ChatMessage, 'messageParameters
 }
 
 /**
- * Returns the links in the given text, matching the server side IURLGenerator::URL_REGEX
+ * Returns the unique links in the given text, plain and markdown links
  *
  * @param text message text
  */
 export function getMessageLinks(text: string): string[] {
-	return [...text.matchAll(URL_REGEX)].map((match) => match[2] + match[3])
+	return [...new Set([...text.matchAll(URL_REGEX)].map((match) => match[1] ?? match[2]))]
 }
 
 /**

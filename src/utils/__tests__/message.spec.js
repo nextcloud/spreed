@@ -169,6 +169,10 @@ describe('getMessageLinks', () => {
 		['https://a.tld https://b.tld\nhttps://c.tld', ['https://a.tld', 'https://b.tld', 'https://c.tld']],
 		['nohttps://nextcloud.com', []],
 		['ftp://nextcloud.com', []],
+		['[Nextcloud](https://nextcloud.com)', ['https://nextcloud.com']],
+		['See [docs](https://docs.tld/a_(b)) and https://c.tld', ['https://docs.tld/a_(b)', 'https://c.tld']],
+		['[a](https://a.tld) [b](https://a.tld) https://a.tld', ['https://a.tld']],
+		['[a](ftp://a.tld)', []],
 	])('returns links of %j', (text, expected) => {
 		expect(getMessageLinks(text)).toEqual(expected)
 	})
