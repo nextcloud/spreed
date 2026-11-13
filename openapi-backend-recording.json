@@ -66,7 +66,9 @@
                                 "type": "object",
                                 "required": [
                                     "allowed",
-                                    "conversation-subfolders"
+                                    "conversation-subfolders",
+                                    "allow-update",
+                                    "skip-compression"
                                 ],
                                 "properties": {
                                     "allowed": {
@@ -80,6 +82,14 @@
                                     "conversation-subfolders": {
                                         "type": "boolean",
                                         "description": "Whether per-conversation subfolders are used for attachments"
+                                    },
+                                    "allow-update": {
+                                        "type": "boolean",
+                                        "description": "Whether shared files are editable by default"
+                                    },
+                                    "skip-compression": {
+                                        "type": "boolean",
+                                        "description": "Whether images are uploaded in original quality by default"
                                     }
                                 }
                             },
