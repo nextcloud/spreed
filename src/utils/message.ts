@@ -240,6 +240,12 @@ const FILE_KEY_REGEX = /^file(?:-\d+)?$/
  * Matches a file-sharing rich object parameter key ('{file}', '{file-1}', '{file-2}', …)
  */
 const FILE_PLACEHOLDERS_REGEX = /^\s*(?:\{file(?:-\d+)?\}\s*)+$/
+// Markdown code blocks and inline code, see ChatManager::MARKDOWN_CODE_REGEX_NO_MODIFIERS
+const MARKDOWN_CODE_REGEX = /^```.*?^```|^~~~.*?^~~~|`[^`\n]*`/gms
+// First alternative: copy of URL_PATTERN from @nextcloud/vue (src/components/NcRichText/helpers.ts, not exported) and
+// IURLGenerator::URL_REGEX on the server. The trailing lookahead lets links separated by a single space both match.
+// Second alternative: markdown links like [text](https://example.tld), see AttachmentService::MARKDOWN_LINK_REGEX
+const URL_REGEX = /(?:(?:\s|^)(https?:\/\/[-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|$))|(?:\[[^\]\n]*\]\((https?:\/\/[-A-Z0-9+_.]+(?::[0-9]+)?(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)\))/gim
 
 /**
  * Returns all keys of files shared with the message ('file', 'file-1', …)
@@ -278,6 +284,39 @@ export function getFilePreviewKeys(message: Pick<ChatMessage, 'messageParameters
  */
 export function isFileShareMessage(message: Pick<ChatMessage, 'messageParameters'>): boolean {
 	return getFileKeys(message).length > 0
+}
+
+/**
+ * Returns the unique links in the given text, plain and markdown links, outside of code
+ *
+ * @param text message text
+ */
+export function getMessageLinks(text: string): string[] {
+	// Replace code with a non-whitespace character, so it does not create new link boundaries
+	const textWithoutCode = text.replace(MARKDOWN_CODE_REGEX, '`')
+	return [...new Set([...textWithoutCode.matchAll(URL_REGEX)].map((match) => match[1] ?? match[2]))]
+}
+
+/**
+ * Returns whether the given link points to this Nextcloud instance
+ *
+ * @param link absolute URL
+ */
+export function isInstanceLink(link: string): boolean {
+	const baseUrl = getBaseUrl()
+	return link === baseUrl || link.startsWith(baseUrl + '/')
+}
+
+/**
+ * Returns whether the given message is a plain chat message containing a link
+ *
+ * @param message Chat message
+ */
+export function isLinkShareMessage(message: Pick<ChatMessage, 'message' | 'messageType' | 'messageParameters'>): boolean {
+	return message.messageType === MESSAGE.TYPE.COMMENT
+		&& !message.messageParameters?.object
+		&& !isFileShareMessage(message)
+		&& getMessageLinks(message.message).length > 0
 }
 
 /**

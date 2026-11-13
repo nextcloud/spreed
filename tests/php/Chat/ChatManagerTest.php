@@ -880,6 +880,7 @@ class ChatManagerTest extends TestCase {
 		$comment->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
 		$comment->method('getActorId')->willReturn('author');
 		$comment->method('getMetaData')->willReturn([Message::METADATA_SILENT => true]);
+		$comment->method('getMessage')->willReturn('Original message');
 
 		$this->dispatcher->expects($this->once())
 			->method('dispatchTyped')

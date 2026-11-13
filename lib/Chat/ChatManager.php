@@ -73,6 +73,8 @@ use Psr\Log\LoggerInterface;
  */
 class ChatManager {
 	public const MAX_CHAT_LENGTH = 32000;
+	/** Markdown code blocks and inline code, to be used with the `sm` modifiers */
+	public const MARKDOWN_CODE_REGEX_NO_MODIFIERS = '^```.*?^```|^~~~.*?^~~~|`[^`\n]*`';
 
 	public const RATE_LIMIT_GUEST_MENTIONS_LIMIT = 50;
 	public const RATE_LIMIT_GUEST_MENTIONS_PERIOD = 24 * 60 * 60;
@@ -474,6 +476,10 @@ class ChatManager {
 				}
 			}
 
+			if ($verb === self::VERB_MESSAGE) {
+				$this->attachmentService->updateLinkAttachment($chat, $comment, false);
+			}
+
 			if (!$fromScheduledMessage && $participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
 			}
@@ -767,6 +773,8 @@ class ChatManager {
 
 		$wasSilent = $metaData[Message::METADATA_SILENT] ?? false;
 
+		$hadLink = $this->attachmentService->containsLink($comment->getMessage());
+
 		if (!$wasSilent) {
 			$mentionsBefore = $comment->getMentions();
 			$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
@@ -778,6 +786,9 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
+		if ($comment->getVerb() === self::VERB_MESSAGE) {
+			$this->attachmentService->updateLinkAttachment($chat, $comment, $hadLink);
+		}
 		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'edited', Operation::MESSAGE_EDITED);
 		$this->referenceManager->invalidateCache($chat->getToken());
 

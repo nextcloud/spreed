@@ -3183,7 +3183,7 @@ class FeatureContext implements Context {
 		Assert::assertMatchesRegularExpression($pattern, $fileLink, 'File link does not match expected pattern');
 	}
 
-	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|pinned|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|link|location|pinned|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSharedMediaInRoom(string $user, string $objectType, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share?objectType=' . $objectType);

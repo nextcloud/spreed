@@ -226,3 +226,24 @@ Feature: chat-1/edit-message
     Then user "participant1" is participant of the following rooms (v4)
       | id   | unreadMessages | unreadMention | unreadMentionDirect |
       | room | 1              | 1             | 1                   |
+
+  Scenario: Messages with links are listed as shared links
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" sends message "No link" to room "room" with 201
+    And user "participant1" sends message "Link https://nextcloud.com" to room "room" with 201
+    Then user "participant1" sees the following shared link in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message                    | messageParameters |
+      | room | users     | participant1 | participant1-displayname | Link https://nextcloud.com | []                |
+    And user "participant1" edits message "No link" in room "room" to "Added https://example.tld" with 200
+    And user "participant1" edits message "Link https://nextcloud.com" in room "room" to "Removed link" with 200
+    Then user "participant1" sees the following shared link in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message                   | messageParameters |
+      | room | users     | participant1 | participant1-displayname | Added https://example.tld | []                |
+    And user "participant1" deletes message "Added https://example.tld" from room "room" with 200
+    Then user "participant1" sees the following shared link in room "room" with 200
+    And user "participant1" sends message "See [Docs](https://docs.nextcloud.com)" to room "room" with 201
+    Then user "participant1" sees the following shared link in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message                                | messageParameters |
+      | room | users     | participant1 | participant1-displayname | See [Docs](https://docs.nextcloud.com) | []                |
