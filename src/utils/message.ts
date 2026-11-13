@@ -298,6 +298,16 @@ export function getMessageLinks(text: string): string[] {
 }
 
 /**
+ * Returns whether the given link points to this Nextcloud instance
+ *
+ * @param link absolute URL
+ */
+export function isInstanceLink(link: string): boolean {
+	const baseUrl = getBaseUrl()
+	return link === baseUrl || link.startsWith(baseUrl + '/')
+}
+
+/**
  * Returns whether the given message is a plain chat message containing a link
  *
  * @param message Chat message
