@@ -72,7 +72,7 @@ jobs:
             echo
             # Deeply nested lists stop indenting on GitHub, so section bodies go into code blocks
             awk '
-              function flush() { sub(/\n+$/, "\n", body); if (body != "") printf "```\n%s```\n\n", body; body = "" }
+              function flush() { sub(/\n+$/, "\n", body); if (body != "") printf "<details><summary>Show changes</summary>\n\n```\n%s```\n\n</details>\n\n", body; body = "" }
               /^### / { flush(); print; print ""; next }
               /^-+$/ { next }
               /^[[:space:]]*$/ { if (body != "") body = body "\n"; next }
