@@ -478,16 +478,18 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
  * @return {Promise<void>}
  */
 async function signalingLeaveCall(token, all = false) {
-	sentVideoQualityThrottler.destroy()
+	// The helpers do not exist if the call was already left (for example,
+	// after failing to start it).
+	sentVideoQualityThrottler?.destroy()
 	sentVideoQualityThrottler = null
 
-	speakingStatusHandler.destroy()
+	speakingStatusHandler?.destroy()
 	speakingStatusHandler = null
 
-	callAnalyzer.destroy()
+	callAnalyzer?.destroy()
 	callAnalyzer = null
 
-	callParticipantsAudioPlayer.destroy()
+	callParticipantsAudioPlayer?.destroy()
 	callParticipantsAudioPlayer = null
 
 	if (tokensInSignaling[token]) {
