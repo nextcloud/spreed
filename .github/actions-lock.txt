@@ -22,12 +22,12 @@ ad9c8d16e90d7b60092d9770ba7646e5 phpunit-sqlite.yml
 fa1cab1471a6a7a7a0622744f8d6ab12 psalm.yml
 2dbec18233063b42f4d8e03bbb43671c reuse.yml
 abcb8206c3f6c5a9dc86cccf57846bfc update-nextcloud-ocp-approve-merge.yml
-24a8e4ff76d12a99ef6ba91d392b418c update-nextcloud-ocp.yml
+e0623401266176cde77f5737be375cff update-nextcloud-ocp.yml
 22604c31b526de270a080eb19967a638 update-stable-titles.yml
 db602a0518c5bfbe201fb4734f7f8d4f lint-typescript.yml
-ff4dc5f5f73469bf3569b654a68f49bf sync-workflow-templates.yml
+af7ef59cad90fa52cfed30e97921b7a9 sync-workflow-templates.yml
 92678f1f5453d90fc2fd01698ade497c ai-policy.yml
 6e07ed85ca156b6bf121a50dc1af6712 npm-build.yml
-f1909c78987565cb19a471c60dc53950 npm-audit-fix.yml
-e76b34d06eafc3d3101e614040c7692b rector-apply.yml
+db73bd92859c4fb9d0489c0378a73d9e npm-audit-fix.yml
+81b83942c461e23d10ec6d81c1adce55 rector-apply.yml
 bea8a43904976fa01f1e091046541b37 release-relay.yml
