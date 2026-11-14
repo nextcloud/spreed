@@ -1265,18 +1265,19 @@ class ChatControllerTest extends TestCase {
 
 	public static function dataReadMarkerWhenPolling(): array {
 		return [
-			'not moving' => [23, 23, false],
-			'regular message' => [23, 20, true],
-			'beyond last message' => [35, 20, false],
+			'not moving' => [23, 23, null],
+			'regular message' => [23, 20, 23],
+			'beyond last message' => [35, 20, 30],
+			'beyond last message when already at last message' => [35, 30, null],
 		];
 	}
 
 	#[DataProvider('dataReadMarkerWhenPolling')]
-	public function testReadMarkerWhenPolling(int $lastKnownMessageId, int $lastReadMessage, bool $expectUpdate): void {
+	public function testReadMarkerWhenPolling(int $lastKnownMessageId, int $lastReadMessage, ?int $expected): void {
 		$participant = $this->setUpReadMarker(30, $lastReadMessage);
-		$this->participantService->expects($expectUpdate ? $this->once() : $this->never())
+		$this->participantService->expects($expected !== null ? $this->once() : $this->never())
 			->method('updateLastReadMessage')
-			->with($participant, $lastKnownMessageId);
+			->with($participant, $expected);
 		$this->chatManager->method('waitForNewMessages')->willReturn([]);
 
 		$this->controller->receiveMessages(1, 100, $lastKnownMessageId);

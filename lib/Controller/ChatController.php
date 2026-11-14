@@ -984,10 +984,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		 */
 
 		$attendee = $this->participant->getAttendee();
+		// Reactions and silent system messages don't update last_message, so the newest known id can be past it
+		$setToMessage = $this->isValidReadMarker($lastKnownMessageId) ? $lastKnownMessageId : $this->room->getLastMessageId();
 		if ($lookIntoFuture && $setReadMarker === 1
-			&& $lastKnownMessageId > $attendee->getLastReadMessage()
-			&& $this->isValidReadMarker($lastKnownMessageId)) {
-			$this->participantService->updateLastReadMessage($this->participant, $lastKnownMessageId);
+			&& $setToMessage > $attendee->getLastReadMessage()) {
+			$this->participantService->updateLastReadMessage($this->participant, $setToMessage);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
