@@ -1871,6 +1871,22 @@ class ParticipantService {
 	}
 
 	/**
+	 * Return the owner of a conversation, if it still exists as an attendee.
+	 *
+	 * Used by automatic recording when the call starter is a guest: the
+	 * recording still needs a local account to own the file, so it is kept
+	 * with the conversation owner even when that owner is not in the call.
+	 */
+	public function getRoomOwner(Room $room): ?Participant {
+		foreach ($this->getParticipantsForRoom($room) as $participant) {
+			if ($participant->isOwner()) {
+				return $participant;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get all sessions and attendees without a session for the room
 	 *
 	 * This will return multiple items for the same attendee if the attendee
