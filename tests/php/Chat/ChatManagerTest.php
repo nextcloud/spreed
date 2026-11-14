@@ -13,6 +13,7 @@ use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\Notifier;
+use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
@@ -71,6 +72,7 @@ class ChatManagerTest extends TestCase {
 	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l;
+	protected ICache&MockObject $chatCache;
 	protected ArrayCache $unreadCountCache;
 	protected ?ChatManager $chatManager = null;
 
@@ -96,6 +98,7 @@ class ChatManagerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->chatCache = $this->createMock(ICache::class);
 		$this->unreadCountCache = new ArrayCache();
 
 		$this->l->method('n')
@@ -116,7 +119,7 @@ class ChatManagerTest extends TestCase {
 		$cacheFactory->method('createDistributed')
 			->willReturnCallback(fn (string $prefix): ICache => $prefix === CachePrefix::CHAT_UNREAD_COUNT
 				? $this->unreadCountCache
-				: $this->createMock(ICache::class));
+				: $this->chatCache);
 
 		if (!empty($methods)) {
 			return $this->getMockBuilder(ChatManager::class)
@@ -295,6 +298,47 @@ class ChatManagerTest extends TestCase {
 		$return = $this->chatManager->sendMessage($chat, $participant, 'users', $userId, $message, $creationDateTime, $replyTo, $referenceId, false);
 
 		$this->assertCommentEquals($commentExpected, $return);
+	}
+
+	public function testSendMessageFlushesNotificationsWhenListenerThrows(): void {
+		$creationDateTime = new \DateTime();
+
+		$comment = $this->newComment(42, 'users', 'testUser', $creationDateTime, 'testMessage');
+
+		$this->commentsManager->expects($this->once())
+			->method('create')
+			->with('users', 'testUser', 'chat', 1234)
+			->willReturn($comment);
+		$this->commentsManager->expects($this->once())
+			->method('save')
+			->with($comment);
+
+		$chat = $this->createMock(Room::class);
+		$chat->method('getId')->willReturn(1234);
+		$chat->method('getToken')->willReturn('token');
+
+		$participant = $this->createStub(Participant::class);
+
+		$this->notificationManager->method('defer')->willReturn(true);
+		$this->notificationManager->expects($this->once())
+			->method('flush');
+		$this->chatCache->expects($this->once())
+			->method('remove')
+			->with('token');
+
+		// Simulates a listener that throws after the message has been committed.
+		$this->dispatcher->method('dispatchTyped')
+			->willReturnCallback(static function (object $event): void {
+				if ($event instanceof ChatMessageSentEvent) {
+					throw new \RuntimeException('Simulated HPB notification failure');
+				}
+			});
+
+		try {
+			$this->chatManager->sendMessage($chat, $participant, 'users', 'testUser', 'testMessage', $creationDateTime);
+			$this->fail('The listener failure must still be reported to the caller');
+		} catch (\RuntimeException) {
+		}
 	}
 
 	public function testGetHistory(): void {
