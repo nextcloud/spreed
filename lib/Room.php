@@ -507,6 +507,14 @@ class Room {
 	 * Announcements are channels with additional restrictions, so they also
 	 * have the channel attribute set and {@see self::isChannel()} is true for them.
 	 */
+	/**
+	 * Whether this conversation starts a recording automatically when a
+	 * moderator joins a call.
+	 */
+	public function isRecordingAutoStart(): bool {
+		return ($this->attributes & RoomAttributes::RECORDING_AUTO_START->value) === RoomAttributes::RECORDING_AUTO_START->value;
+	}
+
 	public function isAnnouncement(): bool {
 		return ($this->attributes & RoomAttributes::ANNOUNCEMENT->value) === RoomAttributes::ANNOUNCEMENT->value;
 	}

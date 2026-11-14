@@ -52,6 +52,7 @@ import {
 	setMessageExpiration,
 	setNotificationCalls,
 	setNotificationLevel,
+	setRecordingAutoStart,
 	setRecordingConsent,
 	setSIPEnabled,
 	unarchiveConversation,
@@ -816,6 +817,24 @@ const actions = {
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while changing the recording consent state for conversation: ', error)
+		}
+	},
+
+	async setRecordingAutoStart({ commit, getters }, { token, state }) {
+		if (!getters.conversations[token]) {
+			return
+		}
+
+		try {
+			await setRecordingAutoStart(token, state)
+			const attributes = state
+				? getters.conversations[token].attributes | CONVERSATION.ATTRIBUTE.RECORDING_AUTO_START
+				: getters.conversations[token].attributes & ~CONVERSATION.ATTRIBUTE.RECORDING_AUTO_START
+			const conversation = { ...getters.conversations[token], attributes }
+			commit('addConversation', conversation)
+		} catch (error) {
+			console.error('Error while changing automatic recording for conversation: ', error)
+			throw error
 		}
 	},
 

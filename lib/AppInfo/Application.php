@@ -120,6 +120,7 @@ use OCA\Talk\Profile\TalkCallAction;
 use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
+use OCA\Talk\Recording\AutoStartListener as RecordingAutoStartListener;
 use OCA\Talk\Recording\Listener as RecordingListener;
 use OCA\Talk\Search\ConversationSearch;
 use OCA\Talk\Search\CurrentMessageSearch;
@@ -321,6 +322,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, StatusListener::class);
 
 		// Recording listeners
+		$context->registerEventListener(CallStartedEvent::class, RecordingAutoStartListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, RecordingListener::class);
 		$context->registerEventListener(CallEndedEvent::class, RecordingListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, RecordingListener::class);

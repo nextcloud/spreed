@@ -108,6 +108,7 @@ class AuditLogListener implements IEventListener {
 			ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS => $this->logValueChange('Mention permissions', $token, $event, Operation::CONVERSATION_MENTION_PERMISSIONS_CHANGED),
 			ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->logValueChange('Message expiration', $token, $event, Operation::CONVERSATION_MESSAGE_EXPIRATION_CHANGED),
 			ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT => $this->logValueChange('Recording consent requirement', $token, $event, Operation::CONVERSATION_RECORDING_CONSENT_CHANGED),
+			ARoomModifiedEvent::PROPERTY_RECORDING_AUTO_START => $this->logValueChange('Automatic recording', $token, $event, Operation::CONVERSATION_RECORDING_AUTO_START_CHANGED),
 			ARoomModifiedEvent::PROPERTY_CALL_RECORDING => $this->callRecordingModified($token, $event),
 			default => null,
 		};
