@@ -28,6 +28,7 @@ enum Operation: string {
 	case CONVERSATION_MENTION_PERMISSIONS_CHANGED = 'spreed.conversation_mention_permissions.changed';
 	case CONVERSATION_MESSAGE_EXPIRATION_CHANGED = 'spreed.conversation_message_expiration.changed';
 	case CONVERSATION_RECORDING_CONSENT_CHANGED = 'spreed.conversation_recording_consent.changed';
+	case CONVERSATION_RECORDING_AUTO_START_CHANGED = 'spreed.conversation_recording_auto_start.changed';
 
 	// Participants
 	case PARTICIPANT_ADDED = 'spreed.participant.added';
@@ -83,6 +84,7 @@ enum Operation: string {
 			self::CONVERSATION_MENTION_PERMISSIONS_CHANGED => 'Who may mention everyone in a conversation was changed',
 			self::CONVERSATION_MESSAGE_EXPIRATION_CHANGED => 'The message expiration of a conversation was changed',
 			self::CONVERSATION_RECORDING_CONSENT_CHANGED => 'The recording consent requirement of a conversation was changed',
+			self::CONVERSATION_RECORDING_AUTO_START_CHANGED => 'Whether a recording starts automatically when a moderator joins the call was changed',
 			self::PARTICIPANT_ADDED => 'A participant was added to a group or public conversation',
 			self::PARTICIPANT_REMOVED => 'A participant was removed from or left a group or public conversation',
 			self::PARTICIPANT_TYPE_CHANGED => 'The participant type of a participant was changed, for example to moderator',

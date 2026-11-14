@@ -3509,6 +3509,33 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Set whether a recording starts automatically when a moderator joins the call.
+	 *
+	 * @param bool $recordingAutoStart Whether to start recording automatically
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'classified'}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>
+	 *
+	 * 200: Automatic recording setting updated
+	 * 400: The conversation cannot use automatic recording
+	 * 412: No recording server is configured
+	 */
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/recording-auto-start', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function setRecordingAutoStart(bool $recordingAutoStart): DataResponse {
+		if (!$this->talkConfig->isRecordingEnabled()) {
+			return new DataResponse(['error' => 'config'], Http::STATUS_PRECONDITION_FAILED);
+		}
+		if ($this->room->isClassified()) {
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+		$this->roomService->setRecordingAutoStart($this->room, $recordingAutoStart);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Resend invitations
 	 *
 	 * @param int|null $attendeeId ID of the attendee

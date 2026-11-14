@@ -938,6 +938,42 @@ class RoomService {
 	}
 
 	/**
+	 * Enable or disable starting a recording automatically when a moderator
+	 * joins a call in this conversation.
+	 *
+	 * The setting only changes future joins; it does not start or stop a
+	 * recording that is already active. The controller validates that
+	 * recording is configured and the conversation can be recorded.
+	 */
+	public function setRecordingAutoStart(Room $room, bool $autoStart): void {
+		$oldAutoStart = $room->isRecordingAutoStart();
+		if ($autoStart === $oldAutoStart) {
+			return;
+		}
+
+		$oldAttributes = $room->getAttributes();
+		if ($autoStart) {
+			$newAttributes = $oldAttributes | RoomAttributes::RECORDING_AUTO_START->value;
+		} else {
+			$newAttributes = $oldAttributes & ~RoomAttributes::RECORDING_AUTO_START->value;
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_RECORDING_AUTO_START, $autoStart, $oldAutoStart);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('attributes', $update->createNamedParameter($newAttributes, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setAttributes($newAttributes);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_RECORDING_AUTO_START, $autoStart, $oldAutoStart);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param int $newState New mention permissions from Room::MENTION_PERMISSIONS_*
 	 * @psalm-param Room::MENTION_PERMISSIONS_* $newState

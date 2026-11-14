@@ -15,4 +15,5 @@ enum RoomAttributes: int {
 	case CLASSIFIED = 4;
 	case CHANNEL = 8;
 	case ANNOUNCEMENT = 16;
+	case RECORDING_AUTO_START = 32;
 }

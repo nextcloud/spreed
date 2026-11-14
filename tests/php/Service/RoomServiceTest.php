@@ -536,6 +536,43 @@ class RoomServiceTest extends TestCase {
 		$this->assertTrue($room->isPreserved());
 	}
 
+	public function testSetRecordingAutoStartEnables(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::NONE->value);
+		$this->assertFalse($room->isRecordingAutoStart());
+
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped');
+
+		$this->service->setRecordingAutoStart($room, true);
+
+		$this->assertTrue($room->isRecordingAutoStart());
+		$this->assertSame(RoomAttributes::RECORDING_AUTO_START->value, $room->getAttributes() & RoomAttributes::RECORDING_AUTO_START->value);
+	}
+
+	public function testSetRecordingAutoStartDisables(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::RECORDING_AUTO_START->value);
+		$this->assertTrue($room->isRecordingAutoStart());
+
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped');
+
+		$this->service->setRecordingAutoStart($room, false);
+
+		$this->assertFalse($room->isRecordingAutoStart());
+		$this->assertSame(0, $room->getAttributes() & RoomAttributes::RECORDING_AUTO_START->value);
+	}
+
+	public function testSetRecordingAutoStartIsNoopWhenUnchanged(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::RECORDING_AUTO_START->value);
+
+		$this->dispatcher->expects($this->never())
+			->method('dispatchTyped');
+
+		$this->service->setRecordingAutoStart($room, true);
+
+		$this->assertTrue($room->isRecordingAutoStart());
+	}
+
 	public function testSetSIPEnabledThrowsForClassifiedRoom(): void {
 		$room = $this->createRoomWithAttributes(RoomAttributes::CLASSIFIED->value);
 		$this->assertTrue($room->isClassified());

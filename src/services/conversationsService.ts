@@ -358,6 +358,18 @@ async function setRecordingConsent(token: string, recordingConsent: setConversat
 }
 
 /**
+ * Change whether a recording starts automatically when a moderator joins the call
+ *
+ * @param token The token of the conversation to be modified
+ * @param recordingAutoStart Whether recording should start automatically
+ */
+async function setRecordingAutoStart(token: string, recordingAutoStart: boolean): Promise<void> {
+	await axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/recording-auto-start', { token }), {
+		recordingAutoStart,
+	})
+}
+
+/**
  * Change the lobby state
  *
  * @param token The token of the conversation to be modified
@@ -487,6 +499,7 @@ export {
 	setMessageExpiration,
 	setNotificationCalls,
 	setNotificationLevel,
+	setRecordingAutoStart,
 	setRecordingConsent,
 	setSIPEnabled,
 	unarchiveConversation,
