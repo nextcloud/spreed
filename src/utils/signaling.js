@@ -611,6 +611,19 @@ Signaling.Internal.prototype._joinCallSuccess = function(token) {
 }
 
 /**
+ * Minimum delay between two signaling reconnects triggered by a failed request,
+ * so that a burst of failures rebuilds the socket only once.
+ */
+const REQUEST_ERROR_RECONNECT_DEBOUNCE_MS = 10000
+
+/**
+ * Id of the axios interceptor watching for connection-level request failures.
+ * Only one signaling connection is active at a time, so the previous one is
+ * ejected before a new connection registers its own.
+ */
+let requestErrorInterceptorId = null
+
+/**
  * @param {object} settings The signaling settings
  * @param {string|string[]} urls The url of the signaling server
  */
@@ -641,6 +654,36 @@ function Standalone(settings, urls) {
 	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
+
+	// Reconnect immediately when connectivity comes back instead of sitting out
+	// a backoff that was chosen while the network was still down. Without this
+	// the client can stay idle for up to 24s after the network is healthy again.
+	this.handleOnline = function() {
+		if (this.connected || this.socket) {
+			return
+		}
+		console.info('Network is back online, reconnecting to the signaling server without waiting for the backoff')
+		this.resetReconnectBackoff()
+		if (this.reconnectTimer) {
+			window.clearTimeout(this.reconnectTimer)
+			this.reconnectTimer = null
+		}
+		this.connect()
+	}.bind(this)
+	window.addEventListener('online', this.handleOnline)
+
+	// A request that never reaches the server means the route to it is gone.
+	// The signaling socket keeps reporting itself as open for a long time in
+	// that situation (~55s were measured before the browser closed it), so use
+	// the failed request as an early warning and rebuild the socket at once.
+	if (requestErrorInterceptorId !== null) {
+		axios.interceptors.response.eject(requestErrorInterceptorId)
+	}
+	requestErrorInterceptorId = axios.interceptors.response.use(null, (error) => {
+		this.handleRequestNetworkError(error)
+		return Promise.reject(error)
+	})
+
 	this.connect()
 	Signaling.Base.prototype._trigger.call(this, 'settingsUpdated', [settings])
 }
@@ -648,6 +691,57 @@ function Standalone(settings, urls) {
 Standalone.prototype = new Signaling.Base()
 Standalone.prototype.constructor = Standalone
 Signaling.Standalone = Standalone
+
+/**
+ * Reset the reconnect backoff to its initial value.
+ */
+Signaling.Standalone.prototype.resetReconnectBackoff = function() {
+	this.reconnectIntervalMs = this.initialReconnectIntervalMs
+}
+
+/**
+ * Rebuild the signaling connection when a request could not reach the server.
+ *
+ * Deliberately conservative: a healthy connection must not be torn down because
+ * of an unrelated or merely unsuccessful request.
+ *
+ * @param {object} error The axios error of the failed request
+ */
+Signaling.Standalone.prototype.handleRequestNetworkError = function(error) {
+	// A server that answered, whatever the status, proves the route is fine,
+	// and a cancelled or timed out request says nothing about connectivity.
+	if (isCancel(error) || error?.response || error?.code === 'ECONNABORTED') {
+		return
+	}
+
+	// While disconnected the reconnect logic is already running
+	if (!this.connected || !this.socket) {
+		return
+	}
+
+	// Requests to other hosts say nothing about our own server
+	const url = error?.config?.url
+	if (!url) {
+		return
+	}
+	try {
+		if (new URL(url, window.location.href).origin !== window.location.origin) {
+			return
+		}
+	} catch (exception) {
+		return
+	}
+
+	const now = Date.now()
+	if (this.lastRequestErrorReconnect && (now - this.lastRequestErrorReconnect) < REQUEST_ERROR_RECONNECT_DEBOUNCE_MS) {
+		return
+	}
+	this.lastRequestErrorReconnect = now
+
+	console.info('A request did not reach the server, rebuilding the signaling connection instead of waiting for the socket to time out')
+	this.resetReconnectBackoff()
+	this.reconnect()
+}
 
 Signaling.Standalone.prototype.reconnect = function() {
 	if (this.reconnectTimer) {
@@ -877,6 +971,14 @@ Signaling.Standalone.prototype.sendBye = function() {
 
 Signaling.Standalone.prototype.disconnect = function() {
 	this.sendBye()
+	if (this.handleOnline) {
+		window.removeEventListener('online', this.handleOnline)
+		this.handleOnline = null
+	}
+	if (requestErrorInterceptorId !== null) {
+		axios.interceptors.response.eject(requestErrorInterceptorId)
+		requestErrorInterceptorId = null
+	}
 	if (this.socket) {
 		this.socket.close()
 		this.socket = null
