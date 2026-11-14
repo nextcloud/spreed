@@ -516,13 +516,16 @@ class ChatManager {
 			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 			$this->dispatcher->dispatchTyped($event);
 		} catch (NotFoundException) {
-		}
-		$this->cache->remove($chat->getToken());
-		if ($threadId !== Thread::THREAD_NONE) {
-			$this->cache->remove($chat->getToken() . '/' . $threadId);
-		}
-		if ($shouldFlush) {
-			$this->notificationManager->flush();
+		} finally {
+			// The message is committed at this point, so cache invalidation and
+			// the deferred notifications must happen even when a listener throws.
+			$this->cache->remove($chat->getToken());
+			if ($threadId !== Thread::THREAD_NONE) {
+				$this->cache->remove($chat->getToken() . '/' . $threadId);
+			}
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
 		}
 
 		return $comment;

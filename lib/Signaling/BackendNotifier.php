@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use OC\Http\Client\Response;
@@ -25,6 +26,28 @@ use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class BackendNotifier {
+	/**
+	 * Timeout for establishing the TCP connection, in seconds.
+	 */
+	private const CONNECT_TIMEOUT = 5;
+
+	/**
+	 * Overall timeout for a single request, in seconds. Without it a signaling
+	 * server that accepts the connection but never answers blocks the request
+	 * for the HTTP client's default timeout on every attempt.
+	 */
+	private const REQUEST_TIMEOUT = 10;
+
+	/**
+	 * Delay between two attempts, in microseconds, multiplied by the attempt
+	 * number.
+	 */
+	private const RETRY_BACKOFF = 100_000;
+
+	/**
+	 * Number of attempts for transient failures.
+	 */
+	private const MAX_RETRIES = 3;
 
 	public function __construct(
 		private readonly Config $config,
@@ -49,12 +72,7 @@ class BackendNotifier {
 	 * @return ?IResponse
 	 * @throws \Exception
 	 */
-	protected function doRequest(string $url, array $params, int $retries = 3): ?IResponse {
-		if (defined('PHPUNIT_RUN')) {
-			// Don't perform network requests when running tests.
-			return null;
-		}
-
+	protected function doRequest(string $url, array $params, int $retries = self::MAX_RETRIES): ?IResponse {
 		$client = $this->clientService->newClient();
 		try {
 			$response = $client->post($url, $params);
@@ -70,24 +88,25 @@ class BackendNotifier {
 			}
 
 			return $response;
-		} catch (ConnectException $e) {
+		} catch (ConnectException|ServerException $e) {
 			if ($retries > 1) {
 				$this->logger->error('Failed to send message to signaling server, ' . $retries . ' retries left!', ['exception' => $e]);
+				usleep((self::MAX_RETRIES - $retries + 1) * self::RETRY_BACKOFF);
 				return $this->doRequest($url, $params, $retries - 1);
 			}
 
 			$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
-			throw $e;
-		} catch (ServerException $e) {
-			if ($retries > 1) {
-				$this->logger->error('Failed to send message to signaling server, ' . $retries . ' retries left!', ['exception' => $e]);
-				return $this->doRequest($url, $params, $retries - 1);
-			}
-
-			$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
-			if ($e->hasResponse()) {
+			if ($e instanceof ServerException && $e->hasResponse()) {
 				return new Response($e->getResponse());
 			}
+			throw $e;
+		} catch (ClientException $e) {
+			// 4xx responses (wrong secret, 413, …) are not transient, so
+			// retrying them only delays the request without any chance of success.
+			$this->logger->error('Signaling server rejected the request', [
+				'exception' => $e,
+				'status' => $e->getResponse()->getStatusCode(),
+			]);
 			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);
@@ -140,7 +159,8 @@ class BackendNotifier {
 		$params = [
 			'headers' => $headers,
 			'body' => $body,
-			'connect_timeout' => 5,
+			'connect_timeout' => self::CONNECT_TIMEOUT,
+			'timeout' => self::REQUEST_TIMEOUT,
 			'nextcloud' => [
 				'allow_local_address' => true,
 			],
