@@ -1315,6 +1315,7 @@ OC.L10N.register(
     "Cancel quote" : "إلغاء التعليق",
     "24 hours" : "24 ساعة",
     "7 days" : "7 أيام",
+    "Expires" : "تنتهي صلاحيته فى",
     "Clear reminder – {timeLocale}" : "إمحُ التذكير – {timeLocale}",
     "Edited by {actor}" : "تمّ تحريرها من قِبَل {actor}",
     "Message text copied to clipboard" : "تمّ نسخ الرسالة النصّية إلى الحافظة",

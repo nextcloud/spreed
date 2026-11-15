@@ -1622,7 +1622,7 @@ OC.L10N.register(
     "7 days" : "7 Tage",
     "30 days" : "30 Tage",
     "Until unpin" : "Bis zum Ablösen",
-    "Expires" : "Ablaufdatum",
+    "Expires" : "Läuft ab am",
     "Clear reminder – {timeLocale}" : "Erinnerung löschen – {timeLocale}",
     "Edited by {actor}" : "Bearbeitet von {actor}",
     "Pinned by you" : "Angeheftet von Ihnen",

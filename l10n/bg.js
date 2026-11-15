@@ -964,6 +964,7 @@ OC.L10N.register(
     "Cancel quote" : "Отказ на офертата",
     "24 hours" : "24 часа",
     "7 days" : "7 дни",
+    "Expires" : "Изтича",
     "Clear reminder – {timeLocale}" : "Премахни напомнянето - {timeLocale}",
     "Add a reaction to this message" : "Добавяне на реакция към това съобщение",
     "Reply privately" : "Отговаряне на лично ",
