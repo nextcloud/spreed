@@ -297,6 +297,26 @@ class ChatManagerTest extends TestCase {
 		$this->assertCommentEquals($commentExpected, $return);
 	}
 
+	public function testSendMessageAsFlowBotUpdatesLastMessage(): void {
+		$creationDateTime = new \DateTime();
+		$comment = $this->newCommentFromArray([
+			'actorType' => Attendee::ACTOR_BOTS,
+			'actorId' => 'participant1',
+			'creationDateTime' => $creationDateTime,
+			'message' => 'message',
+		]);
+		$this->commentsManager->method('create')->willReturn($comment);
+
+		$chat = $this->createMock(Room::class);
+		$chat->method('getId')->willReturn(1234);
+
+		$this->roomService->expects($this->once())
+			->method('setLastMessage')
+			->with($chat, $comment);
+
+		$this->chatManager->sendMessage($chat, null, Attendee::ACTOR_BOTS, 'participant1', 'message', $creationDateTime);
+	}
+
 	public function testGetHistory(): void {
 		$offset = 1;
 		$limit = 42;

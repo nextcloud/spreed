@@ -481,13 +481,7 @@ class ChatManager {
 			}
 
 			// Update last_message
-			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
-				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
-				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
-				$this->roomService->setLastMessage($chat, $comment);
-			} else {
-				$this->roomService->setLastActivity($chat, $comment->getCreationDateTime());
-			}
+			$this->roomService->setLastMessage($chat, $comment);
 
 			$alreadyNotifiedUsers = [];
 			$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($comment);
