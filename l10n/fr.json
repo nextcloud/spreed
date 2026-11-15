@@ -316,6 +316,7 @@
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} was ended, as it reached the maximum call duration (Duration {duration})" : "L'appel avec {user1}, {user2}, {user3}, {user4} et {user5} a pris fin, car il a atteint la durée maximale (Durée {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} ended (Duration {duration})" : "L'appel avec {user1}, {user2}, {user3}, {user4} et {user5} a pris fin (Durée {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} a mis fin à l'appel avec {user1}, {user2}, {user3}, {user4} et {user5} (Durée {duration})",
+    "Message in private conversation" : "Message dans une conversation privée",
     "Message of {user} in {conversation}" : "Message de {user} dans {conversation}",
     "Message of {user}" : "Message de {user}",
     "Message of a deleted user in {conversation}" : "Message d'un utilisateur supprimé dans {conversation}",
