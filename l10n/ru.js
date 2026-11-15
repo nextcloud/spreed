@@ -1622,7 +1622,7 @@ OC.L10N.register(
     "7 days" : "7 дней",
     "30 days" : "30 дней",
     "Until unpin" : "До открепления",
-    "Expires" : "Истекает",
+    "Expires" : "Удаление",
     "Clear reminder – {timeLocale}" : "Удалить напоминание – {timeLocale}",
     "Edited by {actor}" : "Изменено {actor}",
     "Pinned by you" : "Закреплено вами",
