@@ -142,6 +142,7 @@ class Capabilities implements IPublicCapability {
 		'promote-demote-owner',
 		'matrix-rooms',
 		'mute-conversations',
+		'federation-signaling-auth',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -181,6 +182,7 @@ class Capabilities implements IPublicCapability {
 		'classified-conversations',
 		'announcement-preset',
 		'matrix-rooms',
+		'federation-signaling-auth',
 	];
 
 	public const LOCAL_CONFIGS = [

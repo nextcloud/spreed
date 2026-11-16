@@ -373,8 +373,14 @@ class SignalingController extends OCSController {
 		return [
 			'server' => $data['server'],
 			'nextcloudServer' => $room->getRemoteServer(),
+			'joinAuthParams' => [
+				'token' => $this->talkConfig->getFederationSignalingAuthTicket(
+					$data['server'],
+					$room->getRemoteServer(),
+				),
+			],
 			'helloAuthParams' => [
-				'token' => $data['helloAuthParams']['2.0']['token'],
+				'token' => $data['helloAuthParams']['2.0']['token'] ?? '',
 			],
 			'roomId' => $room->getRemoteToken(),
 		];
