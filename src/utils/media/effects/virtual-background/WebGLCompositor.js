@@ -6,6 +6,16 @@
 // @flow
 
 /**
+ * Window radius of the guided filter, in mask pixels.
+ * Larger value - smoother mask over a wider area. Low GPU impact.
+ */
+const GUIDED_RADIUS = 2
+/**
+ * Regularization of the guided filter.
+ * Smaller value - mask edges follow the frame edges more closely.
+ */
+const GUIDED_EPS = 0.001
+/**
  * Number of horizontal + vertical blur iterations applied.
  * Larger value - stronger blur effect. Low GPU impact.
  */
@@ -159,6 +169,71 @@ export default class WebGLCompositor {
 			outColor = vec4(mix(previousVal, newVal, k), 0.0, 0.0, 1.0);
 		}`
 
+		// --- Guided filter shaders (fast guided filter at mask resolution) ---
+		// Separate programs, not uniform branches: ANGLE on D3D flattens branches
+		// with texture() inside, so every pixel would run all of them.
+		const guidedStatsFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_inputFrame;
+		uniform sampler2D u_segmentationMask;
+
+		in vec2 v_texCoord;
+		out vec4 outColor;
+
+		void main() {
+			float i = dot(texture(u_inputFrame, v_texCoord).rgb, vec3(0.299, 0.587, 0.114));
+			float p = texture(u_segmentationMask, v_texCoord).r;
+			outColor = vec4(i, p, i * p, i * i);
+		}`
+
+		const boxFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_input;
+		uniform ivec2 u_direction;
+
+		out vec4 outColor;
+
+		void main() {
+			ivec2 p = ivec2(gl_FragCoord.xy);
+			ivec2 last = textureSize(u_input, 0) - 1;
+			vec4 sum = vec4(0.0);
+			for (int k = -${GUIDED_RADIUS}; k <= ${GUIDED_RADIUS}; k++) {
+				sum += texelFetch(u_input, clamp(p + u_direction * k, ivec2(0), last), 0);
+			}
+			outColor = sum / ${2 * GUIDED_RADIUS + 1}.0;
+		}`
+
+		const guidedCoefficientsFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_input;
+		uniform float u_eps;
+
+		out vec4 outColor;
+
+		void main() {
+			vec4 m = texelFetch(u_input, ivec2(gl_FragCoord.xy), 0);
+			float a = (m.z - m.x * m.y) / (m.w - m.x * m.x + u_eps);
+			outColor = vec4(a, m.y - a * m.x, 0.0, 0.0);
+		}`
+
+		const guidedApplyFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_inputFrame;
+		uniform sampler2D u_coefficients;
+
+		in vec2 v_texCoord;
+		out vec4 outColor;
+
+		void main() {
+			float i = dot(texture(u_inputFrame, v_texCoord).rgb, vec3(0.299, 0.587, 0.114));
+			vec2 ab = texture(u_coefficients, v_texCoord).xy;
+			outColor = vec4(vec3(0.0), clamp(ab.x * i + ab.y, 0.0, 1.0));
+		}`
+
 		// --- Gaussian Blur Fragment Shader ---
 		const blurFS = `#version 300 es
 		precision highp float;
@@ -265,6 +340,15 @@ export default class WebGLCompositor {
 		this.progBlend = this._linkProgram(gl, vsOutput, blendFS)
 		this.progHUD = this._linkProgram(gl, hudVS, hudFS)
 
+		// The guided filter needs float render targets, the bilateral filter is the fallback
+		this.useGuidedFilter = !!gl.getExtension('EXT_color_buffer_float')
+		if (this.useGuidedFilter) {
+			this.progGuidedStats = this._linkProgram(gl, vs, guidedStatsFS)
+			this.progBox = this._linkProgram(gl, vs, boxFS)
+			this.progGuidedCoefficients = this._linkProgram(gl, vs, guidedCoefficientsFS)
+			this.progGuidedApply = this._linkProgram(gl, vs, guidedApplyFS)
+		}
+
 		// --- Setup vertex buffers ---
 		this.vertexArray = gl.createVertexArray()
 		gl.bindVertexArray(this.vertexArray)
@@ -297,6 +381,13 @@ export default class WebGLCompositor {
 		this.fboMask = gl.createFramebuffer()
 		this.fboBlur1 = gl.createFramebuffer()
 		this.fboBlur2 = gl.createFramebuffer()
+
+		// --- Guided filter resources, allocated at mask size on first use ---
+		this.texGuidedA = this._makeTex()
+		this.texGuidedB = this._makeTex()
+		this.fboGuided = gl.createFramebuffer()
+		this.guidedWidth = 0
+		this.guidedHeight = 0
 
 		// --- Default parameters ---
 		this.coverage = [0.45, 0.75]
@@ -510,6 +601,85 @@ export default class WebGLCompositor {
 		gl.bindTexture(gl.TEXTURE_2D, previous)
 
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
+	 * Run one guided filter pass into a texture of the bound framebuffer.
+	 *
+	 * @private
+	 * @param {WebGLProgram} prog - Shader program.
+	 * @param {WebGLTexture} target - Texture to render into.
+	 * @param {object} textures - Sampler uniform names mapped to textures.
+	 * @param {Function} [setUniforms] - Sets further uniforms.
+	 * @return {void}
+	 */
+	_guidedPass(prog, target, textures, setUniforms) {
+		const gl = this.gl
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, target, 0)
+		gl.useProgram(prog)
+		this._setupVertexAttributes(prog)
+		Object.entries(textures).forEach(([name, texture], unit) => {
+			gl.activeTexture(gl.TEXTURE0 + unit)
+			gl.bindTexture(gl.TEXTURE_2D, texture)
+			gl.uniform1i(gl.getUniformLocation(prog, name), unit)
+		})
+		setUniforms?.()
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
+	 * Box mean of a texture in place, horizontal then vertical.
+	 *
+	 * @private
+	 * @param {WebGLTexture} texture - Texture to filter.
+	 * @param {WebGLTexture} temp - Texture of the same size for the first pass.
+	 * @return {void}
+	 */
+	_applyBoxMean(texture, temp) {
+		const gl = this.gl
+		const direction = gl.getUniformLocation(this.progBox, 'u_direction')
+		this._guidedPass(this.progBox, temp, { u_input: texture }, () => gl.uniform2i(direction, 1, 0))
+		this._guidedPass(this.progBox, texture, { u_input: temp }, () => gl.uniform2i(direction, 0, 1))
+	}
+
+	/**
+	 * Apply the fast guided filter (He and Sun, 2015) to the mask: linear
+	 * coefficients of the frame luma at mask size, applied at output size.
+	 *
+	 * @private
+	 * @param {number} width - Output width.
+	 * @param {number} height - Output height.
+	 * @param {number} maskWidth - Mask width.
+	 * @param {number} maskHeight - Mask height.
+	 * @return {void}
+	 */
+	_applyGuidedFilter(width, height, maskWidth, maskHeight) {
+		const gl = this.gl
+
+		if (this.guidedWidth !== maskWidth || this.guidedHeight !== maskHeight) {
+			for (const texture of [this.texGuidedA, this.texGuidedB]) {
+				gl.bindTexture(gl.TEXTURE_2D, texture)
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, maskWidth, maskHeight, 0, gl.RGBA, gl.HALF_FLOAT, null)
+			}
+			this.guidedWidth = maskWidth
+			this.guidedHeight = maskHeight
+		}
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboGuided)
+		gl.viewport(0, 0, maskWidth, maskHeight)
+
+		// Means of luma, mask, their product and luma squared
+		this._guidedPass(this.progGuidedStats, this.texGuidedA, { u_inputFrame: this.texFrame, u_segmentationMask: this.texMaskSmoothed[this._smoothIndex] })
+		this._applyBoxMean(this.texGuidedA, this.texGuidedB)
+
+		// Means of the coefficients a and b
+		const eps = gl.getUniformLocation(this.progGuidedCoefficients, 'u_eps')
+		this._guidedPass(this.progGuidedCoefficients, this.texGuidedB, { u_input: this.texGuidedA }, () => gl.uniform1f(eps, GUIDED_EPS))
+		this._applyBoxMean(this.texGuidedB, this.texGuidedA)
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboMask)
+		gl.viewport(0, 0, width, height)
+		this._guidedPass(this.progGuidedApply, this.texMaskFiltered, { u_inputFrame: this.texFrame, u_coefficients: this.texGuidedB })
 	}
 
 	/**
@@ -767,7 +937,12 @@ export default class WebGLCompositor {
 				this._applyTemporalSmoothing(mask.getAsWebGLTexture(), mask.width, mask.height)
 				this._smoothedMask = mask
 			}
-			this._applyBilateralFilter(maskW, maskH)
+			// Guided filter, or the bilateral filter as fallback
+			if (this.useGuidedFilter) {
+				this._applyGuidedFilter(maskW, maskH, mask.width, mask.height)
+			} else {
+				this._applyBilateralFilter(maskW, maskH)
+			}
 		}
 
 		// Apply multi-pass blur if in blur mode
@@ -841,11 +1016,20 @@ export default class WebGLCompositor {
 		gl.deleteProgram(this.progBlur)
 		gl.deleteProgram(this.progBlend)
 		gl.deleteProgram(this.progHUD)
+		if (this.useGuidedFilter) {
+			gl.deleteProgram(this.progGuidedStats)
+			gl.deleteProgram(this.progBox)
+			gl.deleteProgram(this.progGuidedCoefficients)
+			gl.deleteProgram(this.progGuidedApply)
+		}
 
 		// Delete framebuffers
 		gl.deleteFramebuffer(this.fboMask)
 		gl.deleteFramebuffer(this.fboBlur1)
 		gl.deleteFramebuffer(this.fboBlur2)
+		gl.deleteFramebuffer(this.fboGuided)
+		gl.deleteTexture(this.texGuidedA)
+		gl.deleteTexture(this.texGuidedB)
 
 		// Delete vertex array
 		gl.deleteVertexArray(this.vertexArray)
