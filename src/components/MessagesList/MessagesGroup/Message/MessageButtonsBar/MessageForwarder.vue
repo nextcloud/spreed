@@ -11,9 +11,10 @@
 			v-if="!showForwardedConfirmation"
 			showPostableOnly
 			allowFederation
+			multiple
 			:dialogTitle="dialogTitle"
 			:dialogSubtitle="dialogSubtitle"
-			@select="setSelectedConversationToken"
+			@select="forwardToConversations"
 			@close="handleClose" />
 
 		<!-- Second step of the flow: confirmation modal that gives the user
@@ -43,8 +44,8 @@
 
 <script>
 
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { n, t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { inject, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -99,26 +100,56 @@ export default {
 		},
 
 		dialogSubtitle() {
-			return t('spreed', 'Choose a conversation to forward the selected message.')
+			return t('spreed', 'Choose one or more conversations to forward the selected message.')
+		},
+
+		message() {
+			return this.$store.getters.message(this.token, this.id)
 		},
 	},
 
 	methods: {
 		t,
-		async setSelectedConversationToken(conversation) {
-			this.selectedConversationToken = conversation.token
-			this.selectedConversationName = conversation.displayName
-			try {
-				const response = await this.$store.dispatch('forwardMessage', {
-					targetToken: this.selectedConversationToken,
-					messageToBeForwarded: this.$store.getters.message(this.token, this.id),
+		/**
+		 * Forward the message to each of the selected conversations
+		 *
+		 * @param {Array<object>} conversations the selected conversations
+		 */
+		async forwardToConversations(conversations) {
+			const results = await Promise.allSettled(conversations.map((conversation) => {
+				return this.$store.dispatch('forwardMessage', {
+					targetToken: conversation.token,
+					messageToBeForwarded: this.message,
 				})
-				this.forwardedMessageID = response.data.ocs.data.id
-				this.showForwardedConfirmation = true
-			} catch (error) {
-				console.error('Error while forwarding message', error)
+			}))
+
+			const failedConversations = conversations.filter((conversation, index) => results[index].status === 'rejected')
+			results.filter((result) => result.status === 'rejected')
+				.forEach((result) => console.error('Error while forwarding message', result.reason))
+
+			if (failedConversations.length === conversations.length) {
 				showError(t('spreed', 'Error while forwarding message'))
+				return
 			}
+
+			if (failedConversations.length > 0) {
+				showError(t('spreed', 'The message could not be forwarded to {conversationNames}', {
+					conversationNames: failedConversations.map((conversation) => conversation.displayName).join(', '),
+				}))
+			}
+
+			if (conversations.length > 1) {
+				const forwardedCount = conversations.length - failedConversations.length
+				showSuccess(n('spreed', 'The message has been forwarded to %n conversation', 'The message has been forwarded to %n conversations', forwardedCount))
+				this.handleClose()
+				return
+			}
+
+			// Only one conversation: offer to directly open it
+			this.selectedConversationToken = conversations[0].token
+			this.selectedConversationName = conversations[0].displayName
+			this.forwardedMessageID = results[0].value.data.ocs.data.id
+			this.showForwardedConfirmation = true
 		},
 
 		openConversation() {

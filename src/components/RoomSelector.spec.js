@@ -271,6 +271,28 @@ describe('RoomSelector', () => {
 			expect(emitted[0][0]).toMatchObject(conversations[0])
 		})
 
+		it('emits select event with all selected conversations when multiple', async () => {
+			// Arrange
+			const wrapper = await mountRoomSelector({ multiple: true })
+			const items = wrapper.findAllComponents(ConversationSearchResult)
+
+			// Act: select the first three items, unselect the second one again, then submit
+			await items.at(0).vm.$emit('click', items.at(0).props('item'))
+			await items.at(1).vm.$emit('click', items.at(1).props('item'))
+			await items.at(2).vm.$emit('click', items.at(2).props('item'))
+			await items.at(1).vm.$emit('click', items.at(1).props('item'))
+			await wrapper.findComponent(NcButton).vm.$emit('click')
+
+			// Assert
+			const emitted = wrapper.emitted('select')
+			expect(emitted).toBeTruthy()
+			expect(emitted[0][0]).toHaveLength(2)
+			expect(emitted[0][0].map((conversation) => conversation.token)).toEqual([
+				items.at(0).props('item').token,
+				items.at(2).props('item').token,
+			])
+		})
+
 		it('emits close event', async () => {
 			// Arrange
 			const wrapper = await mountRoomSelector()

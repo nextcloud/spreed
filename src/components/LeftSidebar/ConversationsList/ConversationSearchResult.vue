@@ -7,7 +7,7 @@
 	<NcListItem
 		:name="item.displayName"
 		:title="item.displayName"
-		:active="item.token === selectedRoom?.token"
+		:active="isSelected"
 		:bold="exposeMessagesRef && !!item.unreadMessages"
 		:counterNumber="exposeMessagesRef ? item.unreadMessages : 0"
 		:counterType="counterType"
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { inject, ref, toRefs } from 'vue'
+import { computed, inject, ref, toRefs } from 'vue'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import ConversationIcon from './../../ConversationIcon.vue'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
@@ -78,6 +78,9 @@ export default {
 	setup(props) {
 		const { item } = toRefs(props)
 		const selectedRoom = inject('selectedRoom', null)
+		const selectedRooms = inject('selectedRooms', ref([]))
+		const isSelected = computed(() => item.value.token === selectedRoom?.value?.token
+			|| selectedRooms.value.some((room) => room.token === item.value.token))
 		const exposeDescriptionRef = inject('exposeDescription', ref(false))
 		const exposeMessagesRef = inject('exposeMessages', ref(false))
 		const { counterType, conversationInformation } = useConversationInfo({
@@ -87,7 +90,7 @@ export default {
 		})
 
 		return {
-			selectedRoom,
+			isSelected,
 			counterType,
 			conversationInformation,
 			exposeMessagesRef,

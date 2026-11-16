@@ -43,16 +43,16 @@
 				v-if="!loading && availableRooms.length > 0"
 				class="selector__action"
 				variant="primary"
-				:disabled="!selectedRoom"
+				:disabled="!hasSelection"
 				@click="onSubmit">
-				{{ t('spreed', 'Select conversation') }}
+				{{ submitLabel }}
 			</NcButton>
 		</template>
 	</NcDialog>
 </template>
 
 <script>
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { provide, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
@@ -121,6 +121,15 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Whether several conversations can be selected.
+		 * The "select" event then provides an array of conversations.
+		 */
+		multiple: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['close', 'select'],
@@ -129,10 +138,13 @@ export default {
 		const currentRoom = ref(props.isPlugin ? null : useGetToken().value)
 		const selectedRoom = ref(null)
 		provide('selectedRoom', selectedRoom)
+		const selectedRooms = ref([])
+		provide('selectedRooms', selectedRooms)
 
 		return {
 			currentRoom,
 			selectedRoom,
+			selectedRooms,
 		}
 	},
 
@@ -152,6 +164,17 @@ export default {
 				&& (!this.currentRoom || this.currentRoom !== room.token)
 				&& (!this.showPostableOnly || room.readOnly === CONVERSATION.STATE.READ_WRITE)
 				&& (!this.searchText || room.displayName.toLowerCase().includes(this.searchText.toLowerCase())))
+		},
+
+		hasSelection() {
+			return this.multiple ? this.selectedRooms.length > 0 : !!this.selectedRoom
+		},
+
+		submitLabel() {
+			if (this.multiple && this.selectedRooms.length > 1) {
+				return n('spreed', 'Select %n conversation', 'Select %n conversations', this.selectedRooms.length)
+			}
+			return t('spreed', 'Select conversation')
 		},
 
 		noMatchFoundTitle() {
@@ -205,11 +228,21 @@ export default {
 		},
 
 		onSelect(item) {
-			this.selectedRoom = item
+			if (!this.multiple) {
+				this.selectedRoom = item
+				return
+			}
+
+			// Toggle the conversation in the selection
+			if (this.selectedRooms.some((room) => room.token === item.token)) {
+				this.selectedRooms = this.selectedRooms.filter((room) => room.token !== item.token)
+			} else {
+				this.selectedRooms = [...this.selectedRooms, item]
+			}
 		},
 
 		onSubmit() {
-			this.$emit('select', this.selectedRoom)
+			this.$emit('select', this.multiple ? this.selectedRooms : this.selectedRoom)
 		},
 	},
 }
