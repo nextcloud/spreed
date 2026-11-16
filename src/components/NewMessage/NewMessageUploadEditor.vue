@@ -8,11 +8,11 @@
 		<div v-if="showImageQuality || showSharePermission" class="upload-editor__options">
 			<NcActions
 				v-if="showSharePermission"
-				:variant="uploadStore.allowUpdate ? 'secondary' : 'tertiary'"
+				:variant="uploadStore.allowEdit ? 'secondary' : 'tertiary'"
 				size="small"
 				:menuName="sharePermissionLabel">
 				<template #icon>
-					<IconPencilOutline v-if="uploadStore.allowUpdate" :size="20" />
+					<IconPencilOutline v-if="uploadStore.allowEdit" :size="20" />
 					<IconPencilOffOutline v-else :size="20" />
 				</template>
 				<NcActionButton
@@ -39,11 +39,11 @@
 
 			<NcActions
 				v-if="showImageQuality"
-				:variant="uploadStore.skipCompression ? 'secondary' : 'tertiary'"
+				:variant="uploadStore.originalQuality ? 'secondary' : 'tertiary'"
 				size="small"
 				:menuName="imageQualityLabel">
 				<template #icon>
-					<IconHighDefinition v-if="uploadStore.skipCompression" :size="20" />
+					<IconHighDefinition v-if="uploadStore.originalQuality" :size="20" />
 					<IconStandardDefinition v-else :size="20" />
 				</template>
 				<NcActionButton
@@ -202,32 +202,32 @@ export default {
 
 		imageQuality: {
 			get() {
-				return this.uploadStore.skipCompression ? 'high' : 'standard'
+				return this.uploadStore.originalQuality ? 'high' : 'standard'
 			},
 
 			set(value) {
-				this.uploadStore.updateSkipCompression(value === 'high')
+				this.uploadStore.updateOriginalQuality(value === 'high')
 			},
 		},
 
 		imageQualityLabel() {
-			return this.uploadStore.skipCompression
+			return this.uploadStore.originalQuality
 				? this.labels.highDefinition
 				: this.labels.standardDefinition
 		},
 
 		sharePermission: {
 			get() {
-				return this.uploadStore.allowUpdate ? 'editable' : 'view-only'
+				return this.uploadStore.allowEdit ? 'editable' : 'view-only'
 			},
 
 			set(value) {
-				this.uploadStore.updateAllowUpdate(value === 'editable')
+				this.uploadStore.updateAllowEdit(value === 'editable')
 			},
 		},
 
 		sharePermissionLabel() {
-			return this.uploadStore.allowUpdate
+			return this.uploadStore.allowEdit
 				? this.labels.editable
 				: this.labels.viewOnly
 		},
