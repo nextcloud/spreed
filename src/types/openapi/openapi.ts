@@ -943,7 +943,7 @@ export type paths = {
          * Get available languages for live translations
          * @description The returned array provides a list of origin languages ("originLanguages") and a list of target languages ("targetLanguages"). Any origin language can be translated to any target language.
          *     The origin language list can contain "detect_language" as a special value indicating auto-detection support.
-         *     translations are not supported.
+         *     or translations are not supported.
          */
         get: operations["live_transcription-get-available-translation-languages"];
         put?: never;
@@ -8553,7 +8553,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The external app "live_transcription" is not available */
+            /** @description The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8608,7 +8608,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The external app "live_transcription" is not available or */
+            /** @description The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available */
             400: {
                 headers: {
                     [name: string]: unknown;

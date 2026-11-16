@@ -136,6 +136,7 @@ class Config implements IAppConfig {
 	public const string SIP_BRIDGE_SHARED_SECRET = 'sip_bridge_shared_secret';
 	public const string SIP_BRIDGE_DIALOUT = 'sip_bridge_dialout';
 	public const string SIP_DIALIN_DEFAULT = 'sip_dialin_default';
+	public const string LIVE_TRANSCRIPTION_APP_ID = 'live_transcription_app_id';
 
 	/**
 	 * 1. Call recording, …
