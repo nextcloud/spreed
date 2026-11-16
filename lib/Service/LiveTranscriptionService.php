@@ -10,6 +10,7 @@ namespace OCA\Talk\Service;
 
 use OCA\AppAPI\PublicFunctions;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\LiveTranscriptionAppAPIException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppNotEnabledException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppResponseException;
@@ -17,6 +18,7 @@ use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\L10N\IFactory;
 use OCP\Server;
 use Psr\Container\ContainerExceptionInterface;
@@ -27,6 +29,7 @@ class LiveTranscriptionService {
 
 	public function __construct(
 		private readonly ?string $userId,
+		private readonly IAppConfig $appConfig,
 		private readonly IAppManager $appManager,
 		private readonly IFactory $l10nFactory,
 		private readonly RoomService $roomService,
@@ -43,7 +46,7 @@ class LiveTranscriptionService {
 			return false;
 		}
 
-		$exApp = $appApiPublicFunctions->getExApp('live_transcription');
+		$exApp = $appApiPublicFunctions->getExApp($this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID));
 		if ($exApp === null || !$exApp['enabled']) {
 			return false;
 		}
@@ -72,8 +75,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -95,8 +97,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -121,8 +122,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -142,8 +142,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -154,7 +153,7 @@ class LiveTranscriptionService {
 	public function getAvailableLanguages(): array {
 		$languages = $this->requestToExAppLiveTranscription('GET', '/api/v1/languages');
 		if ($languages === null) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: list of available languages is null');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: list of available languages is null');
 
 			throw new LiveTranscriptionAppAPIException('response-null-language-list');
 		}
@@ -164,8 +163,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -203,8 +201,7 @@ class LiveTranscriptionService {
 	 * indicating auto-detection support.
 	 *
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -227,19 +224,19 @@ class LiveTranscriptionService {
 		$translationLanguages = $capabilities['live_translation']['supported_translation_languages'];
 
 		if (!is_array($translationLanguages['origin_languages'])) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: list of translation origin languages not found');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: list of translation origin languages not found');
 
 			throw new LiveTranscriptionAppAPIException('response-no-origin-language-list');
 		}
 
 		if (!is_array($translationLanguages['target_languages'])) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: list of translation target languages not found');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: list of translation target languages not found');
 
 			throw new LiveTranscriptionAppAPIException('response-no-target-language-list');
 		}
 
 		if (count($translationLanguages['target_languages']) === 0) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: empty list of translation target languages');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: empty list of translation target languages');
 
 			throw new LiveTranscriptionAppAPIException('response-empty-language-list');
 		}
@@ -283,8 +280,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -315,17 +311,16 @@ class LiveTranscriptionService {
 	}
 
 	/**
-	 * Returns the capabilities for the live_transcription app.
+	 * Returns the capabilities for the live transcription external app.
 	 *
-	 * If the installed live_transcription app version does not support yet
+	 * If the installed live transcription app version does not support yet
 	 * capabilities an empty array will be returned. On the other hand, if the
 	 * app is expected to provide capabilities but they are not returned
 	 * LiveTranscriptionAppApiException is thrown instead.
 	 *
 	 * @return array an array with the capabilities.
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -345,13 +340,13 @@ class LiveTranscriptionService {
 		}
 
 		if (!is_array($capabilities)) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: capabilities is not an array');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: capabilities is not an array');
 
 			throw new LiveTranscriptionAppAPIException('response-capabilities-not-array');
 		}
 
 		if (!isset($capabilities['live_transcription'])) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: wrong capabilities structure');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: wrong capabilities structure');
 
 			throw new LiveTranscriptionAppAPIException('response-capabilities-wrong-structure');
 		}
@@ -361,8 +356,7 @@ class LiveTranscriptionService {
 
 	/**
 	 * @throws LiveTranscriptionAppNotEnabledException if the external app
-	 *                                                 "live_transcription" is
-	 *                                                 not enabled.
+	 *                                                 is not enabled.
 	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
 	 *                                          to the app or the response could
 	 *                                          not be processed.
@@ -384,13 +378,13 @@ class LiveTranscriptionService {
 		}
 
 		if (!$this->isLiveTranscriptionAppEnabled($appApiPublicFunctions)) {
-			$this->logger->error('live_transcription (ExApp) is not enabled');
+			$this->logger->error('live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) is not enabled');
 
 			throw new LiveTranscriptionAppNotEnabledException('live-transcription-app');
 		}
 
 		$response = $appApiPublicFunctions->exAppRequest(
-			'live_transcription',
+			$this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID),
 			$route,
 			$this->userId,
 			$method,
@@ -398,7 +392,7 @@ class LiveTranscriptionService {
 		);
 
 		if (is_array($response) && isset($response['error'])) {
-			$this->logger->error('Request to live_transcription (ExApp) failed: ' . $response['error']);
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: ' . $response['error']);
 
 			throw new LiveTranscriptionAppAPIException('response-error');
 		}
@@ -406,7 +400,7 @@ class LiveTranscriptionService {
 		if (is_array($response)) {
 			// AppApi only uses array responses for errors, so this should never
 			// happen.
-			$this->logger->error('Request to live_transcription (ExApp) failed: response is not a valid response object');
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: response is not a valid response object');
 
 			throw new LiveTranscriptionAppAPIException('response-invalid-object');
 		}
@@ -415,7 +409,7 @@ class LiveTranscriptionService {
 		if (str_contains((string)$responseContentType, 'application/json')) {
 			$body = $response->getBody();
 			if (!is_string($body)) {
-				$this->logger->error('Request to live_transcription (ExApp) failed: response body is not a string, but content type is application/json', ['response' => $response]);
+				$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: response body is not a string, but content type is application/json', ['response' => $response]);
 
 				throw new LiveTranscriptionAppAPIException('response-content-type');
 			}
@@ -426,7 +420,7 @@ class LiveTranscriptionService {
 		}
 
 		if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
-			$this->logger->error('live_transcription (ExApp) returned an error', [
+			$this->logger->error('live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) returned an error', [
 				'status-code' => $response->getStatusCode(),
 				'response' => $decodedBody,
 				'method' => $method,
