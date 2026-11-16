@@ -240,6 +240,10 @@
 * `config => conversations => unarchive` (local) - User selected mode when archived conversations are unarchived automatically (`never`, `mention` or `always`)
 * `config => conversations => tags-show-unread` (local) - User selected mode when unread conversations are shown in collapsed conversation tags (`never`, `mention` or `always`)
 
+## 25.0.9
+* `config => attachments => allow-update` (local) - Whether shared files are editable by default, until the user picks a choice in the upload editor
+* `config => attachments => skip-compression` (local) - Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor
+
 ## 26
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `config => chat => mobile-preload-chat` (local) - Whether mobile clients should preload the chat messages of conversations

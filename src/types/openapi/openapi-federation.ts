@@ -177,6 +177,10 @@ export type components = {
                     folder?: string;
                     /** @description Whether per-conversation subfolders are used for attachments */
                     "conversation-subfolders": boolean;
+                    /** @description Whether shared files are editable by default */
+                    "allow-update": boolean;
+                    /** @description Whether images are uploaded in original quality by default */
+                    "skip-compression": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */

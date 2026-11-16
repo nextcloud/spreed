@@ -239,6 +239,8 @@ PROMPT;
 				new Entry(Config::DEFAULT_ROOM_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators' . PHP_EOL . '(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags)'),
 				hash: true,
 			),
+			new AppConfigEntry(new Entry(Config::ATTACHMENTS_ALLOW_UPDATE, ValueType::BOOL, false, definition: 'Whether shared files are editable by participants by default, until the user picks a choice in the upload editor')),
+			new AppConfigEntry(new Entry(Config::ATTACHMENTS_SKIP_COMPRESSION, ValueType::BOOL, false, definition: 'Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor')),
 			new AppConfigEntry(new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: 'Whether files shared in a conversation are stored in a dedicated subfolder of the conversation inside the attachment folder')),
 			new AppConfigEntry(new Entry(Config::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location')),
 			new AppConfigEntry(new Entry(Config::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)')),

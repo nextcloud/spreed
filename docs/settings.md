@@ -72,6 +72,8 @@ Legend:
 |---|---|---|---|---|---|
 | `ai_unread_summary_batch_size` | int | `500` | No |  | Maximum number of unread messages that are summarized with AI in one request |
 | `allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to use Talk (everyone when empty) |
+| `attachments_allow_update` | bool | `false` | No |  | Whether shared files are editable by participants by default, until the user picks a choice in the upload editor |
+| `attachments_skip_compression` | bool | `false` | No |  | Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor |
 | `backgrounds_branded_for_guests` | bool | `false` | No |  | Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/` |
 | `backgrounds_default_for_users` | bool | `true` | No |  | Whether users are allowed to use the default virtual backgrounds provided by the releases |
 | `backgrounds_upload_users` | bool | `true` | No |  | Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files |

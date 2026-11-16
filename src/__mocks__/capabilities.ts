@@ -147,6 +147,8 @@ export const mockedCapabilities: Capabilities = {
 				allowed: true,
 				folder: '/Talk',
 				'conversation-subfolders': true,
+				'allow-update': false,
+				'skip-compression': false,
 			},
 			call: {
 				enabled: true,
@@ -232,6 +234,8 @@ export const mockedCapabilities: Capabilities = {
 				'allowed',
 				'folder',
 				'conversation-subfolders',
+				'allow-update',
+				'skip-compression',
 			],
 			call: [
 				'predefined-backgrounds',
