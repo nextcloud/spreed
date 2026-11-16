@@ -31,6 +31,7 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_PRESERVE_CONVERSATION = 'preserveConversation';
 	public const PROPERTY_READ_ONLY = 'readOnly';
 	public const PROPERTY_RECORDING_CONSENT = 'recordingConsent';
+	public const PROPERTY_RECORDING_AUTO_START = 'recordingAutoStart';
 	public const PROPERTY_SIP_ENABLED = 'sipEnabled';
 	public const PROPERTY_TYPE = 'type';
 
