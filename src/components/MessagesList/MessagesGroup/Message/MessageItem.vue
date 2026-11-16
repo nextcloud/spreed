@@ -494,11 +494,11 @@ export default {
 }
 
 .message--highlighted .message-body {
-	animation: highlight-animation 5s 1;
+	animation: highlight-animation 3.5s 1;
 }
 
 @keyframes highlight-animation {
-	0%, 50% { background-color: var(--message-body-hover, var(--color-background-hover)); }
+	0% { background-color: var(--color-background-selection, var(--color-background-hover)); }
 }
 
 .message-buttons-bar-wrapper {
