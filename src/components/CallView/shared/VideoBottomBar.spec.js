@@ -136,7 +136,11 @@ describe('VideoBottomBar.vue', () => {
 			})
 
 			test('component does not show indicators after video overlay is off', async () => {
-				const wrapper = mountVideoBottomBar(componentProps)
+				const wrapper = mount(VideoBottomBar, {
+					global: { plugins: [store] },
+					props: componentProps,
+					attachTo: document.body,
+				})
 				componentProps.showVideoOverlay = false
 				await wrapper.setProps(cloneDeep(componentProps))
 
@@ -144,6 +148,7 @@ describe('VideoBottomBar.vue', () => {
 				indicators.forEach((indicator) => {
 					expect(indicator.isVisible()).toBeFalsy()
 				})
+				wrapper.unmount()
 			})
 
 			test('component does not render anything when used in sidebar', async () => {
