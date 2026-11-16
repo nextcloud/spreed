@@ -155,6 +155,8 @@ PROMPT;
 			new Entry(Config::ALLOWED_GROUPS_SIP, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to enable SIP dial-in in a conversation'),
 			new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversation'),
 			new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
+			new Entry(Config::ATTACHMENTS_ALLOW_UPDATE, ValueType::BOOL, false, definition: 'Whether shared files are editable by participants by default, until the user picks a choice in the upload editor'),
+			new Entry(Config::ATTACHMENTS_SKIP_COMPRESSION, ValueType::BOOL, false, definition: 'Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor'),
 			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: ''),
 			new Entry(Config::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing tostart conversations in the right sidebar'),
 			new Entry(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled'),

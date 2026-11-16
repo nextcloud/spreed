@@ -695,6 +695,28 @@ describe('fileUploadStore', () => {
 
 	describe('upload choices', () => {
 		test('default to standard quality and view-only', () => {
+			getTalkConfig.mockReturnValue(undefined)
+			setActivePinia(createPinia())
+			uploadStore = useUploadStore()
+			getTalkConfig.mockReturnValue(true)
+
+			expect(uploadStore.skipCompression).toBe(false)
+			expect(uploadStore.allowUpdate).toBe(false)
+		})
+
+		test('fall back to the admin config when browser storage is empty', () => {
+			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'allow-update')
+			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'skip-compression')
+			expect(uploadStore.skipCompression).toBe(true)
+			expect(uploadStore.allowUpdate).toBe(true)
+		})
+
+		test('prefer browser storage over the admin config', () => {
+			BrowserStorage.setItem('skipCompression', 'false')
+			BrowserStorage.setItem('allowUpdate', 'false')
+			setActivePinia(createPinia())
+			uploadStore = useUploadStore()
+
 			expect(uploadStore.skipCompression).toBe(false)
 			expect(uploadStore.allowUpdate).toBe(false)
 		})

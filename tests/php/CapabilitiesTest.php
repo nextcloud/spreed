@@ -177,6 +177,8 @@ class CapabilitiesTest extends TestCase {
 					'attachments' => [
 						'allowed' => false,
 						'conversation-subfolders' => false,
+						'allow-update' => false,
+						'skip-compression' => false,
 					],
 					'call' => [
 						'enabled' => true,
@@ -377,6 +379,8 @@ class CapabilitiesTest extends TestCase {
 			->willReturnMap([
 				['backgrounds_default_for_users', true, true],
 				['backgrounds_upload_users', true, true],
+				['attachments_allow_update', true],
+				['attachments_skip_compression', true],
 			]);
 
 		$this->appConfig->method('getAppValueInt')
@@ -413,6 +417,8 @@ class CapabilitiesTest extends TestCase {
 					'attachments' => [
 						'allowed' => true,
 						'conversation-subfolders' => true,
+						'allow-update' => true,
+						'skip-compression' => true,
 						'folder' => '/Talk',
 					],
 					'call' => [
