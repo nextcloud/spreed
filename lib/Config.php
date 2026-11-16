@@ -59,8 +59,8 @@ class Config implements IAppConfig {
 	public const string ALLOWED_START_CALLS = 'start_calls';
 	public const string ALLOWED_START_CALLS_GROUPS = 'start_calls_groups';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
-	public const string ATTACHMENTS_ALLOW_UPDATE = 'attachments_allow_update';
-	public const string ATTACHMENTS_SKIP_COMPRESSION = 'attachments_skip_compression';
+	public const string DEFAULT_ATTACHMENTS_ALLOW_EDIT = 'default_attachments_allow_edit';
+	public const string DEFAULT_ATTACHMENTS_ORIGINAL_QUALITY = 'default_attachments_original_quality';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string CONVERSATIONS_FILES = 'conversations_files';
 	public const string CONVERSATIONS_FILES_PUBLIC_SHARES = 'conversations_files_public_shares';
