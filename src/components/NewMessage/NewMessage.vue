@@ -1113,8 +1113,8 @@ export default {
 			const payload = {
 				token: this.token,
 				uploadId: this.currentUploadId,
-				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
-				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
+				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowEdit : undefined,
+				compressImages: this.hasImages ? !this.uploadStore.originalQuality : undefined,
 			}
 
 			// TODO drop with support for Nextcloud 27 and older (EOL in 06-2024):

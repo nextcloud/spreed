@@ -280,7 +280,7 @@ export default {
 				return ''
 			}
 
-			const size = this.uploadStore.skipCompression
+			const size = this.uploadStore.originalQuality
 				? this.uploadFile.totalSize
 				: this.uploadStore.compressedFileSizes[this.referenceId] ?? this.uploadFile.totalSize
 			return size ? formatFileSize(size, true) : ''

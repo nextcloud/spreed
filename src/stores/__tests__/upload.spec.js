@@ -700,45 +700,45 @@ describe('fileUploadStore', () => {
 			uploadStore = useUploadStore()
 			getTalkConfig.mockReturnValue(true)
 
-			expect(uploadStore.skipCompression).toBe(false)
-			expect(uploadStore.allowUpdate).toBe(false)
+			expect(uploadStore.originalQuality).toBe(false)
+			expect(uploadStore.allowEdit).toBe(false)
 		})
 
 		test('fall back to the admin config when browser storage is empty', () => {
-			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'allow-update')
-			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'skip-compression')
-			expect(uploadStore.skipCompression).toBe(true)
-			expect(uploadStore.allowUpdate).toBe(true)
+			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'default-allow-edit')
+			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'default-original-quality')
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
 		})
 
 		test('prefer browser storage over the admin config', () => {
-			BrowserStorage.setItem('skipCompression', 'false')
-			BrowserStorage.setItem('allowUpdate', 'false')
+			BrowserStorage.setItem('originalQuality', 'false')
+			BrowserStorage.setItem('allowEdit', 'false')
 			setActivePinia(createPinia())
 			uploadStore = useUploadStore()
 
-			expect(uploadStore.skipCompression).toBe(false)
-			expect(uploadStore.allowUpdate).toBe(false)
+			expect(uploadStore.originalQuality).toBe(false)
+			expect(uploadStore.allowEdit).toBe(false)
 		})
 
 		test('restore the last choices from browser storage', () => {
-			BrowserStorage.setItem('skipCompression', 'true')
-			BrowserStorage.setItem('allowUpdate', 'true')
+			BrowserStorage.setItem('originalQuality', 'true')
+			BrowserStorage.setItem('allowEdit', 'true')
 			setActivePinia(createPinia())
 			uploadStore = useUploadStore()
 
-			expect(uploadStore.skipCompression).toBe(true)
-			expect(uploadStore.allowUpdate).toBe(true)
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
 		})
 
 		test('save the choices to browser storage', () => {
-			uploadStore.updateSkipCompression(true)
-			uploadStore.updateAllowUpdate(true)
+			uploadStore.updateOriginalQuality(true)
+			uploadStore.updateAllowEdit(true)
 
-			expect(uploadStore.skipCompression).toBe(true)
-			expect(uploadStore.allowUpdate).toBe(true)
-			expect(BrowserStorage.getItem('skipCompression')).toBe('true')
-			expect(BrowserStorage.getItem('allowUpdate')).toBe('true')
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
+			expect(BrowserStorage.getItem('originalQuality')).toBe('true')
+			expect(BrowserStorage.getItem('allowEdit')).toBe('true')
 		})
 
 		test('keep the choices when the upload is discarded', () => {
@@ -747,14 +747,14 @@ describe('fileUploadStore', () => {
 				token: 'XXTOKENXX',
 				files: [{ name: 'pngimage.png', type: 'image/png', size: 123, lastModified: Date.UTC(2021, 3, 27, 15, 30, 0) }],
 			})
-			uploadStore.updateSkipCompression(true)
-			uploadStore.updateAllowUpdate(true)
+			uploadStore.updateOriginalQuality(true)
+			uploadStore.updateAllowEdit(true)
 
 			uploadStore.discardUpload('upload-id1')
 
 			expect(uploadStore.currentUploadId).not.toBeDefined()
-			expect(uploadStore.skipCompression).toBe(true)
-			expect(uploadStore.allowUpdate).toBe(true)
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
 		})
 	})
 })
