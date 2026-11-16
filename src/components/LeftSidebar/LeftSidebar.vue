@@ -17,8 +17,9 @@
 								v-model:value="searchText"
 								v-model:isFocused="isFocused"
 								:placeholderText="t('spreed', 'Search in app')"
-								:listRef="[scroller, searchResultsPossibleConversations]"
+								:listRef="[scroller, searchResults, searchResultsPossibleConversations]"
 								@input="debounceFetchSearchResults"
+								@focus="$nextTick(() => initializeNavigation())"
 								@abortSearch="abortSearch" />
 						</div>
 
@@ -322,7 +323,7 @@
 
 		<template #list>
 			<!-- Conversations List -->
-			<template v-if="!isSearching">
+			<template v-if="!isSearching && !isFocused">
 				<NcEmptyContent
 					v-if="showEmptyContent"
 					:name="emptyContentLabel"
@@ -391,7 +392,7 @@
 				:searchText
 				:searchResultsLoading
 				:searchFilters
-				:conversationsList
+				:conversationsList="isSearching ? conversationsList : filteredConversationsList"
 				:searchResults="searchResultsPossibleConversations"
 				:searchResultsMessages
 				:searchResultsListedConversations
@@ -606,6 +607,7 @@ export default {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
 		const scroller = ref(null)
+		const searchResults = ref(null)
 
 		const showArchived = ref(false)
 		const showThreadsList = ref(false)
@@ -639,6 +641,7 @@ export default {
 			filters,
 			searchBox,
 			scroller,
+			searchResults,
 			federationStore,
 			talkHashStore,
 			isMobile,

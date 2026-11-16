@@ -5,7 +5,10 @@
 
 import { defineStore } from 'pinia'
 import { computed, onScopeDispose, ref } from 'vue'
+import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
+
+const RECENT_TOKENS_LIMIT = 5
 
 export const useTokenStore = defineStore('token', () => {
 	const token = ref<'' | (string & {})>('')
@@ -18,6 +21,8 @@ export const useTokenStore = defineStore('token', () => {
 	 * A in the signaling server.
 	 */
 	const lastJoinedConversationToken = ref<'' | (string & {})>('')
+
+	const recentTokens = ref(JSON.parse(BrowserStorage.getItem('recentTokens') ?? '[]') as string[])
 
 	const currentConversationIsJoined = computed(() => token.value !== '' && lastJoinedConversationToken.value === token.value)
 
@@ -62,14 +67,26 @@ export const useTokenStore = defineStore('token', () => {
 		lastJoinedConversationToken.value = newToken
 	}
 
+	/**
+	 * Move the token to the top of the recently opened conversations
+	 *
+	 * @param newToken token of opened conversation
+	 */
+	function addRecentToken(newToken: string) {
+		recentTokens.value = [newToken, ...recentTokens.value.filter((recentToken) => recentToken !== newToken)].slice(0, RECENT_TOKENS_LIMIT)
+		BrowserStorage.setItem('recentTokens', JSON.stringify(recentTokens.value))
+	}
+
 	return {
 		token,
 		fileIdForToken,
 		lastJoinedConversationToken,
 		currentConversationIsJoined,
+		recentTokens,
 
 		updateToken,
 		updateTokenAndFileIdForToken,
 		updateLastJoinedConversationToken,
+		addRecentToken,
 	}
 })

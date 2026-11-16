@@ -228,6 +228,7 @@ export default {
 			// or create BrowserSensitiveStorage for this purposes,
 			// if we have more than one source
 			BrowserStorage.removeItem('cachedConversations')
+			BrowserStorage.removeItem('recentTokens')
 		}
 
 		if (authorizedUser) {
@@ -361,6 +362,9 @@ export default {
 			 */
 			if (from.params.token !== to.params.token) {
 				this.tokenStore.updateToken(to.params.token ?? '')
+				if (to.params.token) {
+					this.tokenStore.addRecentToken(to.params.token)
+				}
 			}
 
 			/**
