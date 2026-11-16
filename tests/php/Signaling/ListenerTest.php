@@ -41,6 +41,7 @@ use OCP\L10N\IFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 #[Group('DB')]
@@ -55,6 +56,7 @@ class ListenerTest extends TestCase {
 	protected ThreadService&MockObject $threadService;
 	protected IFactory $l10nFactory;
 	protected MockObject&PollService $pollService;
+	protected LoggerInterface&MockObject $logger;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -68,6 +70,7 @@ class ListenerTest extends TestCase {
 		$this->threadService = $this->createMock(ThreadService::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->pollService = $this->createMock(PollService::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->listener = new Listener(
 			$this->createMock(Config::class),
@@ -81,6 +84,7 @@ class ListenerTest extends TestCase {
 			$this->threadService,
 			$this->l10nFactory,
 			$this->pollService,
+			$this->logger,
 		);
 	}
 
@@ -325,6 +329,52 @@ class ListenerTest extends TestCase {
 				],
 			]);
 
+		$this->listener->handle($event);
+	}
+
+	public function testChatMessageSentEventSwallowsSignalingFailure(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(1);
+		$room->method('getToken')->willReturn('token');
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getTopmostParentId')->willReturn(null);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
+		$comment->method('getId')->willReturn(1);
+		$message = $this->createConfiguredMock(Message::class, [
+			'getVisibility' => true,
+			'toArray' => [
+				'id' => 123,
+			],
+			'getMessageId' => 123,
+		]);
+		$l10n = $this->createStub(IL10N::class);
+
+		$event = new ChatMessageSentEvent(
+			$room,
+			$comment,
+		);
+
+		$this->l10nFactory->method('get')
+			->willReturn($l10n);
+		$this->messageParser->method('createMessage')
+			->willReturn($message);
+
+		// Simulates an unreachable/hung High-performance backend.
+		$this->backendNotifier->expects($this->once())
+			->method('sendRoomMessage')
+			->willThrowException(new \RuntimeException('Simulated HPB transport failure'));
+
+		$this->logger->expects($this->once())
+			->method('error')
+			->with(
+				'Failed to notify signaling server about {event}',
+				$this->callback(static fn (array $context): bool => $context['event'] === ChatMessageSentEvent::class
+					&& $context['token'] === 'token'
+					&& $context['exception'] instanceof \RuntimeException),
+			);
+
+		// The notification failure must not escape, otherwise it would abort the
+		// already-committed chat request (see issue #20039).
 		$this->listener->handle($event);
 	}
 

@@ -59,6 +59,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\L10N\IFactory;
 use OCP\Server;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
@@ -118,15 +119,30 @@ class Listener implements IEventListener {
 		private readonly ThreadService $threadService,
 		private readonly IFactory $l10nFactory,
 		private readonly PollService $pollService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
-			$this->handleInternalSignaling($event);
-		} else {
-			$this->handleExternalSignaling($event);
+		try {
+			if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+				$this->handleInternalSignaling($event);
+			} else {
+				$this->handleExternalSignaling($event);
+			}
+		} catch (\Throwable $e) {
+			// Signaling is best-effort: the database change that triggered this
+			// event has already been committed, so a failing signaling backend
+			// must neither fail the request nor skip the other listeners.
+			$context = [
+				'exception' => $e,
+				'event' => $event::class,
+			];
+			if ($event instanceof ARoomEvent) {
+				$context['token'] = $event->getRoom()->getToken();
+			}
+			$this->logger->error('Failed to notify signaling server about {event}', $context);
 		}
 	}
 
