@@ -380,11 +380,16 @@ Peer.prototype.offer = async function(options) {
 			if (!parameters) {
 				parameters = {}
 			}
+			// The encodings must be in ascending order (lowest layer first):
+			// libwebrtc takes the minimum bitrate of the encoder from the first
+			// one, so if the highest layer comes first Firefox never suspends
+			// the layers that do not fit in the available bandwidth.
 			parameters.encodings = [
 				{
-					rid: 'h',
+					rid: 'l',
 					active: true,
-					maxBitrate: this.maxBitrates.high,
+					maxBitrate: this.maxBitrates.low,
+					scaleResolutionDownBy: 4,
 				},
 				{
 					rid: 'm',
@@ -393,10 +398,9 @@ Peer.prototype.offer = async function(options) {
 					scaleResolutionDownBy: 2,
 				},
 				{
-					rid: 'l',
+					rid: 'h',
 					active: true,
-					maxBitrate: this.maxBitrates.low,
-					scaleResolutionDownBy: 4,
+					maxBitrate: this.maxBitrates.high,
 				},
 			]
 			try {
@@ -424,15 +428,24 @@ Peer.prototype.offer = async function(options) {
 		}
 
 		this.pc.setLocalDescription(offer).then(function() {
-			if (this.parent.config.nick) {
+			// Janus assumes by default that the highest layer comes first, so
+			// it needs to be told that the Firefox layers are in ascending order.
+			const ridOrderLmh = sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox'
+			if (this.parent.config.nick || ridOrderLmh) {
 				// The offer is a RTCSessionDescription that only serializes
 				// its own attributes to JSON, so if extra attributes are needed
 				// a regular object has to be sent instead.
-				offer = {
+				const plainOffer = {
 					type: offer.type,
 					sdp: offer.sdp,
-					nick: this.parent.config.nick,
 				}
+				if (this.parent.config.nick) {
+					plainOffer.nick = this.parent.config.nick
+				}
+				if (ridOrderLmh) {
+					plainOffer.rid_order = 'lmh'
+				}
+				offer = plainOffer
 			}
 			this.send('offer', offer)
 		}.bind(this)).catch(function(error) {
