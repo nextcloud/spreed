@@ -146,3 +146,35 @@ Feature: conversation-1/create-external-service
       | roomName | room2 |
     When external call service syncs participants of room "room2" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 400 (v4)
       | users  | participant2 |
+
+  Scenario: External call service renames a room
+    Given user "participant2" exists
+    Given the following "spreed" app config is set
+      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_auth_user | nextcloud |
+      | external_call_service_iframe_field | targetUrl |
+    Given external call server is started
+    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service renames room "room" to "renamed" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | name    | type | participantType | objectType    | objectId                             |
+      | room | renamed | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service renames room "room" to "" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 400 (v4)
+    When external call service renames room "room" to "other" as "participant2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 404 (v4)
+    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+      | users  | participant2 |
+    When external call service renames room "room" to "other" as "participant2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 403 (v4)
+    When external call service renames room "room" to "other" as "participant1" with secret "bbbbbbbbbb" with 401 (v4)
+    Given user "participant1" creates room "room2" (v4)
+      | roomType | 3 |
+      | roomName | room2 |
+    When external call service renames room "room2" to "other" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 404 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id    | name    | type | participantType |
+      | room  | renamed | 3    | 1               |
+      | room2 | room2   | 3    | 1               |
