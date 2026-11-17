@@ -78,7 +78,7 @@
 				dir="auto"
 				:interactive="message.markdown && isEditable"
 				:useExtendedMarkdown="message.markdown"
-				:referenceLimit="1"
+				:referenceLimit="referenceLimit"
 				referenceInteractiveOptIn
 				@interactTodo="handleInteraction" />
 		</div>
@@ -221,6 +221,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import {
 	getFileKeys,
@@ -412,6 +413,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.message.token)
+		},
+
+		referenceLimit() {
+			return isClassifiedConversation(this.conversation) ? 0 : 1
 		},
 
 		hasRetentionPeriod() {
