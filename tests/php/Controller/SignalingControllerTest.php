@@ -36,6 +36,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IFilenameValidator;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -124,7 +125,12 @@ class SignalingControllerTest extends TestCase {
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
-		$this->checksumVerificationService = new ChecksumVerificationService($this->config);
+		$this->checksumVerificationService = new ChecksumVerificationService(
+			$this->config,
+			$this->createMock(IRequest::class),
+			$this->createMock(ICacheFactory::class),
+			$this->createMock(ITimeFactory::class),
+		);
 		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->authenticator = $this->createMock(Authenticator::class);

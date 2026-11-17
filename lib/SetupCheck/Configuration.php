@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\SetupCheck;
 
+use OCA\Talk\Config;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -48,6 +49,11 @@ class Configuration implements ISetupCheck {
 			}
 		}
 
+		$publicKey = $this->appConfig->getAppValueString(Config::EXTERNAL_CALL_SERVICE_PUBLIC_KEY);
+		if ($publicKey !== '' && !$this->isEs256PublicKey($publicKey)) {
+			$errors[] = $this->l10n->t('The `external_call_service_public_key` configuration is not a valid PEM encoded ECDSA P-256 public key. Requests from the external call service can not be verified.');
+		}
+
 		if (!empty($errors)) {
 			return SetupResult::error(implode("\n", $errors));
 		}
@@ -55,5 +61,17 @@ class Configuration implements ISetupCheck {
 			return SetupResult::warning(implode("\n", $warnings));
 		}
 		return SetupResult::success();
+	}
+
+	protected function isEs256PublicKey(string $publicKey): bool {
+		$key = openssl_pkey_get_public($publicKey);
+		if ($key === false) {
+			return false;
+		}
+
+		$details = openssl_pkey_get_details($key);
+		return $details !== false
+			&& $details['type'] === OPENSSL_KEYTYPE_EC
+			&& ($details['ec']['curve_name'] ?? '') === 'prime256v1';
 	}
 }
