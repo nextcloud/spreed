@@ -366,7 +366,7 @@ async function submitNewMeeting() {
 <template>
 	<div v-if="conversation">
 		<NcPopover
-			:container="container"
+			:container
 			:popperHideTriggers="hideTriggers"
 			:noFocusTrap="!canScheduleMeeting && upcomingEvents.length === 0"
 			popupRole="dialog">
@@ -428,7 +428,7 @@ async function submitNewMeeting() {
 				:name="t('spreed', 'Schedule a meeting')"
 				size="normal"
 				closeOnClickOutside
-				:container="container">
+				:container>
 				<NcTextField
 					v-model="newMeetingTitle"
 					:label="t('spreed', 'Meeting title')"
@@ -535,7 +535,7 @@ async function submitNewMeeting() {
 					<ContactSelectionBubble
 						v-for="participant in selectedParticipants"
 						:key="participant.actorType + participant.actorId"
-						:participant="participant"
+						:participant
 						@update="removeSelectedParticipant" />
 				</TransitionWrapper>
 				<ul v-if="participantsInitialised && filteredParticipants.length" class="calendar-meeting__attendees">
@@ -543,7 +543,7 @@ async function submitNewMeeting() {
 						v-for="participant in filteredParticipants"
 						:key="participant.attendeeId"
 						v-model:checked="selectedAttendeeIds"
-						:participant="participant"
+						:participant
 						@update:checked="checkSelection" />
 				</ul>
 				<NcEmptyContent

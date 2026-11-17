@@ -21,13 +21,13 @@
 			<AvatarWrapper
 				:id="participant.actorId"
 				:key="participant.attendeeId"
-				:token="token"
+				:token
 				:name="computedName"
 				:source="participant.actorType"
 				disableTooltip
-				:showUserStatus="showUserStatus"
+				:showUserStatus
 				:version="participant.actorAvatarVersion"
-				:preloadedUserStatus="preloadedUserStatus"
+				:preloadedUserStatus
 				:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
 				:offline="isOffline" />
 		</template>
@@ -67,7 +67,7 @@
 					variant="success"
 					:aria-label="t('spreed', 'Dial out phone')"
 					:title="t('spreed', 'Dial out phone')"
-					:disabled="disabled"
+					:disabled
 					@click="dialOutPhoneNumber">
 					<template #icon>
 						<IconPhoneDialOutline :size="20" />
@@ -78,14 +78,14 @@
 						variant="error"
 						:aria-label="t('spreed', 'Hang up phone')"
 						:title="t('spreed', 'Hang up phone')"
-						:disabled="disabled"
+						:disabled
 						@click="hangupPhoneNumber">
 						<template #icon>
 							<IconPhoneHangupOutline :size="20" />
 						</template>
 					</NcButton>
 					<DialpadPanel
-						:disabled="disabled"
+						:disabled
 						container="#tab-participants"
 						dialing
 						@dialType="dialType" />
@@ -341,8 +341,8 @@
 				v-if="showPermissionsOptions && permissionsEditor"
 				:actorId="participant.actorId"
 				closeAfterClick
-				:participant="participant"
-				:token="token"
+				:participant
+				:token
 				@close="permissionsEditor = false" />
 
 			<!-- Confirmation required to remove participant -->

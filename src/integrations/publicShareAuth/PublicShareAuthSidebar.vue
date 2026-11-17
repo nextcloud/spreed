@@ -13,7 +13,7 @@
 			<template v-else>
 				<div class="talk-sidebar-callview">
 					<TopBar isInCall isSidebar />
-					<CallView :token="token" isSidebar />
+					<CallView :token isSidebar />
 				</div>
 				<InternalSignalingHint />
 				<RouterView />

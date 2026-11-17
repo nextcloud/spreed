@@ -36,12 +36,12 @@
 		</NcEmptyContent>
 		<VideoBottomBar
 			v-if="isBig"
-			:token="token"
-			:sharedData="sharedData"
+			:token
+			:sharedData
 			isBig
 			isScreen
-			:model="model"
-			:showVideoOverlay="showVideoOverlay"
+			:model
+			:showVideoOverlay
 			:participantName="remoteParticipantName" />
 	</div>
 </template>

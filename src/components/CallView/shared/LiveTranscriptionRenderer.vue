@@ -11,7 +11,7 @@
 			v-for="item in transcriptBlocks"
 			ref="transcriptBlocks"
 			:key="item.id"
-			:token="token"
+			:token
 			:model="item.model"
 			:chunks="item.chunks"
 			:rightToLeft="item.rightToLeft" />

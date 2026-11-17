@@ -7,21 +7,21 @@
 	<div class="breakout-rooms">
 		<!-- Actions -->
 		<BreakoutRoomsActions
-			:mainToken="mainToken"
-			:mainConversation="mainConversation"
-			:breakoutRooms="breakoutRooms"
-			:breakoutRoomsConfigured="breakoutRoomsConfigured" />
+			:mainToken
+			:mainConversation
+			:breakoutRooms
+			:breakoutRoomsConfigured />
 		<!-- Breakout rooms list -->
 		<ul v-if="showBreakoutRoomsList">
 			<BreakoutRoomItem
 				v-for="breakoutRoom in breakoutRooms"
 				:key="breakoutRoom.token"
-				:breakoutRoom="breakoutRoom"
-				:mainConversation="mainConversation">
+				:breakoutRoom
+				:mainConversation>
 				<ParticipantItem
 					v-for="participant in $store.getters.participantsList(breakoutRoom.token)"
 					:key="participant.actorId"
-					:participant="participant" />
+					:participant />
 			</BreakoutRoomItem>
 		</ul>
 		<NcEmptyContent

@@ -41,7 +41,7 @@
 			{{ t('spreed', 'Picture') }}
 		</h4>
 		<ConversationAvatarEditor
-			:conversation="conversation"
+			:conversation
 			:editable="canFullModerate" />
 	</template>
 </template>

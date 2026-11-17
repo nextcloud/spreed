@@ -124,7 +124,7 @@ onMounted(() => {
 		<NcListItem
 			:title="richSubline"
 			:active="false"
-			:to="to"
+			:to
 			@click="handlePinClick">
 			<template #icon>
 				<IconPin class="pin-icon" :size="20" />

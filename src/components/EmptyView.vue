@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<NcEmptyContent class="empty-view" :name="name" :description="description">
+	<NcEmptyContent class="empty-view" :name :description>
 		<template #icon>
 			<slot name="icon" />
 		</template>

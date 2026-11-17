@@ -7,7 +7,7 @@
 	<div class="talk-tab__wrapper">
 		<InternalSignalingHint />
 		<CallButton v-if="!isInCall" class="talk-tab__call-button" />
-		<CallFailedDialog v-if="connectionFailed" :token="token" />
+		<CallFailedDialog v-if="connectionFailed" :token />
 		<RouterView class="talk-tab__chat-view" />
 		<PollManager />
 		<PollViewer />

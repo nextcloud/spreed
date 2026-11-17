@@ -48,22 +48,22 @@
 						<!-- local screen -->
 						<ScreenShare
 							v-if="showLocalScreen"
-							:token="token"
+							:token
 							:localMediaModel="localModel"
 							:sharedData="localSharedData" />
 						<!-- remote screen -->
 						<ScreenShare
 							v-else-if="model && screens[model.attributes.peerId]"
-							:token="token"
+							:token
 							:callParticipantModel="model"
-							:sharedData="sharedData" />
+							:sharedData />
 
 						<VideoVue
 							v-else-if="model"
 							class="viewer-overlay__video"
-							:token="token"
-							:model="model"
-							:sharedData="sharedData"
+							:token
+							:model
+							:sharedData
 							isGrid
 							unSelectable
 							hideBottomBar
@@ -76,24 +76,24 @@
 						<LocalVideo
 							v-if="localModel.attributes.videoEnabled"
 							class="viewer-overlay__local-video"
-							:token="token"
+							:token
 							:localMediaModel="localModel"
-							:localCallParticipantModel="localCallParticipantModel"
+							:localCallParticipantModel
 							isSmall
 							unSelectable />
 
 						<div class="viewer-overlay__bottom-bar">
 							<LocalAudioControlButton
 								class="viewer-overlay__button"
-								:token="token"
-								:conversation="conversation"
+								:token
+								:conversation
 								:model="localModel"
 								variant="secondary"
 								disableKeyboardShortcuts />
 							<LocalVideoControlButton
 								class="viewer-overlay__button"
-								:token="token"
-								:conversation="conversation"
+								:token
+								:conversation
 								:model="localModel"
 								variant="secondary"
 								disableKeyboardShortcuts />

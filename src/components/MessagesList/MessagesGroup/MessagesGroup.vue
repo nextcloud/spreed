@@ -12,11 +12,11 @@
 				:id="actorId"
 				class="messages__avatar"
 				:class="{'messages__avatar--offseted': isPinnedMessageShown }"
-				:token="token"
+				:token
 				:name="actorDisplayName"
 				:source="actorType"
 				:size="AVATAR.SIZE.SMALL"
-				:disableMenu="disableMenu"
+				:disableMenu
 				disableTooltip />
 		</div>
 		<div class="messages__content" :class="{ 'small-view': isSmallMobile || isSidebar }">
@@ -46,7 +46,7 @@
 						incoming: !isSelfActor && isSplitViewEnabled,
 						outgoing: isSelfActor && isSplitViewEnabled,
 					}"
-					:message="message"
+					:message
 					:nextMessageId="messagesWithCombinedFiles[index + 1]?.id || nextMessageId"
 					:previousMessageId="(index > 0 && messagesWithCombinedFiles[index - 1].id) || previousMessageId"
 					:isSelfActor />

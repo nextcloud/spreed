@@ -28,8 +28,8 @@
 					:key="`server${index}`"
 					v-model:server="servers[index].server"
 					v-model:verify="servers[index].verify"
-					:index="index"
-					:loading="loading"
+					:index
+					:loading
 					@removeServer="removeServer"
 					@update:server="debounceUpdateServers()"
 					@update:verify="debounceUpdateServers()" />

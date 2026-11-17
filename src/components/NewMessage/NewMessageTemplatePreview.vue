@@ -7,8 +7,8 @@
 <template>
 	<li class="template-picker__item">
 		<input
-			:id="id"
-			:checked="checked"
+			:id
+			:checked
 			type="radio"
 			class="radio"
 			name="template-picker"

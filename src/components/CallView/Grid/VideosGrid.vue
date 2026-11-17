@@ -16,10 +16,10 @@
 			class="stripe-controls-position"
 			:class="{ 'stripe-controls-position--collapsed': !stripeOpen }">
 			<StripeControls
-				:currentPage="currentPage"
-				:numberOfPages="numberOfPages"
-				:hasPreviousPage="hasPreviousPage"
-				:hasNextPage="hasNextPage"
+				:currentPage
+				:numberOfPages
+				:hasPreviousPage
+				:hasNextPage
 				:isOpen="stripeOpen"
 				@previous="previous"
 				@next="next"
@@ -54,12 +54,12 @@
 								:class="{ video: !isStripe }"
 								:style="tileStyle(index)"
 								:data-tile-session-id="callParticipantModel.attributes.nextcloudSessionId"
-								:showVideoOverlay="showVideoOverlay"
-								:token="token"
+								:showVideoOverlay
+								:token
 								:model="callParticipantModel"
 								:isGrid="true"
 								:showTalkingHighlight="!isStripe"
-								:isStripe="isStripe"
+								:isStripe
 								:isPromoted="sharedDatas[callParticipantModel.attributes.peerId].promoted && !(isStripe && screens.length)"
 								:isSelected="isSelected(callParticipantModel)"
 								:sharedData="sharedDatas[callParticipantModel.attributes.peerId]"
@@ -69,7 +69,7 @@
 						<template v-if="devMode">
 							<div
 								v-for="(key, index) in displayedVideos"
-								:key="key"
+								:key
 								class="dev-mode-video video"
 								:class="{ 'dev-mode-screenshot': screenshotMode }"
 								:style="tileStyle(index)">
@@ -78,7 +78,7 @@
 									:hasShadow="false"
 									:model="placeholderModel(key)"
 									:sharedData="placeholderSharedData(key)"
-									:token="token"
+									:token
 									:participantName="placeholderName(key, !screenshotMode)" />
 							</div>
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
@@ -92,9 +92,9 @@
 							:style="tileStyle(displayedVideos.length)"
 							isGrid
 							:fitVideo="false"
-							:token="token"
-							:localMediaModel="localMediaModel"
-							:localCallParticipantModel="localCallParticipantModel"
+							:token
+							:localMediaModel
+							:localCallParticipantModel
 							@clickVideo="handleClickLocalVideo" />
 					</div>
 					<NcButton

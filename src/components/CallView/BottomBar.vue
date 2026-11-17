@@ -504,18 +504,18 @@ function setCallLayout(layout: CallLayout) {
 		<div class="bottom-bar-call-controls">
 			<!-- Local media controls -->
 			<TopBarMediaControls
-				:token="token"
+				:token
 				:model="localMediaModel"
-				:isSidebar="isSidebar"
+				:isSidebar
 				:hideVirtualBackgroundShortcut="hidingList.virtualBackground"
-				:localCallParticipantModel="localCallParticipantModel" />
+				:localCallParticipantModel />
 
 			<!-- Reactions menu -->
 			<ReactionMenu
 				v-if="!isSidebar"
-				:token="token"
-				:localMediaModel="localMediaModel"
-				:localCallParticipantModel="localCallParticipantModel" />
+				:token
+				:localMediaModel
+				:localCallParticipantModel />
 
 			<div
 				v-if="!isSidebar && isLiveTranscriptionSupported && !hidingList.liveTranscription"

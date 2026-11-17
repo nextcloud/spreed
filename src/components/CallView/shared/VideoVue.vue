@@ -44,17 +44,17 @@
 		</div>
 		<ScreenShare
 			v-if="showSharedScreen"
-			:isBig="isBig"
-			:token="token"
+			:isBig
+			:token
 			:callParticipantModel="model"
-			:sharedData="sharedData" />
+			:sharedData />
 		<div
 			v-if="showBackgroundAndAvatar"
 			class="avatar-container">
 			<VideoBackground />
 			<AvatarWrapper
 				:id="participantUserId"
-				:token="token"
+				:token
 				:name="displayName"
 				:source="participantActorType"
 				:size="avatarSize"
@@ -76,7 +76,7 @@
 		<slot v-if="!hideBottomBar" name="bottomBar">
 			<VideoBottomBar
 				:hasShadow="hasVideo"
-				:participantName="participantName"
+				:participantName
 				v-bind="$props"
 				@bottomBarHover="handleHoverEvent" />
 		</slot>

@@ -60,7 +60,7 @@ const removeLabel = computed(() => t('spreed', 'Remove participant {name}', { na
 		<template #icon>
 			<AvatarWrapper
 				:id="actorId"
-				:token="token"
+				:token
 				:name="computedName"
 				:source="actorType"
 				:size="AVATAR.SIZE.EXTRA_SMALL"

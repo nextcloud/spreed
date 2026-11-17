@@ -30,7 +30,7 @@ const ariaLabel = computed(() => {
 	<NcHeaderButton
 		id="talk-sidebar-trigger"
 		:title="ariaLabel"
-		:aria-label="ariaLabel"
+		:aria-label
 		@click="emit('click')">
 		<template #icon>
 			<IconMessageTextOutline :size="20" />

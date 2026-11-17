@@ -24,8 +24,8 @@
 				v-model:server="servers[index].server"
 				v-model:secret="servers[index].secret"
 				v-model:protocols="servers[index].protocols"
-				:index="index"
-				:loading="loading"
+				:index
+				:loading
 				@removeServer="removeServer"
 				@update:schemes="debounceUpdateServers()"
 				@update:server="debounceUpdateServers()"

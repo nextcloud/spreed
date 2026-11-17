@@ -77,11 +77,11 @@ const mapLink = computed(() => 'https://www.openstreetmap.org/'
 		:title="name">
 		<LMap
 			:zoom="previewZoom"
-			:center="center"
+			:center
 			:options="mapOptions"
 			@scroll.prevent="">
 			<LTileLayer
-				:url="url"
+				:url
 				:options="tileLayerOptions" />
 			<LControlAttribution
 				position="bottomright"

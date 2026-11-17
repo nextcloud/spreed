@@ -80,9 +80,9 @@
 		<!-- all reactions modal-->
 		<ReactionsList
 			v-if="showAllReactions"
-			:token="token"
-			:detailedReactions="detailedReactions"
-			:reactionsSorted="reactionsSorted"
+			:token
+			:detailedReactions
+			:reactionsSorted
 			@close="showAllReactions = false" />
 	</div>
 </template>

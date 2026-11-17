@@ -28,7 +28,7 @@
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
 				<SharedItems
 					:type="activeTab"
-					:token="token"
+					:token
 					:items="sharedItems[activeTab]" />
 			</div>
 		</div>

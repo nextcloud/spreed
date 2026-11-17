@@ -11,7 +11,7 @@
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
-		<RightSidebar :isInCall="isInCall" />
+		<RightSidebar :isInCall />
 		<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />

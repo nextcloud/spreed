@@ -66,7 +66,7 @@
 			<MessageQuote v-if="showQuote" :message="message.parent" />
 
 			<!-- File previews, rendered as a block on top of the (optional) caption -->
-			<FilePreviewsWrapper v-if="hasFilePreviews" :message="message" />
+			<FilePreviewsWrapper v-if="hasFilePreviews" :message />
 
 			<!-- Message content / text -->
 			<NcRichText
@@ -78,7 +78,7 @@
 				dir="auto"
 				:interactive="message.markdown && isEditable"
 				:useExtendedMarkdown="message.markdown"
-				:referenceLimit="referenceLimit"
+				:referenceLimit
 				referenceInteractiveOptIn
 				@interactTodo="handleInteraction" />
 		</div>

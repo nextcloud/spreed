@@ -8,12 +8,12 @@
 		v-if="group"
 		tag="span"
 		class="transition-group"
-		:name="name">
+		:name>
 		<slot />
 	</TransitionGroup>
 	<Transition
 		v-else
-		:name="name">
+		:name>
 		<slot />
 	</Transition>
 </template>

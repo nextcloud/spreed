@@ -91,7 +91,7 @@
 			<FilePreview
 				v-for="file in files"
 				:key="file[1].temporaryMessage.id"
-				:token="token"
+				:token
 				isUploadEditor
 				:file="file[1].temporaryMessage.messageParameters.file"
 				:referenceId="file[1].temporaryMessage.referenceId"

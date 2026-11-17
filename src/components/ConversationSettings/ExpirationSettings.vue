@@ -102,7 +102,7 @@ async function changeExpiration(expiration: ExpirationOption) {
 				id="moderation_settings_message_expiration"
 				v-model="selectedOption"
 				:inputLabel="t('spreed', 'Set message expiration')"
-				:options="options"
+				:options
 				label="label"
 				:clearable="false"
 				@search="search = $event" />

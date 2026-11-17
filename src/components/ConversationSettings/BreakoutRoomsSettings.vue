@@ -31,7 +31,7 @@
 	<BreakoutRoomsEditor
 		v-if="showBreakoutRoomsEditor"
 		container=".breakout-rooms-settings"
-		:token="token"
+		:token
 		@close="showBreakoutRoomsEditor = false" />
 
 	<!-- Participants editor -->
@@ -45,8 +45,8 @@
 				{{ t('spreed', 'Manage breakout rooms') }}
 			</h2>
 			<BreakoutRoomsParticipantsEditor
-				:token="token"
-				:breakoutRooms="breakoutRooms"
+				:token
+				:breakoutRooms
 				@close="showParticipantsEditor = false" />
 		</div>
 	</NcModal>

@@ -84,12 +84,12 @@ function getReferenceId(key: string): string {
 			}">
 			<FilePreview
 				v-for="key in visibleImageKeys"
-				:key="key"
+				:key
 				:token="message.token"
 				:messageId="message.id"
 				:itemType="getItemTypeFromMessage(message, key)"
 				:referenceId="getReferenceId(key)"
-				:viewerList="viewerList"
+				:viewerList
 				:file="message.messageParameters[key]" />
 		</div>
 		<div
@@ -97,7 +97,7 @@ function getReferenceId(key: string): string {
 			class="file-previews-wrapper__other-column">
 			<FilePreview
 				v-for="key in otherKeys"
-				:key="key"
+				:key
 				:rowLayout
 				:token="message.token"
 				:messageId="message.id"

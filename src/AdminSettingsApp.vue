@@ -42,8 +42,8 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 			v-model:servers="signalingServers.servers"
 			v-model:secret="signalingServers.secret"
 			v-model:hideWarning="signalingServers.hideWarning"
-			:hasValidSubscription="hasValidSubscription" />
-		<HostedSignalingServer :hasSignalingServers="hasSignalingServers" />
+			:hasValidSubscription />
+		<HostedSignalingServer :hasSignalingServers />
 		<GeneralSettings />
 		<EndToEndEncryptionSettings v-if="hasSignalingServers" />
 		<AllowedGroups />
@@ -53,8 +53,8 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
-		<RecordingServers :hasSignalingServers="hasSignalingServers" />
-		<SIPBridge :hasSignalingServers="hasSignalingServers" />
+		<RecordingServers :hasSignalingServers />
+		<SIPBridge :hasSignalingServers />
 		<MatterbridgeIntegration />
 	</div>
 </template>

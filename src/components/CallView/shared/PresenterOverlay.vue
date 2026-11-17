@@ -12,8 +12,8 @@
 			<LocalVideo
 				v-if="isLocalPresenter"
 				class="presenter-overlay__video"
-				:token="token"
-				:localMediaModel="localMediaModel"
+				:token
+				:localMediaModel
 				:localCallParticipantModel="model"
 				isPresenterOverlay
 				unSelectable
@@ -21,11 +21,11 @@
 				@clickPresenter="$emit('click')" />
 			<VideoVue
 				v-else
-				:token="token"
+				:token
 				:class="{ dragging: isDragging }"
 				class="presenter-overlay__video"
-				:model="model"
-				:sharedData="sharedData"
+				:model
+				:sharedData
 				isPresenterOverlay
 				unSelectable
 				hideBottomBar

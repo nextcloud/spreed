@@ -66,7 +66,7 @@
 					:key="group.id">
 					<component
 						:is="messagesGroupComponent[group.type]"
-						:token="token"
+						:token
 						:messages="group.messages"
 						:previousMessageId="group.previousMessageId"
 						:nextMessageId="group.nextMessageId" />

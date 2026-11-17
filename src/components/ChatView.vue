@@ -9,7 +9,7 @@
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
-		<GuestWelcomeWindow v-if="showGuestWelcomeWindow" :token="token" />
+		<GuestWelcomeWindow v-if="showGuestWelcomeWindow" :token />
 		<div class="messages-list-dragover-wrapper">
 			<TransitionWrapper name="slide-up" mode="out-in">
 				<NcEmptyContent
@@ -30,8 +30,8 @@
 				v-model:isChatScrolledToBottom="isChatScrolledToBottom"
 				role="region"
 				:aria-label="t('spreed', 'Conversation messages')"
-				:token="token"
-				:isVisible="isVisible" />
+				:token
+				:isVisible />
 		</div>
 
 		<div class="scroll-to-bottom">
@@ -53,7 +53,7 @@
 		<!-- Input field -->
 		<NewMessage
 			role="region"
-			:token="token"
+			:token
 			hasTypingIndicator
 			:aria-label="t('spreed', 'Post message')" />
 	</div>

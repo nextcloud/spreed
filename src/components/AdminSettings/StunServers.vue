@@ -22,8 +22,8 @@
 				v-for="(server, index) in servers"
 				:key="`server${index}`"
 				v-model:server="servers[index]"
-				:index="index"
-				:loading="loading"
+				:index
+				:loading
 				@removeServer="removeServer"
 				@update:server="debounceUpdateServers()" />
 		</TransitionWrapper>
