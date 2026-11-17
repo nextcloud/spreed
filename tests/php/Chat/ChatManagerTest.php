@@ -17,6 +17,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Poll;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
@@ -839,6 +840,51 @@ class ChatManagerTest extends TestCase {
 
 		$this->expectException(ShareNotFound::class);
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
+	}
+
+	public static function dataRemovePollOnMessageDelete(): array {
+		return [
+			'other user' => [false, 'other', false],
+			'poll creator' => [false, 'creator', true],
+			'moderator' => [true, 'other', true],
+		];
+	}
+
+	#[DataProvider('dataRemovePollOnMessageDelete')]
+	public function testRemovePollOnMessageDelete(bool $isModerator, string $actorId, bool $expectDeletion): void {
+		$chat = $this->createMock(Room::class);
+		$chat->method('getId')
+			->willReturn(1234);
+
+		$attendee = new Attendee();
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId($actorId);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('hasModeratorPermissions')
+			->willReturn($isModerator);
+		$participant->method('getAttendee')
+			->willReturn($attendee);
+
+		$poll = new Poll();
+		$poll->setId(42);
+		$poll->setActorType(Attendee::ACTOR_USERS);
+		$poll->setActorId('creator');
+		$poll->setStatus(Poll::STATUS_CLOSED);
+		$this->pollService->method('getPoll')
+			->with(1234, 42)
+			->willReturn($poll);
+
+		$this->commentsManager->expects($expectDeletion ? $this->once() : $this->never())
+			->method('searchForObjects')
+			->willReturn([]);
+		$this->pollService->expects($expectDeletion ? $this->once() : $this->never())
+			->method('deleteByPollId')
+			->with(42);
+
+		$this->getManager()->removePollOnMessageDelete($chat, $participant, [
+			'message' => 'object_shared',
+			'parameters' => ['objectType' => 'talk-poll', 'objectId' => '42'],
+		], new \DateTime());
 	}
 
 	public function testClearHistory(): void {
