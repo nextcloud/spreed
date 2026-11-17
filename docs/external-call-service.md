@@ -111,6 +111,24 @@ The external service can replace the participant list of an existing conversatio
 | `403 Forbidden`    | `owner` is not an owner of the conversation                                             |
 | `404 Not Found`    | Conversation or `owner` not found                                                       |
 
+## External service → Talk: renaming a conversation
+
+The external service can rename its own conversations (`objectType = external_call`) with the regular rename endpoint.
+
+* Method: `PUT`
+* Endpoint: `/ocs/v2.php/apps/spreed/api/v4/room/{token}`
+* Authentication: same `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers as for creating a conversation
+* `owner` (string, required): user ID of an owner of the conversation, used as the actor
+* `roomName` (string, required): new name of the conversation
+
+| Status             | Meaning                                                                       |
+|--------------------|-------------------------------------------------------------------------------|
+| `200 OK`           | Conversation renamed                                                          |
+| `400 Bad Request`  | The name is empty or too long                                                 |
+| `401 Unauthorized` | Invalid checksum                                                              |
+| `403 Forbidden`    | `owner` is not an owner of the conversation                                   |
+| `404 Not Found`    | Conversation, `owner` not found or conversation is not an `external_call` one |
+
 ## Talk → iframe communication
 
 The iframe URL is loaded in a sandboxed `<iframe>` with the following attributes:

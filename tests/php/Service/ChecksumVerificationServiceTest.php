@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\ChecksumVerificationService;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -19,7 +20,7 @@ class ChecksumVerificationServiceTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->service = new ChecksumVerificationService();
+		$this->service = new ChecksumVerificationService($this->createMock(Config::class));
 	}
 
 	public static function dataValidateRequest(): array {
