@@ -241,5 +241,5 @@
 * `config => conversations => tags-show-unread` (local) - User selected mode when unread conversations are shown in collapsed conversation tags (`never`, `mention` or `always`)
 
 ## 25.0.9
-* `config => attachments => allow-update` (local) - Whether shared files are editable by default, until the user picks a choice in the upload editor
-* `config => attachments => skip-compression` (local) - Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor
+* `config => attachments => default-allow-edit` (local) - Whether shared files are editable by default, until the user picks a choice in the upload editor
+* `config => attachments => default-original-quality` (local) - Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor

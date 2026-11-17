@@ -313,8 +313,8 @@
                                 "required": [
                                     "allowed",
                                     "conversation-subfolders",
-                                    "allow-update",
-                                    "skip-compression"
+                                    "default-allow-edit",
+                                    "default-original-quality"
                                 ],
                                 "properties": {
                                     "allowed": {
@@ -329,11 +329,11 @@
                                         "type": "boolean",
                                         "description": "Whether per-conversation subfolders are used for attachments"
                                     },
-                                    "allow-update": {
+                                    "default-allow-edit": {
                                         "type": "boolean",
                                         "description": "Whether shared files are editable by default"
                                     },
-                                    "skip-compression": {
+                                    "default-original-quality": {
                                         "type": "boolean",
                                         "description": "Whether images are uploaded in original quality by default"
                                     }

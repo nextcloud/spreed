@@ -770,9 +770,9 @@ namespace OCA\Talk;
  *             // Whether per-conversation subfolders are used for attachments
  *             'conversation-subfolders': bool,
  *             // Whether shared files are editable by default
- *             'allow-update': bool,
+ *             'default-allow-edit': bool,
  *             // Whether images are uploaded in original quality by default
- *             'skip-compression': bool,
+ *             'default-original-quality': bool,
  *         },
  *         call: array{
  *             // Whether calls are enabled

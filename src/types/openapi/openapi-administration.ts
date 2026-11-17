@@ -242,9 +242,9 @@ export type components = {
                     /** @description Whether per-conversation subfolders are used for attachments */
                     "conversation-subfolders": boolean;
                     /** @description Whether shared files are editable by default */
-                    "allow-update": boolean;
+                    "default-allow-edit": boolean;
                     /** @description Whether images are uploaded in original quality by default */
-                    "skip-compression": boolean;
+                    "default-original-quality": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */
