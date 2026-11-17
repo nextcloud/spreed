@@ -27,6 +27,10 @@ Feature: callapi/sip-dialout
       | 1               | 0        | users     | participant1         | participant1-displayname |               |        |
     When user "participant1" joins room "room" with 200 (v4)
     And user "participant1" joins call "room" with 200 (v4)
+    And user "participant2" dials out to "+491601231212" from call in room "room" with 400 (v4)
+    And user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
+    And user "participant2" dials out to "+491601231212" from call in room "room" with 412 (v4)
+    And user "participant1" sets lobby state for room "room" to "no lobby" with 200 (v4)
     And reset signaling server requests
     And signaling server will respond with
       | response | {"type": "dialout","dialout": {"callid": "the-call-id"}} |
