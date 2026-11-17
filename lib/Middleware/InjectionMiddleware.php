@@ -105,8 +105,7 @@ class InjectionMiddleware extends Middleware {
 		$controller->setAPIVersion((int)substr((string)$apiVersion, 1));
 
 		if (!empty($reflectionMethod->getAttributes(AllowExternalCallService::class))
-			&& ($this->request->getHeader('x-nextcloud-talk-external-service-random') !== ''
-				|| $this->request->getHeader('x-nextcloud-talk-external-service-checksum') !== '')) {
+			&& $this->request->getHeader('x-nextcloud-talk-external-service-jwt') !== '') {
 			$this->getExternalCallServiceOwner($controller);
 			return;
 		}
@@ -219,14 +218,11 @@ class InjectionMiddleware extends Middleware {
 	 * @throws UnauthorizedException
 	 */
 	protected function getExternalCallServiceOwner(AEnvironmentAwareOCSController $controller): void {
-		$owner = (string)$this->request->getParam('owner', '');
-		if (!$this->checksumVerificationService->validateExternalCallServiceRequest(
-			$this->request->getHeader('x-nextcloud-talk-external-service-random'),
-			$this->request->getHeader('x-nextcloud-talk-external-service-checksum'),
-			$owner,
-		)) {
+		if (!$this->checksumVerificationService->validateExternalCallServiceRequest()) {
 			throw new UnauthorizedException();
 		}
+
+		$owner = (string)$this->request->getParam('owner', '');
 
 		$room = $this->manager->getRoomForUserByToken($this->request->getParam('token'), $owner);
 		if ($room->getObjectType() !== Room::OBJECT_TYPE_EXTERNAL_CALL) {

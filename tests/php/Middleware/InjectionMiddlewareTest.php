@@ -87,13 +87,8 @@ class InjectionMiddlewareTest extends TestCase {
 			['owner', '', 'alice'],
 			['token', null, 'abcdef'],
 		]);
-		$request->method('getHeader')->willReturnMap([
-			['x-nextcloud-talk-external-service-random', 'random'],
-			['x-nextcloud-talk-external-service-checksum', 'checksum'],
-		]);
 		$checksumVerificationService = $this->createMock(ChecksumVerificationService::class);
 		$checksumVerificationService->method('validateExternalCallServiceRequest')
-			->with('alice', 'random', 'checksum')
 			->willReturn($validChecksum);
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn($objectType);
