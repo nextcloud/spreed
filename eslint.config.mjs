@@ -37,6 +37,16 @@ export default [
 	},
 
 	{
+		name: 'talk/vue-style',
+		files: ['**/*.vue'],
+		rules: {
+			'vue/v-bind-style': ['error', 'shorthand', {
+				sameNameShorthand: 'always',
+			}],
+		},
+	},
+
+	{
 		name: 'talk/disabled-during-migration',
 		rules: {
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
