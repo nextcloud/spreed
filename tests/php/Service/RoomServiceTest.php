@@ -257,6 +257,29 @@ class RoomServiceTest extends TestCase {
 		$this->service->createConversation(Room::TYPE_PUBLIC, 'a', null, $type, $id);
 	}
 
+	public static function dataCreateConversationInvalidExternalCallObjectId(): array {
+		return [
+			['participant1'],
+			['D4E5F6A7-B8C9-0123-DEFA-123456789012'],
+			['d4e5f6a7b8c90123defa123456789012'],
+			['d4e5f6a7-b8c9-0123-defa-12345678901'],
+			['d4e5f6a7-b8c9-0123-defa-1234567890123'],
+			['g4e5f6a7-b8c9-0123-defa-123456789012'],
+		];
+	}
+
+	#[DataProvider('dataCreateConversationInvalidExternalCallObjectId')]
+	public function testCreateConversationInvalidExternalCallObjectId(string $objectId): void {
+		$this->config->method('getExternalCallService')
+			->willReturn('https://external-service.example.tld/');
+		$this->manager->expects($this->never())
+			->method('createRoom');
+
+		$this->expectException(InvalidArgumentException::class);
+		$this->expectExceptionMessage('object-id');
+		$this->service->createConversation(Room::TYPE_PUBLIC, 'a', null, Room::OBJECT_TYPE_EXTERNAL_CALL, $objectId);
+	}
+
 	public static function dataCreateConversation(): array {
 		return [
 			[Room::TYPE_GROUP, 'Group conversation', 'admin', '', '', ''],

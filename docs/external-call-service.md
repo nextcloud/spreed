@@ -8,7 +8,7 @@ Nextcloud Talk can delegate in-browser calls to a third-party video conferencing
 ## Requirements
 
 * Nextcloud Talk built-in calls must be disabled (`start_calls = 3`).
-* The conversation must have `objectType = external_call` with an `objectId` that identifies the meeting on the external service side.
+* The conversation must have `objectType = external_call` with an `objectId` that identifies the meeting on the external service side. The `objectId` must be a UUID in lowercase (e.g. `fe455a7b-3ab3-4481-b385-080783dc1ad7`).
 
 ## Server configuration
 
