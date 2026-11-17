@@ -8,10 +8,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use SensitiveParameter;
 
 class ChecksumVerificationService {
+	public function __construct(
+		private readonly Config $talkConfig,
+	) {
+	}
+
 	/**
 	 * Check if the current request is coming from an allowed backend.
 	 *
@@ -52,5 +58,24 @@ class ChecksumVerificationService {
 		}
 
 		throw new UnauthorizedException('Invalid HMAC provided');
+	}
+
+	/**
+	 * Check if the current request is coming from the configured external call service
+	 *
+	 * @param string $data Data string that is signed
+	 * @return bool True if the request is from the external call service and valid
+	 */
+	public function validateExternalCallServiceRequest(string $random, #[SensitiveParameter] string $checksum, string $data): bool {
+		if ($data === '' || !$this->talkConfig->isExternalCallServiceConfigured()) {
+			return false;
+		}
+
+		$secret = $this->talkConfig->getExternalCallServiceSharedSecret();
+		try {
+			return $this->validateRequest($random, $checksum, $secret, $data);
+		} catch (UnauthorizedException) {
+			return false;
+		}
 	}
 }

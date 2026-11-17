@@ -124,7 +124,7 @@ class SignalingControllerTest extends TestCase {
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
-		$this->checksumVerificationService = new ChecksumVerificationService();
+		$this->checksumVerificationService = new ChecksumVerificationService($this->config);
 		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->authenticator = $this->createMock(Authenticator::class);
