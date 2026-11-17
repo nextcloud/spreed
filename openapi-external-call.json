@@ -1421,7 +1421,7 @@
             "post": {
                 "operationId": "room-create-room",
                 "summary": "Create a room with a user, a group or a circle",
-                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.\nThe endpoint can also be used unauthenticated by an external call service by signing the request with the configured shared secret via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the random seed and the `$owner` user ID).",
+                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.\nThe endpoint can also be used unauthenticated by an external call service by signing the request with its private key via the `x-nextcloud-talk-external-service-jwt` header.",
                 "tags": [
                     "room"
                 ],
@@ -1583,7 +1583,7 @@
                                     "owner": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored."
+                                        "description": "User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated as external call service, otherwise ignored."
                                     },
                                     "preset": {
                                         "type": "string",
@@ -1610,17 +1610,9 @@
                         }
                     },
                     {
-                        "name": "x-nextcloud-talk-external-service-random",
+                        "name": "x-nextcloud-talk-external-service-jwt",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-talk-external-service-checksum",
-                        "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
+                        "description": "ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)",
                         "schema": {
                             "type": "string"
                         }
@@ -1981,21 +1973,23 @@
                     }
                 ],
                 "requestBody": {
-                    "required": false,
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "type": "object",
+                                "required": [
+                                    "owner"
+                                ],
                                 "properties": {
+                                    "owner": {
+                                        "type": "string",
+                                        "description": "User ID of an owner of the conversation that will be used as actor"
+                                    },
                                     "participants": {
                                         "$ref": "#/components/schemas/InvitationList",
                                         "default": [],
                                         "description": "List of participants the conversation should have grouped by type"
-                                    },
-                                    "owner": {
-                                        "type": "string",
-                                        "default": "",
-                                        "description": "User ID of an owner of the conversation that will be used as actor"
                                     }
                                 }
                             }
@@ -2026,17 +2020,9 @@
                         }
                     },
                     {
-                        "name": "x-nextcloud-talk-external-service-random",
+                        "name": "x-nextcloud-talk-external-service-jwt",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-talk-external-service-checksum",
-                        "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
+                        "description": "ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)",
                         "schema": {
                             "type": "string"
                         }
@@ -2272,6 +2258,342 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "auth"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}": {
+            "put": {
+                "operationId": "room-rename-room",
+                "summary": "Rename a room",
+                "description": "The endpoint can also be used unauthenticated by an external call service for its own conversations, by signing the request with its private key via the `x-nextcloud-talk-external-service-jwt` header.",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "roomName"
+                                ],
+                                "properties": {
+                                    "roomName": {
+                                        "type": "string",
+                                        "description": "New name"
+                                    },
+                                    "owner": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User ID of an owner of the conversation that will be used as actor. Required when the request is authenticated as external call service, otherwise ignored."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-jwt",
+                        "in": "header",
+                        "description": "ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Room renamed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Renaming room is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "required": [
+                                                "ocs"
+                                            ],
+                                            "properties": {
+                                                "ocs": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "meta",
+                                                        "data"
+                                                    ],
+                                                    "properties": {
+                                                        "meta": {
+                                                            "$ref": "#/components/schemas/OCSMeta"
+                                                        },
+                                                        "data": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "event",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "object",
+                                            "required": [
+                                                "ocs"
+                                            ],
+                                            "properties": {
+                                                "ocs": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "meta",
+                                                        "data"
+                                                    ],
+                                                    "properties": {
+                                                        "meta": {
+                                                            "$ref": "#/components/schemas/OCSMeta"
+                                                        },
+                                                        "data": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "account",
+                                                                        "encrypted",
+                                                                        "matrix",
+                                                                        "message",
+                                                                        "permission"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The Matrix account of the user can not rename the Matrix room",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "encrypted",
+                                                                "matrix",
+                                                                "message",
+                                                                "permission"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The Matrix room or the linked Matrix account of the user was not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "encrypted",
+                                                                "matrix",
+                                                                "message",
+                                                                "permission"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "The Matrix homeserver rejected the change or could not be reached",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "encrypted",
+                                                                "matrix",
+                                                                "message",
+                                                                "permission"
                                                             ]
                                                         }
                                                     }
