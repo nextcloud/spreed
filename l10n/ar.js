@@ -1318,6 +1318,7 @@ OC.L10N.register(
     "Expires" : "تنتهي صلاحيته فى",
     "Clear reminder – {timeLocale}" : "إمحُ التذكير – {timeLocale}",
     "Edited by {actor}" : "تمّ تحريرها من قِبَل {actor}",
+    "Until {absoluteDate}" : "حتى{absoluteDate}",
     "Message text copied to clipboard" : "تمّ نسخ الرسالة النصّية إلى الحافظة",
     "Message text could not be copied" : "تعذّر نسخ الرسالة النصّية إلى الحافظة",
     "Message forwarded to \"Note to self\"" : "الرسالة أُعِيدَ توجيهها إلى \"ملاحظة لنفسي\"",
