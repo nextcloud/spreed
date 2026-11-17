@@ -190,6 +190,11 @@ class MessageParser {
 				if ($botName) {
 					$displayName = $botName . ' (Bot)';
 				}
+			} else {
+				$rawDisplayName = $this->userManager->getDisplayName($actorId);
+				if ($rawDisplayName !== null) {
+					$displayName = str_replace('{user}', $rawDisplayName, $message->getL10n()->t('Flow (by {user})'));
+				}
 			}
 		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			if (isset($this->federatedUsersNames[$actorId])) {
