@@ -193,7 +193,7 @@ describe('MessagesSystemGroup.vue', () => {
 			expect(messagesEl.at(0).props()).toMatchObject({
 				message: {
 					id: `${MESSAGES[0].id}_combined`,
-					message: '{user0}, {user1} and 1 more participant joined the call',
+					message: '{user0}, {user1} and {user2} joined the call',
 					messageParameters: {
 						user0: {
 							id: 'actor-1',
@@ -209,6 +209,43 @@ describe('MessagesSystemGroup.vue', () => {
 				},
 				previousMessageId: 90,
 				nextMessageId: 200,
+			})
+		})
+
+		test('renders grouped users joining with more than three participants', () => {
+			// prepare
+			MESSAGES.push({
+				...MESSAGES[0],
+				id: 140,
+				actorId: 'actor-4',
+				actorDisplayName: 'actor four',
+				messageParameters: {
+					actor: {
+						id: 'actor-4',
+						displayName: 'actor four',
+						type: ATTENDEE.ACTOR_TYPE.USERS,
+					},
+				},
+				timestamp: 100,
+			})
+			// act
+			const wrapper = shallowMount(MessagesSystemGroup, {
+				global: { plugins: [store] },
+				props: {
+					id: 123,
+					token: TOKEN,
+					previousMessageId: 90,
+					nextMessageId: 200,
+					messages: MESSAGES,
+				},
+			})
+			// assert
+			const messagesEl = wrapper.findAllComponents(SystemMessageItem)
+			expect(messagesEl.at(0).props()).toMatchObject({
+				message: {
+					id: `${MESSAGES[0].id}_combined`,
+					message: '{user0}, {user1} and 2 more participants joined the call',
+				},
 			})
 		})
 
@@ -238,7 +275,7 @@ describe('MessagesSystemGroup.vue', () => {
 			expect(messagesEl.at(0).props()).toMatchObject({
 				message: {
 					id: `${MESSAGES[0].id}_combined`,
-					message: '{user0}, {user1} and 1 more participant left the call',
+					message: '{user0}, {user1} and {user2} left the call',
 					messageParameters: {
 						user0: {
 							id: 'actor-1',
