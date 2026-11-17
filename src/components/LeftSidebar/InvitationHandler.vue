@@ -18,7 +18,7 @@
 					v-for="(item, id) in invitations"
 					:key="`invitation_${id}`"
 					class="inbox__item">
-					<ConversationIcon :item="item" hideUserStatus />
+					<ConversationIcon :item hideUserStatus />
 					<div class="inbox__item-desc">
 						<span class="inbox__item-desc__name">
 							{{ item.roomName }}

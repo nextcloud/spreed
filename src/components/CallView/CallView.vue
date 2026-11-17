@@ -11,14 +11,14 @@
 		@mouseleave="hideOverlay">
 		<ViewerOverlayCallView
 			v-if="isViewerOverlay"
-			:token="token"
+			:token
 			:model="promotedParticipantModel"
 			:sharedData="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]"
-			:screens="screens"
-			:localSharedData="localSharedData" />
+			:screens
+			:localSharedData />
 
 		<template v-else>
-			<EmptyCallView v-if="showEmptyCallView" :isSidebar="isSidebar" />
+			<EmptyCallView v-if="showEmptyCallView" :isSidebar />
 
 			<div id="videos" :class="{ 'is-sidebar': isSidebar }">
 				<div
@@ -30,7 +30,7 @@
 						v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="`promoted-${selectedVideoPeerId}`"
 						:data-tile-session-id="selectedCallParticipantModel.attributes.nextcloudSessionId"
-						:token="token"
+						:token
 						:model="selectedCallParticipantModel"
 						:sharedData="sharedDatas[selectedVideoPeerId]"
 						:showTalkingHighlight="false"
@@ -43,9 +43,9 @@
 					<LocalVideo
 						v-else-if="showLocalVideo"
 						ref="localVideo"
-						:token="token"
-						:localMediaModel="localMediaModel"
-						:localCallParticipantModel="localCallParticipantModel"
+						:token
+						:localMediaModel
+						:localCallParticipantModel
 						:isStripe="false"
 						:isSidebar="false"
 						isBig
@@ -56,34 +56,34 @@
 					<ScreenShare
 						v-else-if="showLocalScreen"
 						key="screen-local"
-						:token="token"
-						:localMediaModel="localMediaModel"
-						:showVideoOverlay="showVideoOverlay"
+						:token
+						:localMediaModel
+						:showVideoOverlay
 						:sharedData="localSharedData"
 						isBig />
 					<!-- Remote or selected screen -->
 					<ScreenShare
 						v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
 						:key="`screen-${shownRemoteScreenPeerId}`"
-						:token="token"
+						:token
 						:callParticipantModel="shownRemoteScreenCallParticipantModel"
-						:showVideoOverlay="showVideoOverlay"
+						:showVideoOverlay
 						:sharedData="sharedDatas[shownRemoteScreenPeerId]"
 						isBig />
 					<!-- Several active speakers sharing the main area -->
 					<SpeakersGrid
 						v-else-if="showSpeakersGrid"
-						:token="token"
+						:token
 						:models="promotedSpeakerModels"
-						:sharedDatas="sharedDatas"
-						:showVideoOverlay="showVideoOverlay"
+						:sharedDatas
+						:showVideoOverlay
 						@selectVideo="handleSelectVideo" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue
 						v-else-if="promotedParticipantModel"
 						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
 						:data-tile-session-id="promotedParticipantModel.attributes.nextcloudSessionId"
-						:token="token"
+						:token
 						:model="promotedParticipantModel"
 						:sharedData="sharedDatas[promotedParticipantModel.attributes.peerId]"
 						:showTalkingHighlight="false"
@@ -91,16 +91,16 @@
 						fitVideo
 						isBig
 						:isFullPage="showFullPage"
-						:isSidebar="isSidebar"
+						:isSidebar
 						@forcePromoteVideo="forcePromotedModel = $event" />
 					<!-- presenter overlay -->
 					<PresenterOverlay
 						v-if="shouldShowPresenterOverlay"
-						:token="token"
+						:token
 						:model="presenterModel"
 						:sharedData="presenterSharedData"
 						:isLocalPresenter="showLocalScreen"
-						:localMediaModel="localMediaModel"
+						:localMediaModel
 						:isCollapsed="!showPresenterOverlay"
 						@click="toggleShowPresenterOverlay" />
 
@@ -112,7 +112,7 @@
 							:hasShadow="false"
 							:model="placeholderModel(6)"
 							:sharedData="placeholderSharedData(6)"
-							:token="token"
+							:token
 							:participantName="placeholderName(6)"
 							isBig />
 					</div>
@@ -122,29 +122,29 @@
 				<VideosGrid
 					v-if="!isSidebar"
 					:isStripe="showPromotedArea"
-					:isRecording="isRecording"
-					:token="token"
+					:isRecording
+					:token
 					:isOverlap="showFullPage"
 					:callParticipantModels="stripeParticipantModels"
-					:screens="screens"
-					:localMediaModel="localMediaModel"
-					:localCallParticipantModel="localCallParticipantModel"
-					:showVideoOverlay="showVideoOverlay"
-					:sharedDatas="sharedDatas"
+					:screens
+					:localMediaModel
+					:localCallParticipantModel
+					:showVideoOverlay
+					:sharedDatas
 					v-bind="$attrs"
 					@selectVideo="handleSelectVideo"
 					@clickLocalVideo="handleClickLocalVideo" />
 
 				<ReactionToaster
 					v-if="supportedReactions?.length"
-					:token="token"
-					:supportedReactions="supportedReactions"
-					:callParticipantModels="callParticipantModels" />
+					:token
+					:supportedReactions
+					:callParticipantModels />
 
 				<LiveTranscriptionRenderer
 					v-if="isLiveTranscriptionEnabled"
-					:token="token"
-					:callParticipantModels="callParticipantModels" />
+					:token
+					:callParticipantModels />
 
 				<!-- Local video if sidebar -->
 				<LocalVideo
@@ -154,14 +154,14 @@
 					:class="{ 'local-video--sidebar': isSidebar }"
 					:fitVideo="true"
 					:isStripe="true"
-					:token="token"
-					:localMediaModel="localMediaModel"
-					:localCallParticipantModel="localCallParticipantModel"
-					:isSidebar="isSidebar"
+					:token
+					:localMediaModel
+					:localCallParticipantModel
+					:isSidebar
 					@clickVideo="handleClickLocalVideo" />
 			</div>
 
-			<BottomBar v-if="!isRecording" :isSidebar="isSidebar" />
+			<BottomBar v-if="!isRecording" :isSidebar />
 		</template>
 	</div>
 </template>

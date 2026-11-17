@@ -134,12 +134,12 @@ function handleDirectCall(routeToken: string) {
 	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar v-if="!isInExternalCall" :isInCall="isInCall" />
-			<ExternalCallView v-if="isInExternalCall" :token="token" />
-			<CallView v-else-if="isInCall" :token="token" />
+			<TopBar v-if="!isInExternalCall" :isInCall />
+			<ExternalCallView v-if="isInExternalCall" :token />
+			<CallView v-else-if="isInCall" :token />
 			<ChatView v-else />
 			<PollViewer />
-			<CallFailedDialog v-if="connectionFailed" :token="token" />
+			<CallFailedDialog v-if="connectionFailed" :token />
 		</template>
 	</div>
 </template>

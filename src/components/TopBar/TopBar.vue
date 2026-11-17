@@ -126,7 +126,7 @@
 				</NcButton>
 				<ExtendOneToOneDialog
 					v-else-if="!isSidebar && canExtendOneToOneConversation"
-					:token="token" />
+					:token />
 
 				<!-- Classified conversation indicator (non-interactive) -->
 				<span
@@ -143,7 +143,7 @@
 				<CalendarEventsDialog
 					v-if="showCalendarEvents"
 					class="top-bar__calendar-events"
-					:token="token" />
+					:token />
 
 				<CallButton v-if="!isInCall" shrinkOnMobile />
 
@@ -162,7 +162,7 @@
 				<!-- TopBar menu -->
 				<TopBarMenu
 					v-if="!isSidebar"
-					:token="token"
+					:token
 					:showSearchAction="isSmallMobile"
 					@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
 			</div>
@@ -170,7 +170,7 @@
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor
 				v-if="showBreakoutRoomsEditor"
-				:token="token"
+				:token
 				@close="showBreakoutRoomsEditor = false" />
 		</template>
 	</div>

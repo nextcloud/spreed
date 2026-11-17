@@ -10,12 +10,12 @@
 		:active="item.token === selectedRoom?.token"
 		:bold="exposeMessagesRef && !!item.unreadMessages"
 		:counterNumber="exposeMessagesRef ? item.unreadMessages : 0"
-		:counterType="counterType"
+		:counterType
 		@click="onClick">
 		<template #icon>
 			<ConversationIcon
 				:key="item.token"
-				:item="item"
+				:item
 				:hideFavorite="!item?.attendeeId"
 				:hideCall="!item?.attendeeId" />
 		</template>

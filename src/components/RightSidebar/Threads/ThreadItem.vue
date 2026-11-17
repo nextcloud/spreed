@@ -113,8 +113,8 @@ function handleActionsMenuOpen(open: boolean) {
 		:data-nav-id="`thread_${thread.thread.id}`"
 		class="thread"
 		:name="thread.thread.title"
-		:to="to"
-		:active="active"
+		:to
+		:active
 		forceMenu
 		@update:menuOpen="handleActionsMenuOpen">
 		<template #icon>

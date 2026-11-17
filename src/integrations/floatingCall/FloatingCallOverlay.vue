@@ -250,8 +250,8 @@ async function fetchCurrentConversation() {
 				</div>
 			</div>
 			<div class="floating-call__app">
-				<CallView :token="token" isSidebar />
-				<CallFailedDialog v-if="connectionFailed" :token="token" />
+				<CallView :token isSidebar />
+				<CallFailedDialog v-if="connectionFailed" :token />
 				<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 			</div>
 		</div>

@@ -9,7 +9,7 @@
 		<template #icon>
 			<AvatarWrapper
 				:id="userAbsence.userId"
-				:token="token"
+				:token
 				:name="displayName"
 				source="users"
 				:size="AVATAR.SIZE.SMALL"

@@ -17,9 +17,9 @@
 			}"
 			class="message-body system">
 			<MessageBody
-				:richParameters="richParameters"
+				:richParameters
 				:hasCall="conversation.hasCall"
-				:message="message" />
+				:message />
 		</div>
 
 		<!-- Message actions -->

@@ -46,7 +46,7 @@
 			v-if="!isSearching"
 			:key="token"
 			class="h-100"
-			:participants="participants"
+			:participants
 			:loading="!participantsInitialised" />
 
 		<div v-else class="scroller h-100">
@@ -69,12 +69,12 @@
 			<ParticipantsSearchResults
 				v-if="canAdd"
 				class="search-results"
-				:token="token"
-				:searchResults="searchResults"
+				:token
+				:searchResults
 				:onlyUsers="isOneToOneConversation"
-				:contactsLoading="contactsLoading"
-				:noResults="noResults"
-				:searchText="searchText"
+				:contactsLoading
+				:noResults
+				:searchText
 				@click="addParticipants" />
 
 			<SelectPhoneNumber

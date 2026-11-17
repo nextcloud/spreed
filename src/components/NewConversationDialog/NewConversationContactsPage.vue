@@ -42,7 +42,7 @@
 			<ContactSelectionBubble
 				v-for="participant in selectedParticipants"
 				:key="participant.source + participant.id"
-				:participant="participant"
+				:participant
 				@update="updateSelectedParticipants" />
 		</TransitionWrapper>
 
@@ -54,13 +54,13 @@
 			:value="searchText"
 			@select="addParticipantPhone" />
 		<ParticipantsSearchResults
-			:searchResults="searchResults"
-			:contactsLoading="contactsLoading"
-			:noResults="noResults"
+			:searchResults
+			:contactsLoading
+			:noResults
 			scrollable
 			:showSearchHints="!onlyUsers"
-			:token="token"
-			:onlyUsers="onlyUsers"
+			:token
+			:onlyUsers
 			@click="updateSelectedParticipants"
 			@clickSearchHint="focusInput" />
 	</div>

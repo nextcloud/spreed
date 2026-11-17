@@ -8,7 +8,7 @@
 		<NcAppNavigationCaption :name="t('spreed', 'Phone numbers')" />
 		<NavigationHint v-if="errorHint" :hint="errorHint" />
 		<template v-if="hintAddPhones && libPhoneNumber">
-			<NcListItem :name="name" @click="selectPhoneNumber">
+			<NcListItem :name @click="selectPhoneNumber">
 				<template #icon>
 					<IconPhoneOutline :size="AVATAR.SIZE.DEFAULT" fillColor="var(--color-text-maxcontrast)" />
 				</template>
@@ -21,7 +21,7 @@
 			</NcListItem>
 		</template>
 		<template v-else-if="libPhoneNumber">
-			<NcListItem :name="name" @click="selectPhoneNumber">
+			<NcListItem :name @click="selectPhoneNumber">
 				<template #icon>
 					<IconPhoneOutline :size="AVATAR.SIZE.DEFAULT" />
 				</template>

@@ -6,7 +6,7 @@
 <template>
 	<NcModal
 		:class="{ 'modal-mask__participants-step': isEditingParticipants }"
-		:container="container"
+		:container
 		:labelId="dialogHeaderId"
 		@close="$emit('close')">
 		<div
@@ -74,7 +74,7 @@
 			</template>
 			<template v-else>
 				<BreakoutRoomsParticipantsEditor
-					:token="token"
+					:token
 					:roomNumber="amount"
 					@close="$emit('close')"
 					@back="isEditingParticipants = false"

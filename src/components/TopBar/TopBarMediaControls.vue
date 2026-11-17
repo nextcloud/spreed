@@ -48,16 +48,16 @@
 		</div>
 
 		<LocalAudioControlButton
-			:token="token"
-			:conversation="conversation"
-			:model="model"
+			:token
+			:conversation
+			:model
 			:showDevices="!isSidebar"
 			variant="tertiary" />
 
 		<LocalVideoControlButton
-			:token="token"
-			:conversation="conversation"
-			:model="model"
+			:token
+			:conversation
+			:model
 			:showDevices="!isSidebar"
 			variant="tertiary" />
 

@@ -22,11 +22,11 @@
 		@mouseleave="handleMouseleave">
 		<div class="message-body">
 			<MessageBody
-				:richParameters="richParameters"
-				:isDeleting="isDeleting"
+				:richParameters
+				:isDeleting
 				:hasCall="conversation.hasCall"
-				:message="message"
-				:readInfo="readInfo"
+				:message
+				:readInfo
 				:isShortSimpleMessage
 				:isThreadStarterMessage
 				:isSelfActor>
@@ -35,7 +35,7 @@
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
-					:canReact="canReact"
+					:canReact
 					:showControls="isHovered || isFollowUpEmojiPickerOpen"
 					:isSelfActor
 					@emojiPickerToggled="toggleFollowUpEmojiPicker" />
@@ -52,7 +52,7 @@
 				<ScheduledMessageActions
 					v-if="showScheduledMessages"
 					v-model:isActionMenuOpen="isActionMenuOpen"
-					:message="message"
+					:message
 					class="message-buttons-bar"
 					:class="{ outlined: buttonsBarOutlined }"
 					@edit="handleEdit" />
@@ -64,11 +64,11 @@
 					v-model:isForwarderOpen="isForwarderOpen"
 					class="message-buttons-bar"
 					:class="{ outlined: buttonsBarOutlined }"
-					:canReact="canReact"
-					:message="message"
-					:richParameters="richParameters"
-					:previousMessageId="previousMessageId"
-					:readInfo="readInfo"
+					:canReact
+					:message
+					:richParameters
+					:previousMessageId
+					:readInfo
 					:isThreadStarterMessage
 					@reply="handleReply"
 					@edit="handleEdit"

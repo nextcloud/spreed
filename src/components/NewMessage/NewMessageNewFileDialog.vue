@@ -12,7 +12,7 @@
 		@update:open="closeModal">
 		<form
 			class="templates-picker__form"
-			:style="style"
+			:style
 			@submit.prevent="handleCreateNewFile">
 			<NcTextField
 				id="new-file-form-name"

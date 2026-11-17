@@ -62,7 +62,7 @@
 							class="results__option__details">
 							<PollVotersDetails
 								v-if="poll.details"
-								:token="token"
+								:token
 								:details="getFilteredDetails(index)" />
 							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
 								<IconCheck :size="16" />
@@ -106,7 +106,7 @@
 				<!-- Submit vote button-->
 				<NcButton
 					variant="primary"
-					:disabled="disabled"
+					:disabled
 					@click="submitVote">
 					<template v-if="!selfHasVoted" #icon>
 						<IconCheck :size="20" />

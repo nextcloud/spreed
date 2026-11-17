@@ -23,11 +23,11 @@
 			<template v-else>
 				<div v-if="isInCall" class="talk-sidebar-callview">
 					<TopBar isInCall isSidebar />
-					<CallView :token="token" isSidebar />
+					<CallView :token isSidebar />
 				</div>
 				<InternalSignalingHint />
 				<CallButton v-if="!isInCall" class="call-button" />
-				<CallFailedDialog v-if="connectionFailed" :token="token" />
+				<CallFailedDialog v-if="connectionFailed" :token />
 				<RouterView />
 				<PollManager />
 				<PollViewer />

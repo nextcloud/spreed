@@ -90,11 +90,11 @@ function onSubmit(value: string) {
 
 <template>
 	<NcDialog
-		:name="name"
-		:message="message"
-		:container="container"
-		:size="size"
-		:buttons="buttons"
+		:name
+		:message
+		:container
+		:size
+		:buttons
 		@closing="onClosing">
 		<slot name="default">
 			<template v-if="customMessages">

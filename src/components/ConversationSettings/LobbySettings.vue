@@ -62,7 +62,7 @@
 
 			<ImportEmailsDialog
 				v-if="isImportEmailsDialogOpen"
-				:token="token"
+				:token
 				container=".import-email-participants"
 				@close="isImportEmailsDialogOpen = false" />
 		</div>

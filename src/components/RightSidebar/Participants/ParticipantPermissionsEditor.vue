@@ -6,9 +6,9 @@
 <template>
 	<div class="wrapper">
 		<PermissionEditor
-			:displayName="displayName"
-			:permissions="permissions"
-			:token="token"
+			:displayName
+			:permissions
+			:token
 			@close="$emit('close')"
 			@submit="handleSubmitPermissions" />
 	</div>

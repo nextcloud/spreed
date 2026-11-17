@@ -38,11 +38,11 @@
 		<NcAvatar
 			v-else
 			:key="item.token + (isDarkTheme ? '-dark' : '-light')"
-			:size="size"
+			:size
 			:user="item.name"
-			:disableMenu="disableMenu"
+			:disableMenu
 			:displayName="item.displayName"
-			:preloadedUserStatus="preloadedUserStatus"
+			:preloadedUserStatus
 			:hideStatus="hideUserStatus"
 			:verboseStatus="showUserOnlineStatus"
 			class="conversation-icon__avatar" />

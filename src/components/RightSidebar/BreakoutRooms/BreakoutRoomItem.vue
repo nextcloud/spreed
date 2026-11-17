@@ -53,7 +53,7 @@
 				<!-- Send message dialog -->
 				<SendMessageDialog
 					v-if="isDialogOpened"
-					:dialogTitle="dialogTitle"
+					:dialogTitle
 					:token="roomToken"
 					@submit="sentMessageToRoom"
 					@close="isDialogOpened = false" />

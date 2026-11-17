@@ -48,8 +48,8 @@ function onClose(result?: unknown) {
 <template>
 	<ConfirmDialog
 		:name="t('spreed', 'Stop preserving conversation')"
-		:container="container"
-		:buttons="buttons"
+		:container
+		:buttons
 		size="normal"
 		isForm
 		:inputProps="{ label: t('spreed', 'Conversation token') }"

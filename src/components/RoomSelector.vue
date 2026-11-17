@@ -28,7 +28,7 @@
 			<ConversationsSearchListVirtual
 				v-if="loading || availableRooms.length > 0"
 				:conversations="availableRooms"
-				:loading="loading"
+				:loading
 				class="selector__list"
 				@select="onSelect" />
 			<NcEmptyContent v-else :name="noMatchFoundTitle" :description="noMatchFoundSubtitle">

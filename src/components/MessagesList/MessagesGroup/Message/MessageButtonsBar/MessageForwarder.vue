@@ -11,8 +11,8 @@
 			v-if="!showForwardedConfirmation"
 			showPostableOnly
 			allowFederation
-			:dialogTitle="dialogTitle"
-			:dialogSubtitle="dialogSubtitle"
+			:dialogTitle
+			:dialogSubtitle
 			@select="setSelectedConversationToken"
 			@close="handleClose" />
 

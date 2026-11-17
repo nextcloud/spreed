@@ -36,7 +36,7 @@
 
 				<NcAssistantButton
 					variant="primary"
-					:disabled="disabled"
+					:disabled
 					class="translate-dialog__button"
 					@click="translateMessage">
 					{{ isTranslating ? t('spreed', 'Translating') : t('spreed', 'Translate') }}

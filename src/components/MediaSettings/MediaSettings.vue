@@ -73,7 +73,7 @@
 						<VideoBackground class="background-preview" />
 						<AvatarWrapper
 							:id="userId"
-							:token="token"
+							:token
 							:name="displayName"
 							:source="actorStore.actorType"
 							:size="AVATAR.SIZE.EXTRA_LARGE"
@@ -93,9 +93,9 @@
 							@click="toggleAudio">
 							<template #icon>
 								<VolumeIndicator
-									:audioPreviewAvailable="audioPreviewAvailable"
+									:audioPreviewAvailable
 									:audioEnabled="audioOn"
-									:currentVolume="currentVolume"
+									:currentVolume
 									:volumeThreshold="currentThreshold"
 									overlayMutedColor="#888888" />
 							</template>
@@ -156,24 +156,24 @@
 				</div>
 				<div class="media-settings__settings">
 					<!-- Tab panels -->
-					<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
+					<MediaSettingsTabs v-model:active="tabContent" :tabs>
 						<template #tab-panel:devices>
 							<MediaDevicesSelector
 								kind="audioinput"
-								:devices="devices"
+								:devices
 								:deviceId="audioInputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleAudioInputIdChange" />
 							<MediaDevicesSelector
 								kind="videoinput"
-								:devices="devices"
+								:devices
 								:deviceId="videoInputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleVideoInputIdChange" />
 							<MediaDevicesSelector
 								v-if="audioOutputSupported"
 								kind="audiooutput"
-								:devices="devices"
+								:devices
 								:deviceId="audioOutputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleAudioOutputIdChange">
@@ -195,8 +195,8 @@
 						<template #tab-panel:backgrounds>
 							<VideoBackgroundEditor
 								class="media-settings__tab"
-								:token="token"
-								:skipBlurVirtualBackground="skipBlurVirtualBackground"
+								:token
+								:skipBlurVirtualBackground
 								@updateBackground="handleUpdateVirtualBackground" />
 						</template>
 					</MediaSettingsTabs>
@@ -230,9 +230,9 @@
 						v-else-if="isBeforeJoinCall"
 						class="action-button"
 						isMediaSettings
-						:isRecordingFromStart="isRecordingFromStart"
+						:isRecordingFromStart
 						:disabled="disabledCallButton"
-						:recordingConsentGiven="recordingConsentGiven" />
+						:recordingConsentGiven />
 				</div>
 			</div>
 		</div>

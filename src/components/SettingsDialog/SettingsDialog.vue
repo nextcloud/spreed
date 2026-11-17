@@ -11,9 +11,9 @@
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection
 			v-for="{ id, name, element } in customSettingsSections"
-			:id="id"
+			:id
 			:key="id"
-			:name="name">
+			:name>
 			<component :is="element" />
 		</NcAppSettingsSection>
 

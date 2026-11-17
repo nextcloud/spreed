@@ -16,19 +16,19 @@
 			'conversation--compact__read': compact && !item.unreadMessages,
 		}"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
-		:to="to"
+		:to
 		:bold="!!item.unreadMessages"
 		:counterNumber="item.unreadMessages"
-		:counterType="counterType"
+		:counterType
 		:details="compact ? '' : lastActivityTimeString"
 		forceMenu
-		:compact="compact"
+		:compact
 		@click="onClick"
 		@update:menuOpen="handleActionsMenuOpen">
 		<template #icon>
 			<ConversationIcon
 				:key="item.token"
-				:item="item"
+				:item
 				:hideFavorite="compact || supportTags"
 				:hideCall="compact"
 				:hideUserStatus="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"

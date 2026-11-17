@@ -26,7 +26,7 @@
 
 			<PollCard
 				v-else-if="isPoll"
-				:token="token"
+				:token
 				v-bind="item.messageParameters.object" />
 
 			<div
@@ -45,7 +45,7 @@
 
 			<FilePreview
 				v-else
-				:token="token"
+				:token
 				:rowLayout="!isMedia"
 				:itemType="type"
 				isSharedItems

@@ -130,7 +130,7 @@ function openPollDraftHandler() {
 					<ThreadItem
 						v-for="thread of threadsInformation"
 						:key="`thread_${thread.thread.id}`"
-						:thread="thread" />
+						:thread />
 					<NcButton
 						v-if="hasMoreThreads"
 						variant="tertiary"
@@ -158,8 +158,8 @@ function openPollDraftHandler() {
 						{{ t('spreed', 'Browse poll drafts') }}
 					</NcButton>
 					<SharedItems
-						:type="type"
-						:token="token"
+						:type
+						:token
 						tabView
 						:limit="limit(type)"
 						:items="sharedItems[type]" />
@@ -209,8 +209,8 @@ function openPollDraftHandler() {
 		<SharedItemsBrowser
 			v-if="showSharedItemsBrowser"
 			v-model:activeTab="browserActiveTab"
-			:token="token"
-			:sharedItems="sharedItems"
+			:token
+			:sharedItems
 			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>

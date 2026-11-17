@@ -55,7 +55,7 @@ async function disableLobby() {
 
 		<ImportEmailsDialog
 			v-if="isImportEmailsDialogOpen"
-			:token="token"
+			:token
 			@close="isImportEmailsDialogOpen = false" />
 	</div>
 </template>

@@ -8,7 +8,7 @@
 		v-if="modal"
 		listOpenConversations
 		showPostableOnly
-		:dialogTitle="dialogTitle"
+		:dialogTitle
 		@close="closeModal"
 		@select="openConversation" />
 </template>

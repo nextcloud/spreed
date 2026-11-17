@@ -15,7 +15,7 @@
 					:key="participant.attendeeId"
 					v-model:checked="selectedParticipants"
 					:value="participant.attendeeId"
-					:participant="participant" />
+					:participant />
 			</BreakoutRoomItem>
 			<BreakoutRoomItem
 				v-for="(item, index) in assignments"

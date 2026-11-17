@@ -15,7 +15,7 @@
 						v-for="(item, index) in details.slice(0, 8)"
 						:id="item.actorId"
 						:key="index"
-						:token="token"
+						:token
 						:name="getDisplayName(item)"
 						:source="item.actorType"
 						:size="AVATAR.SIZE.EXTRA_SMALL"
@@ -32,7 +32,7 @@
 				class="poll-voters-details__list-item">
 				<AvatarWrapper
 					:id="item.actorId"
-					:token="token"
+					:token
 					:name="item.actorDisplayName.trim()"
 					:source="item.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"

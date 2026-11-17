@@ -26,7 +26,7 @@
 					<BannedItem
 						v-for="ban in banList"
 						:key="ban.id"
-						:ban="ban"
+						:ban
 						@unbanParticipant="handleUnban(ban.id)" />
 				</ul>
 

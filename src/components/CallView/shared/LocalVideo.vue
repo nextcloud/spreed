@@ -44,7 +44,7 @@
 			<VideoBackground v-if="isGrid || isStripe" />
 			<AvatarWrapper
 				:id="userId"
-				:token="token"
+				:token
 				:name="displayName"
 				:source="actorStore.actorType"
 				:size="avatarSize"

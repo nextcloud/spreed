@@ -73,7 +73,7 @@ async function extendOneToOneConversation() {
 
 <template>
 	<NcPopover
-		:container="container"
+		:container
 		popupRole="dialog">
 		<template #trigger>
 			<NcButton
@@ -93,7 +93,7 @@ async function extendOneToOneConversation() {
 				<NewConversationContactsPage
 					v-model:selectedParticipants="selectedParticipants"
 					class="start-group__contacts"
-					:token="token"
+					:token
 					onlyUsers />
 				<NcButton
 					class="start-group__action"

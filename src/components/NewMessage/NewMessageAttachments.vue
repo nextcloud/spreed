@@ -6,7 +6,7 @@
 <template>
 	<NcActions
 		ref="attachmentsMenu"
-		:disabled="disabled"
+		:disabled
 		:forceMenu="true"
 		:aria-label="t('spreed', 'Share files to the conversation')"
 		:aria-haspopup="true">

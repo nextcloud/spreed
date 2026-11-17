@@ -42,7 +42,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-	<CallView :token="token" isRecording />
+	<CallView :token isRecording />
 </template>
 
 <style lang="scss">
