@@ -1461,7 +1461,10 @@ export type paths = {
         };
         /** Get a room */
         get: operations["room-get-single-room"];
-        /** Rename a room */
+        /**
+         * Rename a room
+         * @description The endpoint can also be used unauthenticated by an external call service for its own conversations, by signing the request with the configured shared secret via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the random seed and the `$owner` user ID).
+         */
         put: operations["room-rename-room"];
         post?: never;
         /** Delete a room */
@@ -11962,6 +11965,10 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum */
+                "x-nextcloud-talk-external-service-random"?: string;
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service */
+                "x-nextcloud-talk-external-service-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -11976,6 +11983,11 @@ export interface operations {
                 "application/json": {
                     /** @description New name */
                     roomName: string;
+                    /**
+                     * @description User ID of an owner of the conversation that will be used as actor. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored.
+                     * @default
+                     */
+                    owner?: string;
                 };
             };
         };
