@@ -95,6 +95,7 @@ OC.L10N.register(
     "- Channels and announcements to broadcast information to a broader audience" : "- Kanäle und Ankündigungen zum Senden von Informationen an ein breiteres Publikum",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Besitzer können einen Chatverlauf speichern und so das Löschen und die Bereinigung des Chats verhindern.",
     "_All %n participant_::_All %n participants_" : ["%n Teilnehmer","Alle %n Teilnehmer"],
+    "Flow (by {user})" : "Flow (von {user})",
     "Talk updates ✅" : "Talk Aktualisierungen ✅",
     "Reaction deleted by author" : "Reaktion vom Autor gelöscht",
     "{actor} created the conversation" : "{actor} hat die Unterhaltung erstellt",
