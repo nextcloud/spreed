@@ -95,6 +95,7 @@ OC.L10N.register(
     "- Channels and announcements to broadcast information to a broader audience" : "- Каналы и оповещения для распространения информации среди широкой аудитории",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Владельцы могут защитить обсуждение, чтобы предотвратить удаление и очистку истории сообщений",
     "_All %n participant_::_All %n participants_" : ["Все %n участник","Все %n участника","Все %n участников","Все %n участников"],
+    "Flow (by {user})" : "Flow (от {user})",
     "Talk updates ✅" : "Обновления приложения «Конференции» ✅",
     "Reaction deleted by author" : "Реакция удалена автором",
     "{actor} created the conversation" : "{actor} создал(а) обсуждение",

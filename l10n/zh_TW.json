@@ -93,6 +93,7 @@
     "- Channels and announcements to broadcast information to a broader audience" : "- 透過各類頻道及公告，向更廣泛的受眾廣播資訊",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- 群組管理員可以保留對話，防止對話被刪除或清空",
     "_All %n participant_::_All %n participants_" : ["全部 %n 個參與者"],
+    "Flow (by {user})" : "流程（由 {user}）",
     "Talk updates ✅" : "Talk 更新 ✅",
     "Reaction deleted by author" : "回應被作者刪除",
     "{actor} created the conversation" : "{actor} 建立了對話",
