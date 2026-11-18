@@ -204,6 +204,7 @@ function switchToParentRoom() {
 }
 
 .leave-call-actions--split :deep(.action-item--single) {
+	height: var(--default-clickable-area);
 	border-start-end-radius: 2px;
 	border-end-end-radius: 2px;
 }
