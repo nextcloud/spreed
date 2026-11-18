@@ -26,7 +26,7 @@ e0623401266176cde77f5737be375cff update-nextcloud-ocp.yml
 22604c31b526de270a080eb19967a638 update-stable-titles.yml
 db602a0518c5bfbe201fb4734f7f8d4f lint-typescript.yml
 af7ef59cad90fa52cfed30e97921b7a9 sync-workflow-templates.yml
-92678f1f5453d90fc2fd01698ade497c ai-policy.yml
+f75df1a028b90a751d6e284b8cb0e621 ai-policy.yml
 6e07ed85ca156b6bf121a50dc1af6712 npm-build.yml
 db73bd92859c4fb9d0489c0378a73d9e npm-audit-fix.yml
 81b83942c461e23d10ec6d81c1adce55 rector-apply.yml
