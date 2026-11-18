@@ -9,15 +9,6 @@ import { mockedCapabilities } from './__mocks__/capabilities.ts'
 
 import 'regenerator-runtime/runtime'
 
-vi.mock('extendable-media-recorder', () => ({
-	MediaRecorder: vi.fn(),
-	register: vi.fn(),
-}))
-
-vi.mock('extendable-media-recorder-wav-encoder', () => ({
-	connect: vi.fn(),
-}))
-
 vi.mock('@nextcloud/dialogs', () => ({
 	showInfo: vi.fn(),
 	showSuccess: vi.fn(),
