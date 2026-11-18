@@ -982,6 +982,30 @@ class RoomService {
 	}
 
 	/**
+	 * @param int $folderId Guests folder storing uploads of participants without storage, 0 to turn them off
+	 */
+	public function setGuestsFolderId(Room $room, int $folderId): void {
+		$oldValue = $room->getGuestsFolderId();
+		if ($folderId === $oldValue) {
+			return;
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, $folderId, $oldValue);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('guests_folder_id', $update->createNamedParameter($folderId, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setGuestsFolderId($folderId);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, $folderId, $oldValue);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
+	/**
 	 * Set the ID of the language to use for live transcriptions in the given
 	 * room.
 	 *

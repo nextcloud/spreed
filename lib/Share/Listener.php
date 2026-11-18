@@ -87,6 +87,8 @@ class Listener implements IEventListener {
 				// Only keep the full relative path when the file sits inside a
 				// user subfolder (first segment is "<name>-<userid>") inside the
 				// conversation subfolder (first segment is "<name>-<token>").
+				// The Guests subfolder of the owner is shown to recipients as
+				// "Guests-<userid>", so it can't clash with their own Guests folder.
 				// Other subdirectories (e.g. Recording/<token>/) are not part of
 				// the conversation subfolder hierarchy and must fall back to the
 				// flat filename so that recipients see the file at Talk/<filename>.
@@ -97,6 +99,9 @@ class Listener implements IEventListener {
 					&& (str_ends_with($potentialUserFolder, '-' . $share->getShareOwner())
 						|| str_ends_with($potentialUserFolder, '-' . $share->getShareOwner() . ConversationFolderService::UPDATABLE_SUFFIX))) {
 					$relativePath = $candidate;
+				} elseif (str_ends_with($potentialConversationFolder, '-' . $share->getSharedWith())
+					&& $candidate === $potentialConversationFolder . '/' . ConversationFolderService::GUESTS_FOLDER) {
+					$relativePath = $candidate . '-' . $share->getShareOwner();
 				}
 			}
 		}

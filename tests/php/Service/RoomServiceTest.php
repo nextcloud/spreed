@@ -466,6 +466,7 @@ class RoomServiceTest extends TestCase {
 			'',
 			0,
 			0,
+			0,
 		);
 
 		$verificationResult = $service->verifyPassword($room, '1234');
@@ -510,6 +511,7 @@ class RoomServiceTest extends TestCase {
 			'',
 			0,
 			$attributes,
+			0,
 		);
 	}
 

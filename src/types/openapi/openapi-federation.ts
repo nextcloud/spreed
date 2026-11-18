@@ -865,6 +865,8 @@ export type components = {
              * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
              */
             muteUntil: number;
+            /** @description Required capability: `uploads-without-storage`. Whether participants without storage can upload files into the storage of a moderator */
+            uploadsWithoutStorage: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

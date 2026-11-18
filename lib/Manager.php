@@ -117,6 +117,7 @@ class Manager {
 			'transcription_language' => '',
 			'last_pinned_id' => 0,
 			'attributes' => 0,
+			'guests_folder_id' => 0,
 		], $data));
 	}
 
@@ -184,6 +185,7 @@ class Manager {
 			(string)$row['transcription_language'],
 			(int)$row['last_pinned_id'],
 			(int)$row['attributes'],
+			(int)$row['guests_folder_id'],
 		);
 	}
 

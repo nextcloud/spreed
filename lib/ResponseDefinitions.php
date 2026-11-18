@@ -634,6 +634,8 @@ namespace OCA\Talk;
  *     attributes: int,
  *     // Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
  *     muteUntil: int,
+ *     // Required capability: `uploads-without-storage`. Whether participants without storage can upload files into the storage of a moderator
+ *     uploadsWithoutStorage: bool,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{

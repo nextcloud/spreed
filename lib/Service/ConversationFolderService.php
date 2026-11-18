@@ -34,6 +34,7 @@ use Psr\Log\LoggerInterface;
  */
 class ConversationFolderService {
 	public const UPDATABLE_SUFFIX = ' (u)';
+	public const GUESTS_FOLDER = 'Guests';
 
 	public function __construct(
 		private readonly TalkConfig $talkConfig,
@@ -71,6 +72,23 @@ class ConversationFolderService {
 	 * @throws \OCP\Files\NotPermittedException if a folder cannot be created
 	 */
 	public function getOrCreateSubfolder(string $userId, Room $room, bool $allowUpdate): Folder {
+		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId, $allowUpdate);
+		return $this->getOrCreateNamedSubfolder($userId, $room, $subfolderName, $allowUpdate);
+	}
+
+	/**
+	 * Returns the Guests folder of the user (e.g. Talk/Room Name-token/Guests/),
+	 * creating it and the room share if not yet present.
+	 *
+	 * @throws NotEnoughSpaceException if the user's quota is exhausted
+	 * @throws \RuntimeException if a path component exists but is not a folder
+	 * @throws \OCP\Files\NotPermittedException if a folder cannot be created
+	 */
+	public function getOrCreateGuestsFolder(string $userId, Room $room): Folder {
+		return $this->getOrCreateNamedSubfolder($userId, $room, self::GUESTS_FOLDER, false);
+	}
+
+	private function getOrCreateNamedSubfolder(string $userId, Room $room, string $subfolderName, bool $allowUpdate): Folder {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
 		$freeSpace = $userFolder->getFreeSpace();
@@ -103,7 +121,6 @@ class ConversationFolderService {
 		}
 
 		// Get or create user subfolder (e.g. Talk/Room Name-token/Alice-alice/)
-		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId, $allowUpdate);
 		try {
 			$subfolder = $convFolder->get($subfolderName);
 			if (!$subfolder instanceof Folder) {

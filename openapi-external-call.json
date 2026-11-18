@@ -1056,7 +1056,8 @@
                     "hiddenPinnedId",
                     "hasScheduledMessages",
                     "attributes",
-                    "muteUntil"
+                    "muteUntil",
+                    "uploadsWithoutStorage"
                 ],
                 "properties": {
                     "actorId": {
@@ -1382,6 +1383,10 @@
                         "type": "integer",
                         "format": "int64",
                         "description": "Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications"
+                    },
+                    "uploadsWithoutStorage": {
+                        "type": "boolean",
+                        "description": "Required capability: `uploads-without-storage`. Whether participants without storage can upload files into the storage of a moderator"
                     }
                 }
             },
