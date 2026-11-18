@@ -129,7 +129,7 @@ function Peer(options) {
 			this.parent.sentStreams.forEach(function(stream) {
 				stream.getTracks().forEach(function(track) {
 					if (track.kind !== 'video' || self.sendVideoIfAvailable) {
-						self.pc.addTrack(track, stream)
+						self._addSentTrack(track, stream)
 					}
 				})
 			})
@@ -368,25 +368,30 @@ function mungeSdpForScreenMaxFs(sdp, track) {
 	return sdp.replace(/max-fs=(\d+)/g, (match, maxFs) => 'max-fs=' + Math.max(maxFs, screenMaxFs))
 }
 
-Peer.prototype.offer = async function(options) {
-	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
-	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
+/**
+ * Adds a sent track to the peer connection.
+ *
+ * In Firefox the simulcast layers are declared with "sendEncodings" when the
+ * transceiver is created: the number of encodings and their rids can not be
+ * changed later with "setParameters" (webrtc-pc). Chromium uses SDP munging
+ * for simulcast instead, so in that case the track is just added.
+ *
+ * @param {MediaStreamTrack} track the track to add.
+ * @param {MediaStream} [stream] the stream that the track belongs to.
+ */
+Peer.prototype._addSentTrack = function(track, stream) {
+	if (track.kind === 'video' && this.sendVideoIfAvailable && this.type !== 'screen' && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
 		console.debug('Enabling Simulcasting for Firefox (RID)')
-		const sender = this.pc.getSenders().find(function(s) {
-			return s.track && s.track.kind === 'video'
-		})
-		if (sender) {
-			let parameters = sender.getParameters()
-			if (!parameters) {
-				parameters = {}
-			}
+		this.pc.addTransceiver(track, {
+			direction: 'sendrecv',
+			streams: stream ? [stream] : [],
 			// The layers are listed in ascending order: the order of the
 			// streams in the "a=simulcast" send direction is the order of
 			// preference, the first one being the most preferred (RFC 8853),
 			// so the lowest layer is the one kept when the bandwidth is too low
 			// for all of them. Janus is told about this order with "rid_order"
 			// in the offer.
-			parameters.encodings = [
+			sendEncodings: [
 				{
 					rid: 'l',
 					active: true,
@@ -403,15 +408,19 @@ Peer.prototype.offer = async function(options) {
 					rid: 'h',
 					active: true,
 					maxBitrate: this.maxBitrates.high,
+					scaleResolutionDownBy: 1,
 				},
-			]
-			try {
-				await sender.setParameters(parameters)
-			} catch (error) {
-				console.warn('Failed to set simulcast parameters in Firefox', error)
-			}
-		}
+			],
+		})
+
+		return
 	}
+
+	this.pc.addTrack(track, stream)
+}
+
+Peer.prototype.offer = function(options) {
+	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
 	this.pc.createOffer(options).then(function(offer) {
 		if (sendVideo && this.enableSimulcast) {
 			// This SDP munging only works with Chrome (Safari STP may support it too)
@@ -894,7 +903,7 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	// will be no sender for that type. In that case the track needs to be added
 	// instead of replaced.
 	if (!senderFound && newTrack) {
-		this.pc.addTrack(newTrack, stream)
+		this._addSentTrack(newTrack, stream)
 
 		return Promise.reject(new Error('Track added instead of replaced'))
 	}
