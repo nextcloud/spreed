@@ -48,6 +48,8 @@ export const useDevices = createSharedComposable(function() {
 	const audioStreamError = ref(null)
 	const videoStream = ref(null)
 	const videoStreamError = ref(null)
+	const audioStreamPending = ref(false)
+	const videoStreamPending = ref(false)
 
 	const devices = computed(() => {
 		return mediaDevicesManager.attributes.devices
@@ -384,6 +386,7 @@ export const useDevices = createSharedComposable(function() {
 	function resetPendingGetUserMediaAudioCount() {
 		const shouldUpdateAgain = pendingGetUserMediaAudioCount > 1
 		pendingGetUserMediaAudioCount = 0
+		audioStreamPending.value = false
 		if (shouldUpdateAgain) {
 			updateAudioStream()
 		}
@@ -434,6 +437,7 @@ export const useDevices = createSharedComposable(function() {
 			return
 		}
 		pendingGetUserMediaAudioCount = 1
+		audioStreamPending.value = true
 
 		mediaDevicesManager.getUserMedia({ audio: true })
 			.then((stream) => {
@@ -503,6 +507,7 @@ export const useDevices = createSharedComposable(function() {
 	function resetPendingGetUserMediaVideoCount() {
 		const shouldUpdateAgain = pendingGetUserMediaVideoCount > 1
 		pendingGetUserMediaVideoCount = 0
+		videoStreamPending.value = false
 		if (shouldUpdateAgain) {
 			updateVideoStream()
 		}
@@ -537,6 +542,7 @@ export const useDevices = createSharedComposable(function() {
 		}
 
 		pendingGetUserMediaVideoCount = 1
+		videoStreamPending.value = true
 
 		mediaDevicesManager.getUserMedia({ video: true })
 			.then((stream) => {
@@ -580,6 +586,8 @@ export const useDevices = createSharedComposable(function() {
 		videoStream,
 		videoStreamError,
 		// MediaSettings only
+		audioStreamPending,
+		videoStreamPending,
 		updatePreferences,
 		virtualBackground,
 		registerVideoElement,
