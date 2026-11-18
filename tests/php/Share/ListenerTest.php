@@ -324,6 +324,28 @@ class ListenerTest extends TestCase {
 		$this->listener->handle($event);
 	}
 
+	public function testOverwriteShareTargetShowsGuestsFolderWithOwnerSuffix(): void {
+		$node = $this->createMock(Node::class);
+		$node->method('getName')->willReturn('Guests');
+		$node->method('getPath')->willReturn('/alice/files/Talk/Room-tok/Guests');
+
+		$share = $this->createMock(IShare::class);
+		$share->method('getShareType')->willReturn(IShare::TYPE_ROOM);
+		$share->method('getShareOwner')->willReturn('alice');
+		$share->method('getSharedWith')->willReturn('tok');
+		$share->method('getNode')->willReturn($node);
+
+		$this->config->method('isConversationSubfoldersEnabled')->willReturn(true);
+		$this->config->method('getAttachmentFolder')->with('alice')->willReturn('/Talk');
+		$share->expects($this->once())->method('setTarget')
+			->with(RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/Room-tok/Guests-alice');
+
+		$event = $this->createMock(BeforeShareCreatedEvent::class);
+		$event->method('getShare')->willReturn($share);
+
+		$this->listener->handle($event);
+	}
+
 	/**
 	 * When conversation subfolders are disabled, overwriteMountPoint must not
 	 * resolve nested placeholder paths — setParent must never be called.

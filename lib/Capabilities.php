@@ -12,6 +12,7 @@ use OCA\Guests\UserBackend;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
@@ -152,6 +153,7 @@ class Capabilities implements IPublicCapability {
 		'chat-summary-api',
 		'call-end-to-end-encryption',
 		'recording-chunked-upload',
+		'uploads-without-storage',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -184,6 +186,7 @@ class Capabilities implements IPublicCapability {
 		'announcement-preset',
 		'matrix-rooms',
 		'federation-signaling-auth',
+		'uploads-without-storage',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -267,6 +270,7 @@ class Capabilities implements IPublicCapability {
 		private readonly ITaskProcessingManager $taskProcessingManager,
 		private readonly LiveTranscriptionService $liveTranscriptionService,
 		private readonly IManager $shareManager,
+		private readonly UploadsWithoutStorageService $uploadsWithoutStorageService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -463,6 +467,10 @@ class Capabilities implements IPublicCapability {
 		if ($this->shareManager->shareApiAllowLinks()
 			&& $this->shareManager->shareApiLinkAllowPublicUpload()) {
 			$capabilities['features'][] = 'recording-chunked-upload';
+		}
+
+		if ($this->uploadsWithoutStorageService->isAvailable()) {
+			$capabilities['features'][] = 'uploads-without-storage';
 		}
 
 		return [

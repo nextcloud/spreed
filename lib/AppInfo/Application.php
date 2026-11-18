@@ -107,6 +107,7 @@ use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\SampleConversationsListener;
 use OCA\Talk\Listener\ThreadListener;
 use OCA\Talk\Listener\UnarchiveConversationListener;
+use OCA\Talk\Listener\UploadsWithoutStorageListener;
 use OCA\Talk\Listener\UserDeletedListener;
 use OCA\Talk\Maps\MapsPluginLoader;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
@@ -284,6 +285,10 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(EmailInvitationSentEvent::class, ResourceListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ResourceListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, ResourceListener::class);
+
+		// Uploads without storage
+		$context->registerEventListener(AttendeesRemovedEvent::class, UploadsWithoutStorageListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, UploadsWithoutStorageListener::class);
 
 		// Sharing listeners
 		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
