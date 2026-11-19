@@ -45,7 +45,7 @@
 
 			<div
 				v-else-if="isLink"
-				class="shared-items__other shared-items__link">
+				class="shared-items__link">
 				<template v-for="link in linksToDisplay[item.id]" :key="link">
 					<NcReferenceWidget
 						v-if="linkReferences[link]"
@@ -271,15 +271,48 @@ export default {
 	}
 
 	&__link {
+		display: flex;
+		flex-direction: column;
+		gap: var(--default-grid-baseline);
 		min-width: 0;
+
+		:deep(.widget-default) {
+			width: auto;
+			margin: 0;
+			font-size: var(--font-size-small);
+		}
+
+		:deep(.widget-default--image) {
+			flex-shrink: 0;
+			width: auto;
+			height: 3lh;
+			aspect-ratio: 1;
+			margin: var(--default-grid-baseline);
+			border-radius: var(--border-radius-element);
+			object-fit: cover;
+		}
+
+		:deep(.widget-default--details) {
+			box-sizing: border-box;
+			height: calc(3lh + 2 * var(--default-grid-baseline));
+			padding: var(--default-grid-baseline);
+		}
+
+		:deep(.widget-default--description) {
+			// Overrides inline line-clamp style set by width
+			display: block !important;
+			white-space: nowrap;
+		}
 
 		a {
 			display: flex;
 			gap: var(--default-grid-baseline);
-		}
+			padding-inline-start: calc(var(--default-grid-baseline) * 2);
+			text-decoration: underline;
 
-		a.shared-items__link-internal::after {
-			content: none;
+			&:not(.shared-items__link-internal)::after {
+				content: ' ↗';
+			}
 		}
 
 		&-text {
