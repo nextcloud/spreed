@@ -236,7 +236,7 @@ class ConversationFolderService {
 	 * @return array{from: string, to: string, node: Node}
 	 */
 	public function finalizeUploadedFile(Folder $subfolder, Node $node, string $desiredName): array {
-		$finalName = $this->findUniqueName($subfolder, $desiredName, $node);
+		$finalName = $this->findUniqueName($subfolder, $this->filenameValidator->sanitizeFilename($desiredName), $node);
 		$targetPath = $subfolder->getPath() . '/' . $finalName;
 		$finalNode = $node;
 		if ($node->getPath() !== $targetPath) {
