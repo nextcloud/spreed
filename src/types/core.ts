@@ -106,6 +106,10 @@ export type AutocompleteResult = componentsCore['schemas']['AutocompleteResult']
 export type AutocompleteParams = operationsCore['auto_complete-get']['parameters']['query']
 export type AutocompleteResponse = ApiResponse<operationsCore['auto_complete-get']['responses'][200]['content']['application/json']>
 
+// Reference API
+export type ReferenceResolveParams = Required<operationsCore['reference_api-resolve']>['requestBody']['content']['application/json']
+export type ReferenceResolveResponse = ApiResponse<operationsCore['reference_api-resolve']['responses'][200]['content']['application/json']>
+
 // Unified Search API
 type MessageSearchResultAttributes = {
 	conversation: string
