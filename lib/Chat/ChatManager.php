@@ -600,6 +600,15 @@ class ChatManager {
 			return;
 		}
 
+		if (!$participant->hasModeratorPermissions(false)) {
+			$attendee = $participant->getAttendee();
+			if (!($attendee->getActorType() === $poll->getActorType()
+				&& $attendee->getActorId() === $poll->getActorId())) {
+				// Only moderators or the poll creator can delete it
+				return;
+			}
+		}
+
 		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
 			$closingMessages = $this->commentsManager->searchForObjects(
 				json_encode([
@@ -619,15 +628,6 @@ class ChatManager {
 			);
 			foreach ($closingMessages as $closingMessage) {
 				$this->deleteMessage($room, $closingMessage, $participant, $deletionTime);
-			}
-		}
-
-		if (!$participant->hasModeratorPermissions(false)) {
-			$attendee = $participant->getAttendee();
-			if (!($attendee->getActorType() === $poll->getActorType()
-				&& $attendee->getActorId() === $poll->getActorId())) {
-				// Only moderators or the poll creator can delete it
-				return;
 			}
 		}
 
