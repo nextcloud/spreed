@@ -156,8 +156,10 @@ function getConversationsSection(): VirtualListItem[] {
 	})
 
 	const recentConversations = tokenStore.recentTokens
+		.filter((token) => token !== tokenStore.token)
 		.map((token) => searchResultsConversationList.find((conversation) => conversation.token === token))
 		.filter((conversation): conversation is Conversation => conversation !== undefined)
+		.slice(0, 5)
 	const otherConversations = searchResultsConversationList.filter((conversation) => !recentConversations.includes(conversation))
 
 	if (recentConversations.length) {

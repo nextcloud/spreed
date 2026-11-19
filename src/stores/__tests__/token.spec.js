@@ -17,13 +17,13 @@ describe('tokenStore', () => {
 		BrowserStorage.removeItem('recentTokens')
 	})
 
-	test('keeps the last five recently opened tokens, most recent first', () => {
+	test('keeps the last six recently opened tokens, most recent first', () => {
 		const tokenStore = useTokenStore()
-		for (const token of ['t1', 't2', 't3', 't4', 't5', 't6', 't3']) {
+		for (const token of ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't3']) {
 			tokenStore.addRecentToken(token)
 		}
 
-		expect(tokenStore.recentTokens).toEqual(['t3', 't6', 't5', 't4', 't2'])
+		expect(tokenStore.recentTokens).toEqual(['t3', 't7', 't6', 't5', 't4', 't2'])
 	})
 
 	test('restores recently opened tokens from browser storage', () => {

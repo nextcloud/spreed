@@ -228,7 +228,7 @@ export default {
 			// or create BrowserSensitiveStorage for this purposes,
 			// if we have more than one source
 			BrowserStorage.removeItem('cachedConversations')
-			BrowserStorage.removeItem('recentTokens')
+			this.tokenStore.clearRecentTokens()
 		}
 
 		if (authorizedUser) {
