@@ -387,6 +387,9 @@ export default {
 				// Safe to navigate
 				// Note: voice rooms are intended to be left without confirmation.
 				beforeRouteChangeListener(to, from, next)
+			} else if (to.name === 'conversation' && window.open(this.$router.resolve(to).href, '_blank')) {
+				// Keep the call, the other conversation is opened separately
+				next(false)
 			} else {
 				spawnDialog(ConfirmDialog, {
 					name: t('spreed', 'Leave call'),
@@ -395,11 +398,8 @@ export default {
 					}),
 					buttons: [
 						{
-							label: IS_DESKTOP ? t('spreed', 'Open in new window') : t('spreed', 'Open in new tab'),
+							label: t('spreed', 'Stay in call'),
 							variant: 'primary',
-							callback: () => {
-								window.open(this.$router.resolve(to).href, '_blank')
-							},
 						},
 						{
 							label: t('spreed', 'Leave call'),
