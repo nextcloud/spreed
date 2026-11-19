@@ -146,6 +146,7 @@ class FeatureContext implements Context {
 	private array $changedWindowsCompatibleFilenames = ['LOCAL' => false, 'REMOTE' => false];
 
 	private ?SharingContext $sharingContext;
+	private array $lastUploadLink = [];
 
 	private array $guestsAppWasEnabled = [];
 	private array $testingAppWasEnabled = [];
@@ -638,6 +639,9 @@ class FeatureContext implements Context {
 				}
 				if (isset($expectedRoom['mentionPermissions'])) {
 					$data['mentionPermissions'] = (int)$room['mentionPermissions'];
+				}
+				if (isset($expectedRoom['uploadsWithoutStorage'])) {
+					$data['uploadsWithoutStorage'] = $room['uploadsWithoutStorage'] ? 'yes' : 'no';
 				}
 				if (isset($expectedRoom['notificationLevel'])) {
 					$data['notificationLevel'] = (int)$room['notificationLevel'];
@@ -1649,6 +1653,8 @@ class FeatureContext implements Context {
 	public function userRemovesUserFromRoom(string $user, string $toRemove, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($toRemove === 'stranger') {
 			$attendeeId = 123456789;
+		} elseif (str_starts_with($toRemove, 'guest')) {
+			$attendeeId = $this->getAttendeeId('guests', sha1(self::$userToSessionId[$toRemove]), $identifier, $statusCode === 200 ? $user : null);
 		} else {
 			$attendeeId = $this->getAttendeeId('users', $toRemove, $identifier, $statusCode === 200 ? $user : null);
 		}
@@ -5423,6 +5429,85 @@ class FeatureContext implements Context {
 		], $headers);
 
 		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
+	}
+
+	#[When('/^user "([^"]*)" (allows|stops) uploads without storage in room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userSetsUploadsWithoutStorage(string $user, string $action, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/uploads-without-storage',
+			new TableNode([
+				['allowed', $action === 'allows' ? 1 : 0],
+			])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[When('/^user "([^"]*)" uploads "([^"]*)" without storage to room "([^"]*)" with (\d+) \((v1)\)$/')]
+	public function userUploadsWithoutStorage(string $user, string $fileName, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->requestUploadLink($user, $identifier, $statusCode, $apiVersion, true);
+		if ($statusCode !== 200) {
+			return;
+		}
+
+		$uploadedName = $this->lastUploadLink['uploadToken'] . '-' . $fileName;
+		$this->putThroughUploadLink($uploadedName, 201);
+		$this->postUpload($user, $uploadedName, $fileName, $identifier, 200, $apiVersion);
+	}
+
+	#[When('/^user "([^"]*)" gets an upload link in room "([^"]*)" with (\d+) \((v1)\)$/')]
+	public function userGetsUploadLink(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->requestUploadLink($user, $identifier, $statusCode, $apiVersion, true);
+	}
+
+	#[When('/^user "([^"]*)" probes room "([^"]*)" without upload link support with (\d+) \((v1)\)$/')]
+	public function userProbesWithoutUploadLinkSupport(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->requestUploadLink($user, $identifier, $statusCode, $apiVersion, false);
+	}
+
+	#[When('/^user "([^"]*)" posts "([^"]*)" uploaded by someone else to room "([^"]*)" with (\d+) \((v1)\)$/')]
+	public function userPostsUploadOfSomeoneElse(string $user, string $fileName, string $identifier, int $statusCode, string $apiVersion): void {
+		$uploadedName = $this->lastUploadLink['uploadToken'] . '-' . $fileName;
+		$this->requestUploadLink($user, $identifier, 200, $apiVersion, true);
+		$this->postUpload($user, $uploadedName, $fileName, $identifier, $statusCode, $apiVersion);
+	}
+
+	#[Then('/^the last upload link accepts a file with (\d+)$/')]
+	public function theLastUploadLinkAcceptsAFile(int $statusCode): void {
+		$this->putThroughUploadLink($this->lastUploadLink['uploadToken'] . '-late.txt', $statusCode);
+	}
+
+	private function requestUploadLink(string $user, string $identifier, int $statusCode, string $apiVersion, bool $supportsUploadLink): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/attachment/folder', [
+			'fileNames' => ['file.txt'],
+			'supportsUploadLink' => $supportsUploadLink,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+		if ($statusCode === 200) {
+			$this->lastUploadLink = $this->getDataFromResponse($this->response);
+		}
+	}
+
+	private function putThroughUploadLink(string $fileName, int $statusCode): void {
+		$client = new Client();
+		$response = $client->request('PUT', $this->baseUrl . 'public.php/dav/files/' . $this->lastUploadLink['uploadToken'] . '/' . $fileName, [
+			'auth' => [$this->lastUploadLink['uploadToken'], $this->lastUploadLink['uploadPassword']],
+			'body' => 'Hello!',
+			'http_errors' => false,
+		]);
+		$this->assertStatusCode($response, $statusCode);
+	}
+
+	private function postUpload(string $user, string $uploadedName, string $fileName, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/attachment', [
+			'filePath' => $uploadedName,
+			'fileName' => $fileName,
+			'referenceId' => '',
+			'uploadToken' => $this->lastUploadLink['uploadToken'],
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	#[When('/^user "([^"]*)" sets mention permissions for room "([^"]*)" to (all|moderators) with (\d+) \((v4)\)$/')]

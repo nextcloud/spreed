@@ -288,6 +288,8 @@ class Application extends App implements IBootstrap {
 
 		// Uploads without storage
 		$context->registerEventListener(AttendeesRemovedEvent::class, UploadsWithoutStorageListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, UploadsWithoutStorageListener::class);
+		$context->registerEventListener(RoomDeletedEvent::class, UploadsWithoutStorageListener::class);
 		$context->registerEventListener(ParticipantModifiedEvent::class, UploadsWithoutStorageListener::class);
 
 		// Sharing listeners

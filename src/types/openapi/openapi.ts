@@ -719,6 +719,7 @@ export type paths = {
          * @description Creates the caller's conversation subfolder (and the room share) if not yet present, then creates or returns a Draft folder for staging uploads. Simulates the rename-on-conflict logic for each requested filename without requiring the files to already exist.
          *     The returned `folder` is the Draft path — a staging area that is NOT shared with the room, so other participants cannot see in-progress uploads or files from aborted messages. Files are moved into the shared subfolder atomically when the attachment endpoint is called.
          *     Recommended client flow: 1. Call this endpoint to obtain the Draft folder path and predicted final names. 2. Display the predicted names as accessibility placeholders immediately. 3. Upload each file to a random temporary name (e.g. a UUID) inside the returned Draft folder — do NOT upload to the predicted final name. 4. Call the attachment endpoint with the temp path as `filePath` and the original desired name as `fileName`. The server moves the file from Draft into the shared subfolder, resolves any conflicts, and posts the message.
+         *     Guests, email guests and users with a quota of 0 get a temporary upload link instead, when a moderator allowed uploads without storage: PUT `{uploadToken}-{temp name}` to `public.php/dav/files/{uploadToken}/`.
          */
         post: operations["chat-probe-attachment-folder"];
         delete?: never;
@@ -7598,11 +7599,16 @@ export interface operations {
                      * @default false
                      */
                     allowUpdate?: boolean;
+                    /**
+                     * @description Whether the client can upload through an upload link
+                     * @default false
+                     */
+                    supportsUploadLink?: boolean;
                 };
             };
         };
         responses: {
-            /** @description Draft folder path and rename map returned */
+            /** @description Draft folder path or upload link and rename map returned */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7616,13 +7622,15 @@ export interface operations {
                                 renames: {
                                     [key: string]: string;
                                 }[];
+                                uploadToken?: string;
+                                uploadPassword?: string;
                             };
                         };
                     };
                 };
             };
-            /** @description Current user is not logged in */
-            401: {
+            /** @description Uploads without storage are not allowed in this conversation */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7630,7 +7638,25 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Too many uploads without storage */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -7720,6 +7746,11 @@ export interface operations {
                      * @default false
                      */
                     allowUpdate?: boolean;
+                    /**
+                     * @description Upload link from the probe endpoint, for participants without storage
+                     * @default
+                     */
+                    uploadToken?: string;
                 };
             };
         };
@@ -7758,8 +7789,8 @@ export interface operations {
                     };
                 };
             };
-            /** @description Current user is not logged in */
-            401: {
+            /** @description Uploads without storage are not allowed in this conversation */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7767,7 +7798,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
