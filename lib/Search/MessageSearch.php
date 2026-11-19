@@ -166,7 +166,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 				continue;
 			}
 
-			$roomMap[(string)$room->getId()] = $room;
+			$roomMap[$room->getId()] = $room;
 		}
 
 		if (empty($roomMap)) {
@@ -197,7 +197,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		$offset = (int)$query->getCursor();
 		$comments = $this->chatManager->searchForObjectsWithFilters(
 			$query->getTerm(),
-			array_keys($roomMap),
+			array_map(strval(...), array_keys($roomMap)),
 			[ChatManager::VERB_MESSAGE, ChatManager::VERB_OBJECT_SHARED],
 			$lowerTimeBoundary,
 			$upperTimeBoundary,
@@ -209,7 +209,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 
 		$result = [];
 		foreach ($comments as $comment) {
-			$room = $roomMap[$comment->getObjectId()];
+			$room = $roomMap[(int)$comment->getObjectId()];
 			try {
 				$result[] = $this->commentToSearchResultEntry($room, $user, $comment, $query);
 			} catch (UnauthorizedException|ParticipantNotFoundException) {
