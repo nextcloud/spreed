@@ -9,10 +9,8 @@ import { useAsyncInit } from './useAsyncInit.ts'
  * Initialize the audio encoder
  */
 async function initAudioEncoder() {
-	const { register, MediaRecorder } = await import('extendable-media-recorder')
-	const { connect } = await import('extendable-media-recorder-wav-encoder')
-	await register(await connect())
-	return MediaRecorder
+	const { loadAacMediaRecorder } = await import('../utils/media/AacMediaRecorder.ts')
+	return loadAacMediaRecorder()
 }
 
 /**

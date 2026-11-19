@@ -209,9 +209,7 @@ export default {
 					this.noiseSuppressionConsumer = await registerNoiseSuppressionWorklet()
 				}
 				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.noiseSuppressionConsumer, this.settingsStore.noiseSuppressionWithModel)
-				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
-					mimeType: 'audio/wav',
-				})
+				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed)
 			} catch (exception) {
 				console.debug(exception)
 				this.killStreams()
@@ -275,11 +273,11 @@ export default {
 		generateFile() {
 			this.killStreams()
 			if (!this.aborted) {
-				this.blob = new Blob(this.chunks, { type: 'audio/wav' })
+				this.blob = new Blob(this.chunks, { type: 'audio/mp4' })
 				// Generate file name
 				const fileName = this.generateFileName()
 				// Convert blob to file
-				const audioFile = new File([this.blob], fileName, { type: 'audio/wav' })
+				const audioFile = new File([this.blob], fileName, { type: 'audio/mp4' })
 				this.$emit('audioFile', audioFile)
 				this.$emit('recording', false)
 			}
@@ -317,7 +315,7 @@ export default {
 			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
 			const name = t('spreed', 'Voice message {time} ({conversation})', { time, conversation })
-			return name.substring(0, 146) + '.wav'
+			return name.substring(0, 146) + '.m4a'
 		},
 
 		/**
