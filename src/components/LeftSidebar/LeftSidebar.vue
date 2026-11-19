@@ -396,6 +396,7 @@
 				:searchResults="searchResultsPossibleConversations"
 				:searchResultsMessages
 				:searchResultsListedConversations
+				@focusout="handleSearchResultsFocusOut"
 				@abortSearch="abortSearch"
 				@createNewConversation="createConversation"
 				@createAndJoinConversation="createAndJoinConversation" />
@@ -1072,6 +1073,22 @@ export default {
 			this.searchText = ''
 			this.isFocused = false
 			this.abortSearchRequests()
+		},
+
+		handleSearchResultsFocusOut(event) {
+			if (event.relatedTarget) {
+				this.leaveRecentConversations(event.relatedTarget)
+			} else {
+				// Non-focusable element was clicked, check its target after the click
+				document.addEventListener('click', (clickEvent) => this.leaveRecentConversations(clickEvent.target), { capture: true, once: true })
+			}
+		},
+
+		leaveRecentConversations(target) {
+			// Ignore popovers and dialogs, which are rendered outside the app root
+			if (!this.isSearching && this.$root.$el.contains(target) && !this.$el.contains(target)) {
+				this.isFocused = false
+			}
 		},
 
 		showSettings() {
