@@ -88,6 +88,13 @@ class ConversationFolderService {
 		return $this->getOrCreateNamedSubfolder($userId, $room, self::GUESTS_FOLDER, false);
 	}
 
+	/**
+	 * Share the Guests folder with the conversation again, in case its owner removed the share
+	 */
+	public function shareGuestsFolder(Folder $guestsFolder, string $userId, Room $room): void {
+		$this->ensureSubfolderShared($guestsFolder, $userId, $room->getToken(), false);
+	}
+
 	private function getOrCreateNamedSubfolder(string $userId, Room $room, string $subfolderName, bool $allowUpdate): Folder {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
@@ -179,7 +186,12 @@ class ConversationFolderService {
 	 *
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-	public function moveToDeletedFolder(string $ownerId, string $token, int $fileId): void {
+	public function moveToDeletedFolder(string $token, int $fileId): void {
+		$ownerId = $this->rootFolder->getFirstNodeById($fileId)?->getOwner()?->getUID();
+		if ($ownerId === null) {
+			return;
+		}
+
 		$node = $this->rootFolder->getUserFolder($ownerId)->getFirstNodeById($fileId);
 		if ($node === null || $node->getType() !== FileInfo::TYPE_FILE) {
 			return;
