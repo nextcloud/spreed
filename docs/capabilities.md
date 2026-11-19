@@ -250,3 +250,4 @@
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)
 * `mute-conversations` - Whether conversations can be muted for a given time
 * `federation-signaling-auth` (local) - Whether federated signaling is sending the join auth params to the clients and the HPB should not allow joining without
+* `shared-items-link` - Whether chat messages containing links are listed as `link` shared items
