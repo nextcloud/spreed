@@ -75,13 +75,13 @@ class RoomController {
 	 * 404: Room not found
 	 */
 	public function joinFederatedRoom(Room $room, Participant $participant): DataResponse {
-		$options = [
-			'sessionId' => $participant->getSession()->getSessionId(),
-		];
 
+		$options = [
+			'sessionId' => $participant->getSession()?->getSessionId() ?? '',
+		];
 		$proxy = $this->proxy->post(
-			$participant->getAttendee()->getInvitedCloudId(),
-			$participant->getAttendee()->getAccessToken(),
+			$participant->getAttendee()->getInvitedCloudId() ?? '',
+			$participant->getAttendee()->getAccessToken() ?? '',
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/federation/active',
 			$options,
 		);
@@ -131,7 +131,7 @@ class RoomController {
 	 */
 	public function leaveFederatedRoom(Room $room, Participant $participant): DataResponse {
 		$options = [
-			'sessionId' => $participant->getSession()->getSessionId(),
+			'sessionId' => $participant->getSession()?->getSessionId() ?? '',
 		];
 
 		$proxy = $this->proxy->delete(
@@ -162,8 +162,8 @@ class RoomController {
 	 */
 	public function getCapabilities(Room $room, Participant $participant): DataResponse {
 		$proxy = $this->proxy->get(
-			$participant->getAttendee()->getInvitedCloudId(),
-			$participant->getAttendee()->getAccessToken(),
+			$participant->getAttendee()->getInvitedCloudId() ?? '',
+			$participant->getAttendee()->getAccessToken() ?? '',
 			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v4/room/' . $room->getRemoteToken() . '/capabilities',
 		);
 
