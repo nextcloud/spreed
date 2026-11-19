@@ -2148,7 +2148,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// Get all attachments
 		foreach ($objectTypes as $objectType) {
 			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
-			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): string => (string)$attachment->getMessageId(), $attachments);
+			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
 
 		$messages = $this->getMessagesForRoom(array_merge(...array_values($messageIdsByType)));
@@ -2357,7 +2357,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return array<string, TalkChatMessage>
+	 * @return array<int, TalkChatMessage>
 	 */
 	protected function getMessagesForRoom(array $messageIds): array {
 		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
@@ -2383,7 +2383,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 
 			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
-			$messages[$comment->getId()] = $message->toArray($this->getResponseFormat(), $threads[$threadId] ?? null);
+			$messages[(int)$comment->getId()] = $message->toArray($this->getResponseFormat(), $threads[$threadId] ?? null);
 		}
 
 		return $messages;
