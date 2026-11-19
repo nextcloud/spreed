@@ -291,6 +291,10 @@ export default {
 		})
 
 		EventBus.on('switch-to-conversation', async (params) => {
+			if (params.token === this.token) {
+				// Already switched, e.g. by both signaling and the client
+				return
+			}
 			await this.joinCallAutomatically(params.token)
 
 			this.skipLeaveWarning = true
