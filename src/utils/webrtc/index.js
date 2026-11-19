@@ -12,6 +12,7 @@ import store from '../../store/index.js'
 import { isIOS, isSafari } from '../browserCheck.ts'
 import CancelableRequest from '../CancelableRequest.ts'
 import Encryption from '../e2ee/encryption.js'
+import { convertToUnix } from '../formattedTime.ts'
 import Signaling from '../signaling.js'
 import SignalingTypingHandler from '../SignalingTypingHandler.js'
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
@@ -210,6 +211,20 @@ function setupWebRtc() {
 	})
 }
 
+// Minimum time (in seconds) that the TURN credentials must still be valid to join a call
+const MIN_TURN_CREDENTIALS_VALIDITY = 2 * 3_600
+
+/**
+ * Check if the TURN credentials expire soon (expiration time is the first part of the user name)
+ *
+ * @return {boolean}
+ */
+function turnCredentialsExpireSoon() {
+	const username = signaling.settings.turnservers?.[0]?.username
+	const expiration = Number.parseInt(String(username ?? '').split(':')[0], 10)
+	return !!expiration && expiration - convertToUnix(Date.now()) < MIN_TURN_CREDENTIALS_VALIDITY
+}
+
 /**
  * Join the given conversation on the respective signaling server with the given sessionId
  *
@@ -241,6 +256,10 @@ async function signalingJoinConversation(token, sessionId) {
  */
 async function signalingJoinCall(token, flags, silent, recordingConsent, silentFor, options = {}) {
 	if (tokensInSignaling[token]) {
+		if (turnCredentialsExpireSoon()) {
+			signaling.setSettings(await getSignalingSettings(token))
+		}
+
 		pendingJoinCallToken = token
 
 		setupWebRtc()
