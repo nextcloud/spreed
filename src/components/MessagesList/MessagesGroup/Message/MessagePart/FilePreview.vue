@@ -105,6 +105,7 @@
 </template>
 
 <script>
+import { getCurrentUser } from '@nextcloud/auth'
 import { formatFileSize } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
@@ -534,6 +535,9 @@ export default {
 				case 'successUpload':
 					return 100
 				case 'uploading':
+					if (this.uploadFile.uploadProgress !== undefined) {
+						return this.uploadFile.uploadProgress
+					}
 					return this.upload
 						? this.upload._uploaded / this.upload._size * 100
 						: 100 // file was removed from the upload queue, so considering done
@@ -571,7 +575,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.isTemporaryUpload && !this.isUploadEditor) {
+		if (this.isTemporaryUpload && !this.isUploadEditor && getCurrentUser()) {
 			this.uploadManager = getUploader()
 		}
 

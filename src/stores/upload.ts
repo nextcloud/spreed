@@ -28,6 +28,7 @@ import {
 	postAttachment,
 	probeAttachmentFolder,
 	shareFile as shareFileApi,
+	uploadToLink,
 } from '../services/filesSharingServices.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
 import {
@@ -47,6 +48,7 @@ type UploadsState = {
 	[uploadId: string]: {
 		token: string
 		draftFolderPath?: string | null
+		uploadLink?: { uploadToken: string, uploadPassword: string } | null
 		allowUpdate?: boolean
 		files: {
 			[index: string]: UploadFile
@@ -585,7 +587,9 @@ export const useUploadStore = defineStore('upload', () => {
 				.map(([, uploadedFile]) => uploadedFile.file.name)
 			try {
 				const response = await probeAttachmentFolder({ token, fileNames, allowUpdate })
-				uploads[uploadId].draftFolderPath = response.data.ocs.data.folder
+				const { folder, uploadToken, uploadPassword } = response.data.ocs.data
+				uploads[uploadId].draftFolderPath = folder
+				uploads[uploadId].uploadLink = uploadToken && uploadPassword ? { uploadToken, uploadPassword } : null
 				uploads[uploadId].allowUpdate = allowUpdate
 
 				// Update temporary messages with predicted rename-on-conflict
@@ -614,6 +618,22 @@ export const useUploadStore = defineStore('upload', () => {
 					}
 				}
 			} catch (error) {
+				const message = isAxiosErrorResponse(error) && error.response
+					? {
+							403: t('spreed', 'You are not allowed to upload files in this conversation'),
+							429: t('spreed', 'Too many uploads, please try again later'),
+							507: t('spreed', 'Storage quota exceeded'),
+						}[error.response.status]
+					: undefined
+				if (message) {
+					showError(message)
+					for (const [index, uploadedFile] of getInitialisedUploads(uploadId)) {
+						markFileAsFailedUpload({ uploadId, index })
+						vuexStore.dispatch('markTemporaryMessageAsFailed', { token, id: uploadedFile.temporaryMessage.id, uploadId, reason: 'failed-upload' })
+					}
+					EventBus.emit('upload-finished')
+					return
+				}
 				console.error('Error while creating conversation attachment folder, falling back to flat upload: ', error)
 			}
 		}
@@ -647,14 +667,16 @@ export const useUploadStore = defineStore('upload', () => {
 	 */
 	async function prepareUploadPaths({ token, uploadId }: { token: string, uploadId: string }) {
 		const draftFolderPath = uploads[uploadId]?.draftFolderPath
-		if (draftFolderPath) {
+		const uploadLink = uploads[uploadId]?.uploadLink
+		if (draftFolderPath || uploadLink) {
 			// Upload to a random temp name inside the Draft folder; the backend
 			// resolves the final name (and any conflicts) when postAttachment
 			// moves the file out of Draft.
 			for (const [index] of getInitialisedUploads(uploadId)) {
 				// crypto.randomUUID() is not available in insecure context
 				const tempName = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-				markFileAsPendingUpload({ uploadId, index, sharePath: '/' + draftFolderPath + '/' + tempName })
+				const sharePath = uploadLink ? uploadLink.uploadToken + '-' + tempName : '/' + draftFolderPath + '/' + tempName
+				markFileAsPendingUpload({ uploadId, index, sharePath })
 			}
 			return
 		}
@@ -728,9 +750,21 @@ export const useUploadStore = defineStore('upload', () => {
 
 			try {
 				markFileAsUploading({ uploadId, index })
-				const uploader = getUploader()
-				// @ts-expect-error: UploadFile.file is a custom type, not a File
-				await uploader.upload(uploadedFile.sharePath!, currentFile)
+				const uploadLink = uploads[uploadId]?.uploadLink
+				if (uploadLink) {
+					await uploadToLink({
+						...uploadLink,
+						fileName: uploadedFile.sharePath!,
+						file: currentFile,
+						onProgress: (percent) => {
+							uploads[uploadId].files[index].uploadProgress = percent
+						},
+					})
+				} else {
+					const uploader = getUploader()
+					// @ts-expect-error: UploadFile.file is a custom type, not a File
+					await uploader.upload(uploadedFile.sharePath!, currentFile)
+				}
 				markFileAsSuccessUpload({ uploadId, index })
 			} catch (exception) {
 				let reason = 'failed-upload'
@@ -754,8 +788,8 @@ export const useUploadStore = defineStore('upload', () => {
 			}
 		}
 
-		const uploads = getPendingUploads(uploadId)
-		await Promise.all(uploads.map(performUpload))
+		const pendingUploads = getPendingUploads(uploadId)
+		await Promise.all(pendingUploads.map(performUpload))
 	}
 
 	/**
@@ -823,10 +857,11 @@ export const useUploadStore = defineStore('upload', () => {
 			markFileAsSharing({ uploadId, index })
 
 			const draftFolderPath = uploads[uploadId]?.draftFolderPath
-			if (draftFolderPath && fileName) {
+			const uploadLink = uploads[uploadId]?.uploadLink
+			if ((draftFolderPath || uploadLink) && fileName) {
 				// Draft-folder flow: post via the Talk attachment endpoint
 				const filePath = path.replace(/^\//, '')
-				await postAttachment({ token, filePath, fileName, referenceId: referenceId!, talkMetaData: talkMetaData!, allowUpdate })
+				await postAttachment({ token, filePath, fileName, referenceId: referenceId!, talkMetaData: talkMetaData!, allowUpdate, uploadToken: uploadLink?.uploadToken })
 			} else {
 				await shareFileApi({ path, shareWith: token, referenceId, talkMetaData })
 			}

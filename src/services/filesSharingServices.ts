@@ -13,11 +13,13 @@ import type {
 	PostAttachmentFolderResponse,
 	ProbeAttachmentFolderParams,
 	ProbeAttachmentFolderResponse,
+	UploadFile,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { SHARE } from '../constants.ts'
+import { generatePublicShareFileUrl } from '../utils/davUtils.ts'
 
 /**
  * Appends a file as a message to the messages list
@@ -79,7 +81,7 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
  *         and a rename simulation for the requested file names.
  */
 async function probeAttachmentFolder({ token, fileNames, allowUpdate }: { token: string } & ProbeAttachmentFolderParams): ProbeAttachmentFolderResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames, allowUpdate })
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames, allowUpdate, supportsUploadLink: true })
 }
 
 /**
@@ -99,17 +101,37 @@ async function probeAttachmentFolder({ token, fileNames, allowUpdate }: { token:
  * @param payload.referenceId Client reference ID for the chat message
  * @param payload.talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
  * @param payload.allowUpdate Whether to grant update permissions
+ * @param payload.uploadToken Upload link token, for participants without storage
  * @return An array of `{ originalName: finalName }` entries — one per posted
  *         file.  When the backend had to rename due to a conflict the two
  *         names differ; otherwise they are identical.
  */
-async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData, allowUpdate }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
+async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData, allowUpdate, uploadToken }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment', { token }), {
 		filePath,
 		fileName,
 		referenceId,
 		talkMetaData,
 		allowUpdate,
+		uploadToken,
+	})
+}
+
+/**
+ * Upload a file through the temporary upload link that
+ * {@link probeAttachmentFolder} returns to participants without storage.
+ *
+ * @param payload The function payload
+ * @param payload.uploadToken The upload link token
+ * @param payload.uploadPassword The upload link password
+ * @param payload.fileName Temporary file name, starting with the upload token
+ * @param payload.file The file to upload
+ * @param payload.onProgress Called with the uploaded percentage
+ */
+async function uploadToLink({ uploadToken, uploadPassword, fileName, file, onProgress }: { uploadToken: string, uploadPassword: string, fileName: string, file: UploadFile['file'], onProgress: (percent: number) => void }) {
+	return axios.put(generatePublicShareFileUrl(uploadToken, '/' + fileName), file, {
+		auth: { username: uploadToken, password: uploadPassword },
+		onUploadProgress: ({ loaded, total }) => onProgress(total ? loaded / total * 100 : 0),
 	})
 }
 
@@ -119,4 +141,5 @@ export {
 	postAttachment,
 	probeAttachmentFolder,
 	shareFile,
+	uploadToLink,
 }
