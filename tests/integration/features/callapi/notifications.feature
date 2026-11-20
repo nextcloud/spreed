@@ -185,3 +185,21 @@ Feature: callapi/notifications
     Given user "participant1" pings user "participant1" attendeeIdPlusOne to join call "room" with 404 (v4)
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
+
+  Scenario: Pinging requires being in the call and respects the lobby
+    Given user "participant3" exists
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    Given user "participant1" joins room "room" with 200 (v4)
+    Given user "participant1" loads attendees attendee ids in room "room" (v4)
+    Given user "participant1" joins call "room" with 200 (v4)
+      | silent | true |
+    Given user "participant2" pings user "participant3" to join call "room" with 400 (v4)
+    And user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
+    Given user "participant2" pings user "participant3" to join call "room" with 412 (v4)
+    Then user "participant3" has the following notifications
+      | app    | object_type | object_id | subject                                                                  |
+      | spreed | room        | room      | participant1-displayname invited you to a group conversation: room |
