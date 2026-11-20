@@ -6,6 +6,7 @@
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { createStore } from 'vuex'
 import SharedItems from './SharedItems.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
 
@@ -25,6 +26,7 @@ describe('SharedItems.vue', () => {
 	function getRenderedLinks(limit) {
 		const wrapper = mount(SharedItems, {
 			props: { token: 'XXTOKENXX', type: SHARED_ITEM.TYPES.LINK, items, limit },
+			global: { plugins: [createStore({ getters: { conversation: () => () => undefined } })] },
 		})
 		return wrapper.findAll('a').map((link) => link.attributes('href'))
 	}

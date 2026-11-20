@@ -45,17 +45,22 @@
 
 			<div
 				v-else-if="isLink"
-				class="shared-items__other shared-items__link">
-				<a
-					v-for="link in linksToDisplay[item.id]"
-					:key="link"
-					:href="link"
-					:title="link"
-					:class="{ 'shared-items__link-internal': isInstanceLink(link) }"
-					target="_blank"
-					rel="noopener noreferrer">
-					<span class="shared-items__link-text">{{ link }}</span>
-				</a>
+				class="shared-items__link">
+				<template v-for="link in linksToDisplay[item.id]" :key="link">
+					<NcReferenceWidget
+						v-if="linkReferences[link]"
+						:reference="linkReferences[link]"
+						:interactive="false" />
+					<a
+						v-else
+						:href="link"
+						:title="link"
+						:class="{ 'shared-items__link-internal': isInstanceLink(link) }"
+						target="_blank"
+						rel="noopener noreferrer">
+						<span class="shared-items__link-text">{{ link }}</span>
+					</a>
+				</template>
 			</div>
 
 			<FilePreview
@@ -70,12 +75,16 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
+import { NcReferenceWidget } from '@nextcloud/vue/components/NcRichText'
 import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard.vue'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import PinnedMessageItem from '../PinnedMessages/PinnedMessageItem.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
+import { resolveReferences } from '../../../services/coreService.ts'
+import { useActorStore } from '../../../stores/actor.ts'
+import { isClassifiedConversation } from '../../../utils/conversation.ts'
 import { getMessageLinks, isInstanceLink } from '../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'))
@@ -87,6 +96,7 @@ export default {
 		DeckCard,
 		FilePreview,
 		LocationCard,
+		NcReferenceWidget,
 		PollCard,
 		PinnedMessageItem,
 	},
@@ -120,6 +130,16 @@ export default {
 		},
 	},
 
+	setup() {
+		const actorStore = useActorStore()
+		const references = ref({})
+
+		return {
+			actorStore,
+			references,
+		}
+	},
+
 	computed: {
 		itemsToDisplay() {
 			const items = Object.values(this.items).reverse()
@@ -148,6 +168,24 @@ export default {
 				}
 			}
 			return linksToDisplay
+		},
+
+		// Overridden type renders the default OpenGraph card instead of registered custom widgets
+		linkReferences() {
+			const linkReferences = {}
+			if (this.isClassified) {
+				return linkReferences
+			}
+			for (const [link, reference] of Object.entries(this.references)) {
+				if (reference?.accessible) {
+					linkReferences[link] = { ...reference, richObjectType: 'open-graph' }
+				}
+			}
+			return linkReferences
+		},
+
+		isClassified() {
+			return isClassifiedConversation(this.$store.getters.conversation(this.token))
 		},
 
 		isLocation() {
@@ -183,8 +221,31 @@ export default {
 		},
 	},
 
+	watch: {
+		linksToDisplay: {
+			handler: 'fetchReferences',
+			immediate: true,
+		},
+	},
+
 	methods: {
 		isInstanceLink,
+
+		async fetchReferences() {
+			if (!this.actorStore.isLoggedIn || this.isClassified) {
+				return
+			}
+			const links = Object.values(this.linksToDisplay).flat().filter((link) => !(link in this.references))
+			if (!links.length) {
+				return
+			}
+			try {
+				const response = await resolveReferences(links)
+				this.references = { ...this.references, ...response.data.ocs.data.references }
+			} catch (error) {
+				console.error('Error while resolving link references', error)
+			}
+		},
 	},
 }
 </script>
@@ -210,15 +271,48 @@ export default {
 	}
 
 	&__link {
+		display: flex;
+		flex-direction: column;
+		gap: var(--default-grid-baseline);
 		min-width: 0;
+
+		:deep(.widget-default) {
+			width: auto;
+			margin: 0;
+			font-size: var(--font-size-small);
+		}
+
+		:deep(.widget-default--image) {
+			flex-shrink: 0;
+			width: auto;
+			height: 3lh;
+			aspect-ratio: 1;
+			margin: var(--default-grid-baseline);
+			border-radius: var(--border-radius-element);
+			object-fit: cover;
+		}
+
+		:deep(.widget-default--details) {
+			box-sizing: border-box;
+			height: calc(3lh + 2 * var(--default-grid-baseline));
+			padding: var(--default-grid-baseline);
+		}
+
+		:deep(.widget-default--description) {
+			// Overrides inline line-clamp style set by width
+			display: block !important;
+			white-space: nowrap;
+		}
 
 		a {
 			display: flex;
 			gap: var(--default-grid-baseline);
-		}
+			padding-inline-start: calc(var(--default-grid-baseline) * 2);
+			text-decoration: underline;
 
-		a.shared-items__link-internal::after {
-			content: none;
+			&:not(.shared-items__link-internal)::after {
+				content: ' ↗';
+			}
 		}
 
 		&-text {

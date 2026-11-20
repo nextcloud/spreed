@@ -706,6 +706,12 @@ export type {
 	AutocompleteResult,
 } from './core.ts'
 
+// Reference API
+export type {
+	ReferenceResolveParams,
+	ReferenceResolveResponse,
+} from './core.ts'
+
 // Unified Search API
 export type {
 	SearchMessagePayload,
