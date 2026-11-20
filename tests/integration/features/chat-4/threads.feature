@@ -70,6 +70,12 @@ Feature: chat-4/threads
       | t.id      | t.title          | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 2 | User thread      | 0            | 0             | 0                   | Message 2    | NULL        |
       | Message 1 | Moderator thread | 0            | 0             | 0                   | Message 1    | NULL        |
+    When user "participant1" sets permissions for "participant2" in room "room" to "CSJLAVP" with 200 (v4)
+    Then user "participant2" renames thread "User thread" to "No chat permission" in room "room" with 403
+    When user "participant1" sets permissions for "participant2" in room "room" to "D" with 200 (v4)
+    And user "participant1" locks room "room" with 200 (v4)
+    Then user "participant2" renames thread "User thread" to "Read-only" in room "room" with 403
+    And user "participant1" renames thread "User thread" to "Read-only" in room "room" with 403
 
   Scenario: Notification levels
     Given user "participant1" creates room "room" (v4)
