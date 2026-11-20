@@ -131,9 +131,10 @@ class UserConverter {
 	}
 
 	/**
+	 * @template T of TalkChatMessageWithParent
 	 * @param Room $room
-	 * @param TalkChatMessageWithParent $message
-	 * @return TalkChatMessageWithParent
+	 * @param T $message
+	 * @return T
 	 */
 	public function convertMessage(Room $room, array $message): array {
 		$message['token'] = $room->getToken();
@@ -170,10 +171,10 @@ class UserConverter {
 	public function convertThreadInfo(Room $room, array $threadInfo): array {
 		$threadInfo['thread']['roomToken'] = $room->getToken();
 		if (isset($threadInfo['first'])) {
-			$threadInfo['first'] = $this->convertMessageParameters($room, $threadInfo['first']);
+			$threadInfo['first'] = $this->convertMessage($room, $threadInfo['first']);
 		}
 		if (isset($threadInfo['last'])) {
-			$threadInfo['last'] = $this->convertMessageParameters($room, $threadInfo['last']);
+			$threadInfo['last'] = $this->convertMessage($room, $threadInfo['last']);
 		}
 		return $threadInfo;
 	}
