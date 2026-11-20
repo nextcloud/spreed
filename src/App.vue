@@ -291,6 +291,10 @@ export default {
 		})
 
 		EventBus.on('switch-to-conversation', async (params) => {
+			if (params.token === this.token) {
+				// Already switched, e.g. by both signaling and the client
+				return
+			}
 			await this.joinCallAutomatically(params.token)
 
 			this.skipLeaveWarning = true
@@ -387,6 +391,9 @@ export default {
 				// Safe to navigate
 				// Note: voice rooms are intended to be left without confirmation.
 				beforeRouteChangeListener(to, from, next)
+			} else if (to.name === 'conversation' && window.open(this.$router.resolve(to).href, '_blank')) {
+				// Keep the call, the other conversation is opened separately
+				next(false)
 			} else {
 				spawnDialog(ConfirmDialog, {
 					name: t('spreed', 'Leave call'),
