@@ -1613,6 +1613,7 @@
     "Blur" : "Sløring",
     "Upload" : "Overfør",
     "Files" : "Filer",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Mislykkedes: WebAssembly er deaktiveret eller understøttes ikke i denne browser. Aktivér WebAssembly, eller brug en browser, der understøtter det, for at udføre kontrollen.",
     "(editing)" : "(redigering)",
     "(edited)" : "(redigeret)",
     "The message has expired or has been deleted" : "Beskeden er udløbet eller slettet",

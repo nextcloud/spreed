@@ -590,6 +590,7 @@ OC.L10N.register(
     "MUC server URL" : "כתובת שרת MUC",
     "Jabber ID" : "מזהה Jabber",
     "Media" : "מדיה",
+    "Links" : "קישורים",
     "Polls" : "סקרים",
     "Locations" : "מיקומים",
     "Audio" : "קובץ שמע",

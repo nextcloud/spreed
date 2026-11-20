@@ -350,6 +350,7 @@ OC.L10N.register(
     "API token" : "API-ĵetono",
     "Login" : "Ensaluti",
     "Client ID" : "Klientidentigilo",
+    "Links" : "Ligiloj",
     "Polls" : "Enketilo",
     "Audio" : "Sonaĵo",
     "Group" : "Grupo",

@@ -604,6 +604,7 @@ OC.L10N.register(
     "Client ID" : "Biðlaraauðkenni",
     "Team ID" : "Auðkenni teymis",
     "Media" : "Myndefni",
+    "Links" : "Tenglar",
     "Polls" : "Kannanir",
     "Locations" : "Staðsetningar",
     "Audio" : "Hljóð",

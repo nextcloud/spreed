@@ -1420,6 +1420,7 @@
     "Blur" : "تۇتۇقلا",
     "Upload" : "يۈكلەش",
     "Files" : "ھۆججەتلەر",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "مەغلۇپ بولدى: بۇ توركۆرگۈدە WebAssemble چەكلەنگەن ياكى قوللىمايدۇ. WebAssemble نى قوزغىتىڭ ياكى ئۇنى قوللاش ئۈچۈن توركۆرگۈ ئىشلىتىڭ.",
     "(editing)" : "(تەھرىرلەش)",
     "(edited)" : "(تەھرىرلەندى)",
     "The message has expired or has been deleted" : "ئۇچۇرنىڭ ۋاقتى توشتى ياكى ئۆچۈرۈلدى",

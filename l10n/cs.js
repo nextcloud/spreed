@@ -1455,6 +1455,7 @@ OC.L10N.register(
     "Blur" : "Rozmazat",
     "Upload" : "Nahrát",
     "Files" : "Soubory",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Nezdar: WebAssembly je vypnuté nebo nepodporované prohlížečem. Pro provedení kontroly zapněte WebAssembly nebo použijte prohlížeč, který jej podporuje.",
     "(editing)" : "(upravováno)",
     "(edited)" : "(upraveno)",
     "The message has expired or has been deleted" : "Platnost této zprávy skončila nebo byla smazána",

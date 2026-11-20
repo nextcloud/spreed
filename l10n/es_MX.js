@@ -495,6 +495,7 @@ OC.L10N.register(
     "Login" : "Iniciar sesión",
     "Client ID" : "ID del cliente",
     "Media" : "Multimedia",
+    "Links" : "Ligas",
     "Polls" : "Encuestas",
     "Locations" : "Ubicaciones",
     "Audio" : "Audio",

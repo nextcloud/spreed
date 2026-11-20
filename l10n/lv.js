@@ -540,6 +540,7 @@ OC.L10N.register(
     "Login" : "Pieteikumvārds",
     "Client ID" : "Klienta ID",
     "Media" : "Informācijas nesēji",
+    "Links" : "Saites",
     "Polls" : "Aptaujas",
     "Audio" : "Audio",
     "Show all files" : "Parādīt visas datnes",

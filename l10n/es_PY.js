@@ -118,6 +118,7 @@ OC.L10N.register(
     "API token" : "Ficha del API",
     "Login" : "Iniciar sesión",
     "Client ID" : "ID del cliente",
+    "Links" : "Ligas",
     "Polls" : "Encuestas",
     "Locations" : "Ubicaciones",
     "Audio" : "Audio",
