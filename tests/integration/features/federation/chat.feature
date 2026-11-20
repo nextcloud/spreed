@@ -650,3 +650,22 @@ Feature: federation/chat
     Then user "participant2" is participant of the following rooms (v4)
       | id          | type | lastPinnedId | hiddenPinnedId |
       | LOCAL::room | 2    | EMPTY        | EMPTY          |
+
+  Scenario: Federated users can only rename their own threads
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    Given using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And using server "LOCAL"
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room" with 201
+    Given using server "REMOTE"
+    And user "participant2" sends thread "Thread 2" with message "Message 2" to room "LOCAL::room" with 201
+    Then user "participant2" renames thread "Thread 1" to "No permissions" in room "LOCAL::room" with 403
+    And user "participant2" renames thread "Thread 2" to "My own thread" in room "LOCAL::room" with 200
