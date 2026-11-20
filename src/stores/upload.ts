@@ -358,6 +358,56 @@ export const useUploadStore = defineStore('upload', () => {
 	}
 
 	/**
+	 * Replaces a staged file with an edited version of it (e.g. from the image editor).
+	 * The preview and the eager compression follow the new file
+	 *
+	 * @param referenceId the temporary message's reference id
+	 * @param editedFile the file to upload instead
+	 */
+	function replaceStagedFile(referenceId: string, editedFile: File) {
+		const uploadId = currentUploadId.value
+		const entry = uploadId
+			? getUploadsArray(uploadId).find(([, uploadedFile]) => uploadedFile.temporaryMessage.referenceId === referenceId)
+			: undefined
+		if (!uploadId || !entry) {
+			return
+		}
+
+		const [index, uploadedFile] = entry
+		dismissCompressImage(referenceId)
+		if (localUrls[referenceId]) {
+			URL.revokeObjectURL(localUrls[referenceId])
+		}
+		const localUrl = URL.createObjectURL(editedFile)
+		localUrls[referenceId] = localUrl
+
+		const { messageParameters } = uploadedFile.temporaryMessage
+		uploads[uploadId].files[index] = {
+			...uploadedFile,
+			// @ts-expect-error: Type File is not assignable to type
+			file: editedFile,
+			totalSize: editedFile.size,
+			temporaryMessage: {
+				...uploadedFile.temporaryMessage,
+				messageParameters: {
+					...messageParameters,
+					file: {
+						...messageParameters.file,
+						// @ts-expect-error: 'file' does not exist in type RichObjectParameter
+						file: editedFile,
+						mimetype: editedFile.type,
+						localUrl,
+					},
+				},
+			},
+		}
+
+		if (supportImageCompression(editedFile.type) && editedFile.size > 0) {
+			void initCompressImage(referenceId, editedFile)
+		}
+	}
+
+	/**
 	 * Initialises uploads and shares files to a conversation
 	 *
 	 * @param payload the wrapping object
@@ -945,6 +995,7 @@ export const useUploadStore = defineStore('upload', () => {
 		markFileAsSharing,
 		markFileAsShared,
 		removeFileFromSelection,
+		replaceStagedFile,
 
 		initialiseUpload,
 		discardUpload,

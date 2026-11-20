@@ -525,5 +525,33 @@ describe('FilePreview.vue', () => {
 			await wrapper.findComponent(NcButton).trigger('click')
 			expect(wrapper.emitted().removeFile).toStrictEqual([['123']])
 		})
+
+		test('emits event to edit an image when clicking the preview', async () => {
+			props.file.mimetype = 'image/jpeg'
+			props.referenceId = 'reference-id'
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('load')
+			await wrapper.trigger('click')
+
+			expect(wrapper.find('.edit-image-button').exists()).toBe(true)
+			expect(wrapper.emitted().editFile).toStrictEqual([['reference-id']])
+			expect(wrapper.emitted().removeFile).toBeUndefined()
+
+			// The remove button still removes the image
+			await wrapper.findComponent(NcButton).trigger('click')
+			expect(wrapper.emitted().removeFile).toStrictEqual([['123']])
+		})
+
+		test('does not offer editing for an animated image', async () => {
+			props.file.mimetype = 'image/gif'
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('load')
+			await wrapper.trigger('click')
+
+			expect(wrapper.find('.edit-image-button').exists()).toBe(false)
+			expect(wrapper.emitted().editFile).toBeUndefined()
+		})
 	})
 })

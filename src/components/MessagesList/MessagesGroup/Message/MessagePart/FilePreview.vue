@@ -52,6 +52,9 @@
 					@load="onLoad"
 					@error="onError">
 				<template v-if="!isLoading || fallbackLocalUrl">
+					<span v-if="isEditableImage" class="edit-image-button">
+						<IconPencilOutline :size="20" fillColor="#ffffff" />
+					</span>
 					<span v-if="isPlayable && !rowLayout" class="play-video-button">
 						<IconPlayCircleOutline
 							:size="48"
@@ -89,7 +92,7 @@
 			variant="secondary"
 			size="small"
 			:aria-label="removeAriaLabel"
-			@click.stop.prevent="handleClick">
+			@click.stop.prevent="$emit('removeFile', file.id)">
 			<template #icon>
 				<IconClose :size="20" />
 			</template>
@@ -116,6 +119,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 import AudioPlayer from './AudioPlayer.vue'
@@ -129,6 +133,9 @@ import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
 import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
+
+// Formats the image editor can save back in the same format
+const EDITABLE_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -148,6 +155,7 @@ export default {
 		// Icons
 		IconClose,
 		IconEyeOutline,
+		IconPencilOutline,
 		IconPlayCircleOutline,
 	},
 
@@ -210,7 +218,7 @@ export default {
 		},
 	},
 
-	emits: ['removeFile'],
+	emits: ['removeFile', 'editFile'],
 
 	setup() {
 		const { openViewer, canOpenInViewer } = useViewer('talk')
@@ -557,6 +565,10 @@ export default {
 			return this.isUploadEditor ? '0' : undefined
 		},
 
+		isEditableImage() {
+			return this.isUploadEditor && EDITABLE_IMAGE_TYPES.includes(this.file.mimetype)
+		},
+
 		removeAriaLabel() {
 			return t('spreed', 'Remove {fileName}', { fileName: this.sanitizedFileName })
 		},
@@ -608,6 +620,11 @@ export default {
 		},
 
 		handleClick(event) {
+			if (this.isEditableImage) {
+				this.$emit('editFile', this.referenceId)
+				return
+			}
+
 			if (this.isUploadEditor) {
 				this.$emit('removeFile', this.file.id)
 				return
@@ -666,7 +683,8 @@ export default {
 	&:focus-visible {
 		outline: none;
 
-		.remove-file {
+		.remove-file,
+		.edit-image-button {
 			visibility: visible;
 		}
 
@@ -755,6 +773,24 @@ export default {
 		max-width: 100%;
 		max-height: 100%;
 		border-radius: var(--border-radius);
+
+		// Upload editor: signal that a click opens the image editor
+		.edit-image-button {
+			visibility: hidden;
+			position: absolute;
+			top: 50%;
+			inset-inline-start: 50%;
+			transform: translate(-50%, -50%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: var(--default-clickable-area);
+			height: var(--default-clickable-area);
+			border-radius: 50%;
+			background-color: rgba(0, 0, 0, 0.5);
+			z-index: 1;
+			pointer-events: none;
+		}
 
 		// Classified: signal that the hidden preview is clickable (not failed)
 		.classified-preview-button {

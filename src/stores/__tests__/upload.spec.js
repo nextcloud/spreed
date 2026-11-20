@@ -368,6 +368,37 @@ describe('fileUploadStore', () => {
 			expect(uploads[0][1].file).toStrictEqual(files[0])
 		})
 
+		test('replaces a staged file with an edited one', async () => {
+			global.URL.revokeObjectURL = vi.fn()
+			const original = new File([new Uint8Array(4096)], 'pngimage.png', { type: 'image/png' })
+			uploadStore.initialiseUpload({
+				uploadId: 'upload-id1',
+				token: 'XXTOKENXX',
+				files: [original],
+			})
+			const [[index, staged]] = uploadStore.getInitialisedUploads('upload-id1')
+			const referenceId = staged.temporaryMessage.referenceId
+
+			const edited = new File([new Uint8Array(2048)], 'pngimage.png', { type: 'image/png' })
+			URL.createObjectURL.mockReturnValueOnce('local-url:edited')
+			uploadStore.replaceStagedFile(referenceId, edited)
+
+			const replaced = uploadStore.getUploadFile('upload-id1', index)
+			expect(replaced.file).toBe(edited)
+			expect(replaced.totalSize).toBe(2048)
+			expect(replaced.temporaryMessage.referenceId).toBe(referenceId)
+			expect(replaced.temporaryMessage.messageParameters.file).toMatchObject({
+				file: edited,
+				mimetype: 'image/png',
+				name: 'pngimage.png',
+				localUrl: 'local-url:edited',
+			})
+			expect(uploadStore.getLocalUrl(referenceId)).toBe('local-url:edited')
+			expect(URL.revokeObjectURL).toHaveBeenCalledWith('local-url:pngimage.png')
+			// The compression runs again for the edited file
+			expect(compressImage).toHaveBeenLastCalledWith(edited)
+		})
+
 		test('discard an entire upload', async () => {
 			const files = [
 				{

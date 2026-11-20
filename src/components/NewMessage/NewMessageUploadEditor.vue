@@ -95,7 +95,8 @@
 				isUploadEditor
 				:file="file[1].temporaryMessage.messageParameters.file"
 				:referenceId="file[1].temporaryMessage.referenceId"
-				@removeFile="removeFile" />
+				@removeFile="removeFile"
+				@editFile="editedReferenceId = $event" />
 		</TransitionWrapper>
 		<div v-else class="upload-editor__voice-message">
 			<AudioPlayer
@@ -111,11 +112,23 @@
 				</template>
 			</NcButton>
 		</div>
+
+		<Teleport v-if="editedFile" to="body">
+			<ImageEditor
+				class="upload-editor__image-editor"
+				:src="editedFile"
+				:label="editedFile.name"
+				@save="saveEditedImage"
+				@cancel="closeImageEditor"
+				@error="onImageEditorError" />
+		</Teleport>
 	</div>
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { defineAsyncComponent } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -144,6 +157,8 @@ export default {
 		IconHighDefinition,
 		IconStandardDefinition,
 		AudioPlayer,
+		// Loaded only when an image is opened for editing, as it brings Konva along
+		ImageEditor: defineAsyncComponent(() => import('@nextcloud/image-editor').then((module) => module.ImageEditor)),
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -184,6 +199,12 @@ export default {
 			token,
 			uploadStore,
 			labels,
+		}
+	},
+
+	data() {
+		return {
+			editedReferenceId: null,
 		}
 	},
 
@@ -239,6 +260,14 @@ export default {
 			return this.firstFile.file.name
 		},
 
+		editedFile() {
+			if (!this.editedReferenceId) {
+				return null
+			}
+			const entry = this.files.find(([, uploadedFile]) => uploadedFile.temporaryMessage.referenceId === this.editedReferenceId)
+			return entry?.[1].file ?? null
+		},
+
 		voiceMessageLocalURL() {
 			return this.uploadStore.getLocalUrl(this.firstFile.temporaryMessage.referenceId)
 		},
@@ -246,6 +275,29 @@ export default {
 
 	methods: {
 		t,
+
+		/**
+		 * Stage the edited image for upload instead of the original
+		 *
+		 * @param {import('@nextcloud/image-editor').ExportResult} result the edited image
+		 */
+		saveEditedImage({ blob }) {
+			const editedFile = new File([blob], this.editedFile.name, { type: blob.type, lastModified: Date.now() })
+			this.uploadStore.replaceStagedFile(this.editedReferenceId, editedFile)
+			this.closeImageEditor()
+		},
+
+		closeImageEditor() {
+			this.editedReferenceId = null
+		},
+
+		/**
+		 * @param {Error} error the error from loading or exporting the image
+		 */
+		onImageEditorError(error) {
+			console.error('Error while editing the image: ', error)
+			showError(t('spreed', 'The image could not be edited'))
+		},
 	},
 }
 </script>
@@ -341,4 +393,14 @@ export default {
 	}
 }
 
+</style>
+
+<style lang="scss">
+// The editor is teleported out of the upload editor, so the scoped styles above do not reach it.
+// It covers the whole viewport, as in the Viewer, over the editor's own '.image-editor' rule
+.image-editor.upload-editor__image-editor {
+	position: fixed;
+	inset: 0;
+	z-index: 10102;
+}
 </style>
