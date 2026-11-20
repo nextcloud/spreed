@@ -130,6 +130,7 @@ import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FileP
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useUploadFiles } from '../../composables/useUploadFiles.ts'
+import { useActorStore } from '../../stores/actor.ts'
 import { useUploadStore } from '../../stores/upload.ts'
 
 export default {
@@ -155,6 +156,7 @@ export default {
 	setup() {
 		const token = useGetToken()
 		const uploadStore = useUploadStore()
+		const actorStore = useActorStore()
 
 		const labels = {
 			standardDefinition: t('spreed', 'Standard image quality'),
@@ -183,6 +185,7 @@ export default {
 			removeFile,
 			token,
 			uploadStore,
+			actorStore,
 			labels,
 		}
 	},
@@ -197,7 +200,7 @@ export default {
 		},
 
 		showSharePermission() {
-			return !this.isVoiceMessage && this.supportConversationSubfolders
+			return !this.isVoiceMessage && this.supportConversationSubfolders && this.actorStore.isActorUser
 		},
 
 		imageQuality: {

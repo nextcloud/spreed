@@ -12,6 +12,7 @@ import type {
 	deleteConversationResponse,
 	getAllConversationsParams,
 	getAllConversationsResponse,
+	getConversationUploadsWithoutStorageResponse,
 	getListedConversationsParams,
 	getListedConversationsResponse,
 	getNoteToSelfConversationResponse,
@@ -53,6 +54,8 @@ import type {
 	setConversationRecordingResponse,
 	setConversationSipParams,
 	setConversationSipResponse,
+	setConversationUploadsWithoutStorageParams,
+	setConversationUploadsWithoutStorageResponse,
 	unarchiveConversationResponse,
 	unbindConversationFromObjectResponse,
 	unpreserveConversationResponse,
@@ -408,6 +411,27 @@ async function setMentionPermissions(token: string, mentionPermissions: setConve
 }
 
 /**
+ * Get the Guests folder storing uploads of participants without storage.
+ *
+ * @param token The token of the conversation
+ */
+async function getUploadsWithoutStorage(token: string): getConversationUploadsWithoutStorageResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}/uploads-without-storage', { token }))
+}
+
+/**
+ * Allow or stop uploads of participants without storage into the current user's storage.
+ *
+ * @param token The token of the conversation to be modified
+ * @param allowed Whether participants without storage may upload files
+ */
+async function setUploadsWithoutStorage(token: string, allowed: setConversationUploadsWithoutStorageParams['allowed']): setConversationUploadsWithoutStorageResponse {
+	return axios.put(generateOcsUrl('apps/spreed/api/v4/room/{token}/uploads-without-storage', { token }), {
+		allowed,
+	} as setConversationUploadsWithoutStorageParams)
+}
+
+/**
  * Set the default permissions for participants in a conversation.
  *
  * @param token conversation token
@@ -468,6 +492,7 @@ export {
 	fetchConversations,
 	fetchNoteToSelfConversation,
 	getPresets,
+	getUploadsWithoutStorage,
 	makeConversationPrivate,
 	makeConversationPublic,
 	makeLegacyConversationPublic,
@@ -489,6 +514,7 @@ export {
 	setNotificationLevel,
 	setRecordingConsent,
 	setSIPEnabled,
+	setUploadsWithoutStorage,
 	unarchiveConversation,
 	unbindConversationFromObject,
 	unpreserveConversation,
