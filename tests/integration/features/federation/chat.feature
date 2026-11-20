@@ -651,6 +651,7 @@ Feature: federation/chat
       | id          | type | lastPinnedId | hiddenPinnedId |
       | LOCAL::room | 2    | EMPTY        | EMPTY          |
 
+  @skip32
   Scenario: Federated users can only rename their own threads
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
