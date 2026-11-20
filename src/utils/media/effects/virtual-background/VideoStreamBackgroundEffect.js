@@ -13,6 +13,12 @@ import {
 } from './TimerWorker.js'
 import WebGLCompositor from './WebGLCompositor.js'
 
+/**
+ * Width of the frame passed to the segmentation, the height follows the video aspect ratio.
+ * The model scales its input anyway; a small frame also keeps the mask small.
+ */
+const SEGMENTATION_INPUT_WIDTH = 256
+
 // Cache MediaPipe resources to avoid loading them multiple times.
 let _WasmFileset = null
 
@@ -58,7 +64,7 @@ export async function getWasmFileset() {
  */
 export function getModelAssetPath() {
 	return new URL(
-		'./vendor/models/selfie_segmenter.tflite',
+		'./vendor/models/selfie_segmenter_landscape.tflite',
 		import.meta.url,
 	).pathname
 }
@@ -126,6 +132,8 @@ export default class VideoStreamBackgroundEffect {
 			this._outputCanvasElement.getContext('2d')
 		}
 		this._inputVideoElement = document.createElement('video')
+		this._segmentationInputCanvas = document.createElement('canvas')
+		this._segmentationInputCtx = this._segmentationInputCanvas.getContext('2d', { alpha: false })
 		this._bgChanged = false
 		this._prevBgMode = null
 	}
@@ -174,7 +182,7 @@ export default class VideoStreamBackgroundEffect {
 		let segmentationResult
 		try {
 			segmentationResult = await this._imageSegmenter.segmentForVideo(
-				this._inputVideoElement,
+				this._getSegmentationInput(),
 				performance.now(),
 			)
 
@@ -195,6 +203,24 @@ export default class VideoStreamBackgroundEffect {
 				segmentationResult.confidenceMasks.forEach((mask) => mask.close())
 			}
 		}
+	}
+
+	/**
+	 * Draw the current video frame, scaled down, as the segmentation input.
+	 *
+	 * @private
+	 * @return {HTMLCanvasElement}
+	 */
+	_getSegmentationInput() {
+		const { videoWidth, videoHeight } = this._inputVideoElement
+		const width = SEGMENTATION_INPUT_WIDTH
+		const height = Math.max(1, Math.round(width * videoHeight / Math.max(1, videoWidth)))
+		if (this._segmentationInputCanvas.width !== width || this._segmentationInputCanvas.height !== height) {
+			this._segmentationInputCanvas.width = width
+			this._segmentationInputCanvas.height = height
+		}
+		this._segmentationInputCtx.drawImage(this._inputVideoElement, 0, 0, width, height)
+		return this._segmentationInputCanvas
 	}
 
 	/**
