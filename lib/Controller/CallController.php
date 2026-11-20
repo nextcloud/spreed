@@ -31,6 +31,7 @@ use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\SIPDialOutService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -68,8 +69,27 @@ class CallController extends AEnvironmentAwareOCSController {
 		private readonly Config $talkConfig,
 		private readonly Authenticator $federationAuthenticator,
 		private readonly SIPDialOutService $dialOutService,
+		private readonly SessionService $sessionService,
 	) {
 		parent::__construct($appName, $request);
+	}
+
+	/**
+	 * Requests without a session (e.g. federation proxy or app password
+	 * clients) count as in the call when any session of the attendee is.
+	 */
+	private function isParticipantInCall(): bool {
+		$session = $this->participant->getSession();
+		if ($session !== null) {
+			return $session->getInCall() !== Participant::FLAG_DISCONNECTED;
+		}
+
+		foreach ($this->sessionService->getAllSessionsForAttendee($this->participant->getAttendee()) as $attendeeSession) {
+			if ($attendeeSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -372,6 +392,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[PublicPage]
 	#[RequireCallEnabled]
+	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
@@ -390,7 +411,7 @@ class CallController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($this->participant->getSession() && $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
+		if (!$this->isParticipantInCall()) {
 			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -418,6 +439,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
+	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/call/{token}/dialout/{attendeeId}', requirements: [
@@ -429,7 +451,7 @@ class CallController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($this->participant->getSession() && $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
+		if (!$this->isParticipantInCall()) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
