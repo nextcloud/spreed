@@ -17,6 +17,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCS\OCSException;
 
 /**
  * @psalm-import-type TalkCapabilities from ResponseDefinitions
@@ -117,6 +118,7 @@ class CallController {
 	 * @param int $attendeeId ID of the attendee to ring
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
+	 * @throws OCSException When the lobby is active on the host
 	 *
 	 * 200: Attendee rang successfully
 	 * 400: Ringing attendee is not possible
@@ -130,9 +132,13 @@ class CallController {
 		);
 
 		$statusCode = $proxy->getStatusCode();
-		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_BAD_REQUEST, Http::STATUS_NOT_FOUND], true)) {
+		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_BAD_REQUEST, Http::STATUS_NOT_FOUND, Http::STATUS_PRECONDITION_FAILED], true)) {
 			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
 			throw new CannotReachRemoteException();
+		}
+
+		if ($statusCode === Http::STATUS_PRECONDITION_FAILED) {
+			throw new OCSException('', Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		if ($statusCode === Http::STATUS_BAD_REQUEST) {
