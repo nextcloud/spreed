@@ -1615,6 +1615,7 @@ OC.L10N.register(
     "Blur" : "Verwischen",
     "Upload" : "Hochladen",
     "Files" : "Dateien",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Fehlgeschlagen: WebAssembly ist in diesem Browser deaktiviert oder wird nicht unterstützt. Bitte WebAssembly aktivieren oder einen Browser verwenden, der es unterstützt, um die Prüfung durchzuführen.",
     "(editing)" : "(Bearbeiten)",
     "(edited)" : "(Bearbeitet)",
     "The message has expired or has been deleted" : "Die Nachricht ist abgelaufen oder wurde gelöscht",
