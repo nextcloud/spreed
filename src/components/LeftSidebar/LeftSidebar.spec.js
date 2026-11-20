@@ -11,12 +11,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import LeftSidebar from './LeftSidebar.vue'
 import router from '../../__mocks__/router.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { searchListedConversations } from '../../services/conversationsService.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { useActorStore } from '../../stores/actor.ts'
+import { useTokenStore } from '../../stores/token.ts'
 import { findNcActionButton, findNcButton, generateOCSResponse } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
@@ -107,6 +109,7 @@ describe('LeftSidebar.vue', () => {
 
 	afterEach(() => {
 		localCapabilities.spreed.config.conversations['can-create'] = true
+		BrowserStorage.removeItem('recentTokens')
 		vi.clearAllMocks()
 	})
 
@@ -453,6 +456,39 @@ describe('LeftSidebar.vue', () => {
 				navigationItemsList.forEach((name, index) => {
 					expect(itemsListNames).toContain(navigationItemsList.at(index).text())
 				})
+			})
+
+			test('shows recently opened conversations on top', async () => {
+				useTokenStore().addRecentToken('t200')
+
+				const wrapper = await testSearch(SEARCH_TERM, [], [])
+
+				const captionsEls = wrapper.find('.scroller').findAll('.app-navigation-caption')
+				expect(captionsEls.at(0).text()).toBe('Recent conversations')
+				expect(captionsEls.at(1).text()).toBe('Conversations')
+
+				const conversationNames = wrapper.find('.scroller').findAllComponents({ name: 'ConversationItem' })
+					.map((item) => item.props('item').token)
+				expect(conversationNames).toEqual(['t200', 't100'])
+			})
+
+			test('shows recently opened conversations when focusing the empty search box', async () => {
+				conversationsList.forEach((conversation) => {
+					conversation.isArchived = false
+				})
+				useTokenStore().addRecentToken('t300')
+
+				const wrapper = mountComponent()
+				await flushPromises()
+
+				await wrapper.findComponent({ name: 'SearchBox' }).find('input[type="text"]').trigger('focus')
+
+				const captionsEls = wrapper.find('.scroller').findAll('.app-navigation-caption')
+				expect(captionsEls.map((caption) => caption.text())).toEqual(['Recent conversations', 'Conversations'])
+
+				const conversationNames = wrapper.find('.scroller').findAllComponents({ name: 'ConversationItem' })
+					.map((item) => item.props('item').token)
+				expect(conversationNames).toEqual(['t300', 't100', 't200'])
 			})
 
 			test('only shows user search results when cannot create conversations', async () => {

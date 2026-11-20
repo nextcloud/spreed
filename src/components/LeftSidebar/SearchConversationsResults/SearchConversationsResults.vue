@@ -24,6 +24,7 @@ import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
 import { getTalkConfig, hasServerAppCapabilities } from '../../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../../stores/settings.ts'
+import { useTokenStore } from '../../../stores/token.ts'
 import { sortConversationsList } from '../../../utils/conversation.ts'
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
@@ -46,6 +47,7 @@ const emit = defineEmits<{
 const isCirclesEnabled = hasServerAppCapabilities('circles')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const settingsStore = useSettingsStore()
+const tokenStore = useTokenStore()
 const isCompact = computed(() => settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT)
 
 // Item's content (avatar) + internal_padding * 2 + external_padding * 2
@@ -90,6 +92,10 @@ type VirtualListItem
 const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 	// Initialize
 	const virtualList: VirtualListItem[] = []
+
+	if (props.searchText === '') {
+		return getConversationsSection()
+	}
 
 	const showConversations = props.searchFilters.includes('conversations')
 	const showMessages = props.searchFilters.includes('messages')
@@ -149,11 +155,28 @@ function getConversationsSection(): VirtualListItem[] {
 		return searchTerms.every((term) => displayName.includes(term) || name.includes(term))
 	})
 
+	const recentConversations = tokenStore.recentTokens
+		.filter((token) => token !== tokenStore.token)
+		.map((token) => searchResultsConversationList.find((conversation) => conversation.token === token))
+		.filter((conversation): conversation is Conversation => conversation !== undefined)
+		.slice(0, 5)
+	const otherConversations = searchResultsConversationList.filter((conversation) => !recentConversations.includes(conversation))
+
+	if (recentConversations.length) {
+		items.push({ type: 'caption', id: 'recent_conversations_caption', name: t('spreed', 'Recent conversations') })
+		recentConversations.forEach((item) => {
+			items.push({ type: 'conversation', id: `conversation_${item.id}`, object: item })
+		})
+		if (otherConversations.length === 0) {
+			return items
+		}
+	}
+
 	items.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
-	if (searchResultsConversationList.length === 0) {
+	if (otherConversations.length === 0) {
 		items.push({ type: 'hint', id: 'hint_conversations', hint: t('spreed', 'No matches found') })
 	} else {
-		sortConversationsList(searchResultsConversationList, settingsStore.groupMode, settingsStore.sortOrder)
+		sortConversationsList(otherConversations, settingsStore.groupMode, settingsStore.sortOrder)
 			.forEach((item: Conversation) => {
 				items.push({ type: 'conversation', id: `conversation_${item.id}`, object: item })
 			})

@@ -175,6 +175,19 @@ export default {
 				return
 			}
 
+			// Safari doesn't focus clicked links: check the click target after the click
+			if (!event.relatedTarget && this.listRef?.length) {
+				document.addEventListener('click', (clickEvent) => {
+					if (!this.listRef.some((list) => list?.$el?.contains(clickEvent.target))) {
+						this.$emit('blur', event)
+						if (!this.isSearching) {
+							this.$emit('update:isFocused', false)
+						}
+					}
+				}, { capture: true, once: true })
+				return
+			}
+
 			// Blur in other cases
 			this.$emit('blur', event)
 			if (!this.isSearching) {
