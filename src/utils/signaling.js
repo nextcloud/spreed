@@ -901,6 +901,13 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 		return
 	}
 
+	if (newSession && this._isRejoiningConversationWithNewSession) {
+		// A reconnection with a new session is already in progress; a second
+		// one would leave the call again and create another session.
+		console.debug('Forced reconnection with a new session already in progress')
+		return
+	}
+
 	this._forceReconnect = false
 	if (newSession) {
 		if (this.currentCallToken) {
@@ -933,6 +940,18 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 				this.sendBye()
 				if (this.socket) {
 					// Trigger reconnect.
+					this.socket.close()
+				}
+			})
+			.catch((error) => {
+				// Without a new session the reconnection is done with the
+				// current one; the room (and the call, as its token was kept)
+				// are joined again once connected.
+				console.error('Failed to rejoin the conversation with a new session', error)
+				this._isRejoiningConversationWithNewSession = false
+				this.resumeId = null
+				this.signalingRoomJoined = null
+				if (this.socket) {
 					this.socket.close()
 				}
 			})
