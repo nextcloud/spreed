@@ -1265,6 +1265,22 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^external call service renames room "([^"]*)" to "([^"]*)" as "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceRenamesRoom(string $identifier, string $roomName, string $owner, string $secret, int $statusCode, string $apiVersion): void {
+		$random = bin2hex(random_bytes(32));
+		$headers = [
+			'x-nextcloud-talk-external-service-random' => $random,
+			'x-nextcloud-talk-external-service-checksum' => hash_hmac('sha256', $random . $owner, $secret),
+		];
+
+		$this->setCurrentUser('');
+		$this->sendRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier], [
+			'owner' => $owner,
+			'roomName' => $roomName,
+		], $headers);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForPath(string $user, string $path, int $statusCode, string $apiVersion): void {
 		$fileId = $this->getFileIdForPath($user, $path);

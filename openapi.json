@@ -23364,6 +23364,7 @@
             "put": {
                 "operationId": "room-rename-room",
                 "summary": "Rename a room",
+                "description": "The endpoint can also be used unauthenticated by an external call service for its own conversations, by signing the request with the configured shared secret via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the random seed and the `$owner` user ID).",
                 "tags": [
                     "room"
                 ],
@@ -23389,6 +23390,11 @@
                                     "roomName": {
                                         "type": "string",
                                         "description": "New name"
+                                    },
+                                    "owner": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User ID of an owner of the conversation that will be used as actor. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored."
                                     }
                                 }
                             }
@@ -23415,6 +23421,22 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-checksum",
+                        "in": "header",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
