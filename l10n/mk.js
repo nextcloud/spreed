@@ -1556,6 +1556,7 @@ OC.L10N.register(
     "Thread ID" : "ID на нишка",
     "Pinned messages" : "Пинувани пораки",
     "Media" : "Медија",
+    "Links" : "Линкови",
     "Polls" : "Анкети",
     "Deck cards" : "Deck картици",
     "Voice messages" : "Говорни пораки",

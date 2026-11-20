@@ -266,6 +266,7 @@ OC.L10N.register(
     "API token" : "Çelës identifikues i API-t ",
     "Login" : "Hyrje",
     "Client ID" : "ID klienti",
+    "Links" : "Lidhje",
     "Polls" : "Sondazhe",
     "Audio" : "Audio",
     "Group" : "Grup",

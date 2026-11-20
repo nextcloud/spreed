@@ -125,6 +125,7 @@ OC.L10N.register(
     "Login" : "Inicio de sesión",
     "Client ID" : "ID del cliente",
     "Media" : "Media",
+    "Links" : "Links",
     "Locations" : "Ubicaciones",
     "Audio" : "Audio",
     "Group" : "Grupo",

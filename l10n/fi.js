@@ -1249,6 +1249,7 @@ OC.L10N.register(
     "XMPP/Jabber server URL" : "XMPP-/Jabber-palvelimen URL-osoite",
     "MUC server URL" : "MUC-palvelimen URL-osoite",
     "Media" : "Media",
+    "Links" : "Linkit",
     "Polls" : "Kyselyt",
     "Voice messages" : "Ääniviestit",
     "Locations" : "Sijainnit",

@@ -1417,6 +1417,7 @@ OC.L10N.register(
     "Blur" : "ເບລີ",
     "Upload" : "ອັບໂຫລດ",
     "Files" : "ໄຟລ໌",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check.",
     "(editing)" : "(editing)",
     "(edited)" : "(edited)",
     "The message has expired or has been deleted" : "The message has expired or has been deleted",

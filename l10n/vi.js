@@ -890,6 +890,7 @@ OC.L10N.register(
     "MUC server URL" : "URL máy chủ MUC",
     "Jabber ID" : "Mã Jabber",
     "Media" : "Phương tiện",
+    "Links" : "Đường dẫn",
     "Locations" : "Các địa điểm",
     "Audio" : "Âm thanh",
     "Show all files" : "Hiển thị tất cả tệp",
