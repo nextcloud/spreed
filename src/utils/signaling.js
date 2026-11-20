@@ -126,14 +126,13 @@ Signaling.Base.prototype._trigger = function(ev, args) {
 }
 
 Signaling.Base.prototype.setSettings = function(settings) {
-	if (!settings) {
-		// Signaling object is expected to always have a settings object
-		return
+	// Signaling object is expected to always have a settings object
+	if (settings) {
+		this.settings = settings
+		this._trigger('settingsUpdated', [settings])
 	}
 
-	this.settings = settings
-	this._trigger('settingsUpdated', [settings])
-
+	// Unblock the deferred connect(); with old settings it gets token_expired and fetches again
 	if (this._pendingUpdateSettingsPromise) {
 		this._pendingUpdateSettingsPromise.resolve()
 		delete this._pendingUpdateSettingsPromise
@@ -714,7 +713,6 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
 		}
-		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		if (this.settings.helloAuthParams['2.0']) {
 			this.waitForWelcomeTimeout = setTimeout(this.welcomeTimeout.bind(this), this.welcomeTimeoutMs)
 		} else {
@@ -1110,6 +1108,8 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 
 	const resumedSession = !!this.resumeId
 	this.connected = true
+	// Reset only after a successful hello, so failed hellos (token_expired) keep backing off
+	this.reconnectIntervalMs = this.initialReconnectIntervalMs
 	if (this._forceReconnect && resumedSession) {
 		console.info('Perform pending forced reconnect')
 		this.forceReconnect(true)
