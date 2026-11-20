@@ -278,6 +278,10 @@ export default {
 
 			if (!this.lines.length) {
 				const firstChunkClientRectsLength = this.$refs.chunks[0].getClientRects().length
+				// No layout boxes, e.g. when the transcript is not rendered
+				if (!firstChunkClientRectsLength) {
+					return
+				}
 
 				// If there is a single chunk and it has several bounding
 				// rectangles each rectangle will be in its own line.
@@ -295,7 +299,11 @@ export default {
 			}
 
 			let lastKnownChunkElement = this.$refs.chunks[lastKnownChunkIndex]
-			let lastKnownChunkElementTop = lastKnownChunkElement.getClientRects()[lastKnownChunkElement.getClientRects().length - 1].top
+			const clientRects = lastKnownChunkElement.getClientRects()
+			if (!clientRects.length) {
+				return
+			}
+			let lastKnownChunkElementTop = clientRects[clientRects.length - 1].top
 
 			for (let i = lastKnownChunkIndex + 1; i < this.$refs.chunks.length; i++) {
 				const nextChunkElement = this.$refs.chunks[i]
