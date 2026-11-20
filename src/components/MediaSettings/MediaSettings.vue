@@ -47,112 +47,77 @@
 				{{ t('spreed', 'You can only join a voice room via a call.') }}
 			</NcNoteCard>
 			<div class="media-settings__content" :class="{ 'media-settings__content--mobile': isMobile }">
-				<!-- Preview -->
-				<div class="media-settings__preview">
-					<video
-						v-show="showVideo"
-						ref="video"
-						class="preview__video"
-						:class="{ 'preview__video--mirrored': isMirrored }"
-						disablePictureInPicture
-						tabindex="-1" />
-					<NcButton
-						v-if="showVideo"
-						variant="secondary"
-						class="media-settings__preview-mirror"
-						:title="mirrorToggleLabel"
-						:aria-label="mirrorToggleLabel"
-						@click="isMirrored = !isMirrored">
-						<template #icon>
-							<IconReflectHorizontal :size="20" />
-						</template>
-					</NcButton>
-					<div
-						v-show="!showVideo"
-						class="preview__novideo">
-						<VideoBackground class="background-preview" />
-						<AvatarWrapper
-							:id="userId"
-							:token
-							:name="displayName"
-							:source="actorStore.actorType"
-							:size="AVATAR.SIZE.EXTRA_LARGE"
-							disableMenu
-							disableTooltip />
-					</div>
-
-					<!-- Audio and video toggles -->
-					<div class="media-settings__toggles">
-						<!-- Audio toggle -->
+				<div class="media-settings__media">
+					<!-- Preview -->
+					<div class="media-settings__preview">
+						<video
+							v-show="showVideo"
+							ref="video"
+							class="preview__video"
+							:class="{ 'preview__video--mirrored': isMirrored }"
+							disablePictureInPicture
+							tabindex="-1" />
 						<NcButton
-							v-if="!audioStreamError"
-							variant="tertiary"
-							:title="audioButtonTitle"
-							:aria-label="audioButtonTitle"
-							:disabled="!audioPreviewAvailable"
-							@click="toggleAudio">
+							v-if="showVideo"
+							variant="secondary"
+							class="media-settings__preview-mirror"
+							:title="mirrorToggleLabel"
+							:aria-label="mirrorToggleLabel"
+							@click="isMirrored = !isMirrored">
 							<template #icon>
-								<VolumeIndicator
-									:audioPreviewAvailable
-									:audioEnabled="audioOn"
-									:currentVolume
-									:volumeThreshold="currentThreshold"
-									overlayMutedColor="#888888" />
+								<IconReflectHorizontal :size="20" />
 							</template>
 						</NcButton>
-						<NcPopover
-							v-else
-							:title="t('spreed', 'Show more info')"
-							noFocusTrap>
-							<template #trigger>
-								<NcButton
-									variant="error"
-									:aria-label="t('spreed', 'Audio is not available')">
-									<template #icon>
-										<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
-									</template>
-								</NcButton>
-							</template>
-							<template #default>
-								<p class="media-settings__device-error">
-									{{ audioStreamErrorMessage }}
-								</p>
-							</template>
-						</NcPopover>
+						<div
+							v-show="!showVideo"
+							class="preview__novideo">
+							<VideoBackground class="background-preview" />
+							<AvatarWrapper
+								:id="userId"
+								:token
+								:name="displayName"
+								:source="actorStore.actorType"
+								:size="AVATAR.SIZE.EXTRA_LARGE"
+								disableMenu
+								disableTooltip />
+						</div>
 
-						<!-- Video toggle -->
-						<NcButton
-							v-if="!videoStreamError"
-							variant="tertiary"
-							:title="videoButtonTitle"
-							:aria-label="videoButtonTitle"
-							:disabled="!videoPreviewAvailable"
-							@click="toggleVideo">
-							<template #icon>
-								<IconVideo v-if="videoOn" :size="20" />
-								<IconVideoOffOutline v-else :size="20" />
-							</template>
-						</NcButton>
-						<NcPopover
-							v-else
-							:title="t('spreed', 'Show more info')"
-							noFocusTrap>
-							<template #trigger>
-								<NcButton
-									variant="error"
-									:aria-label="t('spreed', 'Video is not available')">
-									<template #icon>
-										<IconVideoOffOutline :size="20" />
-									</template>
-								</NcButton>
-							</template>
-							<template #default>
-								<p class="media-settings__device-error">
-									{{ videoStreamErrorMessage }}
-								</p>
-							</template>
-						</NcPopover>
+						<!-- Audio and video toggles -->
+						<div class="media-settings__toggles">
+							<!-- Audio toggle -->
+							<NcButton
+								:variant="audioStreamError ? 'error' : 'tertiary'"
+								:title="audioButtonTitle"
+								:aria-label="audioButtonTitle"
+								:disabled="!audioPreviewAvailable"
+								@click="toggleAudio">
+								<template #icon>
+									<NcIconSvgWrapper v-if="audioStreamError" :svg="IconMicrophoneOffOutline" :size="20" />
+									<VolumeIndicator
+										v-else
+										:audioPreviewAvailable
+										:audioEnabled="audioOn"
+										:currentVolume
+										:volumeThreshold="currentThreshold"
+										overlayMutedColor="#888888" />
+								</template>
+							</NcButton>
+
+							<!-- Video toggle -->
+							<NcButton
+								:variant="videoStreamError ? 'error' : 'tertiary'"
+								:title="videoButtonTitle"
+								:aria-label="videoButtonTitle"
+								:disabled="!videoPreviewAvailable"
+								@click="toggleVideo">
+								<template #icon>
+									<IconVideo v-if="videoOn" :size="20" />
+									<IconVideoOffOutline v-else :size="20" />
+								</template>
+							</NcButton>
+						</div>
 					</div>
+					<MediaDevicesStatus />
 				</div>
 				<div class="media-settings__settings">
 					<!-- Tab panels -->
@@ -256,7 +221,6 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
 import IconTune from 'vue-material-design-icons/Tune.vue'
@@ -270,6 +234,7 @@ import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
 import AdvancedAudioDialog from './AdvancedAudioDialog.vue'
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
+import MediaDevicesStatus from './MediaDevicesStatus.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 import VirtualBackgroundChecks from './VirtualBackgroundChecks.vue'
@@ -302,6 +267,7 @@ export default {
 		AvatarWrapper,
 		CallButton,
 		MediaDevicesSelector,
+		MediaDevicesStatus,
 		MediaDevicesSpeakerTest,
 		MediaSettingsTabs,
 		NcActionButton,
@@ -310,7 +276,6 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcIconSvgWrapper,
 		NcModal,
-		NcPopover,
 		NcNoteCard,
 		VideoBackground,
 		VideoBackgroundEditor,
@@ -577,58 +542,6 @@ export default {
 
 		startWithoutMediaEnabled() {
 			return this.settingsStore.startWithoutMedia
-		},
-
-		audioStreamErrorMessage() {
-			if (!this.audioStreamError) {
-				return null
-			}
-
-			if (this.audioStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
-				return t('spreed', 'Calls are not supported in your browser')
-			}
-
-			// In newer browser versions MediaDevicesManager is not supported in
-			// insecure contexts; in older browser versions it is, but getting
-			// the user media fails with "NotAllowedError".
-			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.includes('Only secure origins')
-			if ((this.audioStreamError.name === 'NotSupportedError' && isInsecureContext)
-				|| (this.audioStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
-				return t('spreed', 'Access to microphone is only possible with HTTPS')
-			}
-
-			if (this.audioStreamError.name === 'NotAllowedError') {
-				return t('spreed', 'Access to microphone was denied')
-			}
-
-			return t('spreed', 'Error while accessing microphone')
-		},
-
-		videoStreamErrorMessage() {
-			if (!this.videoStreamError) {
-				return null
-			}
-
-			if (this.videoStreamError.name === 'NotSupportedError' && !window.RTCPeerConnection) {
-				return t('spreed', 'Calls are not supported in your browser')
-			}
-
-			// In newer browser versions MediaDevicesManager is not supported in
-			// insecure contexts; in older browser versions it is, but getting
-			// the user media fails with "NotAllowedError".
-			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.includes('Only secure origins')
-			if ((this.videoStreamError.name === 'NotSupportedError' && isInsecureContext)
-				|| (this.videoStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
-				return t('spreed', 'Access to camera is only possible with HTTPS')
-			}
-
-			if (this.videoStreamError.name === 'NotAllowedError') {
-				return t('spreed', 'Access to camera was denied')
-			}
-
-			return t('spreed', 'Error while accessing camera')
 		},
 
 		disabledCallButton() {
@@ -997,15 +910,22 @@ export default {
 .media-settings {
 	padding: calc(var(--default-grid-baseline) * 5);
 
+	&__media {
+		display: flex;
+		flex-direction: column;
+		aspect-ratio: 4/3;
+		margin-inline-end: var(--default-grid-baseline);
+	}
+
 	&__preview {
 		position: relative;
 		display: flex;
+		flex: 1 1 0;
+		min-height: 0;
 		align-items: center;
 		justify-content: center;
 		border-radius: var(--border-radius-element, var(--border-radius-large));
 		background-color: var(--color-loading-dark);
-		aspect-ratio: 4/3;
-		margin-inline-end: var(--default-grid-baseline);
 	}
 
 	&__preview > &__preview-mirror {
@@ -1052,10 +972,6 @@ export default {
 	&__background-checks {
 		margin-top: var(--default-grid-baseline);
 	}
-
-	&__device-error {
-		padding: calc(var(--default-grid-baseline) * 2);
-	}
 }
 
 .preview {
@@ -1065,8 +981,8 @@ export default {
 		max-height: 100%;
 		border-radius: var(--border-radius-element);
 		position: absolute;
-		top: 0;
-		inset-inline-start: 0;
+		inset: 0;
+		margin: auto;
 
 		&--mirrored {
 			transform: none !important;
