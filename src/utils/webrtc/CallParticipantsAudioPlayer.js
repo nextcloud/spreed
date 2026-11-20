@@ -6,6 +6,11 @@
 import attachMediaStream from '../attachmediastream.js'
 import { mediaDevicesManager } from '../webrtc/index.js'
 
+// Events after which the audio can be resumed if the browser requires a user
+// gesture for that. "pointerdown" is a user gesture only with a mouse; with
+// touch it is "pointerup" or "touchend" instead.
+const USER_GESTURE_EVENTS = ['pointerdown', 'pointerup', 'touchend', 'mousedown', 'keydown']
+
 /**
  * Player for audio of call participants.
  *
@@ -37,6 +42,18 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 		this._audioDestination = this._audioContext.createMediaStreamDestination()
 		this._audioElement = attachMediaStream(this._audioDestination.stream, null, { audio: true })
 		this._audioNodes = new Map()
+
+		// The browser can suspend the audio context (for example, iOS does it
+		// when the audio is interrupted by a phone call or by locking the
+		// screen), which silences all the participants. It is resumed again as
+		// soon as possible; if the browser requires a user gesture for that it
+		// will be done on the next interaction with the page.
+		this._resumeAudioBound = this._resumeAudio.bind(this)
+		this._audioContext.addEventListener?.('statechange', this._resumeAudioBound)
+		document.addEventListener('visibilitychange', this._resumeAudioBound)
+		USER_GESTURE_EVENTS.forEach((eventName) => {
+			document.addEventListener(eventName, this._resumeAudioBound, true)
+		})
 	} else {
 		this._audioElements = new Map()
 	}
@@ -67,8 +84,32 @@ CallParticipantsAudioPlayer.prototype = {
 		})
 
 		if (this._mixAudio) {
+			this._audioContext.removeEventListener?.('statechange', this._resumeAudioBound)
+			document.removeEventListener('visibilitychange', this._resumeAudioBound)
+			USER_GESTURE_EVENTS.forEach((eventName) => {
+				document.removeEventListener(eventName, this._resumeAudioBound, true)
+			})
+
 			this._audioElement.srcObject = null
 			this._audioContext.close()
+		}
+	},
+
+	_resumeAudio() {
+		if (this._audioContext.state === 'closed') {
+			return
+		}
+
+		if (this._audioContext.state !== 'running') {
+			this._audioContext.resume()?.catch(() => {
+				// It will be tried again on the next state change or interaction.
+			})
+		}
+
+		if (this._audioElement.paused) {
+			this._audioElement.play()?.catch(() => {
+				// It will be tried again on the next state change or interaction.
+			})
 		}
 	},
 
@@ -200,6 +241,10 @@ CallParticipantsAudioPlayer.prototype = {
 				// Force creating a new audio renderer to work around broken
 				// audio output in Safari after disconnecting a node.
 				this._audioElement.srcObject = this._audioDestination.stream
+
+				// Setting the source again restarts the element, which may
+				// not be able to play again by itself without a user gesture.
+				this._resumeAudio()
 			}
 
 			return
