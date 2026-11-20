@@ -197,6 +197,8 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/chat/{token}/threads/{threadId}', requirements: [
 		'apiVersion' => '(v1)',
