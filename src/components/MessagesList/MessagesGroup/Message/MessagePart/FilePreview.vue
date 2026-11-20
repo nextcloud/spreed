@@ -128,6 +128,7 @@ import { useUploadStore } from '../../../../../stores/upload.ts'
 import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
 import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../../../../../utils/davUtils.ts'
 import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
+import { getFileKeys } from '../../../../../utils/message.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
 const PREVIEW_TYPE = {
@@ -630,7 +631,7 @@ export default {
 
 			if (this.itemType === SHARED_ITEM.TYPES.MEDIA && this.isSharedItems) {
 				const getRevertedList = (items) => Object.values(items).reverse()
-					.map((item) => item.messageParameters.file)
+					.flatMap((item) => getFileKeys(item).map((key) => item.messageParameters[key]))
 
 				// Get available media files from store and put them to the list to navigate through slides
 				list = getRevertedList(this.sharedItemsStore.sharedItems(this.token).media)
