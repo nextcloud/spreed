@@ -100,6 +100,10 @@ export default function LocalMedia(opts) {
 	this._handleTrackReplacedBound = this._handleTrackReplaced.bind(this)
 	this._handleTrackEnabledBound = this._handleTrackEnabled.bind(this)
 
+	this._mediaDevicesSource.on('inputIdChangeSettled', (mediaDevicesSource, kind) => {
+		this.emit('localInputIdChangeSettled', kind)
+	})
+
 	this._mediaDevicesSource.connectTrackSink('audio', this._audioTrackEnabler)
 	this._mediaDevicesSource.connectTrackSink('video', this._videoTrackEnabler)
 
@@ -377,6 +381,10 @@ LocalMedia.prototype.unmute = function() {
 // Video controls
 LocalMedia.prototype.isVideoAllowed = function() {
 	return this._mediaDevicesSource.isVideoAllowed()
+}
+
+LocalMedia.prototype.isInputIdChangePending = function(kind) {
+	return this._mediaDevicesSource.isInputIdChangePending(kind)
 }
 
 LocalMedia.prototype.disallowVideo = function() {
