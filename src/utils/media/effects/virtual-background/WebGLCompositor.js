@@ -9,7 +9,7 @@
  * Number of horizontal + vertical blur iterations applied.
  * Larger value - stronger blur effect. Low GPU impact.
  */
-const DEFAULT_BLUR_PASSES = 3
+const DEFAULT_BLUR_PASSES = 2
 /**
  * Spatial radius of the bilateral filter.
  * Larger value - smoother mask over a wider area, softer edges. High GPU impact.
@@ -522,7 +522,7 @@ export default class WebGLCompositor {
 	 */
 	_applyMultiPassBlur(width, height) {
 		const gl = this.gl
-		const scale = 0.5
+		const scale = 0.25
 		const blurWidth = width * scale
 		const blurHeight = height * scale
 		const texelWidth = 1 / blurWidth
@@ -720,8 +720,10 @@ export default class WebGLCompositor {
 		}
 
 		// Allocate mask filtered texture
+		const maskW = Math.ceil(outW / 2)
+		const maskH = Math.ceil(outH / 2)
 		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, outW, outH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskW, maskH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
 
 		// Upload and process mask
 		if (mask) {
@@ -746,7 +748,7 @@ export default class WebGLCompositor {
 
 		// Apply bilateral filter to mask
 		if (mask) {
-			this._applyBilateralFilter(outW, outH)
+			this._applyBilateralFilter(maskW, maskH)
 		}
 
 		// Apply multi-pass blur if in blur mode
