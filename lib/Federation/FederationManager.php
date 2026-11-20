@@ -25,7 +25,9 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\IUser;
@@ -80,6 +82,9 @@ class FederationManager {
 		$this->restrictionValidator->isAllowedToInvite($user, $cloudIdToInvite, $room);
 	}
 
+	/**
+	 * @throws ProviderCouldNotAddShareException
+	 */
 	public function addRemoteRoom(
 		IUser $user,
 		int $remoteAttendeeId,
@@ -112,6 +117,16 @@ class FederationManager {
 		if ($couldHaveInviteWithOtherCasing) {
 			try {
 				$invitation = $this->invitationMapper->getInvitationForUserByLocalRoom($room, $user->getUID(), true);
+
+				// The new credentials must be valid on the host before they
+				// replace the ones of an already accepted conversation
+				if ($invitation->getState() === Invitation::STATE_ACCEPTED) {
+					$cloudId = $this->cloudIdManager->getCloudId($user->getUID(), null);
+					if (!$this->backendNotifier->sendShareAccepted($remoteServerUrl, $remoteAttendeeId, $sharedSecret, $user->getDisplayName(), $cloudId->getId())) {
+						throw new ProviderCouldNotAddShareException('Could not confirm the invitation with the host', '', Http::STATUS_BAD_REQUEST);
+					}
+				}
+
 				$invitation->setAccessToken($sharedSecret);
 				$invitation->setRemoteAttendeeId($remoteAttendeeId);
 				$invitation->setInviterCloudId($inviterCloudId);
