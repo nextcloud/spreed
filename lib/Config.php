@@ -545,20 +545,8 @@ class Config {
 		return $this->appConfig->getAppValueArray('external_call_service_frame_origins');
 	}
 
-	/**
-	 * Minimum length of the external call service shared secret. Shorter
-	 * secrets are not considered configured to improve security.
-	 */
-	protected const EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH = 64;
-
-	public function getExternalCallServiceSharedSecret(): string {
-		$secret = $this->appConfig->getAppValueString('external_call_service_shared_secret');
-
-		if ($secret !== '' && strlen($secret) < self::EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH) {
-			throw new \InvalidArgumentException('Invalid external call service secret length');
-		}
-
-		return $secret;
+	public function getExternalCallServicePublicKey(): string {
+		return $this->appConfig->getAppValueString('external_call_service_public_key');
 	}
 
 	public function getExternalCallServiceAuthUser(): string {
@@ -574,13 +562,12 @@ class Config {
 	}
 
 	/**
-	 * Whether the external call service is configured to authenticate requests
-	 * via the `x-nextcloud-talk-external-service` header. Requires the service
-	 * URL to be set and the shared secret to have a minimum length.
+	 * Whether the external call service is configured: the service URL and
+	 * the public key to verify its requests are set.
 	 */
 	public function isExternalCallServiceConfigured(): bool {
 		return $this->getExternalCallService() !== null
-			&& $this->getExternalCallServiceSharedSecret() !== '';
+			&& $this->getExternalCallServicePublicKey() !== '';
 	}
 
 	/**
