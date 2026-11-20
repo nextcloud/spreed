@@ -134,6 +134,7 @@ OC.L10N.register(
     "Login" : "Iniciar sesión",
     "Client ID" : "ID del cliente",
     "Media" : "Medios de comunicación",
+    "Links" : "Ligas",
     "Polls" : "Encuestas",
     "Audio" : "Audio",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

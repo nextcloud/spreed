@@ -1414,6 +1414,7 @@
     "Blur" : "Ukungu",
     "Upload" : "Pakia",
     "Files" : "Faili",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Imeshindwa: WebAssembly imezimwa au haitumiki katika kivinjari hiki. Tafadhali washa WebAssembly au tumia kivinjari chenye usaidizi ili kufanya ukaguzi.",
     "(editing)" : "(inahariri)",
     "(edited)" : "(imehaririwa)",
     "The message has expired or has been deleted" : "Ujumbe umekwisha muda wake au umefutwa",

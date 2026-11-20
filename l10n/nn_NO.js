@@ -144,6 +144,7 @@ OC.L10N.register(
     "User" : "Bruker",
     "Login" : "Logg inn",
     "Client ID" : "Klient-ID",
+    "Links" : "Lenker",
     "Audio" : "Lyd",
     "Group" : "Gruppe",
     "You: {lastMessage}" : "Deg: {lastMessage}",

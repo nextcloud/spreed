@@ -1090,6 +1090,7 @@ OC.L10N.register(
     "Blur" : "Blur",
     "Upload" : "Upload",
     "Files" : "ფაილები",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check.",
     "The message has expired or has been deleted" : "The message has expired or has been deleted",
     "Cancel quote" : "Cancel quote",
     "24 hours" : "24 hours",

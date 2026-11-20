@@ -1301,6 +1301,7 @@
     "Blur" : "Difumina",
     "Upload" : "Puja",
     "Files" : "Fitxers",
+    "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Error: WebAssembly està desactivat o no és compatible amb aquest navegador. Si us plau, habiliteu WebAssembly o utilitzeu un navegador amb suport per fer la comprovació.",
     "(editing)" : "(edició)",
     "(edited)" : "(editat)",
     "The message has expired or has been deleted" : "El missatge ha caducat o s'ha suprimit",

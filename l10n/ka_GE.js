@@ -131,6 +131,7 @@ OC.L10N.register(
     "API token" : "API ტოკენი",
     "Login" : "ავტორიზაცია",
     "Client ID" : "კლიენტის ID",
+    "Links" : "ბმულები",
     "Polls" : "გამოკითხვები",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Please reload the page." : "გთხოვთ გადატვირთოთ გვერდი.",
