@@ -15008,7 +15008,7 @@
                         }
                     },
                     "400": {
-                        "description": "The external app \"live_transcription\" is not available",
+                        "description": "The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -15055,7 +15055,7 @@
             "get": {
                 "operationId": "live_transcription-get-available-translation-languages",
                 "summary": "Get available languages for live translations",
-                "description": "The returned array provides a list of origin languages (\"originLanguages\") and a list of target languages (\"targetLanguages\"). Any origin language can be translated to any target language.\nThe origin language list can contain \"detect_language\" as a special value indicating auto-detection support.\ntranslations are not supported.",
+                "description": "The returned array provides a list of origin languages (\"originLanguages\") and a list of target languages (\"targetLanguages\"). Any origin language can be translated to any target language.\nThe origin language list can contain \"detect_language\" as a special value indicating auto-detection support.\nor translations are not supported.",
                 "tags": [
                     "live_transcription"
                 ],
@@ -15146,7 +15146,7 @@
                         }
                     },
                     "400": {
-                        "description": "The external app \"live_transcription\" is not available or",
+                        "description": "The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available",
                         "content": {
                             "application/json": {
                                 "schema": {
