@@ -15,19 +15,22 @@ Comply with the [AI Contribution Policy](https://github.com/nextcloud/.github/bl
 **Always:**
 - Add an `Assisted-by: AGENT_NAME:MODEL_VERSION` trailer to every AI-assisted commit.
 - Disclose AI tool use in every PR description.
+- Issues, PR descriptions and comments may be drafted with AI and posted on the contributor's behalf when they ask for it. Write them for human readers: lead with what changed and why, keep the repository's issue or PR template intact, end AI-drafted issues and comments with an `Assisted by <Tool>:<model>` footer, and put agent-only details in a collapsed `<details>` block. For a bug report, also state whether the bug was validated and reproduced on a live Nextcloud instance.
+- Commit message bodies explain why the change was made, not how; the diff already shows what changed.
+- Validate every change to runtime behavior on a live Nextcloud instance where you can, and give the contributor concrete steps to test it there themselves; your testing supports theirs, it does not replace it.
 - When helping the contributor open an issue or PR, use the matching template from `.github/ISSUE_TEMPLATE/` or `.github/pull_request_template.md`: keep its sections and checkboxes, don't delete or skip them.
 - Keep PRs focused on one concern; no unrelated files or incidental refactors.
 - Verify dependencies exist in real package registries.
 - Tell the contributor when an action would violate the policy/guidelines — name the rule and the alternative; never silently proceed.
 - Warn before a PR grows too large (approaching several thousand lines) and suggest a split.
 
-**Never:**
-- Open issues, submit PRs, post review comments, or send security reports autonomously — a human submits every contribution.
-- Add `Signed-off-by` tags (only the human certifies the DCO).
-- Submit unverified security reports; report verified ones via [HackerOne](https://hackerone.com/nextcloud), not GitHub issues.
-- Write PR descriptions, review comments, or issue reports for the contributor — these must be in their own words.
-- Fully automate resolution of [`good first issue`](https://github.com/issues?q=org%3Anextcloud+label%3A%22good+first+issue%22)-style issues.
-- Submit unreviewed code — remove dead code, redundant logic, excessive comments, and unrelated changes first.
+**Never do, and what to do instead:**
+- Don't open issues, submit pull requests, or post comments on your own initiative. Instead, post only what the contributor asked for, on their behalf, and tell them what you posted.
+- Don't write texts for machines: no file-by-file restatement of the diff, no filler, no raw tool output. Instead, write short, skimmable text for a human reviewer that explains what changed and why.
+- Don't add `Signed-off-by` tags to commits. Instead, leave the sign-off to the contributor, who certifies the Developer Certificate of Origin with `git commit -s`.
+- Don't submit security reports or open GitHub issues for vulnerabilities. Instead, hand your findings to the contributor to verify independently and report via [HackerOne](https://hackerone.com/nextcloud).
+- Don't fully automate the resolution of issues labeled [`good first issue`](https://github.com/issues?q=org%3Anextcloud+label%3A%22good+first+issue%22) or similar beginner-friendly labels. Instead, explain the code and guide the contributor so they can solve the issue themselves.
+- Don't hand over code with dead code, redundant logic, excessive comments, or unrelated changes. Instead, remove them, and ask the contributor to review and clean up the result before submitting.
 
 ## Baseline & tooling
 
