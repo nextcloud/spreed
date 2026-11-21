@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e64e366ceacfe3f4e044c612c376154",
+    "content-hash": "8ab7a33d9323c7d636f3e1c02397692b",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -65,16 +65,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "2.6.1",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "0076db8773d8662bba23f2a49fa95dc3e30ac44f"
+                "reference": "6e89ca1afaa8543619fd9512e4665722f225fb38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/0076db8773d8662bba23f2a49fa95dc3e30ac44f",
-                "reference": "0076db8773d8662bba23f2a49fa95dc3e30ac44f",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/6e89ca1afaa8543619fd9512e4665722f225fb38",
+                "reference": "6e89ca1afaa8543619fd9512e4665722f225fb38",
                 "shasum": ""
             },
             "require": {
@@ -135,7 +135,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.6.1"
+                "source": "https://github.com/CuyZ/Valinor/tree/2.7.0"
             },
             "funding": [
                 {
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-04T13:14:00+00:00"
+            "time": "2026-11-12T10:33:19+00:00"
         },
         {
             "name": "cweagans/composer-configurable-plugin",
@@ -396,8 +396,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-11-13T03:58:55+00:00",
-            "published-time": "2026-11-13T03:59:03+00:00"
+            "time": "2026-11-13T03:58:55+00:00"
         },
         {
             "name": "psr/clock",
@@ -1043,5 +1042,5 @@
     "platform-overrides": {
         "php": "8.3"
     },
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.9.0"
 }
