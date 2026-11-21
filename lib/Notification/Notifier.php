@@ -558,6 +558,7 @@ class Notifier implements INotifier {
 			}
 		}
 
+		/** @var array<string, string> $subjectParameters */
 		$subjectParameters = $notification->getSubjectParameters();
 
 		$richSubjectUser = null;
@@ -672,9 +673,11 @@ class Notifier implements INotifier {
 		}
 
 		$richSubjectParameters = [
-			'user' => $richSubjectUser,
 			'call' => $richSubjectCall,
 		];
+		if ($richSubjectUser !== null) {
+			$richSubjectParameters['user'] = $richSubjectUser;
+		}
 
 		if ($participant->getAttendee()->isSensitive()) {
 			// Prevent message preview and conversation name in sensitive conversations
@@ -961,10 +964,6 @@ class Notifier implements INotifier {
 			$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
 		}
 
-		if (array_key_exists('user', $richSubjectParameters) && $richSubjectParameters['user'] === null) {
-			unset($richSubjectParameters['user']);
-		}
-
 		$placeholders = $replacements = [];
 		foreach ($richSubjectParameters as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
@@ -981,7 +980,7 @@ class Notifier implements INotifier {
 	 * @param Room $room
 	 * @param Attendee::ACTOR_* $actorType
 	 * @param string $actorId
-	 * @return array
+	 * @return array{type: 'guest', id: string, name: string}
 	 * @throws ParticipantNotFoundException
 	 */
 	protected function getGuestParameter(Room $room, string $actorType, string $actorId): array {
@@ -1434,6 +1433,9 @@ class Notifier implements INotifier {
 		return $notification;
 	}
 
+	/**
+	 * @return array<string, string>
+	 */
 	protected function getCircle(string $circleId): array {
 		if (!$this->appManager->isEnabledForUser('circles')) {
 			return [
