@@ -4,8 +4,6 @@
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
-      <code><![CDATA[CircleEditedEvent]]></code>
-      <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Capabilities.php">
@@ -90,11 +88,6 @@
   <file src="lib/Listener/CalDavEventListener.php">
     <UndefinedClass>
       <code><![CDATA[Reader]]></code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/Listener/CircleEditedListener.php">
-    <UndefinedClass>
-      <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Listener/RestrictStartingCalls.php">

@@ -35,7 +35,7 @@ class CircleEditedListener implements IEventListener {
 		$displayName = $event->getCircle()->getDisplayName();
 		if ($event instanceof EditingCircleEvent) {
 			// In the before event we need to cheat to get the name
-			if ($event->getFederatedEvent()?->getData()?->hasKey('name')) {
+			if ($event->getFederatedEvent()->getData()->hasKey('name')) {
 				$displayName = $event->getFederatedEvent()->getData()->g('name');
 			}
 		}
