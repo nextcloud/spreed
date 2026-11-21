@@ -156,7 +156,7 @@ class ChatGenerator {
 			return Room::TYPE_GROUP;
 		}
 		$roll = $this->rng->getInt(0, 9999) / 10000;
-		if ($roll < $oneToOneRatio && $availableUsers >= 2) {
+		if ($roll < $oneToOneRatio) {
 			return Room::TYPE_ONE_TO_ONE;
 		}
 		if ($roll < $oneToOneRatio + $publicRatio) {
