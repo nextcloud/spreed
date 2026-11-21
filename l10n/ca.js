@@ -1741,6 +1741,7 @@ OC.L10N.register(
     "MUC server URL" : "URL del servidor MUC",
     "Jabber ID" : "ID del Jabber",
     "Media" : "Multimèdia",
+    "Links" : "Enllaços",
     "Polls" : "Enquestes",
     "Deck cards" : "Pila de targetes",
     "Voice messages" : "Missatges de veu",

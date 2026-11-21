@@ -899,6 +899,7 @@ OC.L10N.register(
     "Thread ID" : "ID de filu",
     "Jabber ID" : "ID de Jabber",
     "Media" : "Multimedia",
+    "Links" : "Enllaces",
     "Polls" : "Encuestes",
     "Voice messages" : "Mensaxes de voz",
     "Locations" : "Llugares",

@@ -300,6 +300,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "User" : "Gebruiker",
     "Client ID" : "Klant-ID",
+    "Links" : "Skakels",
     "Audio" : "Oudio",
     "Please reload the page." : "Herlaai asseblief die bladsy.",
     "Android app" : "Android-toep",
