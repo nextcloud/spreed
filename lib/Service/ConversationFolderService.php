@@ -34,6 +34,7 @@ use Psr\Log\LoggerInterface;
  */
 class ConversationFolderService {
 	public const UPDATABLE_SUFFIX = ' (u)';
+	public const GUESTS_FOLDER = 'Guests';
 
 	public function __construct(
 		private readonly TalkConfig $talkConfig,
@@ -71,6 +72,30 @@ class ConversationFolderService {
 	 * @throws \OCP\Files\NotPermittedException if a folder cannot be created
 	 */
 	public function getOrCreateSubfolder(string $userId, Room $room, bool $allowUpdate): Folder {
+		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId, $allowUpdate);
+		return $this->getOrCreateNamedSubfolder($userId, $room, $subfolderName, $allowUpdate);
+	}
+
+	/**
+	 * Returns the Guests folder of the user (e.g. Talk/Room Name-token/Guests/),
+	 * creating it and the room share if not yet present.
+	 *
+	 * @throws NotEnoughSpaceException if the user's quota is exhausted
+	 * @throws \RuntimeException if a path component exists but is not a folder
+	 * @throws \OCP\Files\NotPermittedException if a folder cannot be created
+	 */
+	public function getOrCreateGuestsFolder(string $userId, Room $room): Folder {
+		return $this->getOrCreateNamedSubfolder($userId, $room, self::GUESTS_FOLDER, false);
+	}
+
+	/**
+	 * Share the Guests folder with the conversation again, in case its owner removed the share
+	 */
+	public function shareGuestsFolder(Folder $guestsFolder, string $userId, Room $room): void {
+		$this->ensureSubfolderShared($guestsFolder, $userId, $room->getToken(), false);
+	}
+
+	private function getOrCreateNamedSubfolder(string $userId, Room $room, string $subfolderName, bool $allowUpdate): Folder {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
 		$freeSpace = $userFolder->getFreeSpace();
@@ -103,7 +128,6 @@ class ConversationFolderService {
 		}
 
 		// Get or create user subfolder (e.g. Talk/Room Name-token/Alice-alice/)
-		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId, $allowUpdate);
 		try {
 			$subfolder = $convFolder->get($subfolderName);
 			if (!$subfolder instanceof Folder) {
@@ -162,7 +186,12 @@ class ConversationFolderService {
 	 *
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-	public function moveToDeletedFolder(string $ownerId, string $token, int $fileId): void {
+	public function moveToDeletedFolder(string $token, int $fileId): void {
+		$ownerId = $this->rootFolder->getFirstNodeById($fileId)?->getOwner()?->getUID();
+		if ($ownerId === null) {
+			return;
+		}
+
 		$node = $this->rootFolder->getUserFolder($ownerId)->getFirstNodeById($fileId);
 		if ($node === null || $node->getType() !== FileInfo::TYPE_FILE) {
 			return;
@@ -207,7 +236,7 @@ class ConversationFolderService {
 	 * @return array{from: string, to: string, node: Node}
 	 */
 	public function finalizeUploadedFile(Folder $subfolder, Node $node, string $desiredName): array {
-		$finalName = $this->findUniqueName($subfolder, $desiredName, $node);
+		$finalName = $this->findUniqueName($subfolder, $this->filenameValidator->sanitizeFilename($desiredName), $node);
 		$targetPath = $subfolder->getPath() . '/' . $finalName;
 		$finalNode = $node;
 		if ($node->getPath() !== $targetPath) {

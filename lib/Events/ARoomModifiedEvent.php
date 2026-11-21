@@ -33,6 +33,7 @@ abstract class ARoomModifiedEvent extends ARoomEvent {
 	public const PROPERTY_RECORDING_CONSENT = 'recordingConsent';
 	public const PROPERTY_SIP_ENABLED = 'sipEnabled';
 	public const PROPERTY_TYPE = 'type';
+	public const PROPERTY_GUESTS_FOLDER = 'guestsFolder';
 
 	/**
 	 * @param self::PROPERTY_* $property

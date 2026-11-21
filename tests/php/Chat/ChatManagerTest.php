@@ -723,7 +723,7 @@ class ChatManagerTest extends TestCase {
 
 		$this->conversationFolderService->expects($this->once())
 			->method('moveToDeletedFolder')
-			->with('user', 'T0k3N', 42);
+			->with('T0k3N', 42);
 
 		$this->commentsManager->expects($this->once())
 			->method('save')
@@ -761,7 +761,7 @@ class ChatManagerTest extends TestCase {
 
 		$this->conversationFolderService->expects($this->once())
 			->method('moveToDeletedFolder')
-			->with('user', 'T0k3N', 42);
+			->with('T0k3N', 42);
 
 		$this->commentsManager->expects($this->once())
 			->method('deleteCommentsExpiredAtObject')

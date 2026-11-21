@@ -131,6 +131,7 @@ class AuditLogListenerTest extends TestCase {
 			[ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, 1, 0, 'Mention permissions', 'spreed.conversation_mention_permissions.changed'],
 			[ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION, 3600, 0, 'Message expiration', 'spreed.conversation_message_expiration.changed'],
 			[ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, 1, 0, 'Recording consent requirement', 'spreed.conversation_recording_consent.changed'],
+			[ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, 42, 0, 'Guests folder for uploads without storage', 'spreed.conversation_uploads_without_storage.changed'],
 		];
 	}
 

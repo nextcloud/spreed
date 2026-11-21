@@ -136,6 +136,7 @@ class Room {
 		private string $liveTranscriptionLanguageId,
 		private int $lastPinnedId,
 		private int $attributes,
+		private int $guestsFolderId,
 	) {
 	}
 
@@ -457,6 +458,14 @@ class Room {
 	 */
 	public function setMentionPermissions(int $mentionPermissions): void {
 		$this->mentionPermissions = $mentionPermissions;
+	}
+
+	public function getGuestsFolderId(): int {
+		return $this->guestsFolderId;
+	}
+
+	public function setGuestsFolderId(int $guestsFolderId): void {
+		$this->guestsFolderId = $guestsFolderId;
 	}
 
 	public function setObjectId(string $objectId): void {
