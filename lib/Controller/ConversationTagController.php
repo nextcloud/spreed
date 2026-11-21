@@ -190,8 +190,10 @@ class ConversationTagController extends OCSController {
 	 * @return TalkConversationTag
 	 */
 	protected function formatTag(ConversationTag $tag): array {
+		/** @var numeric-string $id */
+		$id = $tag->getId();
 		return [
-			'id' => (string)$tag->getId(),
+			'id' => $id,
 			'name' => $tag->getName(),
 			'sortOrder' => $tag->getSortOrder(),
 			'collapsed' => $tag->isCollapsed(),
