@@ -234,7 +234,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			];
 			$originalMessageData['metaData'] = array_merge($originalMessageData['metaData'] ?? [], $extraMetaData);
 			// Create a link message for the private reply
-			$copiedParent = $this->chatManager->sendMessage(
+			$parent = $this->chatManager->sendMessage(
 				$this->room,
 				$this->participant,
 				$parentActorType,
@@ -250,7 +250,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				],
 			);
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $copiedParent, $this->l);
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($parentMessage);
 		} else {
 			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
@@ -261,7 +261,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		return ['parent' => $isPrivateReplyFromAnotherConvo ? $copiedParent : $parent, 'parentMessage' => $parentMessage];
+		return ['parent' => $parent, 'parentMessage' => $parentMessage];
 	}
 	/**
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
