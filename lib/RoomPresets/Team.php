@@ -37,6 +37,8 @@ readonly class Team extends APreset {
 	#[\Override]
 	public function getParameters(): array {
 		return [
+			// Default values during creating,
+			// right after creation settings will be mapped to the actual Team settings
 			Parameter::LISTABLE->value => Room::LISTABLE_USERS,
 			Parameter::PERMISSIONS->value => Attendee::PERMISSIONS_DEFAULT,
 		];
