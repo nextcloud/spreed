@@ -14,6 +14,9 @@
     </DeprecatedInterface>
   </file>
   <file src="lib/Chat/CommentsManager.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[$verbs]]></code>
+    </MethodSignatureMismatch>
     <UndefinedMethod>
       <code><![CDATA[getLastKnownComment]]></code>
     </UndefinedMethod>
