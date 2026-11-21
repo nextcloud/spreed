@@ -234,7 +234,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			];
 			$originalMessageData['metaData'] = array_merge($originalMessageData['metaData'] ?? [], $extraMetaData);
 			// Create a link message for the private reply
-			$copiedParent = $this->chatManager->sendMessage(
+			$parent = $this->chatManager->sendMessage(
 				$this->room,
 				$this->participant,
 				$parentActorType,
@@ -250,7 +250,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				],
 			);
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $copiedParent, $this->l);
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($parentMessage);
 		} else {
 			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
@@ -261,7 +261,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		return ['parent' => $isPrivateReplyFromAnotherConvo ? $copiedParent : $parent, 'parentMessage' => $parentMessage];
+		return ['parent' => $parent, 'parentMessage' => $parentMessage];
 	}
 	/**
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
@@ -1194,7 +1194,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 
 			if ($comment->getParentId() !== '0') {
-				$parentIds[$id] = $comment->getParentId();
+				$parentIds[$id] = (int)$comment->getParentId();
 			}
 
 			$threadId = (int)$comment->getTopmostParentId() ?: $id;
@@ -1229,7 +1229,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			// Parent was not skipped due to visibility, so we need to manually grab it.
 			if (!isset($commentIdToIndex[$parentId])) {
 				try {
-					$comment = $this->chatManager->getParentComment($this->room, $parentId);
+					$comment = $this->chatManager->getParentComment($this->room, (string)$parentId);
 					$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 					$this->messageParser->parseMessage($message);
 
@@ -1253,7 +1253,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 					}
 
 					$loadedParents[$parentId] = [
-						'id' => (int)$parentId,
+						'id' => $parentId,
 						'deleted' => true,
 					];
 				} catch (NotFoundException) {
@@ -1262,7 +1262,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 			// Message is not visible to the user
 			$messages[$commentKey]['parent'] = [
-				'id' => (int)$parentId,
+				'id' => $parentId,
 				'deleted' => true,
 			];
 		}

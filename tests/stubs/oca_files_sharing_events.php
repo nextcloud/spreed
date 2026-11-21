@@ -8,8 +8,12 @@
 namespace OCA\Files_Sharing {
 
 	use OCP\Files\Mount\IMountPoint;
+	use OCP\Files\Storage\ISharedStorage;
 	use OCP\IUser;
 	use OCP\Share\IShare;
+
+	abstract class SharedStorage implements ISharedStorage {
+	}
 
 	abstract class SharedMount implements IMountPoint {
 		public function getShare(): IShare {

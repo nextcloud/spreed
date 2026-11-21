@@ -8,17 +8,15 @@
       <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/Authenticator.php">
-    <NoInterfaceProperties>
-      <code><![CDATA[$this->request->server]]></code>
-    </NoInterfaceProperties>
-  </file>
   <file src="lib/Capabilities.php">
     <DeprecatedInterface>
       <code><![CDATA[private]]></code>
     </DeprecatedInterface>
   </file>
   <file src="lib/Chat/CommentsManager.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[$verbs]]></code>
+    </MethodSignatureMismatch>
     <UndefinedMethod>
       <code><![CDATA[getLastKnownComment]]></code>
     </UndefinedMethod>
@@ -116,26 +114,6 @@
     <DeprecatedMethod>
       <code><![CDATA[getDatabasePlatform]]></code>
     </DeprecatedMethod>
-  </file>
-  <file src="lib/Model/Poll.php">
-    <LessSpecificReturnStatement>
-      <code><![CDATA[[
-			'id' => $this->getId(),
-			// The room id is not needed on the API level but only internally for optimising database queries
-			// 'roomId' => $this->getRoomId(),
-			'question' => $this->getQuestion(),
-			'options' => json_decode($this->getOptions(), true, 512, JSON_THROW_ON_ERROR),
-			'actorType' => $this->getActorType(),
-			'actorId' => $this->getActorId(),
-			'actorDisplayName' => $this->getDisplayName(),
-			'status' => $this->getStatus(),
-			'resultMode' => $this->getResultMode(),
-			'maxVotes' => $this->getMaxVotes(),
-		]]]></code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType>
-      <code><![CDATA[TalkPollDraft]]></code>
-    </MoreSpecificReturnType>
   </file>
   <file src="lib/Notification/Notifier.php">
     <DeprecatedConstant>
