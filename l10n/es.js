@@ -1432,6 +1432,7 @@ OC.L10N.register(
     "Upload" : "Subir",
     "Files" : "Archivos",
     "Fast" : "Rápido",
+    "Slow" : "Lento",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Fallo: WebAssembly está deshabilitado o no está soportado por este navegador. Por favor, activa WebAssembly o usa un navegador con soporte para que se haga la comprobación.",
     "(editing)" : "(editando)",
     "(edited)" : "(editado)",
