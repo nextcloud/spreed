@@ -23,7 +23,7 @@
 		"openapi": "generate-spec && (npm run ts:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
 		"rector:check": "rector --dry-run",
 		"rector": "rector && php-cs-fixer fix",
-		"psalm": "psalm --no-cache --threads=$(nproc)",
+		"psalm": "psalm --no-cache",
 		"psalm:dev": "@psalm",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline --set-baseline=tests/psalm-baseline.xml",
 		"post-install-cmd": [
