@@ -1415,6 +1415,7 @@ OC.L10N.register(
     "Upload" : "Μεταφόρτωση",
     "Files" : "Αρχεία",
     "Fast" : "Γρήγορα",
+    "Slow" : "Αργά",
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "Απέτυχε: Το WebAssembly είναι απενεργοποιημένο ή δεν υποστηρίζεται σε αυτό το πρόγραμμα περιήγησης. Παρακαλώ ενεργοποιήστε το WebAssembly ή χρησιμοποιήστε ένα πρόγραμμα περιήγησης με υποστήριξη για να κάνετε τον έλεγχο.",
     "(editing)" : "(επεξεργασία)",
     "(edited)" : "(επεξεργασμένο)",
