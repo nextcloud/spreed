@@ -37,11 +37,9 @@ class TalkBackend implements ITalkBackend {
 	#[\Override]
 	public function createConversation(string $name, array $moderators, IConversationOptions $options): IConversation {
 		$objectType = $objectId = '';
-		if (method_exists($options, 'getMeetingStartDate')) {
-			if ($options->getMeetingStartDate() !== null) {
-				$objectType = Room::OBJECT_TYPE_EVENT;
-				$objectId = $options->getMeetingStartDate()->getTimestamp() . '#' . $options->getMeetingEndDate()->getTimestamp();
-			}
+		if ($options->getMeetingStartDate() !== null) {
+			$objectType = Room::OBJECT_TYPE_EVENT;
+			$objectId = $options->getMeetingStartDate()->getTimestamp() . '#' . $options->getMeetingEndDate()->getTimestamp();
 		}
 
 		$room = $this->manager->createRoom(
