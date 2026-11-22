@@ -688,6 +688,48 @@ class TeamRoomSyncService {
 	}
 
 	/**
+	 * Whether the attendee is still a member of the team of the room: removing
+	 * them only from the room would be undone by the next resync
+	 *
+	 * Users are checked as direct members, federated users as members of
+	 * their server, email guests by their address. When the team was deleted
+	 * nobody is a member anymore, when Circles is unavailable everybody stays one.
+	 */
+	public function isMemberOfTeam(Room $room, #[\SensitiveParameter] Attendee $attendee): bool {
+		$teamId = $room->getObjectId();
+		try {
+			return match ($attendee->getActorType()) {
+				Attendee::ACTOR_USERS => !is_null($this->circlesAdapter->getDirectMember($teamId, $attendee->getActorId())),
+				Attendee::ACTOR_FEDERATED_USERS => $this->isRemoteMemberOfTeam($teamId, $attendee->getActorId()),
+				Attendee::ACTOR_EMAILS => isset($this->circlesAdapter->getEmailMembers($teamId)[mb_strtolower($attendee->getInvitedCloudId())]),
+				default => false,
+			};
+		} catch (\Exception $e) {
+			return !CirclesAdapter::isTeamNotFound($e);
+		}
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	protected function isRemoteMemberOfTeam(string $teamId, #[\SensitiveParameter] string $cloudId): bool {
+		try {
+			$key = $this->getNormalizedCloudId($this->cloudIdManager->resolveCloudId($cloudId));
+		} catch (\InvalidArgumentException) {
+			return false;
+		}
+		foreach ($this->circlesAdapter->getRemoteMembers($teamId) as $member) {
+			try {
+				if ($this->getNormalizedCloudId($this->cloudIdManager->getCloudId($member['userId'], $member['instance'])) === $key) {
+					return true;
+				}
+			} catch (\InvalidArgumentException) {
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @param bool $left Left the team themselves, otherwise removed
 	 */
 	public function removeFormerTeamMember(Room $room, #[\SensitiveParameter] Member $member, bool $left): void {

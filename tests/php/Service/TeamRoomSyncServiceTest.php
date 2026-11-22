@@ -871,4 +871,46 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->service->rememberEmailLeave($this->room, ' Guest@Example.TLD ');
 	}
+
+	public static function dataIsMemberOfTeam(): array {
+		return [
+			'direct member' => [Attendee::ACTOR_USERS, 'alice', null, true],
+			'no direct member' => [Attendee::ACTOR_USERS, 'carol', null, false],
+			'remote member, other casing of the server' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@Remote.Example', null, true],
+			'remote user of another server' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@other.example', null, false],
+			'email member' => [Attendee::ACTOR_EMAILS, hash('sha256', 'guest@example.tld'), 'Guest@Example.TLD', true],
+			'other email address' => [Attendee::ACTOR_EMAILS, hash('sha256', 'other@example.tld'), 'other@example.tld', false],
+			'guest' => [Attendee::ACTOR_GUESTS, 'random', null, false],
+		];
+	}
+
+	#[DataProvider('dataIsMemberOfTeam')]
+	public function testIsMemberOfTeam(string $actorType, string $actorId, ?string $invitedCloudId, bool $expected): void {
+		$this->circlesAdapter->method('getDirectMember')
+			->willReturnCallback(static fn (string $teamId, string $userId): ?array => $userId === 'alice' ? ['level' => self::LEVEL_MEMBER, 'joined' => 1] : null);
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER],
+		]);
+		$this->circlesAdapter->method('getEmailMembers')->willReturn(['guest@example.tld' => 'Guest']);
+
+		$attendee = Attendee::fromRow(['actor_type' => $actorType, 'actor_id' => $actorId, 'invited_cloud_id' => $invitedCloudId]);
+		$this->assertSame($expected, $this->service->isMemberOfTeam($this->room, $attendee));
+	}
+
+	public static function dataIsMemberOfTeamWhenCirclesFails(): array {
+		return [
+			// Nobody is a member of a deleted team: they can leave its archived conversation
+			'team deleted' => [new \Exception('Circle not found', 0, new CircleNotFoundException('Circle not found')), false],
+			// Nothing is changed while Circles is unavailable
+			'Circles unavailable' => [new \Exception('Circles App unavailable'), true],
+		];
+	}
+
+	#[DataProvider('dataIsMemberOfTeamWhenCirclesFails')]
+	public function testIsMemberOfTeamWhenCirclesFails(\Exception $exception, bool $expected): void {
+		$this->circlesAdapter->method('getDirectMember')->willThrowException($exception);
+
+		$attendee = Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']);
+		$this->assertSame($expected, $this->service->isMemberOfTeam($this->room, $attendee));
+	}
 }

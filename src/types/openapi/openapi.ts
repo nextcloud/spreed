@@ -12679,7 +12679,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key) */
+            /** @description Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the user is no member of the team of a team conversation (check error attribute of response for detail key) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -12690,7 +12690,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "team" | "trusted-servers";
                             };
                         };
                     } | {
@@ -12746,7 +12746,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "team" | "trusted-servers";
                             };
                         };
                     } | {
@@ -12771,7 +12771,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "team" | "trusted-servers";
                             };
                         };
                     };
@@ -12892,7 +12892,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Removing participant is not possible */
+            /** @description Removing participant is not possible, e.g. members of the team of a team conversation leave the team in the Teams app */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -12903,7 +12903,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "announcement" | "last-moderator" | "participant";
+                                error: "announcement" | "last-moderator" | "participant" | "team";
                             };
                         };
                     } | {
@@ -12959,7 +12959,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "announcement" | "last-moderator" | "participant";
+                                error: "announcement" | "last-moderator" | "participant" | "team";
                             };
                         };
                     } | {
@@ -13024,7 +13024,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Removing attendee is not possible */
+            /** @description Removing attendee is not possible, e.g. members of the team of a team conversation are removed from the team in the Teams app */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -13035,7 +13035,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
+                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type" | "team";
                             };
                         };
                     } | {
@@ -13060,7 +13060,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
+                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type" | "team";
                             };
                         };
                     } | {
@@ -13085,7 +13085,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
+                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type" | "team";
                             };
                         };
                     } | {

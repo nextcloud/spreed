@@ -25,6 +25,9 @@ Feature: conversation-5/team-conversation-settings
       | name        | Team Alpha      |
       | description | New description |
 
+  # Skipped until Circles fires EditingCircleEvent for config changes (CircleConfig),
+  # without it the conversation only follows the team with the next resync
+  @skip
   Scenario: The conversation is open to users when everyone can join the team, also with confirmation
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     And user "participant1" gets room "room" with 200 (v4)

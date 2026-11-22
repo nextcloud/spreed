@@ -157,7 +157,55 @@ Feature: conversation-5/team-conversation-roles
       | users     | participant3 | 3               |
       | users     | participant4 | 3               |
 
+  Scenario: Participants can not be invited when creating the team conversation
+    # The participants are the members of the team, added by the sync
+    When user "participant1" creates room "room" with 400 (v4)
+      | roomType               | 2                    |
+      | roomName               | Team A               |
+      | objectType             | team                 |
+      | objectId               | TEAM_ID(Team A)      |
+      | participants[users][0] | participant4         |
+    Then user "participant4" is participant of the following rooms (v4)
+
+  # Adding
+
+  Scenario: Only members of the team are added to the team conversation in Talk
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    # Users that are no member of the team are added to the team in the Teams app
+    When user "participant1" adds user "participant4" to room "room" with 400 (v4)
+    # Members missing in the conversation (not synced yet) are added right away
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant3 | 3               |
+
+  Scenario: Groups, teams and email addresses are not added to the team conversation in Talk
+    Given group "group1" exists
+    And user "participant4" is member of group "group1"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    When user "participant1" adds group "group1" to room "room" with 400 (v4)
+    And user "participant1" adds email "guest@example.tld" to room "room" with 400 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+
   # Removing
+
+  Scenario: Members of the team are not removed or leave only in Talk
+    # The next resync would add them again: that is done in the Teams app
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And add user "participant4" to team "Team A"
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant1" removes "participant2" from room "room" with 400 (v4)
+    And user "participant3" leaves room "room" with 400 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant2 | 3               |
+      | users     | participant3 | 3               |
+      | users     | participant4 | 3               |
+
 
   Scenario: Members removed in the Teams app are removed from the conversation right away
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)

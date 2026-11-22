@@ -13,17 +13,22 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -32,6 +37,8 @@ class RoomControllerTest extends TestCase {
 	private SendService&MockObject $sendService;
 	private Config&MockObject $talkConfig;
 	private IEventDispatcher&MockObject $dispatcher;
+	private TeamRoomSyncService&MockObject $teamRoomSyncService;
+	private IUserManager&MockObject $userManager;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
 	private RoomController $controller;
@@ -42,6 +49,8 @@ class RoomControllerTest extends TestCase {
 		$this->sendService = $this->createMock(SendService::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->teamRoomSyncService = $this->createMock(TeamRoomSyncService::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
 
@@ -56,6 +65,8 @@ class RoomControllerTest extends TestCase {
 					SendService::class => $this->sendService,
 					Config::class => $this->talkConfig,
 					IEventDispatcher::class => $this->dispatcher,
+					TeamRoomSyncService::class => $this->teamRoomSyncService,
+					IUserManager::class => $this->userManager,
 					default => $this->createMock($type),
 				},
 			};
@@ -112,5 +123,100 @@ class RoomControllerTest extends TestCase {
 		} finally {
 			$this->restoreService(IClientService::class);
 		}
+	}
+
+	private function inTeamRoom(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$this->room->method('getToken')->willReturn('teamroom');
+	}
+
+	private function makeUser(string $userId): IUser&MockObject {
+		$user = $this->createMock(IUser::class);
+		$user->method('getUID')->willReturn($userId);
+		return $user;
+	}
+
+	public static function dataAddToTeamRoom(): array {
+		return [
+			'member of the team' => ['users', true, Http::STATUS_OK, null],
+			'no member of the team' => ['users', false, Http::STATUS_BAD_REQUEST, 'team'],
+			'email address' => ['emails', true, Http::STATUS_BAD_REQUEST, 'source'],
+			'group' => ['groups', true, Http::STATUS_BAD_REQUEST, 'source'],
+			'team' => ['teams', true, Http::STATUS_BAD_REQUEST, 'source'],
+			'federated user' => ['federated_users', true, Http::STATUS_BAD_REQUEST, 'source'],
+			'phone number' => ['phones', true, Http::STATUS_BAD_REQUEST, 'source'],
+		];
+	}
+
+	#[DataProvider('dataAddToTeamRoom')]
+	public function testOnlyMembersOfTheTeamAreAddedToTeamRooms(string $source, bool $isMember, int $status, ?string $error): void {
+		$this->inTeamRoom();
+		$bob = $this->makeUser('bob');
+		$this->userManager->method('get')->with('bob')->willReturn($bob);
+		$this->teamRoomSyncService->expects($source === 'users' ? $this->once() : $this->never())
+			->method('syncUserInTeamRoom')
+			->with($this->room, $bob)
+			->willReturn($isMember ? $this->createMock(Participant::class) : null);
+		$this->participantService->expects($this->never())->method('addUsers');
+		$this->participantService->expects($this->never())->method('inviteEmailAddress');
+		$this->participantService->expects($this->never())->method('addGroup');
+
+		$response = $this->controller->addParticipantToRoom('bob', $source);
+
+		self::assertSame($status, $response->getStatus());
+		if ($error !== null) {
+			self::assertSame(['error' => $error], $response->getData());
+		}
+	}
+
+	public function testBannedMemberIsNotAddedToTeamRoom(): void {
+		$this->inTeamRoom();
+		$this->userManager->method('get')->willReturn($this->makeUser('bob'));
+		$this->teamRoomSyncService->method('syncUserInTeamRoom')->willThrowException(new ForbiddenException('actor'));
+
+		$response = $this->controller->addParticipantToRoom('bob');
+
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'ban'], $response->getData());
+	}
+
+	public static function dataRemoveFromTeamRoom(): array {
+		return [
+			// Removed again by the resync otherwise: removing from the team is done in the Teams app
+			'still a member of the team' => [true, Http::STATUS_BAD_REQUEST],
+			// E.g. a participant the resync did not remove yet
+			'no member of the team anymore' => [false, Http::STATUS_OK],
+		];
+	}
+
+	#[DataProvider('dataRemoveFromTeamRoom')]
+	public function testOnlyFormerTeamMembersAreRemovedFromTeamRooms(bool $isMember, int $status): void {
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+		$attendee = Attendee::fromRow(['id' => 2, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'bob', 'participant_type' => Participant::USER]);
+		$target = $this->createMock(Participant::class);
+		$target->method('getAttendee')->willReturn($attendee);
+		$target->method('isOwner')->willReturn(false);
+		$this->participantService->method('getParticipantByAttendeeId')->with($this->room, 2)->willReturn($target);
+		$this->teamRoomSyncService->method('isMemberOfTeam')->with($this->room, $attendee)->willReturn($isMember);
+
+		$this->participantService->expects($isMember ? $this->never() : $this->once())->method('removeAttendee');
+
+		self::assertSame($status, $this->controller->removeAttendeeFromRoom(2)->getStatus());
+	}
+
+	public function testMembersOfTheTeamCanNotLeaveTheTeamRoom(): void {
+		$this->inTeamRoom();
+		$attendee = Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::USER]);
+		$this->participant->method('getAttendee')->willReturn($attendee);
+		$this->teamRoomSyncService->method('isMemberOfTeam')->with($this->room, $attendee)->willReturn(true);
+
+		$this->participantService->expects($this->never())->method('removeUser');
+
+		$response = $this->controller->removeSelfFromRoom();
+
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'team'], $response->getData());
 	}
 }

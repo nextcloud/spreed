@@ -829,6 +829,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
+		if ($objectType === Room::OBJECT_TYPE_TEAM && !empty(array_filter($participants))) {
+			// The participants of team conversations are the members of the team,
+			// they are added by the sync: no users, groups, emails or phone numbers here
+			return new DataResponse(['error' => 'invite'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$invitationList = $this->invitationService->validateInvitations($participants, $user, isClassified: $isClassified);
 		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
 			// FIXME add the list of failed invitations?
@@ -1682,10 +1688,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $newParticipant New participant
 	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones'|'teams' $source Source of the participant
-	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'team'|'trusted-servers'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Participant successfully added, in Matrix conversations the user is invited and added once they accepted
-	 * 400: Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key)
+	 * 400: Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the user is no member of the team of a team conversation (check error attribute of response for detail key)
 	 * 403: The Matrix account of the user can not invite to the Matrix room
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
@@ -1721,6 +1727,26 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => $e->getMessage()], $e->getStatus());
 			}
 			return new DataResponse([]);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			return $this->addParticipantToTeamRoom($newParticipant, $source);
+		}
+
+		if ($this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Breakout rooms of team conversations: only participants of the team conversation
+			try {
+				$parentRoom = $this->manager->getRoomByToken($this->room->getObjectId());
+			} catch (RoomNotFoundException) {
+				$parentRoom = null;
+			}
+			if ($parentRoom?->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+				try {
+					$this->participantService->getParticipantByActor($parentRoom, Attendee::ACTOR_USERS, $newParticipant);
+				} catch (ParticipantNotFoundException) {
+					return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+				}
+			}
 		}
 
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
@@ -1909,12 +1935,46 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * The participants of team conversations are the members of the team, they
+	 * are managed in the Teams app. Only members missing in the conversation
+	 * (e.g. not synced yet) are added here, right away.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'ban'|'new-participant'|'source'|'team'}, array{}>
+	 */
+	protected function addParticipantToTeamRoom(string $newParticipant, string $source): DataResponse {
+		if ($source !== 'users') {
+			// Groups, teams, emails, phone numbers and federated users are added to the team in the Teams app
+			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$newUser = $this->userManager->get($newParticipant);
+		if (!$newUser instanceof IUser || $newParticipant === MatterbridgeManager::BRIDGE_BOT_USERID) {
+			return new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$participant = $this->teamRoomSyncService->syncUserInTeamRoom($this->room, $newUser);
+		} catch (ForbiddenException) {
+			return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
+		} catch (\Exception $e) {
+			$this->logger->info('User ' . $newUser->getUID() . ' could not be added to team conversation ' . $this->room->getToken(), ['exception' => $e]);
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($participant === null) {
+			// Not a member of the team: they need to be added to the team in the Teams app
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse([]);
+	}
+
+	/**
 	 * Remove the current user from a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'|'team'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Participant removed successfully
-	 * 400: Removing participant is not possible
+	 * 400: Removing participant is not possible, e.g. members of the team of a team conversation leave the team in the Teams app
 	 * 403: The Matrix account of the user is not active anymore
 	 * 404: Participant not found
 	 * 502: The Matrix homeserver rejected leaving the Matrix room or could not be reached
@@ -1932,7 +1992,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'|'team'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
@@ -1946,6 +2006,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($room->isFederatedConversation()) {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
+		}
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+			&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
+			&& $this->teamRoomSyncService->isMemberOfTeam($room, $participant->getAttendee())) {
+			// Members of the team leave the team in the Teams app, otherwise the next resync adds
+			// them again. Federated users can leave: the resync does not invite them again.
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($room->isAnnouncement() && !$participant->hasModeratorPermissions(false)) {
@@ -1995,10 +2063,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'|'team'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee removed successfully
-	 * 400: Removing attendee is not possible
+	 * 400: Removing attendee is not possible, e.g. members of the team of a team conversation are removed from the team in the Teams app
 	 * 403: Removing attendee is not allowed
 	 * 404: Attendee not found
 	 * 502: The Matrix homeserver rejected the removal or could not be reached
@@ -2032,6 +2100,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($targetParticipant->isOwner()) {
 			return new DataResponse(['error' => 'owner'], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_TEAM
+			&& $this->teamRoomSyncService->isMemberOfTeam($this->room, $targetParticipant->getAttendee())) {
+			// Members of the team are removed from the team in the Teams app, otherwise the next resync adds them again
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {

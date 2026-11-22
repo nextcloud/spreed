@@ -25338,7 +25338,7 @@
                         }
                     },
                     "400": {
-                        "description": "Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key)",
+                        "description": "Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the user is no member of the team of a team conversation (check error attribute of response for detail key)",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -25379,6 +25379,7 @@
                                                                         "room-type",
                                                                         "sip",
                                                                         "source",
+                                                                        "team",
                                                                         "trusted-servers"
                                                                     ]
                                                                 }
@@ -25473,6 +25474,7 @@
                                                                         "room-type",
                                                                         "sip",
                                                                         "source",
+                                                                        "team",
                                                                         "trusted-servers"
                                                                     ]
                                                                 }
@@ -25565,6 +25567,7 @@
                                                                 "room-type",
                                                                 "sip",
                                                                 "source",
+                                                                "team",
                                                                 "trusted-servers"
                                                             ]
                                                         }
@@ -26271,7 +26274,7 @@
                         }
                     },
                     "400": {
-                        "description": "Removing participant is not possible",
+                        "description": "Removing participant is not possible, e.g. members of the team of a team conversation leave the team in the Teams app",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -26303,7 +26306,8 @@
                                                                     "enum": [
                                                                         "announcement",
                                                                         "last-moderator",
-                                                                        "participant"
+                                                                        "participant",
+                                                                        "team"
                                                                     ]
                                                                 }
                                                             }
@@ -26388,7 +26392,8 @@
                                                                     "enum": [
                                                                         "announcement",
                                                                         "last-moderator",
-                                                                        "participant"
+                                                                        "participant",
+                                                                        "team"
                                                                     ]
                                                                 }
                                                             }
@@ -26653,7 +26658,7 @@
                         }
                     },
                     "400": {
-                        "description": "Removing attendee is not possible",
+                        "description": "Removing attendee is not possible, e.g. members of the team of a team conversation are removed from the team in the Teams app",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -26687,7 +26692,8 @@
                                                                         "last-moderator",
                                                                         "owner",
                                                                         "participant",
-                                                                        "room-type"
+                                                                        "room-type",
+                                                                        "team"
                                                                     ]
                                                                 }
                                                             }
@@ -26774,7 +26780,8 @@
                                                                         "last-moderator",
                                                                         "owner",
                                                                         "participant",
-                                                                        "room-type"
+                                                                        "room-type",
+                                                                        "team"
                                                                     ]
                                                                 }
                                                             }
@@ -26861,7 +26868,8 @@
                                                                         "last-moderator",
                                                                         "owner",
                                                                         "participant",
-                                                                        "room-type"
+                                                                        "room-type",
+                                                                        "team"
                                                                     ]
                                                                 }
                                                             }
