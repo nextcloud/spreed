@@ -11,6 +11,12 @@ import { MENTION } from '../constants.ts'
 import { sanitizeFileName } from './fileUpload.ts'
 import { getFileKeys } from './message.ts'
 
+// Mirrors \OCA\Talk\Chat\ChatManager::MARKDOWN_CODE_REGEX_NO_MODIFIERS
+// (`$(?![\s\S])` simulates \z, the absolute end of the string)
+const MARKDOWN_CODE_REGEX = /^```.*?(^```|$(?![\s\S]))|^~~~.*?(^~~~|$(?![\s\S]))|`[^`\n]*`/gms
+// Mirrors the mention ids matched by \OCP\Comments\Comment::getMentions()
+const AT_ALL_MENTION_REGEX = /(^|[\s@.'-])@(?:"all"|all(?![\w@.'-]))/i
+
 /**
  * Parse message text to return proper formatting for mentions
  *
@@ -83,7 +89,20 @@ function parseSpecialSymbols(text: string): string {
 		.replace(/\r\n|\n|\r/gm, '\n') // remove line breaks
 }
 
+/**
+ * Check whether the message text contains an `@all` mention that notifies all
+ * participants, either picked from the mention list (`@"all"`) or typed
+ * manually (`@all`). Mentions inside markdown code are ignored, mirroring
+ * the server-side parsing.
+ *
+ * @param text The string to check
+ */
+function hasAtAllMention(text: string): boolean {
+	return AT_ALL_MENTION_REGEX.test(text.replace(MARKDOWN_CODE_REGEX, ''))
+}
+
 export {
+	hasAtAllMention,
 	parseMentions,
 	parseSpecialSymbols,
 	parseToSimpleMessage,

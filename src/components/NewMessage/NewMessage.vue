@@ -337,9 +337,10 @@
 <script>
 import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import debounce from 'debounce'
 import { inject, nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -363,6 +364,7 @@ import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better indication
 import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantClockOutline.vue' // Filled for better indication
 import MessageQuote from '../MessageQuote.vue'
+import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
@@ -395,10 +397,13 @@ import {
 	insertTextInElement,
 	selectRange,
 } from '../../utils/selectionRange.ts'
-import { parseSpecialSymbols } from '../../utils/textParse.ts'
+import { hasAtAllMention, parseSpecialSymbols } from '../../utils/textParse.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
+
+// Participant count at which mentioning `@all` requires a confirmation
+const mentionAllConfirmationThreshold = 10
 
 export default {
 	name: 'NewMessage',
@@ -798,6 +803,26 @@ export default {
 			// TRANSLATORS: "... sent tomorrow, <March 18, 2026>"
 			return t('spreed', 'Message will be sent {datetimeString}', { datetimeString })
 		},
+
+		participantCount() {
+			return this.$store.getters.participantsList(this.token).length
+		},
+
+		canMentionAll() {
+			return this.conversation.mentionPermissions !== CONVERSATION.MENTION_PERMISSIONS.MODERATORS
+				|| [
+					PARTICIPANT.TYPE.OWNER,
+					PARTICIPANT.TYPE.MODERATOR,
+					PARTICIPANT.TYPE.GUEST_MODERATOR,
+				].includes(this.conversation.participantType)
+		},
+
+		requiresMentionAllConfirmation() {
+			return !this.silentChat
+				&& this.canMentionAll
+				&& this.participantCount >= mentionAllConfirmationThreshold
+				&& hasAtAllMention(this.text)
+		},
 	},
 
 	watch: {
@@ -939,6 +964,7 @@ export default {
 	},
 
 	methods: {
+		n,
 		t,
 
 		getCustomDateOptions,
@@ -1049,6 +1075,9 @@ export default {
 			}
 
 			if (supportScheduleMessages && this.scheduleMessageTime && !this.isPrivateReply) {
+				if (this.requiresMentionAllConfirmation && !(await this.confirmMentionAllParticipants())) {
+					return
+				}
 				await this.handleScheduleMessage()
 				return
 			}
@@ -1057,6 +1086,10 @@ export default {
 				// Block sending and prompt user to pick a time for scheduling
 				this.submenu = 'schedule'
 				this.isNcActionsOpen = true
+				return
+			}
+
+			if (this.requiresMentionAllConfirmation && !(await this.confirmMentionAllParticipants())) {
 				return
 			}
 
@@ -1152,6 +1185,29 @@ export default {
 		// Broadcast message to all breakout rooms
 		async submitMessage(token, temporaryMessage) {
 			this.$emit('submit', { token, temporaryMessage })
+		},
+
+		/**
+		 * Ask for confirmation before sending a message that mentions all
+		 * participants of a large conversation
+		 *
+		 * @return {Promise<boolean>} whether the user confirmed mentioning everyone
+		 */
+		async confirmMentionAllParticipants() {
+			const confirmed = await spawnDialog(ConfirmDialog, {
+				container: this.container,
+				name: t('spreed', 'Mention all participants'),
+				message: n('spreed',
+					'You are about to mention %n participant, who will receive a notification.',
+					'You are about to mention %n participants, who will receive a notification.',
+					this.participantCount),
+				buttons: [
+					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Send message'), variant: 'primary', callback: () => true },
+				],
+			})
+
+			return !!confirmed
 		},
 
 		async handleSubmitSpam(numberOfMessages) {

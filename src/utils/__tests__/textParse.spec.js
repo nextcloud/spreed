@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it, vi } from 'vitest'
-import { parseMentions, parseSpecialSymbols } from '../textParse.ts'
+import { hasAtAllMention, parseMentions, parseSpecialSymbols } from '../textParse.ts'
 
 vi.mock('@nextcloud/router', () => ({
 	getBaseUrl: vi.fn().mockReturnValue('https://server2.com'),
@@ -186,6 +186,53 @@ describe('textParse', () => {
 				},
 			}
 			expect(parseMentions(input, parameters)).toBe(output)
+		})
+	})
+
+	describe('hasAtAllMention', () => {
+		it('detects a mention picked from the mention list', () => {
+			expect(hasAtAllMention('test @"all" test')).toBe(true)
+		})
+
+		it('detects a manually typed mention', () => {
+			expect(hasAtAllMention('test @all test')).toBe(true)
+			expect(hasAtAllMention('@all test')).toBe(true)
+			expect(hasAtAllMention('test @all')).toBe(true)
+			expect(hasAtAllMention('test\n@all')).toBe(true)
+		})
+
+		it('detects a mention followed by punctuation', () => {
+			expect(hasAtAllMention('test @all, test')).toBe(true)
+			expect(hasAtAllMention('test @all!')).toBe(true)
+		})
+
+		it('detects a manually typed quoted mention', () => {
+			expect(hasAtAllMention('test @"all" test')).toBe(true)
+		})
+
+		it('ignores mentions of users starting with "all"', () => {
+			expect(hasAtAllMention('test @allison test')).toBe(false)
+			expect(hasAtAllMention('test @"allison" test')).toBe(false)
+			expect(hasAtAllMention('test @all-then test')).toBe(false)
+		})
+
+		it('ignores @all inside markdown code', () => {
+			expect(hasAtAllMention('test `@all` test')).toBe(false)
+			expect(hasAtAllMention('test\n```\n@all\n```\ntest')).toBe(false)
+			expect(hasAtAllMention('test\n~~~\n@all\n~~~\ntest')).toBe(false)
+			expect(hasAtAllMention('test\n```\n@all')).toBe(false)
+		})
+
+		it('detects a mention outside of markdown code', () => {
+			expect(hasAtAllMention('`@all` test @all')).toBe(true)
+			expect(hasAtAllMention('```\n@all\n```\ntest @all')).toBe(true)
+		})
+
+		it('returns false when there is no at-all mention', () => {
+			expect(hasAtAllMention('')).toBe(false)
+			expect(hasAtAllMention('test @"alice" test')).toBe(false)
+			expect(hasAtAllMention('test @alice test')).toBe(false)
+			expect(hasAtAllMention('test email@example.com')).toBe(false)
 		})
 	})
 
