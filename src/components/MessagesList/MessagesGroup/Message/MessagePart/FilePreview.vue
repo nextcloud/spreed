@@ -17,7 +17,7 @@
 		}"
 		v-bind="filePreviewBinding"
 		@click.exact="handleClick"
-		@keydown.enter="handleClick">
+		@keydown.enter.self="handleClick">
 		<span
 			:title="sanitizedFileName"
 			class="image-container"
@@ -89,7 +89,7 @@
 			variant="secondary"
 			size="small"
 			:aria-label="removeAriaLabel"
-			@click.stop.prevent="handleClick">
+			@click.stop.prevent="$emit('removeFile', file.id)">
 			<template #icon>
 				<IconClose :size="20" />
 			</template>
@@ -101,6 +101,44 @@
 			</span>
 			<span v-if="rowLayout && fileMetaLabel" class="name-container__meta">{{ fileMetaLabel }}</span>
 		</div>
+
+		<NcModal
+			v-if="localPreviewOpen"
+			:name="sanitizedFileName"
+			size="large"
+			closeOnClickOutside
+			@close="localPreviewOpen = false">
+			<div class="local-file-preview">
+				<img
+					v-if="localPreviewType === 'image'"
+					class="local-file-preview__media"
+					:src="localPreviewUrl"
+					:alt="sanitizedFileName">
+				<video
+					v-else-if="localPreviewType === 'video'"
+					class="local-file-preview__media"
+					:src="localPreviewUrl"
+					controls
+					playsinline />
+				<audio
+					v-else-if="localPreviewType === 'audio'"
+					class="local-file-preview__media"
+					:src="localPreviewUrl"
+					controls />
+				<iframe
+					v-else-if="localPreviewType === 'inline'"
+					class="local-file-preview__frame"
+					:src="localPreviewUrl"
+					:title="sanitizedFileName" />
+				<div v-else class="local-file-preview__fallback">
+					<img
+						class="local-file-preview__fallback-icon"
+						:src="defaultIconUrl"
+						alt="">
+					<span v-if="fileMetaLabel">{{ fileMetaLabel }}</span>
+				</div>
+			</div>
+		</NcModal>
 	</component>
 </template>
 
@@ -113,6 +151,7 @@ import { getUploader } from '@nextcloud/upload'
 import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcModal from '@nextcloud/vue/components/NcModal'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
@@ -137,12 +176,17 @@ const PREVIEW_TYPE = {
 	PREVIEW: 3,
 }
 
+// Mime types browsers can render inline in the local preview modal.
+// Active content (HTML, SVG iframes) is deliberately excluded.
+const INLINE_PREVIEW_MIMETYPES = ['application/pdf', 'text/plain']
+
 export default {
 	name: 'FilePreview',
 
 	components: {
 		NcButton,
 		NcLoadingIcon,
+		NcModal,
 		NcProgressBar,
 		TransitionWrapper,
 		// Icons
@@ -231,6 +275,8 @@ export default {
 			failed: false,
 			previewFailed: false,
 			uploadManager: null,
+			localFileUrl: undefined,
+			localPreviewOpen: false,
 		}
 	},
 
@@ -270,7 +316,8 @@ export default {
 		},
 
 		fileMetaLabel() {
-			const size = parseInt(this.file.size, 10)
+			// Staged files carry no size parameter, take it from the File object
+			const size = parseInt(this.file.size, 10) || this.file.file?.size
 			const sizeLabel = size ? formatFileSize(size, true) : ''
 			return [this.fileExtension.slice(1).toUpperCase(), sizeLabel].filter(Boolean).join(' · ')
 		},
@@ -288,6 +335,33 @@ export default {
 
 		fallbackLocalUrl() {
 			return this.uploadStore.getLocalUrl(this.referenceId)
+		},
+
+		localPreviewUrl() {
+			return this.fallbackLocalUrl ?? this.file.localUrl ?? this.localFileUrl
+		},
+
+		/**
+		 * How the staged file can be rendered inside the local preview modal.
+		 * 'none' falls back to the mime icon and the file meta.
+		 */
+		localPreviewType() {
+			if (!this.localPreviewUrl) {
+				return 'none'
+			}
+			if (this.file.mimetype.startsWith('image/')) {
+				return 'image'
+			}
+			if (this.file.mimetype.startsWith('video/')) {
+				return 'video'
+			}
+			if (this.file.mimetype.startsWith('audio/')) {
+				return 'audio'
+			}
+			if (INLINE_PREVIEW_MIMETYPES.includes(this.file.mimetype)) {
+				return 'inline'
+			}
+			return 'none'
 		},
 
 		// This is used to decide which outer element type to use
@@ -587,6 +661,9 @@ export default {
 
 	beforeUnmount() {
 		this.uploadManager = null
+		if (this.localFileUrl) {
+			URL.revokeObjectURL(this.localFileUrl)
+		}
 	},
 
 	methods: {
@@ -609,7 +686,10 @@ export default {
 
 		handleClick(event) {
 			if (this.isUploadEditor) {
-				this.$emit('removeFile', this.file.id)
+				// Clicking a staged file must not remove it: open a local preview
+				// instead, so the file can be checked before sending. Removing
+				// is handled by the dedicated remove button only.
+				this.openLocalFilePreview()
 				return
 			}
 
@@ -645,6 +725,19 @@ export default {
 			}
 
 			this.openViewer(list, this.file, loadMore)
+		},
+
+		/**
+		 * Shows the staged file in a modal, so it can be checked before the
+		 * upload is sent. The Viewer only handles already uploaded files, so
+		 * the stored preview URL is reused for media files and an object URL
+		 * is created from the staged file otherwise
+		 */
+		openLocalFilePreview() {
+			if (!this.localFileUrl && this.file.file instanceof File) {
+				this.localFileUrl = URL.createObjectURL(this.file.file)
+			}
+			this.localPreviewOpen = true
 		},
 	},
 }
@@ -937,6 +1030,43 @@ export default {
 	// The tile padding is 8px, so the offsets are that padding less the overhang
 	top: 4px;
 	inset-inline-end: 4px;
+}
+
+// Content of the staged file preview modal (teleported to body)
+.local-file-preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: calc(2 * var(--default-grid-baseline));
+
+	&__media {
+		display: block;
+		max-width: 100%;
+		// The modal is capped at 90% of the viewport minus header and margins
+		max-height: calc(90vh - 160px);
+		object-fit: contain;
+	}
+
+	&__frame {
+		width: 100%;
+		height: calc(90vh - 160px);
+		border: none;
+	}
+
+	&__fallback {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		padding: calc(4 * var(--default-grid-baseline));
+		color: var(--color-text-maxcontrast);
+	}
+
+	&__fallback-icon {
+		width: 128px;
+		height: 128px;
+	}
 }
 
 </style>
