@@ -20,7 +20,7 @@ namespace OC\Core\Command {
 
 		protected string $defaultOutputFormat = self::OUTPUT_FORMAT_PLAIN;
 
-		public function __construct(?string $name = null) {
+		public function __construct(?string $name = null, ?callable $code = null) {
 		}
 
 		protected function configure() {
@@ -35,7 +35,7 @@ namespace OC\Core\Command {
 		public function getDefinition(): InputDefinition {
 		}
 
-		protected function writeArrayInOutputFormat(InputInterface $input, OutputInterface $output, array $items, string $prefix = '  - '): void {
+		protected function writeArrayInOutputFormat(InputInterface $input, OutputInterface $output, iterable $items, string $prefix = '  - '): void {
 		}
 
 		protected function writeTableInOutputFormat(InputInterface $input, OutputInterface $output, array $items): void {
@@ -50,10 +50,10 @@ namespace OC\Core\Command {
 		protected function abortIfInterrupted() {
 		}
 
-		protected function cancelOperation() {
+		public function cancelOperation(): void {
 		}
 
-		public function run(InputInterface $input, OutputInterface $output) {
+		public function run(InputInterface $input, OutputInterface $output): int {
 		}
 
 		public function completeOptionValues($optionName, CompletionContext $context) {

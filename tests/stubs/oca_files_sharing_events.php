@@ -37,7 +37,10 @@ namespace OCA\Files_Sharing\Event {
 	use OCP\IUser;
 
 	class UserShareAccessUpdatedEvent extends Event {
-		public function __construct(IUser $user) {
+		/**
+		 * @param IUser|list<IUser> $users
+		 */
+		public function __construct(IUser|array $users) {
 		}
 	}
 
