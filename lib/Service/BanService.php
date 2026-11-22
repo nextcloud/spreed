@@ -38,7 +38,22 @@ class BanService {
 		private readonly LoggerInterface $logger,
 		private readonly IFactory $ipFactory,
 		private readonly IEventDispatcher $dispatcher,
+		private readonly CirclesAdapter $circlesAdapter,
 	) {
+	}
+
+	/**
+	 * @throws \InvalidArgumentException 'moderator' when the team refused it
+	 */
+	protected function removeFromTeam(Room $room, string $userId, string $moderatorUserId): void {
+		try {
+			if ($this->circlesAdapter->getDirectMember($room->getObjectId(), $userId) !== null) {
+				$this->circlesAdapter->removeDirectUser($room->getObjectId(), $userId, $moderatorUserId);
+			}
+		} catch (\Exception $e) {
+			$this->logger->info('User ' . $userId . ' can not be banned from team conversation ' . $room->getToken() . ', the team refused the removal', ['exception' => $e]);
+			throw new \InvalidArgumentException('moderator', previous: $e);
+		}
 	}
 
 	/**
@@ -112,6 +127,14 @@ class BanService {
 		$ban->setBannedDisplayname($displayname);
 		$ban->setBannedTime($bannedTime);
 		$ban->setInternalNote($internalNote);
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $bannedActorType === Attendee::ACTOR_USERS) {
+			if ($moderatorActorType !== Attendee::ACTOR_USERS) {
+				// No account to act in the team with
+				throw new \InvalidArgumentException('moderator');
+			}
+			$this->removeFromTeam($room, $bannedActorId, $moderatorActorId);
+		}
 
 		//Remove the banned user from the room
 		if ($bannedActorType !== 'ip') {
@@ -235,6 +258,19 @@ class BanService {
 		} catch (DoesNotExistException) {
 			return false;
 		}
+	}
+
+	public function isEmailBanned(Room $room, #[\SensitiveParameter] string $email): bool {
+		$email = mb_strtolower(mb_trim($email));
+		if ($this->isActorBanned($room, Attendee::ACTOR_EMAILS, $email)) {
+			return true;
+		}
+		foreach ($this->userManager->getByEmail($email) as $user) {
+			if ($this->isActorBanned($room, Attendee::ACTOR_USERS, $user->getUID())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

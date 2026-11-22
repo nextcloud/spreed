@@ -31,6 +31,7 @@ class RoomPresetFactory {
 		private readonly IAppConfig $appConfig,
 		private readonly IGroupManager $groupManager,
 		private readonly LoggerInterface $logger,
+		private readonly CirclesAdapter $circlesAdapter,
 		private readonly ?string $userId,
 	) {
 	}
@@ -46,8 +47,11 @@ class RoomPresetFactory {
 			Presentation::class,
 			Classified::class,
 			Channel::class,
-			Team::class,
 		];
+
+		if ($this->circlesAdapter->isAvailable()) {
+			$presetClasses[] = Team::class;
+		}
 
 		if ($this->userId !== null && $this->groupManager->isAdmin($this->userId)) {
 			$presetClasses[] = Announcement::class;

@@ -14,6 +14,7 @@ use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
+use OCA\Talk\Service\CirclesAdapter;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -32,6 +33,7 @@ class BanServiceTest extends TestCase {
 	protected IUserManager&MockObject $userManager;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected BanService $service;
+	protected CirclesAdapter $circlesAdapter;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -40,6 +42,7 @@ class BanServiceTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->circlesAdapter = $this->createMock(CirclesAdapter::class);
 		$this->service = new BanService(
 			$this->banMapper,
 			$this->participantService,
@@ -49,6 +52,7 @@ class BanServiceTest extends TestCase {
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(IFactory::class),
 			$this->dispatcher,
+			$this->circlesAdapter,
 		);
 	}
 

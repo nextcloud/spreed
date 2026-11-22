@@ -96,6 +96,7 @@ class RoomService {
 		private readonly IManager $calendarManager,
 		private readonly IUserManager $userManager,
 		private readonly ISession $session,
+		private readonly CirclesAdapter $circlesAdapter,
 	) {
 	}
 
@@ -221,6 +222,7 @@ class RoomService {
 			Room::OBJECT_TYPE_EVENT,
 			Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
 			Room::OBJECT_TYPE_INSTANT_MEETING,
+			Room::OBJECT_TYPE_TEAM,
 		];
 		if ($allowInternalTypes) {
 			$objectTypes[] = BreakoutRoom::PARENT_OBJECT_TYPE;
@@ -230,7 +232,6 @@ class RoomService {
 			$objectTypes[] = Room::OBJECT_TYPE_NOTE_TO_SELF;
 			$objectTypes[] = Room::OBJECT_TYPE_SAMPLE;
 			$objectTypes[] = Room::OBJECT_TYPE_VIDEO_VERIFICATION;
-			$objectTypes[] = Room::OBJECT_TYPE_TEAM;
 
 			if ($this->config->getExternalCallService() !== null) {
 				$objectTypes[] = Room::OBJECT_TYPE_EXTERNAL_CALL;
@@ -261,6 +262,89 @@ class RoomService {
 
 			$this->session->set('talk-overwrite-actor-type', Attendee::ACTOR_GUESTS);
 			$this->session->set('talk-overwrite-actor-id', Attendee::ACTOR_ID_SYSTEM);
+		}
+
+		/** @var array<string, array{actorType: string, actorId: string, displayName: string, participantType: int}> $initialParticipants */
+		$initialParticipants = [];
+		if ($owner instanceof IUser) {
+			$initialParticipants[$owner->getUID()] = [
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => $owner->getUID(),
+				'displayName' => $owner->getDisplayName(),
+				'participantType' => Participant::OWNER,
+			];
+		}
+
+		if ($objectType === Room::OBJECT_TYPE_TEAM) {
+			if (!($owner instanceof IUser) || mb_strlen($objectId) > 64) {
+				throw new CreationException(CreationException::REASON_OBJECT);
+			}
+			if ($type !== Room::TYPE_GROUP) {
+				throw new CreationException(CreationException::REASON_TYPE);
+			}
+			if ($sipEnabled === Webinary::SIP_ENABLED_NO_PIN) {
+				$sipEnabled = Webinary::SIP_ENABLED;
+			}
+			try {
+				$members = $this->circlesAdapter->getDirectMembers($objectId);
+				$team = $this->circlesAdapter->getTeam($objectId);
+				$isSupportedTeam = $team['local'] && TeamRoomSettingsService::isSupportedTeam($team['config']);
+			} catch (\Exception) {
+				throw new CreationException(CreationException::REASON_OBJECT_ID);
+			}
+			if (!isset($members[$owner->getUID()]) || !$isSupportedTeam) {
+				throw new CreationException(CreationException::REASON_OBJECT_ID);
+			}
+
+			$attributes |= RoomAttributes::TEAM->value;
+
+			// The conversation shows the team right away, as the resync would set it:
+			// name, description and visibility (a closed team is never listed)
+			if (!empty(mb_trim($team['name']))) {
+				$name = mb_trim($team['name']);
+			}
+			$description = mb_substr(mb_trim($team['description']), 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
+			$listable = TeamRoomSettingsService::getListableForConfig($team['config']);
+
+			// The creator gets exactly the role of their team level, nothing more
+			$creatorType = TeamRoomSyncService::getParticipantTypeForLevel($members[$owner->getUID()]['level']);
+			$initialParticipants[$owner->getUID()]['participantType'] = $creatorType;
+			if ($creatorType === Participant::USER) {
+				// Settings only moderators can change later are not set by a plain member
+				$readOnly = Room::READ_WRITE;
+				$messageExpiration = 0;
+				$lobbyState = Webinary::LOBBY_NONE;
+				$lobbyTimer = null;
+				$permissions = Attendee::PERMISSIONS_DEFAULT;
+				$recordingConsent = RecordingService::CONSENT_REQUIRED_NO;
+				$mentionPermissions = Room::MENTION_PERMISSIONS_EVERYONE;
+				$sipEnabled = Webinary::SIP_DISABLED;
+			}
+			foreach ($members as $userId => $member) {
+				$userId = (string)$userId;
+				$participantType = TeamRoomSyncService::getParticipantTypeForLevel($member['level']);
+				if ($participantType !== Participant::OWNER || isset($initialParticipants[$userId])) {
+					continue;
+				}
+				$user = $this->userManager->get($userId);
+				if (!is_null($user)) {
+					$initialParticipants[$userId] = [
+						'actorType' => Attendee::ACTOR_USERS,
+						'actorId' => $userId,
+						'displayName' => $user->getDisplayName(),
+						'participantType' => $participantType,
+					];
+				}
+			}
+		}
+
+		if ($objectType === Room::OBJECT_TYPE_TEAM) {
+			try {
+				$existingRoom = $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $objectId);
+				throw new CreationException(CreationException::REASON_TYPE, $existingRoom);
+			} catch (RoomNotFoundException) {
+				// Object ID is unique, continue
+			}
 		}
 
 		if ($type === Room::TYPE_PUBLIC && $password === '' && $this->config->isPasswordEnforced()) {
@@ -354,18 +438,26 @@ class RoomService {
 			$attributes,
 		);
 
+		if ($objectType === Room::OBJECT_TYPE_TEAM) {
+			// Created twice at the same time: the first conversation of the team stays
+			try {
+				$firstRoom = $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $objectId);
+			} catch (RoomNotFoundException) {
+				$firstRoom = $room;
+			}
+			if ($firstRoom->getId() !== $room->getId()) {
+				$this->deleteRoom($room);
+				throw new CreationException(CreationException::REASON_TYPE, $firstRoom);
+			}
+		}
+
 		if ($emoji !== null) {
 			$avatarService = Server::get(AvatarService::class);
 			$avatarService->setAvatarFromEmoji($room, $emoji, $avatarColor);
 		}
 
-		if ($owner instanceof IUser) {
-			$this->participantService->addUsers($room, [[
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $owner->getUID(),
-				'displayName' => $owner->getDisplayName(),
-				'participantType' => Participant::OWNER,
-			]], null);
+		if ($initialParticipants !== []) {
+			$this->participantService->addUsers($room, array_values($initialParticipants), null);
 		}
 		return $room;
 	}
@@ -445,6 +537,11 @@ class RoomService {
 
 		if ($room->isClassified() && $newSipEnabled !== Webinary::SIP_DISABLED) {
 			throw new SipConfigurationException(SipConfigurationException::REASON_CLASSIFIED);
+		}
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newSipEnabled === Webinary::SIP_ENABLED_NO_PIN) {
+			// Dial-in without PIN lets anonymous phone guests in, team conversations have members only
+			throw new SipConfigurationException(SipConfigurationException::REASON_VALUE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
@@ -754,6 +851,11 @@ class RoomService {
 			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newType === Room::TYPE_PUBLIC) {
+			// Team members only: a public link would let guests in
+			throw new TypeException(TypeException::REASON_TYPE);
+		}
+
 		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, $newType, $oldType);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -890,6 +992,11 @@ class RoomService {
 			Room::LISTABLE_USERS,
 			Room::LISTABLE_ALL,
 		], true)) {
+			throw new ListableException(ListableException::REASON_VALUE);
+		}
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newState === Room::LISTABLE_ALL) {
+			// Guests can not be members of a team
 			throw new ListableException(ListableException::REASON_VALUE);
 		}
 

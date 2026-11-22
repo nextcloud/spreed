@@ -12,6 +12,8 @@ use OCA\Talk\Config;
 use OCA\Talk\Room;
 use OCA\Talk\RoomPresets\Announcement;
 use OCA\Talk\RoomPresets\Channel;
+use OCA\Talk\RoomPresets\Team;
+use OCA\Talk\Service\CirclesAdapter;
 use OCA\Talk\Service\RoomPresetFactory;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IGroupManager;
@@ -23,6 +25,7 @@ class RoomPresetFactoryTest extends TestCase {
 	protected IAppConfig&MockObject $appConfig;
 	protected IGroupManager&MockObject $groupManager;
 	protected LoggerInterface&MockObject $logger;
+	protected CirclesAdapter&MockObject $circlesAdapter;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -33,6 +36,7 @@ class RoomPresetFactoryTest extends TestCase {
 			->willReturn(Room::START_CALL_EVERYONE);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->circlesAdapter = $this->createMock(CirclesAdapter::class);
 	}
 
 	protected function getFactory(?string $userId): RoomPresetFactory {
@@ -40,6 +44,7 @@ class RoomPresetFactoryTest extends TestCase {
 			$this->appConfig,
 			$this->groupManager,
 			$this->logger,
+			$this->circlesAdapter,
 			$userId,
 		);
 	}
@@ -74,5 +79,24 @@ class RoomPresetFactoryTest extends TestCase {
 		$presets = $this->getFactory(null)->getPresets();
 
 		$this->assertArrayNotHasKey(Announcement::getIdentifier(), $presets);
+	}
+
+	public function testTeamIsAvailableWithTheTeamsApp(): void {
+		$this->circlesAdapter->method('isAvailable')
+			->willReturn(true);
+
+		$presets = $this->getFactory('user')->getPresets();
+
+		$this->assertArrayHasKey(Team::getIdentifier(), $presets);
+	}
+
+	public function testTeamIsNotAvailableWithoutTheTeamsApp(): void {
+		$this->circlesAdapter->method('isAvailable')
+			->willReturn(false);
+
+		$presets = $this->getFactory('user')->getPresets();
+
+		$this->assertArrayNotHasKey(Team::getIdentifier(), $presets);
+		$this->assertArrayHasKey(Channel::getIdentifier(), $presets, 'The other presets are still available');
 	}
 }

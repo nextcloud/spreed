@@ -88,6 +88,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\TeamRoomSyncService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Share\Helper\Preloader;
@@ -158,6 +159,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly NoteToSelfService $noteToSelfService,
 		private readonly InvitationService $invitationService,
 		private readonly ParticipantService $participantService,
+		private readonly TeamRoomSyncService $teamRoomSyncService,
 		private readonly SessionService $sessionService,
 		private readonly GuestManager $guestManager,
 		private readonly IUserStatusManager $statusManager,
@@ -891,7 +893,21 @@ class RoomController extends AEnvironmentAwareOCSController {
 		} catch (CreationException $e) {
 			$room = $e->getRoom();
 			if ($room instanceof Room) {
-				return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $actorUserId, false)), Http::STATUS_OK);
+				try {
+					$participant = $this->participantService->getParticipant($room, $actorUserId, false);
+				} catch (ParticipantNotFoundException) {
+					// Team conversations: RoomService checked that the user is a member
+					// of the team, they are only not synced yet
+					$participant = null;
+					if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $user instanceof IUser) {
+						try {
+							$participant = $this->teamRoomSyncService->syncUserInTeamRoom($room, $user);
+						} catch (\Exception $syncException) {
+							$this->logger->info('User ' . $actorUserId . ' could not be added to team conversation ' . $room->getToken() . ' right away, the resync adds them', ['exception' => $syncException]);
+						}
+					}
+				}
+				return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK);
 			}
 			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		} catch (PasswordException $e) {

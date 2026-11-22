@@ -28,6 +28,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\CirclesAdapter;
 use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -67,6 +68,7 @@ class RoomServiceTest extends TestCase {
 	protected ISession&MockObject $session;
 	protected EmojiService $emojiService;
 	protected ?RoomService $service = null;
+	protected CirclesAdapter $circlesAdapter;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -84,6 +86,7 @@ class RoomServiceTest extends TestCase {
 		$this->calendarManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->session = $this->createMock(ISession::class);
+		$this->circlesAdapter = $this->createMock(CirclesAdapter::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
@@ -99,6 +102,7 @@ class RoomServiceTest extends TestCase {
 			$this->calendarManager,
 			$this->userManager,
 			$this->session,
+			$this->circlesAdapter,
 		);
 	}
 
@@ -430,6 +434,7 @@ class RoomServiceTest extends TestCase {
 			$this->calendarManager,
 			$this->userManager,
 			$this->session,
+			$this->circlesAdapter,
 		);
 
 		$room = new Room(
