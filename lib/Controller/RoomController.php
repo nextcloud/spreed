@@ -1723,6 +1723,17 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse([]);
 		}
 
+		// 'circles' is the legacy name of the 'teams' source
+		$source = match ($source) {
+			'circles' => 'teams',
+			default => $source,
+		};
+
+		if (!in_array($source, ['users', 'groups', 'teams', 'emails', 'federated_users', 'phones'], true)) {
+			$this->logger->error('Trying to add participant from unsupported source ' . $source);
+			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
 		$participantsByUserId = [];
 		$remoteParticipantsByFederatedId = [];
@@ -1737,68 +1748,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		/** @var IUser $addedBy */
 		$addedBy = $this->userManager->get($this->userId);
 
-		// list of participants to attempt adding,
-		// existing ones will be filtered later below
-		$participantsToAdd = [];
-
-		if ($source === 'users') {
-			if ($newParticipant === MatterbridgeManager::BRIDGE_BOT_USERID) {
-				return new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND);
-			}
-
-			$newUser = $this->userManager->get($newParticipant);
-			if (!$newUser instanceof IUser) {
-				return new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND);
-			}
-
-			//Check if the user is banned
-			if ($this->banService->isActorBanned($this->room, Attendee::ACTOR_USERS, $newUser->getUID())) {
-				return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
-			}
-
-			$participantsToAdd[] = [
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $newUser->getUID(),
-				'displayName' => $newUser->getDisplayName(),
-			];
-		} elseif ($source === 'groups') {
-			$group = $this->groupManager->get($newParticipant);
-			if (!$group instanceof IGroup) {
-				return new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND);
-			}
-
-			$this->participantService->addGroup($this->room, $group, $participants);
-		} elseif ($source === 'circles' || $source === 'teams') {
-			if (!$this->appManager->isEnabledForUser('circles')) {
-				return new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST);
-			}
-
-			try {
-				$circle = $this->participantService->getCircle($newParticipant, $this->userId);
-			} catch (\Exception) {
-				return new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND);
-			}
-
-			$this->participantService->addCircle($this->room, $circle, $participants);
-		} elseif ($source === 'emails') {
-			if ($this->room->isClassified()) {
-				// The invitation mail would carry the conversation into the email
-				// infrastructure, and the access token link would allow joining
-				// without an account
-				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
-			}
-
-			$email = strtolower($newParticipant);
-			$actorId = hash('sha256', $email);
-			try {
-				$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_EMAILS, $actorId);
-			} catch (ParticipantNotFoundException) {
-				$participant = $this->participantService->inviteEmailAddress($this->room, $actorId, $email);
-				$this->guestManager->sendEmailInvitation($this->room, $participant);
-			}
-
-			return new DataResponse([]);
-		} elseif ($source === 'federated_users') {
+		if ($source === 'federated_users') {
+			// The federation checks produce dedicated errors that the invitation
+			// list can not express, so they are kept here instead of using
+			// InvitationService::validateInvitations()
 			if (!$this->talkConfig->isFederationEnabled()) {
 				return new DataResponse(['error' => 'federation'], Http::STATUS_NOT_IMPLEMENTED);
 			}
@@ -1816,62 +1769,93 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 			}
 
-			$participantsToAdd[] = [
-				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
-				'actorId' => $newUser->getId(),
-				'displayName' => $newUser->getDisplayId(),
-			];
-		} elseif ($source === 'phones') {
-			if ($this->room->isClassified()) {
+			$invitationList = new InvitationList();
+			$invitationList->setFederatedUserResults([$newParticipant => $newUser], []);
+		} else {
+			if ($source === 'teams' && !$this->appManager->isEnabledForUser('circles')) {
+				return new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST);
+			}
+
+			if ($source === 'emails' && $this->room->isClassified()) {
+				// The invitation mail would carry the conversation into the email
+				// infrastructure, and the access token link would allow joining
+				// without an account
 				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
 			}
 
-			if (
-				!$addedBy instanceof IUser
-				|| !$this->talkConfig->isSIPConfigured()
-				|| !$this->talkConfig->canUserDialOutSIP($addedBy)
-				|| preg_match(Room::SIP_INCOMPATIBLE_REGEX, $this->room->getToken())
-				|| ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_PUBLIC)) {
-				return new DataResponse(['error' => 'sip'], Http::STATUS_NOT_IMPLEMENTED);
+			if ($source === 'phones') {
+				if ($this->room->isClassified()) {
+					// Classified conversations can not dial out
+					return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+				}
+
+				if (
+					!$addedBy instanceof IUser
+					|| !$this->talkConfig->isSIPConfigured()
+					|| !$this->talkConfig->canUserDialOutSIP($addedBy)
+					|| preg_match(Room::SIP_INCOMPATIBLE_REGEX, $this->room->getToken())
+					|| ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_PUBLIC)) {
+					return new DataResponse(['error' => 'sip'], Http::STATUS_NOT_IMPLEMENTED);
+				}
 			}
 
-			$phoneRegion = $this->config->getSystemValueString('default_phone_region');
-			if ($phoneRegion === '') {
-				$phoneRegion = null;
-			}
+			$invitationList = $this->invitationService->validateInvitations(
+				[$source => [$newParticipant]],
+				$addedBy,
+				$this->room,
+			);
 
-			$formattedNumber = $this->phoneNumberUtil->convertToStandardFormat($newParticipant, $phoneRegion);
-			if ($formattedNumber === null) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			$invalidInvitations = $invitationList->getInvalidList();
+			if (isset($invalidInvitations[$source])) {
+				return match ($source) {
+					'emails' => new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST),
+					'phones' => new DataResponse([], Http::STATUS_BAD_REQUEST),
+					default => new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND),
+				};
 			}
-
-			$participantsToAdd[] = [
-				'actorType' => Attendee::ACTOR_PHONES,
-				'actorId' => sha1($formattedNumber . '#' . $this->timeFactory->getTime()),
-				'displayName' => substr($formattedNumber, 0, -4) . '…', // FIXME Allow the UI to hand in a name (when selected from contacts?)
-				'phoneNumber' => $formattedNumber,
-			];
-		} else {
-			$this->logger->error('Trying to add participant from unsupported source ' . $source);
-			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
 		}
 
-		// attempt adding the listed users to the room
-		// existing users with USER_SELF_JOINED will get converted to regular USER participants
-		foreach ($participantsToAdd as $index => $participantToAdd) {
-			$existingParticipant = $participantsByUserId[$participantToAdd['actorId']] ?? null;
-			if ($participantToAdd['actorType'] === Attendee::ACTOR_FEDERATED_USERS) {
-				$existingParticipant = $remoteParticipantsByFederatedId[$participantToAdd['actorId']] ?? null;
-			}
+		if ($source === 'users') {
+			$newUser = $invitationList->getUsers()[$newParticipant] ?? null;
 
-			if ($existingParticipant !== null) {
-				unset($participantsToAdd[$index]);
-				if ($existingParticipant->getAttendee()->getParticipantType() !== Participant::USER_SELF_JOINED) {
-					// user is already a regular participant, skip
+			//Check if the user is banned
+			if ($newUser instanceof IUser
+				&& $this->banService->isActorBanned($this->room, Attendee::ACTOR_USERS, $newUser->getUID())) {
+				return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		// Participants that are already in the room are filtered out of the
+		// invitation list, existing users with USER_SELF_JOINED will be
+		// converted to regular USER participants
+		if ($source === 'users') {
+			$users = [];
+			foreach ($invitationList->getUsers() as $userId => $user) {
+				$existingParticipant = $participantsByUserId[$user->getUID()] ?? null;
+				if ($existingParticipant === null) {
+					$users[$userId] = $user;
 					continue;
 				}
-				$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
+
+				if ($existingParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
+				}
 			}
+			$invitationList->setUserResults($users, []);
+		} elseif ($source === 'federated_users') {
+			$cloudIds = [];
+			foreach ($invitationList->getFederatedUsers() as $cloudIdString => $cloudId) {
+				$existingParticipant = $remoteParticipantsByFederatedId[$cloudId->getId()] ?? null;
+				if ($existingParticipant === null) {
+					$cloudIds[$cloudIdString] = $cloudId;
+					continue;
+				}
+
+				if ($existingParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$this->participantService->updateParticipantType($this->room, $existingParticipant, Participant::USER);
+				}
+			}
+			$invitationList->setFederatedUserResults($cloudIds, []);
 		}
 
 		if ($source === 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
@@ -1885,7 +1869,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$newParticipant
 				);
 			} catch (ParticipantNotFoundException $e) {
-				$this->participantService->addUsers($parentRoom, $participantsToAdd, $addedBy);
+				$this->participantService->addInvitationList($parentRoom, $invitationList, $addedBy);
 			}
 
 			// Remove from previous breakout room in case the user is moved
@@ -1898,11 +1882,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		// add the remaining users in batch
-		try {
-			$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
-		} catch (CannotReachRemoteException) {
-			return new DataResponse(['error' => 'reach-remote'], Http::STATUS_NOT_FOUND);
+		if ($invitationList->hasValidInvitations()) {
+			try {
+				$this->participantService->addInvitationList($this->room, $invitationList, $addedBy);
+			} catch (CannotReachRemoteException) {
+				return new DataResponse(['error' => 'reach-remote'], Http::STATUS_NOT_FOUND);
+			}
 		}
 
 		return new DataResponse([]);
