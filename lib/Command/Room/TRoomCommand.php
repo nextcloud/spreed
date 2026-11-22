@@ -21,9 +21,10 @@ use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
-use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\InvitationList;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\IGroup;
@@ -34,6 +35,7 @@ use SensitiveParameter;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Output\OutputInterface;
 
 trait TRoomCommand {
 
@@ -41,6 +43,7 @@ trait TRoomCommand {
 		protected Manager $manager,
 		protected RoomService $roomService,
 		protected ParticipantService $participantService,
+		protected InvitationService $invitationService,
 		protected IUserManager $userManager,
 		protected IGroupManager $groupManager,
 	) {
@@ -216,71 +219,53 @@ trait TRoomCommand {
 	}
 
 	/**
-	 * @param Room $room
-	 * @param string[] $groupIds
+	 * Adds all valid invitations from the list to the room. Users that are
+	 * participants already are skipped, so they are not added and announced
+	 * a second time.
 	 *
-	 * @throws InvalidArgumentException
+	 * @param Room $room
+	 * @param InvitationList $invitationList
 	 */
-	protected function addRoomParticipantsByGroup(Room $room, array $groupIds): void {
-		if (!$groupIds) {
+	protected function addRoomParticipants(Room $room, InvitationList $invitationList): void {
+		if (!$invitationList->hasValidInvitations()) {
 			return;
 		}
 
-		foreach ($groupIds as $groupId) {
-			$group = $this->groupManager->get($groupId);
-			if ($group === null) {
-				throw new InvalidArgumentException(sprintf("Group '%s' not found.", $groupId));
-			}
+		$newUsers = array_diff_key(
+			$invitationList->getUsers(),
+			array_flip($this->participantService->getParticipantUserIds($room)),
+		);
+		if (count($newUsers) !== count($invitationList->getUsers())) {
+			$invitationList->setUserResults($newUsers, $invitationList->getInvalidList()['users'] ?? []);
+		}
 
-			$this->participantService->addGroup($room, $group);
+		if ($invitationList->hasValidInvitations()) {
+			$this->participantService->addInvitationList($room, $invitationList);
 		}
 	}
 
 	/**
-	 * @param Room $room
-	 * @param string[] $userIds
+	 * Prints one error per invitation that could not be applied
 	 *
-	 * @throws InvalidArgumentException
+	 * @param InvitationList $invitationList
+	 * @param OutputInterface $output
 	 */
-	protected function addRoomParticipants(Room $room, array $userIds): void {
-		if (!$userIds) {
-			return;
+	protected function printInvalidInvitations(InvitationList $invitationList, OutputInterface $output): void {
+		foreach ($invitationList->getInvalidList() as $source => $inviteeIds) {
+			$label = match ($source) {
+				'users' => 'user',
+				'federated_users' => 'federated user',
+				'groups' => 'group',
+				'teams' => 'team',
+				'emails' => 'email address',
+				'phones' => 'phone number',
+				default => $source,
+			};
+
+			foreach ($inviteeIds as $inviteeId) {
+				$output->writeln(sprintf("<error>%s '%s' could not be invited.</error>", ucfirst($label), $inviteeId));
+			}
 		}
-
-		/** @var array<string, array{actorType: string, actorId: string, displayName: string}> $participants */
-		$participants = [];
-		foreach ($userIds as $userId) {
-			if ($userId === MatterbridgeManager::BRIDGE_BOT_USERID) {
-				throw new InvalidArgumentException('Can not add the bridge-bot user.');
-			}
-
-			$user = $this->userManager->get($userId);
-			if ($user === null) {
-				throw new InvalidArgumentException(sprintf("User '%s' not found.", $userId));
-			}
-
-			if (isset($participants[$user->getUID()])) {
-				// nothing to do, user is going to be a participant already
-				continue;
-			}
-
-			try {
-				$this->participantService->getParticipant($room, $user->getUID(), false);
-
-				// nothing to do, user is a participant already
-				continue;
-			} catch (ParticipantNotFoundException) {
-				// we expect the user not to be a participant yet
-			}
-
-			$participants[$user->getUID()] = [
-				'actorType' => Attendee::ACTOR_USERS,
-				'actorId' => $user->getUID(),
-				'displayName' => $user->getDisplayName(),
-			];
-		}
-
-		$this->participantService->addUsers($room, $participants);
 	}
 
 	/**

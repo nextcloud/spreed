@@ -108,3 +108,17 @@ Feature: command/create
     And user "participant1" is participant of the following rooms (v4)
       | name  | messageExpiration |
       | room1 | 3                 |
+
+  Scenario: Create a group room for an unknown user
+    When invoking occ with "talk:room:create room1 --user unknown-user"
+    Then the command failed with exit code 1
+    And the command output contains the text "User 'unknown-user' could not be invited."
+
+  Scenario: Create a group room for participant1 and an unknown user
+    When invoking occ with "talk:room:create room1 --user participant1 --user unknown-user"
+    Then the command failed with exit code 1
+    And the command output contains the text "User 'unknown-user' could not be invited."
+    And the command output contains the text "Room token:"
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | type | participantType |
+      | room1 | 2    | 3               |
