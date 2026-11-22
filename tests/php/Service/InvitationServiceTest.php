@@ -18,6 +18,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
+use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IPhoneNumberUtil;
 use OCP\IUser;
@@ -230,5 +231,56 @@ class InvitationServiceTest extends TestCase {
 
 		self::assertSame(['+491601234567' => '+491601234567'], $invitationList->getPhoneNumbers());
 		self::assertFalse($invitationList->hasInvalidInvitations());
+	}
+
+	public function testUserAndGroupInvitationsAreAcceptedWithoutUser(): void {
+		$user = $this->createMock(IUser::class);
+		$this->userManager->method('get')->willReturn($user);
+		$group = $this->createMock(IGroup::class);
+		$this->groupManager->method('get')->willReturn($group);
+
+		$invitationList = $this->service->validateInvitations(
+			[
+				'users' => ['user-id'],
+				'groups' => ['group-id'],
+			],
+			null,
+		);
+
+		self::assertTrue($invitationList->hasValidInvitations());
+		self::assertFalse($invitationList->hasInvalidInvitations());
+		self::assertSame(['user-id' => $user], $invitationList->getUsers());
+		self::assertSame(['group-id' => $group], $invitationList->getGroup());
+	}
+
+	public function testInvitationsRequiringAnActingUserAreRejectedWithoutUser(): void {
+		$this->appManager->expects(self::never())
+			->method('isEnabledForUser');
+		$this->cloudIdManager->expects(self::never())
+			->method('resolveCloudId');
+		$this->federationManager->expects(self::never())
+			->method('isAllowedToInvite');
+		$this->phoneNumberUtil->expects(self::never())
+			->method('convertToStandardFormat');
+
+		$invitationList = $this->service->validateInvitations(
+			[
+				'teams' => ['team-id'],
+				'federated_users' => ['remote-user@remote.example.tld'],
+				'phones' => ['+491601234567'],
+			],
+			null,
+		);
+
+		self::assertFalse($invitationList->hasValidInvitations());
+		self::assertTrue($invitationList->hasInvalidInvitations());
+		self::assertSame(
+			[
+				'federated_users' => ['remote-user@remote.example.tld'],
+				'teams' => ['team-id'],
+				'phones' => ['+491601234567'],
+			],
+			$invitationList->getInvalidList(),
+		);
 	}
 }

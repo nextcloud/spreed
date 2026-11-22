@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Room;
 
-use InvalidArgumentException;
 use OC\Core\Command\Base;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Room;
@@ -70,11 +69,14 @@ class Add extends Base {
 			return 1;
 		}
 
-		try {
-			$this->addRoomParticipants($room, $users);
-			$this->addRoomParticipantsByGroup($room, $groups);
-		} catch (InvalidArgumentException $e) {
-			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+		$invitationList = $this->invitationService->validateInvitations([
+			'users' => $users,
+			'groups' => $groups,
+		], null, $room);
+		$this->addRoomParticipants($room, $invitationList);
+
+		if ($invitationList->hasInvalidInvitations()) {
+			$this->printInvalidInvitations($invitationList, $output);
 			return 1;
 		}
 

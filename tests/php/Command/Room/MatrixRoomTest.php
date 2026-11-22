@@ -16,6 +16,7 @@ use OCA\Talk\Command\Room\Remove;
 use OCA\Talk\Command\Room\Update;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\IGroupManager;
@@ -59,6 +60,7 @@ class MatrixRoomTest extends TestCase {
 			$manager,
 			$roomService,
 			$participantService,
+			$this->createMock(InvitationService::class),
 			$this->createMock(IUserManager::class),
 			$this->createMock(IGroupManager::class),
 		);
