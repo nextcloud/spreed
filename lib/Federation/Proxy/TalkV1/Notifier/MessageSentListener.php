@@ -14,8 +14,10 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\ProxyCacheMessage;
@@ -45,11 +47,17 @@ class MessageSentListener implements IEventListener {
 	public function handle(Event $event): void {
 		if (!$event instanceof ChatMessageSentEvent
 			&& !$event instanceof SystemMessageSentEvent
-			&& !$event instanceof SystemMessagesMultipleSentEvent) {
+			&& !$event instanceof SystemMessagesMultipleSentEvent
+			&& !$event instanceof ReactionAddedEvent) {
 			return;
 		}
 
 		if (!$event->getRoom()->hasFederatedParticipants()) {
+			return;
+		}
+
+		if ($event instanceof ReactionAddedEvent) {
+			$this->notifyAboutReaction($event);
 			return;
 		}
 
@@ -128,6 +136,62 @@ class MessageSentListener implements IEventListener {
 			if ($success === null) {
 				$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
 			}
+		}
+	}
+
+	/**
+	 * Reactions are no regular chat messages, so the server of the user that
+	 * wrote the reacted-to message is informed with a dedicated notification,
+	 * so it can notify the user when they are fully subscribed to the
+	 * conversation. The notification level of federated users is only known
+	 * on their home server, so it is checked there, like done for local users
+	 * in {@see \OCA\Talk\Chat\Notifier::notifyReacted()}.
+	 */
+	protected function notifyAboutReaction(ReactionAddedEvent $event): void {
+		$comment = $event->getMessage();
+		if ($comment->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
+			// Local users are already handled by \OCA\Talk\Chat\Notifier::notifyReacted()
+			return;
+		}
+
+		if ($comment->getActorId() === $event->getActorId()
+			&& $event->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			// User reacted to their own message
+			return;
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantByActor(
+				$event->getRoom(),
+				Attendee::ACTOR_FEDERATED_USERS,
+				$comment->getActorId(),
+			);
+		} catch (ParticipantNotFoundException) {
+			return;
+		}
+
+		$reactionData = [
+			'remoteMessageId' => (int)$comment->getId(),
+			'actorType' => $event->getActorType(),
+			'actorId' => $event->getActorId(),
+			'actorDisplayName' => $event->getActorDisplayName(),
+			'reaction' => $event->getReaction(),
+			'creationDatetime' => ($event->getReactionMessage()?->getCreationDateTime() ?? new \DateTime())->format(\DateTime::ATOM),
+		];
+
+		$attendee = $participant->getAttendee();
+		$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
+
+		$success = $this->backendNotifier->sendReactionAdded(
+			$cloudId->getRemote(),
+			$attendee->getId(),
+			$attendee->getAccessToken(),
+			$event->getRoom()->getToken(),
+			$reactionData,
+		);
+
+		if ($success === null) {
+			$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
 		}
 	}
 }

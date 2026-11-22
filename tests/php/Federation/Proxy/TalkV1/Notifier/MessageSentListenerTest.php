@@ -11,6 +11,8 @@ namespace OCA\Talk\Tests\php\Federation\Proxy\TalkV1\Notifier;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\MessageSentListener;
 use OCA\Talk\Model\Attendee;
@@ -118,5 +120,92 @@ class MessageSentListenerTest extends TestCase {
 		$this->listener->handle(new ChatMessageSentEvent($room, $comment));
 
 		$this->assertSame($expectedAttendeeIds, $notifiedAttendeeIds);
+	}
+
+	public function testReactionAddedNotifiesFederatedAuthor(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('hasFederatedParticipants')->willReturn(Room::HAS_FEDERATION_TALKv1);
+		$room->method('getToken')->willReturn('room');
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getId')->willReturn('42');
+		$comment->method('getActorType')->willReturn(Attendee::ACTOR_FEDERATED_USERS);
+		$comment->method('getActorId')->willReturn('author@remote');
+
+		$reactionComment = $this->createMock(IComment::class);
+		$reactionComment->method('getCreationDateTime')->willReturn(new \DateTime('2025-01-01T00:00:00+00:00'));
+
+		$participant = $this->createFederatedParticipant(1, Attendee::PERMISSIONS_DEFAULT);
+		$participant->getAttendee()->setActorId('author@remote');
+		$this->participantService->method('getParticipantByActor')
+			->with($room, Attendee::ACTOR_FEDERATED_USERS, 'author@remote')
+			->willReturn($participant);
+
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getRemote')->willReturn('remote');
+		$this->cloudIdManager->method('resolveCloudId')
+			->with('author@remote')
+			->willReturn($cloudId);
+
+		$this->backendNotifier->expects($this->once())
+			->method('sendReactionAdded')
+			->with(
+				'remote',
+				1,
+				'token1',
+				'room',
+				$this->callback(static fn (array $reactionData): bool => $reactionData['remoteMessageId'] === 42
+					&& $reactionData['actorType'] === Attendee::ACTOR_USERS
+					&& $reactionData['actorId'] === 'reactor'
+					&& $reactionData['actorDisplayName'] === 'Reactor'
+					&& $reactionData['reaction'] === '👍'
+					&& $reactionData['creationDatetime'] === '2025-01-01T00:00:00+00:00'),
+			)
+			->willReturn(true);
+
+		$this->listener->handle(new ReactionAddedEvent(
+			$room,
+			$comment,
+			Attendee::ACTOR_USERS,
+			'reactor',
+			'Reactor',
+			'👍',
+			$reactionComment,
+		));
+	}
+
+	public static function dataReactionAddedSkipped(): array {
+		return [
+			'local author' => [Attendee::ACTOR_USERS, 'author', Attendee::ACTOR_USERS, 'reactor'],
+			'reaction to own message' => [Attendee::ACTOR_FEDERATED_USERS, 'author@remote', Attendee::ACTOR_FEDERATED_USERS, 'author@remote'],
+			'author left the room' => [Attendee::ACTOR_FEDERATED_USERS, 'author@remote', Attendee::ACTOR_USERS, 'reactor'],
+		];
+	}
+
+	#[DataProvider('dataReactionAddedSkipped')]
+	public function testReactionAddedSkipped(string $authorType, string $authorId, string $reactorType, string $reactorId): void {
+		$room = $this->createMock(Room::class);
+		$room->method('hasFederatedParticipants')->willReturn(Room::HAS_FEDERATION_TALKv1);
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getActorType')->willReturn($authorType);
+		$comment->method('getActorId')->willReturn($authorId);
+
+		if ($authorType === Attendee::ACTOR_FEDERATED_USERS && $reactorId !== $authorId) {
+			$this->participantService->method('getParticipantByActor')
+				->willThrowException(new ParticipantNotFoundException());
+		}
+
+		$this->backendNotifier->expects($this->never())
+			->method('sendReactionAdded');
+
+		$this->listener->handle(new ReactionAddedEvent(
+			$room,
+			$comment,
+			$reactorType,
+			$reactorId,
+			'Reactor',
+			'👍',
+		));
 	}
 }
