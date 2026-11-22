@@ -12,6 +12,7 @@ use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleEditedEvent;
 use OCA\Circles\Events\EditingCircleEvent;
+use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
@@ -95,6 +96,7 @@ use OCA\Talk\Listener\CalDavEventListener;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Listener\CircleEditedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
+use OCA\Talk\Listener\CirclesEnabledListener;
 use OCA\Talk\Listener\ClassifiedRoomAutoDeleteListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\DisplayNameListener;
@@ -105,6 +107,9 @@ use OCA\Talk\Listener\LoadNavigationEntryListener;
 use OCA\Talk\Listener\NoteToSelfListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\SampleConversationsListener;
+use OCA\Talk\Listener\TeamFederatedListener;
+use OCA\Talk\Listener\TeamRoomListener;
+use OCA\Talk\Listener\TeamRoomSettingsListener;
 use OCA\Talk\Listener\ThreadListener;
 use OCA\Talk\Listener\UnarchiveConversationListener;
 use OCA\Talk\Listener\UserDeletedListener;
@@ -140,6 +145,7 @@ use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
 use OCA\Talk\Team\TalkTeamResourceProvider;
+use OCP\App\Events\AppEnableEvent;
 use OCP\App\IAppManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -305,6 +311,18 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(CircleEditedEvent::class, CircleEditedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
+
+		// Team rooms
+		$context->registerEventListener(RoomCreatedEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(AddingCircleMemberEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(RemovingCircleMemberEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(EditingCircleMemberEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(EditingCircleEvent::class, TeamRoomSettingsListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, TeamRoomSettingsListener::class);
+		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, TeamRoomSettingsListener::class);
+		$context->registerEventListener(AttendeeRemovedEvent::class, TeamFederatedListener::class);
+		$context->registerEventListener(RoomDeletedEvent::class, TeamFederatedListener::class);
+		$context->registerEventListener(AppEnableEvent::class, CirclesEnabledListener::class);
 
 		// Notification listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, NotificationListener::class);

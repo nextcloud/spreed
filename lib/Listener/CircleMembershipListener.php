@@ -96,7 +96,8 @@ class CircleMembershipListener extends AMembershipListener {
 		}
 
 		$invitedBy = $circle->hasInitiator() ? $circle->getInitiator() : $newMember->getInvitedBy();
-		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
+		// Remote users can have the same user id as a local user
+		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->isLocal() && !empty($invitedBy->getUserId())) {
 			$this->session->set('talk-overwrite-actor-id', $invitedBy->getUserId());
 			$this->session->set('talk-overwrite-actor-displayname', $invitedBy->getDisplayName());
 		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getBasedOn()?->getSource() === Member::APP_OCC) {
@@ -116,8 +117,8 @@ class CircleMembershipListener extends AMembershipListener {
 			return;
 		}
 
-		if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
-			// Not a user?
+		if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal() || empty($member->getUserId())) {
+			// Not a (local) user?
 			return;
 		}
 
@@ -152,8 +153,8 @@ class CircleMembershipListener extends AMembershipListener {
 		$circle = $event->getCircle();
 		$removedMember = $event->getMember();
 
-		if ($removedMember->getUserType() !== Member::TYPE_USER || $removedMember->getUserId() === '') {
-			// Not a user?
+		if ($removedMember->getUserType() !== Member::TYPE_USER || !$removedMember->isLocal() || empty($removedMember->getUserId())) {
+			// Not a (local) user? Remote users can have the same user id as a local user
 			return;
 		}
 
@@ -164,7 +165,7 @@ class CircleMembershipListener extends AMembershipListener {
 		}
 
 		$removedBy = $circle->hasInitiator() ? $circle->getInitiator() : $removedMember->getInvitedBy();
-		if ($removedBy->getUserType() === Member::TYPE_USER && $removedBy->getUserId() !== '') {
+		if ($removedBy->getUserType() === Member::TYPE_USER && $removedBy->isLocal() && !empty($removedBy->getUserId())) {
 			$this->session->set('talk-overwrite-actor-id', $removedBy->getUserId());
 			$this->session->set('talk-overwrite-actor-displayname', $removedBy->getDisplayName());
 		} elseif ($removedBy->getUserType() === Member::TYPE_APP && $removedBy->getUserId() === 'occ') {

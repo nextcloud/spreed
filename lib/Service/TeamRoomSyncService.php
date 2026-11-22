@@ -10,6 +10,7 @@ namespace OCA\Talk\Service;
 
 use OCA\Circles\Model\Member;
 use OCA\Talk\BackgroundJob\ResyncTeamRoom;
+use OCA\Talk\BackgroundJob\ResyncTeamRoomsNow;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
@@ -117,6 +118,17 @@ class TeamRoomSyncService {
 		if (!$this->jobList->has(ResyncTeamRoom::class, $argument)) {
 			$this->jobList->add(ResyncTeamRoom::class, $argument);
 		}
+	}
+
+	/**
+	 * Start a resync pass over all team rooms, unless one is still running
+	 * (ResyncTeamRoomsNow queues itself again with its cursor until it is done)
+	 */
+	public function queueFullResync(): void {
+		foreach ($this->jobList->getJobsIterator(ResyncTeamRoomsNow::class, 1, 0) as $job) {
+			return;
+		}
+		$this->jobList->add(ResyncTeamRoomsNow::class, ['afterId' => 0]);
 	}
 
 	public function resyncRoom(Room $room, bool $inviteFederated): void {
