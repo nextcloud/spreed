@@ -112,6 +112,22 @@ class ParticipantService {
 		Room::OBJECT_TYPE_CLASSIFIED_PERSIST,
 		Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
 		Room::OBJECT_TYPE_INSTANT_MEETING,
+		// Several owners: the team owner and the team admins
+		Room::OBJECT_TYPE_TEAM,
+	];
+
+	/**
+	 * Team conversations only have team members: accounts of the team, and
+	 * federated users when the team allows them. Matrix users are only in
+	 * Matrix conversations, bridged users come from Matterbridge.
+	 */
+	protected const TEAM_ROOM_FORBIDDEN_ACTOR_TYPES = [
+		Attendee::ACTOR_MATRIX,
+		Attendee::ACTOR_BRIDGED,
+		// Guests of all kinds: the Teams app has none (guest accounts are users)
+		Attendee::ACTOR_GUESTS,
+		Attendee::ACTOR_EMAILS,
+		Attendee::ACTOR_PHONES,
 	];
 
 	/** @var array<int, array<string, array<string, Participant>>> */
@@ -153,6 +169,27 @@ class ParticipantService {
 	 * @throws ParticipantTypeException
 	 */
 	public function updateParticipantTypeByModerator(Room $room, Participant $actor, Participant $target, bool $promote, ?int $requestedType = null): int {
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+			&& $target->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			// Roles of users are their levels in the team, changed in the Teams app
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_ROOM_TYPE);
+		}
+
+		$newType = $this->getParticipantTypeChangeByModerator($room, $actor, $target, $promote, $requestedType);
+		$this->updateParticipantType($room, $target, $newType);
+
+		return $newType;
+	}
+
+	/**
+	 * Check a promotion/demotion by a moderator without applying it
+	 *
+	 * @param bool $promote Whether the attendee should be promoted or demoted
+	 * @param int|null $requestedType Target level, or null to only toggle the moderator level
+	 * @return int The new participant type
+	 * @throws ParticipantTypeException
+	 */
+	public function getParticipantTypeChangeByModerator(Room $room, Participant $actor, Participant $target, bool $promote, ?int $requestedType = null): int {
 		$attendee = $target->getAttendee();
 		$currentType = $attendee->getParticipantType();
 
@@ -207,8 +244,6 @@ class ParticipantService {
 			// Never leave the conversation without a moderator
 			throw new ParticipantTypeException(ParticipantTypeException::REASON_LAST_MODERATOR);
 		}
-
-		$this->updateParticipantType($room, $target, $newType);
 
 		return $newType;
 	}
@@ -643,6 +678,13 @@ class ParticipantService {
 	 * @throws UnauthorizedException
 	 */
 	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, #[SensitiveParameter] string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null, ?string $displayName = null, ?string $phoneNumber = null): Participant {
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+			&& $previousParticipant?->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
+			// Team conversations have the members of the team only: email guests
+			// (email members of the team) join with their invitation, no other guests
+			throw new UnauthorizedException('Guests can not join team conversations');
+		}
+
 		$event = new BeforeGuestJoinedRoomEvent($room, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -787,6 +829,13 @@ class ParticipantService {
 		}
 		$attendees = [];
 		foreach ($participants as $participant) {
+			if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+				&& in_array($participant['actorType'], self::TEAM_ROOM_FORBIDDEN_ACTOR_TYPES, true)) {
+				// Matrix, bridged users and guests would take part without being team members
+				$this->logger->warning('Actor type ' . $participant['actorType'] . ' can not be added to team conversation ' . $room->getToken() . ', skipped');
+				continue;
+			}
+
 			$readPrivacy = Participant::PRIVACY_PUBLIC;
 			if ($participant['actorType'] === Attendee::ACTOR_USERS) {
 				if (isset($bannedUserIds[$participant['actorId']])) {
@@ -1084,8 +1133,8 @@ class ParticipantService {
 		$newParticipants = [];
 		foreach ($membersInCircle as $member) {
 			/** @var Member $member */
-			if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
-				// Not a user?
+			if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal() || $member->getUserId() === '') {
+				// Not a (local) user? Users of other servers can have the same user id as a local user
 				continue;
 			}
 
@@ -1374,13 +1423,13 @@ class ParticipantService {
 		$users = [];
 		foreach ($membersInCircle as $member) {
 			/** @var Member $member */
-			if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
-				// Not a user?
+			if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal() || $member->getUserId() === '') {
+				// Not a (local) user? Users of other servers can have the same user id as a local user
 				continue;
 			}
 
 			if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
-				// Only allow invited and regular members
+				// Also invited users: they were added as participants before invitations were left out
 				continue;
 			}
 
