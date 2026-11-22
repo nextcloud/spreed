@@ -41,6 +41,11 @@ use Psr\Log\LoggerInterface;
  * @psalm-type TalkTeamRoomMarkers = array{left?: array<string, bool>, wait?: array<string, array{count: int, until: int}>, emailLeft?: array<string, bool>}
  */
 class TeamRoomSyncService {
+	/** Pause after the first failed invitation of a federated member, doubled with every further failure */
+	public const INVITATION_RETRY_PAUSE = 300;
+	/** Longest pause between two invitations: unreachable servers are still tried once a day */
+	public const INVITATION_RETRY_PAUSE_MAX = 86400;
+
 	/**
 	 * @var array<int, TalkTeamRoomMarkers>|null
 	 */
@@ -359,14 +364,22 @@ class TeamRoomSyncService {
 		}
 
 		$failures++;
-		$pause = 100;
-		$until = $this->timeFactory->getTime() + $pause;
+		$until = $this->timeFactory->getTime() + self::getInvitationRetryPause($failures);
 		$hash = $this->hashMember($key);
 		$this->updateFederatedMarkers($room, static function (array $markers) use ($hash, $failures, $until): array {
 			$markers['wait'][$hash] = ['count' => $failures, 'until' => $until];
 			return $markers;
 		});
 		return false;
+	}
+
+	/**
+	 * 5 minutes after the first failure, then doubled up to a day: servers that
+	 * are down for longer do not slow down every resync with timeouts
+	 */
+	public static function getInvitationRetryPause(int $failures): int {
+		$doublings = min(max($failures, 1) - 1, 20);
+		return min(self::INVITATION_RETRY_PAUSE << $doublings, self::INVITATION_RETRY_PAUSE_MAX);
 	}
 
 	/**
