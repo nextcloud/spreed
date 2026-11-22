@@ -102,6 +102,12 @@ class BanService {
 			try {
 				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
 				$displayname = $bannedParticipant->getAttendee()->getDisplayName();
+				if ($bannedActorType === Attendee::ACTOR_EMAILS && $room->getObjectType() === Room::OBJECT_TYPE_TEAM
+					&& !empty($bannedParticipant->getAttendee()->getInvitedCloudId())) {
+					// The actor id is the hash of the address: the ban list of team
+					// conversations shows the address to the moderators instead
+					$displayname = (string)$bannedParticipant->getAttendee()->getInvitedCloudId();
+				}
 				if ($bannedParticipant->hasModeratorPermissions()) {
 					throw new \InvalidArgumentException('moderator');
 				}
@@ -262,7 +268,8 @@ class BanService {
 
 	public function isEmailBanned(Room $room, #[\SensitiveParameter] string $email): bool {
 		$email = mb_strtolower(mb_trim($email));
-		if ($this->isActorBanned($room, Attendee::ACTOR_EMAILS, $email)) {
+		// Email guests are banned with their actor id, the hash of the address
+		if ($this->isActorBanned($room, Attendee::ACTOR_EMAILS, hash('sha256', $email))) {
 			return true;
 		}
 		foreach ($this->userManager->getByEmail($email) as $user) {

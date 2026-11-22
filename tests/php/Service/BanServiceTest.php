@@ -12,6 +12,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\CirclesAdapter;
@@ -28,12 +29,12 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class BanServiceTest extends TestCase {
+	protected CirclesAdapter&MockObject $circlesAdapter;
 	protected BanMapper&MockObject $banMapper;
 	protected ParticipantService&MockObject $participantService;
 	protected IUserManager&MockObject $userManager;
 	protected IEventDispatcher&MockObject $dispatcher;
 	protected BanService $service;
-	protected CirclesAdapter $circlesAdapter;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -77,6 +78,41 @@ class BanServiceTest extends TestCase {
 		$this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_USERS, 'bob', new \DateTime(), 'Internal note');
 	}
 
+	private function makeTeamRoom(): Room&MockObject {
+		$room = $this->createMock(Room::class);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$room->method('getToken')->willReturn('teamroom');
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('getObjectId')->willReturn('team1');
+		$this->participantService->method('getParticipantByActor')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->circlesAdapter->method('getDirectMember')
+			->willReturnCallback(static fn (string $teamId, string $userId): ?array => $userId === 'bob' ? ['level' => 4, 'joined' => 1] : null);
+		return $room;
+	}
+
+	public function testBanInTeamRoomRemovesFromTheTeamAsTheModerator(): void {
+		$room = $this->makeTeamRoom();
+		$this->banMapper->method('insert')->willReturnArgument(0);
+
+		$this->circlesAdapter->expects($this->once())
+			->method('removeDirectUser')
+			->with('team1', 'bob', 'alice');
+
+		$this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_USERS, 'bob', new \DateTime(), 'Note');
+	}
+
+	public function testBanInTeamRoomIsRefusedWhenTheTeamRefusesTheRemoval(): void {
+		$room = $this->makeTeamRoom();
+		// e.g. bob has the same team level as alice
+		$this->circlesAdapter->method('removeDirectUser')->willThrowException(new \InvalidArgumentException('level'));
+		$this->banMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('moderator');
+		$this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_USERS, 'bob', new \DateTime(), 'Note');
+	}
+
 	public function testDeleteBanLogsCriticalAction(): void {
 		$ban = new Ban();
 		$ban->setBannedActorType(Attendee::ACTOR_USERS);
@@ -101,5 +137,52 @@ class BanServiceTest extends TestCase {
 			->method('dispatchTyped');
 
 		$this->service->findAndDeleteBanByIdForRoom(12, 34);
+	}
+
+	public function testBannedEmailGuestIsFoundByTheAddress(): void {
+		// Email guests are banned with their actor id, the hash of the address
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(42);
+		$this->banMapper->method('findForBannedActorAndRoom')
+			->willReturnCallback(static function (string $actorType, string $actorId, int $roomId): Ban {
+				if ($actorType === Attendee::ACTOR_EMAILS && $actorId === hash('sha256', 'guest@example.tld') && $roomId === 42) {
+					return new Ban();
+				}
+				throw new DoesNotExistException('');
+			});
+		$this->userManager->method('getByEmail')->willReturn([]);
+
+		$this->assertTrue($this->service->isEmailBanned($room, ' Guest@Example.TLD '));
+		$this->assertFalse($this->service->isEmailBanned($room, 'other@example.tld'));
+	}
+
+	public static function dataBannedEmailGuestDisplayName(): array {
+		return [
+			'team conversation shows the address' => [Room::OBJECT_TYPE_TEAM, 'guest@example.tld'],
+			'other conversations keep the name' => ['', 'Guest'],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataBannedEmailGuestDisplayName')]
+	public function testBannedEmailGuestDisplayName(string $objectType, string $expected): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$room->method('getObjectType')->willReturn($objectType);
+		$actorId = hash('sha256', 'guest@example.tld');
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn(Attendee::fromRow([
+			'actor_type' => Attendee::ACTOR_EMAILS,
+			'actor_id' => $actorId,
+			'display_name' => 'Guest',
+			'invited_cloud_id' => 'guest@example.tld',
+		]));
+		$this->participantService->method('getParticipantByActor')->willReturn($participant);
+		$this->banMapper->method('insert')->willReturnArgument(0);
+
+		$ban = $this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_EMAILS, $actorId, new \DateTime(), 'Note');
+
+		$this->assertSame($expected, $ban->getBannedDisplayname());
+		// Still banned by the actor id, as email guests are checked when joining
+		$this->assertSame($actorId, $ban->getBannedActorId());
 	}
 }
