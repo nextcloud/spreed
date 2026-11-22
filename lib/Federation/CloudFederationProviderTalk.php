@@ -209,6 +209,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED => $this->participantModified((int)$providerId, $notification),
 			FederationManager::NOTIFICATION_ROOM_MODIFIED => $this->roomModified((int)$providerId, $notification),
 			FederationManager::NOTIFICATION_MESSAGE_POSTED => $this->messagePosted((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_REACTION_ADDED => $this->reactionAdded((int)$providerId, $notification),
 			default => throw new BadRequestException([$notificationType]),
 		};
 	}
@@ -582,6 +583,50 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);
 			$this->unarchiveService->unarchiveAfterFederatedMessage($room, $participant, $message);
 		}
+
+		return [];
+	}
+
+	/**
+	 * @param int $remoteAttendeeId
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, reactionData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string}} $notification
+	 * @return array
+	 * @throws ActionNotSupportedException
+	 * @throws AuthenticationFailedException
+	 * @throws ShareNotFound
+	 */
+	private function reactionAdded(int $remoteAttendeeId, array $notification): array {
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedConversation()) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantWithActiveSession($room, $invite->getUserId());
+		} catch (ParticipantNotFoundException) {
+			// Not accepted the invite yet
+			return [];
+		}
+
+		try {
+			$message = $this->pcmService->findByRemote(
+				$notification['remoteServerUrl'],
+				$notification['remoteToken'],
+				$notification['reactionData']['remoteMessageId'],
+			);
+		} catch (DoesNotExistException) {
+			// The message that was reacted to is not cached, so no notification can be rendered
+			return [];
+		}
+
+		$this->federationChatNotifier->handleReaction($room, $participant, $message, $notification['reactionData']);
 
 		return [];
 	}

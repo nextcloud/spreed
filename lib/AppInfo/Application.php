@@ -338,6 +338,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(LobbyModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TalkV1RoomModifiedListener::class);
 		$context->registerEventListener(ChatMessageSentEvent::class, TalkV1MessageSentListener::class);
+		$context->registerEventListener(ReactionAddedEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(SystemMessagesMultipleSentEvent::class, TalkV1MessageSentListener::class);
 		$context->registerEventListener(AttendeeRemovedEvent::class, TalkV1CancelRetryOCMListener::class);
