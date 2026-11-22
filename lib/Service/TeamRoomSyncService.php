@@ -665,7 +665,7 @@ class TeamRoomSyncService {
 	 * @throws \Exception
 	 */
 	public function archiveForDeletedTeam(Room $room): void {
-		if ($room->getObjectType() !== Room::OBJECT_TYPE_TEAM
+		if (!$room->isTeamManaged()
 			|| ($room->getReadOnly() === Room::READ_ONLY && $this->participantService->getNumberOfModerators($room) === 0)) {
 			return;
 		}

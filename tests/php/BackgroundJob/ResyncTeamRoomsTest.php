@@ -11,7 +11,6 @@ namespace OCA\Talk\Tests\php\BackgroundJob;
 use OCA\Talk\BackgroundJob\ResyncTeamRoom;
 use OCA\Talk\BackgroundJob\ResyncTeamRooms;
 use OCA\Talk\BackgroundJob\ResyncTeamRoomsNow;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\TeamRoomSyncService;
@@ -67,7 +66,7 @@ class ResyncTeamRoomsTest extends TestCase {
 	public function testResyncOfOneTeamRoom(): void {
 		$room = $this->createMock(Room::class);
 		$manager = $this->createMock(Manager::class);
-		$manager->method('getRoomByObject')->with(Room::OBJECT_TYPE_TEAM, 'team1')->willReturn($room);
+		$manager->method('getTeamRoom')->with('team1')->willReturn($room);
 		$this->syncService->expects($this->once())->method('resyncRoom')->with($room, true);
 
 		$job = new ResyncTeamRoom($this->timeFactory, $manager, $this->syncService, $this->createMock(LoggerInterface::class));
@@ -76,7 +75,7 @@ class ResyncTeamRoomsTest extends TestCase {
 
 	public function testResyncOfADeletedTeamRoomIsSkipped(): void {
 		$manager = $this->createMock(Manager::class);
-		$manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+		$manager->method('getTeamRoom')->willReturn(null);
 		$this->syncService->expects($this->never())->method('resyncRoom');
 
 		$job = new ResyncTeamRoom($this->timeFactory, $manager, $this->syncService, $this->createMock(LoggerInterface::class));
@@ -85,7 +84,7 @@ class ResyncTeamRoomsTest extends TestCase {
 
 	public function testFailingResyncOfOneTeamRoomIsLogged(): void {
 		$manager = $this->createMock(Manager::class);
-		$manager->method('getRoomByObject')->willReturn($this->createMock(Room::class));
+		$manager->method('getTeamRoom')->willReturn($this->createMock(Room::class));
 		$this->syncService->method('resyncRoom')->willThrowException(new \Exception('Circles unavailable'));
 		$logger = $this->createMock(LoggerInterface::class);
 		$logger->expects($this->once())->method('info');

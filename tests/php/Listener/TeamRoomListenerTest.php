@@ -17,7 +17,6 @@ use OCA\Circles\Model\Federated\FederatedEvent;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Tools\Model\SimpleDataStore;
 use OCA\Talk\Events\RoomCreatedEvent;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Listener\TeamRoomListener;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
@@ -70,7 +69,7 @@ class TeamRoomListenerTest extends TestCase {
 	}
 
 	private function withRoom(): void {
-		$this->manager->method('getRoomByObject')->with(Room::OBJECT_TYPE_TEAM, 'team1')->willReturn($this->room);
+		$this->manager->method('getTeamRoom')->with('team1')->willReturn($this->room);
 	}
 
 	public static function dataRemovedRightAway(): array {
@@ -97,7 +96,7 @@ class TeamRoomListenerTest extends TestCase {
 	}
 
 	public function testTeamWithoutConversation(): void {
-		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+		$this->manager->method('getTeamRoom')->willReturn(null);
 		$this->syncService->expects($this->never())->method('removeFormerTeamMember');
 		$this->syncService->expects($this->never())->method('queueResync');
 
@@ -155,6 +154,7 @@ class TeamRoomListenerTest extends TestCase {
 	public function testCreatedTeamRoomIsResyncedForAllMembers(string $objectType, int $resyncs): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn($objectType);
+		$room->method('isTeamManaged')->willReturn($objectType === Room::OBJECT_TYPE_TEAM);
 		$this->syncService->expects($this->exactly($resyncs))->method('queueResync')->with($room);
 
 		$this->listener->handle(new RoomCreatedEvent($room));

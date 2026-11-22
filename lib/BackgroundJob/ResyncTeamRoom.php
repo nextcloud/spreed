@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\TeamRoomSyncService;
@@ -41,9 +40,8 @@ class ResyncTeamRoom extends QueuedJob {
 	 */
 	#[\Override]
 	protected function run($argument): void {
-		try {
-			$room = $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $argument['teamId']);
-		} catch (RoomNotFoundException) {
+		$room = $this->manager->getTeamRoom($argument['teamId']);
+		if (is_null($room)) {
 			return;
 		}
 

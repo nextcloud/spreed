@@ -901,16 +901,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 			if ($room instanceof Room) {
 				try {
 					$participant = $this->participantService->getParticipant($room, $actorUserId, false);
-				} catch (ParticipantNotFoundException) {
+				} catch (ParticipantNotFoundException $notFound) {
+					if (!$room->isTeamManaged() || !$user instanceof IUser) {
+						// Other conversations are only returned to their participants, as before
+						throw $notFound;
+					}
 					// Team conversations: RoomService checked that the user is a member
 					// of the team, they are only not synced yet
 					$participant = null;
-					if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $user instanceof IUser) {
-						try {
-							$participant = $this->teamRoomSyncService->syncUserInTeamRoom($room, $user);
-						} catch (\Exception $syncException) {
-							$this->logger->info('User ' . $actorUserId . ' could not be added to team conversation ' . $room->getToken() . ' right away, the resync adds them', ['exception' => $syncException]);
-						}
+					try {
+						$participant = $this->teamRoomSyncService->syncUserInTeamRoom($room, $user);
+					} catch (\Exception $syncException) {
+						$this->logger->info('User ' . $actorUserId . ' could not be added to team conversation ' . $room->getToken() . ' right away, the resync adds them', ['exception' => $syncException]);
 					}
 				}
 				return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK);
@@ -1729,23 +1731,17 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse([]);
 		}
 
-		if ($this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+		if ($this->room->isTeamManaged()) {
 			return $this->addParticipantToTeamRoom($newParticipant, $source);
 		}
 
-		if ($this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
-			// Breakout rooms of team conversations: only participants of the team conversation
+		// Breakout rooms of team conversations: only participants of the team conversation
+		$teamRoom = $this->manager->getTeamRoomOf($this->room);
+		if (!is_null($teamRoom)) {
 			try {
-				$parentRoom = $this->manager->getRoomByToken($this->room->getObjectId());
-			} catch (RoomNotFoundException) {
-				$parentRoom = null;
-			}
-			if ($parentRoom?->getObjectType() === Room::OBJECT_TYPE_TEAM) {
-				try {
-					$this->participantService->getParticipantByActor($parentRoom, Attendee::ACTOR_USERS, $newParticipant);
-				} catch (ParticipantNotFoundException) {
-					return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
-				}
+				$this->participantService->getParticipantByActor($teamRoom, Attendee::ACTOR_USERS, $newParticipant);
+			} catch (ParticipantNotFoundException) {
+				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 			}
 		}
 
@@ -2008,7 +2004,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
 		}
 
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+		if ($room->isTeamManaged()
 			&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
 			&& $this->teamRoomSyncService->isMemberOfTeam($room, $participant->getAttendee())) {
 			// Members of the team leave the team in the Teams app, otherwise the next resync adds
@@ -2102,7 +2098,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'owner'], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($this->room->getObjectType() === Room::OBJECT_TYPE_TEAM
+		if ($this->room->isTeamManaged()
 			&& $this->teamRoomSyncService->isMemberOfTeam($this->room, $targetParticipant->getAttendee())) {
 			// Members of the team are removed from the team in the Teams app, otherwise the next resync adds them again
 			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);

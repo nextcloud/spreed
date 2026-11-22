@@ -169,7 +169,7 @@ class ParticipantService {
 	 * @throws ParticipantTypeException
 	 */
 	public function updateParticipantTypeByModerator(Room $room, Participant $actor, Participant $target, bool $promote, ?int $requestedType = null): int {
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+		if ($room->isTeamManaged()
 			&& $target->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			// Roles of users are their levels in the team, changed in the Teams app
 			throw new ParticipantTypeException(ParticipantTypeException::REASON_ROOM_TYPE);
@@ -678,7 +678,7 @@ class ParticipantService {
 	 * @throws UnauthorizedException
 	 */
 	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, #[SensitiveParameter] string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null, ?string $displayName = null, ?string $phoneNumber = null): Participant {
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+		if ($room->isTeamManaged()
 			&& $previousParticipant?->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
 			// Team conversations have the members of the team only: email guests
 			// (email members of the team) join with their invitation, no other guests
@@ -829,7 +829,7 @@ class ParticipantService {
 		}
 		$attendees = [];
 		foreach ($participants as $participant) {
-			if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM
+			if ($room->isTeamManaged()
 				&& in_array($participant['actorType'], self::TEAM_ROOM_FORBIDDEN_ACTOR_TYPES, true)) {
 				// Matrix, bridged users and guests would take part without being team members
 				$this->logger->warning('Actor type ' . $participant['actorType'] . ' can not be added to team conversation ' . $room->getToken() . ', skipped');

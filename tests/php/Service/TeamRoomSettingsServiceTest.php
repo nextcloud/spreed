@@ -44,6 +44,7 @@ class TeamRoomSettingsServiceTest extends TestCase {
 	private function makeRoom(string $objectType = Room::OBJECT_TYPE_TEAM, int $listable = Room::LISTABLE_NONE): Room&MockObject {
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn($objectType);
+		$room->method('isTeamManaged')->willReturn($objectType === Room::OBJECT_TYPE_TEAM);
 		$room->method('getObjectId')->willReturn('team1');
 		$room->method('getName')->willReturn('New name');
 		$room->method('getDescription')->willReturn('New description');

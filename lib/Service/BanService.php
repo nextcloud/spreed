@@ -102,7 +102,7 @@ class BanService {
 			try {
 				$bannedParticipant = $this->participantService->getParticipantByActor($room, $bannedActorType, $bannedActorId);
 				$displayname = $bannedParticipant->getAttendee()->getDisplayName();
-				if ($bannedActorType === Attendee::ACTOR_EMAILS && $room->getObjectType() === Room::OBJECT_TYPE_TEAM
+				if ($bannedActorType === Attendee::ACTOR_EMAILS && $room->isTeamManaged()
 					&& !empty($bannedParticipant->getAttendee()->getInvitedCloudId())) {
 					// The actor id is the hash of the address: the ban list of team
 					// conversations shows the address to the moderators instead
@@ -134,7 +134,7 @@ class BanService {
 		$ban->setBannedTime($bannedTime);
 		$ban->setInternalNote($internalNote);
 
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $bannedActorType === Attendee::ACTOR_USERS) {
+		if ($room->isTeamManaged() && $bannedActorType === Attendee::ACTOR_USERS) {
 			if ($moderatorActorType !== Attendee::ACTOR_USERS) {
 				// No account to act in the team with
 				throw new \InvalidArgumentException('moderator');

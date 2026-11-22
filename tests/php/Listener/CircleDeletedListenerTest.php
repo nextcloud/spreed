@@ -11,7 +11,6 @@ namespace OCA\Talk\Tests\php\Listener;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Model\Circle;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -46,7 +45,7 @@ class CircleDeletedListenerTest extends TestCase {
 
 	public function testRoomOfTheTeamIsArchivedNotDeleted(): void {
 		$teamRoom = $this->createMock(Room::class);
-		$this->manager->method('getRoomByObject')->with(Room::OBJECT_TYPE_TEAM, 'team1')->willReturn($teamRoom);
+		$this->manager->method('getTeamRoom')->with('team1')->willReturn($teamRoom);
 		$this->manager->method('getRoomsForActor')->willReturn([]);
 
 		$this->syncService->expects($this->once())->method('archiveForDeletedTeam')->with($teamRoom);
@@ -56,7 +55,7 @@ class CircleDeletedListenerTest extends TestCase {
 	}
 
 	public function testTeamAsParticipantIsStillRemovedFromOtherRooms(): void {
-		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+		$this->manager->method('getTeamRoom')->willReturn(null);
 		$room = $this->createMock(Room::class);
 		$this->manager->method('getRoomsForActor')->with(Attendee::ACTOR_CIRCLES, 'team1')->willReturn([$room]);
 		$participant = $this->createMock(Participant::class);

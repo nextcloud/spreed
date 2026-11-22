@@ -394,6 +394,7 @@ class RoomServiceTest extends TestCase {
 		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
 		$room->method('getType')->willReturn(Room::TYPE_GROUP);
 		$room->method('getObjectType')->willReturn('');
+		$room->method('isTeamManaged')->willReturn(false);
 		$room->method('getId')->willReturn(0);
 		$room->expects($this->once())->method('setLobbyState')->with(Webinary::LOBBY_NONE);
 		$room->expects($this->once())->method('setLobbyTimer')->with(null);
@@ -578,6 +579,7 @@ class RoomServiceTest extends TestCase {
 		// Dial-in without PIN lets anonymous phone guests in
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('isTeamManaged')->willReturn(true);
 		$room->method('isClassified')->willReturn(false);
 
 		$this->expectException(SipConfigurationException::class);
@@ -638,6 +640,7 @@ class RoomServiceTest extends TestCase {
 		$room->method('getName')->willReturn('Room name');
 		$room->method('getToken')->willReturn('abcdef');
 		$room->method('getObjectType')->willReturn('file');
+		$room->method('isTeamManaged')->willReturn(false);
 		$room->method('getObjectId')->willReturn('42');
 		$room->method('getBreakoutRoomMode')->willReturn(BreakoutRoom::MODE_NOT_CONFIGURED);
 		$room->method('isFederatedConversation')->willReturn(false);
@@ -731,7 +734,7 @@ class RoomServiceTest extends TestCase {
 		$this->circlesAdapter->method('getDirectMembers')->with('team1')->willReturn($members);
 		$this->circlesAdapter->method('getTeam')->with('team1')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => $config, 'local' => $local]);
 		$this->userManager->method('get')->willReturnCallback(fn (string $userId): IUser => $this->makeUser($userId));
-		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+		$this->manager->method('getTeamRoom')->willReturn(null);
 	}
 
 	public static function dataCreateTeamConversationRefused(): array {
@@ -766,7 +769,7 @@ class RoomServiceTest extends TestCase {
 	public function testOnlyOneConversationPerTeam(): void {
 		$this->circlesAdapter->method('getDirectMembers')->willReturn(['alice' => ['level' => 9, 'joined' => 1]]);
 		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => 0, 'local' => true]);
-		$this->manager->method('getRoomByObject')->with(Room::OBJECT_TYPE_TEAM, 'team1')->willReturn($this->createMock(Room::class));
+		$this->manager->method('getTeamRoom')->with('team1')->willReturn($this->createMock(Room::class));
 		$this->manager->expects($this->never())->method('createRoom');
 
 		try {
@@ -844,7 +847,7 @@ class RoomServiceTest extends TestCase {
 		$this->circlesAdapter->method('getDirectMembers')->willReturn(['alice' => ['level' => 9, 'joined' => 1]]);
 		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team name', 'description' => 'Team description', 'config' => $config, 'local' => true]);
 		$this->userManager->method('get')->willReturnCallback(fn (string $userId): IUser => $this->makeUser($userId));
-		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+		$this->manager->method('getTeamRoom')->willReturn(null);
 
 		$this->manager->expects($this->once())
 			->method('createRoom')

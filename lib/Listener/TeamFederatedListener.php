@@ -12,7 +12,6 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\AttendeeRemovedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Room;
 use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -36,7 +35,7 @@ class TeamFederatedListener implements IEventListener {
 	#[\Override]
 	public function handle(Event $event): void {
 		if ($event instanceof RoomDeletedEvent) {
-			if ($event->getRoom()->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			if ($event->getRoom()->isTeamManaged()) {
 				$this->syncService->deleteFederatedMarkers($event->getRoom());
 			}
 			return;
@@ -44,7 +43,7 @@ class TeamFederatedListener implements IEventListener {
 
 		if (!$event instanceof AttendeeRemovedEvent
 			|| $event->getReason() !== AAttendeeRemovedEvent::REASON_LEFT
-			|| $event->getRoom()->getObjectType() !== Room::OBJECT_TYPE_TEAM) {
+			|| !$event->getRoom()->isTeamManaged()) {
 			return;
 		}
 

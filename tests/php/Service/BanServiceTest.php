@@ -83,6 +83,7 @@ class BanServiceTest extends TestCase {
 		$room->method('getType')->willReturn(Room::TYPE_GROUP);
 		$room->method('getToken')->willReturn('teamroom');
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('isTeamManaged')->willReturn(true);
 		$room->method('getObjectId')->willReturn('team1');
 		$this->participantService->method('getParticipantByActor')
 			->willThrowException(new ParticipantNotFoundException());
@@ -168,6 +169,7 @@ class BanServiceTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$room->method('getType')->willReturn(Room::TYPE_GROUP);
 		$room->method('getObjectType')->willReturn($objectType);
+		$room->method('isTeamManaged')->willReturn($objectType === Room::OBJECT_TYPE_TEAM);
 		$actorId = hash('sha256', 'guest@example.tld');
 		$participant = $this->createMock(Participant::class);
 		$participant->method('getAttendee')->willReturn(Attendee::fromRow([

@@ -17,7 +17,7 @@ use OCA\Talk\Webinary;
 use Test\TestCase;
 
 class RoomTest extends TestCase {
-	private function createRoom(?\DateTime $lobbyTimer = null, int $lobbyState = Webinary::LOBBY_NONE): Room {
+	private function createRoom(?\DateTime $lobbyTimer = null, int $lobbyState = Webinary::LOBBY_NONE, string $objectType = '', string $remoteServer = '', int $attributes = 0): Room {
 		return new Room(
 			1,
 			Room::TYPE_GROUP,
@@ -32,7 +32,7 @@ class RoomTest extends TestCase {
 			'',
 			'',
 			'',
-			'',
+			$remoteServer,
 			'',
 			Attendee::PERMISSIONS_DEFAULT,
 			Participant::FLAG_DISCONNECTED,
@@ -41,8 +41,8 @@ class RoomTest extends TestCase {
 			0,
 			null,
 			$lobbyTimer,
-			'',
-			'',
+			$objectType,
+			$objectType === '' ? '' : 'object1',
 			BreakoutRoom::MODE_NOT_CONFIGURED,
 			BreakoutRoom::STATUS_STOPPED,
 			Room::RECORDING_NONE,
@@ -51,7 +51,7 @@ class RoomTest extends TestCase {
 			Room::MENTION_PERMISSIONS_EVERYONE,
 			'',
 			0,
-			0,
+			$attributes,
 		);
 	}
 
@@ -66,5 +66,20 @@ class RoomTest extends TestCase {
 		$room = $this->createRoom($timer);
 		$this->assertEquals($timer, $room->getLobbyTimer());
 		$this->assertEquals($timer, $room->getLobbyTimer());
+	}
+
+	public static function dataIsTeamManaged(): array {
+		return [
+			'conversation of a team' => [Room::OBJECT_TYPE_TEAM, '', true],
+			// Synced by the server of the team, the copy only has the attribute
+			'federated copy of a team conversation' => [Room::OBJECT_TYPE_TEAM, 'https://remote.example', false],
+			'other conversation' => ['', '', false],
+			'breakout room' => [BreakoutRoom::PARENT_OBJECT_TYPE, '', false],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataIsTeamManaged')]
+	public function testIsTeamManaged(string $objectType, string $remoteServer, bool $expected): void {
+		$this->assertSame($expected, $this->createRoom(objectType: $objectType, remoteServer: $remoteServer)->isTeamManaged());
 	}
 }

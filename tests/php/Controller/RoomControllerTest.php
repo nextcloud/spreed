@@ -78,6 +78,7 @@ class RoomControllerTest extends TestCase {
 
 	public function testNotificationLevelOfMatrixConversation(): void {
 		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->room->method('isTeamManaged')->willReturn(false);
 		$this->participantService->expects(self::once())->method('updateNotificationLevel')->with($this->participant, Participant::NOTIFY_NEVER);
 		$this->sendService->expects(self::once())
 			->method('setNotificationLevel')
@@ -89,6 +90,7 @@ class RoomControllerTest extends TestCase {
 
 	public function testInvalidNotificationLevelIsNotSentToMatrix(): void {
 		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_MATRIX);
+		$this->room->method('isTeamManaged')->willReturn(false);
 		$this->participantService->method('updateNotificationLevel')->willThrowException(new \InvalidArgumentException('level'));
 		$this->sendService->expects(self::never())->method('setNotificationLevel');
 
@@ -99,6 +101,7 @@ class RoomControllerTest extends TestCase {
 		$this->talkConfig->method('isExternalCallServiceConfigured')->willReturn(true);
 		$this->talkConfig->method('getExternalCallService')->willReturn('https://example.com/{meetingId}');
 		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EXTERNAL_CALL);
+		$this->room->method('isTeamManaged')->willReturn(false);
 		$this->room->method('getObjectId')->willReturn('meeting');
 		$this->room->method('getToken')->willReturn('abcdef');
 		$attendee = new Attendee();
@@ -128,6 +131,7 @@ class RoomControllerTest extends TestCase {
 	private function inTeamRoom(): void {
 		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
 		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$this->room->method('isTeamManaged')->willReturn(true);
 		$this->room->method('getToken')->willReturn('teamroom');
 	}
 

@@ -14,7 +14,6 @@ use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Listener\TeamRoomSettingsListener;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -57,6 +56,7 @@ class TeamRoomSettingsListenerTest extends TestCase {
 	private function makeRoom(string $objectType = Room::OBJECT_TYPE_TEAM): Room&MockObject {
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn($objectType);
+		$room->method('isTeamManaged')->willReturn($objectType === Room::OBJECT_TYPE_TEAM);
 		$room->method('getObjectId')->willReturn('team1');
 		$room->method('getToken')->willReturn('teamroom');
 		return $room;
@@ -72,21 +72,21 @@ class TeamRoomSettingsListenerTest extends TestCase {
 
 	public function testTeamChangesAreAppliedToItsRoom(): void {
 		$room = $this->makeRoom();
-		$this->manager->method('getRoomByObject')->with(Room::OBJECT_TYPE_TEAM, 'team1')->willReturn($room);
+		$this->manager->method('getTeamRoom')->with('team1')->willReturn($room);
 		$this->settingsService->expects($this->once())->method('applyTeamToRoom')->with($room);
 
 		$this->listener->handle($this->makeTeamEditedEvent());
 	}
 
 	public function testTeamWithoutRoomIsIgnored(): void {
-		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+		$this->manager->method('getTeamRoom')->willReturn(null);
 		$this->settingsService->expects($this->never())->method('applyTeamToRoom');
 
 		$this->listener->handle($this->makeTeamEditedEvent());
 	}
 
 	public function testFailureToApplyTheTeamDoesNotBreakTheTeamChange(): void {
-		$this->manager->method('getRoomByObject')->willReturn($this->makeRoom());
+		$this->manager->method('getTeamRoom')->willReturn($this->makeRoom());
 		$this->settingsService->method('applyTeamToRoom')->willThrowException(new \Exception('Circles unavailable'));
 		$this->logger->expects($this->once())->method('warning');
 

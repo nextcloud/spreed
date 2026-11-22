@@ -13,7 +13,6 @@ use OCA\Circles\Events\CircleGenericEvent;
 use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\TeamRoomSyncService;
@@ -46,15 +45,15 @@ class TeamRoomListener implements IEventListener {
 		if ($event instanceof RoomCreatedEvent) {
 			// Only the creator and the team admins are added when creating:
 			// all other members right after, by the resync
-			if ($event->getRoom()->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			if ($event->getRoom()->isTeamManaged()) {
 				$this->syncService->queueResync($event->getRoom());
 			}
 			return;
 		}
 
 		if ($event instanceof EditingCircleMemberEvent) {
-			$room = $event->getType() === CircleGenericEvent::LEVEL ? $this->getRoom($event->getCircle()->getSingleId()) : null;
-			if ($room !== null) {
+			$room = $event->getType() === CircleGenericEvent::LEVEL ? $this->manager->getTeamRoom($event->getCircle()->getSingleId()) : null;
+			if (!is_null($room)) {
 				$this->syncService->queueResync($room);
 			}
 			return;
@@ -62,8 +61,8 @@ class TeamRoomListener implements IEventListener {
 
 		if ($event instanceof AddingCircleMemberEvent || $event instanceof RemovingCircleMemberEvent) {
 			// Only direct members are participants, parent teams are not affected
-			$room = $this->getRoom($event->getCircle()->getSingleId());
-			if ($room === null) {
+			$room = $this->manager->getTeamRoom($event->getCircle()->getSingleId());
+			if (is_null($room)) {
 				return;
 			}
 			if ($event instanceof RemovingCircleMemberEvent) {
@@ -90,14 +89,6 @@ class TeamRoomListener implements IEventListener {
 		} catch (\Throwable $e) {
 			// Never fail the change in the Teams app (and its federation), the resync removes them
 			$this->logger->warning('Member of team room ' . $room->getToken() . ' could not be removed yet, will be removed by the next resync', ['exception' => $e]);
-		}
-	}
-
-	protected function getRoom(string $teamId): ?Room {
-		try {
-			return $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $teamId);
-		} catch (RoomNotFoundException) {
-			return null;
 		}
 	}
 }

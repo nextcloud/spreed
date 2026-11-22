@@ -167,6 +167,7 @@ class ParticipantServiceTest extends TestCase {
 		$room->method('getId')->willReturn(123456789);
 		$room->method('getToken')->willReturn('teamroom');
 		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('isTeamManaged')->willReturn(true);
 
 		$this->logger->expects($this->once())
 			->method('warning')

@@ -16,6 +16,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
@@ -976,6 +977,36 @@ class Manager {
 		}
 
 		return $this->createRoomObject($row);
+	}
+
+	/**
+	 * The conversation of the team, null when the team has none
+	 */
+	public function getTeamRoom(string $teamId): ?Room {
+		try {
+			return $this->getRoomByObject(Room::OBJECT_TYPE_TEAM, $teamId);
+		} catch (RoomNotFoundException) {
+			return null;
+		}
+	}
+
+	/**
+	 * The team conversation the room belongs to: the room itself, or the parent
+	 * of a breakout room. null for all other rooms.
+	 */
+	public function getTeamRoomOf(Room $room): ?Room {
+		if ($room->isTeamManaged()) {
+			return $room;
+		}
+		if ($room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
+			return null;
+		}
+		try {
+			$parentRoom = $this->getRoomByToken($room->getObjectId());
+		} catch (RoomNotFoundException) {
+			return null;
+		}
+		return $parentRoom->isTeamManaged() ? $parentRoom : null;
 	}
 
 	/**

@@ -127,6 +127,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->room = $this->createMock(Room::class);
 		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$this->room->method('isTeamManaged')->willReturn(true);
 		$this->room->method('getObjectId')->willReturn('team1');
 		$this->room->method('getToken')->willReturn('teamroom');
 		$this->room->method('getId')->willReturn(7);
@@ -722,6 +723,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 	public function testOtherConversationsAreNeverArchivedAsTeamConversation(): void {
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn('');
+		$room->method('isTeamManaged')->willReturn(false);
 		$this->roomService->expects($this->never())->method('setReadOnly');
 
 		$this->service->archiveForDeletedTeam($room);

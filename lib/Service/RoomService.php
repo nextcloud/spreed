@@ -339,11 +339,9 @@ class RoomService {
 		}
 
 		if ($objectType === Room::OBJECT_TYPE_TEAM) {
-			try {
-				$existingRoom = $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $objectId);
+			$existingRoom = $this->manager->getTeamRoom($objectId);
+			if ($existingRoom !== null) {
 				throw new CreationException(CreationException::REASON_TYPE, $existingRoom);
-			} catch (RoomNotFoundException) {
-				// Object ID is unique, continue
 			}
 		}
 
@@ -440,11 +438,7 @@ class RoomService {
 
 		if ($objectType === Room::OBJECT_TYPE_TEAM) {
 			// Created twice at the same time: the first conversation of the team stays
-			try {
-				$firstRoom = $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $objectId);
-			} catch (RoomNotFoundException) {
-				$firstRoom = $room;
-			}
+			$firstRoom = $this->manager->getTeamRoom($objectId) ?? $room;
 			if ($firstRoom->getId() !== $room->getId()) {
 				$this->deleteRoom($room);
 				throw new CreationException(CreationException::REASON_TYPE, $firstRoom);
@@ -539,7 +533,7 @@ class RoomService {
 			throw new SipConfigurationException(SipConfigurationException::REASON_CLASSIFIED);
 		}
 
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newSipEnabled === Webinary::SIP_ENABLED_NO_PIN) {
+		if ($room->isTeamManaged() && $newSipEnabled === Webinary::SIP_ENABLED_NO_PIN) {
 			// Dial-in without PIN lets anonymous phone guests in, team conversations have members only
 			throw new SipConfigurationException(SipConfigurationException::REASON_VALUE);
 		}
@@ -851,7 +845,7 @@ class RoomService {
 			throw new TypeException(TypeException::REASON_BREAKOUT_ROOM);
 		}
 
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newType === Room::TYPE_PUBLIC) {
+		if ($room->isTeamManaged() && $newType === Room::TYPE_PUBLIC) {
 			// Team members only: a public link would let guests in
 			throw new TypeException(TypeException::REASON_TYPE);
 		}
@@ -995,7 +989,7 @@ class RoomService {
 			throw new ListableException(ListableException::REASON_VALUE);
 		}
 
-		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newState === Room::LISTABLE_ALL) {
+		if ($room->isTeamManaged() && $newState === Room::LISTABLE_ALL) {
 			// Guests can not be members of a team
 			throw new ListableException(ListableException::REASON_VALUE);
 		}

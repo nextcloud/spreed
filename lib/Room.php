@@ -515,4 +515,8 @@ class Room {
 	public function isTeam(): bool {
 		return ($this->attributes & RoomAttributes::TEAM->value) === RoomAttributes::TEAM->value;
 	}
+
+	public function isTeamManaged(): bool {
+		return $this->objectType === self::OBJECT_TYPE_TEAM && !$this->isFederatedConversation();
+	}
 }

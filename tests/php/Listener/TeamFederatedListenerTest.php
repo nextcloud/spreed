@@ -31,6 +31,7 @@ class TeamFederatedListenerTest extends TestCase {
 	private function makeRoom(string $objectType): Room&MockObject {
 		$room = $this->createMock(Room::class);
 		$room->method('getObjectType')->willReturn($objectType);
+		$room->method('isTeamManaged')->willReturn($objectType === Room::OBJECT_TYPE_TEAM);
 		return $room;
 	}
 

@@ -13,10 +13,8 @@ use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\BeforeUserJoinedRoomEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Room;
 use OCA\Talk\Service\CirclesAdapter;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\TeamRoomSettingsService;
@@ -56,9 +54,8 @@ class TeamRoomSettingsListener implements IEventListener {
 	}
 
 	protected function teamEdited(EditingCircleEvent $event): void {
-		try {
-			$room = $this->manager->getRoomByObject(Room::OBJECT_TYPE_TEAM, $event->getCircle()->getSingleId());
-		} catch (RoomNotFoundException) {
+		$room = $this->manager->getTeamRoom($event->getCircle()->getSingleId());
+		if (is_null($room)) {
 			return;
 		}
 
@@ -72,7 +69,7 @@ class TeamRoomSettingsListener implements IEventListener {
 
 	protected function roomModified(RoomModifiedEvent $event): void {
 		$room = $event->getRoom();
-		if ($room->getObjectType() !== Room::OBJECT_TYPE_TEAM) {
+		if (!$room->isTeamManaged()) {
 			return;
 		}
 
@@ -92,7 +89,7 @@ class TeamRoomSettingsListener implements IEventListener {
 	 */
 	protected function userJoining(BeforeUserJoinedRoomEvent $event): void {
 		$room = $event->getRoom();
-		if ($room->getObjectType() !== Room::OBJECT_TYPE_TEAM) {
+		if (!$room->isTeamManaged()) {
 			return;
 		}
 
