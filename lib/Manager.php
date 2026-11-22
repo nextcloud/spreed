@@ -1038,6 +1038,32 @@ class Manager {
 	}
 
 	/**
+	 * Page through all rooms of an object type, ordered by id
+	 *
+	 * @param int $afterId Only rooms with a higher id (0 to start)
+	 * @return list<Room>
+	 */
+	public function getRoomsByObjectType(string $objectType, int $afterId, int $limit): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->gt('r.id', $query->createNamedParameter($afterId, IQueryBuilder::PARAM_INT)))
+			->orderBy('r.id', 'ASC')
+			->setMaxResults($limit);
+
+		$result = $query->executeQuery();
+		$rooms = [];
+		while ($row = $result->fetchAssociative()) {
+			$rooms[] = $this->createRoomObject($row);
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param string[] $tokens
 	 * @return array<string, Room>
 	 */
