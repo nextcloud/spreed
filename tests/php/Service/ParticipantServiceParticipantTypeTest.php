@@ -381,4 +381,36 @@ class ParticipantServiceParticipantTypeTest extends TestCase {
 
 		$this->assertSame(Participant::GUEST_MODERATOR, $newType);
 	}
+
+	public function testRoleChangeIsAppliedOnce(): void {
+		$room = $this->createRoom();
+		$actor = $this->createParticipant($room, Participant::OWNER, 'owner');
+		$target = $this->createParticipant($room, Participant::USER, 'user');
+
+		$service = $this->getMockBuilder(ParticipantService::class)
+			->setConstructorArgs($this->getConstructorArgs())
+			->onlyMethods(['updateParticipantType', 'getNumberOfModerators'])
+			->getMock();
+		$service->method('getNumberOfModerators')->willReturn(2);
+		$service->expects($this->once())
+			->method('updateParticipantType')
+			->with($room, $target, Participant::MODERATOR);
+
+		$service->updateParticipantTypeByModerator($room, $actor, $target, true, Participant::MODERATOR);
+	}
+
+	public function testCheckingARoleChangeDoesNotApplyIt(): void {
+		$room = $this->createRoom();
+		$actor = $this->createParticipant($room, Participant::OWNER, 'owner');
+		$target = $this->createParticipant($room, Participant::USER, 'user');
+
+		$service = $this->getMockBuilder(ParticipantService::class)
+			->setConstructorArgs($this->getConstructorArgs())
+			->onlyMethods(['updateParticipantType', 'getNumberOfModerators'])
+			->getMock();
+		$service->method('getNumberOfModerators')->willReturn(2);
+		$service->expects($this->never())->method('updateParticipantType');
+
+		$this->assertSame(Participant::MODERATOR, $service->getParticipantTypeChangeByModerator($room, $actor, $target, true, Participant::MODERATOR));
+	}
 }

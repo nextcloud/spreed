@@ -4600,6 +4600,172 @@ class FeatureContext implements Context {
 		$this->theCommandWasSuccessful();
 	}
 
+	#[Given('/^User "([^"]*)" creates personal team "([^"]*)"$/')]
+	public function createPersonalTeamAsUser(string $owner, string $team): void {
+		$this->runOcc(['circles:manage:create', '--personal', '--type', '1', '--output', 'json', $owner, $team]);
+		$this->theCommandWasSuccessful();
+
+		$data = json_decode($this->getLastStdOut(), true);
+		self::$createdTeams[$this->currentServer][$team] = $data['id'];
+	}
+
+	#[Given('/^add email "([^"]*)" to team "([^"]*)"$/')]
+	public function addEmailToTeam(string $email, string $team): void {
+		$this->runOcc(['circles:members:add', '--type', '4', self::$createdTeams[$this->currentServer][$team], $email]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^remove email "([^"]*)" from team "([^"]*)"$/')]
+	public function removeEmailFromTeam(string $email, string $team): void {
+		$this->runOcc(['circles:members:remove', $this->getTeamMember($email, $team, 4)['id']]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^add group "([^"]*)" to team "([^"]*)"$/')]
+	public function addGroupToTeam(string $group, string $team): void {
+		$this->runOcc(['circles:members:add', '--type', '2', self::$createdTeams[$this->currentServer][$team], $group]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^add team "([^"]*)" to team "([^"]*)"$/')]
+	public function addTeamToTeam(string $member, string $team): void {
+		$this->runOcc(['circles:members:add', '--type', '16', self::$createdTeams[$this->currentServer][$team], self::$createdTeams[$this->currentServer][$member]]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^remove user "([^"]*)" from team "([^"]*)"$/')]
+	public function removeUserFromTeam(string $user, string $team): void {
+		$this->runOcc(['circles:members:remove', $this->getTeamMember($user, $team)['id']]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^remove team "([^"]*)" from team "([^"]*)"$/')]
+	public function removeTeamFromTeam(string $member, string $team): void {
+		$this->runOcc(['circles:members:remove', $this->getTeamMember(self::$createdTeams[$this->currentServer][$member], $team, 16)['id']]);
+		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * Settings by their occ names (VISIBLE, OPEN, INVITE, JOINREQUEST,
+	 * FRIENDS, ROOT, FEDERATED), a leading _ removes the setting
+	 */
+	#[Given('/^set config "([^"]*)" of team "([^"]*)"$/')]
+	public function setTeamConfig(string $config, string $team): void {
+		$this->runOcc(array_merge(['circles:manage:config', self::$createdTeams[$this->currentServer][$team]], explode(' ', $config)));
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^set description of team "([^"]*)" to "([^"]*)"$/')]
+	public function setTeamDescription(string $team, string $description): void {
+		$this->runOcc(['circles:manage:edit', self::$createdTeams[$this->currentServer][$team], 'description', $description]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^set level of user "([^"]*)" in team "([^"]*)" to "(Member|Moderator|Admin|Owner)"$/')]
+	public function setTeamLevel(string $user, string $team, string $level): void {
+		$this->runOcc(['circles:members:level', $this->getTeamMember($user, $team)['id'], $level]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Then('/^user "([^"]*)" has level "(Member|Moderator|Admin|Owner)" in team "([^"]*)"$/')]
+	public function assertTeamLevel(string $user, string $level, string $team): void {
+		$levels = ['Member' => 1, 'Moderator' => 4, 'Admin' => 8, 'Owner' => 9];
+		Assert::assertSame($levels[$level], $this->getTeamMember($user, $team)['level'], 'Level of ' . $user . ' in team ' . $team);
+	}
+
+	#[Then('/^user "([^"]*)" is no direct member of team "([^"]*)"$/')]
+	public function assertNoDirectTeamMember(string $user, string $team): void {
+		$member = $this->findTeamMember($team, static fn (array $member): bool => (int)$member['userType'] === 1 && $member['userId'] === $user);
+		// Invited or asked to join (no level yet) is not a member either
+		Assert::assertTrue($member === null || $member['level'] === 0, 'User ' . $user . ' is still a direct member of team ' . $team);
+	}
+
+	#[Then('/^team "([^"]*)" has the following details$/')]
+	public function assertTeamDetails(string $team, TableNode $expected): void {
+		$this->runOcc(['circles:manage:details', '--output', 'json', self::$createdTeams[$this->currentServer][$team]]);
+		$this->theCommandWasSuccessful();
+		$details = json_decode($this->getLastStdOut(), true, flags: JSON_THROW_ON_ERROR);
+
+		$configs = ['VISIBLE' => 8, 'OPEN' => 16, 'INVITE' => 32, 'JOINREQUEST' => 64, 'FRIENDS' => 128, 'ROOT' => 8192, 'FEDERATED' => 32768];
+		foreach ($expected->getRowsHash() as $key => $value) {
+			if (isset($configs[$key])) {
+				Assert::assertSame($value === 'true', ((int)$details['config'] & $configs[$key]) !== 0, 'Config ' . $key . ' of team ' . $team);
+			} else {
+				Assert::assertEquals($value, $details[$key], ucfirst($key) . ' of team ' . $team);
+			}
+		}
+	}
+
+	/**
+	 * Joining or accepting the invitation in the Teams app (Circles API), not in Talk
+	 */
+	#[When('/^user "([^"]*)" joins team "([^"]*)" in the Teams app$/')]
+	public function userJoinsTeamInTheTeamsApp(string $user, string $team): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('PUT', '/apps/circles/circles/' . self::$createdTeams[$this->currentServer][$team] . '/join');
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	/**
+	 * A conversation with the object type "team" for the team, named after it
+	 *
+	 * "unknown team" is a team id that does not exist, so only the existence differs
+	 */
+	#[Then('/^user "([^"]*)" creates team conversation "([^"]*)" for (team "[^"]*"|unknown team) with (\d+) \((v4)\)$/')]
+	public function userCreatesTeamConversation(string $user, string $identifier, string $team, int $statusCode, string $apiVersion, ?TableNode $expectedError = null): void {
+		$label = $team === 'unknown team' ? 'Unknown team' : substr($team, 6, -1);
+		$teamId = $team === 'unknown team'
+			? 'NotExistingTeamId0000000000000'
+			: self::$createdTeams[$this->currentServer][$label];
+
+		$this->userCreatesRoomWith($user, $identifier, $statusCode, $apiVersion, new TableNode([
+			['roomType', '2'],
+			['roomName', $label],
+			['objectType', 'team'],
+			['objectId', $teamId],
+		]));
+
+		if ($expectedError instanceof TableNode) {
+			Assert::assertSame($expectedError->getRowsHash(), $this->getDataFromResponse($this->response));
+		}
+	}
+
+	#[When('/^team "([^"]*)" is deleted$/')]
+	public function teamIsDeleted(string $team): void {
+		$this->deleteTeam($team);
+	}
+
+	/**
+	 * Direct member entry in the team (circles:members:list)
+	 *
+	 * @param string $id User id, email address for $type 4, team id for $type 16
+	 * @param int $type 1 for users, 4 for email addresses, 16 for teams
+	 * @return array{id: string, level: int}
+	 */
+	protected function getTeamMember(string $id, string $team, int $type = 1): array {
+		return $this->findTeamMember($team, static fn (array $member): bool => (int)$member['userType'] === $type
+			&& ($type === 16 ? $member['singleId'] : $member['userId']) === $id)
+			?? throw new \RuntimeException('No direct member ' . $id . ' in team ' . $team);
+	}
+
+	/**
+	 * The first direct member of the team that matches (circles:members:list)
+	 *
+	 * @param callable(array<string, mixed>): bool $match
+	 * @return array{id: string, level: int}|null
+	 */
+	protected function findTeamMember(string $team, callable $match): ?array {
+		$this->runOcc(['circles:members:list', '--output', 'json', self::$createdTeams[$this->currentServer][$team]]);
+		$this->theCommandWasSuccessful();
+
+		foreach (json_decode($this->getLastStdOut(), true, flags: JSON_THROW_ON_ERROR) as $member) {
+			if ($match($member)) {
+				return ['id' => (string)$member['id'], 'level' => (int)$member['level']];
+			}
+		}
+		return null;
+	}
+
 	public function deleteTeam(string $team): void {
 		$this->runOcc(['circles:manage:destroy', self::$createdTeams[$this->currentServer][$team]]);
 		$this->theCommandWasSuccessful();

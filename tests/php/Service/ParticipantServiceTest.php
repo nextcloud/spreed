@@ -154,6 +154,33 @@ class ParticipantServiceTest extends TestCase {
 		}
 	}
 
+	public static function dataAddUsersSkipsForeignActorsInTeamRoom(): array {
+		return [
+			[Attendee::ACTOR_MATRIX, '@alice:matrix.example'],
+			[Attendee::ACTOR_BRIDGED, 'alice'],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataAddUsersSkipsForeignActorsInTeamRoom')]
+	public function testAddUsersSkipsForeignActorsInTeamRoom(string $actorType, string $actorId): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(123456789);
+		$room->method('getToken')->willReturn('teamroom');
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+
+		$this->logger->expects($this->once())
+			->method('warning')
+			->with($this->stringContains('can not be added to team conversation'));
+
+		$attendees = $this->service->addUsers($room, [[
+			'actorType' => $actorType,
+			'actorId' => $actorId,
+			'displayName' => 'Alice',
+		]], bansAlreadyChecked: true);
+
+		$this->assertSame([], $attendees);
+	}
+
 	public function testInviteEmailAddressThrowsForClassifiedRoom(): void {
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')

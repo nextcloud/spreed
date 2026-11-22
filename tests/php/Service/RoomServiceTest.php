@@ -67,8 +67,8 @@ class RoomServiceTest extends TestCase {
 	protected IUserManager&MockObject $userManager;
 	protected ISession&MockObject $session;
 	protected EmojiService $emojiService;
+	protected CirclesAdapter&MockObject $circlesAdapter;
 	protected ?RoomService $service = null;
-	protected CirclesAdapter $circlesAdapter;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -434,7 +434,7 @@ class RoomServiceTest extends TestCase {
 			$this->calendarManager,
 			$this->userManager,
 			$this->session,
-			$this->circlesAdapter,
+			$this->createMock(CirclesAdapter::class),
 		);
 
 		$room = new Room(
@@ -574,6 +574,18 @@ class RoomServiceTest extends TestCase {
 		$this->service->setSIPEnabled($room, Webinary::SIP_ENABLED);
 	}
 
+	public function testSetSIPEnabledWithoutPinThrowsForTeamRoom(): void {
+		// Dial-in without PIN lets anonymous phone guests in
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('isClassified')->willReturn(false);
+
+		$this->expectException(SipConfigurationException::class);
+		$this->expectExceptionMessage(SipConfigurationException::REASON_VALUE);
+
+		$this->service->setSIPEnabled($room, Webinary::SIP_ENABLED_NO_PIN);
+	}
+
 	public function testSetListableThrowsForClassifiedRoom(): void {
 		$room = $this->createRoomWithAttributes(RoomAttributes::CLASSIFIED->value);
 
@@ -699,5 +711,150 @@ class RoomServiceTest extends TestCase {
 		$otherBots = $botConversationMapper->findForToken('t' . $otherRoomId);
 		$this->assertCount(1, $otherBots);
 		$botConversationMapper->delete($otherBots[0]);
+	}
+
+	private function makeUser(string $userId): IUser&MockObject {
+		$user = $this->createMock(IUser::class);
+		$user->method('getUID')->willReturn($userId);
+		$user->method('getDisplayName')->willReturn(ucfirst($userId));
+		return $user;
+	}
+
+	/**
+	 * @param array<string, int> $levels User id => level of the direct members
+	 */
+	private function mockTeam(array $levels, int $config = 0, bool $local = true): void {
+		$members = [];
+		foreach ($levels as $userId => $level) {
+			$members[$userId] = ['level' => $level, 'joined' => 1];
+		}
+		$this->circlesAdapter->method('getDirectMembers')->with('team1')->willReturn($members);
+		$this->circlesAdapter->method('getTeam')->with('team1')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => $config, 'local' => $local]);
+		$this->userManager->method('get')->willReturnCallback(fn (string $userId): IUser => $this->makeUser($userId));
+		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+	}
+
+	public static function dataCreateTeamConversationRefused(): array {
+		return [
+			'creator is no member of the team' => [['bob' => 9], 0, true, Room::TYPE_GROUP, CreationException::REASON_OBJECT_ID],
+			'team of another server' => [['alice' => 9], 0, false, Room::TYPE_GROUP, CreationException::REASON_OBJECT_ID],
+			'personal team' => [['alice' => 9], 2, true, Room::TYPE_GROUP, CreationException::REASON_OBJECT_ID],
+			'public conversation' => [['alice' => 9], 0, true, Room::TYPE_PUBLIC, CreationException::REASON_TYPE],
+		];
+	}
+
+	#[DataProvider('dataCreateTeamConversationRefused')]
+	public function testCreateTeamConversationRefused(array $levels, int $config, bool $local, int $type, string $reason): void {
+		$this->mockTeam($levels, $config, $local);
+		$this->manager->expects($this->never())->method('createRoom');
+
+		try {
+			$this->service->createConversation($type, 'Team', $this->makeUser('alice'), Room::OBJECT_TYPE_TEAM, 'team1');
+			$this->fail('CreationException expected');
+		} catch (CreationException $e) {
+			$this->assertSame($reason, $e->getReason());
+		}
+	}
+
+	public function testCreateTeamConversationWithoutOwnerIsRefused(): void {
+		$this->manager->expects($this->never())->method('createRoom');
+
+		$this->expectException(CreationException::class);
+		$this->service->createConversation(Room::TYPE_GROUP, 'Team', null, Room::OBJECT_TYPE_TEAM, 'team1');
+	}
+
+	public function testOnlyOneConversationPerTeam(): void {
+		$this->circlesAdapter->method('getDirectMembers')->willReturn(['alice' => ['level' => 9, 'joined' => 1]]);
+		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => 0, 'local' => true]);
+		$this->manager->method('getRoomByObject')->with(Room::OBJECT_TYPE_TEAM, 'team1')->willReturn($this->createMock(Room::class));
+		$this->manager->expects($this->never())->method('createRoom');
+
+		try {
+			$this->service->createConversation(Room::TYPE_GROUP, 'Team', $this->makeUser('alice'), Room::OBJECT_TYPE_TEAM, 'team1');
+			$this->fail('CreationException expected');
+		} catch (CreationException $e) {
+			$this->assertSame(CreationException::REASON_TYPE, $e->getReason());
+		}
+	}
+
+	public static function dataCreatorRole(): array {
+		return [
+			'team owner' => [9, Participant::OWNER],
+			'team admin' => [8, Participant::OWNER],
+			'team moderator' => [4, Participant::MODERATOR],
+			'team member' => [1, Participant::USER],
+		];
+	}
+
+	#[DataProvider('dataCreatorRole')]
+	public function testCreatorGetsTheRoleOfTheirLevelAndTeamOwnersAreAdded(int $level, int $participantType): void {
+		$levels = ['alice' => $level, 'carol' => 1];
+		if ($level < 9) {
+			$levels['bob'] = 9;
+		}
+		$this->mockTeam($levels);
+		$room = $this->createMock(Room::class);
+		$this->manager->method('createRoom')->willReturn($room);
+
+		$expected = [[
+			'actorType' => Attendee::ACTOR_USERS,
+			'actorId' => 'alice',
+			'displayName' => 'Alice',
+			'participantType' => $participantType,
+		]];
+		if ($level < 9) {
+			$expected[] = [
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => 'bob',
+				'displayName' => 'Bob',
+				'participantType' => Participant::OWNER,
+			];
+		}
+		// Plain members are added by the sync
+		$this->participantService->expects($this->once())->method('addUsers')->with($room, $expected);
+
+		$this->service->createConversation(Room::TYPE_GROUP, 'Team', $this->makeUser('alice'), Room::OBJECT_TYPE_TEAM, 'team1');
+	}
+
+	public function testPlainMembersCanNotSetModeratorSettingsAtCreation(): void {
+		$this->mockTeam(['alice' => 1, 'bob' => 9]);
+		$this->manager->expects($this->once())
+			->method('createRoom')
+			->with(Room::TYPE_GROUP, 'Team', Room::OBJECT_TYPE_TEAM, 'team1', '', Room::READ_WRITE, $this->anything(), 0, Webinary::LOBBY_NONE, null, Webinary::SIP_DISABLED)
+			->willReturn($this->createMock(Room::class));
+
+		$this->service->createConversation(
+			Room::TYPE_GROUP, 'Team', $this->makeUser('alice'), Room::OBJECT_TYPE_TEAM, 'team1',
+			readOnly: Room::READ_ONLY,
+			messageExpiration: 3600,
+			lobbyState: Webinary::LOBBY_NON_MODERATORS,
+			sipEnabled: Webinary::SIP_ENABLED,
+		);
+	}
+
+	public static function dataTeamConversationShowsTheTeam(): array {
+		return [
+			'open and visible team is listed' => [8 | 16, Room::LISTABLE_USERS],
+			'closed team is never listed' => [0, Room::LISTABLE_NONE],
+		];
+	}
+
+	#[DataProvider('dataTeamConversationShowsTheTeam')]
+	public function testTeamConversationShowsTheTeamRightAway(int $config, int $listable): void {
+		$this->circlesAdapter->method('getDirectMembers')->willReturn(['alice' => ['level' => 9, 'joined' => 1]]);
+		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team name', 'description' => 'Team description', 'config' => $config, 'local' => true]);
+		$this->userManager->method('get')->willReturnCallback(fn (string $userId): IUser => $this->makeUser($userId));
+		$this->manager->method('getRoomByObject')->willThrowException(new RoomNotFoundException());
+
+		$this->manager->expects($this->once())
+			->method('createRoom')
+			->with(Room::TYPE_GROUP, 'Team name', Room::OBJECT_TYPE_TEAM, 'team1', '', Room::READ_WRITE, $listable)
+			->willReturnCallback(function (int $type, string $name, string $objectType, string $objectId, string $password, int $readOnly, int $listable, int $messageExpiration, int $lobbyState, ?\DateTime $lobbyTimer, int $sipEnabled, int $permissions, int $recordingConsent, int $mentionPermissions, string $description): Room {
+				$this->assertSame('Team description', $description);
+				return $this->createMock(Room::class);
+			});
+
+		// The preset asks for listing, the closed team does not allow it
+		$this->service->createConversation(Room::TYPE_GROUP, 'Requested name', $this->makeUser('alice'), Room::OBJECT_TYPE_TEAM, 'team1', listable: Room::LISTABLE_USERS);
 	}
 }
