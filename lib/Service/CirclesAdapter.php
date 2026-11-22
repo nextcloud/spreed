@@ -15,6 +15,7 @@ use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Service\CircleService;
 use OCA\Circles\Service\ContactService;
+use OCA\Circles\Service\FederatedUserService;
 use OCP\App\IAppManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -354,14 +355,11 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	protected function asSuperUser(callable $callback): mixed {
-		return $this->run(static function (CirclesManager $manager) use ($callback): mixed {
-			$manager->startSuperSession();
-			try {
-				return $callback($manager);
-			} finally {
-				$manager->stopSession();
-			}
-		});
+		return $this->run(fn (CirclesManager $manager): mixed => $this->inSession(
+			$manager,
+			static fn () => $manager->startSuperSession(),
+			$callback,
+		));
 	}
 
 	/**
@@ -371,14 +369,38 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	protected function asUser(string $userId, callable $callback): mixed {
-		return $this->run(static function (CirclesManager $manager) use ($userId, $callback): mixed {
-			$manager->startSession($manager->getFederatedUser($userId, Member::TYPE_USER));
-			try {
-				return $callback($manager);
-			} finally {
-				$manager->stopSession();
+		return $this->run(fn (CirclesManager $manager): mixed => $this->inSession(
+			$manager,
+			function () use ($manager, $userId): void {
+				$manager->startSession($manager->getFederatedUser($userId, Member::TYPE_USER));
+				// Never as super user, also when called inside a super session of Circles or another app
+				$this->getCirclesService(FederatedUserService::class)->bypassCurrentUserCondition(false);
+			},
+			$callback,
+		));
+	}
+
+	/**
+	 * @template T
+	 * @param callable(): void $start
+	 * @param callable(CirclesManager): T $callback
+	 * @return T
+	 */
+	protected function inSession(CirclesManager $manager, callable $start, callable $callback): mixed {
+		$federatedUserService = $this->getCirclesService(FederatedUserService::class);
+		$previousUser = $federatedUserService->getCurrentUser();
+		$previousBypass = $federatedUserService->canBypassCurrentUserCondition();
+
+		$start();
+		try {
+			return $callback($manager);
+		} finally {
+			$manager->stopSession();
+			if ($previousUser !== null) {
+				$federatedUserService->setCurrentUser($previousUser);
 			}
-		});
+			$federatedUserService->bypassCurrentUserCondition($previousBypass);
+		}
 	}
 
 	/**

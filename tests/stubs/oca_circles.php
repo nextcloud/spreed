@@ -5,6 +5,16 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+namespace OCA\Circles {
+	interface IFederatedUser {
+	}
+}
+
+namespace OCA\Circles\Model {
+	class FederatedUser implements \OCA\Circles\IFederatedUser {
+	}
+}
+
 namespace OCA\Circles\Events {
 
 	use OCA\Circles\Model\Circle;
@@ -103,6 +113,17 @@ namespace OCA\Circles\Service {
 		 * @return string[]
 		 */
 		public function getMailAddressesFromMember(\OCA\Circles\Model\Member $member): array {
+		}
+	}
+
+	class FederatedUserService {
+		public function getCurrentUser(): ?\OCA\Circles\Model\FederatedUser {
+		}
+		public function setCurrentUser(\OCA\Circles\IFederatedUser $federatedUser): void {
+		}
+		public function bypassCurrentUserCondition(bool $bypass): void {
+		}
+		public function canBypassCurrentUserCondition(): bool {
 		}
 	}
 

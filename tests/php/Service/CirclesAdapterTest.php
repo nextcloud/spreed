@@ -11,7 +11,9 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Model\Circle;
+use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\Member;
+use OCA\Circles\Service\FederatedUserService;
 use OCA\Talk\Service\CirclesAdapter;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -24,6 +26,10 @@ class CirclesAdapterTest extends TestCase {
 	protected IAppManager&MockObject $appManager;
 	protected ContainerInterface&MockObject $container;
 	protected CirclesManager&MockObject $circlesManager;
+	protected FederatedUserService&MockObject $federatedUserService;
+	/** Session state of Circles, as FederatedUserService keeps it */
+	protected ?FederatedUser $currentUser = null;
+	protected bool $bypass = false;
 	protected CirclesAdapter $adapter;
 
 	public function setUp(): void {
@@ -32,7 +38,12 @@ class CirclesAdapterTest extends TestCase {
 		$this->appManager->method('isEnabledForAnyone')->with('circles')->willReturn(true);
 		$this->circlesManager = $this->createMock(CirclesManager::class);
 		$this->container = $this->createMock(ContainerInterface::class);
-		$this->container->method('get')->with(CirclesManager::class)->willReturn($this->circlesManager);
+		$this->federatedUserService = $this->createMock(FederatedUserService::class);
+		$this->container->method('get')->willReturnCallback(fn (string $class): object => match ($class) {
+			CirclesManager::class => $this->circlesManager,
+			FederatedUserService::class => $this->federatedUserService,
+		});
+		$this->mockSessionState();
 
 		$this->adapter = new CirclesAdapter($this->appManager, $this->container, $this->createMock(LoggerInterface::class));
 	}
@@ -155,5 +166,79 @@ class CirclesAdapterTest extends TestCase {
 		} catch (\Exception $e) {
 			$this->assertFalse(CirclesAdapter::isTeamNotFound($e));
 		}
+	}
+
+	/**
+	 * The session methods of CirclesManager and FederatedUserService change the same state
+	 */
+	private function mockSessionState(): void {
+		$this->circlesManager->method('startSuperSession')->willReturnCallback(function (): void {
+			$this->currentUser = null;
+			$this->bypass = true;
+		});
+		$this->circlesManager->method('startSession')->willReturnCallback(function (?FederatedUser $federatedUser = null): void {
+			$this->currentUser = $federatedUser;
+		});
+		$this->circlesManager->method('stopSession')->willReturnCallback(function (): void {
+			$this->currentUser = null;
+			$this->bypass = false;
+		});
+		$this->federatedUserService->method('getCurrentUser')->willReturnCallback(fn (): ?FederatedUser => $this->currentUser);
+		$this->federatedUserService->method('setCurrentUser')->willReturnCallback(function (FederatedUser $federatedUser): void {
+			$this->currentUser = $federatedUser;
+		});
+		$this->federatedUserService->method('canBypassCurrentUserCondition')->willReturnCallback(fn (): bool => $this->bypass);
+		$this->federatedUserService->method('bypassCurrentUserCondition')->willReturnCallback(function (bool $bypass): void {
+			$this->bypass = $bypass;
+		});
+	}
+
+	public function testSuperSessionRestoresTheSessionOfTheCaller(): void {
+		// E.g. Talk reads the team in a listener while Circles runs a change of a user
+		$caller = $this->createMock(FederatedUser::class);
+		$this->currentUser = $caller;
+
+		$during = null;
+		$this->circlesManager->method('getCircle')->willReturnCallback(function () use (&$during): Circle {
+			$during = [$this->currentUser, $this->bypass];
+			$circle = $this->createMock(Circle::class);
+			$circle->method('getMembers')->willReturn([]);
+			return $circle;
+		});
+
+		$this->adapter->getDirectMembers('team1');
+
+		$this->assertSame([null, true], $during);
+		$this->assertSame($caller, $this->currentUser);
+		$this->assertFalse($this->bypass);
+	}
+
+	public function testUserSessionInsideASuperSessionIsNoSuperUser(): void {
+		// E.g. Talk writes as a user while Circles or another app runs a super session
+		$this->bypass = true;
+		$alice = $this->createMock(FederatedUser::class);
+		$this->circlesManager->method('getFederatedUser')->with('alice', Member::TYPE_USER)->willReturn($alice);
+
+		$during = self::invokePrivate($this->adapter, 'asUser', ['alice', fn (): array => [$this->currentUser, $this->bypass]]);
+
+		$this->assertSame([$alice, false], $during);
+		// The super session of the caller is back
+		$this->assertNull($this->currentUser);
+		$this->assertTrue($this->bypass);
+	}
+
+	public function testSessionIsRestoredWhenCirclesFails(): void {
+		$caller = $this->createMock(FederatedUser::class);
+		$this->currentUser = $caller;
+		$this->circlesManager->method('getCircle')->willThrowException(new \RuntimeException('Deadlock'));
+
+		try {
+			$this->adapter->getTeam('team1');
+			$this->fail('Exception expected');
+		} catch (\Exception) {
+		}
+
+		$this->assertSame($caller, $this->currentUser);
+		$this->assertFalse($this->bypass);
 	}
 }
