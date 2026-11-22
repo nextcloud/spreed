@@ -6,11 +6,9 @@
  */
 
 namespace OC\Hooks {
-	class Emitter {
-		public function emit(string $class, string $value, array $option) {
-		}
-		/** Closure $closure */
-		public function listen(string $class, string $value, $closure) {
-		}
+	interface Emitter {
+		public function listen($scope, $method, callable $callback);
+
+		public function removeListener($scope = null, $method = null, ?callable $callback = null);
 	}
 }

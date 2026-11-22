@@ -44,7 +44,7 @@ class TrustedServers {
 	 * @return list<array{id: int, url: string, url_hash: string, shared_secret: ?string, status: int, sync_token: ?string}>
 	 * @throws Exception
 	 */
-	public function getServers() {
+	public function getServers(): ?array {
 	}
 	/**
 	 * Check if given server is a trusted Nextcloud server
