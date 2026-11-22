@@ -160,6 +160,10 @@ PROMPT;
 			new AppConfigEntry(new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false, definition: 'Set automatically when the High-performance backend supports the `changed-users` feature, so only the affected users are sent in room updates')),
 			new AppConfigEntry(new Entry(Config::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 604800, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)')),
 			new AppConfigEntry(
+				new Entry(Config::TEAM_FEDERATED_MEMBERS, ValueType::ARRAY, [], definition: 'Set automatically: per team room (room id), the federated members and email guests of the team who declined or left (not invited again) and the pause after failed invitations, by HMAC-SHA256 (with the instance secret) of the cloud id or email address', lazy: true),
+				arrayType: 'array<int, array{left?: array<string, bool>, wait?: array<string, array{count: int, until: int}>, emailLeft?: array<string, bool>}>',
+			),
+			new AppConfigEntry(
 				new Entry(Config::STUN_SERVERS, ValueType::ARRAY, [Config::DEFAULT_STUN_SERVER], definition: 'List of STUN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
 				hash: true,
 				adminSetting: true,

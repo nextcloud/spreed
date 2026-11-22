@@ -161,6 +161,7 @@ Legend:
 | `start_conversations` | `list<string>` | `[]` | Yes | 🖌️ | List of group ids that are allowed to create conversations (everyone when empty) |
 | `stun_servers` | `list<string>` | `["stun.nextcloud.com:443"]` | Yes | 🖌️💻 | List of STUN servers for WebRTC connections |
 | `summary_threshold` | int | `100` | No |  | Amount of unread messages a user needs before they see the option to summarize with AI |
+| `team_federated_members` | `array<int, array{left?: array<string, bool>, wait?: array<string, array{count: int, until: int}>, emailLeft?: array<string, bool>}>` | `[]` | No |  | Set automatically: per team room (room id), the federated members and email guests of the team who declined or left (not invited again) and the pause after failed invitations, by HMAC-SHA256 (with the instance secret) of the cloud id or email address |
 | `token_entropy` | int | `8` | No |  | Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort |
 | `turn_servers` | `list<array{schemes: string, server: string, secret: string, protocols: string}>` | `[]` | Yes | 🖌️💻 | List of TURN servers for WebRTC connections |
 
