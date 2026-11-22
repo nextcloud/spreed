@@ -24,7 +24,7 @@ final class HttpFactory implements RequestFactoryInterface, ResponseFactoryInter
 	public function createStream(string $content = ''): StreamInterface {
 	}
 
-	public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface {
+	public function createStreamFromFile(string $file, string $mode = 'r'): StreamInterface {
 	}
 
 	public function createStreamFromResource($resource): StreamInterface {

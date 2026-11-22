@@ -8,6 +8,6 @@
 namespace GuzzleHttp\Exception;
 
 class ClientException extends \RuntimeException {
-	public function getResponse() {
+	public function getResponse(): \Psr\Http\Message\ResponseInterface {
 	}
 }

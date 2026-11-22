@@ -9,7 +9,7 @@ namespace GuzzleHttp\Exception;
 
 class ServerException extends \RuntimeException {
 
-	public function getResponse() {
+	public function getResponse(): \Psr\Http\Message\ResponseInterface {
 	}
 	public function hasResponse(): bool {
 	}

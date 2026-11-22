@@ -11,7 +11,7 @@ use OCP\Http\Client\IResponse;
 use Psr\Http\Message\ResponseInterface;
 
 class Response implements IResponse {
-	public function __construct(ResponseInterface $response, $stream = false) {
+	public function __construct(ResponseInterface $response, bool $stream = false) {
 	}
 
 	public function getBody() {
