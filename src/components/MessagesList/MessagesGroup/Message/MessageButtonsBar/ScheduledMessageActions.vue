@@ -93,6 +93,7 @@ async function handleReschedule(timestamp: number) {
 		await chatExtrasStore.editScheduledMessage(props.message.token, props.message.id, {
 			message: props.message.message,
 			sendAt: convertToUnix(timestamp),
+			silent: props.message.silent,
 		})
 		EventBus.emit('focus-message', { messageId: props.message.id })
 	} catch (e) {
