@@ -50,8 +50,8 @@ class TeamRoomSyncServiceTest extends TestCase {
 	private const LEVEL_ADMIN = 8;
 	private const LEVEL_OWNER = 9;
 
-	/** TeamRoomSyncService::inviteFederatedMember() */
-	private const INVITATION_PAUSE = 100;
+	/** Pause after the first failed invitation */
+	private const INVITATION_PAUSE = TeamRoomSyncService::INVITATION_RETRY_PAUSE;
 
 	protected CirclesAdapter&MockObject $circlesAdapter;
 	protected Manager&MockObject $manager;
@@ -914,5 +914,34 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$attendee = Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']);
 		$this->assertSame($expected, $this->service->isMemberOfTeam($this->room, $attendee));
+	}
+
+	public static function dataInvitationRetryPause(): array {
+		return [
+			'first failure' => [1, 300],
+			'second failure' => [2, 600],
+			'fifth failure' => [5, 4800],
+			'ninth failure' => [9, 76800],
+			'never longer than a day' => [10, 86400],
+			'also after many failures' => [1000, 86400],
+		];
+	}
+
+	#[DataProvider('dataInvitationRetryPause')]
+	public function testInvitationRetryPauseGrows(int $failures, int $pause): void {
+		$this->assertSame($pause, TeamRoomSyncService::getInvitationRetryPause($failures));
+	}
+
+	public function testRepeatedFailureWaitsLonger(): void {
+		$this->mockRemoteBob();
+		// Third try after two failures
+		$this->appConfig->method('getAppValueArray')->willReturn([7 => ['wait' => [self::hmac('bob@remote.example') => ['count' => 2, 'until' => 1000000 - 1]]]]);
+		$this->participantService->method('addUsers')->willThrowException(new CannotReachRemoteException());
+
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::TEAM_FEDERATED_MEMBERS, [7 => ['wait' => [self::hmac('bob@remote.example') => ['count' => 3, 'until' => 1000000 + 1200]]]]);
+
+		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
 	}
 }
