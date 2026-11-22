@@ -68,8 +68,8 @@ jobs:
           - 'sharing-2'
           - 'sharing-3'
           - 'sharing-4'
-        php-versions: ['8.5']
-        server-versions: ['master']
+        php-versions: ['8.6']
+        server-versions: ['techdebt/8.6/welcome']
         guests-versions: ['main']
         circles-versions: ['master']
         notifications-versions: ['master']
