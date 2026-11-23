@@ -344,6 +344,27 @@ class CirclesAdapter {
 	}
 
 	/**
+	 * Remove the first direct member that matches (a member on another server,
+	 * an email or contact member), acting as $actorUserId: Circles checks the
+	 * permissions. Loads all members of the team, for removals in requests only.
+	 *
+	 * @param callable(Member): bool $match
+	 * @return bool False when no member matched
+	 * @throws \Exception
+	 */
+	public function removeMatchingMember(string $teamId, callable $match, string $actorUserId): bool {
+		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $match): bool {
+			foreach ($manager->getCircle($teamId)->getMembers() as $member) {
+				if ($match($member)) {
+					$manager->removeMember($member->getId());
+					return true;
+				}
+			}
+			return false;
+		});
+	}
+
+	/**
 	 * @template T
 	 * @param callable(CirclesManager): T $callback
 	 * @return T

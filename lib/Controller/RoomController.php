@@ -2125,16 +2125,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->room->isTeamManaged()) {
 			// Removing from the room = removing from the team, otherwise the next resync adds them again.
-			// Only users so far, and only by a local user: federated moderators have no
-			// account here to act in the team with, and nothing runs as super user.
+			// Only by a local user: federated moderators have no account here to act
+			// in the team with, and nothing runs as super user.
 			$target = $targetParticipant->getAttendee();
 			$isLocalActor = !is_null($this->userId) && $this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
-			if ($target->getActorType() === Attendee::ACTOR_USERS && $isLocalActor) {
+			if ($isLocalActor && in_array($target->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
 				try {
 					// Stale participants that are no member anymore are only removed from the room
-					$this->teamRoomSyncService->removeFromTeamRoom($this->room, $target->getActorId(), $this->userId);
+					match ($target->getActorType()) {
+						Attendee::ACTOR_USERS => $this->teamRoomSyncService->removeFromTeamRoom($this->room, $target->getActorId(), $this->userId),
+						Attendee::ACTOR_FEDERATED_USERS => $this->teamRoomSyncService->removeFederatedFromTeamRoom($this->room, $target->getActorId(), $this->userId),
+					};
 				} catch (\Exception $e) {
-					$this->logger->info('User ' . $target->getActorId() . ' could not be removed from the team with the team room' . $this->room->getToken(), ['exception' => $e]);
+					$this->logger->info('Attendee ' . $target->getId() . ' could not be removed from the team with the team room ' . $this->room->getToken(), ['exception' => $e]);
 					return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 				}
 
@@ -2146,7 +2149,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 					return new DataResponse(null);
 				}
 			} elseif ($this->teamRoomSyncService->isMemberOfTeam($this->room, $target)) {
-				// Federated users and email guests of the team are removed in the Teams app for now
+				// Email guests of the team are removed in the Teams app for now,
+				// and federated moderators can not change the team
 				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 			}
 		}

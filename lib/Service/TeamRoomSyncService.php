@@ -507,9 +507,15 @@ class TeamRoomSyncService {
 	}
 
 	protected function getNormalizedCloudId(#[\SensitiveParameter] ICloudId $cloudId): string {
-		// Circles and cloud ids can write the server differently: protocol, case and trailing slash
-		$server = mb_strtolower(mb_rtrim($this->cloudIdManager->removeProtocolFromUrl($cloudId->getRemote()), '/'));
-		return $cloudId->getUser() . '@' . $server;
+		return $this->getRemoteMemberKey($cloudId->getUser(), $cloudId->getRemote());
+	}
+
+	/**
+	 * Key of a member of another server: Circles and cloud ids can write the
+	 * server differently (protocol, case and trailing slash)
+	 */
+	protected function getRemoteMemberKey(#[\SensitiveParameter] string $userId, string $server): string {
+		return $userId . '@' . mb_strtolower(mb_rtrim($this->cloudIdManager->removeProtocolFromUrl($server), '/'));
 	}
 
 	/**
@@ -870,12 +876,47 @@ class TeamRoomSyncService {
 	 * @throws \Exception When the team refused it or Circles is unavailable
 	 */
 	protected function changeMembershipFromTalk(Room $room, string $userId, callable $change): void {
-		$teamId = $room->getObjectId();
-		try {
-			if (is_null($this->circlesAdapter->getDirectMember($teamId, $userId))) {
-				return;
+		$this->changeTeamOfRoomFromTalk($room, function (string $teamId) use ($userId, $change): void {
+			if (!is_null($this->circlesAdapter->getDirectMember($teamId, $userId))) {
+				$change($teamId);
 			}
-			$this->changeTeamFromTalk(static fn () => $change($teamId));
+		});
+	}
+
+	/**
+	 * Removing a federated participant from a team room means removing the
+	 * member of their server from the team, as the acting (local) user, so the
+	 * next resync does not invite them again. Only the member of their server:
+	 * other servers can have users with the same user id.
+	 *
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function removeFederatedFromTeamRoom(Room $room, #[\SensitiveParameter] string $cloudId, string $actorUserId): void {
+		try {
+			$key = $this->getNormalizedCloudId($this->cloudIdManager->resolveCloudId($cloudId));
+		} catch (\InvalidArgumentException) {
+			// No valid cloud id, so no member of the team either
+			return;
+		}
+		$this->changeTeamOfRoomFromTalk($room, fn (string $teamId) => $this->circlesAdapter->removeMatchingMember(
+			$teamId,
+			fn (Member $member): bool => $member->getUserType() === Member::TYPE_USER
+				&& !$member->isLocal()
+				&& $this->getRemoteMemberKey($member->getUserId(), $member->getInstance()) === $key,
+			$actorUserId,
+		));
+	}
+
+	/**
+	 * Run a change of the team from Talk: the Circles events of it are skipped
+	 * (Talk updates the room itself), and a deleted team needs no change.
+	 *
+	 * @param callable(string): mixed $change Gets the team id
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	protected function changeTeamOfRoomFromTalk(Room $room, callable $change): void {
+		try {
+			$this->changeTeamFromTalk(static fn () => $change($room->getObjectId()));
 		} catch (\Exception $e) {
 			if (!CirclesAdapter::isTeamNotFound($e)) {
 				throw $e;

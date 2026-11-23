@@ -1200,4 +1200,66 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->expectExceptionObject($exception);
 		$this->service->changeRoleInTeam($this->room, $actor, $target, true, Participant::OWNER);
 	}
+
+	/**
+	 * Members of the team that removeMatchingMember() is called with: the first one that matches is removed
+	 *
+	 * @param list<Member> $members
+	 * @param-out list<Member> $removed
+	 */
+	private function mockRemoveMatchingMember(array $members, ?array &$removed, ?bool &$changingFromTalk = null): void {
+		$removed = [];
+		$this->circlesAdapter->method('removeMatchingMember')
+			->willReturnCallback(function (string $teamId, callable $match, string $actorUserId) use ($members, &$removed, &$changingFromTalk): bool {
+				$this->assertSame('team1', $teamId);
+				$this->assertSame('alice', $actorUserId);
+				$changingFromTalk = $this->service->isChangingTeamFromTalk();
+				foreach ($members as $member) {
+					if ($match($member)) {
+						$removed[] = $member;
+						return true;
+					}
+				}
+				return false;
+			});
+	}
+
+	public function testRemovingAFederatedParticipantRemovesTheMemberOfTheirServer(): void {
+		// Same user id locally and on another server: only the member of their server
+		$local = $this->makeCirclesMember('bob');
+		$other = $this->makeCirclesMember('bob', 'other.example');
+		$theirs = $this->makeCirclesMember('bob', 'Remote.Example');
+		$this->mockRemoveMatchingMember([$local, $other, $theirs], $removed, $changingFromTalk);
+
+		$this->service->removeFederatedFromTeamRoom($this->room, 'bob@remote.example', 'alice');
+
+		$this->assertSame([$theirs], $removed);
+		$this->assertTrue($changingFromTalk);
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testRemovingAFederatedParticipantThatLeftTheTeam(): void {
+		// Stale participant: nothing to remove in the team, removing from the room is enough
+		$this->mockRemoveMatchingMember([$this->makeCirclesMember('carol', 'remote.example')], $removed);
+
+		$this->service->removeFederatedFromTeamRoom($this->room, 'bob@remote.example', 'alice');
+
+		$this->assertSame([], $removed);
+	}
+
+	public function testRemovingAFederatedParticipantOfADeletedTeam(): void {
+		$this->circlesAdapter->method('removeMatchingMember')
+			->willThrowException(new \Exception('Circle not found', 0, new CircleNotFoundException('Circle not found')));
+
+		$this->service->removeFederatedFromTeamRoom($this->room, 'bob@remote.example', 'alice');
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testRefusedRemovalOfAFederatedParticipantIsReported(): void {
+		$exception = new \Exception('Insufficient rights', 0, new \RuntimeException('Insufficient rights'));
+		$this->circlesAdapter->method('removeMatchingMember')->willThrowException($exception);
+
+		$this->expectExceptionObject($exception);
+		$this->service->removeFederatedFromTeamRoom($this->room, 'bob@remote.example', 'alice');
+	}
 }
