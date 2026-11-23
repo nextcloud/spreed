@@ -77,7 +77,7 @@ class TeamRoomSettingsService {
 		}
 		return !is_null($participant)
 			&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
-			&& $participant->getAttendee()->getParticipantType() === Participant::OWNER;
+			&& $participant->isOwner();
 	}
 
 	public static function isSupportedTeam(int $config): bool {

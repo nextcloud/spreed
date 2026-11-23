@@ -755,19 +755,7 @@ class TeamRoomSyncService {
 	 * @throws \Exception When the team refused it or Circles is unavailable
 	 */
 	public function leaveTeamOfRoom(Room $room, string $userId): void {
-		$teamId = $room->getObjectId();
-		try {
-			if ($this->circlesAdapter->getDirectMember($teamId, $userId) === null) {
-				// Stale participant: leaving the conversation is enough
-				return;
-			}
-			$this->changeTeamFromTalk(fn () => $this->circlesAdapter->leaveTeam($teamId, $userId));
-		} catch (\Exception $e) {
-			if (!CirclesAdapter::isTeamNotFound($e)) {
-				throw $e;
-			}
-			// The team was deleted: leaving the conversation is enough
-		}
+		$this->changeMembershipFromTalk($room, $userId, fn (string $teamId) => $this->circlesAdapter->leaveTeam($teamId, $userId));
 	}
 
 	/**
@@ -893,23 +881,30 @@ class TeamRoomSyncService {
 	 *
 	 * @throws \Exception When the team refused it or Circles is unavailable
 	 */
-	public function removeFromTeamRoom(Room $room, string $userId, string $actorUserId): bool {
-		$success = false;
+	public function removeFromTeamRoom(Room $room, string $userId, string $actorUserId): void {
+		$this->changeMembershipFromTalk($room, $userId, fn (string $teamId) => $this->circlesAdapter->removeDirectUser($teamId, $userId, $actorUserId));
+	}
+
+	/**
+	 * Change the direct membership of a user in the team of the room from Talk
+	 * (leaving, removing): a stale participant that is no member anymore, or
+	 * the deleted team, need no change, removing from the room is enough.
+	 *
+	 * @param callable(string): mixed $change Gets the team id
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	protected function changeMembershipFromTalk(Room $room, string $userId, callable $change): void {
 		$teamId = $room->getObjectId();
 		try {
-			// Stale participant: removing them from the conversation is enough
 			if (is_null($this->circlesAdapter->getDirectMember($teamId, $userId))) {
-				return true;
+				return;
 			}
-			$this->changeTeamFromTalk(fn () => $this->circlesAdapter->removeDirectUser($teamId, $userId, $actorUserId));
-			$success = true;
+			$this->changeTeamFromTalk(static fn () => $change($teamId));
 		} catch (\Exception $e) {
 			if (!CirclesAdapter::isTeamNotFound($e)) {
 				throw $e;
 			}
-			// The team was deleted: removing them from the conversation is enough
 		}
-		return $success;
 	}
 
 	/**

@@ -2123,20 +2123,30 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'owner'], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($this->room->isTeamManaged()
-			&& $this->teamRoomSyncService->isMemberOfTeam($this->room, $targetParticipant->getAttendee())) {
-			// Removing from room = removing from the team, otherwise the next resync adds them again.
+		if ($this->room->isTeamManaged()) {
+			// Removing from the room = removing from the team, otherwise the next resync adds them again.
 			// Only users so far, and only by a local user: federated moderators have no
 			// account here to act in the team with, and nothing runs as super user.
-			if ($targetParticipant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
-				|| is_null($this->userId)
-				|| $this->participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
-				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
-			}
-			try {
-				$this->teamRoomSyncService->removeFromTeamRoom($this->room, $targetParticipant->getAttendee()->getActorId(), $this->userId);
-			} catch (\Exception $e) {
-				$this->logger->info('User ' . $targetParticipant->getAttendee()->getActorId() . ' could not be removed from the team of conversation ' . $this->room->getToken(), ['exception' => $e]);
+			$target = $targetParticipant->getAttendee();
+			$isLocalActor = !is_null($this->userId) && $this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
+			if ($target->getActorType() === Attendee::ACTOR_USERS && $isLocalActor) {
+				try {
+					// Stale participants that are no member anymore are only removed from the room
+					$this->teamRoomSyncService->removeFromTeamRoom($this->room, $target->getActorId(), $this->userId);
+				} catch (\Exception $e) {
+					$this->logger->info('User ' . $target->getActorId() . ' could not be removed from the team with the team room' . $this->room->getToken(), ['exception' => $e]);
+					return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+				}
+
+				try {
+					// In web requests Circles removes the member in a separate request, and
+					// TeamRoomListener may have removed the participant already: removed once
+					$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $target->getId());
+				} catch (ParticipantNotFoundException) {
+					return new DataResponse(null);
+				}
+			} elseif ($this->teamRoomSyncService->isMemberOfTeam($this->room, $target)) {
+				// Federated users and email guests of the team are removed in the Teams app for now
 				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 			}
 		}

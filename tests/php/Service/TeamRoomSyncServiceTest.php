@@ -1135,9 +1135,8 @@ class TeamRoomSyncServiceTest extends TestCase {
 			'erin' => ['level' => self::LEVEL_MODERATOR, 'joined' => 1],
 		]);
 		$changes = [];
-		$this->circlesAdapter->method('setMemberLevel')->willReturnCallback(static function (string $teamId, string $userId, int $level, string $actorUserId) use (&$changes): bool {
+		$this->circlesAdapter->method('setMemberLevel')->willReturnCallback(static function (string $teamId, string $userId, int $level, string $actorUserId) use (&$changes): void {
 			$changes[] = [$userId, $level, $actorUserId];
-			return true;
 		});
 
 		$this->service->changeRoleInTeam($this->room, $actor, $target, false);

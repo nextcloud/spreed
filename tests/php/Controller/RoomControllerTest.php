@@ -190,11 +190,12 @@ class RoomControllerTest extends TestCase {
 		return [
 			// Removed from the team as the moderator, Circles decides
 			'member of the team' => [Attendee::ACTOR_USERS, 'bob', true, true, Http::STATUS_OK],
-			// E.g. a participant the resync did not remove yet
-			'no member of the team anymore' => [Attendee::ACTOR_USERS, 'bob', false, false, Http::STATUS_OK],
+			// E.g. a participant the resync did not remove yet: the sync service only removes them from the room
+			'no member of the team anymore' => [Attendee::ACTOR_USERS, 'bob', false, true, Http::STATUS_OK],
 			// Federated users and email guests are removed in the Teams app for now
 			'federated member of the team' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example', true, false, Http::STATUS_BAD_REQUEST],
 			'email member of the team' => [Attendee::ACTOR_EMAILS, 'hash', true, false, Http::STATUS_BAD_REQUEST],
+			'federated user that left the team' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example', false, false, Http::STATUS_OK],
 		];
 	}
 
@@ -207,7 +208,11 @@ class RoomControllerTest extends TestCase {
 		$target->method('getAttendee')->willReturn($attendee);
 		$target->method('isOwner')->willReturn(false);
 		$this->participantService->method('getParticipantByAttendeeId')->with($this->room, 2)->willReturn($target);
-		$this->teamRoomSyncService->method('isMemberOfTeam')->with($this->room, $attendee)->willReturn($isMember);
+		// One lookup in Circles only: users are checked by removeFromTeamRoom() itself
+		$this->teamRoomSyncService->expects($actorType === Attendee::ACTOR_USERS ? $this->never() : $this->once())
+			->method('isMemberOfTeam')
+			->with($this->room, $attendee)
+			->willReturn($isMember);
 
 		$this->teamRoomSyncService->expects($removedFromTeam ? $this->once() : $this->never())
 			->method('removeFromTeamRoom')

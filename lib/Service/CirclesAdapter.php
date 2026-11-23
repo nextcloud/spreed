@@ -168,20 +168,35 @@ class CirclesAdapter {
 	 */
 	public function getDirectMember(string $teamId, string $userId): ?array {
 		return $this->asSuperUser(function (CirclesManager $manager) use ($teamId, $userId): ?array {
-			$memberRequest = $this->getCirclesService(MemberRequest::class);
-			foreach ($memberRequest->getMembersByUserId($userId) as $member) {
-				if ($member->getCircleId() === $teamId
-					&& $member->getUserType() === Member::TYPE_USER
-					&& $member->isLocal()) {
-					return $member->getLevel() >= Member::LEVEL_MEMBER
-						? ['level' => $member->getLevel(), 'joined' => $member->getJoined()]
-						: null;
-				}
+			$member = $this->findDirectMember($teamId, $userId);
+			if (!is_null($member)) {
+				return $member->getLevel() >= Member::LEVEL_MEMBER
+					? ['level' => $member->getLevel(), 'joined' => $member->getJoined()]
+					: null;
 			}
 			// Not a member: make sure the team still exists (throws otherwise)
 			$manager->getCircle($teamId);
 			return null;
 		});
+	}
+
+	/**
+	 * The direct membership of a local user, of any level (also invited or
+	 * requesting), without loading all members of the team. Remote members
+	 * can have the same user id, they are not matched.
+	 *
+	 * CirclesManager has no public method for this, so the internal
+	 * MemberRequest is used (memberships of the user, few rows).
+	 */
+	protected function findDirectMember(string $teamId, string $userId): ?Member {
+		foreach ($this->getCirclesService(MemberRequest::class)->getMembersByUserId($userId) as $member) {
+			if ($member->getCircleId() === $teamId
+				&& $member->getUserType() === Member::TYPE_USER
+				&& $member->isLocal()) {
+				return $member;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -202,31 +217,6 @@ class CirclesAdapter {
 			}
 			return $emails;
 		});
-	}
-
-	/**
-	 * The first direct member of the team that matches, in the session the
-	 * caller started (permissions of the acting user, or super user)
-	 *
-	 * @param callable(Member): bool $match
-	 * @throws \Exception
-	 */
-	protected static function findMember(CirclesManager $manager, string $teamId, callable $match): ?Member {
-		foreach ($manager->getCircle($teamId)->getMembers() as $member) {
-			if ($match($member)) {
-				return $member;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * A local user (remote members can have the same user id)
-	 */
-	protected static function isLocalUser(Member $member, string $userId): bool {
-		return $member->getUserType() === Member::TYPE_USER
-			&& $member->isLocal()
-			&& $member->getUserId() === $userId;
 	}
 
 	/**
@@ -294,18 +284,15 @@ class CirclesAdapter {
 	 * @param int $level One of Member::LEVEL_MEMBER, _MODERATOR, _ADMIN or _OWNER
 	 * @throws \Exception When the user is no direct member, the team refused it or Circles is unavailable
 	 */
-	public function setMemberLevel(string $teamId, string $userId, int $level, string $actorUserId): bool {
-		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $userId, $level): bool {
-			$success = false;
-			$member = self::findMember($manager, $teamId, static fn (Member $member): bool => self::isLocalUser($member, $userId));
+	public function setMemberLevel(string $teamId, string $userId, int $level, string $actorUserId): void {
+		$this->asUser($actorUserId, function (CirclesManager $manager) use ($teamId, $userId, $level): void {
+			$member = $this->findDirectMember($teamId, $userId);
 			if (is_null($member)) {
-				throw new \Exception('No direct member of the team');
+				throw new \Exception('Not a direct member of the team');
 			}
 			if ($member->getLevel() !== $level) {
 				$manager->levelMember($member->getId(), $level);
-				$success = true;
 			}
-			return $success;
 		});
 	}
 
@@ -316,6 +303,7 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	public function leaveTeam(string $teamId, string $userId): void {
+		// TODO: check circleLeave() for outcome message to return status here
 		$this->asUser($userId, function () use ($teamId): void {
 			$this->getCirclesService(CircleService::class)->circleLeave($teamId);
 		});
@@ -328,11 +316,11 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	public function joinTeam(string $teamId, string $userId): bool {
-		return $this->asUser($userId, function (CirclesManager $manager) use ($teamId, $userId): bool {
+		return $this->asUser($userId, function () use ($teamId, $userId): bool {
 			$circleService = $this->getCirclesService(CircleService::class);
 			$circleService->circleJoin($teamId);
 
-			$member = self::findMember($manager, $teamId, static fn (Member $member): bool => self::isLocalUser($member, $userId));
+			$member = $this->findDirectMember($teamId, $userId);
 			return !is_null($member) && $member->getLevel() >= Member::LEVEL_MEMBER;
 		});
 	}
@@ -374,20 +362,13 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	public function removeDirectUser(string $teamId, string $userId, string $actorUserId): void {
-		$this->asUser($actorUserId, self::removeDirectUserCallback($teamId, $userId));
-	}
-
-	/**
-	 * @return callable(CirclesManager): void
-	 */
-	protected static function removeDirectUserCallback(string $teamId, string $userId): callable {
-		return static function (CirclesManager $manager) use ($teamId, $userId): void {
-			$member = self::findMember($manager, $teamId, static fn (Member $member): bool => self::isLocalUser($member, $userId));
+		$this->asUser($actorUserId, function (CirclesManager $manager) use ($teamId, $userId): void {
+			$member = $this->findDirectMember($teamId, $userId);
 			if (is_null($member)) {
-				throw new \Exception('not-direct-member');
+				throw new \Exception('Not a direct member of the team');
 			}
 			$manager->removeMember($member->getId());
-		};
+		});
 	}
 
 	/**
