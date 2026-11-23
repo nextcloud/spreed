@@ -1197,10 +1197,7 @@ export default {
 			const confirmed = await spawnDialog(ConfirmDialog, {
 				container: this.container,
 				name: t('spreed', 'Mention all participants'),
-				message: n('spreed',
-					'You are about to mention %n participant, who will receive a notification.',
-					'You are about to mention %n participants, who will receive a notification.',
-					this.participantCount),
+				message: n('spreed', 'You are about to mention %n participant, who will receive a notification.', 'You are about to mention %n participants, who will receive a notification.', this.participantCount),
 				buttons: [
 					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
 					{ label: t('spreed', 'Send message'), variant: 'primary', callback: () => true },
