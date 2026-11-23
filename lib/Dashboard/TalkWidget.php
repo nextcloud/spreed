@@ -73,6 +73,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 */
 	#[\Override]
 	public function getTitle(): string {
+		// TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations
 		return $this->l10n->t('Mentions & important');
 	}
 

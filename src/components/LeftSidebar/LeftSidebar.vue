@@ -44,6 +44,7 @@
 									<template #icon>
 										<IconAt :size="20" />
 									</template>
+									<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
 									{{ t('spreed', 'Mentions & important') }}
 								</NcActionButton>
 
@@ -379,6 +380,7 @@
 					class="unread-mention-button"
 					variant="primary"
 					@click="scrollBottomUnread">
+					<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
 					{{ t('spreed', 'Mentions & important') }}
 				</NcButton>
 			</template>
@@ -528,6 +530,7 @@ const supportTags = hasTalkFeature('local', 'conversation-tags')
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
+	// TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations
 	mentions: t('spreed', 'Mentions & important'),
 	events: t('spreed', 'Meetings'),
 	default: '',

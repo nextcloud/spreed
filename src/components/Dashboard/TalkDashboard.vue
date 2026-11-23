@@ -363,6 +363,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</div>
 			<div class="talk-dashboard__chats">
 				<div class="talk-dashboard__unread-mentions">
+					<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
 					<DashboardSection
 						v-if="filteredConversations.length > 0 || !conversationsInitialised"
 						:title="t('spreed', 'Mentions & important')"
@@ -374,6 +375,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 								:loading="!conversationsInitialised" />
 						</template>
 					</DashboardSection>
+					<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
 					<DashboardSection
 						v-else
 						:title="t('spreed', 'Mentions & important')"
