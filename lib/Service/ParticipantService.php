@@ -128,6 +128,10 @@ class ParticipantService {
 		Attendee::ACTOR_GUESTS,
 		Attendee::ACTOR_EMAILS,
 		Attendee::ACTOR_PHONES,
+		// Groups and teams that are members of the team do not take part,
+		// only the direct members of the team
+		Attendee::ACTOR_GROUPS,
+		Attendee::ACTOR_CIRCLES,
 	];
 
 	/** @var array<int, array<string, array<string, Participant>>> */
@@ -831,7 +835,7 @@ class ParticipantService {
 		foreach ($participants as $participant) {
 			if ($room->isTeamManaged()
 				&& in_array($participant['actorType'], self::TEAM_ROOM_FORBIDDEN_ACTOR_TYPES, true)) {
-				// Matrix, bridged users and guests would take part without being team members
+				// Matrix, bridged users, guests, groups and teams would take part without being direct team members
 				$this->logger->warning('Actor type ' . $participant['actorType'] . ' can not be added to team conversation ' . $room->getToken() . ', skipped');
 				continue;
 			}
@@ -994,6 +998,12 @@ class ParticipantService {
 	 * @param Participant[] &$existingParticipants
 	 */
 	public function addGroup(Room $room, IGroup $group, array &$existingParticipants = []): void {
+		if ($room->isTeamManaged()) {
+			// Only the direct members of the team are participants, also for occ
+			$this->logger->warning('Groups cannot be added to a team room');
+			return;
+		}
+
 		$usersInGroup = $group->getUsers();
 
 		if (empty($existingParticipants)) {
@@ -1115,6 +1125,12 @@ class ParticipantService {
 	 * @param Participant[] &$existingParticipants
 	 */
 	public function addCircle(Room $room, Circle $circle, array &$existingParticipants = []): void {
+		if ($room->isTeamManaged()) {
+			// Only the direct members of the team are participants, also for occ
+			$this->logger->warning('Teams cannot be added to a team room ');
+			return;
+		}
+
 		$membersInCircle = $circle->getInheritedMembers();
 
 		if (empty($existingParticipants)) {

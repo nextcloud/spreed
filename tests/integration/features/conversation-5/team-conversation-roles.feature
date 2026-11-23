@@ -225,6 +225,16 @@ Feature: conversation-5/team-conversation-roles
     When user "participant2" adds user "participant4" to room "room" with 403 (v4)
     Then user "participant4" is no direct member of team "Team A"
 
+  Scenario: Groups are not added to the team conversation with occ either
+    Given group "group1" exists
+    And user "participant4" is member of group "group1"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    When invoking occ with "talk:room:add ROOM(room) --group group1"
+    Then the command was successful
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+
   Scenario: Groups, teams and email addresses are not added to the team conversation in Talk
     Given group "group1" exists
     And user "participant4" is member of group "group1"

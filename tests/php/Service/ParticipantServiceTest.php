@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Circles\Model\Circle;
 use OCA\Talk\Config;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
@@ -26,6 +27,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
+use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
@@ -158,6 +160,9 @@ class ParticipantServiceTest extends TestCase {
 		return [
 			[Attendee::ACTOR_MATRIX, '@alice:matrix.example'],
 			[Attendee::ACTOR_BRIDGED, 'alice'],
+			// Only the direct members of the team, not its groups and teams
+			[Attendee::ACTOR_GROUPS, 'group1'],
+			[Attendee::ACTOR_CIRCLES, 'team2'],
 		];
 	}
 
@@ -220,5 +225,40 @@ class ParticipantServiceTest extends TestCase {
 				&& $event->getParameters() === ['token' => 'abcdef', 'method' => Attendee::PERMISSIONS_MODIFY_SET, 'permissions' => 254]));
 
 		$this->service->updateAllPermissions($room, Attendee::PERMISSIONS_MODIFY_SET, 254);
+	}
+
+	private function makeTeamRoom(): Room&MockObject {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(123456789);
+		$room->method('getToken')->willReturn('teamroom');
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('isTeamManaged')->willReturn(true);
+		return $room;
+	}
+
+	public function testGroupIsNotAddedToTeamRoom(): void {
+		$room = $this->makeTeamRoom();
+		$group = $this->createMock(IGroup::class);
+		$group->method('getGID')->willReturn('group1');
+		$group->expects($this->never())->method('getUsers');
+		$this->logger->expects($this->once())->method('warning');
+
+		$this->service->addGroup($room, $group);
+
+		$this->expectException(DoesNotExistException::class);
+		$this->attendeeMapper->findByActor(123456789, Attendee::ACTOR_GROUPS, 'group1');
+	}
+
+	public function testTeamIsNotAddedToTeamRoom(): void {
+		$room = $this->makeTeamRoom();
+		$circle = $this->createMock(Circle::class);
+		$circle->method('getSingleId')->willReturn('team2');
+		$circle->expects($this->never())->method('getInheritedMembers');
+		$this->logger->expects($this->once())->method('warning');
+
+		$this->service->addCircle($room, $circle);
+
+		$this->expectException(DoesNotExistException::class);
+		$this->attendeeMapper->findByActor(123456789, Attendee::ACTOR_CIRCLES, 'team2');
 	}
 }
