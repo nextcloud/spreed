@@ -17,6 +17,7 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
@@ -1091,5 +1092,110 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->expectException(ForbiddenException::class);
 		$this->service->addToTeamRoom($this->room, $bob, 'alice');
+	}
+
+	public static function dataLevelForParticipantType(): array {
+		return [
+			// Talk owners are team admins: only the team owner transfers the ownership
+			'owner' => [Participant::OWNER, self::LEVEL_ADMIN],
+			'moderator' => [Participant::MODERATOR, self::LEVEL_MODERATOR],
+			'user' => [Participant::USER, self::LEVEL_MEMBER],
+		];
+	}
+
+	#[DataProvider('dataLevelForParticipantType')]
+	public function testLevelForParticipantType(int $participantType, int $level): void {
+		$this->assertSame($level, TeamRoomSyncService::getLevelForParticipantType($participantType));
+	}
+
+	private function mockRoleChange(int $newType): array {
+		$actor = $this->makeUserParticipant('alice', Participant::OWNER);
+		$target = $this->makeUserParticipant('bob');
+		$this->participantService->method('getParticipantTypeChangeByModerator')->willReturn($newType);
+		$this->mockUsers();
+		$this->participantService->method('getParticipant')->willReturn($target);
+		return [$actor, $target];
+	}
+
+	public function testRoleChangeIsDoneInTheTeamAsTheModerator(): void {
+		[$actor, $target] = $this->mockRoleChange(Participant::MODERATOR);
+		$this->circlesAdapter->method('getDirectMember')->willReturn(['level' => self::LEVEL_MEMBER, 'joined' => 1]);
+		$this->circlesAdapter->expects($this->once())->method('setMemberLevel')->with('team1', 'bob', self::LEVEL_MODERATOR, 'alice');
+
+		$this->assertSame(Participant::MODERATOR, $this->service->changeRoleInTeam($this->room, $actor, $target, true));
+	}
+
+	public function testTeamOwnerSteppingDownHandsTheTeamOver(): void {
+		[$actor, $target] = $this->mockRoleChange(Participant::MODERATOR);
+		$this->circlesAdapter->method('getDirectMember')->willReturn(['level' => self::LEVEL_OWNER, 'joined' => 1]);
+		$this->circlesAdapter->method('getDirectMembers')->willReturn([
+			'bob' => ['level' => self::LEVEL_OWNER, 'joined' => 1],
+			'carol' => ['level' => self::LEVEL_ADMIN, 'joined' => 3],
+			'dave' => ['level' => self::LEVEL_ADMIN, 'joined' => 2],
+			'erin' => ['level' => self::LEVEL_MODERATOR, 'joined' => 1],
+		]);
+		$changes = [];
+		$this->circlesAdapter->method('setMemberLevel')->willReturnCallback(static function (string $teamId, string $userId, int $level, string $actorUserId) use (&$changes): bool {
+			$changes[] = [$userId, $level, $actorUserId];
+			return true;
+		});
+
+		$this->service->changeRoleInTeam($this->room, $actor, $target, false);
+
+		// The admin who is member the longest takes over first
+		$this->assertSame([['dave', self::LEVEL_OWNER, 'alice'], ['bob', self::LEVEL_MODERATOR, 'alice']], $changes);
+	}
+
+	public function testTeamOwnerCanNotStepDownWithoutAdmin(): void {
+		[$actor, $target] = $this->mockRoleChange(Participant::MODERATOR);
+		$this->circlesAdapter->method('getDirectMember')->willReturn(['level' => self::LEVEL_OWNER, 'joined' => 1]);
+		$this->circlesAdapter->method('getDirectMembers')->willReturn([
+			'bob' => ['level' => self::LEVEL_OWNER, 'joined' => 1],
+			'erin' => ['level' => self::LEVEL_MODERATOR, 'joined' => 1],
+		]);
+		$this->circlesAdapter->expects($this->never())->method('setMemberLevel');
+
+		$this->expectException(ParticipantTypeException::class);
+		$this->expectExceptionMessage(ParticipantTypeException::REASON_LAST_MODERATOR);
+		$this->service->changeRoleInTeam($this->room, $actor, $target, false);
+	}
+
+	public function testTeamOwnerStaysOwner(): void {
+		[$actor, $target] = $this->mockRoleChange(Participant::OWNER);
+		$this->circlesAdapter->method('getDirectMember')->willReturn(['level' => self::LEVEL_OWNER, 'joined' => 1]);
+		$this->circlesAdapter->expects($this->never())->method('setMemberLevel');
+
+		$this->assertSame(Participant::OWNER, $this->service->changeRoleInTeam($this->room, $actor, $target, true, Participant::OWNER));
+	}
+
+	public function testFederatedModeratorsCanNotChangeTeamRoles(): void {
+		[, $target] = $this->mockRoleChange(Participant::MODERATOR);
+		$actor = $this->makeFederatedParticipant('carol@remote.example', Participant::MODERATOR);
+		$this->circlesAdapter->expects($this->never())->method('setMemberLevel');
+
+		$this->expectException(ParticipantTypeException::class);
+		$this->expectExceptionMessage(ParticipantTypeException::REASON_MODERATOR);
+		$this->service->changeRoleInTeam($this->room, $actor, $target, true);
+	}
+
+	public function testRoleOfAFormerMemberIsNotChanged(): void {
+		[$actor, $target] = $this->mockRoleChange(Participant::MODERATOR);
+		$this->circlesAdapter->method('getDirectMember')->willReturn(null);
+		$this->circlesAdapter->expects($this->never())->method('setMemberLevel');
+
+		$this->expectException(ParticipantTypeException::class);
+		$this->expectExceptionMessage(ParticipantTypeException::REASON_TYPE);
+		$this->service->changeRoleInTeam($this->room, $actor, $target, true);
+	}
+
+	public function testTeamRefusingTheRoleChangeIsReported(): void {
+		[$actor, $target] = $this->mockRoleChange(Participant::OWNER);
+		$this->circlesAdapter->method('getDirectMember')->willReturn(['level' => self::LEVEL_MEMBER, 'joined' => 1]);
+		$exception = new \Exception('Insufficient rights', 0, new \RuntimeException('Insufficient rights'));
+		$this->circlesAdapter->method('setMemberLevel')->willThrowException($exception);
+		$this->participantService->expects($this->never())->method('updateParticipantType');
+
+		$this->expectExceptionObject($exception);
+		$this->service->changeRoleInTeam($this->room, $actor, $target, true, Participant::OWNER);
 	}
 }

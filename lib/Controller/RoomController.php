@@ -3251,10 +3251,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param int $participantType Level to promote the attendee to: owner (`1`) or moderator (`2`), `0` to only grant moderator permissions. Guests are promoted to guest moderator (`6`) and can never become owners.
 	 * @psalm-param 0|Participant::OWNER|Participant::MODERATOR $participantType
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'team'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee promoted successfully
-	 * 400: Promoting attendee is not possible
+	 * 400: Promoting attendee is not possible, e.g. the team of a team room refused the change of the level
 	 * 403: Promoting attendee is not allowed
 	 * 404: Attendee not found
 	 * 502: The Matrix homeserver rejected the change or could not be reached
@@ -3279,10 +3279,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param int $participantType Level to demote the attendee to: moderator (`2`) or user (`3`), `0` to only revoke moderator permissions. Guest moderators are demoted to guest (`4`).
 	 * @psalm-param 0|Participant::MODERATOR|Participant::USER $participantType
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'team'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee demoted successfully
-	 * 400: Demoting attendee is not possible
+	 * 400: Demoting attendee is not possible, e.g. the team of a team room refused the change of the level
 	 * 403: Demoting attendee is not allowed
 	 * 404: Attendee not found
 	 * 502: The Matrix homeserver rejected the change or could not be reached
@@ -3305,7 +3305,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param bool $promote Shall the attendee be promoted or demoted
 	 * @param int $participantType Level to change the attendee to, 0 to only toggle the moderator permissions
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'team'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 */
 	protected function changeParticipantType(int $attendeeId, bool $promote, int $participantType = 0): DataResponse {
 		try {
@@ -3334,19 +3334,38 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$this->participantService->updateParticipantTypeByModerator(
-				$this->room,
-				$this->participant,
-				$targetParticipant,
-				$promote,
-				$participantType !== 0 ? $participantType : null,
-			);
+			if ($this->room->isTeamManaged() && $attendee->getActorType() === Attendee::ACTOR_USERS) {
+				// The roles of users are their levels in the team: changed in the team, as the moderator
+				$this->teamRoomSyncService->changeRoleInTeam(
+					$this->room,
+					$this->participant,
+					$targetParticipant,
+					$promote,
+					$participantType !== 0 ? $participantType : null,
+				);
+			} else {
+				$this->participantService->updateParticipantTypeByModerator(
+					$this->room,
+					$this->participant,
+					$targetParticipant,
+					$promote,
+					$participantType !== 0 ? $participantType : null,
+				);
+			}
 		} catch (ParticipantTypeException $e) {
 			if ($e->getReason() === ParticipantTypeException::REASON_MODERATOR
 				|| $e->getReason() === ParticipantTypeException::REASON_SELF) {
 				return new DataResponse(['error' => $e->getReason()], Http::STATUS_FORBIDDEN);
 			}
 			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		} catch (\Exception $e) {
+			if (!$this->room->isTeamManaged()) {
+				// Other conversations fail as before
+				throw $e;
+			}
+			// The team refused the change of the level, or it is unavailable
+			$this->logger->info('Role of ' . $attendee->getActorId() . ' could not be changed in the team with the room ' . $this->room->getToken(), ['exception' => $e]);
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse(null);

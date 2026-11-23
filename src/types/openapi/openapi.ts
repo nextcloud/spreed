@@ -14324,7 +14324,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Promoting attendee is not possible */
+            /** @description Promoting attendee is not possible, e.g. the team of a team room refused the change of the level */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -14335,7 +14335,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "team" | "type";
                             };
                         };
                     } | {
@@ -14360,7 +14360,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "team" | "type";
                             };
                         };
                     } | {
@@ -14385,7 +14385,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "team" | "type";
                             };
                         };
                     } | {
@@ -14452,7 +14452,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Demoting attendee is not possible */
+            /** @description Demoting attendee is not possible, e.g. the team of a team room refused the change of the level */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -14463,7 +14463,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "team" | "type";
                             };
                         };
                     } | {
@@ -14488,7 +14488,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "team" | "type";
                             };
                         };
                     } | {
@@ -14513,7 +14513,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "team" | "type";
                             };
                         };
                     } | {

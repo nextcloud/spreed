@@ -29920,7 +29920,7 @@
                         }
                     },
                     "400": {
-                        "description": "Promoting attendee is not possible",
+                        "description": "Promoting attendee is not possible, e.g. the team of a team room refused the change of the level",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -29957,6 +29957,7 @@
                                                                         "participant-type",
                                                                         "room-type",
                                                                         "self",
+                                                                        "team",
                                                                         "type"
                                                                     ]
                                                                 }
@@ -30047,6 +30048,7 @@
                                                                         "participant-type",
                                                                         "room-type",
                                                                         "self",
+                                                                        "team",
                                                                         "type"
                                                                     ]
                                                                 }
@@ -30137,6 +30139,7 @@
                                                                         "participant-type",
                                                                         "room-type",
                                                                         "self",
+                                                                        "team",
                                                                         "type"
                                                                     ]
                                                                 }
@@ -30338,7 +30341,7 @@
                         }
                     },
                     "400": {
-                        "description": "Demoting attendee is not possible",
+                        "description": "Demoting attendee is not possible, e.g. the team of a team room refused the change of the level",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -30375,6 +30378,7 @@
                                                                         "participant-type",
                                                                         "room-type",
                                                                         "self",
+                                                                        "team",
                                                                         "type"
                                                                     ]
                                                                 }
@@ -30465,6 +30469,7 @@
                                                                         "participant-type",
                                                                         "room-type",
                                                                         "self",
+                                                                        "team",
                                                                         "type"
                                                                     ]
                                                                 }
@@ -30555,6 +30560,7 @@
                                                                         "participant-type",
                                                                         "room-type",
                                                                         "self",
+                                                                        "team",
                                                                         "type"
                                                                     ]
                                                                 }

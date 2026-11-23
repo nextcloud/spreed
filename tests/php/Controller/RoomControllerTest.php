@@ -14,6 +14,7 @@ use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
 use OCA\Talk\Exceptions\ForbiddenException;
+use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Model\Attendee;
@@ -275,5 +276,63 @@ class RoomControllerTest extends TestCase {
 
 		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		self::assertSame(['error' => 'team'], $response->getData());
+	}
+
+	private function mockTarget(string $actorType, string $actorId): Participant&MockObject {
+		$target = $this->createMock(Participant::class);
+		$target->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 2, 'actor_type' => $actorType, 'actor_id' => $actorId, 'participant_type' => Participant::USER]));
+		$this->participantService->method('getParticipantByAttendeeId')->with($this->room, 2)->willReturn($target);
+		return $target;
+	}
+
+	public function testRolesOfUsersAreChangedInTheTeam(): void {
+		$this->inTeamRoom();
+		$target = $this->mockTarget(Attendee::ACTOR_USERS, 'bob');
+		$this->teamRoomSyncService->expects($this->once())
+			->method('changeRoleInTeam')
+			->with($this->room, $this->participant, $target, true, Participant::OWNER);
+		$this->participantService->expects($this->never())->method('updateParticipantTypeByModerator');
+
+		self::assertSame(Http::STATUS_OK, $this->controller->promoteModerator(2, Participant::OWNER)->getStatus());
+	}
+
+	public function testUnexpectedErrorsInOtherConversationsAreNotReportedAsTeamError(): void {
+		$this->room->method('getObjectType')->willReturn('');
+		$this->room->method('isTeamManaged')->willReturn(false);
+		$this->mockTarget(Attendee::ACTOR_USERS, 'bob');
+		$this->teamRoomSyncService->expects($this->never())->method('changeRoleInTeam');
+		$this->participantService->method('updateParticipantTypeByModerator')->willThrowException(new \RuntimeException('Deadlock'));
+
+		$this->expectException(\RuntimeException::class);
+		$this->controller->promoteModerator(2);
+	}
+
+	public static function dataRoleChangeRefused(): array {
+		return [
+			'refused by the team' => [new \Exception('Insufficient rights'), Http::STATUS_BAD_REQUEST, 'team'],
+			'refused by Talk' => [new ParticipantTypeException(ParticipantTypeException::REASON_MODERATOR), Http::STATUS_FORBIDDEN, 'moderator'],
+			'no admin to take over the team' => [new ParticipantTypeException(ParticipantTypeException::REASON_LAST_MODERATOR), Http::STATUS_BAD_REQUEST, 'last-moderator'],
+		];
+	}
+
+	#[DataProvider('dataRoleChangeRefused')]
+	public function testRefusedRoleChange(\Exception $exception, int $status, string $error): void {
+		$this->inTeamRoom();
+		$this->mockTarget(Attendee::ACTOR_USERS, 'bob');
+		$this->teamRoomSyncService->method('changeRoleInTeam')->willThrowException($exception);
+
+		$response = $this->controller->demoteModerator(2);
+
+		self::assertSame($status, $response->getStatus());
+		self::assertSame(['error' => $error], $response->getData());
+	}
+
+	public function testRolesOfFederatedUsersStayInTalk(): void {
+		$this->inTeamRoom();
+		$this->mockTarget(Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example');
+		$this->teamRoomSyncService->expects($this->never())->method('changeRoleInTeam');
+		$this->participantService->expects($this->once())->method('updateParticipantTypeByModerator');
+
+		$this->controller->promoteModerator(2);
 	}
 }

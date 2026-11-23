@@ -136,26 +136,50 @@ Feature: conversation-5/team-conversation-roles
       | users     | participant2 | 1               |
       | users     | participant3 | 3               |
 
-  Scenario: Roles of users are not changed in Talk, they are the team levels
+  Scenario: Roles changed in Talk are changed in the team
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
-    And add user "participant4" to team "Team A"
     And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" promotes "participant3" to "OWNER" in room "room" with 200 (v4)
+    Then user "participant2" has level "Moderator" in team "Team A"
+    And user "participant3" has level "Admin" in team "Team A"
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
-      | users     | participant2 | 3               |
-      | users     | participant3 | 3               |
-      | users     | participant4 | 3               |
-    When user "participant1" promotes "participant2" in room "room" with 400 (v4)
-    And user "participant1" promotes "participant3" to "OWNER" in room "room" with 400 (v4)
+      | users     | participant2 | 2               |
+      | users     | participant3 | 1               |
+    When user "participant1" demotes "participant2" in room "room" with 200 (v4)
     Then user "participant2" has level "Member" in team "Team A"
-    And user "participant3" has level "Member" in team "Team A"
-    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+
+  Scenario: Only the team owner can hand the team over, to a team admin
+    Given set level of user "participant2" in team "Team A" to "Admin"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    # Another Talk owner (team admin) can not take the team over
+    When user "participant2" demotes "participant1" to "MODERATOR" in room "room" with 400 (v4)
+    Then user "participant1" has level "Owner" in team "Team A"
+    # The team owner stepping down: the admin who is member the longest takes over
+    When user "participant1" demotes "participant1" to "MODERATOR" in room "room" with 200 (v4)
+    Then user "participant2" has level "Owner" in team "Team A"
+    And user "participant1" has level "Moderator" in team "Team A"
+    And user "participant2" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
-      | users     | participant1 | 1               |
-      | users     | participant2 | 3               |
+      | users     | participant1 | 2               |
+      | users     | participant2 | 1               |
       | users     | participant3 | 3               |
-      | users     | participant4 | 3               |
+
+  Scenario: The team owner can not step down without a team admin to take over
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant1" demotes "participant1" to "MODERATOR" in room "room" with 400 (v4)
+    Then user "participant1" has level "Owner" in team "Team A"
+
+  Scenario: Moderators can not change the roles of team admins
+    Given set level of user "participant2" in team "Team A" to "Moderator"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant2" promotes "participant3" to "OWNER" in room "room" with 400 (v4)
+    Then user "participant3" has level "Member" in team "Team A"
 
   Scenario: Participants can not be invited when creating the team conversation
     # The participants are the members of the team, added by the sync

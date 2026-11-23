@@ -17,6 +17,7 @@ use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
@@ -767,6 +768,101 @@ class TeamRoomSyncService {
 			}
 			// The team was deleted: leaving the conversation is enough
 		}
+	}
+
+	/**
+	 * Promote/demote in a team room: the level is changed in the team as the
+	 * acting user, so Circles decides with its own rules (moderators can not
+	 * change admins, only the owner can transfer the ownership, etc). The rules
+	 * of Talk are checked before as well.
+	 *
+	 * When the team owner steps down, the ownership goes to another Talk owner
+	 * (team admin) first, with the strategy of Circles: highest level, then
+	 * longest member. Only the owner can do that, as in the Teams app.
+	 *
+	 * @param int|null $requestedType Target type, or null to only toggle the moderator level
+	 * @return int The new participant type
+	 * @throws ParticipantTypeException When Talk does not allow the change
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function changeRoleInTeam(Room $room, Participant $actor, Participant $target, bool $promote, ?int $requestedType = null): int {
+		$newType = $this->participantService->getParticipantTypeChangeByModerator($room, $actor, $target, $promote, $requestedType);
+		if ($actor->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
+			// Federated moderators have no account here to act in the team with
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_MODERATOR);
+		}
+
+		$teamId = $room->getObjectId();
+		$actorUserId = $actor->getAttendee()->getActorId();
+		$userId = $target->getAttendee()->getActorId();
+
+		// Only this user, all members only when the owner steps down
+		$member = $this->circlesAdapter->getDirectMember($teamId, $userId);
+		if (is_null($member)) {
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_TYPE);
+		}
+
+		$successor = null;
+		$level = self::getLevelForParticipantType($newType);
+		if ($member['level'] === Member::LEVEL_OWNER) {
+			if ($newType === Participant::OWNER) {
+				// Already the team owner, nothing to change in the team
+				return $newType;
+			}
+			$successor = self::pickSuccessor($this->circlesAdapter->getDirectMembers($teamId), $userId, Member::LEVEL_ADMIN);
+			if (is_null($successor)) {
+				// Another Talk owner (team admin) is needed to take over the team
+				throw new ParticipantTypeException(ParticipantTypeException::REASON_LAST_MODERATOR);
+			}
+			$this->circlesAdapter->setMemberLevel($teamId, $successor, Member::LEVEL_OWNER, $actorUserId);
+		}
+		$this->circlesAdapter->setMemberLevel($teamId, $userId, $level, $actorUserId);
+
+		// Right away for the changed users, the others with the resync queued by the Circles event
+		foreach (array_filter([$userId, $successor]) as $changedUserId) {
+			$changedUser = $this->userManager->get($changedUserId);
+			if (!is_null($changedUser)) {
+				$this->syncUserInTeamRoom($room, $changedUser);
+			}
+		}
+		return $newType;
+	}
+
+	/**
+	 * Team level of a Talk role: Talk owners are team admins, only the owner of
+	 * the team transfers the ownership
+	 */
+	public static function getLevelForParticipantType(int $participantType): int {
+		return match ($participantType) {
+			Participant::OWNER => Member::LEVEL_ADMIN,
+			Participant::MODERATOR => Member::LEVEL_MODERATOR,
+			default => Member::LEVEL_MEMBER,
+		};
+	}
+
+	/**
+	 * The member who takes over the team: highest level, then the longest member
+	 *
+	 * @param array<array-key, TalkTeamDirectMember> $members
+	 */
+	protected static function pickSuccessor(array $members, string $excludeUserId, int $minLevel): ?string {
+		$successor = null;
+		$best = null;
+		foreach ($members as $userId => $member) {
+			$userId = (string)$userId;
+			if ($userId === $excludeUserId
+				|| $member['level'] === Member::LEVEL_OWNER
+				|| $member['level'] < $minLevel) {
+				continue;
+			}
+			if (is_null($best)
+				|| $member['level'] > $best['level']
+				|| ($member['level'] === $best['level'] && $member['joined'] < $best['joined'])) {
+				$successor = $userId;
+				$best = $member;
+			}
+		}
+		return $successor;
 	}
 
 	/**

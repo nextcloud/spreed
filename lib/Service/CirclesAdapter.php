@@ -287,6 +287,29 @@ class CirclesAdapter {
 	}
 
 	/**
+	 * Set the level of a local direct member, acting as $actorUserId: Circles
+	 * checks the permissions (only the owner can make someone else owner, the
+	 * former owner becomes an admin then).
+	 *
+	 * @param int $level One of Member::LEVEL_MEMBER, _MODERATOR, _ADMIN or _OWNER
+	 * @throws \Exception When the user is no direct member, the team refused it or Circles is unavailable
+	 */
+	public function setMemberLevel(string $teamId, string $userId, int $level, string $actorUserId): bool {
+		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $userId, $level): bool {
+			$success = false;
+			$member = self::findMember($manager, $teamId, static fn (Member $member): bool => self::isLocalUser($member, $userId));
+			if (is_null($member)) {
+				throw new \Exception('No direct member of the team');
+			}
+			if ($member->getLevel() !== $level) {
+				$manager->levelMember($member->getId(), $level);
+				$success = true;
+			}
+			return $success;
+		});
+	}
+
+	/**
 	 * The user leaves the team themselves, Circles checks it like "Leave team"
 	 * in the Teams app. When the owner leaves, Circles decides the new owner.
 	 *
