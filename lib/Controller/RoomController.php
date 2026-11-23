@@ -1960,6 +1960,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'announcement'], Http::STATUS_BAD_REQUEST);
 		}
 
+		// The participants are the members of the team: they leave the team in the Teams app
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 			if ($participant->hasModeratorPermissions(false)
 				&& $this->participantService->getNumberOfUsers($room) > 1
