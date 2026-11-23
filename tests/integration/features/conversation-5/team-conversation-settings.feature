@@ -62,6 +62,21 @@ Feature: conversation-5/team-conversation-settings
       | name        | Team Beta |
       | description | From Talk |
 
+  Scenario: Only team admins change the settings of the team in Talk
+    Given set level of user "participant2" in team "Team A" to "Moderator"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    # Talk moderator = team moderator: no team admin
+    When user "participant2" renames room "room" to "Team Beta" with 403 (v4)
+    And user "participant2" sets description for room "room" to "From Talk" with 403 (v4)
+    And user "participant2" allows listing room "room" for "users" with 403 (v4)
+    And user "participant2" deletes room "room" with 403 (v4)
+    Then team "Team A" has the following details
+      | displayName | Team A |
+    And user "participant1" gets room "room" with 200 (v4)
+      | name     | Team A |
+      | listable | 0      |
+
   Scenario: Opening the conversation opens the team, closing it closes the team
     # "Request to join" is a team setting Talk does not change
     Given set config "VISIBLE JOINREQUEST" of team "Team A"

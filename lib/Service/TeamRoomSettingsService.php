@@ -12,6 +12,8 @@ use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\NameException;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
@@ -62,6 +64,20 @@ class TeamRoomSettingsService {
 			return $config & ~self::TEAM_CFG_OPEN;
 		}
 		return $config | self::TEAM_CFG_VISIBLE | self::TEAM_CFG_OPEN;
+	}
+
+	/**
+	 * Name, description, listing and deleting of a team conversation are settings
+	 * of the team: only team admins (the owners of the team room) can change
+	 * them, Circles would refuse it for everyone else. Other conversations: true.
+	 */
+	public static function canEditTeamSettings(Room $room, ?Participant $participant): bool {
+		if (!$room->isTeamManaged()) {
+			return true;
+		}
+		return !is_null($participant)
+			&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
+			&& $participant->getAttendee()->getParticipantType() === Participant::OWNER;
 	}
 
 	public static function isSupportedTeam(int $config): bool {

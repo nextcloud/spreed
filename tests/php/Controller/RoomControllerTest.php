@@ -335,4 +335,25 @@ class RoomControllerTest extends TestCase {
 
 		$this->controller->promoteModerator(2);
 	}
+
+	public static function dataTeamSettings(): array {
+		return [
+			'rename' => ['renameRoom', ['New name']],
+			'description' => ['setDescription', ['New description']],
+			'listing' => ['setListable', [Room::LISTABLE_USERS]],
+			'delete' => ['deleteRoom', []],
+		];
+	}
+
+	#[DataProvider('dataTeamSettings')]
+	public function testOnlyTeamAdminsChangeTeamSettings(string $method, array $arguments): void {
+		$this->inTeamRoom();
+		// A Talk moderator is a team moderator, not a team admin
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::MODERATOR]));
+
+		$response = $this->controller->$method(...$arguments);
+
+		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		self::assertSame(['error' => 'team'], $response->getData());
+	}
 }

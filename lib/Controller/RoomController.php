@@ -88,6 +88,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\TeamRoomSettingsService;
 use OCA\Talk\Service\TeamRoomSyncService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Settings\UserPreference;
@@ -1246,11 +1247,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $roomName New name
 	 * @param string $owner User ID of an owner of the conversation that will be used as actor. Required when the request is authenticated as external call service, otherwise ignored.
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'team'}, array{}>
 	 *
 	 * 200: Room renamed successfully
 	 * 400: Renaming room is not possible
-	 * 403: The Matrix account of the user can not rename the Matrix room
+	 * 403: The Matrix account of the user can not rename the Matrix room, or only team admins can rename a team conversation
 	 * 404: The Matrix room or the linked Matrix account of the user was not found
 	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
@@ -1269,6 +1270,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function renameRoom(string $roomName, string $owner = ''): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!TeamRoomSettingsService::canEditTeamSettings($this->room, $this->participant)) {
+			// Settings of the team: only team admins (the owners of the team conversation)
+			return new DataResponse(['error' => 'team'], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
@@ -1291,11 +1297,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Update the description of a room
 	 *
 	 * @param string $description New description for the conversation (limited to 2.000 characters, was 500 before Talk 21)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'team'}, array{}>
 	 *
 	 * 200: Description updated successfully
 	 * 400: Updating description is not possible
-	 * 403: The Matrix account of the user can not change the topic of the Matrix room
+	 * 403: The Matrix account of the user can not change the topic of the Matrix room, or only team admins can change the description of a team room
 	 * 404: The Matrix room or the linked Matrix account of the user was not found
 	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
@@ -1309,6 +1315,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function setDescription(string $description): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+
+		// Settings of the team: only team admins (the owners of the team room)
+		if (!TeamRoomSettingsService::canEditTeamSettings($this->room, $this->participant)) {
+			return new DataResponse(['error' => 'team'], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
@@ -1331,11 +1342,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Delete a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, null, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, null, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'|'team'}, array{}>
 	 *
 	 * 200: Room successfully deleted
 	 * 400: Deleting room is not possible
-	 * 403: Conversation is preserved
+	 * 403: Conversation is preserved, or only team admins can delete a team room
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
@@ -1346,6 +1357,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function deleteRoom(): DataResponse {
 		if ($this->room->isPreserved()) {
 			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
+		}
+
+		// Settings of the team: only team admins (the owners of the team conversation)
+		if (!TeamRoomSettingsService::canEditTeamSettings($this->room, $this->participant)) {
+			return new DataResponse(['error' => 'team'], Http::STATUS_FORBIDDEN);
 		}
 
 		if (!$this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
@@ -2248,11 +2264,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $scope Scope where the room is listable
 	 * @psalm-param Room::LISTABLE_* $scope
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'|'team'}, array{}>
 	 *
 	 * 200: Made room listable successfully
 	 * 400: Making room listable is not possible
-	 * 403: Conversation is preserved
+	 * 403: Conversation is preserved, or only team admins can change the listing of a team room
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
@@ -2263,6 +2279,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function setListable(int $scope): DataResponse {
 		if ($this->room->isPreserved()) {
 			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
+		}
+
+		// Settings of the team: only team admins (the owners of the team room)
+		if (!TeamRoomSettingsService::canEditTeamSettings($this->room, $this->participant)) {
+			return new DataResponse(['error' => 'team'], Http::STATUS_FORBIDDEN);
 		}
 
 		/** @var Room::LISTABLE_* $forced */

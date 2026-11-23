@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CirclesAdapter;
 use OCA\Talk\Service\RoomService;
@@ -204,5 +206,34 @@ class TeamRoomSettingsServiceTest extends TestCase {
 		$this->circlesAdapter->expects($this->once())->method('updateTeam')->willThrowException(new \Exception('Not an admin of the team'));
 
 		$this->service->applyRoomToTeam($this->makeRoom(), ARoomModifiedEvent::PROPERTY_NAME);
+	}
+
+	private function makeParticipant(string $actorType, int $participantType): Participant&MockObject {
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn(Attendee::fromRow([
+			'actor_type' => $actorType,
+			'actor_id' => 'alice',
+			'participant_type' => $participantType,
+		]));
+		return $participant;
+	}
+
+	public static function dataCanEditTeamSettings(): array {
+		return [
+			'team owner or admin' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::OWNER, true],
+			'team moderator' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::MODERATOR, false],
+			'team member' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::USER, false],
+			'federated moderator' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_FEDERATED_USERS, Participant::MODERATOR, false],
+			'moderator of another conversation' => ['', Attendee::ACTOR_USERS, Participant::MODERATOR, true],
+		];
+	}
+
+	#[DataProvider('dataCanEditTeamSettings')]
+	public function testCanEditTeamSettings(string $objectType, string $actorType, int $participantType, bool $expected): void {
+		$this->assertSame($expected, TeamRoomSettingsService::canEditTeamSettings($this->makeRoom($objectType), $this->makeParticipant($actorType, $participantType)));
+	}
+
+	public function testNobodyCanEditTeamSettingsWithoutParticipant(): void {
+		$this->assertFalse(TeamRoomSettingsService::canEditTeamSettings($this->makeRoom(), null));
 	}
 }

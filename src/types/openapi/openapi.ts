@@ -12027,7 +12027,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The Matrix account of the user can not rename the Matrix room */
+            /** @description The Matrix account of the user can not rename the Matrix room, or only team admins can rename a team conversation */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -12039,6 +12039,14 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "team";
                             };
                         };
                     };
@@ -12123,7 +12131,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Conversation is preserved */
+            /** @description Conversation is preserved, or only team admins can delete a team room */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -12134,7 +12142,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "preserved";
+                                error: "preserved" | "team";
                             };
                         };
                     };
@@ -12482,7 +12490,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The Matrix account of the user can not change the topic of the Matrix room */
+            /** @description The Matrix account of the user can not change the topic of the Matrix room, or only team admins can change the description of a team room */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -12494,6 +12502,14 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "team";
                             };
                         };
                     };
@@ -13439,7 +13455,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Conversation is preserved */
+            /** @description Conversation is preserved, or only team admins can change the listing of a team room */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -13450,7 +13466,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "preserved";
+                                error: "preserved" | "team";
                             };
                         };
                     };
