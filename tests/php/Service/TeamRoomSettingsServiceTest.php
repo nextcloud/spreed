@@ -208,18 +208,21 @@ class TeamRoomSettingsServiceTest extends TestCase {
 		$this->service->applyRoomToTeam($this->makeRoom(), ARoomModifiedEvent::PROPERTY_NAME);
 	}
 
-	private function makeParticipant(string $actorType, int $participantType): Participant&MockObject {
-		$participant = $this->createMock(Participant::class);
-		$participant->method('getAttendee')->willReturn(Attendee::fromRow([
+	/**
+	 * A real participant: canEditTeamSettings() asks it (isOwner()), a mock would answer false
+	 */
+	private function makeParticipant(string $actorType, int $participantType): Participant {
+		$attendee = Attendee::fromRow([
 			'actor_type' => $actorType,
 			'actor_id' => 'alice',
 			'participant_type' => $participantType,
-		]));
-		return $participant;
+		]);
+		return new Participant($this->createMock(Room::class), $attendee, null);
 	}
 
 	public static function dataCanEditTeamSettings(): array {
 		return [
+			'team owner or admin' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::OWNER, true],
 			'team moderator' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::MODERATOR, false],
 			'team member' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::USER, false],
 			'federated moderator' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_FEDERATED_USERS, Participant::MODERATOR, false],

@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php;
 
-use OCA\Talk\Config;
 use OCA\Talk\Exceptions\GuestImportException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
