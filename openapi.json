@@ -558,6 +558,7 @@
                                         "type": "string",
                                         "enum": [
                                             "never",
+                                            "mention-direct",
                                             "mention",
                                             "always"
                                         ],
@@ -567,6 +568,7 @@
                                         "type": "string",
                                         "enum": [
                                             "never",
+                                            "mention-direct",
                                             "mention",
                                             "always"
                                         ],
