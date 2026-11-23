@@ -32,7 +32,7 @@ jobs:
 
       - name: Get php version
         id: php_versions
-        uses: nextcloud-libraries/nextcloud-version-matrix@496b897175b6b6d0d1205764676cfa0a4fadf2bb # v1.3.5
+        uses: nextcloud-libraries/nextcloud-version-matrix@d96fc6d3fd6cb9fc67f92d72aed808e802a5e65b # v1.3.6
 
       - name: Set up php
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
