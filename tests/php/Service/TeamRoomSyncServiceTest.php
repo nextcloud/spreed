@@ -72,6 +72,8 @@ class TeamRoomSyncServiceTest extends TestCase {
 	protected IAppConfig&MockObject $appConfig;
 	protected GuestManager&MockObject $guestManager;
 	protected TeamRoomSyncService $service;
+	/** Local owner or moderator the federated members are invited in the name of */
+	protected ?Attendee $inviter = null;
 	protected Room&MockObject $room;
 
 	/**
@@ -104,8 +106,9 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$serverConfig = $this->createMock(IConfig::class);
 		$serverConfig->method('getSystemValueString')->with('secret')->willReturn('secret');
 		// A local owner sends the invitations of federated members
+		$this->inviter = Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']);
 		$this->participantService->method('getHighestPermissionAttendee')
-			->willReturn(Attendee::fromRow(['actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+			->willReturnCallback(fn (): ?Attendee => $this->inviter);
 
 		$this->service = new TeamRoomSyncService(
 			$this->circlesAdapter,
@@ -136,6 +139,9 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->cloudIdManager->method('getCloudId')
 			->willReturnCallback(fn (string $user, ?string $remote): ICloudId => $this->makeCloudId($user, 'https://' . $remote));
+		// Same as the server: only the protocol is removed
+		$this->cloudIdManager->method('removeProtocolFromUrl')
+			->willReturnCallback(static fn (string $url): string => (string)preg_replace('/^https?:\/\//', '', $url));
 		$this->cloudIdManager->method('resolveCloudId')
 			->willReturnCallback(function (string $cloudId): ICloudId {
 				[$user, $remote] = explode('@', $cloudId, 2);
@@ -230,11 +236,8 @@ class TeamRoomSyncServiceTest extends TestCase {
 		});
 	}
 
-	/**
-	 * @param array<string, array{level: int, joined: int}> $directMembers
-	 */
-	private function syncFederatedMembers(array $directMembers = []): void {
-		self::invokePrivate($this->service, 'syncFederatedMembers', [$this->room, $directMembers]);
+	private function syncFederatedMembers(): void {
+		self::invokePrivate($this->service, 'syncFederatedMembers', [$this->room]);
 	}
 
 	/**
@@ -453,10 +456,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 				'participantType' => Participant::MODERATOR,
 			]], $inviter);
 
-		$this->syncFederatedMembers([
-			'carol' => ['level' => self::LEVEL_MEMBER, 'joined' => 1],
-			'alice' => ['level' => self::LEVEL_ADMIN, 'joined' => 2],
-		]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testMembersAreInvitedInTheNameOfALocalOwner(): void {
@@ -476,7 +476,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 			->method('addUsers')
 			->with($this->room, $this->anything(), $owner);
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testBannedRemoteMemberIsNotInvited(): void {
@@ -484,7 +484,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->banService->method('isActorBanned')->with($this->room, Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example')->willReturn(true);
 		$this->participantService->expects($this->never())->method('addUsers');
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testUnreachableRemoteIsTriedAgainLater(): void {
@@ -497,7 +497,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 			->method('setAppValueArray')
 			->with(Config::TEAM_FEDERATED_MEMBERS, [7 => ['wait' => [self::hmac('bob@remote.example') => ['count' => 1, 'until' => 1000000 + self::INVITATION_PAUSE]]]]);
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public static function dataNotInvitedAgain(): array {
@@ -514,7 +514,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->participantService->expects($this->never())->method('addUsers');
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testMarkersOfFormerTeamMembersAreDeleted(): void {
@@ -575,7 +575,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->participantService->expects($this->never())->method('addUsers');
 		$this->participantService->expects($this->never())->method('removeAttendee');
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testUserIdsOfOtherCasingAreDifferentUsers(): void {
@@ -595,7 +595,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 			->method('removeAttendee')
 			->with($this->room, $other, AAttendeeRemovedEvent::REASON_REMOVED);
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testFederatedRoleFollowsTheTeam(): void {
@@ -608,7 +608,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->participantService->expects($this->once())->method('updateParticipantType')->with($this->room, $bob, Participant::MODERATOR);
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testFederatedParticipantsThatLeftTheTeamAreRemoved(): void {
@@ -631,10 +631,13 @@ class TeamRoomSyncServiceTest extends TestCase {
 		]);
 		$this->participantService->method('getParticipantsByActorType')->willReturn([]);
 
+		// No local owner or moderator in the conversation
+		$this->inviter = null;
+
 		$this->participantService->expects($this->never())->method('addUsers');
 		$this->logger->expects($this->once())->method('warning');
 
-		$this->syncFederatedMembers(['carol' => ['level' => self::LEVEL_MEMBER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testEmailMembersAreInvited(): void {
@@ -944,7 +947,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 			->method('setAppValueArray')
 			->with(Config::TEAM_FEDERATED_MEMBERS, [7 => ['wait' => [self::hmac('bob@remote.example') => ['count' => 3, 'until' => 1000000 + 1200]]]]);
 
-		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
+		$this->syncFederatedMembers();
 	}
 
 	public function testLeavingTheRoomLeavesTheTeamAsTheUser(): void {

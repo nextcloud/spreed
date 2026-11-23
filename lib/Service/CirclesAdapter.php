@@ -65,10 +65,11 @@ class CirclesAdapter {
 	}
 
 	/**
-	 * Everything a resync needs, with one lookup of the team and its members
-	 * (instead of getTeam(), getDirectMembers(), getRemoteMembers() and
-	 * getEmailMembers() one after the other); also one consistent state
+	 * Everything a resync needs, with one lookup of the team and its members,
+	 * also one consistent state. getDirectMembers(), getRemoteMembers() and
+	 * getEmailMembers() return its parts.
 	 *
+	 * @return array{team: array, direct: TalkTeamDirectMembers, remote: list<TalkTeamRemoteMember>, emails: array<string, string>}
 	 * @throws \Exception
 	 */
 	public function getTeamSnapshot(string $teamId): array {
@@ -83,7 +84,7 @@ class CirclesAdapter {
 			foreach ($circle->getMembers() as $member) {
 				$directEntry = self::getDirectMemberEntry($member);
 				if (!empty($directEntry)) {
-					$direct[self::getUserIdOf($member)] = $directEntry;
+					$direct[(string)$member->getUserId()] = $directEntry;
 					continue;
 				}
 				$remoteEntry = self::getRemoteMemberEntry($member);
@@ -93,7 +94,8 @@ class CirclesAdapter {
 				}
 				$email = $member->getLevel() >= Member::LEVEL_MEMBER ? $this->getEmailOfMember($member) : null;
 				if (!empty($email)) {
-					$emails[$email] = !empty(self::getDisplayNameOf($member)) ? self::getDisplayNameOf($member) : $email;
+					$displayName = (string)$member->getDisplayName();
+					$emails[$email] = $displayName !== '' ? $displayName : $email;
 				}
 			}
 			return [
@@ -105,14 +107,9 @@ class CirclesAdapter {
 		});
 	}
 
-	protected static function getUserIdOf(Member $member): string {
-		return $member->getUserId();
-	}
-
-	protected static function getDisplayNameOf(Member $member): string {
-		return $member->getDisplayName();
-	}
-
+	/**
+	 * @return TalkTeamDirectMember|null
+	 */
 	protected static function getDirectMemberEntry(Member $member): ?array {
 		if ($member->getUserType() !== Member::TYPE_USER || empty($member->getUserId())
 			|| !$member->isLocal() || $member->getLevel() < Member::LEVEL_MEMBER) {
@@ -121,6 +118,9 @@ class CirclesAdapter {
 		return ['level' => $member->getLevel(), 'joined' => $member->getJoined()];
 	}
 
+	/**
+	 * @return TalkTeamRemoteMember|null
+	 */
 	protected static function getRemoteMemberEntry(Member $member): ?array {
 		if ($member->getUserType() !== Member::TYPE_USER || $member->isLocal()
 			|| empty($member->getUserId()) || $member->getLevel() < Member::LEVEL_MEMBER) {
@@ -143,17 +143,7 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	public function getDirectMembers(string $teamId): array {
-		return $this->asSuperUser(static function (CirclesManager $manager) use ($teamId): array {
-			/** @var TalkTeamDirectMembers $members */
-			$members = [];
-			foreach ($manager->getCircle($teamId)->getMembers() as $member) {
-				$entry = self::getDirectMemberEntry($member);
-				if (!is_null($entry)) {
-					$members[self::getUserIdOf($member)] = $entry;
-				}
-			}
-			return $members;
-		});
+		return $this->getTeamSnapshot($teamId)['direct'];
 	}
 
 	/**
@@ -207,16 +197,7 @@ class CirclesAdapter {
 	 * @throws \Exception
 	 */
 	public function getEmailMembers(string $teamId): array {
-		return $this->asSuperUser(function (CirclesManager $manager) use ($teamId): array {
-			$emails = [];
-			foreach ($manager->getCircle($teamId)->getMembers() as $member) {
-				$email = $this->getEmailOfMember($member);
-				if (!is_null($email) && $member->getLevel() >= Member::LEVEL_MEMBER) {
-					$emails[$email] = !empty(self::getDisplayNameOf($member)) ? self::getDisplayNameOf($member) : $email;
-				}
-			}
-			return $emails;
-		});
+		return $this->getTeamSnapshot($teamId)['emails'];
 	}
 
 	/**
@@ -245,20 +226,11 @@ class CirclesAdapter {
 	/**
 	 * Direct members of the team on other instances (Circles federation)
 	 *
-	 * @return array
+	 * @return list<TalkTeamRemoteMember>
 	 * @throws \Exception
 	 */
 	public function getRemoteMembers(string $teamId): array {
-		return $this->asSuperUser(static function (CirclesManager $manager) use ($teamId): array {
-			$remoteMembers = [];
-			foreach ($manager->getCircle($teamId)->getMembers() as $member) {
-				$entry = self::getRemoteMemberEntry($member);
-				if (!is_null($entry)) {
-					$remoteMembers[] = $entry;
-				}
-			}
-			return $remoteMembers;
-		});
+		return $this->getTeamSnapshot($teamId)['remote'];
 	}
 
 	/**
@@ -369,14 +341,6 @@ class CirclesAdapter {
 			}
 			$manager->removeMember($member->getId());
 		});
-	}
-
-	/**
-	 * Instances as Circles and cloud ids write them can differ in case
-	 * (host names are case-insensitive), protocol and trailing slash
-	 */
-	public static function getNormalizedInstanceDomain(string $instanceUrl): string {
-		return mb_strtolower(preg_replace('/^https?:\/\//i', '', mb_rtrim($instanceUrl, '/')));
 	}
 
 	/**

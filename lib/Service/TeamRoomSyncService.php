@@ -119,11 +119,7 @@ class TeamRoomSyncService {
 	 * resync in a request
 	 */
 	public function queueResync(Room $room): void {
-		$this->queueResyncOfTeam($room->getObjectId());
-	}
-
-	public function queueResyncOfTeam(string $teamId): void {
-		$argument = ['teamId' => $teamId];
+		$argument = ['teamId' => $room->getObjectId()];
 		if (!$this->jobList->has(ResyncTeamRoom::class, $argument)) {
 			$this->jobList->add(ResyncTeamRoom::class, $argument);
 		}
@@ -151,7 +147,8 @@ class TeamRoomSyncService {
 				// Circles is unavailable or failed: nothing is changed, the next resync tries again
 				throw $e;
 			}
-			$this->handleDeletedTeam($room);
+			// Also when the CircleDestroyedEvent was missed (e.g. Circles was disabled meanwhile)
+			$this->archiveForDeletedTeam($room);
 			return;
 		}
 		$team = $snapshot['team'];
@@ -181,7 +178,7 @@ class TeamRoomSyncService {
 
 		// Marker changes of all invitations are written once
 		$this->withMarkerBatch(function () use ($room, $direct, $inviteFederated, $snapshot): void {
-			$this->syncFederatedMembers($room, $direct, $inviteFederated, $snapshot['remote']);
+			$this->syncFederatedMembers($room, $inviteFederated, $snapshot['remote']);
 			$this->syncEmailMembers($room, $inviteFederated, $snapshot['emails']);
 		});
 	}
@@ -255,11 +252,10 @@ class TeamRoomSyncService {
 	}
 
 	/**
-	 * @param array<array-key, TalkTeamDirectMember> $directMembers Local direct members, for the inviter
 	 * @param list<TalkTeamRemoteMember>|null $remoteMembers Members on other servers, loaded when null
 	 * @throws \Exception
 	 */
-	protected function syncFederatedMembers(Room $room, array $directMembers, bool $inviteFederated = true, ?array $remoteMembers = null): void {
+	protected function syncFederatedMembers(Room $room, bool $inviteFederated = true, ?array $remoteMembers = null): void {
 		if (!$this->talkConfig->isFederationEnabled()) {
 			return;
 		}
@@ -312,9 +308,9 @@ class TeamRoomSyncService {
 				continue;
 			}
 
-			$inviter ??= $this->getInviter($directMembers);
+			$inviter ??= $this->getInviter($room);
 			if (is_null($inviter)) {
-				$this->logger->warning('Team conversation ' . $room->getToken() . ' has no local owner or admin to invite the federated members of the team');
+				$this->logger->warning('Team conversation ' . $room->getToken() . ' has no local owner or moderator to invite the federated members of the team');
 				break;
 			}
 			$this->inviteFederatedMember($room, $member['cloudId'], $member['displayName'], $member['participantType'], $inviter, $markers['wait'][$key]['count'] ?? 0);
@@ -337,12 +333,6 @@ class TeamRoomSyncService {
 		if ($this->banService->isActorBanned($room, Attendee::ACTOR_FEDERATED_USERS, $cloudId->getId())) {
 			return false;
 		}
-		if (is_null($this->participantService->getHighestPermissionAttendee($room))) {
-			// The invitation is sent in the name of a local owner or moderator
-			$this->logger->warning('Team conversation ' . $room->getToken() . ' has no local owner or moderator to invite a federated member from ' . $cloudId->getRemote());
-			return false;
-		}
-
 		$key = $this->getNormalizedCloudId($cloudId);
 		try {
 			$this->federationManager->isAllowedToInvite($inviter, $cloudId, $room);
@@ -508,22 +498,18 @@ class TeamRoomSyncService {
 	}
 
 	/**
-	 * @param array<array-key, TalkTeamDirectMember> $directMembers
+	 * Federated members are invited in the name of a local owner (team admin)
+	 * or moderator, Talk's federation settings are checked for that user
 	 */
-	protected function getInviter(array $directMembers): ?IUser {
-		$candidates = array_filter($directMembers, static fn (array $member): bool => $member['level'] >= Member::LEVEL_ADMIN);
-		uasort($candidates, static fn (array $a, array $b): int => [$b['level'], $a['joined']] <=> [$a['level'], $b['joined']]);
-		foreach (array_keys($candidates) as $userId) {
-			$user = $this->userManager->get((string)$userId);
-			if (!is_null($user)) {
-				return $user;
-			}
-		}
-		return null;
+	protected function getInviter(Room $room): ?IUser {
+		$attendee = $this->participantService->getHighestPermissionAttendee($room);
+		return $attendee === null ? null : $this->userManager->get($attendee->getActorId());
 	}
 
 	protected function getNormalizedCloudId(#[\SensitiveParameter] ICloudId $cloudId): string {
-		return $cloudId->getUser() . '@' . CirclesAdapter::getNormalizedInstanceDomain($cloudId->getRemote());
+		// Circles and cloud ids can write the server differently: protocol, case and trailing slash
+		$server = mb_strtolower(mb_rtrim($this->cloudIdManager->removeProtocolFromUrl($cloudId->getRemote()), '/'));
+		return $cloudId->getUser() . '@' . $server;
 	}
 
 	/**
@@ -664,16 +650,6 @@ class TeamRoomSyncService {
 				$this->participantService->removeAttendee($room, $current[$userId], AAttendeeRemovedEvent::REASON_REMOVED);
 			}
 		}
-	}
-
-	/**
-	 * @param Room $room
-	 * @return void
-	 * @throws \Exception
-	 */
-	protected function handleDeletedTeam(Room $room): void {
-		// Missed CircleDestroyedEvent (e.g. Circles was disabled meanwhile)
-		$this->archiveForDeletedTeam($room);
 	}
 
 	/**
