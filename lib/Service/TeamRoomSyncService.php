@@ -46,6 +46,9 @@ class TeamRoomSyncService {
 	/** Longest pause between two invitations: unreachable servers are still tried once a day */
 	public const INVITATION_RETRY_PAUSE_MAX = 86400;
 
+	/** Changes of the team that Talk makes right now, see isChangingTeamFromTalk() */
+	protected int $changesFromTalk = 0;
+
 	/**
 	 * @var array<int, TalkTeamRoomMarkers>|null
 	 */
@@ -740,6 +743,55 @@ class TeamRoomSyncService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Leaving a team conversation means leaving the team, otherwise the next
+	 * resync would add the user again. The user leaves themselves, so Circles
+	 * checks it like "Leave team" in the Teams app. When the owner leaves,
+	 * Circles picks the new owner and the resync makes them the room owner in Talk.
+	 *
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function leaveTeamOfRoom(Room $room, string $userId): void {
+		$teamId = $room->getObjectId();
+		try {
+			if ($this->circlesAdapter->getDirectMember($teamId, $userId) === null) {
+				// Stale participant: leaving the conversation is enough
+				return;
+			}
+			$this->changeTeamFromTalk(fn () => $this->circlesAdapter->leaveTeam($teamId, $userId));
+		} catch (\Exception $e) {
+			if (!CirclesAdapter::isTeamNotFound($e)) {
+				throw $e;
+			}
+			// The team was deleted: leaving the conversation is enough
+		}
+	}
+
+	/**
+	 * @template T
+	 * @param callable(): T $change
+	 * @return T
+	 */
+	protected function changeTeamFromTalk(callable $change): mixed {
+		$this->changesFromTalk++;
+		try {
+			return $change();
+		} finally {
+			$this->changesFromTalk--;
+		}
+	}
+
+	/**
+	 * Whether Talk is changing the team in this process and updates the
+	 * conversation itself: the listeners of the Circles events skip it then.
+	 * In web requests Circles may apply the change later (asynchronously),
+	 * then the removal arrives after Talk removed the participant already and
+	 * changes nothing.
+	 */
+	public function isChangingTeamFromTalk(): bool {
+		return $this->changesFromTalk > 0;
 	}
 
 	/**

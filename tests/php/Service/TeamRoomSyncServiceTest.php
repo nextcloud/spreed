@@ -944,4 +944,55 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->syncFederatedMembers(['alice' => ['level' => self::LEVEL_OWNER, 'joined' => 1]]);
 	}
+
+	public function testLeavingTheRoomLeavesTheTeamAsTheUser(): void {
+		$this->mockSnapshot(['alice' => self::LEVEL_MEMBER]);
+		$during = null;
+		$this->circlesAdapter->expects($this->once())->method('leaveTeam')->with('team1', 'alice')
+			->willReturnCallback(function () use (&$during): void {
+				// Circles applies the leave in this process on the command line: its event arrives now
+				$during = $this->service->isChangingTeamFromTalk();
+			});
+
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+		$this->service->leaveTeamOfRoom($this->room, 'alice');
+
+		$this->assertTrue($during);
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testStaleParticipantOnlyLeavesTheRoom(): void {
+		$this->mockSnapshot(['bob' => self::LEVEL_OWNER]);
+		$this->circlesAdapter->expects($this->never())->method('leaveTeam');
+
+		$this->service->leaveTeamOfRoom($this->room, 'alice');
+	}
+
+	public function testLeavingTheRoomOfADeletedTeam(): void {
+		$this->circlesAdapter->method('getDirectMember')
+			->willThrowException(new \Exception('Circle not found', 0, new CircleNotFoundException('Circle not found')));
+		$this->circlesAdapter->expects($this->never())->method('leaveTeam');
+
+		$this->service->leaveTeamOfRoom($this->room, 'alice');
+	}
+
+	public static function dataLeaveRefused(): array {
+		return [
+			'Circles unavailable' => [new \Exception('Circles App unavailable')],
+			'refused by the team' => [new \Exception('Not allowed', 0, new \RuntimeException('Not allowed'))],
+		];
+	}
+
+	#[DataProvider('dataLeaveRefused')]
+	public function testRefusedLeaveIsReported(\Exception $exception): void {
+		$this->mockSnapshot(['alice' => self::LEVEL_MEMBER]);
+		$this->circlesAdapter->method('leaveTeam')->willThrowException($exception);
+
+		$this->expectExceptionObject($exception);
+		try {
+			$this->service->leaveTeamOfRoom($this->room, 'alice');
+		} finally {
+			$this->assertFalse($this->service->isChangingTeamFromTalk());
+		}
+	}
 }

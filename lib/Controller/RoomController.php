@@ -1970,7 +1970,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'|'team'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Participant removed successfully
-	 * 400: Removing participant is not possible, e.g. members of the team of a team conversation leave the team in the Teams app
+	 * 400: Removing participant is not possible, e.g. the team of a team conversation refused that the user leaves it
 	 * 403: The Matrix account of the user is not active anymore
 	 * 404: Participant not found
 	 * 502: The Matrix homeserver rejected leaving the Matrix room or could not be reached
@@ -2004,21 +2004,26 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
 		}
 
-		if ($room->isTeamManaged()
-			&& $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS
-			&& $this->teamRoomSyncService->isMemberOfTeam($room, $participant->getAttendee())) {
-			// Members of the team leave the team in the Teams app, otherwise the next resync adds
-			// them again. Federated users can leave: the resync does not invite them again.
-			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
-		}
-
 		if ($room->isAnnouncement() && !$participant->hasModeratorPermissions(false)) {
 			// Announcements can not be left, so the audience can not miss out on them.
 			// Moderators can still remove participants from the conversation.
 			return new DataResponse(['error' => 'announcement'], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
+		$isTeamRoom = $room->isTeamManaged();
+		if ($isTeamRoom && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			// Leaving the room = leaving the team, otherwise the next resync adds them again.
+			// Federated users only leave the conversation: the resync does not invite them again.
+			try {
+				$this->teamRoomSyncService->leaveTeamOfRoom($room, $participant->getAttendee()->getActorId());
+			} catch (\Exception $e) {
+				$this->logger->info('User ' . $participant->getAttendee()->getActorId() . ' could not leave the team of conversation ' . $room->getToken(), ['exception' => $e]);
+				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		// In team rooms Circles picks the new owner when the owner leaves
+		if (!$isTeamRoom && $room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 			if ($participant->hasModeratorPermissions(false)
 				&& $this->participantService->getNumberOfUsers($room) > 1
 				&& $this->participantService->getNumberOfModerators($room) === 1) {
@@ -2026,7 +2031,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		if ($room->getType() !== Room::TYPE_CHANGELOG
+		// Safeguard for Circles: the team room will not be deleted so it doesn't
+		// disappear during resyncing, membership changes or other failures.
+		// FIXME: once stable, change to room deletion when team deletion or empty teams is reliable
+		if (!$isTeamRoom
+			&& $room->getType() !== Room::TYPE_CHANGELOG
 			&& $room->getObjectType() !== Room::OBJECT_TYPE_FILE
 			&& $this->participantService->getNumberOfUsers($room) === 1
 			&& \in_array($participant->getAttendee()->getParticipantType(), [

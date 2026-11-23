@@ -192,18 +192,31 @@ Feature: conversation-5/team-conversation-roles
 
   # Removing
 
-  Scenario: Members of the team are not removed or leave only in Talk
+  Scenario: Members of the team are not removed only in Talk
     # The next resync would add them again: that is done in the Teams app
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     And add user "participant4" to team "Team A"
     And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     When user "participant1" removes "participant2" from room "room" with 400 (v4)
-    And user "participant3" leaves room "room" with 400 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
       | users     | participant2 | 3               |
       | users     | participant3 | 3               |
+      | users     | participant4 | 3               |
+
+  Scenario: Leaving the team conversation leaves the team
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant3" leaves room "room" with 200 (v4)
+    Then user "participant3" is no direct member of team "Team A"
+    # The resync does not add them again
+    When add user "participant4" to team "Team A"
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant2 | 3               |
       | users     | participant4 | 3               |
 
 

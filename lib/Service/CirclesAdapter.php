@@ -272,6 +272,18 @@ class CirclesAdapter {
 	}
 
 	/**
+	 * The user leaves the team themselves, Circles checks it like "Leave team"
+	 * in the Teams app. When the owner leaves, Circles decides the new owner.
+	 *
+	 * @throws \Exception
+	 */
+	public function leaveTeam(string $teamId, string $userId): void {
+		$this->asUser($userId, function () use ($teamId): void {
+			$this->getCirclesService(CircleService::class)->circleLeave($teamId);
+		});
+	}
+
+	/**
 	 * The user joins the team themselves (CFG_OPEN, with CFG_REQUEST only a request)
 	 *
 	 * @return bool True when the user is a member now, false when the request needs a moderator

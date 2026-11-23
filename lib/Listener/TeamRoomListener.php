@@ -83,6 +83,10 @@ class TeamRoomListener implements IEventListener {
 			// archived for the deleted team instead of being emptied
 			return;
 		}
+		if ($this->syncService->isChangingTeamFromTalk()) {
+			// Talk removes the participant itself, with its actor and reason
+			return;
+		}
 
 		try {
 			$this->syncService->removeFormerTeamMember($room, $event->getMember(), $event->getType() === CircleGenericEvent::LEFT);

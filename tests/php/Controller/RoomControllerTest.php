@@ -210,11 +210,41 @@ class RoomControllerTest extends TestCase {
 		self::assertSame($status, $this->controller->removeAttendeeFromRoom(2)->getStatus());
 	}
 
-	public function testMembersOfTheTeamCanNotLeaveTheTeamRoom(): void {
+	public function testLeavingTheTeamRoomLeavesTheTeam(): void {
 		$this->inTeamRoom();
-		$attendee = Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::USER]);
+		$attendee = Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::OWNER]);
 		$this->participant->method('getAttendee')->willReturn($attendee);
-		$this->teamRoomSyncService->method('isMemberOfTeam')->with($this->room, $attendee)->willReturn(true);
+		$this->participant->method('hasModeratorPermissions')->willReturn(true);
+		$alice = $this->makeUser('alice');
+		$this->userManager->method('get')->willReturn($alice);
+		// The only owner can leave: Circles picks the new owner of the team
+		$this->participantService->method('getNumberOfUsers')->willReturn(3);
+		$this->participantService->method('getNumberOfModerators')->willReturn(1);
+
+		$this->teamRoomSyncService->expects($this->once())->method('leaveTeamOfRoom')->with($this->room, 'alice');
+		$this->participantService->expects($this->once())->method('removeUser')->with($this->room, $alice, 'leave');
+
+		self::assertSame(Http::STATUS_OK, $this->controller->removeSelfFromRoom()->getStatus());
+	}
+
+	public function testLastUserLeavingDoesNotDeleteTheTeamRoom(): void {
+		// e.g. the owner leaves before the resync added the other members of the team
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::OWNER]));
+		$alice = $this->makeUser('alice');
+		$this->userManager->method('get')->willReturn($alice);
+		$this->participantService->method('getNumberOfUsers')->willReturn(1);
+
+		$this->roomService->expects($this->never())->method('deleteRoom');
+		$this->participantService->expects($this->once())->method('removeUser')->with($this->room, $alice, 'leave');
+
+		self::assertSame(Http::STATUS_OK, $this->controller->removeSelfFromRoom()->getStatus());
+	}
+
+	public function testTeamRefusingTheLeaveKeepsTheParticipant(): void {
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::USER]));
+		$this->teamRoomSyncService->method('leaveTeamOfRoom')->willThrowException(new \Exception('Circles App unavailable'));
 
 		$this->participantService->expects($this->never())->method('removeUser');
 

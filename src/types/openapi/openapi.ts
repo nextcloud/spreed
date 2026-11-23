@@ -12892,7 +12892,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Removing participant is not possible, e.g. members of the team of a team conversation leave the team in the Teams app */
+            /** @description Removing participant is not possible, e.g. the team of a team conversation refused that the user leaves it */
             400: {
                 headers: {
                     [name: string]: unknown;

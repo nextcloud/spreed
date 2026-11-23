@@ -159,4 +159,13 @@ class TeamRoomListenerTest extends TestCase {
 
 		$this->listener->handle(new RoomCreatedEvent($room));
 	}
+
+	public function testRemovalMadeByTalkIsNotRepeated(): void {
+		$this->manager->method('getTeamRoom')->with('team1')->willReturn($this->room);
+		$this->syncService->method('isChangingTeamFromTalk')->willReturn(true);
+		$this->syncService->expects($this->never())->method('removeFormerTeamMember');
+		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
+
+		$this->listener->handle($this->makeRemovingEvent(CircleGenericEvent::LEFT));
+	}
 }
