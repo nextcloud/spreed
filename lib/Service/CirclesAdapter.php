@@ -411,6 +411,29 @@ class CirclesAdapter {
 	}
 
 	/**
+	 * Set the level of the first direct member that matches (a member on another
+	 * server), acting as $actorUserId: Circles checks the permissions.
+	 *
+	 * @param callable(Member): bool $match
+	 * @param int $level One of Member::LEVEL_MEMBER, _MODERATOR or _ADMIN
+	 * @return bool False when no member matched
+	 * @throws \Exception
+	 */
+	public function setMatchingMemberLevel(string $teamId, callable $match, int $level, string $actorUserId): bool {
+		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $match, $level): bool {
+			foreach ($manager->getCircle($teamId)->getMembers() as $member) {
+				if ($match($member)) {
+					if ($member->getLevel() !== $level) {
+						$manager->levelMember($member->getId(), $level);
+					}
+					return true;
+				}
+			}
+			return false;
+		});
+	}
+
+	/**
 	 * @template T
 	 * @param callable(CirclesManager): T $callback
 	 * @return T

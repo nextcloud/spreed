@@ -1431,4 +1431,75 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->expectExceptionObject($exception);
 		$this->service->addEmailToTeamRoom($this->room, 'guest@example.tld', 'alice');
 	}
+
+	/**
+	 * Members of the team that setMatchingMemberLevel() is called with: the level of the first one that matches is set
+	 *
+	 * @param list<Member> $members
+	 */
+	private function mockSetMatchingMemberLevel(array $members, ?array &$changed): void {
+		$changed = [];
+		$this->circlesAdapter->method('setMatchingMemberLevel')
+			->willReturnCallback(function (string $teamId, callable $match, int $level, string $actorUserId) use ($members, &$changed): bool {
+				$this->assertSame('team1', $teamId);
+				$this->assertSame('alice', $actorUserId);
+				foreach ($members as $member) {
+					if ($match($member)) {
+						$changed[] = [$member, $level];
+						return true;
+					}
+				}
+				return false;
+			});
+	}
+
+	public function testFederatedRoleIsChangedInTheTeamAsTheModerator(): void {
+		$actor = $this->makeUserParticipant('alice', Participant::OWNER);
+		$target = $this->makeFederatedParticipant('bob@remote.example');
+		$this->participantService->method('getParticipantTypeChangeByModerator')->willReturn(Participant::MODERATOR);
+		// Same user id on another server: only the member of their server
+		$other = $this->makeCirclesMember('bob', 'other.example');
+		$theirs = $this->makeCirclesMember('bob', 'remote.example');
+		$this->mockSetMatchingMemberLevel([$other, $theirs], $changed);
+
+		$this->participantService->expects($this->once())->method('updateParticipantType')->with($this->room, $target, Participant::MODERATOR);
+
+		$this->assertSame(Participant::MODERATOR, $this->service->changeFederatedRoleInTeam($this->room, $actor, $target, true));
+		$this->assertSame([[$theirs, self::LEVEL_MODERATOR]], $changed);
+	}
+
+	public function testFederatedModeratorsCanNotChangeFederatedRoles(): void {
+		$actor = $this->makeFederatedParticipant('carol@remote.example', Participant::MODERATOR);
+		$target = $this->makeFederatedParticipant('bob@remote.example');
+		$this->participantService->method('getParticipantTypeChangeByModerator')->willReturn(Participant::MODERATOR);
+		$this->circlesAdapter->expects($this->never())->method('setMatchingMemberLevel');
+
+		$this->expectException(ParticipantTypeException::class);
+		$this->expectExceptionMessage(ParticipantTypeException::REASON_MODERATOR);
+		$this->service->changeFederatedRoleInTeam($this->room, $actor, $target, true);
+	}
+
+	public function testFederatedRoleOfAFormerMemberIsNotChanged(): void {
+		$actor = $this->makeUserParticipant('alice', Participant::OWNER);
+		$target = $this->makeFederatedParticipant('bob@remote.example');
+		$this->participantService->method('getParticipantTypeChangeByModerator')->willReturn(Participant::MODERATOR);
+		$this->mockSetMatchingMemberLevel([$this->makeCirclesMember('carol', 'remote.example')], $changed);
+		$this->participantService->expects($this->never())->method('updateParticipantType');
+
+		$this->expectException(ParticipantTypeException::class);
+		$this->expectExceptionMessage(ParticipantTypeException::REASON_TYPE);
+		$this->service->changeFederatedRoleInTeam($this->room, $actor, $target, true);
+	}
+
+	public function testTeamRefusingTheFederatedRoleChangeKeepsTheRole(): void {
+		$actor = $this->makeUserParticipant('alice', Participant::MODERATOR);
+		$target = $this->makeFederatedParticipant('bob@remote.example', Participant::MODERATOR);
+		$this->participantService->method('getParticipantTypeChangeByModerator')->willReturn(Participant::USER);
+		$exception = new \Exception('Insufficient rights');
+		$this->circlesAdapter->method('setMatchingMemberLevel')->willThrowException($exception);
+		$this->participantService->expects($this->never())->method('updateParticipantType');
+
+		$this->expectExceptionObject($exception);
+		$this->service->changeFederatedRoleInTeam($this->room, $actor, $target, false);
+	}
 }

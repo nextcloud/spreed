@@ -987,11 +987,60 @@ class TeamRoomSyncService {
 		}
 		$this->changeTeamOfRoomFromTalk($room, fn (string $teamId) => $this->circlesAdapter->removeMatchingMember(
 			$teamId,
-			fn (Member $member): bool => $member->getUserType() === Member::TYPE_USER
-				&& !$member->isLocal()
-				&& $this->getRemoteMemberKey($member->getUserId(), $member->getInstance()) === $key,
+			$this->matchRemoteMember($key),
 			$actorUserId,
 		));
+	}
+
+	/**
+	 * Promote/demote a federated participant of a team room: the level of the
+	 * member of their server is changed in the team as the acting (local) user,
+	 * so Circles decides. Federated users can be moderators at most. The rules
+	 * of Talk are checked before as well.
+	 *
+	 * @param int|null $requestedType Target type, or null to only toggle the moderator level
+	 * @return int The new participant type
+	 * @throws ParticipantTypeException When Talk does not allow the change
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function changeFederatedRoleInTeam(Room $room, Participant $actor, #[\SensitiveParameter] Participant $target, bool $promote, ?int $requestedType = null): int {
+		$newType = $this->participantService->getParticipantTypeChangeByModerator($room, $actor, $target, $promote, $requestedType);
+		if ($actor->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
+			// Federated moderators have no account here to act in the team with
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_MODERATOR);
+		}
+
+		try {
+			$key = $this->getNormalizedCloudId($this->cloudIdManager->resolveCloudId($target->getAttendee()->getActorId()));
+		} catch (\InvalidArgumentException) {
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_TYPE);
+		}
+		$isMember = $this->circlesAdapter->setMatchingMemberLevel(
+			$room->getObjectId(),
+			$this->matchRemoteMember($key),
+			self::getLevelForParticipantType($newType),
+			$actor->getAttendee()->getActorId(),
+		);
+		if (!$isMember) {
+			// No member of the team anymore: removed by the next resync
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_TYPE);
+		}
+
+		// The team has the new level now, same as the next resync would do
+		$this->participantService->updateParticipantType($room, $target, $newType);
+		return $newType;
+	}
+
+	/**
+	 * The team member of another server with this key (see getRemoteMemberKey()),
+	 * not a local user or a user of another server with the same user id
+	 *
+	 * @return callable(Member): bool
+	 */
+	protected function matchRemoteMember(string $key): callable {
+		return fn (Member $member): bool => $member->getUserType() === Member::TYPE_USER
+			&& !$member->isLocal()
+			&& $this->getRemoteMemberKey($member->getUserId(), $member->getInstance()) === $key;
 	}
 
 	/**

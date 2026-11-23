@@ -360,13 +360,27 @@ class RoomControllerTest extends TestCase {
 		self::assertSame(['error' => $error], $response->getData());
 	}
 
-	public function testRolesOfFederatedUsersStayInTalk(): void {
+	public function testRolesOfFederatedUsersAreChangedInTheTeam(): void {
+		$this->inTeamRoom();
+		$target = $this->mockTarget(Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example');
+		$this->teamRoomSyncService->expects($this->never())->method('changeRoleInTeam');
+		$this->teamRoomSyncService->expects($this->once())
+			->method('changeFederatedRoleInTeam')
+			->with($this->room, $this->participant, $target, true, null);
+		$this->participantService->expects($this->never())->method('updateParticipantTypeByModerator');
+
+		self::assertSame(Http::STATUS_OK, $this->controller->promoteModerator(2)->getStatus());
+	}
+
+	public function testTeamRefusingTheFederatedRoleChange(): void {
 		$this->inTeamRoom();
 		$this->mockTarget(Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example');
-		$this->teamRoomSyncService->expects($this->never())->method('changeRoleInTeam');
-		$this->participantService->expects($this->once())->method('updateParticipantTypeByModerator');
+		$this->teamRoomSyncService->method('changeFederatedRoleInTeam')->willThrowException(new \Exception('Insufficient rights'));
 
-		$this->controller->promoteModerator(2);
+		$response = $this->controller->promoteModerator(2);
+
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'team'], $response->getData());
 	}
 
 	public static function dataTeamSettings(): array {

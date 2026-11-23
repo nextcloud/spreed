@@ -174,8 +174,8 @@ class ParticipantService {
 	 */
 	public function updateParticipantTypeByModerator(Room $room, Participant $actor, Participant $target, bool $promote, ?int $requestedType = null): int {
 		if ($room->isTeamManaged()
-			&& $target->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			// Roles of users are their levels in the team, see TeamRoomSyncService::changeRoleInTeam()
+			&& in_array($target->getAttendee()->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
+			// Roles of users are their levels in the team, see TeamRoomSyncService::changeRoleInTeam() and changeFederatedRoleInTeam()
 			throw new ParticipantTypeException(ParticipantTypeException::REASON_ROOM_TYPE);
 		}
 

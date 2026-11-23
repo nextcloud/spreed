@@ -3453,6 +3453,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$promote,
 					$participantType !== 0 ? $participantType : null,
 				);
+			} elseif ($this->room->isTeamManaged() && $attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				// Federated users as well: the level of the member of their server
+				$this->teamRoomSyncService->changeFederatedRoleInTeam(
+					$this->room,
+					$this->participant,
+					$targetParticipant,
+					$promote,
+					$participantType !== 0 ? $participantType : null,
+				);
 			} else {
 				$this->participantService->updateParticipantTypeByModerator(
 					$this->room,
