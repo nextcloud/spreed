@@ -19,6 +19,7 @@ use OCA\Talk\Model\RetryNotification;
 use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
@@ -110,6 +111,7 @@ class BackendNotifier {
 		$protocol['roomName'] = $roomName;
 		$protocol['roomType'] = $roomType;
 		$protocol['roomDefaultPermissions'] = $roomDefaultPermissions;
+		$protocol['roomAttributes'] = $room->getAttributes() & RoomAttributes::TEAM->value;
 		$protocol['name'] = FederationManager::TALK_PROTOCOL_NAME;
 		$share->setProtocol($protocol);
 

@@ -481,7 +481,7 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame('passy', $room->getPassword());
 	}
 
-	protected function createRoomWithAttributes(int $attributes, int $type = Room::TYPE_PUBLIC): Room {
+	protected function createRoomWithAttributes(int $attributes, int $type = Room::TYPE_PUBLIC, string $remoteServer = ''): Room {
 		return new Room(
 			0,
 			$type,
@@ -496,7 +496,7 @@ class RoomServiceTest extends TestCase {
 			'description',
 			'',
 			'',
-			'',
+			$remoteServer,
 			'',
 			Attendee::PERMISSIONS_DEFAULT,
 			Participant::FLAG_DISCONNECTED,
@@ -859,5 +859,42 @@ class RoomServiceTest extends TestCase {
 
 		// The preset asks for listing, the closed team does not allow it
 		$this->service->createConversation(Room::TYPE_GROUP, 'Requested name', $this->makeUser('alice'), Room::OBJECT_TYPE_TEAM, 'team1', listable: Room::LISTABLE_USERS);
+	}
+
+	public function testRemoteTeamAttributeMarksTheFederatedCopy(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::NONE->value, Room::TYPE_GROUP, 'https://host.example');
+
+		$this->dispatcher->expects($this->exactly(2))->method('dispatchTyped');
+
+		$this->service->setRemoteTeamAttribute($room, true);
+
+		$this->assertTrue($room->isTeam());
+		// Only the attribute: no team logic runs for the copy
+		$this->assertFalse($room->isTeamManaged());
+	}
+
+	public function testRemoteTeamAttributeIsRemovedFromTheFederatedCopy(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::TEAM->value, Room::TYPE_GROUP, 'https://host.example');
+
+		$this->service->setRemoteTeamAttribute($room, false);
+
+		$this->assertFalse($room->isTeam());
+	}
+
+	public static function dataRemoteTeamAttributeUnchanged(): array {
+		return [
+			// Team conversations of this server get the attribute when they are created
+			'conversation of this server' => [RoomAttributes::NONE->value, '', true],
+			'already marked' => [RoomAttributes::TEAM->value, 'https://host.example', true],
+		];
+	}
+
+	#[DataProvider('dataRemoteTeamAttributeUnchanged')]
+	public function testRemoteTeamAttributeIsOnlyChangedForFederatedCopies(int $attributes, string $remoteServer, bool $isTeam): void {
+		$room = $this->createRoomWithAttributes($attributes, Room::TYPE_GROUP, $remoteServer);
+
+		$this->dispatcher->expects($this->never())->method('dispatchTyped');
+
+		$this->service->setRemoteTeamAttribute($room, $isTeam);
 	}
 }

@@ -1010,6 +1010,37 @@ class RoomService {
 	}
 
 	/**
+	 * The copy of a federated conversation on this server shows whether the
+	 * conversation is a team room on the owning server. Only the attribute:
+	 * the object type stays empty, so no team logic (sync, Circles) runs for
+	 * the copy, the server of the team syncs the participants.
+	 */
+	public function setRemoteTeamAttribute(Room $room, bool $isTeam): void {
+		if (!$room->isFederatedConversation() || $room->isTeam() === $isTeam) {
+			return;
+		}
+
+		$oldAttributes = $room->getAttributes();
+		$newAttributes = $isTeam
+			? $oldAttributes | RoomAttributes::TEAM->value
+			: $oldAttributes & ~RoomAttributes::TEAM->value;
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TEAM, $isTeam, !$isTeam);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('attributes', $update->createNamedParameter($newAttributes, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setAttributes($newAttributes);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TEAM, $isTeam, !$isTeam);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
+	/**
 	 * Mark a conversation as preserved (or remove the mark again).
 	 *
 	 * While preserved the conversation can not be deleted, its chat history can

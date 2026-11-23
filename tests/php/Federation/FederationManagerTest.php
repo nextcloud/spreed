@@ -18,6 +18,7 @@ use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -39,6 +40,7 @@ class FederationManagerTest extends TestCase {
 	protected BackendNotifier&MockObject $backendNotifier;
 	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected IEventDispatcher&MockObject $dispatcher;
+	protected RoomService&MockObject $roomService;
 	protected FederationManager $federationManager;
 	protected IUser&MockObject $user;
 
@@ -52,6 +54,7 @@ class FederationManagerTest extends TestCase {
 		$this->backendNotifier = $this->createMock(BackendNotifier::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->roomService = $this->createMock(RoomService::class);
 		$notificationManager = $this->createMock(IManager::class);
 		$notification = $this->createMock(INotification::class);
 		$notification->method('setApp')->willReturnSelf();
@@ -62,7 +65,7 @@ class FederationManagerTest extends TestCase {
 		$this->federationManager = new FederationManager(
 			$this->manager,
 			$this->participantService,
-			$this->createMock(RoomService::class),
+			$this->roomService,
 			$this->invitationMapper,
 			$this->attendeeMapper,
 			$this->backendNotifier,
@@ -207,5 +210,26 @@ class FederationManagerTest extends TestCase {
 		$this->federationManager->addRemoteRoom($this->user, 42, Room::TYPE_GROUP, 'Room', Attendee::PERMISSIONS_DEFAULT, 'remotetoken', 'https://remote.example', 'new-secret', 'bob@remote.example', 'Bob', 'alice@local.example');
 
 		$this->assertSame('new-secret', $invitation->getAccessToken());
+	}
+
+	public static function dataTeamMarkerOfTheCopy(): array {
+		return [
+			'team conversation on the host' => [RoomAttributes::TEAM->value, true],
+			// Other attributes of the host are not taken over
+			'other conversation' => [RoomAttributes::CHANNEL->value, false],
+			'older host without attributes' => [0, false],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataTeamMarkerOfTheCopy')]
+	public function testTeamMarkerOfTheCopy(int $roomAttributes, bool $isTeam): void {
+		$invitation = $this->createInvitation(Invitation::STATE_PENDING);
+		$this->prepareReInvite($invitation);
+
+		$this->roomService->expects($this->once())
+			->method('setRemoteTeamAttribute')
+			->with($this->isInstanceOf(Room::class), $isTeam);
+
+		$this->federationManager->addRemoteRoom($this->user, 42, Room::TYPE_GROUP, 'Room', Attendee::PERMISSIONS_DEFAULT, 'remotetoken', 'https://remote.example', 'new-secret', 'bob@remote.example', 'Bob', 'alice@local.example', $roomAttributes);
 	}
 }

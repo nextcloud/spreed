@@ -32,6 +32,7 @@ use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ConversationUnarchiveService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
@@ -132,6 +133,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		$roomToken = $share->getResourceName();
 		$roomName = $share->getProtocol()['roomName'];
 		$roomDefaultPermissions = $share->getProtocol()['roomDefaultPermissions'] ?? Attendee::PERMISSIONS_DEFAULT;
+		// Only the team room marker is taken over from the server that owns the team room
+		$roomAttributes = (int)($share->getProtocol()['roomAttributes'] ?? 0) & RoomAttributes::TEAM->value;
 		if (isset($share->getProtocol()['invitedCloudId'])) {
 			$localCloudId = $share->getProtocol()['invitedCloudId'];
 		} else {
@@ -184,7 +187,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
-			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int)$remoteId, $roomType, $roomName, $roomDefaultPermissions, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId);
+			$invite = $this->federationManager->addRemoteRoom($shareWithUser, (int)$remoteId, $roomType, $roomName, $roomDefaultPermissions, $roomToken, $remote, $shareSecret, $sharedByFederatedId, $sharedByDisplayName, $localCloudId, $roomAttributes);
 
 			$this->notifyAboutNewShare($shareWithUser, (string)$invite->getId(), $sharedByFederatedId, $sharedByDisplayName, $roomName, $roomToken, $remote);
 			return (string)$invite->getId();

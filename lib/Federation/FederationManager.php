@@ -22,6 +22,7 @@ use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\InvitationMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -99,6 +100,7 @@ class FederationManager {
 		string $inviterCloudId,
 		string $inviterDisplayName,
 		string $localCloudId,
+		?int $roomAttributes = 0,
 	): Invitation {
 		$couldHaveInviteWithOtherCasing = false;
 		try {
@@ -107,6 +109,8 @@ class FederationManager {
 		} catch (RoomNotFoundException) {
 			$room = $this->manager->createRemoteRoom($roomType, $roomName, $remoteToken, $remoteServerUrl);
 		}
+		// For a team room invited to before, the owning server may have changed attributes
+		$this->roomService->setRemoteTeamAttribute($room, ($roomAttributes & RoomAttributes::TEAM->value) !== 0);
 
 		// Only update the room permissions if there are no participants in the
 		// remote room. Otherwise, the room permissions would be up to date
