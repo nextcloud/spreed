@@ -56,7 +56,7 @@ jobs:
       - name: Get version matrix
         if: steps.changes.outputs.src != 'false'
         id: versions
-        uses: nextcloud-libraries/nextcloud-version-matrix@496b897175b6b6d0d1205764676cfa0a4fadf2bb # v1.3.5
+        uses: nextcloud-libraries/nextcloud-version-matrix@d96fc6d3fd6cb9fc67f92d72aed808e802a5e65b # v1.3.6
 
   phpunit-pgsql:
     runs-on: ubuntu-latest
