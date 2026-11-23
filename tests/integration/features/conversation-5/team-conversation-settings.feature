@@ -25,27 +25,36 @@ Feature: conversation-5/team-conversation-settings
       | name        | Team Alpha      |
       | description | New description |
 
-  # Skipped until Circles fires EditingCircleEvent for config changes (CircleConfig),
-  # without it the conversation only follows the team with the next resync
-  @skip
+  # Circles fires no event for config changes (CircleConfig), so the
+  # conversation follows the settings of the team with the next resync
   Scenario: The conversation is open to users when everyone can join the team, also with confirmation
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     And user "participant1" gets room "room" with 200 (v4)
       | listable | 0 |
     When set config "VISIBLE" of team "Team A"
+    And force run "OCA\Talk\BackgroundJob\ResyncTeamRooms" background jobs
+    And repeating run "OCA\Talk\BackgroundJob\ResyncTeamRoomsNow" background jobs
     Then user "participant1" gets room "room" with 200 (v4)
       | listable | 0 |
     When set config "OPEN" of team "Team A"
+    And force run "OCA\Talk\BackgroundJob\ResyncTeamRooms" background jobs
+    And repeating run "OCA\Talk\BackgroundJob\ResyncTeamRoomsNow" background jobs
     Then user "participant1" gets room "room" with 200 (v4)
       | listable | 1 |
     # Joining sends a request to join then
     When set config "JOINREQUEST" of team "Team A"
+    And force run "OCA\Talk\BackgroundJob\ResyncTeamRooms" background jobs
+    And repeating run "OCA\Talk\BackgroundJob\ResyncTeamRoomsNow" background jobs
     Then user "participant1" gets room "room" with 200 (v4)
       | listable | 1 |
     When set config "_JOINREQUEST" of team "Team A"
+    And force run "OCA\Talk\BackgroundJob\ResyncTeamRooms" background jobs
+    And repeating run "OCA\Talk\BackgroundJob\ResyncTeamRoomsNow" background jobs
     Then user "participant1" gets room "room" with 200 (v4)
       | listable | 1 |
     When set config "_OPEN" of team "Team A"
+    And force run "OCA\Talk\BackgroundJob\ResyncTeamRooms" background jobs
+    And repeating run "OCA\Talk\BackgroundJob\ResyncTeamRoomsNow" background jobs
     Then user "participant1" gets room "room" with 200 (v4)
       | listable | 0 |
 

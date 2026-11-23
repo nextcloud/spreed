@@ -25,6 +25,7 @@ use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ConversationUnarchiveService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
@@ -48,6 +49,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -142,8 +144,24 @@ class FederationTest extends TestCase {
 		);
 	}
 
-	public function testSendRemoteShareWithOwner(): void {
-		$cloudShare = $this->createStub(ICloudFederationShare::class);
+	public static function dataRoomAttributes(): array {
+		return [
+			'none' => [RoomAttributes::NONE->value, RoomAttributes::NONE->value],
+			'team room' => [RoomAttributes::TEAM->value, RoomAttributes::TEAM->value],
+			// Only the team room marker goes to the other server
+			'team room with other attributes' => [RoomAttributes::TEAM->value | RoomAttributes::CLASSIFIED->value | RoomAttributes::VOICE_ROOM->value, RoomAttributes::TEAM->value],
+			'other attributes only' => [RoomAttributes::CLASSIFIED->value, RoomAttributes::NONE->value],
+		];
+	}
+
+	#[DataProvider('dataRoomAttributes')]
+	public function testSendRemoteShareWithOwner(int $roomAttributes, int $expectedAttributes): void {
+		$cloudShare = $this->createMock(ICloudFederationShare::class);
+		$cloudShare->method('getProtocol')
+			->willReturn([]);
+		$cloudShare->expects($this->once())
+			->method('setProtocol')
+			->with($this->callback(static fn (array $protocol): bool => $protocol['roomAttributes'] === $expectedAttributes));
 
 		$providerId = '3';
 		$token = 'abcdefghijklmno';
@@ -185,6 +203,9 @@ class FederationTest extends TestCase {
 			->method('getToken')
 			->with()
 			->willReturn($name);
+
+		$room->method('getAttributes')
+			->willReturn($roomAttributes);
 
 		$this->userManager->expects($this->once())
 			->method('get')
@@ -245,7 +266,15 @@ class FederationTest extends TestCase {
 		$this->backendNotifier->sendRemoteShare($providerId, $token, $shareWith, $sharedBy, $shareType, $room, $attendee);
 	}
 
-	public function testReceiveRemoteShare(): void {
+	public static function dataReceivedRoomAttributes(): array {
+		return array_merge(self::dataRoomAttributes(), [
+			// Older servers send no room attributes
+			'older server' => [null, RoomAttributes::NONE->value],
+		]);
+	}
+
+	#[DataProvider('dataReceivedRoomAttributes')]
+	public function testReceiveRemoteShare(?int $roomAttributes, int $expectedAttributes): void {
 		$providerId = '3';
 		$token = 'abcdefghijklmno';
 		$shareWith = 'test@remote.test.local';
@@ -276,7 +305,7 @@ class FederationTest extends TestCase {
 			'talk-room',
 			$token
 		);
-		$share->setProtocol([
+		$protocol = [
 			'name' => 'nctalk',
 			'roomType' => $roomType,
 			'roomName' => $roomName,
@@ -285,15 +314,23 @@ class FederationTest extends TestCase {
 				'sharedSecret' => $token,
 			],
 			'invitedCloudId' => 'test@remote.test.local',
-		]);
+		];
+		if ($roomAttributes !== null) {
+			$protocol['roomAttributes'] = $roomAttributes;
+		}
+		$share->setProtocol($protocol);
 
 		$invite = Invitation::fromRow(['id' => 20]);
 
 		// Test receiving federation expectations
+		$receivedAttributes = null;
 		$this->federationManager->expects($this->once())
 			->method('addRemoteRoom')
 			->with($shareWithUser, $providerId, $roomType, $roomName, $roomDefaultPermissions, $name, $remote, $token)
-			->willReturn($invite);
+			->willReturnCallback(static function (mixed ...$args) use ($invite, &$receivedAttributes): Invitation {
+				$receivedAttributes = $args[11];
+				return $invite;
+			});
 
 		$this->config->method('isFederationEnabled')
 			->willReturn(true);
@@ -371,6 +408,7 @@ class FederationTest extends TestCase {
 		$this->assertSame('20',
 			$this->cloudFederationProvider->shareReceived($share)
 		);
+		$this->assertSame($expectedAttributes, $receivedAttributes);
 	}
 
 	public function testSendAcceptNotification(): void {
