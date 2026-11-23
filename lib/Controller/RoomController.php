@@ -3228,6 +3228,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 */
 	protected function changeParticipantType(int $attendeeId, bool $promote, int $participantType = 0): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {
