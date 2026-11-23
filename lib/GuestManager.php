@@ -35,7 +35,6 @@ use Psr\Log\LoggerInterface;
 
 class GuestManager {
 	public function __construct(
-		private readonly Config $talkConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly IEmailValidator $emailValidator,
 		private readonly IMailer $mailer,
@@ -100,7 +99,8 @@ class GuestManager {
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF
 			|| $room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE
-			|| $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
+			|| $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION
+			|| $room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
 			throw new GuestImportException(GuestImportException::REASON_ROOM);
 		}
 
