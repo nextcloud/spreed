@@ -105,7 +105,7 @@ class FederationChatNotifier {
 	 * subscribed to the conversation, the same way as
 	 * {@see \OCA\Talk\Chat\Notifier::notifyReacted()} does for local users.
 	 *
-	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string, defaultNotificationLevel?: int} $reactionData
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string} $reactionData
 	 */
 	public function handleReaction(Room $room, Participant $participant, ProxyCacheMessage $message, array $reactionData): void {
 		if ($message->getActorType() !== Attendee::ACTOR_USERS
@@ -126,11 +126,7 @@ class FederationChatNotifier {
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$notificationLevel = Participant::NOTIFY_ALWAYS;
 			} else {
-				// The user's own notification level is only stored locally and
-				// never reaches the host, so when unset the host's default
-				// applies (sent with the notification)
-				$notificationLevel = $reactionData['defaultNotificationLevel']
-					?? $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
+				$notificationLevel = $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
 			}
 		}
 

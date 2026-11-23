@@ -196,9 +196,9 @@ class FederationChatNotifierTest extends TestCase {
 		$this->notifier->handleReaction($room, $participant, $message, $reactionData);
 	}
 
-	public function testHandleReactionUsesHostDefaultNotificationLevel(): void {
-		// When the user has not set a level, the host's default applies,
-		// not this server's default
+	public function testHandleReactionIgnoresSentDefaultNotificationLevel(): void {
+		// When the user has not set a level, the local default applies, even
+		// when the host sent a different default with the notification
 		$room = $this->createRoom(Room::TYPE_GROUP);
 		$participant = $this->createParticipant(Participant::NOTIFY_DEFAULT);
 		$message = $this->createReactedMessage();
@@ -211,8 +211,18 @@ class FederationChatNotifierTest extends TestCase {
 		$this->userConverter->method('convertTypeAndId')
 			->willReturn(['type' => Attendee::ACTOR_FEDERATED_USERS, 'id' => 'reactor@remote']);
 
-		$this->notificationManager->expects($this->never())
-			->method('notify');
+		$notification = $this->createMock(INotification::class);
+		$notification->method('setApp')->willReturnSelf();
+		$notification->method('setObject')->willReturnSelf();
+		$notification->method('setMessage')->willReturnSelf();
+		$notification->method('setDateTime')->willReturnSelf();
+		$notification->method('setSubject')->willReturnSelf();
+		$notification->method('setUser')->willReturnSelf();
+		$this->notificationManager->method('createNotification')
+			->willReturn($notification);
+		$this->notificationManager->expects($this->once())
+			->method('notify')
+			->with($notification);
 
 		$this->notifier->handleReaction($room, $participant, $message, $reactionData);
 	}

@@ -589,7 +589,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, reactionData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string, defaultNotificationLevel?: int}} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, reactionData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string}} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
