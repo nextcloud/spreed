@@ -15,6 +15,7 @@ use OCA\Talk\BackgroundJob\ResyncTeamRoomsNow;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
@@ -1032,5 +1033,63 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 		$this->expectExceptionObject($exception);
 		$this->service->removeFromTeamRoom($this->room, 'bob', 'alice');
+	}
+
+	public function testAddingToTheRoomAddsToTheTeamAsTheModerator(): void {
+		$bob = $this->createMock(IUser::class);
+		$bob->method('getUID')->willReturn('bob');
+		$this->circlesAdapter->expects($this->once())->method('addUser')->with('team1', 'bob', 'alice')->willReturn(true);
+		$participant = $this->makeUserParticipant('bob');
+		// syncUserInTeamRoom() reads the member again: added by now
+		$this->circlesAdapter->method('getDirectMember')->willReturnOnConsecutiveCalls(null, ['level' => self::LEVEL_MEMBER, 'joined' => 2]);
+		$lookups = 0;
+		$this->participantService->method('getParticipant')->willReturnCallback(function () use (&$lookups, $participant): Participant {
+			if ($lookups++ === 0) {
+				throw new ParticipantNotFoundException();
+			}
+			return $participant;
+		});
+		$this->participantService->expects($this->once())->method('addUsers');
+
+		$this->assertSame($participant, $this->service->addToTeamRoom($this->room, $bob, 'alice'));
+	}
+
+	public function testInvitedUsersAreAddedAfterAccepting(): void {
+		$bob = $this->createMock(IUser::class);
+		$bob->method('getUID')->willReturn('bob');
+		$this->circlesAdapter->method('getDirectMember')->willReturn(null);
+		$this->circlesAdapter->expects($this->once())->method('addUser')->willReturn(false);
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->assertNull($this->service->addToTeamRoom($this->room, $bob, 'alice'));
+	}
+
+	public function testMissingMembersAreOnlyAddedToTheRoom(): void {
+		$bob = $this->createMock(IUser::class);
+		$bob->method('getUID')->willReturn('bob');
+		$this->circlesAdapter->method('getDirectMember')->willReturn(['level' => self::LEVEL_MEMBER, 'joined' => 2]);
+		$participant = $this->makeUserParticipant('bob');
+		// Not in the conversation yet, then the participant that was added
+		$lookups = 0;
+		$this->participantService->method('getParticipant')->willReturnCallback(function () use (&$lookups, $participant): Participant {
+			if ($lookups++ === 0) {
+				throw new ParticipantNotFoundException();
+			}
+			return $participant;
+		});
+		$this->circlesAdapter->expects($this->never())->method('addUser');
+		$this->participantService->expects($this->once())->method('addUsers');
+
+		$this->assertSame($participant, $this->service->addToTeamRoom($this->room, $bob, 'alice'));
+	}
+
+	public function testBannedUsersAreNotAddedToTheTeam(): void {
+		$bob = $this->createMock(IUser::class);
+		$bob->method('getUID')->willReturn('bob');
+		$this->banService->method('throwIfActorIsBanned')->with($this->room, 'bob')->willThrowException(new ForbiddenException('actor'));
+		$this->circlesAdapter->expects($this->never())->method('addUser');
+
+		$this->expectException(ForbiddenException::class);
+		$this->service->addToTeamRoom($this->room, $bob, 'alice');
 	}
 }

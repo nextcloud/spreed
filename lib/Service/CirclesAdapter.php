@@ -272,6 +272,21 @@ class CirclesAdapter {
 	}
 
 	/**
+	 * Add a user as direct member of the team, acting as $actorUserId: Circles
+	 * checks the permissions (moderator) and the team settings (with
+	 * CFG_INVITE the user is only invited and needs to accept).
+	 *
+	 * @return bool True when the user is a member now, false when only invited
+	 * @throws \Exception
+	 */
+	public function addUser(string $teamId, #[\SensitiveParameter] string $userId, string $actorUserId): bool {
+		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $userId): bool {
+			$member = $manager->addMember($teamId, $manager->getFederatedUser($userId, Member::TYPE_USER));
+			return $member->getLevel() >= Member::LEVEL_MEMBER;
+		});
+	}
+
+	/**
 	 * The user leaves the team themselves, Circles checks it like "Leave team"
 	 * in the Teams app. When the owner leaves, Circles decides the new owner.
 	 *

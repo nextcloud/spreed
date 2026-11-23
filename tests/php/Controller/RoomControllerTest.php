@@ -143,25 +143,36 @@ class RoomControllerTest extends TestCase {
 
 	public static function dataAddToTeamRoom(): array {
 		return [
-			'member of the team' => ['users', true, Http::STATUS_OK, null],
-			'no member of the team' => ['users', false, Http::STATUS_BAD_REQUEST, 'team'],
-			'email address' => ['emails', true, Http::STATUS_BAD_REQUEST, 'source'],
-			'group' => ['groups', true, Http::STATUS_BAD_REQUEST, 'source'],
-			'team' => ['teams', true, Http::STATUS_BAD_REQUEST, 'source'],
-			'federated user' => ['federated_users', true, Http::STATUS_BAD_REQUEST, 'source'],
-			'phone number' => ['phones', true, Http::STATUS_BAD_REQUEST, 'source'],
+			// Added to the team as the moderator, and to the conversation right away
+			'user' => ['users', 'added', Http::STATUS_OK, null],
+			// Invite-only team: added by the resync after accepting
+			'user of an invite-only team' => ['users', 'invited', Http::STATUS_OK, null],
+			'team refused it' => ['users', 'refused', Http::STATUS_BAD_REQUEST, 'team'],
+			'banned user' => ['users', 'banned', Http::STATUS_BAD_REQUEST, 'ban'],
+			'email address' => ['emails', '', Http::STATUS_BAD_REQUEST, 'source'],
+			'group' => ['groups', '', Http::STATUS_BAD_REQUEST, 'source'],
+			'team' => ['teams', '', Http::STATUS_BAD_REQUEST, 'source'],
+			'federated user' => ['federated_users', '', Http::STATUS_BAD_REQUEST, 'source'],
+			'phone number' => ['phones', '', Http::STATUS_BAD_REQUEST, 'source'],
 		];
 	}
 
 	#[DataProvider('dataAddToTeamRoom')]
-	public function testOnlyMembersOfTheTeamAreAddedToTeamRooms(string $source, bool $isMember, int $status, ?string $error): void {
+	public function testAddingToTeamRoomsAddsToTheTeam(string $source, string $result, int $status, ?string $error): void {
 		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
 		$bob = $this->makeUser('bob');
 		$this->userManager->method('get')->with('bob')->willReturn($bob);
-		$this->teamRoomSyncService->expects($source === 'users' ? $this->once() : $this->never())
-			->method('syncUserInTeamRoom')
-			->with($this->room, $bob)
-			->willReturn($isMember ? $this->createMock(Participant::class) : null);
+		$adding = $this->teamRoomSyncService->expects($source === 'users' ? $this->once() : $this->never())
+			->method('addToTeamRoom')
+			->with($this->room, $bob, 'alice');
+		match ($result) {
+			'added' => $adding->willReturn($this->createMock(Participant::class)),
+			'invited' => $adding->willReturn(null),
+			'refused' => $adding->willThrowException(new \Exception('Insufficient rights')),
+			'banned' => $adding->willThrowException(new ForbiddenException('actor')),
+			default => null,
+		};
 		$this->participantService->expects($this->never())->method('addUsers');
 		$this->participantService->expects($this->never())->method('inviteEmailAddress');
 		$this->participantService->expects($this->never())->method('addGroup');
@@ -172,17 +183,6 @@ class RoomControllerTest extends TestCase {
 		if ($error !== null) {
 			self::assertSame(['error' => $error], $response->getData());
 		}
-	}
-
-	public function testBannedMemberIsNotAddedToTeamRoom(): void {
-		$this->inTeamRoom();
-		$this->userManager->method('get')->willReturn($this->makeUser('bob'));
-		$this->teamRoomSyncService->method('syncUserInTeamRoom')->willThrowException(new ForbiddenException('actor'));
-
-		$response = $this->controller->addParticipantToRoom('bob');
-
-		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
-		self::assertSame(['error' => 'ban'], $response->getData());
 	}
 
 	public static function dataRemoveFromTeamRoom(): array {

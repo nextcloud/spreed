@@ -1692,8 +1692,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones'|'teams' $source Source of the participant
 	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'team'|'trusted-servers'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
-	 * 200: Participant successfully added, in Matrix conversations the user is invited and added once they accepted
-	 * 400: Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the user is no member of the team of a team conversation (check error attribute of response for detail key)
+	 * 200: Participant successfully added, in Matrix conversations and invite-only teams of team conversations the user is invited and added once they accepted
+	 * 400: Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the team of a team room refused adding the user (check error attribute of response for detail key)
 	 * 403: The Matrix account of the user can not invite to the Matrix room
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
@@ -1931,9 +1931,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * The participants of team conversations are the members of the team, they
-	 * are managed in the Teams app. Only members missing in the conversation
-	 * (e.g. not synced yet) are added here, right away.
+	 * The participants of team conversations are the members of the team: adding
+	 * a user adds them to the team, as the moderator (Circles decides). With an
+	 * invite-only team they are invited and become a participant after accepting.
 	 *
 	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'ban'|'new-participant'|'source'|'team'}, array{}>
 	 */
@@ -1942,6 +1942,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 			// Groups, teams, emails, phone numbers and federated users are added to the team in the Teams app
 			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
 		}
+		if (is_null($this->userId) || $this->participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
+			// Federated moderators have no account here to act in the team with
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
 
 		$newUser = $this->userManager->get($newParticipant);
 		if (!$newUser instanceof IUser || $newParticipant === MatterbridgeManager::BRIDGE_BOT_USERID) {
@@ -1949,16 +1953,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$participant = $this->teamRoomSyncService->syncUserInTeamRoom($this->room, $newUser);
+			// Null when only invited: added by the resync after accepting
+			$this->teamRoomSyncService->addToTeamRoom($this->room, $newUser, $this->userId);
 		} catch (ForbiddenException) {
 			return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
-			$this->logger->info('User ' . $newUser->getUID() . ' could not be added to team conversation ' . $this->room->getToken(), ['exception' => $e]);
-			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
-		}
-
-		if ($participant === null) {
-			// Not a member of the team: they need to be added to the team in the Teams app
+			$this->logger->info('User ' . $newUser->getUID() . ' could not be added to the team room ' . $this->room->getToken(), ['exception' => $e]);
 			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse([]);

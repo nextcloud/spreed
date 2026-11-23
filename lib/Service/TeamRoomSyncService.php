@@ -770,6 +770,27 @@ class TeamRoomSyncService {
 	}
 
 	/**
+	 * Adding a user to a team room  means adding them to the team, as
+	 * the acting user: Circles decides (moderator) and with an invite-only team
+	 * the user is only invited, they become a participant after accepting.
+	 * Members that are missing in the team room are only added to it.
+	 *
+	 * @return Participant|null The participant, null when the user was only invited
+	 * @throws ForbiddenException When the user is banned from the conversation
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function addToTeamRoom(Room $room, IUser $user, string $actorUserId): ?Participant {
+		$this->banService->throwIfActorIsBanned($room, $user->getUID());
+
+		// Invited: added by the resync after accepting the invitation in the Teams app
+		if (is_null($this->circlesAdapter->getDirectMember($room->getObjectId(), $user->getUID()))
+			&& !$this->circlesAdapter->addUser($room->getObjectId(), $user->getUID(), $actorUserId)) {
+			return null;
+		}
+		return $this->syncUserInTeamRoom($room, $user);
+	}
+
+	/**
 	 * Removing a user from a team conversation means removing them from the
 	 * team, as the acting user: Circles decides (moderator, and a higher level
 	 * than the removed member), like in the Teams app.

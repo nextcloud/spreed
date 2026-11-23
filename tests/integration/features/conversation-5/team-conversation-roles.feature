@@ -169,16 +169,37 @@ Feature: conversation-5/team-conversation-roles
 
   # Adding
 
-  Scenario: Only members of the team are added to the team conversation in Talk
+  Scenario: Adding a user in Talk adds them to the team
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
-    # Users that are no member of the team are added to the team in the Teams app
-    When user "participant1" adds user "participant4" to room "room" with 400 (v4)
+    When user "participant1" adds user "participant4" to room "room" with 200 (v4)
+    Then user "participant4" has level "Member" in team "Team A"
     # Members missing in the conversation (not synced yet) are added right away
-    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    When user "participant1" adds user "participant3" to room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
       | users     | participant3 | 3               |
+      | users     | participant4 | 3               |
+
+  Scenario: Users added to an invite-only team become participants after accepting
+    Given set config "INVITE" of team "Team A"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    When user "participant1" adds user "participant4" to room "room" with 200 (v4)
+    Then user "participant4" is no direct member of team "Team A"
+    When user "participant4" joins team "Team A" in the Teams app
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant2 | 3               |
+      | users     | participant3 | 3               |
+      | users     | participant4 | 3               |
+
+  Scenario: Members of the team can not add users when they are no moderators
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant2" adds user "participant4" to room "room" with 403 (v4)
+    Then user "participant4" is no direct member of team "Team A"
 
   Scenario: Groups, teams and email addresses are not added to the team conversation in Talk
     Given group "group1" exists

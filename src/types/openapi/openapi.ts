@@ -12662,7 +12662,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Participant successfully added, in Matrix conversations the user is invited and added once they accepted */
+            /** @description Participant successfully added, in Matrix conversations and invite-only teams of team conversations the user is invited and added once they accepted */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -12679,7 +12679,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the user is no member of the team of a team conversation (check error attribute of response for detail key) */
+            /** @description Adding participant is not possible, e.g. when the user is banned, an email, phone number or federated user is added to a classified conversation, or the team of a team room refused adding the user (check error attribute of response for detail key) */
             400: {
                 headers: {
                     [name: string]: unknown;
