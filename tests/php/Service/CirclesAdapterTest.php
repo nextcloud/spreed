@@ -241,4 +241,31 @@ class CirclesAdapterTest extends TestCase {
 		$this->assertSame($caller, $this->currentUser);
 		$this->assertFalse($this->bypass);
 	}
+
+	public function testRemoteUserIsAddedLikeInTheTeamsApp(): void {
+		// Looked up before acting as alice: the lookup changes the instance of
+		// this server, alice and the team must be created after it
+		$calls = [];
+		$alice = $this->createMock(FederatedUser::class);
+		$bob = $this->createMock(FederatedUser::class);
+		$this->circlesManager->method('getFederatedUser')->with('alice', Member::TYPE_USER)
+			->willReturnCallback(function () use (&$calls, $alice): FederatedUser {
+				$calls[] = 'actor';
+				return $alice;
+			});
+		$this->federatedUserService->expects($this->once())
+			->method('generateFederatedUser')
+			->with('bob@remote.example', Member::TYPE_USER)
+			->willReturnCallback(function () use (&$calls, $bob): FederatedUser {
+				$calls[] = 'lookup';
+				return $bob;
+			});
+		$this->circlesManager->expects($this->once())
+			->method('addMember')
+			->with('team1', $bob)
+			->willReturn($this->makeMember(Member::TYPE_USER, 'bob', Member::LEVEL_MEMBER, false));
+
+		$this->assertTrue($this->adapter->addRemoteUser('team1', 'bob', 'remote.example', 'alice'));
+		$this->assertSame(['lookup', 'actor'], $calls);
+	}
 }

@@ -12,6 +12,7 @@ use OCA\Circles\CirclesManager;
 use OCA\Circles\Db\MemberRequest;
 use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Model\Circle;
+use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Service\CircleService;
 use OCA\Circles\Service\ContactService;
@@ -244,6 +245,36 @@ class CirclesAdapter {
 	public function addUser(string $teamId, #[\SensitiveParameter] string $userId, string $actorUserId): bool {
 		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $userId): bool {
 			$member = $manager->addMember($teamId, $manager->getFederatedUser($userId, Member::TYPE_USER));
+			return $member->getLevel() >= Member::LEVEL_MEMBER;
+		});
+	}
+
+	/**
+	 * Add a user of another server as direct member of the team, acting as
+	 * $actorUserId: Circles checks the permissions and the team settings (the
+	 * team needs to allow members of other servers, with CFG_INVITE the user is
+	 * only invited).
+	 *
+	 * Same as the Teams app: when looking up the user on their server fails
+	 * (e.g. the server is not a known instance of Circles), Circles creates the
+	 * member from the user id and the server.
+	 *
+	 * The user is looked up before acting as $actorUserId: the lookup switches
+	 * Circles to the interface for other servers, which changes the instance of
+	 * this server from the loopback address to the public one. Circles requires
+	 * the acting user (the patron) to have the same instance as the team, so
+	 * both have to be created after the switch, otherwise Circles refuses the
+	 * member with "Member is invited by an entity that does not belongs to the
+	 * instance at the origin of the request".
+	 *
+	 * @param string $server Server of the user, without protocol
+	 * @return bool True when the user is a member now, false when only invited
+	 * @throws \Exception
+	 */
+	public function addRemoteUser(string $teamId, #[\SensitiveParameter] string $userId, string $server, string $actorUserId): bool {
+		$federatedUser = $this->run(fn (): FederatedUser => $this->getCirclesService(FederatedUserService::class)->generateFederatedUser($userId . '@' . $server, Member::TYPE_USER));
+		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $federatedUser): bool {
+			$member = $manager->addMember($teamId, $federatedUser);
 			return $member->getLevel() >= Member::LEVEL_MEMBER;
 		});
 	}

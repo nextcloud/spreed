@@ -13,17 +13,22 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
+use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
+use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudId;
+use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IUser;
@@ -40,6 +45,9 @@ class RoomControllerTest extends TestCase {
 	private IEventDispatcher&MockObject $dispatcher;
 	private TeamRoomSyncService&MockObject $teamRoomSyncService;
 	private IUserManager&MockObject $userManager;
+	private ICloudIdManager&MockObject $cloudIdManager;
+	private FederationManager&MockObject $federationManager;
+	private BanService&MockObject $banService;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
 	private RoomController $controller;
@@ -52,6 +60,9 @@ class RoomControllerTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->teamRoomSyncService = $this->createMock(TeamRoomSyncService::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
+		$this->federationManager = $this->createMock(FederationManager::class);
+		$this->banService = $this->createMock(BanService::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
 
@@ -68,6 +79,9 @@ class RoomControllerTest extends TestCase {
 					IEventDispatcher::class => $this->dispatcher,
 					TeamRoomSyncService::class => $this->teamRoomSyncService,
 					IUserManager::class => $this->userManager,
+					ICloudIdManager::class => $this->cloudIdManager,
+					FederationManager::class => $this->federationManager,
+					BanService::class => $this->banService,
 					default => $this->createMock($type),
 				},
 			};
@@ -153,7 +167,6 @@ class RoomControllerTest extends TestCase {
 			'email address' => ['emails', '', Http::STATUS_BAD_REQUEST, 'source'],
 			'group' => ['groups', '', Http::STATUS_BAD_REQUEST, 'source'],
 			'team' => ['teams', '', Http::STATUS_BAD_REQUEST, 'source'],
-			'federated user' => ['federated_users', '', Http::STATUS_BAD_REQUEST, 'source'],
 			'phone number' => ['phones', '', Http::STATUS_BAD_REQUEST, 'source'],
 		];
 	}
@@ -371,6 +384,64 @@ class RoomControllerTest extends TestCase {
 		$response = $this->controller->$method(...$arguments);
 
 		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		self::assertSame(['error' => 'team'], $response->getData());
+	}
+
+	public static function dataAddFederatedToTeamRoom(): array {
+		return [
+			// Added to the team as the moderator, invited to the conversation right away
+			'added' => [true, null, false, null, Http::STATUS_OK, null],
+			'federation disabled' => [false, null, false, null, Http::STATUS_NOT_IMPLEMENTED, 'federation'],
+			'invalid cloud id' => [true, new \InvalidArgumentException(), false, null, Http::STATUS_BAD_REQUEST, 'cloud-id'],
+			// Talk's federation rules are checked before the team changes
+			'server not trusted' => [true, null, false, new FederationRestrictionException(FederationRestrictionException::REASON_TRUSTED_SERVERS), Http::STATUS_BAD_REQUEST, 'trusted-servers'],
+			'banned' => [true, null, true, null, Http::STATUS_BAD_REQUEST, 'ban'],
+		];
+	}
+
+	#[DataProvider('dataAddFederatedToTeamRoom')]
+	public function testAddingFederatedUsersToTeamRoomsAddsThemToTheTeam(bool $federation, ?\InvalidArgumentException $invalid, bool $banned, ?FederationRestrictionException $restriction, int $status, ?string $error): void {
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+		$alice = $this->makeUser('alice');
+		$this->userManager->method('get')->with('alice')->willReturn($alice);
+		$this->talkConfig->method('isFederationEnabled')->willReturn($federation);
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getId')->willReturn('bob@remote.example');
+		if ($invalid !== null) {
+			$this->cloudIdManager->method('resolveCloudId')->willThrowException($invalid);
+		} else {
+			$this->cloudIdManager->method('resolveCloudId')->with('bob@remote.example')->willReturn($cloudId);
+		}
+		if ($restriction !== null) {
+			$this->federationManager->method('isAllowedToInvite')->willThrowException($restriction);
+		}
+		$this->banService->method('isActorBanned')->with($this->room, Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example')->willReturn($banned);
+
+		$this->teamRoomSyncService->expects($status === Http::STATUS_OK ? $this->once() : $this->never())
+			->method('addFederatedToTeamRoom')
+			->with($this->room, $cloudId, $alice);
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example', 'federated_users');
+
+		self::assertSame($status, $response->getStatus());
+		if ($error !== null) {
+			self::assertSame(['error' => $error], $response->getData());
+		}
+	}
+
+	public function testTeamRefusingTheFederatedUser(): void {
+		// E.g. the team does not allow members of other servers
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+		$this->userManager->method('get')->willReturn($this->makeUser('alice'));
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->cloudIdManager->method('resolveCloudId')->willReturn($this->createMock(ICloudId::class));
+		$this->teamRoomSyncService->method('addFederatedToTeamRoom')->willThrowException(new \Exception('Federated members not allowed'));
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example', 'federated_users');
+
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		self::assertSame(['error' => 'team'], $response->getData());
 	}
 }

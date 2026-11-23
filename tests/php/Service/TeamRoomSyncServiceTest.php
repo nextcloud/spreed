@@ -1293,4 +1293,85 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->service->removeEmailFromTeamRoom($this->room, 'guest@example.tld', 'alice');
 		$this->assertFalse($this->service->isChangingTeamFromTalk());
 	}
+
+	private function makeAlice(): IUser&MockObject {
+		$alice = $this->createMock(IUser::class);
+		$alice->method('getUID')->willReturn('alice');
+		return $alice;
+	}
+
+	public function testAddingAFederatedUserAddsThemToTheTeamAndInvitesThem(): void {
+		$alice = $this->makeAlice();
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
+		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+		$this->circlesAdapter->expects($this->once())->method('addRemoteUser')->with('team1', 'bob', 'remote.example', 'alice')->willReturn(true);
+
+		// In the name of the acting user, as member
+		$this->federationManager->expects($this->once())->method('isAllowedToInvite')->with($alice, $this->anything(), $this->room);
+		$this->participantService->expects($this->once())
+			->method('addUsers')
+			->with($this->room, [[
+				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
+				'actorId' => 'bob@remote.example',
+				'displayName' => 'bob@remote.example',
+				'participantType' => Participant::USER,
+			]], $alice);
+
+		$this->assertTrue($this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $alice));
+	}
+
+	public function testAddingAFederatedMemberThatDeclinedInvitesThemAgain(): void {
+		$alice = $this->makeAlice();
+		// Moderator of the team already, declined the invitation before
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'Remote.Example', 'displayName' => 'Bob', 'level' => self::LEVEL_MODERATOR],
+		]);
+		$stored = [7 => ['left' => [self::hmac('bob@remote.example') => true]]];
+		$this->appConfig->method('getAppValueArray')->willReturnCallback(static function () use (&$stored): array {
+			return $stored;
+		});
+		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+
+		$this->circlesAdapter->expects($this->never())->method('addRemoteUser');
+		// The "left" record is deleted, nothing else is written
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::TEAM_FEDERATED_MEMBERS, [])
+			->willReturnCallback(static function (string $key, array $value) use (&$stored): bool {
+				$stored = $value;
+				return true;
+			});
+		$this->participantService->expects($this->once())
+			->method('addUsers')
+			->with($this->room, $this->callback(static fn (array $participants): bool => $participants[0]['participantType'] === Participant::MODERATOR), $alice);
+
+		$this->assertTrue($this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $alice));
+	}
+
+	public function testFederatedUserOnlyInvitedToAnInviteOnlyTeam(): void {
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
+		$this->circlesAdapter->method('addRemoteUser')->willReturn(false);
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->assertFalse($this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $this->makeAlice()));
+	}
+
+	public function testFederatedParticipantIsNotInvitedTwice(): void {
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER],
+		]);
+		$this->participantService->method('getParticipantByActor')->willReturn($this->makeFederatedParticipant('bob@remote.example'));
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->assertTrue($this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $this->makeAlice()));
+	}
+
+	public function testTeamRefusingTheFederatedUserIsReported(): void {
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
+		$exception = new \Exception('Federated members not allowed');
+		$this->circlesAdapter->method('addRemoteUser')->willThrowException($exception);
+
+		$this->expectExceptionObject($exception);
+		$this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $this->makeAlice());
+	}
 }

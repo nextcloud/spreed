@@ -717,15 +717,67 @@ class TeamRoomSyncService {
 		} catch (\InvalidArgumentException) {
 			return false;
 		}
+		return !is_null($this->findRemoteMember($teamId, $key));
+	}
+
+	/**
+	 * @return TalkTeamRemoteMember|null
+	 * @throws \Exception
+	 */
+	protected function findRemoteMember(string $teamId, string $key): ?array {
 		foreach ($this->circlesAdapter->getRemoteMembers($teamId) as $member) {
-			try {
-				if ($this->getNormalizedCloudId($this->cloudIdManager->getCloudId($member['userId'], $member['instance'])) === $key) {
-					return true;
-				}
-			} catch (\InvalidArgumentException) {
+			if ($this->getRemoteMemberKey($member['userId'], $member['instance']) === $key) {
+				return $member;
 			}
 		}
-		return false;
+		return null;
+	}
+
+	/**
+	 * Adding a federated user to a team room means adding the user of their
+	 * server to the team, as the acting user: Circles decides (moderator, the
+	 * team allows members of other servers). They are invited to the
+	 * conversation right away, in the name of the acting user. With an
+	 * invite-only team they are only invited to the team, and invited to the
+	 * conversation by the resync after accepting.
+	 *
+	 * Federation rules in Talk for the acting user are checked before and are
+	 * a further permission check outside what the circles app does or supports.
+	 *
+	 * @return bool False when they were only invited to the team
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function addFederatedToTeamRoom(Room $room, #[\SensitiveParameter] ICloudId $cloudId, IUser $actor): bool {
+		$teamId = $room->getObjectId();
+		$key = $this->getNormalizedCloudId($cloudId);
+
+		$member = $this->findRemoteMember($teamId, $key);
+		if (is_null($member)) {
+			$server = $this->cloudIdManager->removeProtocolFromUrl($cloudId->getRemote());
+			if (!$this->circlesAdapter->addRemoteUser($teamId, $cloudId->getUser(), $server, $actor->getUID())) {
+				return false;
+			}
+			$level = Member::LEVEL_MEMBER;
+		} else {
+			$level = $member['level'];
+		}
+
+		// Added again on purpose: invited, even after declining or leaving before
+		$hash = $this->hashMember($key);
+		$this->updateFederatedMarkers($room, static function (array $markers) use ($hash): array {
+			unset($markers['left'][$hash]);
+			return $markers;
+		});
+
+		try {
+			$this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $cloudId->getId());
+			return true;
+		} catch (ParticipantNotFoundException) {
+		}
+		// Federated users can not be owners
+		$participantType = max(Participant::MODERATOR, self::getParticipantTypeForLevel($level));
+		$this->inviteFederatedMember($room, $cloudId, $cloudId->getDisplayId(), $participantType, $actor);
+		return true;
 	}
 
 	/**

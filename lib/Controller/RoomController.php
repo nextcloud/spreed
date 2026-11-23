@@ -1951,16 +1951,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * a user adds them to the team, as the moderator (Circles decides). With an
 	 * invite-only team they are invited and become a participant after accepting.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'ban'|'new-participant'|'source'|'team'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'new-participant'|'outgoing'|'source'|'team'|'trusted-servers'}, array{}>
 	 */
 	protected function addParticipantToTeamRoom(string $newParticipant, string $source): DataResponse {
-		if ($source !== 'users') {
-			// Groups, teams, emails, phone numbers and federated users are added to the team in the Teams app
+		if ($source !== Attendee::ACTOR_USERS && $source !== Attendee::ACTOR_FEDERATED_USERS) {
+			// Groups, teams, emails and phone numbers must be added to the team in the Teams app
 			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
 		}
 		if (is_null($this->userId) || $this->participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
 			// Federated moderators have no account here to act in the team with
 			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
+		if ($source === Attendee::ACTOR_FEDERATED_USERS) {
+			return $this->addFederatedToTeamRoom($newParticipant);
 		}
 
 		$newUser = $this->userManager->get($newParticipant);
@@ -1975,6 +1978,46 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			$this->logger->info('User ' . $newUser->getUID() . ' could not be added to the team room ' . $this->room->getToken(), ['exception' => $e]);
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse([]);
+	}
+
+	/**
+	 * A federated user is added to the team as member of their server and invited
+	 * to the conversation right away, in the name of the moderator. Talk's
+	 * federation rules for the moderator are checked before the team changes.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'outgoing'|'team'|'trusted-servers'}, array{}>
+	 */
+	protected function addFederatedToTeamRoom(#[SensitiveParameter] string $newParticipant): DataResponse {
+		if (!$this->talkConfig->isFederationEnabled()) {
+			return new DataResponse(['error' => 'federation'], Http::STATUS_NOT_IMPLEMENTED);
+		}
+		try {
+			$cloudId = $this->cloudIdManager->resolveCloudId($newParticipant);
+		} catch (\InvalidArgumentException) {
+			return new DataResponse(['error' => 'cloud-id'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$addedBy = $this->userManager->get($this->userId);
+		if (!$addedBy instanceof IUser) {
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
+		try {
+			$this->federationManager->isAllowedToInvite($addedBy, $cloudId, $this->room);
+		} catch (FederationRestrictionException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		}
+		if ($this->banService->isActorBanned($this->room, Attendee::ACTOR_FEDERATED_USERS, $cloudId->getId())) {
+			return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			// False when only invited to the team: invited to the conversation by the resync after accepting
+			$this->teamRoomSyncService->addFederatedToTeamRoom($this->room, $cloudId, $addedBy);
+		} catch (\Exception $e) {
+			$this->logger->info('Federated user could not be added to the team with the team room ' . $this->room->getToken(), ['exception' => $e]);
 			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse([]);

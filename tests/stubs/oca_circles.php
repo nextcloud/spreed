@@ -125,6 +125,8 @@ namespace OCA\Circles\Service {
 		}
 		public function canBypassCurrentUserCondition(): bool {
 		}
+		public function generateFederatedUser(string $federatedId, int $type = 0): \OCA\Circles\Model\FederatedUser {
+		}
 	}
 
 	class CircleService {
