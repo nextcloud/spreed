@@ -87,7 +87,17 @@ class TalkWidgetTest extends TestCase {
 		$this->assertSame($expected, self::invokePrivate($this->widget, 'hasUnreadMention', [$attendee]));
 	}
 
-	public function testGetItemsV2UnreadConversationWithoutMention(): void {
+	public static function dataGetItemsV2UnreadConversationWithoutMention(): array {
+		return [
+			'changelog, never read' => [Room::TYPE_CHANGELOG, false, ChatManager::UNREAD_FIRST_MESSAGE, 0, 'No unread mentions or messages in important conversations'],
+			'group, unread' => [Room::TYPE_GROUP, false, 100, 1, 'No unread mentions or messages in important conversations'],
+			'important group, unread' => [Room::TYPE_GROUP, true, 100, 1, ''],
+			'important group, only system messages unread' => [Room::TYPE_GROUP, true, 100, 0, 'No unread mentions or messages in important conversations'],
+		];
+	}
+
+	#[DataProvider('dataGetItemsV2UnreadConversationWithoutMention')]
+	public function testGetItemsV2UnreadConversationWithoutMention(int $type, bool $important, int $lastRead, int $unreadCount, string $expected): void {
 		$comment = $this->createMock(IComment::class);
 
 		$room = $this->createMock(Room::class);
@@ -95,19 +105,18 @@ class TalkWidgetTest extends TestCase {
 		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NONE);
 		$room->method('getCallFlag')->willReturn(Participant::FLAG_DISCONNECTED);
 		$room->method('isFederatedConversation')->willReturn(false);
-		$room->method('getType')->willReturn(Room::TYPE_CHANGELOG);
+		$room->method('getType')->willReturn($type);
 		$room->method('getLastMessageId')->willReturn(110);
 		$room->method('getLastMessage')->willReturn($comment);
 		$room->method('getDisplayName')->willReturn('user');
 		$room->method('getToken')->willReturn('token');
 
-		// Never read (-2) and never mentioned (0), as the changelog conversation
-		// of a user who did not open it yet
 		$attendee = new Attendee();
 		$attendee->setActorType(Attendee::ACTOR_USERS);
 		$attendee->setActorId('user');
-		$attendee->setLastReadMessage(ChatManager::UNREAD_FIRST_MESSAGE);
+		$attendee->setLastReadMessage($lastRead);
 		$attendee->setLastMentionMessage(0);
+		$attendee->setImportant($important);
 
 		$this->manager->method('getRoomsForUser')->willReturn([$room]);
 		$this->participantService->method('getParticipant')
@@ -120,12 +129,13 @@ class TalkWidgetTest extends TestCase {
 		$message->method('getExpirationDateTime')->willReturn(null);
 		$this->messageParser->method('createMessage')->willReturn($message);
 
+		$this->chatManager->method('getUnreadCount')->willReturn($unreadCount);
 		// "0" is not a message: asking for it fails with an InvalidArgumentException
 		$this->chatManager->expects($this->never())->method('getComment');
 
 		$items = $this->widget->getItemsV2('user');
 
 		$this->assertCount(1, $items->getItems());
-		$this->assertSame('No unread mentions', $items->getHalfEmptyContentMessage());
+		$this->assertSame($expected, $items->getHalfEmptyContentMessage());
 	}
 }

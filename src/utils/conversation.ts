@@ -78,6 +78,15 @@ export function hasUnreadMentions(conversation: Conversation): boolean {
 }
 
 /**
+ * check if the conversation has unread mentions, or unread messages in an important conversation
+ *
+ * @param conversation conversation object
+ */
+export function hasUnreadMentionsOrImportant(conversation: Conversation): boolean {
+	return hasUnreadMentions(conversation) || (conversation.isImportant && hasUnreadMessages(conversation))
+}
+
+/**
  * check if the conversation has ongoing call
  *
  * @param conversation conversation object
@@ -192,7 +201,7 @@ export function filterConversation(conversation: Conversation, filters: Filter[]
 		return shouldIncludeEvents(conversation)
 	}
 	return (!filters.includes('unread') || hasUnreadMessages(conversation))
-		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
+		&& (!filters.includes('mentions') || hasUnreadMentionsOrImportant(conversation))
 		&& (!filters.includes('events') || isEvent(conversation))
 }
 

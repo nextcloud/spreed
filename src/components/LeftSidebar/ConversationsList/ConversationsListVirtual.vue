@@ -15,7 +15,7 @@ import ConversationTagHeader from './ConversationTagHeader.vue'
 import { AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { useSettingsStore } from '../../../stores/settings.ts'
-import { hasCall, hasUnreadMentions, hasUnreadMessages } from '../../../utils/conversation.ts'
+import { hasCall, hasUnreadMentions, hasUnreadMentionsOrImportant, hasUnreadMessages } from '../../../utils/conversation.ts'
 
 export type VirtualListItem = (Conversation | TagHeaderItem) & { _key?: string }
 
@@ -333,12 +333,12 @@ function scrollToConversation(token: string) {
 
 /**
  * Get the indices (in the flattened virtual-list, i.e. tag-header- and
- * collapsed-section-aware) of conversations with unread mentions.
+ * collapsed-section-aware) of conversations with unread mentions or important unread messages.
  */
 function getUnreadMentionIndices(): number[] {
 	const indices: number[] = []
 	listItems.value.forEach((item, index) => {
-		if (!isTagHeader(item) && hasUnreadMentions(item)) {
+		if (!isTagHeader(item) && hasUnreadMentionsOrImportant(item)) {
 			indices.push(index)
 		}
 	})
