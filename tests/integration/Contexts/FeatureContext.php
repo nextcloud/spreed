@@ -1174,6 +1174,11 @@ class FeatureContext implements Context {
 			}
 		}
 
+		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'team'
+			&& preg_match('/^TEAM_ID\(([^)]+)\)$/', $body['objectId'], $matches)) {
+			$body['objectId'] = self::getTeamIdForLabel($this->currentServer, $matches[1]);
+		}
+
 		if (isset($body['objectType']) && $body['objectType'] === 'event') {
 			[$start, $end] = explode('#', $body['objectId']);
 			$body['objectId'] = (time() + (int)$start) . '#' . (time() + (int)$end);

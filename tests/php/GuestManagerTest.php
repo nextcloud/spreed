@@ -193,4 +193,18 @@ class GuestManagerTest extends TestCase {
 
 		$this->getGuestManager()->sendEmailInvitation($room, $participant);
 	}
+
+	public function testImportEmailsThrowsForTeamConversation(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+
+		$this->participantService->expects(self::never())
+			->method('inviteEmailAddress');
+
+		$this->expectException(GuestImportException::class);
+		$this->expectExceptionMessage(GuestImportException::REASON_ROOM);
+
+		$guestManager = $this->getGuestManager(['sendEmailInvitation']);
+		$guestManager->importEmails($room, __DIR__ . '/data/import-valid-only-email.csv', false);
+	}
 }
