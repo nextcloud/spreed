@@ -99,6 +99,7 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			return in_array($value, [
 				UserPreference::CONVERSATIONS_UNARCHIVE_NEVER,
 				UserPreference::CONVERSATIONS_UNARCHIVE_MENTION,
+				UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT,
 				UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
 			], true);
 		}
@@ -107,6 +108,7 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			return in_array($value, [
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER,
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION_DIRECT,
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
 			], true);
 		}

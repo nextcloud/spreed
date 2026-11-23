@@ -103,6 +103,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	public static function dataUnarchiveAfterMessage(): array {
 		$never = UserPreference::CONVERSATIONS_UNARCHIVE_NEVER;
 		$mention = UserPreference::CONVERSATIONS_UNARCHIVE_MENTION;
+		$mentionDirect = UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT;
 		$always = UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS;
 		$directMention = [['type' => 'user', 'id' => 'bob']];
 		$allMention = [['type' => 'user', 'id' => 'all']];
@@ -118,6 +119,10 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			'mention: @all unarchives' => [['bob' => $mention], $allMention, null, [2]],
 			'mention: reply to own message unarchives' => [['bob' => $mention], [], 'bob', [2]],
 			'mention: reply to someone else keeps archived' => [['bob' => $mention], [], 'alice', []],
+			'mention-direct: one-to-one plain message unarchives' => [['bob' => $mentionDirect], [], null, [2], $oneToOne],
+			'mention-direct: direct mention unarchives' => [['bob' => $mentionDirect], $directMention, null, [2]],
+			'mention-direct: @all keeps archived' => [['bob' => $mentionDirect], $allMention, null, []],
+			'mention-direct: reply to own message unarchives' => [['bob' => $mentionDirect], [], 'bob', [2]],
 			'always: plain message unarchives' => [['bob' => $always], [], null, [2]],
 			'mixed settings' => [['alice' => $always, 'bob' => $mention], [], null, [1]],
 			'mixed settings with mention' => [['alice' => $always, 'bob' => $mention], $directMention, null, [1, 2]],
@@ -265,6 +270,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	public static function dataUnarchiveAfterFederatedMessage(): array {
 		$never = UserPreference::CONVERSATIONS_UNARCHIVE_NEVER;
 		$mention = UserPreference::CONVERSATIONS_UNARCHIVE_MENTION;
+		$mentionDirect = UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT;
 		$always = UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS;
 		$remote = [Attendee::ACTOR_FEDERATED_USERS, 'carol@remote.tld'];
 		$own = [Attendee::ACTOR_USERS, 'bob'];
@@ -283,6 +289,9 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			'mention: reply unarchives' => [$mention, $remote, [], $reply, '', true, true],
 			'mention: silent mention unarchives' => [$mention, $remote, $directMention, ['silent' => true], '', true, true],
 			'mention: own message keeps archived' => [$mention, $own, $allMention, [], '', true, false],
+			'mention-direct: direct mention unarchives' => [$mentionDirect, $remote, $directMention, [], '', true, true],
+			'mention-direct: @all keeps archived' => [$mentionDirect, $remote, $allMention, [], '', true, false],
+			'mention-direct: reply unarchives' => [$mentionDirect, $remote, [], $reply, '', true, true],
 			'always: plain message unarchives' => [$always, $remote, [], [], '', true, true],
 			'always: silent message unarchives' => [$always, $remote, [], ['silent' => true], '', true, true],
 			'always: own message keeps archived' => [$always, $own, [], [], '', true, false],

@@ -237,8 +237,8 @@
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
 * `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant
-* `config => conversations => unarchive` (local) - User selected mode when archived conversations are unarchived automatically (`never`, `mention` or `always`)
-* `config => conversations => tags-show-unread` (local) - User selected mode when unread conversations are shown in collapsed conversation tags (`never`, `mention` or `always`)
+* `config => conversations => unarchive` (local) - User selected mode when archived conversations are unarchived automatically (`never`, `mention`, `mention-direct` with `notify-direct-mentions` capability, or `always`)
+* `config => conversations => tags-show-unread` (local) - User selected mode when unread conversations are shown in collapsed conversation tags (`never`, `mention`, `mention-direct` with `notify-direct-mentions` capability, or `always`)
 
 ## 25.0.9
 * `config => attachments => default-allow-edit` (local) - Whether shared files are editable by default, until the user picks a choice in the upload editor

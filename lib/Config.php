@@ -1112,6 +1112,7 @@ class Config implements IAppConfig {
 			if (in_array($userSetting, [
 				UserPreference::CONVERSATIONS_UNARCHIVE_NEVER,
 				UserPreference::CONVERSATIONS_UNARCHIVE_MENTION,
+				UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT,
 				UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
 			], true)) {
 				return $userSetting;
@@ -1138,6 +1139,7 @@ class Config implements IAppConfig {
 			if (in_array($userSetting, [
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER,
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION,
+				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION_DIRECT,
 				UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
 			], true)) {
 				return $userSetting;

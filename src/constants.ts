@@ -183,12 +183,14 @@ export const CONVERSATION = {
 
 	UNARCHIVE: {
 		NEVER: 'never',
+		MENTION_DIRECT: 'mention-direct',
 		MENTION: 'mention',
 		ALWAYS: 'always',
 	},
 
 	TAGS_SHOW_UNREAD: {
 		NEVER: 'never',
+		MENTION_DIRECT: 'mention-direct',
 		MENTION: 'mention',
 		ALWAYS: 'always',
 	},
