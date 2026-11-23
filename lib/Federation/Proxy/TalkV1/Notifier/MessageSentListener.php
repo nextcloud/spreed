@@ -11,6 +11,7 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
@@ -21,8 +22,10 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\ProxyCacheMessage;
+use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -40,6 +43,7 @@ class MessageSentListener implements IEventListener {
 		private readonly MessageParser $messageParser,
 		private readonly IFactory $l10nFactory,
 		private readonly ChatManager $chatManager,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 
@@ -170,6 +174,13 @@ class MessageSentListener implements IEventListener {
 			return;
 		}
 
+		if ($event->getRoom()->getLobbyState() !== Webinary::LOBBY_NONE
+			&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+			// Participants in the lobby can not see the reacted-to message,
+			// so no notification is sent
+			return;
+		}
+
 		$reactionData = [
 			'remoteMessageId' => (int)$comment->getId(),
 			'actorType' => $event->getActorType(),
@@ -177,21 +188,24 @@ class MessageSentListener implements IEventListener {
 			'actorDisplayName' => $event->getActorDisplayName(),
 			'reaction' => $event->getReaction(),
 			'creationDatetime' => ($event->getReactionMessage()?->getCreationDateTime() ?? new \DateTime())->format(\DateTime::ATOM),
+			// A federated user's notification level lives on their home server
+			// and never reaches the host, so the host's default is sent along
+			// for when the user has not set a level
+			'defaultNotificationLevel' => $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS),
 		];
 
 		$attendee = $participant->getAttendee();
 		$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
 
-		$success = $this->backendNotifier->sendReactionAdded(
+		// Remote servers that do not know this notification yet answer
+		// RESOURCE_NOT_FOUND. That is no reason to remove the participant,
+		// so the result is not checked here.
+		$this->backendNotifier->sendReactionAdded(
 			$cloudId->getRemote(),
 			$attendee->getId(),
 			$attendee->getAccessToken(),
 			$event->getRoom()->getToken(),
 			$reactionData,
 		);
-
-		if ($success === null) {
-			$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
-		}
 	}
 }

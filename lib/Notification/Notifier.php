@@ -764,10 +764,20 @@ class Notifier implements INotifier {
 					$subject = $l->t('Deleted user reacted with {reaction} in {call}') . "\n{message}";
 				} else {
 					try {
-						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, (string)$subjectParameters['userType'], (string)$subjectParameters['userId']);
 						$subject = $l->t('{guest} (guest) reacted with {reaction} in {call}') . "\n{message}";
 					} catch (ParticipantNotFoundException) {
-						$subject = $l->t('Guest reacted with {reaction} in {call}') . "\n{message}";
+						if (!empty($subjectParameters['userDisplayName'])) {
+							// Remote guests have no attendee here, their display name was sent along
+							$richSubjectParameters['guest'] = [
+								'type' => 'guest',
+								'id' => (string)$subjectParameters['userId'],
+								'name' => $subjectParameters['userDisplayName'],
+							];
+							$subject = $l->t('{guest} (guest) reacted with {reaction} in {call}') . "\n{message}";
+						} else {
+							$subject = $l->t('Guest reacted with {reaction} in {call}') . "\n{message}";
+						}
 					}
 				}
 			} else {
@@ -856,10 +866,20 @@ class Notifier implements INotifier {
 				$subject = $l->t('A deleted user reacted with {reaction} to your message in conversation {call}');
 			} else {
 				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, (string)$subjectParameters['userType'], (string)$subjectParameters['userId']);
 					$subject = $l->t('{guest} (guest) reacted with {reaction} to your message in conversation {call}');
 				} catch (ParticipantNotFoundException) {
-					$subject = $l->t('A guest reacted with {reaction} to your message in conversation {call}');
+					if (!empty($subjectParameters['userDisplayName'])) {
+						// Remote guests have no attendee here, their display name was sent along
+						$richSubjectParameters['guest'] = [
+							'type' => 'guest',
+							'id' => (string)$subjectParameters['userId'],
+							'name' => $subjectParameters['userDisplayName'],
+						];
+						$subject = $l->t('{guest} (guest) reacted with {reaction} to your message in conversation {call}');
+					} else {
+						$subject = $l->t('A guest reacted with {reaction} to your message in conversation {call}');
+					}
 				}
 			}
 		} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {

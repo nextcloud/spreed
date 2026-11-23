@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\ReactionAddedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -21,6 +22,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
@@ -37,6 +39,7 @@ class MessageSentListenerTest extends TestCase {
 	protected MessageParser&MockObject $messageParser;
 	protected IFactory&MockObject $l10nFactory;
 	protected ChatManager&MockObject $chatManager;
+	protected IAppConfig&MockObject $appConfig;
 	protected MessageSentListener $listener;
 
 	public function setUp(): void {
@@ -48,6 +51,7 @@ class MessageSentListenerTest extends TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
 		$this->listener = new MessageSentListener(
 			$this->backendNotifier,
@@ -56,6 +60,7 @@ class MessageSentListenerTest extends TestCase {
 			$this->messageParser,
 			$this->l10nFactory,
 			$this->chatManager,
+			$this->appConfig,
 		);
 	}
 
@@ -147,6 +152,11 @@ class MessageSentListenerTest extends TestCase {
 			->with('author@remote')
 			->willReturn($cloudId);
 
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NONE);
+		$this->appConfig->method('getAppValueInt')
+			->with(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS)
+			->willReturn(Participant::NOTIFY_ALWAYS);
+
 		$this->backendNotifier->expects($this->once())
 			->method('sendReactionAdded')
 			->with(
@@ -159,7 +169,8 @@ class MessageSentListenerTest extends TestCase {
 					&& $reactionData['actorId'] === 'reactor'
 					&& $reactionData['actorDisplayName'] === 'Reactor'
 					&& $reactionData['reaction'] === '👍'
-					&& $reactionData['creationDatetime'] === '2025-01-01T00:00:00+00:00'),
+					&& $reactionData['creationDatetime'] === '2025-01-01T00:00:00+00:00'
+					&& $reactionData['defaultNotificationLevel'] === Participant::NOTIFY_ALWAYS),
 			)
 			->willReturn(true);
 
@@ -171,6 +182,69 @@ class MessageSentListenerTest extends TestCase {
 			'Reactor',
 			'👍',
 			$reactionComment,
+		));
+	}
+
+	public function testReactionAddedInLobbyIsSkipped(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('hasFederatedParticipants')->willReturn(Room::HAS_FEDERATION_TALKv1);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getActorType')->willReturn(Attendee::ACTOR_FEDERATED_USERS);
+		$comment->method('getActorId')->willReturn('author@remote');
+
+		$this->participantService->method('getParticipantByActor')
+			->willReturn($this->createFederatedParticipant(1, Attendee::PERMISSIONS_DEFAULT));
+
+		$this->backendNotifier->expects($this->never())
+			->method('sendReactionAdded');
+
+		$this->listener->handle(new ReactionAddedEvent(
+			$room,
+			$comment,
+			Attendee::ACTOR_USERS,
+			'reactor',
+			'Reactor',
+			'👍',
+		));
+	}
+
+	public function testReactionAddedDoesNotRemoveParticipantWhenRemoteDoesNotKnowTheNotification(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('hasFederatedParticipants')->willReturn(Room::HAS_FEDERATION_TALKv1);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NONE);
+		$room->method('getToken')->willReturn('room');
+
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getId')->willReturn('42');
+		$comment->method('getActorType')->willReturn(Attendee::ACTOR_FEDERATED_USERS);
+		$comment->method('getActorId')->willReturn('author@remote');
+
+		$participant = $this->createFederatedParticipant(1, Attendee::PERMISSIONS_DEFAULT);
+		$participant->getAttendee()->setActorId('author@remote');
+		$this->participantService->method('getParticipantByActor')
+			->willReturn($participant);
+
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getRemote')->willReturn('remote');
+		$this->cloudIdManager->method('resolveCloudId')
+			->willReturn($cloudId);
+
+		// The remote server runs an older Talk version and answers RESOURCE_NOT_FOUND
+		$this->backendNotifier->method('sendReactionAdded')
+			->willReturn(null);
+
+		$this->participantService->expects($this->never())
+			->method('removeAttendee');
+
+		$this->listener->handle(new ReactionAddedEvent(
+			$room,
+			$comment,
+			Attendee::ACTOR_USERS,
+			'reactor',
+			'Reactor',
+			'👍',
 		));
 	}
 
