@@ -1559,7 +1559,7 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	#[Then('/^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/')]
+	#[Then('/^user "([^"]*)" sets notifications to (default|disabled|mention|direct-mention|all) for room "([^"]*)" \((v4)\)$/')]
 	public function userSetsNotificationLevelForRoom(string $user, string $level, string $identifier, string $apiVersion): void {
 		$this->setCurrentUser($user);
 
@@ -1568,6 +1568,8 @@ class FeatureContext implements Context {
 			$intLevel = 3;
 		} elseif ($level === 'mention') {
 			$intLevel = 2;
+		} elseif ($level === 'direct-mention') {
+			$intLevel = 4;
 		} elseif ($level === 'all') {
 			$intLevel = 1;
 		}

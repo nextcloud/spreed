@@ -391,7 +391,8 @@ class ParticipantService {
 		if (!\in_array($level, [
 			Participant::NOTIFY_ALWAYS,
 			Participant::NOTIFY_MENTION,
-			Participant::NOTIFY_NEVER
+			Participant::NOTIFY_NEVER,
+			Participant::NOTIFY_MENTION_DIRECT,
 		], true)) {
 			throw new \InvalidArgumentException('level');
 		}

@@ -75,7 +75,10 @@ class FederationChatNotifier {
 
 		// Also notify default participants in one-to-one chats or when the admin default is "always"
 		$defaultLevel = $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
+		$directMentionsOnly = $notificationLevel === Participant::NOTIFY_MENTION_DIRECT
+			|| ($notificationLevel === Participant::NOTIFY_DEFAULT && $defaultLevel === Participant::NOTIFY_MENTION_DIRECT);
 		if ($notificationLevel === Participant::NOTIFY_MENTION
+			|| $directMentionsOnly
 			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isRepliedTo($room, $participant, $metaData)) {
 				$notification = $this->createNotification($room, $message, 'reply', threadId: $threadId);
@@ -85,7 +88,7 @@ class FederationChatNotifier {
 				$notification = $this->createNotification($room, $message, 'mention', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
-			} elseif ($this->isMentionedAll($room, $message)) {
+			} elseif (!$directMentionsOnly && $this->isMentionedAll($room, $message)) {
 				$notification = $this->createNotification($room, $message, 'mention_all', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);

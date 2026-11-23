@@ -20,7 +20,7 @@ import { useGetToken } from '../../../composables/useGetToken.ts'
 import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
-import { notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
+import { getNotificationLevels, notificationLevelIcons } from './threadsConstants.ts'
 
 const props = defineProps<{
 	/** Whether component is used outside TopBar */
@@ -37,8 +37,10 @@ const currentThread = computed(() => chatExtrasStore.getThread(token.value, thre
 
 const threadNotification = computed(() => currentThread.value?.attendee.notificationLevel ?? PARTICIPANT.NOTIFY.DEFAULT)
 
+const notificationLevels = computed(() => getNotificationLevels(token.value))
+
 const threadNotificationVariant = computed(() => {
-	return ([PARTICIPANT.NOTIFY.ALWAYS, PARTICIPANT.NOTIFY.MENTION].includes(threadNotification.value))
+	return ([PARTICIPANT.NOTIFY.ALWAYS, PARTICIPANT.NOTIFY.MENTION, PARTICIPANT.NOTIFY.MENTION_DIRECT].includes(threadNotification.value))
 		? 'secondary'
 		: 'tertiary'
 })

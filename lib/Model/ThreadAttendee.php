@@ -74,7 +74,7 @@ class ThreadAttendee extends Entity implements \JsonSerializable {
 	#[\Override]
 	public function jsonSerialize(): array {
 		return [
-			'notificationLevel' => min(3, max(0, $this->getNotificationLevel())),
+			'notificationLevel' => min(Participant::NOTIFY_MENTION_DIRECT, max(Participant::NOTIFY_DEFAULT, $this->getNotificationLevel())),
 		];
 	}
 }

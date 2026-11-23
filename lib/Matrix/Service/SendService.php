@@ -231,7 +231,7 @@ class SendService {
 	/**
 	 * Store the notification level as push rules of the Matrix account
 	 *
-	 * @param Participant::NOTIFY_ALWAYS|Participant::NOTIFY_MENTION|Participant::NOTIFY_NEVER $level
+	 * @param Participant::NOTIFY_ALWAYS|Participant::NOTIFY_MENTION|Participant::NOTIFY_NEVER|Participant::NOTIFY_MENTION_DIRECT $level
 	 * @throws SendException
 	 */
 	public function setNotificationLevel(Room $room, Participant $participant, int $level): void {

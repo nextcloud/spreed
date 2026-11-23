@@ -378,6 +378,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			Participant::NOTIFY_ALWAYS,
 			Participant::NOTIFY_MENTION,
 			Participant::NOTIFY_NEVER,
+			Participant::NOTIFY_MENTION_DIRECT,
 		], true)) {
 			return new DataResponse(['error' => 'level'], Http::STATUS_BAD_REQUEST);
 		}

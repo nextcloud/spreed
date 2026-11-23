@@ -10,12 +10,13 @@ import { t } from '@nextcloud/l10n'
 import { computed, reactive } from 'vue'
 import { useStore } from 'vuex'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import IconBellMinusOutline from 'vue-material-design-icons/BellMinusOutline.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import { PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { isClassifiedConversation } from '../../utils/conversation.ts'
+import { isClassifiedConversation, supportsDirectMentionsNotification } from '../../utils/conversation.ts'
 
 const props = defineProps<{
 	conversation: Conversation
@@ -24,7 +25,9 @@ const props = defineProps<{
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 
-const notificationLevels = [
+const supportDirectMentions = computed(() => supportsDirectMentionsNotification(props.conversation))
+
+const notificationLevels = computed(() => [
 	{
 		value: PARTICIPANT.NOTIFY.ALWAYS,
 		icon: IconBellRingOutline,
@@ -33,6 +36,11 @@ const notificationLevels = [
 	{
 		value: PARTICIPANT.NOTIFY.MENTION,
 		icon: IconBellOutline,
+		label: supportDirectMentions.value ? t('spreed', '@-mentions & @all') : t('spreed', '@-mentions only'),
+	},
+	{
+		value: PARTICIPANT.NOTIFY.MENTION_DIRECT,
+		icon: IconBellMinusOutline,
 		label: t('spreed', '@-mentions only'),
 	},
 	{
@@ -40,7 +48,7 @@ const notificationLevels = [
 		icon: IconBellOffOutline,
 		label: t('spreed', 'Off'),
 	},
-]
+].filter((level) => level.value !== PARTICIPANT.NOTIFY.MENTION_DIRECT || supportDirectMentions.value))
 
 const store = useStore()
 

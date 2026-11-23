@@ -121,10 +121,11 @@ Required capability: `conversation-presets`
 * `8` Uses SIP dial-in
 
 ### Participant notification levels
-* `0` Default (`1` for one-to-one conversations, `2` for other conversations)
+* `0` Default (`1` for one-to-one conversations, `default_group_notification` app config for other conversations)
 * `1` Always notify
-* `2` Notify on mention
+* `2` Notify on mention, including `@all`
 * `3` Never notify
+* `4` Notify on direct mention only, excluding `@all` (only for group conversations, see capability `notify-direct-mentions`)
 
 ### Participant call notification levels
 * `0` Off

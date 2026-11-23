@@ -3632,7 +3632,7 @@ export type components = {
              * @description The notification level for the user in this thread (See [Participant notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-notification-levels))
              * @enum {integer}
              */
-            notificationLevel: 0 | 1 | 2 | 3;
+            notificationLevel: 0 | 1 | 2 | 3 | 4;
         };
         ThreadInfo: {
             /** @description Thread details */

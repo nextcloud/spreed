@@ -786,7 +786,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkThreadAttendee = array{
  *      // The notification level for the user in this thread (See [Participant notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-notification-levels))
- *      notificationLevel: 0|1|2|3,
+ *      notificationLevel: 0|1|2|3|4,
  * }
  *
  * @psalm-type TalkThreadInfo = array{

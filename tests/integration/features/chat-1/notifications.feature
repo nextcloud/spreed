@@ -316,6 +316,33 @@ Feature: chat-1/notifications
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
 
+  Scenario: At-all when recipient with direct mention notifications in the group room
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    And user "participant2" sets notifications to direct-mention for room "room" (v4)
+    When user "participant1" sends message "Hi @all bye" to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
+  Scenario: Mention when recipient with direct mention notifications in the group room
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    And user "participant2" sets notifications to direct-mention for room "room" (v4)
+    When user "participant1" sends message "Hi @participant2 bye" to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                 | subject                                                     |
+      | spreed | chat        | room/Hi @participant2 bye | participant1-displayname mentioned you in conversation room |
+
   Scenario: Group-mention when recipient is online in the group room
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |

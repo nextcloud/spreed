@@ -309,6 +309,7 @@ import IconArchiveOffOutline from 'vue-material-design-icons/ArchiveOffOutline.v
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import IconBellMinusOutline from 'vue-material-design-icons/BellMinusOutline.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
@@ -334,7 +335,7 @@ import { useConversationInfo } from '../../../composables/useConversationInfo.ts
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
-import { isClassifiedConversation } from '../../../utils/conversation.ts'
+import { isClassifiedConversation, supportsDirectMentionsNotification } from '../../../utils/conversation.ts'
 import { formatDateTime, getDiffInDays } from '../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
@@ -342,12 +343,6 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
 const supportTags = hasTalkFeature('local', 'conversation-tags')
-
-const notificationLevels = [
-	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), icon: IconBellRingOutline },
-	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only'), icon: IconBellOutline },
-	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off'), icon: IconBellOffOutline },
-]
 
 export default {
 	name: 'ConversationItem',
@@ -439,7 +434,6 @@ export default {
 			isDarkTheme,
 			counterType,
 			conversationInformation,
-			notificationLevels,
 			CONVERSATION,
 		}
 	},
@@ -479,6 +473,16 @@ export default {
 
 		notificationLevel() {
 			return this.item.notificationLevel.toString()
+		},
+
+		notificationLevels() {
+			const supportDirectMentions = supportsDirectMentionsNotification(this.item)
+			return [
+				{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), icon: IconBellRingOutline },
+				{ value: PARTICIPANT.NOTIFY.MENTION, label: supportDirectMentions ? t('spreed', '@-mentions & @all') : t('spreed', '@-mentions only'), icon: IconBellOutline },
+				{ value: PARTICIPANT.NOTIFY.MENTION_DIRECT, label: t('spreed', '@-mentions only'), icon: IconBellMinusOutline },
+				{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off'), icon: IconBellOffOutline },
+			].filter((level) => level.value !== PARTICIPANT.NOTIFY.MENTION_DIRECT || supportDirectMentions)
 		},
 
 		currentTagIds() {

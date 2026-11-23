@@ -374,6 +374,10 @@ class RoomSyncService {
 				continue;
 			}
 			$level = self::getNotificationLevel($pushRules, $matrixRoom->getMatrixRoomId());
+			if ($level === Participant::NOTIFY_MENTION && $attendee->getNotificationLevel() === Participant::NOTIFY_MENTION_DIRECT) {
+				// Matrix push rules can not ignore "@room", so the stricter local level is kept
+				continue;
+			}
 			if ($attendee->getNotificationLevel() !== $level) {
 				// Not through the participant service, which does not allow going back to the default
 				$attendee->setNotificationLevel($level);

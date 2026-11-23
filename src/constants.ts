@@ -340,6 +340,7 @@ export const PARTICIPANT = {
 		ALWAYS: 1,
 		MENTION: 2,
 		NEVER: 3,
+		MENTION_DIRECT: 4,
 	},
 
 	NOTIFY_CALLS: {
