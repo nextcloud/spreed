@@ -2033,7 +2033,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
 			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
 		}
 
