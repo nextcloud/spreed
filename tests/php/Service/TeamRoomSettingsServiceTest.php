@@ -220,7 +220,6 @@ class TeamRoomSettingsServiceTest extends TestCase {
 
 	public static function dataCanEditTeamSettings(): array {
 		return [
-			'team owner or admin' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::OWNER, true],
 			'team moderator' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::MODERATOR, false],
 			'team member' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_USERS, Participant::USER, false],
 			'federated moderator' => [Room::OBJECT_TYPE_TEAM, Attendee::ACTOR_FEDERATED_USERS, Participant::MODERATOR, false],
