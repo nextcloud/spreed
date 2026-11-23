@@ -850,6 +850,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
+		if ($objectType === Room::OBJECT_TYPE_TEAM) {
+			// The participants are the members of the team, added with the team itself
+			$participants = ['teams' => [$objectId]];
+		}
+
 		$invitationList = $this->invitationService->validateInvitations($participants, $user, isClassified: $isClassified);
 		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
 			// FIXME add the list of failed invitations?
