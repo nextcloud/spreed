@@ -449,7 +449,7 @@ class BackendNotifier {
 	 * Send information to remote participants that a reaction was added to a message
 	 * Sent from Host server to Remote participant server
 	 *
-	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string, defaultNotificationLevel: int} $reactionData
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string} $reactionData
 	 */
 	public function sendReactionAdded(
 		string $remoteServer,

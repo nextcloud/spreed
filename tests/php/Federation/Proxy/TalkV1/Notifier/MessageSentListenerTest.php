@@ -10,7 +10,6 @@ namespace OCA\Talk\Tests\php\Federation\Proxy\TalkV1\Notifier;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
-use OCA\Talk\Config;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\ReactionAddedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -22,7 +21,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
-use OCP\AppFramework\Services\IAppConfig;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
@@ -39,7 +37,6 @@ class MessageSentListenerTest extends TestCase {
 	protected MessageParser&MockObject $messageParser;
 	protected IFactory&MockObject $l10nFactory;
 	protected ChatManager&MockObject $chatManager;
-	protected IAppConfig&MockObject $appConfig;
 	protected MessageSentListener $listener;
 
 	public function setUp(): void {
@@ -51,7 +48,6 @@ class MessageSentListenerTest extends TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
-		$this->appConfig = $this->createMock(IAppConfig::class);
 
 		$this->listener = new MessageSentListener(
 			$this->backendNotifier,
@@ -60,7 +56,6 @@ class MessageSentListenerTest extends TestCase {
 			$this->messageParser,
 			$this->l10nFactory,
 			$this->chatManager,
-			$this->appConfig,
 		);
 	}
 
@@ -153,9 +148,6 @@ class MessageSentListenerTest extends TestCase {
 			->willReturn($cloudId);
 
 		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NONE);
-		$this->appConfig->method('getAppValueInt')
-			->with(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS)
-			->willReturn(Participant::NOTIFY_ALWAYS);
 
 		$this->backendNotifier->expects($this->once())
 			->method('sendReactionAdded')
@@ -169,8 +161,7 @@ class MessageSentListenerTest extends TestCase {
 					&& $reactionData['actorId'] === 'reactor'
 					&& $reactionData['actorDisplayName'] === 'Reactor'
 					&& $reactionData['reaction'] === '👍'
-					&& $reactionData['creationDatetime'] === '2025-01-01T00:00:00+00:00'
-					&& $reactionData['defaultNotificationLevel'] === Participant::NOTIFY_ALWAYS),
+					&& $reactionData['creationDatetime'] === '2025-01-01T00:00:00+00:00'),
 			)
 			->willReturn(true);
 
