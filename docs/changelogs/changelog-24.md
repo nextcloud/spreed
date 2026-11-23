@@ -5,6 +5,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.8 – 2026-11-12
+### Changed
+- Update translations
+
+### Fixed
+- fix: Verify read marker before setting
+  [#20289](https://github.com/nextcloud/spreed/pull/20289)
+- fix(sharing-sidebar): Fix session handling when checking share password authentication
+  [#20270](https://github.com/nextcloud/spreed/pull/20270)
+- fix(webrtc): Fix Firefox simulcast race condition
+  [#20258](https://github.com/nextcloud/spreed/pull/20258)
+- fix(AdminSettings): do not rely on Report.toJSON() for CSP violations
+  [#20244](https://github.com/nextcloud/spreed/pull/20244)
+- fix(polls): Expire polls and votes when message expiration is on
+  [#20180](https://github.com/nextcloud/spreed/pull/20180)
+
 ## 24.0.7 – 2026-11-05
 ### Added
 - feat(external-call): Allow the service to set the participant list

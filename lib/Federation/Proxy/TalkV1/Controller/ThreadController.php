@@ -96,11 +96,12 @@ class ThreadController {
 	 * @see \OCA\Talk\Controller\ThreadController::setNotificationLevel()
 	 *
 	 * @psalm-param non-negative-int $threadId
-	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'title'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkThreadInfo, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'title'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'permission'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Thread renamed successfully
 	 * 400: When the provided title is empty
+	 * 403: Not allowed, either not the original author or not a moderator
 	 * 404: Thread not found
 	 */
 	public function renameThread(Room $room, Participant $participant, int $threadId, string $threadTitle): DataResponse {
@@ -115,10 +116,13 @@ class ThreadController {
 		if ($statusCode !== Http::STATUS_OK) {
 			if (!in_array($statusCode, [
 				Http::STATUS_BAD_REQUEST,
+				Http::STATUS_FORBIDDEN,
 				Http::STATUS_NOT_FOUND,
 			], true)) {
 				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
 				$data = ['error' => 'thread'];
+			} elseif ($statusCode === Http::STATUS_FORBIDDEN) {
+				$data = ['error' => 'permission'];
 			} elseif ($statusCode === Http::STATUS_BAD_REQUEST) {
 				/** @var array{error: 'title'} $data */
 				$data = $this->proxy->getOCSData($proxy, [

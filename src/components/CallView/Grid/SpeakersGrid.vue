@@ -95,10 +95,10 @@ function tileStyle(index: number) {
 				class="speakers-grid__tile"
 				:style="tileStyle(index)"
 				:data-tile-session-id="model.attributes.nextcloudSessionId"
-				:token="token"
-				:model="model"
+				:token
+				:model
 				:sharedData="sharedDatas[model.attributes.peerId]"
-				:showVideoOverlay="showVideoOverlay"
+				:showVideoOverlay
 				isGrid
 				fitVideo
 				@clickVideo="emit('selectVideo', model.attributes.peerId)" />

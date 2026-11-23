@@ -208,6 +208,8 @@ namespace OCA\Talk;
  *     threadId?: int,
  *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
  *     threadTitle?: string,
+ *     // Role of the author at the time of posting. If missing, the author was a regular participant, the conversation has no ranks or the message predates it
+ *     actorRole?: 'owner'|'moderator',
  *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
  *     replyToMessageId?: int,
  *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token.
@@ -630,6 +632,8 @@ namespace OCA\Talk;
  *     hasScheduledMessages: int,
  *     // Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details
  *     attributes: int,
+ *     // Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
+ *     muteUntil: int,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{
@@ -722,6 +726,10 @@ namespace OCA\Talk;
  *     server: string,
  *     // URL of the Nextcloud server for federation
  *     nextcloudServer: string,
+ *     // Authentication parameters for the federation join request
+ *     joinAuthParams?: array{
+ *         token: string,
+ *     },
  *     // Authentication parameters for the hello request
  *     helloAuthParams: array{
  *         token: string,
@@ -805,6 +813,10 @@ namespace OCA\Talk;
  *             folder?: string,
  *             // Whether per-conversation subfolders are used for attachments
  *             'conversation-subfolders': bool,
+ *             // Whether shared files are editable by default
+ *             'default-allow-edit': bool,
+ *             // Whether images are uploaded in original quality by default
+ *             'default-original-quality': bool,
  *         },
  *         call: array{
  *             // Whether calls are enabled

@@ -573,6 +573,12 @@ class FeatureContext implements Context {
 						$data['lobbyTimer'] = 'GREATER_THAN_ZERO';
 					}
 				}
+				if (isset($expectedRoom['muteUntil'])) {
+					$data['muteUntil'] = (int)$room['muteUntil'];
+					if ($expectedRoom['muteUntil'] === 'GREATER_THAN_ZERO' && $room['muteUntil'] > 0) {
+						$data['muteUntil'] = 'GREATER_THAN_ZERO';
+					}
+				}
 				if (isset($expectedRoom['breakoutRoomMode'])) {
 					$data['breakoutRoomMode'] = (int)$room['breakoutRoomMode'];
 				}
@@ -1358,6 +1364,27 @@ class FeatureContext implements Context {
 
 		$this->setCurrentUser($user);
 		$this->sendRequestFullUrl('GET', $this->baseUrl . 'index.php/s/' . $shareToken, options: ['allow_redirects' => false]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * Only works for guests, as for users the basic auth credentials would be
+	 * sent along and the password form is not shown.
+	 */
+	#[When('/^user "([^"]*)" authenticates last share with password "([^"]*)" with (\d+)$/')]
+	public function userAuthenticatesLastShareWithPassword(string $user, string $password, int $statusCode): void {
+		$shareToken = $this->sharingContext->getLastShareToken();
+		$url = $this->baseUrl . 'index.php/s/' . $shareToken . '/authenticate/showShare';
+
+		$this->setCurrentUser($user);
+		$this->sendRequestFullUrl('GET', $url, headers: ['Accept' => 'text/html']);
+		$this->assertStatusCode($this->response, 200);
+		$requestToken = $this->extractRequestTokenFromResponse($this->response);
+
+		$this->sendRequestFullUrl('POST', $url, [
+			'password' => $password,
+			'requesttoken' => $requestToken,
+		], ['Accept' => 'text/html'], ['allow_redirects' => false]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -3171,7 +3198,7 @@ class FeatureContext implements Context {
 		Assert::assertMatchesRegularExpression($pattern, $fileLink, 'File link does not match expected pattern');
 	}
 
-	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|pinned|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|link|location|pinned|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSharedMediaInRoom(string $user, string $objectType, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share?objectType=' . $objectType);
@@ -5664,6 +5691,26 @@ class FeatureContext implements Context {
 		sort($expectedIds);
 		sort($actual);
 		Assert::assertSame($expectedIds, $actual);
+	}
+
+	#[When('/^user "([^"]*)" mutes room "([^"]*)" until OFFSET\((\d+)\) with (\d+) \((v4)\)$/')]
+	public function userMutesConversationUntil(string $user, string $identifier, int $muteUntil, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/mute', [
+				'muteUntil' => time() + $muteUntil,
+			],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[When('/^user "([^"]*)" unmutes room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userUnmutesConversationUntil(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/mute',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	public function sendRequestFullUrl(string $verb, string $fullUrl, TableNode|array|string|null $body = null, array $headers = [], array $options = []): void {

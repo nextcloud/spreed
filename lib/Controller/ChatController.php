@@ -234,7 +234,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			];
 			$originalMessageData['metaData'] = array_merge($originalMessageData['metaData'] ?? [], $extraMetaData);
 			// Create a link message for the private reply
-			$copiedParent = $this->chatManager->sendMessage(
+			$parent = $this->chatManager->sendMessage(
 				$this->room,
 				$this->participant,
 				$parentActorType,
@@ -250,7 +250,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				],
 			);
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $copiedParent, $this->l);
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($parentMessage);
 		} else {
 			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
@@ -261,7 +261,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		return ['parent' => $isPrivateReplyFromAnotherConvo ? $copiedParent : $parent, 'parentMessage' => $parentMessage];
+		return ['parent' => $parent, 'parentMessage' => $parentMessage];
 	}
 	/**
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
@@ -984,9 +984,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		 */
 
 		$attendee = $this->participant->getAttendee();
+		// Reactions and silent system messages don't update last_message, so the newest known id can be past it
+		$setToMessage = $this->isValidReadMarker($lastKnownMessageId) ? $lastKnownMessageId : $this->room->getLastMessageId();
 		if ($lookIntoFuture && $setReadMarker === 1
-			&& $lastKnownMessageId > $attendee->getLastReadMessage()) {
-			$this->participantService->updateLastReadMessage($this->participant, $lastKnownMessageId);
+			&& $setToMessage > $attendee->getLastReadMessage()) {
+			$this->participantService->updateLastReadMessage($this->participant, $setToMessage);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
@@ -1192,7 +1194,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 
 			if ($comment->getParentId() !== '0') {
-				$parentIds[$id] = $comment->getParentId();
+				$parentIds[$id] = (int)$comment->getParentId();
 			}
 
 			$threadId = (int)$comment->getTopmostParentId() ?: $id;
@@ -1227,7 +1229,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			// Parent was not skipped due to visibility, so we need to manually grab it.
 			if (!isset($commentIdToIndex[$parentId])) {
 				try {
-					$comment = $this->chatManager->getParentComment($this->room, $parentId);
+					$comment = $this->chatManager->getParentComment($this->room, (string)$parentId);
 					$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 					$this->messageParser->parseMessage($message);
 
@@ -1251,7 +1253,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 					}
 
 					$loadedParents[$parentId] = [
-						'id' => (int)$parentId,
+						'id' => $parentId,
 						'deleted' => true,
 					];
 				} catch (NotFoundException) {
@@ -1260,7 +1262,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 			// Message is not visible to the user
 			$messages[$commentKey]['parent'] = [
-				'id' => (int)$parentId,
+				'id' => $parentId,
 				'deleted' => true,
 			];
 		}
@@ -1878,6 +1880,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * A marker beyond every message can never be lowered by polling again, and clients seed their offset from it.
+	 */
+	private function isValidReadMarker(int $messageId): bool {
+		return $messageId <= $this->room->getLastMessageId() || $this->room->isFederatedConversation();
+	}
+
+	/**
 	 * @throws DoesNotExistException
 	 * @throws CannotReachRemoteException
 	 */
@@ -1974,6 +1983,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	])]
 	public function setReadMarker(?int $lastReadMessage = null): DataResponse {
 		$setToMessage = $lastReadMessage ?? $this->room->getLastMessageId();
+		if (!$this->isValidReadMarker($setToMessage)) {
+			$setToMessage = $this->room->getLastMessageId();
+		}
 		if ($setToMessage === 0) {
 			/**
 			 * Frontend and Desktop don't get chat context with ID 0,
@@ -2108,6 +2120,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			Attachment::TYPE_AUDIO,
 			Attachment::TYPE_DECK_CARD,
 			Attachment::TYPE_FILE,
+			Attachment::TYPE_LINK,
 			Attachment::TYPE_LOCATION,
 			Attachment::TYPE_MEDIA,
 			Attachment::TYPE_OTHER,
@@ -2123,6 +2136,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				// Attachment::TYPE_AUDIO,
 				Attachment::TYPE_DECK_CARD,
 				// Attachment::TYPE_FILE,
+				Attachment::TYPE_LINK,
 				Attachment::TYPE_LOCATION,
 				// Attachment::TYPE_MEDIA,
 				// Attachment::TYPE_OTHER,
@@ -2137,7 +2151,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// Get all attachments
 		foreach ($objectTypes as $objectType) {
 			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
-			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): string => (string)$attachment->getMessageId(), $attachments);
+			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
 
 		$messages = $this->getMessagesForRoom(array_merge(...array_values($messageIdsByType)));
@@ -2346,7 +2360,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return array<string, TalkChatMessage>
+	 * @return array<int, TalkChatMessage>
 	 */
 	protected function getMessagesForRoom(array $messageIds): array {
 		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
@@ -2372,7 +2386,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 
 			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
-			$messages[$comment->getId()] = $message->toArray($this->getResponseFormat(), $threads[$threadId] ?? null);
+			$messages[(int)$comment->getId()] = $message->toArray($this->getResponseFormat(), $threads[$threadId] ?? null);
 		}
 
 		return $messages;

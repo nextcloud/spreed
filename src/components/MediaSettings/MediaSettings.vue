@@ -73,7 +73,7 @@
 						<VideoBackground class="background-preview" />
 						<AvatarWrapper
 							:id="userId"
-							:token="token"
+							:token
 							:name="displayName"
 							:source="actorStore.actorType"
 							:size="AVATAR.SIZE.EXTRA_LARGE"
@@ -93,9 +93,9 @@
 							@click="toggleAudio">
 							<template #icon>
 								<VolumeIndicator
-									:audioPreviewAvailable="audioPreviewAvailable"
+									:audioPreviewAvailable
 									:audioEnabled="audioOn"
-									:currentVolume="currentVolume"
+									:currentVolume
 									:volumeThreshold="currentThreshold"
 									overlayMutedColor="#888888" />
 							</template>
@@ -156,24 +156,24 @@
 				</div>
 				<div class="media-settings__settings">
 					<!-- Tab panels -->
-					<MediaSettingsTabs v-model:active="tabContent" :tabs="tabs">
+					<MediaSettingsTabs v-model:active="tabContent" :tabs>
 						<template #tab-panel:devices>
 							<MediaDevicesSelector
 								kind="audioinput"
-								:devices="devices"
+								:devices
 								:deviceId="audioInputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleAudioInputIdChange" />
 							<MediaDevicesSelector
 								kind="videoinput"
-								:devices="devices"
+								:devices
 								:deviceId="videoInputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleVideoInputIdChange" />
 							<MediaDevicesSelector
 								v-if="audioOutputSupported"
 								kind="audiooutput"
-								:devices="devices"
+								:devices
 								:deviceId="audioOutputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleAudioOutputIdChange">
@@ -195,9 +195,12 @@
 						<template #tab-panel:backgrounds>
 							<VideoBackgroundEditor
 								class="media-settings__tab"
-								:token="token"
-								:skipBlurVirtualBackground="skipBlurVirtualBackground"
+								:token
+								:skipBlurVirtualBackground
 								@updateBackground="handleUpdateVirtualBackground" />
+							<div class="media-settings__background-checks">
+								<VirtualBackgroundChecks />
+							</div>
 						</template>
 					</MediaSettingsTabs>
 
@@ -218,14 +221,6 @@
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
-					<!-- Notify call option-->
-					<NcCheckboxRadioSwitch
-						v-if="showNotifyCallOption"
-						v-model="notifyCall"
-						class="checkbox"
-						@update:modelValue="setNotifyCall">
-						{{ t('spreed', 'Notify all participants about this call') }}
-					</NcCheckboxRadioSwitch>
 
 					<NcButton
 						v-if="showUpdateChangesButton"
@@ -238,10 +233,9 @@
 						v-else-if="isBeforeJoinCall"
 						class="action-button"
 						isMediaSettings
-						:isRecordingFromStart="isRecordingFromStart"
+						:isRecordingFromStart
 						:disabled="disabledCallButton"
-						:recordingConsentGiven="recordingConsentGiven"
-						:silentCall="!notifyCall" />
+						:recordingConsentGiven />
 				</div>
 			</div>
 		</div>
@@ -278,6 +272,7 @@ import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
+import VirtualBackgroundChecks from './VirtualBackgroundChecks.vue'
 import IconMicrophoneOffOutline from '../../../img/material-icons/microphone-off-outline.svg?raw'
 import IconBackground from '../../../img/material-icons/replace-background.svg?raw'
 import { useDevices } from '../../composables/useDevices.js'
@@ -319,6 +314,7 @@ export default {
 		NcNoteCard,
 		VideoBackground,
 		VideoBackgroundEditor,
+		VirtualBackgroundChecks,
 		VolumeIndicator,
 		SetGuestUsername,
 		// Icons
@@ -426,7 +422,6 @@ export default {
 			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
-			notifyCall: true,
 			updatedBackground: undefined,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
@@ -560,11 +555,6 @@ export default {
 			return this.isBeforeJoinCall && (this.isCurrentlyRecording || this.isRecordingConsentRequired)
 		},
 
-		showNotifyCallOption() {
-			return !this.hasCall && !this.isPublicShareAuthSidebar
-				&& this.isBeforeJoinCall && !this.isVoiceRoom
-		},
-
 		showStartRecordingOption() {
 			return !this.hasCall && this.canModerateRecording && this.isBeforeJoinCall
 		},
@@ -670,7 +660,6 @@ export default {
 					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				}
-				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
@@ -834,14 +823,6 @@ export default {
 				this.videoOn = false
 			}
 			this.videoDeviceStateChanged = true
-		},
-
-		setNotifyCall(value) {
-			if (!value) {
-				BrowserStorage.setItem('silentCall_' + this.token, 'true')
-			} else {
-				BrowserStorage.removeItem('silentCall_' + this.token)
-			}
 		},
 
 		closeModalAndApplySettings() {
@@ -1065,6 +1046,10 @@ export default {
 	}
 
 	&__guest {
+		margin-top: var(--default-grid-baseline);
+	}
+
+	&__background-checks {
 		margin-top: var(--default-grid-baseline);
 	}
 

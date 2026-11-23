@@ -57,8 +57,10 @@ class Homeserver extends SnowflakeAwareEntity implements \JsonSerializable {
 	#[\Override]
 	public function jsonSerialize(): array {
 		$versions = $this->getVersions()['versions'] ?? [];
+		/** @var numeric-string $id */
+		$id = $this->getId();
 		return [
-			'id' => (string)$this->getId(),
+			'id' => $id,
 			'name' => $this->getName(),
 			'serverName' => $this->getServerName(),
 			'baseUrl' => $this->getBaseUrl(),

@@ -696,6 +696,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[PublicPage]
+	#[OpenAPI]
+	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
@@ -742,10 +744,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			$actorUserId = $owner;
 
-			if (!in_array($roomType, [
-				Room::TYPE_GROUP,
-				Room::TYPE_PUBLIC,
-			], true)) {
+			if ($objectType !== Room::OBJECT_TYPE_EXTERNAL_CALL
+				|| !in_array($roomType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 				return new DataResponse(['error' => CreationException::REASON_OBJECT_TYPE], Http::STATUS_BAD_REQUEST);
 			}
 			$allowInternalTypes = true;
@@ -960,6 +960,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: Room or owner not found
 	 */
 	#[PublicPage]
+	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
 	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
@@ -3920,5 +3921,55 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return ['url' => $url, 'status' => Http::STATUS_OK];
+	}
+
+	/**
+	 * Mute chat notifications in a conversation until a specific time.
+	 * Does not alter notification settings for the attendee.
+	 *
+	 * Required capability: `mute-conversations`
+	 *
+	 * @param int $muteUntil Unix timestamp until notifications are muted
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'mute-until'}, array{}>
+	 *
+	 * 200: Conversation muted
+	 * 400: Timestamp is in the past
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/mute', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function muteConversation(int $muteUntil): DataResponse {
+		if ($muteUntil <= $this->timeFactory->getTime()) {
+			return new DataResponse(['error' => 'mute-until'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->participantService->setMuteUntil($this->participant, $muteUntil);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Unmute chat notifications in a conversation, when they were muted before.
+	 * Does not alter notification settings for the attendee.
+	 *
+	 * Required capability: `mute-conversations`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation unmuted
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/mute', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function unmuteConversation(): DataResponse {
+		$this->participantService->setMuteUntil($this->participant, 0);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 }

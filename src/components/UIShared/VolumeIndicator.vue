@@ -11,12 +11,12 @@
 		<span
 			class="volume-indicator volume-indicator-primary"
 			:style="{ height: iconPrimaryHeight + 'px' }">
-			<IconMicrophone v-if="audioEnabled" :size="size" :fillColor="primaryColor" />
+			<IconMicrophone v-if="audioEnabled" :size :fillColor="primaryColor" />
 			<NcIconSvgWrapper
 				v-else
 				inline
 				:svg="IconMicrophoneOffOutline"
-				:size="size"
+				:size
 				:style="{ color: primaryColor }" />
 		</span>
 
@@ -25,12 +25,12 @@
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
-			<IconMicrophone v-if="audioEnabled" :size="size" :fillColor="overlayColor" />
+			<IconMicrophone v-if="audioEnabled" :size :fillColor="overlayColor" />
 			<NcIconSvgWrapper
 				v-else
 				inline
 				:svg="IconMicrophoneOffOutline"
-				:size="size"
+				:size
 				:style="{ color: overlayMutedColor }" />
 		</span>
 	</span>

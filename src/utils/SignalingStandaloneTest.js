@@ -52,7 +52,9 @@ class StandaloneTest {
 			CSPObserver = new ReportingObserver(
 				([report]) => {
 					CSPViolation = {
-						...report.toJSON(),
+						type: report.type,
+						url: report.url,
+						body: report.body,
 						message: 'CSP violation while connecting to WebSocket. Page reload is required',
 					}
 				},

@@ -10,22 +10,27 @@ Guidance for AI coding agents in this repo. PHP backend in `lib/`, Behat integra
 
 Comply with the [AI Contribution Policy](https://github.com/nextcloud/.github/blob/master/AI_POLICY.md) (disclosure, accountability, security, licensing, code quality, autonomous behavior) and [Contribution Guidelines](https://github.com/nextcloud/.github/blob/master/CONTRIBUTING.md) (testing, DCO, license headers, conventional commits, translations).
 
+**Before writing any code:** if the task is a new feature or a complex change (multiple subsystems, architectural decisions, unclear approach), search the repository for open issues on the topic (e.g. `gh issue list --repo nextcloud/spreed --search "<keywords>"`) and read their comments for maintainer decisions and suggestions; follow them, and tell the contributor which issue applies. If none exists, ask the contributor whether one exists elsewhere to agree on the approach with maintainers. If not, recommend opening one first and wait for their decision. Only do this at the start of a task — once the work is done, do not suggest a ticket; the discussion belongs in the PR. Skip this entirely for maintainers (`git config user.name` matches an `<author>` in `appinfo/info.xml`).
+
 **Always:**
 - Add an `Assisted-by: AGENT_NAME:MODEL_VERSION` trailer to every AI-assisted commit.
 - Disclose AI tool use in every PR description.
+- Issues, PR descriptions and comments may be drafted with AI and posted on the contributor's behalf when they ask for it. Write them for human readers: lead with what changed and why, keep the repository's issue or PR template intact, end AI-drafted issues and comments with an `Assisted by <Tool>:<model>` footer, and put agent-only details in a collapsed `<details>` block. For a bug report, also state whether the bug was validated and reproduced on a live Nextcloud instance.
+- Commit message bodies explain why the change was made, not how; the diff already shows what changed.
+- Validate every change to runtime behavior on a live Nextcloud instance where you can, and give the contributor concrete steps to test it there themselves; your testing supports theirs, it does not replace it.
+- When helping the contributor open an issue or PR, use the matching template from `.github/ISSUE_TEMPLATE/` or `.github/pull_request_template.md`: keep its sections and checkboxes, don't delete or skip them.
 - Keep PRs focused on one concern; no unrelated files or incidental refactors.
 - Verify dependencies exist in real package registries.
 - Tell the contributor when an action would violate the policy/guidelines — name the rule and the alternative; never silently proceed.
 - Warn before a PR grows too large (approaching several thousand lines) and suggest a split.
-- Recommend a discussion ticket before complex changes (multiple subsystems, architectural decisions, unclear approach).
 
-**Never:**
-- Open issues, submit PRs, post review comments, or send security reports autonomously — a human submits every contribution.
-- Add `Signed-off-by` tags (only the human certifies the DCO).
-- Submit unverified security reports; report verified ones via [HackerOne](https://hackerone.com/nextcloud), not GitHub issues.
-- Write PR descriptions, review comments, or issue reports for the contributor — these must be in their own words.
-- Fully automate resolution of [`good first issue`](https://github.com/issues?q=org%3Anextcloud+label%3A%22good+first+issue%22)-style issues.
-- Submit unreviewed code — remove dead code, redundant logic, excessive comments, and unrelated changes first.
+**Never do, and what to do instead:**
+- Don't open issues, submit pull requests, or post comments on your own initiative. Instead, post only what the contributor asked for, on their behalf, and tell them what you posted.
+- Don't write texts for machines: no file-by-file restatement of the diff, no filler, no raw tool output. Instead, write short, skimmable text for a human reviewer that explains what changed and why.
+- Don't add `Signed-off-by` tags to commits. Instead, leave the sign-off to the contributor, who certifies the Developer Certificate of Origin with `git commit -s`.
+- Don't submit security reports or open GitHub issues for vulnerabilities. Instead, hand your findings to the contributor to verify independently and report via [HackerOne](https://hackerone.com/nextcloud).
+- Don't fully automate the resolution of issues labeled [`good first issue`](https://github.com/issues?q=org%3Anextcloud+label%3A%22good+first+issue%22) or similar beginner-friendly labels. Instead, explain the code and guide the contributor so they can solve the issue themselves.
+- Don't hand over code with dead code, redundant logic, excessive comments, or unrelated changes. Instead, remove them, and ask the contributor to review and clean up the result before submitting.
 
 ## Baseline & tooling
 
@@ -92,6 +97,7 @@ From a 2026-06 tech-debt analysis. New code uses the modern pattern.
 - **App config (admin):** write via `setAppConfig()` from `src/services/appConfigService.ts` (awaitable, handles password confirmation, throws). Don't use `OCP.AppConfig.setValue` — callback-only, not awaitable, swallows errors.
 - **User config (preferences):** write via `setUserConfig()` from `src/services/settingsService.ts` (provisioning API `config/users/{appId}/{configKey}`, no password confirmation). Values are strings — never send raw booleans/numbers.
 - **EventBus:** `src/services/EventBus.ts` (typed mitt) bridges the non-Vue signaling/call layer into Vue only — not for component-to-component UI coordination or store-to-store sync; register every new event in the `Events` type. `@nextcloud/event-bus` is only for cross-app server events.
+- **Templates:** declare the result, don't compute it — no function calls in templates (event handlers excepted). The renderer decides when and how often templates run, so calls can cause uncontrolled side effects and block rendering. Bind to computed properties or reactive state instead, and load async/expensive data from watchers or event handlers.
 - **Dialogs:** declarative `<NcDialog>` in the owning template is the target; `spawnDialog()` only without template context; `NcModal` is legacy.
 - **Icons/loading:** `vue-material-design-icons` components (not `icon-*` CSS classes); `NcLoadingIcon` (not `icon-loading*` divs).
 - **Styling:** scoped styles with Nextcloud CSS vars (`var(--color-*)`, defined in `apps/theming/css/default.css`); hardcoded colors only for brand exceptions. Avoid new `:deep()` overrides of `@nextcloud/vue` internals — prefer props/slots or an upstream issue. Spacing/dimensions use the standard vars (`calc(x * var(--default-grid-baseline))`), no magic numbers. Follow the [string-writing rules](https://docs.nextcloud.com/server/latest/developer_manual/design/writing.html).

@@ -32,6 +32,10 @@ class Message {
 	public const METADATA_PINNED_MESSAGE_ID = 'pinned_id';
 	public const METADATA_PINNED_AT = 'pinned_at';
 	public const METADATA_PINNED_UNTIL = 'pinned_until';
+	public const METADATA_ACTOR_PARTICIPANT_TYPE = 'actor_participant_type';
+	public const METADATA_ACTOR_ROLE = 'actor_role';
+	public const ACTOR_ROLE_OWNER = 'owner';
+	public const ACTOR_ROLE_MODERATOR = 'moderator';
 	public const EXPOSED_METADATA_KEYS = [
 		self::METADATA_PINNED_BY_TYPE => 'pinnedActorType',
 		self::METADATA_PINNED_BY_ID => 'pinnedActorId',
@@ -40,6 +44,7 @@ class Message {
 		self::METADATA_PINNED_UNTIL => 'pinnedUntil',
 		self::METADATA_THREAD_ID => 'threadId',
 		self::METADATA_THREAD_TITLE => 'threadTitle',
+		self::METADATA_ACTOR_ROLE => 'actorRole',
 	];
 
 	protected bool $visible = true;

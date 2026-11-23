@@ -3,120 +3,92 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { flushPromises, shallowMount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { reactive, ref } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import { mount } from '@vue/test-utils'
+import { cloneDeep } from 'es-toolkit'
+import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
+import { createStore } from 'vuex'
 import PollViewer from './PollViewer.vue'
+import router from '../../__mocks__/router.js'
+import { ATTENDEE, POLL } from '../../constants.ts'
+import storeConfig from '../../store/storeConfig.js'
+import { usePollsStore } from '../../stores/polls.ts'
+import { findNcCheckboxRadioSwitch } from '../../test-helpers.js'
 
-const mocks = vi.hoisted(() => ({ store: null }))
-
-vi.mock('../../stores/polls.ts', () => ({ usePollsStore: () => mocks.store }))
-vi.mock('../../stores/actor.ts', () => ({ useActorStore: () => ({ checkIfSelfIsActor: () => false }) }))
-vi.mock('../../composables/useIsInCall.js', () => ({ useIsInCall: () => ref(false) }))
-vi.mock('../../services/CapabilitiesManager.ts', () => ({ hasTalkFeature: () => true }))
-
-describe('PollViewer results', () => {
+describe('PollViewer.vue', () => {
+	const TOKEN = 'XXTOKENXX'
+	let store
+	let pollsStore
 	let poll
-	let wrapper
 
 	beforeEach(() => {
-		poll = reactive({
+		setActivePinia(createPinia())
+		pollsStore = usePollsStore()
+		vi.spyOn(pollsStore, 'getPollData').mockResolvedValue(undefined)
+		store = createStore(cloneDeep(storeConfig))
+
+		poll = {
 			id: 1,
-			question: 'Lunch?',
-			options: ['Pizza', 'Pasta', 'Salad'],
-			resultMode: 0,
-			status: 0,
-			maxVotes: 1,
-			votes: { 'option-0': 2, 'option-1': 1 },
-			numVoters: 3,
+			question: 'What is the answer?',
+			options: ['Option A', 'Option B', 'Option C'],
+			votes: {},
+			numVoters: 0,
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			actorId: 'bob',
+			actorDisplayName: 'Bob',
+			status: POLL.STATUS.OPEN,
+			resultMode: POLL.MODE.PUBLIC,
+			maxVotes: POLL.ANSWER_TYPE.MULTIPLE,
 			votedSelf: [],
-		})
-		mocks.store = {
-			activePoll: { token: 'room', id: '1', name: 'Lunch?' },
-			getPoll: vi.fn(() => poll),
-			getPollData: vi.fn(),
-			hidePollToast: vi.fn(),
-			submitVote: vi.fn(),
 		}
+
+		pollsStore.addPoll({ token: TOKEN, poll })
+		pollsStore.setActivePoll({ token: TOKEN, pollId: poll.id, name: 'Bob' })
 	})
 
-	afterEach(() => {
-		wrapper?.unmount()
-	})
-
-	function mountViewer() {
-		wrapper = shallowMount(PollViewer, {
+	const mountPollViewer = () => {
+		return mount(PollViewer, {
 			global: {
-				renderStubDefaultSlot: true,
-				stubs: { NcModal: { template: '<div><slot /></div>' } },
-				mocks: { $store: { getters: { isModerator: false } } },
+				plugins: [router, store],
+				stubs: {
+					NcModal: { template: '<div><slot /></div>' },
+				},
 			},
 		})
-		return wrapper
 	}
 
-	it.each([0, 1])('shows counts and percentages before voting in mode %i when enabled', (mode) => {
-		poll.resultMode = mode
-		poll.resultMode |= 8
-		mountViewer()
-		expect(wrapper.find('.poll-modal__options').exists()).toBe(true)
-		expect(wrapper.findAll('.percentage').map((item) => item.text())).toEqual(['2 votes (67%)', '1 vote (33%)', '0 votes (0%)'])
+	it('keeps selected options when another participant votes', async () => {
+		const wrapper = mountPollViewer()
+		await nextTick()
+
+		await findNcCheckboxRadioSwitch(wrapper, 'Option A').find('input').setValue(true)
+		await findNcCheckboxRadioSwitch(wrapper, 'Option C').find('input').setValue(true)
+
+		pollsStore.addPoll({
+			token: TOKEN,
+			poll: { ...poll, votes: { 'option-1': 1 }, numVoters: 1 },
+		})
+		await nextTick()
+
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option A').find('input').element.checked).toBe(true)
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option B').find('input').element.checked).toBe(false)
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option C').find('input').element.checked).toBe(true)
 	})
 
-	it.each([0, 1])('does not show results before voting in mode %i by default', (mode) => {
-		poll.resultMode = mode
-		mountViewer()
-		expect(wrapper.find('.results__options').exists()).toBe(false)
-	})
+	it('shows the results when the poll is closed', async () => {
+		const wrapper = mountPollViewer()
+		await nextTick()
 
-	it.each([0, 1])('shows absolute counts in closed polls in mode %i', (mode) => {
-		poll.resultMode = mode
-		poll.status = 1
-		mountViewer()
-		expect(wrapper.findAll('.percentage').map((item) => item.text())).toEqual(['2 votes (67%)', '1 vote (33%)', '0 votes (0%)'])
-	})
+		await findNcCheckboxRadioSwitch(wrapper, 'Option A').find('input').setValue(true)
 
-	it('shows absolute counts after voting on a public poll without preview', () => {
-		poll.votedSelf = [0]
-		mountViewer()
-		expect(wrapper.find('.percentage').text()).toBe('2 votes (67%)')
-	})
+		pollsStore.addPoll({
+			token: TOKEN,
+			poll: { ...poll, status: POLL.STATUS.CLOSED },
+		})
+		await nextTick()
 
-	it('shows zero votes and zero percent for a poll without votes', () => {
-		poll.resultMode |= 8
-		poll.votes = {}
-		poll.numVoters = 0
-		mountViewer()
-		expect(wrapper.findAll('.percentage').map((item) => item.text())).toEqual(['0 votes (0%)', '0 votes (0%)', '0 votes (0%)'])
-	})
-
-	it('can submit a vote while the result preview is visible', async () => {
-		poll.resultMode = 1
-		poll.resultMode |= 8
-		mountViewer()
-		wrapper.findAllComponents(NcCheckboxRadioSwitch)[0].vm.$emit('update:modelValue', '0')
-		await flushPromises()
-		const submit = wrapper.findAllComponents(NcButton).find((button) => button.text() === 'Submit')
-		expect(submit.props('disabled')).toBe(false)
-		submit.vm.$emit('click')
-		await flushPromises()
-		expect(mocks.store.submitVote).toHaveBeenCalledWith({ token: 'room', pollId: '1', optionIds: [0] })
-	})
-
-	it('refreshes a cached poll when opening the viewer', () => {
-		mountViewer()
-		expect(mocks.store.getPollData).toHaveBeenCalledWith({ token: 'room', pollId: '1' })
-	})
-
-	it('renders voter details before voting when both options allow it', () => {
-		poll.resultMode |= 8
-		poll.resultMode |= 6
-		poll.details = [{ actorType: 'users', actorId: 'alice', actorDisplayName: 'Alice', optionId: 0 }]
-		mountViewer()
-		const details = wrapper.findComponent({ name: 'PollVotersDetails' })
-		expect(details.props('details')).toEqual(poll.details)
-		expect(wrapper.text()).toContain('You can see who voted for each option before voting')
+		expect(findNcCheckboxRadioSwitch(wrapper, 'Option A').exists()).toBe(false)
+		expect(wrapper.text()).toContain('Final results')
 	})
 })

@@ -155,6 +155,8 @@ class CapabilitiesTest extends TestCase {
 		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
 				['enable_matterbridge', false],
+				['default_attachments_allow_edit', false],
+				['default_attachments_original_quality', false],
 				['mobile_preload_chat', true],
 				['sip_bridge_dialout', false],
 				['sip_bridge_dialout_anonymous', false],
@@ -196,6 +198,8 @@ class CapabilitiesTest extends TestCase {
 					'attachments' => [
 						'allowed' => false,
 						'conversation-subfolders' => false,
+						'default-allow-edit' => false,
+						'default-original-quality' => false,
 					],
 					'call' => [
 						'enabled' => true,
@@ -400,6 +404,8 @@ class CapabilitiesTest extends TestCase {
 				['backgrounds_branded_for_guests', false],
 				['backgrounds_default_for_users', true],
 				['backgrounds_upload_users', true],
+				['default_attachments_allow_edit', true],
+				['default_attachments_original_quality', true],
 				['sip_bridge_dialout', false],
 				['sip_bridge_dialout_anonymous', false],
 				['enable_matterbridge', false],
@@ -448,6 +454,8 @@ class CapabilitiesTest extends TestCase {
 					'attachments' => [
 						'allowed' => true,
 						'conversation-subfolders' => true,
+						'default-allow-edit' => true,
+						'default-original-quality' => true,
 						'folder' => '/Talk',
 					],
 					'call' => [

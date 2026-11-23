@@ -49,7 +49,7 @@ function openPollEditor({ id, action }: { id: number | null, action?: string }) 
 	<NcDialog
 		class="drafts"
 		:name="t('spreed', 'Poll drafts')"
-		:container="container"
+		:container
 		size="normal"
 		closeOnClickOutside
 		@update:open="emit('close')">
@@ -68,7 +68,7 @@ function openPollEditor({ id, action }: { id: number | null, action?: string }) 
 				v-for="item in pollDrafts"
 				:id="item.id.toString()"
 				:key="item.id"
-				:token="token"
+				:token
 				:name="item.question"
 				draft
 				@click="openPollEditor" />

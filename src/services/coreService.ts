@@ -7,8 +7,11 @@ import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	AutocompleteParams,
 	AutocompleteResponse,
+	ReferenceResolveParams,
+	ReferenceResolveResponse,
 	SearchMessagePayload,
 	TaskProcessingResponse,
+	TaskProcessingTaskTypesResponse,
 	UnifiedSearchResponse,
 	UserProfileResponse,
 } from '../types/index.ts'
@@ -85,6 +88,15 @@ async function getUserProfile(userId: string, options?: AxiosRequestConfig): Use
 }
 
 /**
+ * Get all task types available on the server, including their input options
+ *
+ * @param options Axios request options
+ */
+async function getTaskTypes(options?: AxiosRequestConfig): TaskProcessingTaskTypesResponse {
+	return axios.get(generateOcsUrl('taskprocessing/tasktypes'), options)
+}
+
+/**
  *
  * @param id
  * @param options
@@ -126,11 +138,26 @@ async function searchMessagesInCurrentConversation(params: SearchMessagePayload,
 	})
 }
 
+/**
+ * Resolve multiple links to references
+ *
+ * @param references links to resolve
+ * @param options Axios request options
+ */
+async function resolveReferences(references: string[], options?: AxiosRequestConfig): ReferenceResolveResponse {
+	return axios.post(generateOcsUrl('references/resolve'), {
+		references,
+		limit: references.length,
+	} as ReferenceResolveParams, options)
+}
+
 export {
 	autocompleteQuery,
 	deleteTaskById,
 	getTaskById,
+	getTaskTypes,
 	getUserProfile,
+	resolveReferences,
 	searchMessages,
 	searchMessagesInCurrentConversation,
 }

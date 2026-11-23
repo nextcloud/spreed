@@ -318,18 +318,18 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('You stopped breakout rooms');
 			}
 		} elseif ($message === 'guests_allowed') {
-			$parsedMessage = $this->l->t('{actor} allowed guests');
+			$parsedMessage = $this->l->t('{actor} allowed guests to join via link');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You allowed guests');
+				$parsedMessage = $this->l->t('You allowed guests to join via link');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator allowed guests');
+				$parsedMessage = $this->l->t('An administrator allowed guests to join via link');
 			}
 		} elseif ($message === 'guests_disallowed') {
-			$parsedMessage = $this->l->t('{actor} disallowed guests');
+			$parsedMessage = $this->l->t('{actor} disallowed guests to join via link');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You disallowed guests');
+				$parsedMessage = $this->l->t('You disallowed guests to join via link');
 			} elseif ($cliIsActor) {
-				$parsedMessage = $this->l->t('An administrator disallowed guests');
+				$parsedMessage = $this->l->t('An administrator disallowed guests to join via link');
 			}
 		} elseif ($message === 'password_set') {
 			$parsedMessage = $this->l->t('{actor} set a password');

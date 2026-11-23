@@ -7,7 +7,10 @@ import type { NotificationEvent } from '../../index.ts'
 
 declare module '@nextcloud/event-bus' {
 	import type { NextcloudUser } from '@nextcloud/auth'
+	import type { INode } from '@nextcloud/files'
 	export interface NextcloudEvents {
+		// @nextcloud/viewer, after a file is saved
+		'files:node:updated': INode
 		'user:info:changed': NextcloudUser
 		'notifications:action:execute': NotificationEvent
 		'notifications:notification:received': NotificationEvent

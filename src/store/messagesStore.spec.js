@@ -13,6 +13,7 @@ import {
 	ATTENDEE,
 	CHAT,
 	MESSAGE,
+	SHARED_ITEM,
 } from '../constants.ts'
 import {
 	fetchNoteToSelfConversation,
@@ -32,6 +33,7 @@ import { useActorStore } from '../stores/actor.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { useReactionsStore } from '../stores/reactions.js'
+import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/CancelableRequest.ts'
 import messagesStore from './messagesStore.js'
@@ -125,6 +127,32 @@ describe('messagesStore', () => {
 	})
 
 	describe('processMessage', () => {
+		test('tracks messages with links as shared items, also after edits', () => {
+			const sharedItemsStore = useSharedItemsStore()
+			const message1 = {
+				id: 1,
+				token: TOKEN,
+				message: 'See https://nextcloud.com',
+				messageType: MESSAGE.TYPE.COMMENT,
+				messageParameters: [],
+			}
+
+			store.dispatch('processMessage', { token: TOKEN, message: message1 })
+			expect(sharedItemsStore.sharedItems(TOKEN)[SHARED_ITEM.TYPES.LINK]).toEqual({ 1: message1 })
+
+			store.dispatch('processMessage', {
+				token: TOKEN,
+				message: {
+					id: 2,
+					token: TOKEN,
+					messageType: MESSAGE.TYPE.SYSTEM,
+					systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED,
+					parent: { ...message1, message: 'No link' },
+				},
+			})
+			expect(sharedItemsStore.sharedItems(TOKEN)[SHARED_ITEM.TYPES.LINK]).toBeUndefined()
+		})
+
 		test('adds message to the store by token', () => {
 			const message1 = {
 				id: 1,

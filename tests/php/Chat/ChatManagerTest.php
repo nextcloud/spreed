@@ -17,6 +17,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Poll;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
@@ -297,6 +298,26 @@ class ChatManagerTest extends TestCase {
 		$this->assertCommentEquals($commentExpected, $return);
 	}
 
+	public function testSendMessageAsFlowBotUpdatesLastMessage(): void {
+		$creationDateTime = new \DateTime();
+		$comment = $this->newCommentFromArray([
+			'actorType' => Attendee::ACTOR_BOTS,
+			'actorId' => 'participant1',
+			'creationDateTime' => $creationDateTime,
+			'message' => 'message',
+		]);
+		$this->commentsManager->method('create')->willReturn($comment);
+
+		$chat = $this->createMock(Room::class);
+		$chat->method('getId')->willReturn(1234);
+
+		$this->roomService->expects($this->once())
+			->method('setLastMessage')
+			->with($chat, $comment);
+
+		$this->chatManager->sendMessage($chat, null, Attendee::ACTOR_BOTS, 'participant1', 'message', $creationDateTime);
+	}
+
 	public function testGetHistory(): void {
 		$offset = 1;
 		$limit = 42;
@@ -394,27 +415,16 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
-	public static function dataGetUnreadCount(): array {
-		return [
-			[Room::TYPE_ONE_TO_ONE, ['comment', 'object_shared', 'reaction']],
-			[Room::TYPE_GROUP, ['comment', 'object_shared']],
-			[Room::TYPE_PUBLIC, ['comment', 'object_shared']],
-		];
-	}
-
-	#[DataProvider('dataGetUnreadCount')]
-	public function testGetUnreadCount(int $roomType, array $verbs): void {
+	public function testGetUnreadCount(): void {
 		/** @var Room&MockObject $chat */
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->atLeastOnce())
 			->method('getId')
 			->willReturn(23);
-		$chat->method('getType')
-			->willReturn($roomType);
 
 		$this->commentsManager->expects($this->once())
 			->method('getNumberOfCommentsWithVerbsForObjectSinceComment')
-			->with('chat', 23, 42, $verbs);
+			->with('chat', 23, 42, ['comment', 'object_shared']);
 
 		$this->chatManager->getUnreadCount($chat, 42);
 	}
@@ -498,6 +508,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
 			'has_scheduled_messages' => 0,
+			'mute_until' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -581,6 +592,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
 			'has_scheduled_messages' => 0,
+			'mute_until' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -674,6 +686,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
 			'has_scheduled_messages' => 0,
+			'mute_until' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -793,6 +806,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
 			'has_scheduled_messages' => 0,
+			'mute_until' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -826,6 +840,51 @@ class ChatManagerTest extends TestCase {
 
 		$this->expectException(ShareNotFound::class);
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
+	}
+
+	public static function dataRemovePollOnMessageDelete(): array {
+		return [
+			'other user' => [false, 'other', false],
+			'poll creator' => [false, 'creator', true],
+			'moderator' => [true, 'other', true],
+		];
+	}
+
+	#[DataProvider('dataRemovePollOnMessageDelete')]
+	public function testRemovePollOnMessageDelete(bool $isModerator, string $actorId, bool $expectDeletion): void {
+		$chat = $this->createMock(Room::class);
+		$chat->method('getId')
+			->willReturn(1234);
+
+		$attendee = new Attendee();
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId($actorId);
+		$participant = $this->createMock(Participant::class);
+		$participant->method('hasModeratorPermissions')
+			->willReturn($isModerator);
+		$participant->method('getAttendee')
+			->willReturn($attendee);
+
+		$poll = new Poll();
+		$poll->setId(42);
+		$poll->setActorType(Attendee::ACTOR_USERS);
+		$poll->setActorId('creator');
+		$poll->setStatus(Poll::STATUS_CLOSED);
+		$this->pollService->method('getPoll')
+			->with(1234, 42)
+			->willReturn($poll);
+
+		$this->commentsManager->expects($expectDeletion ? $this->once() : $this->never())
+			->method('searchForObjects')
+			->willReturn([]);
+		$this->pollService->expects($expectDeletion ? $this->once() : $this->never())
+			->method('deleteByPollId')
+			->with(42);
+
+		$this->getManager()->removePollOnMessageDelete($chat, $participant, [
+			'message' => 'object_shared',
+			'parameters' => ['objectType' => 'talk-poll', 'objectId' => '42'],
+		], new \DateTime());
 	}
 
 	public function testClearHistory(): void {
@@ -891,6 +950,7 @@ class ChatManagerTest extends TestCase {
 		$comment->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
 		$comment->method('getActorId')->willReturn('author');
 		$comment->method('getMetaData')->willReturn([Message::METADATA_SILENT => true]);
+		$comment->method('getMessage')->willReturn('Original message');
 
 		$this->dispatcher->expects($this->once())
 			->method('dispatchTyped')
@@ -943,6 +1003,31 @@ class ChatManagerTest extends TestCase {
 	public function testSearchIsPartOfConversationNameOrAtAll(string $search, string $roomDisplayName, bool $expected): void {
 		$actual = self::invokePrivate($this->chatManager, 'searchIsPartOfConversationNameOrAtAll', [$search, $roomDisplayName]);
 		$this->assertEquals($expected, $actual);
+	}
+
+	public static function dataGetActorParticipantTypeMetaData(): array {
+		return [
+			'owner' => [Participant::OWNER, 'alice', [Message::METADATA_ACTOR_PARTICIPANT_TYPE => Participant::OWNER]],
+			'user' => [Participant::USER, 'alice', [Message::METADATA_ACTOR_PARTICIPANT_TYPE => Participant::USER]],
+			'no participant' => [null, 'alice', []],
+			'participant is not the actor' => [Participant::OWNER, 'bob', []],
+		];
+	}
+
+	#[DataProvider('dataGetActorParticipantTypeMetaData')]
+	public function testGetActorParticipantTypeMetaData(?int $participantType, string $actorId, array $expected): void {
+		$participant = null;
+		if ($participantType !== null) {
+			$attendee = Attendee::fromRow([
+				'actor_type' => Attendee::ACTOR_USERS,
+				'actor_id' => 'alice',
+				'participant_type' => $participantType,
+			]);
+			$participant = new Participant($this->createMock(Room::class), $attendee, null);
+		}
+
+		$actual = self::invokePrivate($this->chatManager, 'getActorParticipantTypeMetaData', [$participant, Attendee::ACTOR_USERS, $actorId]);
+		$this->assertSame($expected, $actual);
 	}
 
 	public static function dataAddConversationNotify(): array {

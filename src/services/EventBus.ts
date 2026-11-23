@@ -13,7 +13,7 @@ import type {
 	StandaloneSignalingJoinSession,
 	StandaloneSignalingUpdateSession,
 } from '../types/index.ts'
-import type { components } from '../types/openapi/openapi-full.ts'
+import type { components } from '../types/openapi/openapi.ts'
 
 import mitt from 'mitt'
 

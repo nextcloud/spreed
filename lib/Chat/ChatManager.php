@@ -73,6 +73,8 @@ use Psr\Log\LoggerInterface;
  */
 class ChatManager {
 	public const MAX_CHAT_LENGTH = 32000;
+	/** Markdown code blocks and inline code, to be used with the `sm` modifiers */
+	public const MARKDOWN_CODE_REGEX_NO_MODIFIERS = '^```.*?^```|^~~~.*?^~~~|`[^`\n]*`';
 
 	public const RATE_LIMIT_GUEST_MENTIONS_LIMIT = 50;
 	public const RATE_LIMIT_GUEST_MENTIONS_PERIOD = 24 * 60 * 60;
@@ -199,6 +201,7 @@ class ChatManager {
 		if ($chat->getMentionPermissions() === Room::MENTION_PERMISSIONS_EVERYONE || $participant?->hasModeratorPermissions()) {
 			$metadata[Message::METADATA_CAN_MENTION_ALL] = true;
 		}
+		$metadata = array_merge($metadata, $this->getActorParticipantTypeMetaData($participant, $actorType, $actorId));
 		$comment->setMetaData($metadata);
 
 		$this->setMessageExpiration($chat, $comment);
@@ -449,6 +452,7 @@ class ChatManager {
 		if ($threadId !== Thread::THREAD_NONE) {
 			$metadata[Message::METADATA_THREAD_ID] = $threadId;
 		}
+		$metadata = array_merge($metadata, $this->getActorParticipantTypeMetaData($participant, $actorType, $actorId));
 		$comment->setMetaData(array_merge($metadata, $extraMetaData));
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
@@ -474,18 +478,16 @@ class ChatManager {
 				}
 			}
 
+			if ($verb === self::VERB_MESSAGE) {
+				$this->attachmentService->updateLinkAttachment($chat, $comment, false);
+			}
+
 			if (!$fromScheduledMessage && $participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
 			}
 
 			// Update last_message
-			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
-				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
-				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
-				$this->roomService->setLastMessage($chat, $comment);
-			} else {
-				$this->roomService->setLastActivity($chat, $comment->getCreationDateTime());
-			}
+			$this->roomService->setLastMessage($chat, $comment);
 
 			$alreadyNotifiedUsers = [];
 			$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($comment);
@@ -524,6 +526,22 @@ class ChatManager {
 		}
 
 		return $comment;
+	}
+
+	/**
+	 * Snapshot of the author's participant type at the time of posting, so
+	 * the role can be rendered without access to the participant list.
+	 *
+	 * @return array<string, int>
+	 */
+	protected function getActorParticipantTypeMetaData(?Participant $participant, string $actorType, string $actorId): array {
+		if ($participant === null
+			|| $participant->getAttendee()->getActorType() !== $actorType
+			|| $participant->getAttendee()->getActorId() !== $actorId) {
+			return [];
+		}
+
+		return [Message::METADATA_ACTOR_PARTICIPANT_TYPE => $participant->getAttendee()->getParticipantType()];
 	}
 
 	private function setMessageExpiration(Room $room, IComment $comment): void {
@@ -608,6 +626,15 @@ class ChatManager {
 			return;
 		}
 
+		if (!$participant->hasModeratorPermissions(false)) {
+			$attendee = $participant->getAttendee();
+			if (!($attendee->getActorType() === $poll->getActorType()
+				&& $attendee->getActorId() === $poll->getActorId())) {
+				// Only moderators or the poll creator can delete it
+				return;
+			}
+		}
+
 		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
 			$closingMessages = $this->commentsManager->searchForObjects(
 				json_encode([
@@ -627,15 +654,6 @@ class ChatManager {
 			);
 			foreach ($closingMessages as $closingMessage) {
 				$this->deleteMessage($room, $closingMessage, $participant, $deletionTime);
-			}
-		}
-
-		if (!$participant->hasModeratorPermissions(false)) {
-			$attendee = $participant->getAttendee();
-			if (!($attendee->getActorType() === $poll->getActorType()
-				&& $attendee->getActorId() === $poll->getActorId())) {
-				// Only moderators or the poll creator can delete it
-				return;
 			}
 		}
 
@@ -767,6 +785,8 @@ class ChatManager {
 
 		$wasSilent = $metaData[Message::METADATA_SILENT] ?? false;
 
+		$hadLink = $this->attachmentService->containsLink($comment->getMessage());
+
 		if (!$wasSilent) {
 			$mentionsBefore = $comment->getMentions();
 			$usersDirectlyMentionedBefore = $this->notifier->getMentionedUserIds($comment);
@@ -778,6 +798,9 @@ class ChatManager {
 		}
 
 		$this->commentsManager->save($comment);
+		if ($comment->getVerb() === self::VERB_MESSAGE) {
+			$this->attachmentService->updateLinkAttachment($chat, $comment, $hadLink);
+		}
 		$this->logModerationOfOthersMessage($chat, $comment, $participant, 'edited', Operation::MESSAGE_EDITED);
 		$this->referenceManager->invalidateCache($chat->getToken());
 
@@ -1058,11 +1081,7 @@ class ChatManager {
 		$key = $chat->getId() . '-' . $chat->getLastMessageId() . '-' . $lastReadMessage;
 		$unreadCount = $this->unreadCountCache->get($key);
 		if ($unreadCount === null) {
-			$verbs = [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED];
-			if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
-				$verbs[] = self::VERB_REACTION;
-			}
-			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, $verbs);
+			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED]);
 			$this->unreadCountCache->set($key, $unreadCount, 1800);
 		}
 		return $unreadCount;

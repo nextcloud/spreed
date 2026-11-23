@@ -102,8 +102,10 @@ class ScheduledMessage extends SnowflakeAwareEntity {
 	 */
 	public function toArray(string $format, ?Message $parent, ?Thread $thread) : array {
 		$metaData = $this->getDecodedMetaData();
+		/** @var numeric-string $id */
+		$id = $this->getId();
 		$data = [
-			'id' => (string)$this->getId(),
+			'id' => $id,
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'threadId' => $this->getThreadId(),

@@ -53,6 +53,7 @@ module.exports = defineConfig((env) => {
 			deck: path.join(__dirname, 'src', 'integrations', 'deck', 'deck.js'),
 			maps: path.join(__dirname, 'src', 'integrations', 'maps', 'maps.js'),
 			search: path.join(__dirname, 'src', 'integrations', 'search', 'search.js'),
+			reference: path.join(__dirname, 'src', 'integrations', 'reference', 'reference.ts'),
 			icons: path.join(__dirname, 'src', 'icons.css'),
 		},
 

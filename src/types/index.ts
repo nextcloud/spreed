@@ -395,6 +395,17 @@ export type importEmailsResponse = ApiResponse<operations['room-import-emails-as
 
 // Chats
 export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
+// Rich object of a 'call' reference (TalkReferenceProvider)
+export type CallReference = Pick<RichObjectParameter, 'id' | 'name' | 'call-type' | 'message-id'> & {
+	link: string
+	description?: string
+	'avatar-version'?: string
+	'user-id'?: string
+	'actor-type'?: string
+	'actor-id'?: string
+	'actor-display-name'?: string
+	timestamp?: string
+}
 export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
 	etag: string
 	permissions: string
@@ -597,9 +608,13 @@ export type getRoomDataByShareTokenResponse = ApiResponse<operations['files_inte
 export type createVideoVerificationRoomParams = Required<operations['public_share_auth-create-room']>['requestBody']['content']['application/json']
 export type createVideoVerificationRoomResponse = ApiResponse<operations['public_share_auth-create-room']['responses'][201]['content']['application/json']>
 
-// AI Summary
+// Task Processing API
 export type {
 	TaskProcessingResponse,
+	TaskProcessingScheduleParams,
+	TaskProcessingScheduleResponse,
+	TaskProcessingTaskType,
+	TaskProcessingTaskTypesResponse,
 } from './core.ts'
 
 // Teams (circles)
@@ -691,6 +706,12 @@ export type {
 	AutocompleteResult,
 } from './core.ts'
 
+// Reference API
+export type {
+	ReferenceResolveParams,
+	ReferenceResolveResponse,
+} from './core.ts'
+
 // Unified Search API
 export type {
 	SearchMessagePayload,
@@ -712,6 +733,7 @@ export type {
 	createFileFromTemplateResponse,
 	FileTemplate,
 	getFileTemplatesListResponse,
+	TemplateFile,
 } from './core.ts'
 
 // Files sharing API

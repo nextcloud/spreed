@@ -169,7 +169,7 @@ jobs:
           echo "Please amend the affected commit(s) to remove the coding-agent sign-off"
           echo "and replace it with an 'Assisted-by' trailer, for example:"
           echo ""
-          echo "  Assisted-by: Claude Code:claude-sonnet-4-6"
+          echo "  Assisted-by: ClaudeCode:claude-sonnet-5-5"
           echo ""
           echo "References:"
           echo "  • AGENTS.md (this repository)"

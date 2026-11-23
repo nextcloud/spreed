@@ -15,11 +15,11 @@
 			ref="newMessage"
 			role="region"
 			class="send-message-dialog"
-			:token="token"
+			:token
 			:container="modalContainerId"
 			:aria-label="dialogTitle"
 			dialog
-			:broadcast="broadcast"
+			:broadcast
 			@submit="handleSubmit" />
 	</NcDialog>
 </template>

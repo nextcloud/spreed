@@ -70,7 +70,7 @@
 							class="results__option__details">
 							<PollVotersDetails
 								v-if="poll.details"
-								:token="token"
+								:token
 								:details="getFilteredDetails(index)" />
 							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
 								<IconCheck :size="16" />
@@ -113,7 +113,7 @@
 				<!-- Submit vote button-->
 				<NcButton
 					variant="primary"
-					:disabled="disabled"
+					:disabled
 					@click="submitVote">
 					<template v-if="!selfHasVoted" #icon>
 						<IconCheck :size="20" />
@@ -392,7 +392,12 @@ export default {
 
 		poll: {
 			immediate: true,
-			handler(value) {
+			handler(value, oldValue) {
+				if (value && oldValue && value.id === oldValue.id && value.status === oldValue.status
+					&& value.votedSelf?.toString() === oldValue.votedSelf?.toString()) {
+					return
+				}
+
 				if (!value) {
 					this.modalPage = ''
 				} else if (this.isPollClosed || (this.isPollPublic && this.selfHasVoted)) {

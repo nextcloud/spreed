@@ -50,7 +50,7 @@ class AttachmentMapper extends QBMapper {
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
 			->setMaxResults($limit)
-			->orderBy('id', 'DESC');
+			->orderBy('message_id', 'DESC');
 
 		if ($offset > 0) {
 			$query->andWhere($query->expr()->lt('message_id', $query->createNamedParameter($offset)));
@@ -71,6 +71,15 @@ class AttachmentMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
 			->where($query->expr()->eq('message_id', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
+
+		$query->executeStatement();
+	}
+
+	public function deleteByMessageIdAndType(int $messageId, string $objectType): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('message_id', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter($objectType)));
 
 		$query->executeStatement();
 	}

@@ -17,6 +17,7 @@ import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { useMessageInfo } from '../composables/useMessageInfo.ts'
+import { getFileEtag } from '../composables/useViewer.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
@@ -113,8 +114,8 @@ const filePreview = computed(() => {
 		return {
 			alt: fileData.name,
 			src: actorStore.userId === null
-				? generatePublicSharePreviewUrl(fileData.link!, fileData.path!, { x: 32, y: 32 })
-				: generatePreviewUrl(fileData.id, { x: 32, y: 32 }),
+				? generatePublicSharePreviewUrl(fileData.link!, fileData.path!, { x: 32, y: 32, etag: getFileEtag(fileData.id, fileData.etag) })
+				: generatePreviewUrl(fileData.id, { x: 32, y: 32, etag: getFileEtag(fileData.id, fileData.etag) }),
 		}
 	} else {
 		return undefined

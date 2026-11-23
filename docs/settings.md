@@ -92,6 +92,8 @@ Legend:
 | `conversations_list_style` | string<br>`two-lines` or `compact` | `two-lines` | No |  | Default conversation list style when not overwritten by the user |
 | `create_samples` | bool | `true` | No |  | Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config) |
 | `default_attachment_folder` | string | `/Talk` | No |  | Specify default attachment folder location |
+| `default_attachments_allow_edit` | bool | `false` | No |  | Whether shared files are editable by participants by default, until the user picks a choice in the upload editor |
+| `default_attachments_original_quality` | bool | `false` | No |  | Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor |
 | `default_group_notification` | int | `1` | No | 🖌️ | Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels<br>(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations) |
 | `default_permissions` | int | `246` | Yes |  | Default permissions for non-moderators<br>(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags) |
 | `delete_one_to_one_conversations` | bool | `false` | No |  | Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves |

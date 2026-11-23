@@ -382,6 +382,7 @@ export const SHARED_ITEM = {
 		AUDIO: 'audio',
 		DECK_CARD: 'deckcard',
 		FILE: 'file',
+		LINK: 'link',
 		LOCATION: 'location',
 		MEDIA: 'media',
 		OTHER: 'other',
@@ -546,5 +547,8 @@ export const TASK_PROCESSING = {
 		RUNNING: 'STATUS_RUNNING',
 		SCHEDULED: 'STATUS_SCHEDULED',
 		UNKNOWN: 'STATUS_UNKNOWN',
+	},
+	TYPE: {
+		TRANSLATE: 'core:text2text:translate',
 	},
 }

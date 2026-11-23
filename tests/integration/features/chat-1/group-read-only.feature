@@ -19,7 +19,7 @@ Feature: chat-1/group-read-only
     Then signaling server received the following requests
       | token | data |
       | group room | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | group room | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":1,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | group room | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":0,"read-only":1,"listable":0,"active-since":0,"sip-enabled":0,"description":""}}} |
     When user "participant1" sends message "Message 2" to room "group room" with 403
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
@@ -29,7 +29,7 @@ Feature: chat-1/group-read-only
     Then signaling server received the following requests
       | token | data |
       | group room | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | group room | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | group room | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":0,"read-only":0,"listable":0,"active-since":0,"sip-enabled":0,"description":""}}} |
     When user "participant1" sends message "Message 3" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |

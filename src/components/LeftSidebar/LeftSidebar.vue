@@ -227,7 +227,7 @@
 						<MatrixRoomDialog v-if="showMatrixRoomDialog" @close="showMatrixRoomDialog = false" />
 
 						<!-- New Conversation dialog -->
-						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
+						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut />
 
 						<!-- New phone (SIP dial-out) dialog -->
 						<CallPhoneDialog v-if="canModerateSipDialOut" ref="callPhoneDialog" />
@@ -349,7 +349,7 @@
 						<ThreadItem
 							v-for="thread of followedThreads"
 							:key="`thread_${thread.thread.id}`"
-							:thread="thread" />
+							:thread />
 					</ul>
 					<div v-if="!allFollowedThreadsReceived" class="navigation-buttons-container">
 						<LeftSidebarButton
@@ -366,7 +366,7 @@
 					v-else
 					v-show="sortedConversationsList.length > 0"
 					ref="scroller"
-					:token="token"
+					:token
 					:listAriaLabelledBy="LIST_HEADING_ID"
 					:conversations="sortedConversationsList"
 					:loading="!conversationsInitialised"
@@ -388,13 +388,13 @@
 				v-else
 				ref="searchResults"
 				class="scroller"
-				:searchText="searchText"
-				:searchResultsLoading="searchResultsLoading"
-				:searchFilters="searchFilters"
-				:conversationsList="conversationsList"
+				:searchText
+				:searchResultsLoading
+				:searchFilters
+				:conversationsList
 				:searchResults="searchResultsPossibleConversations"
-				:searchResultsMessages="searchResultsMessages"
-				:searchResultsListedConversations="searchResultsListedConversations"
+				:searchResultsMessages
+				:searchResultsListedConversations
 				@abortSearch="abortSearch"
 				@createNewConversation="createConversation"
 				@createAndJoinConversation="createAndJoinConversation" />

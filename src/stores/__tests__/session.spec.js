@@ -654,6 +654,28 @@ describe('sessionStore', () => {
 				})
 		})
 
+		it('should not handle internal clients as unknown sessions on change', () => {
+			// Arrange
+			populateParticipantsStore()
+			sessionStore.updateSessions(TOKEN, [{
+				userid: '',
+				sessionid: 'session-id-recording',
+				roomsessionid: 'nextcloud-session-id-recording',
+			}])
+			const participantsPayload = [{
+				sessionId: 'session-id-recording',
+				inCall: 1,
+				lastPing: 1717192800,
+				internal: true,
+			}]
+
+			// Act
+			const unknownResults = sessionStore.updateSessions(TOKEN, participantsPayload)
+
+			// Assert
+			expect(unknownResults).toBeFalsy()
+		})
+
 		it('should update participant objects for a known session on call disconnect', () => {
 			// Arrange
 			populateParticipantsStore()

@@ -106,7 +106,7 @@
 				</h2>
 				<BreakoutRoomsParticipantsEditor
 					:token="mainToken"
-					:breakoutRooms="breakoutRooms"
+					:breakoutRooms
 					@close="closeParticipantsEditor" />
 			</div>
 		</NcModal>

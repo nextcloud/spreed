@@ -59,6 +59,8 @@ class Config implements IAppConfig {
 	public const string ALLOWED_START_CALLS = 'start_calls';
 	public const string ALLOWED_START_CALLS_GROUPS = 'start_calls_groups';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
+	public const string DEFAULT_ATTACHMENTS_ALLOW_EDIT = 'default_attachments_allow_edit';
+	public const string DEFAULT_ATTACHMENTS_ORIGINAL_QUALITY = 'default_attachments_original_quality';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string CONVERSATIONS_FILES = 'conversations_files';
 	public const string CONVERSATIONS_FILES_PUBLIC_SHARES = 'conversations_files_public_shares';
@@ -938,6 +940,22 @@ class Config implements IAppConfig {
 		$data = substr($ticket, 0, $lastColon);
 		$hash = hash_hmac('sha256', $data, $secret);
 		return hash_equals($hash, substr($ticket, $lastColon + 1));
+	}
+
+	public function getFederationSignalingAuthTicket(string $hostSignalingServer, string $hostNextcloudServer): string {
+		$timestamp = $this->timeFactory->getTime();
+		$data = [
+			'iss' => $this->urlGenerator->getAbsoluteURL(''),
+			'iat' => $timestamp,
+			'exp' => $timestamp + 60,  // Valid for 1 minute.
+			'sub' => $hostSignalingServer,
+			'nc' => $hostNextcloudServer,
+		];
+
+		$alg = $this->getSignalingTokenAlgorithm();
+		$secret = $this->getSignalingTokenPrivateKey($alg);
+		$token = JWT::encode($data, $secret, $alg);
+		return $token;
 	}
 
 	public function getGridVideosLimit(): int {

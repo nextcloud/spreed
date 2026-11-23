@@ -2155,6 +2155,24 @@ export interface operations {
                     };
                 };
             };
+            /** @description Value rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                data: {
+                                    message: string;
+                                };
+                            };
+                        };
+                    };
+                };
+            };
             /** @description Current user is not logged in */
             401: {
                 headers: {

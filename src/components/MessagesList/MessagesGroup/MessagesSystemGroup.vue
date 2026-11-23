@@ -26,7 +26,7 @@
 				<SystemMessageItem
 					v-for="message in messagesCollapsed.messages"
 					:key="message.id"
-					:message="message"
+					:message
 					:isCollapsedSystemMessage="messagesCollapsed.messages?.length > 1"
 					:lastCollapsedMessageId="messagesCollapsed.lastId"
 					:nextMessageId="getNextMessageId(message)"

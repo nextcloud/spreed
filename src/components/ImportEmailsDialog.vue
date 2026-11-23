@@ -126,7 +126,7 @@ async function submitList(file: File | null) {
 		:name="t('spreed', 'Import email participants')"
 		size="normal"
 		closeOnClickOutside
-		:container="container"
+		:container
 		@update:open="emit('close')">
 		<!--native file picker, hidden -->
 		<input

@@ -12,7 +12,7 @@
 			</h4>
 			<NcActions
 				class="actions"
-				:container="container"
+				:container
 				:inline="editable ? 1 : 0"
 				placement="bottom-end">
 				<NcActionButton v-if="editable" closeAfterClick @click="$emit('editClicked')">
@@ -38,7 +38,7 @@
 		</div>
 		<div
 			v-for="(field, key) in displayedFields"
-			:key="key"
+			:key
 			class="field">
 			<!-- TODO: do not mutate prop `part` directly -->
 			<!-- eslint-disable -->

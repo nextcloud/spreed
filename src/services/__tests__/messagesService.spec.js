@@ -24,6 +24,7 @@ import {
 } from '../reactionsService.ts'
 import {
 	getTranslationLanguages,
+	scheduleTranslateTask,
 	translateText,
 } from '../translationService.ts'
 
@@ -299,6 +300,26 @@ describe('messagesService', () => {
 				text: 'text to translate',
 				fromLanguage: 'en',
 				toLanguage: 'de',
+			},
+			{
+				dummyOption: true,
+			},
+		)
+	})
+
+	test('scheduleTranslateTask calls the task processing API endpoint', () => {
+		scheduleTranslateTask('text to translate', 'en', 'de', { dummyOption: true })
+
+		expect(axios.post).toHaveBeenCalledWith(
+			generateOcsUrl('taskprocessing/schedule'),
+			{
+				type: 'core:text2text:translate',
+				appId: 'spreed',
+				input: {
+					input: 'text to translate',
+					origin_language: 'en',
+					target_language: 'de',
+				},
 			},
 			{
 				dummyOption: true,

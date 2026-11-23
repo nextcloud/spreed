@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { nextTick } from 'vue'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
@@ -20,6 +21,7 @@ import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
+import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
@@ -134,7 +136,11 @@ describe('VideoBottomBar.vue', () => {
 			})
 
 			test('component does not show indicators after video overlay is off', async () => {
-				const wrapper = mountVideoBottomBar(componentProps)
+				const wrapper = mount(VideoBottomBar, {
+					global: { plugins: [store] },
+					props: componentProps,
+					attachTo: document.body,
+				})
 				componentProps.showVideoOverlay = false
 				await wrapper.setProps(cloneDeep(componentProps))
 
@@ -142,6 +148,7 @@ describe('VideoBottomBar.vue', () => {
 				indicators.forEach((indicator) => {
 					expect(indicator.isVisible()).toBeFalsy()
 				})
+				wrapper.unmount()
 			})
 
 			test('component does not render anything when used in sidebar', async () => {
@@ -221,6 +228,31 @@ describe('VideoBottomBar.vue', () => {
 
 					const raiseHandIndicator = wrapper.findComponent(IconHandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
+				})
+
+				test('indicator shows the position only when the session is in the raised hands queue', async () => {
+					const participantActivityStore = useParticipantActivityStore()
+					componentProps.model.attributes.raisedHand.state = true
+					componentProps.model.attributes.nextcloudSessionId = 'session-id-participant'
+					const wrapper = mountVideoBottomBar(componentProps)
+
+					expect(wrapper.findComponent(IconHandBackLeft).exists()).toBeTruthy()
+					expect(wrapper.find('.raiseHandIndicator__order').exists()).toBeFalsy()
+
+					participantActivityStore.setParticipantHandRaised({
+						sessionId: 'session-id-other',
+						raisedHand: { state: true, timestamp: 1 },
+					})
+					participantActivityStore.setParticipantHandRaised({
+						sessionId: 'session-id-participant',
+						raisedHand: { state: true, timestamp: 2 },
+					})
+					await nextTick()
+					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('2')
+
+					participantActivityStore.setParticipantHandRaised({ sessionId: 'session-id-other', raisedHand: false })
+					await nextTick()
+					expect(wrapper.find('.raiseHandIndicator__order').text()).toBe('1')
 				})
 			})
 		})

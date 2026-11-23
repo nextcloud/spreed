@@ -10,6 +10,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { computed, ref } from 'vue'
 import AllowedGroups from './components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from './components/AdminSettings/BotsSettings.vue'
+import EndToEndEncryptionSettings from './components/AdminSettings/EndToEndEncryptionSettings.vue'
 import FederationSettings from './components/AdminSettings/FederationSettings.vue'
 import GeneralSettings from './components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from './components/AdminSettings/HostedSignalingServer.vue'
@@ -41,9 +42,10 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 			v-model:servers="signalingServers.servers"
 			v-model:secret="signalingServers.secret"
 			v-model:hideWarning="signalingServers.hideWarning"
-			:hasValidSubscription="hasValidSubscription" />
-		<HostedSignalingServer :hasSignalingServers="hasSignalingServers" />
-		<GeneralSettings :hasSignalingServers="hasSignalingServers" />
+			:hasValidSubscription />
+		<HostedSignalingServer :hasSignalingServers />
+		<GeneralSettings />
+		<EndToEndEncryptionSettings v-if="hasSignalingServers" />
 		<AllowedGroups />
 		<FederationSettings v-if="supportFederation" />
 		<MatrixSettings />
@@ -51,8 +53,8 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
-		<RecordingServers :hasSignalingServers="hasSignalingServers" />
-		<SIPBridge :hasSignalingServers="hasSignalingServers" />
+		<RecordingServers :hasSignalingServers />
+		<SIPBridge :hasSignalingServers />
 		<MatterbridgeIntegration />
 	</div>
 </template>

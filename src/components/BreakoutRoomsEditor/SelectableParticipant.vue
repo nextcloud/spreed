@@ -7,7 +7,7 @@
 	<label class="selectable-participant" :data-nav-id="participantNavigationId">
 		<input
 			v-model="modelProxy"
-			:value="value"
+			:value
 			:aria-label="participantAriaLabel"
 			:disabled="isLocked"
 			type="checkbox"
@@ -21,8 +21,8 @@
 			:source="actorType"
 			disableMenu
 			disableTooltip
-			:preloadedUserStatus="preloadedUserStatus"
-			:showUserStatus="showUserStatus" />
+			:preloadedUserStatus
+			:showUserStatus />
 
 		<span class="selectable-participant__content">
 			<span class="selectable-participant__content-name">

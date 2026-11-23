@@ -18,7 +18,6 @@ use OCA\Talk\Service\ParticipantService;
 /**
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  * @psalm-import-type TalkPoll from ResponseDefinitions
- * @psalm-import-type TalkPollDraft from ResponseDefinitions
  * @psalm-import-type TalkReaction from ResponseDefinitions
  * @psalm-import-type TalkThreadInfo from ResponseDefinitions
  */
@@ -131,9 +130,10 @@ class UserConverter {
 	}
 
 	/**
+	 * @template T of TalkChatMessageWithParent
 	 * @param Room $room
-	 * @param TalkChatMessageWithParent $message
-	 * @return TalkChatMessageWithParent
+	 * @param T $message
+	 * @return T
 	 */
 	public function convertMessage(Room $room, array $message): array {
 		$message['token'] = $room->getToken();
@@ -170,10 +170,10 @@ class UserConverter {
 	public function convertThreadInfo(Room $room, array $threadInfo): array {
 		$threadInfo['thread']['roomToken'] = $room->getToken();
 		if (isset($threadInfo['first'])) {
-			$threadInfo['first'] = $this->convertMessageParameters($room, $threadInfo['first']);
+			$threadInfo['first'] = $this->convertMessage($room, $threadInfo['first']);
 		}
 		if (isset($threadInfo['last'])) {
-			$threadInfo['last'] = $this->convertMessageParameters($room, $threadInfo['last']);
+			$threadInfo['last'] = $this->convertMessage($room, $threadInfo['last']);
 		}
 		return $threadInfo;
 	}
@@ -191,12 +191,10 @@ class UserConverter {
 	}
 
 	/**
-	 * @template T of TalkPoll|TalkPollDraft
+	 * @template T of TalkPoll
 	 * @param Room $room
-	 * @param TalkPoll|TalkPollDraft $poll
-	 * @psalm-param T $poll
-	 * @return TalkPoll|TalkPollDraft
-	 * @psalm-return T
+	 * @param T $poll
+	 * @return T
 	 */
 	public function convertPoll(Room $room, array $poll): array {
 		$poll = $this->convertAttendee($room, $poll, 'actorType', 'actorId', 'actorDisplayName');

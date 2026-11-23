@@ -9,7 +9,7 @@
 			v-if="!editing"
 			class="editable-text-field__output"
 			dir="auto"
-			:text="text"
+			:text
 			autolink
 			:useExtendedMarkdown="useMarkdown" />
 		<NcRichContenteditable
@@ -19,9 +19,9 @@
 			dir="auto"
 			:autoComplete="() => {}"
 			:maxlength="maxLength"
-			:multiline="multiline"
+			:multiline
 			:contenteditable="!loading"
-			:placeholder="placeholder"
+			:placeholder
 			@submit="handleSubmitText"
 			@keydown.esc="handleCancelEditing" />
 		<template v-if="!loading">

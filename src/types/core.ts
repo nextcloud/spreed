@@ -88,6 +88,13 @@ export type TranslationTranslateParams = Required<operationsCore['translation_ap
 export type TranslationTranslateResponse = ApiResponse<operationsCore['translation_api-translate']['responses'][200]['content']['application/json']>
 
 // Task Processing API
+export type TaskProcessingTaskType = componentsCore['schemas']['TaskProcessingTaskType']
+export type TaskProcessingTaskTypesResponse = ApiResponse<operationsCore['task_processing_api-task-types']['responses'][200]['content']['application/json']>
+// FIXME upstream: the `input` values are typed as an empty object in the OpenAPI spec
+export type TaskProcessingScheduleParams = Omit<Required<operationsCore['task_processing_api-schedule']>['requestBody']['content']['application/json'], 'input'> & {
+	input: Record<string, string | number | boolean>
+}
+export type TaskProcessingScheduleResponse = ApiResponse<operationsCore['task_processing_api-schedule']['responses'][200]['content']['application/json']>
 export type TaskProcessingResponse = ApiResponse<operationsCore['task_processing_api-get-task']['responses'][200]['content']['application/json']>
 
 // Profile API
@@ -98,6 +105,10 @@ export type UserProfileResponse = ApiResponse<operationsCore['profile_api-get-pr
 export type AutocompleteResult = componentsCore['schemas']['AutocompleteResult']
 export type AutocompleteParams = operationsCore['auto_complete-get']['parameters']['query']
 export type AutocompleteResponse = ApiResponse<operationsCore['auto_complete-get']['responses'][200]['content']['application/json']>
+
+// Reference API
+export type ReferenceResolveParams = Required<operationsCore['reference_api-resolve']>['requestBody']['content']['application/json']
+export type ReferenceResolveResponse = ApiResponse<operationsCore['reference_api-resolve']['responses'][200]['content']['application/json']>
 
 // Unified Search API
 type MessageSearchResultAttributes = {
@@ -143,6 +154,7 @@ export type UnifiedSearchResponse = ApiResponse<operationsCore['unified_search-s
 
 // Files API
 export type FileTemplate = componentsFiles['schemas']['TemplateFileCreatorWithTemplates']
+export type TemplateFile = componentsFiles['schemas']['TemplateFile']
 export type getFileTemplatesListResponse = ApiResponse<operationsFiles['template-list']['responses'][200]['content']['application/json']>
 export type createFileFromTemplateParams = Required<operationsFiles['template-create']>['requestBody']['content']['application/json']
 export type createFileFromTemplateResponse = ApiResponse<operationsFiles['template-create']['responses'][200]['content']['application/json']>

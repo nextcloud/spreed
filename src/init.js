@@ -86,11 +86,14 @@ function cleanOutdatedBrowserStorageKeys() {
 		'audioInputDevicePreferred', // Not needed anymore
 		'videoInputDevicePreferred', // Not needed anymore
 
-		// Talk 33
+		// Talk 23
 		'virtualBackgroundBlurStrength_', // Migration from conversation level to Talk level settings
 		'virtualBackgroundEnabled_', // Migration from conversation level to Talk level settings
 		'virtualBackgroundType_', // Migration from conversation level to Talk level settings
 		'virtualBackgroundUrl_', // Migration from conversation level to Talk level settings
+
+		// Talk 26
+		'silentCall_', // Not needed anymore, silent start is chosen from the split call button
 	].map((key) => BrowserStorage.scopeKey(key)) // FIXME upstream: this is a private method
 
 	Object.keys(localStorage).forEach((key) => {

@@ -534,6 +534,13 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function setMuteUntil(Participant $participant, int $muteUntil): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setMuteUntil($muteUntil);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
 	/**
 	 * @param RoomService $roomService
 	 * @param Room $room

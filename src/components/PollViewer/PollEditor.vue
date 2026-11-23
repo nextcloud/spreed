@@ -292,7 +292,7 @@ function goBack() {
 	<NcDialog
 		:name="dialogName"
 		:closeOnClickOutside="!isFilled"
-		:container="container"
+		:container
 		@update:open="emit('close')">
 		<NcButton
 			v-if="supportPollDrafts && isOpenedFromDraft"

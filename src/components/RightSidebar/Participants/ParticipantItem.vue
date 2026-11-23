@@ -8,7 +8,10 @@
 		:name="computedName"
 		:data-nav-id="participantNavigationId"
 		class="participant"
-		:class="{ 'participant--offline': isOffline }"
+		:class="{
+			'participant--offline': isOffline,
+			'participant--raised-hand': isHandRaised,
+		}"
 		:aria-label="participantAriaLabel"
 		:actions-aria-label="participantSettingsAriaLabel"
 		forceDisplayActions
@@ -18,13 +21,13 @@
 			<AvatarWrapper
 				:id="participant.actorId"
 				:key="participant.attendeeId"
-				:token="token"
+				:token
 				:name="computedName"
 				:source="participant.actorType"
 				disableTooltip
-				:showUserStatus="showUserStatus"
+				:showUserStatus
 				:version="participant.actorAvatarVersion"
-				:preloadedUserStatus="preloadedUserStatus"
+				:preloadedUserStatus
 				:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
 				:offline="isOffline" />
 		</template>
@@ -50,7 +53,7 @@
 			<!-- Second line: participant status message if applicable -->
 			<span
 				class="participant__status"
-				:class="{ 'participant__status--highlighted': isParticipantSpeaking }"
+				:class="{ 'participant__status--highlighted': isParticipantSpeaking && !isHandRaised }"
 				:title="statusMessage">
 				{{ statusMessage }}
 			</span>
@@ -64,7 +67,7 @@
 					variant="success"
 					:aria-label="t('spreed', 'Dial out phone')"
 					:title="t('spreed', 'Dial out phone')"
-					:disabled="disabled"
+					:disabled
 					@click="dialOutPhoneNumber">
 					<template #icon>
 						<IconPhoneDialOutline :size="20" />
@@ -75,14 +78,14 @@
 						variant="error"
 						:aria-label="t('spreed', 'Hang up phone')"
 						:title="t('spreed', 'Hang up phone')"
-						:disabled="disabled"
+						:disabled
 						@click="hangupPhoneNumber">
 						<template #icon>
 							<IconPhoneHangupOutline :size="20" />
 						</template>
 					</NcButton>
 					<DialpadPanel
-						:disabled="disabled"
+						:disabled
 						container="#tab-participants"
 						dialing
 						@dialType="dialType" />
@@ -95,6 +98,7 @@
 				class="participant__call-state"
 				:title="callIcon.title">
 				<component :is="callIcon.icon" :size="callIcon.size" />
+				<span v-if="raisedHandOrder" class="participant__raised-hand-order">{{ raisedHandOrder }}</span>
 			</span>
 
 			<!-- Grant or revoke lobby permissions (inline button) -->
@@ -337,8 +341,8 @@
 				v-if="showPermissionsOptions && permissionsEditor"
 				:actorId="participant.actorId"
 				closeAfterClick
-				:participant="participant"
-				:token="token"
+				:participant
+				:token
 				@close="permissionsEditor = false" />
 
 			<!-- Confirmation required to remove participant -->
@@ -598,6 +602,10 @@ export default {
 				}
 			}
 
+			if (this.isHandRaised) {
+				return t('spreed', 'Raised their hand')
+			}
+
 			if (this.isSpeakingStatusAvailable) {
 				return this.isParticipantSpeaking
 					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
@@ -655,6 +663,14 @@ export default {
 
 			const raisedState = this.participantActivityStore.getParticipantRaisedHand(this.participant.sessionIds)
 			return raisedState.state
+		},
+
+		raisedHandOrder() {
+			if (!this.isHandRaised) {
+				return null
+			}
+
+			return this.participantActivityStore.getParticipantRaisedHandOrder(this.participant.sessionIds)
 		},
 
 		callIcon() {
@@ -1231,6 +1247,13 @@ export default {
 		}
 	}
 
+	&--raised-hand &__call-state,
+	&--raised-hand &__status,
+	&--raised-hand &__user-badge,
+	&--raised-hand &__user-icon {
+		color: var(--color-warning-text);
+	}
+
 	&--offline &__user-name {
 		color: var(--color-text-maxcontrast);
 	}
@@ -1272,7 +1295,13 @@ export default {
 		height: 100%;
 		display: flex;
 		align-items: center;
+		gap: 2px;
 		color: var(--color-text-maxcontrast);
+	}
+
+	&__raised-hand-order {
+		font-weight: bold;
+		font-variant-numeric: tabular-nums;
 	}
 
 	:deep(.list-item-content__actions > .critical) {
@@ -1290,4 +1319,21 @@ export default {
 	color: var(--color-text-error);
 }
 
+</style>
+
+<style lang="scss">
+/*
+ * Override NcListItem styles to highlight participants with a raised hand.
+ * This block is not scoped because :deep does not work here:
+ * NcVNodes returns an array, so <li> is not a root element and does not get the data-v
+ * attribute of this component.
+ */
+.participant--raised-hand > .list-item {
+	background-color: var(--color-warning);
+
+	// NcListItem hover/focus selector is heavier; !important avoids copying its internal :not() chain
+	&:is(:hover, :focus-within, :has(:active), :has(:focus-visible)) {
+		background-color: var(--color-warning-hover) !important;
+	}
+}
 </style>

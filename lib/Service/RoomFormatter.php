@@ -163,6 +163,7 @@ class RoomFormatter {
 			'tagIds' => [],
 			'hasScheduledMessages' => 0,
 			'attributes' => 0,
+			'muteUntil' => 0,
 		];
 
 		if ($room->isClassified()) {
@@ -259,6 +260,7 @@ class RoomFormatter {
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 			'attributes' => $room->getAttributes(),
+			'muteUntil' => $attendee->getMuteUntil(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

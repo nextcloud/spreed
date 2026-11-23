@@ -177,6 +177,10 @@ export type components = {
                     folder?: string;
                     /** @description Whether per-conversation subfolders are used for attachments */
                     "conversation-subfolders": boolean;
+                    /** @description Whether shared files are editable by default */
+                    "default-allow-edit": boolean;
+                    /** @description Whether images are uploaded in original quality by default */
+                    "default-original-quality": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */
@@ -483,6 +487,11 @@ export type components = {
             threadId?: number;
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
+            /**
+             * @description Role of the author at the time of posting. If missing, the author was a regular participant, the conversation has no ranks or the message predates it
+             * @enum {string}
+             */
+            actorRole?: "owner" | "moderator";
             /**
              * Format: int64
              * @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
@@ -851,6 +860,11 @@ export type components = {
              * @description Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details
              */
             attributes: number;
+            /**
+             * Format: int64
+             * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
+             */
+            muteUntil: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

@@ -116,7 +116,7 @@ async function changeLanguage(language: LanguageOption) {
 		v-model="selectedOption"
 		class="live_transcription_settings_target_language_id"
 		:inputLabel="t('spreed', 'Set language used to show the transcriptions')"
-		:placeholder="placeholder"
+		:placeholder
 		:options="languageOptions"
 		:disabled="!languageOptions.length || loadLanguagesFailed || languageBeingChanged"
 		:loading="(!languageOptions.length && !loadLanguagesFailed) || languageBeingChanged" />

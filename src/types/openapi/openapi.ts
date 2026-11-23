@@ -1491,28 +1491,6 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a list of participants for a room */
-        get: operations["room-get-participants"];
-        /**
-         * Synchronize the participants of a conversation with the given list
-         * @description Only available for the external call service. Participants missing from the list are removed (except owners), participants new in the list are added.
-         */
-        put: operations["room-sync-participants"];
-        /** Add a participant to a room */
-        post: operations["room-add-participant-to-room"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/favorite": {
         parameters: {
             query?: never;
@@ -1597,6 +1575,24 @@ export type paths = {
          * @description Required capability: `unbind-conversation`
          */
         delete: operations["room-unbind-room-from-object"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a list of participants for a room */
+        get: operations["room-get-participants"];
+        put?: never;
+        /** Add a participant to a room */
+        post: operations["room-add-participant-to-room"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2118,6 +2114,30 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/mute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mute chat notifications in a conversation until a specific time. Does not alter notification settings for the attendee.
+         * @description Required capability: `mute-conversations`
+         */
+        post: operations["room-mute-conversation"];
+        /**
+         * Unmute chat notifications in a conversation, when they were muted before. Does not alter notification settings for the attendee.
+         * @description Required capability: `mute-conversations`
+         */
+        delete: operations["room-unmute-conversation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
         parameters: {
             query?: never;
@@ -2373,6 +2393,10 @@ export type components = {
                     folder?: string;
                     /** @description Whether per-conversation subfolders are used for attachments */
                     "conversation-subfolders": boolean;
+                    /** @description Whether shared files are editable by default */
+                    "default-allow-edit": boolean;
+                    /** @description Whether images are uploaded in original quality by default */
+                    "default-original-quality": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */
@@ -2702,6 +2726,11 @@ export type components = {
             threadId?: number;
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
+            /**
+             * @description Role of the author at the time of posting. If missing, the author was a regular participant, the conversation has no ranks or the message predates it
+             * @enum {string}
+             */
+            actorRole?: "owner" | "moderator";
             /**
              * Format: int64
              * @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
@@ -3439,6 +3468,11 @@ export type components = {
              * @description Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details
              */
             attributes: number;
+            /**
+             * Format: int64
+             * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
+             */
+            muteUntil: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
@@ -3488,6 +3522,10 @@ export type components = {
             server: string;
             /** @description URL of the Nextcloud server for federation */
             nextcloudServer: string;
+            /** @description Authentication parameters for the federation join request */
+            joinAuthParams?: {
+                token: string;
+            };
             /** @description Authentication parameters for the hello request */
             helloAuthParams: {
                 token: string;
@@ -12138,352 +12176,6 @@ export interface operations {
             };
         };
     };
-    "room-get-participants": {
-        parameters: {
-            query?: {
-                /** @description Include the user statuses */
-                includeStatus?: boolean;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Participants returned */
-            200: {
-                headers: {
-                    "X-Nextcloud-Has-User-Statuses"?: boolean;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Participant"][];
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions for getting participants */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-sync-participants": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum */
-                "x-nextcloud-talk-external-service-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service */
-                "x-nextcloud-talk-external-service-checksum"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                /** @description Token of the room */
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * @description List of participants the conversation should have grouped by type
-                     * @default []
-                     */
-                    participants?: components["schemas"]["InvitationList"];
-                    /**
-                     * @description User ID of an owner of the conversation that will be used as actor
-                     * @default
-                     */
-                    owner?: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Participants synchronized successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Participants synchronized but not all participants could be added */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["RoomWithInvalidInvitations"];
-                        };
-                    };
-                };
-            };
-            /** @description Room is not an external call service conversation */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "owner" | "room" | "room-type";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Invalid external call service secret */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "auth";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Owner is not an owner of the conversation */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "owner" | "room" | "room-type";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Room or owner not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "owner" | "room" | "room-type";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-add-participant-to-room": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description New participant */
-                    newParticipant: string;
-                    /**
-                     * @description Source of the participant
-                     * @default users
-                     * @enum {string}
-                     */
-                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "teams";
-                };
-            };
-        };
-        responses: {
-            /** @description Participant successfully added, in Matrix conversations the user is invited and added once they accepted */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** Format: int64 */
-                                type?: number;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
-                            };
-                        };
-                    } | {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description The Matrix account of the user can not invite to the Matrix room */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description User, group or other target to invite was not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
-                            };
-                        };
-                    } | {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description SIP dial-out is not configured */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description The Matrix homeserver rejected the invite or could not be reached */
-            502: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
     "room-add-to-favorites": {
         parameters: {
             query?: never;
@@ -12873,6 +12565,219 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "object-type";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-get-participants": {
+        parameters: {
+            query?: {
+                /** @description Include the user statuses */
+                includeStatus?: boolean;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Participants returned */
+            200: {
+                headers: {
+                    "X-Nextcloud-Has-User-Statuses"?: boolean;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Participant"][];
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions for getting participants */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-add-participant-to-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New participant */
+                    newParticipant: string;
+                    /**
+                     * @description Source of the participant
+                     * @default users
+                     * @enum {string}
+                     */
+                    source?: "users" | "groups" | "circles" | "emails" | "federated_users" | "phones" | "teams";
+                };
+            };
+        };
+        responses: {
+            /** @description Participant successfully added, in Matrix conversations the user is invited and added once they accepted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** Format: int64 */
+                                type?: number;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix account of the user can not invite to the Matrix room */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description User, group or other target to invite was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description SIP dial-out is not configured */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rejected the invite or could not be reached */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "encrypted" | "matrix" | "message" | "permission";
                             };
                         };
                     };
@@ -15502,6 +15407,123 @@ export interface operations {
                                 /** @enum {string} */
                                 error: "calendar" | "conversation" | "email" | "end" | "start";
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mute-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Unix timestamp until notifications are muted
+                     */
+                    muteUntil: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Conversation muted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Timestamp is in the past */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "mute-until";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-unmute-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation unmuted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };

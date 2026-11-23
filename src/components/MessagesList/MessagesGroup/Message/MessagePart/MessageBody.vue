@@ -66,7 +66,7 @@
 			<MessageQuote v-if="showQuote" :message="message.parent" />
 
 			<!-- File previews, rendered as a block on top of the (optional) caption -->
-			<FilePreviewsWrapper v-if="hasFilePreviews" :message="message" />
+			<FilePreviewsWrapper v-if="hasFilePreviews" :message />
 
 			<!-- Message content / text -->
 			<NcRichText
@@ -78,7 +78,7 @@
 				dir="auto"
 				:interactive="message.markdown && isEditable"
 				:useExtendedMarkdown="message.markdown"
-				:referenceLimit="1"
+				:referenceLimit
 				referenceInteractiveOptIn
 				@interactTodo="handleInteraction" />
 		</div>
@@ -221,6 +221,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import {
 	getFileKeys,
@@ -412,6 +413,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.message.token)
+		},
+
+		referenceLimit() {
+			return isClassifiedConversation(this.conversation) ? 0 : 1
 		},
 
 		hasRetentionPeriod() {

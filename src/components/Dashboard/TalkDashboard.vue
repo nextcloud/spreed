@@ -309,7 +309,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 								<EventCard
 									v-for="eventRoom in eventRooms"
 									:key="`${eventRoom.eventLink}-${eventRoom.start}`"
-									:eventRoom="eventRoom"
+									:eventRoom
 									class="talk-dashboard__event-card" />
 							</div>
 							<div class="talk-dashboard__event-cards__scroll-indicator">

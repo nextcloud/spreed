@@ -13,8 +13,7 @@ use OCP\IDBConnection;
 use OCP\IUser;
 
 class Manager implements \OCP\Comments\ICommentsManager {
-	/** @var IDBConnection */
-	protected $dbConn;
+	protected IDBConnection $dbConn;
 	protected ITimeFactory $timeFactory;
 
 	protected function normalizeDatabaseData(array $data): array {
@@ -26,11 +25,11 @@ class Manager implements \OCP\Comments\ICommentsManager {
 	protected function uncache($id): void {
 	}
 
-	public function get($id) {
+	public function get($id): IComment {
 		// TODO: Implement get() method.
 	}
 
-	public function getTree($id, $limit = 0, $offset = 0) {
+	public function getTree($id, $limit = 0, $offset = 0): array {
 		// TODO: Implement getTree() method.
 	}
 
@@ -38,11 +37,11 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement getForObject() method.
 	}
 
-	public function getForObjectSince(string $objectType, string $objectId, int $lastKnownCommentId, string $sortDirection = 'asc', int $limit = 30, bool $includeLastKnown = false): array {
+	public function getForObjectSince(string $objectType, string $objectId, int $lastKnownCommentId, string $sortDirection = 'asc', int $limit = 30, bool $includeLastKnown = false, string $topmostParentId = ''): array {
 		// TODO: Implement getForObjectSince() method.
 	}
 
-	public function getCommentsWithVerbForObjectSinceComment(string $objectType, string $objectId, array $verbs, int $lastKnownCommentId, string $sortDirection = 'asc', int $limit = 30, bool $includeLastKnown = false): array {
+	public function getCommentsWithVerbForObjectSinceComment(string $objectType, string $objectId, array $verbs, int $lastKnownCommentId, string $sortDirection = 'asc', int $limit = 30, bool $includeLastKnown = false, string $topmostParentId = ''): array {
 		// TODO: Implement getCommentsWithVerbForObjectSinceComment() method.
 	}
 
@@ -54,7 +53,7 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement searchForObjects() method.
 	}
 
-	public function getNumberOfCommentsForObject($objectType, $objectId, ?\DateTime $notOlderThan = null, $verb = '') {
+	public function getNumberOfCommentsForObject($objectType, $objectId, ?\DateTime $notOlderThan = null, $verb = ''): int {
 		// TODO: Implement getNumberOfCommentsForObject() method.
 	}
 
@@ -114,11 +113,11 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement save() method.
 	}
 
-	public function deleteReferencesOfActor($actorType, $actorId) {
+	public function deleteReferencesOfActor($actorType, $actorId): bool {
 		// TODO: Implement deleteReferencesOfActor() method.
 	}
 
-	public function deleteCommentsAtObject($objectType, $objectId) {
+	public function deleteCommentsAtObject($objectType, $objectId): bool {
 		// TODO: Implement deleteCommentsAtObject() method.
 	}
 

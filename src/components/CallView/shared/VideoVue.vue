@@ -44,17 +44,17 @@
 		</div>
 		<ScreenShare
 			v-if="showSharedScreen"
-			:isBig="isBig"
-			:token="token"
+			:isBig
+			:token
 			:callParticipantModel="model"
-			:sharedData="sharedData" />
+			:sharedData />
 		<div
 			v-if="showBackgroundAndAvatar"
 			class="avatar-container">
 			<VideoBackground />
 			<AvatarWrapper
 				:id="participantUserId"
-				:token="token"
+				:token
 				:name="displayName"
 				:source="participantActorType"
 				:size="avatarSize"
@@ -76,7 +76,7 @@
 		<slot v-if="!hideBottomBar" name="bottomBar">
 			<VideoBottomBar
 				:hasShadow="hasVideo"
-				:participantName="participantName"
+				:participantName
 				v-bind="$props"
 				@bottomBarHover="handleHoverEvent" />
 		</slot>
@@ -326,6 +326,7 @@ export default {
 				'video-container-big': this.isBig,
 				'full-page': this.isFullPage,
 				'presenter-overlay': this.isPresenterOverlay,
+				'raised-hand': !this.placeholderForPromoted && this.isHandRaised,
 			}
 		},
 
@@ -454,6 +455,10 @@ export default {
 
 		isSpeaking() {
 			return this.model.attributes.speaking
+		},
+
+		isHandRaised() {
+			return this.model.attributes.raisedHand.state
 		},
 
 		hasVideo() {
@@ -765,6 +770,11 @@ export default {
 	content: '';
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
+}
+
+.video-container.raised-hand::after {
+	content: '';
+	box-shadow: inset 0 0 0 3px var(--color-element-warning);
 }
 
 .presenter-icon__hide {

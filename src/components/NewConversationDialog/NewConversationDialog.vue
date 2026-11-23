@@ -34,7 +34,7 @@
 					v-if="page === 1"
 					v-model:selectedParticipants="selectedParticipants"
 					class="new-group-conversation__content"
-					:canModerateSipDialOut="canModerateSipDialOut"
+					:canModerateSipDialOut
 					:onlyLocal="isClassified" />
 			</div>
 
@@ -44,7 +44,7 @@
 				<!-- First page -->
 				<NcButton
 					v-if="page === 0 && conversationName"
-					:disabled="disabled"
+					:disabled
 					variant="tertiary"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
@@ -52,7 +52,7 @@
 				<NcButton
 					v-if="page === 0"
 					variant="primary"
-					:disabled="disabled"
+					:disabled
 					class="new-group-conversation__button"
 					@click="switchToPage(1)">
 					{{ t('spreed', 'Add participants') }}

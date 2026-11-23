@@ -9,7 +9,7 @@
 		:class="{ 'wrapper--narrow': isSidebar || isSmallMobile }">
 		<NewMessageTypingIndicator
 			v-if="showTypingStatus"
-			:token="token" />
+			:token />
 
 		<!--native file picker, hidden -->
 		<input
@@ -29,12 +29,12 @@
 			<NewMessageAttachments
 				v-if="showAttachmentsMenu"
 				class="new-message-form__attachments"
-				:token="token"
-				:disabled="disabled"
-				:canUploadFiles="canUploadFiles"
-				:canShareFiles="canShareFiles"
-				:canCreatePoll="canCreatePoll"
-				:canCreateThread="canCreateThread"
+				:token
+				:disabled
+				:canUploadFiles
+				:canShareFiles
+				:canCreatePoll
+				:canCreateThread
 				@openFileUpload="openFileUploadWindow"
 				@createThread="setCreateThread"
 				@handleFileShare="showFilePicker"
@@ -45,7 +45,7 @@
 				<NewMessageAbsenceInfo
 					v-if="!dialog && userAbsence"
 					class="new-message-form__note-content"
-					:userAbsence="userAbsence"
+					:userAbsence
 					:displayName="conversation.displayName" />
 
 				<NewMessageChatSummary
@@ -59,7 +59,7 @@
 						:setReturnFocus="getContenteditable"
 						@select="addEmoji">
 						<NcButton
-							:disabled="disabled"
+							:disabled
 							variant="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
 							:aria-haspopup="true">
@@ -118,7 +118,7 @@
 					v-model="threadTitle"
 					class="new-message-form__thread-title"
 					:label="t('spreed', 'Thread title')"
-					:disabled="disabled"
+					:disabled
 					:error="!!errorTitle"
 					:title="errorTitle"
 					showTrailingButton
@@ -135,9 +135,9 @@
 					v-model="text"
 					:class="{ 'new-message-form__input-rich--required': errorMessage }"
 					:title="errorMessage"
-					:autoComplete="autoComplete"
-					:disabled="disabled"
-					:userData="userData"
+					:autoComplete
+					:disabled
+					:userData
 					:menuContainer="container"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
@@ -156,7 +156,7 @@
 			<!-- Silent chat -->
 			<NcActions
 				v-if="showSendActions"
-				:disabled="disabled"
+				:disabled
 				:aria-label="t('spreed', 'Send options')"
 				:title="t('spreed', 'Send options')"
 				forceMenu
@@ -264,7 +264,7 @@
 			<!-- Audio recorder -->
 			<NewMessageAudioRecorder
 				v-if="showAudioRecorder"
-				:disabled="disabled"
+				:disabled
 				@recording="handleRecording"
 				@audioFile="handleAudioFile" />
 
@@ -311,8 +311,8 @@
 
 				<NcButton
 					v-else
-					:disabled="disabled"
-					variant="tertiary"
+					:disabled
+					variant="secondary"
 					type="submit"
 					:title="sendMessageLabel"
 					:aria-label="sendMessageLabel"
@@ -328,8 +328,8 @@
 		<!-- New file creation dialog -->
 		<NewMessageNewFileDialog
 			v-if="showNewFileDialog !== -1"
-			:token="token"
-			:showNewFileDialog="showNewFileDialog"
+			:token
+			:showNewFileDialog
 			@dismiss="showNewFileDialog = -1" />
 	</div>
 </template>
@@ -1113,8 +1113,8 @@ export default {
 			const payload = {
 				token: this.token,
 				uploadId: this.currentUploadId,
-				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
-				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
+				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowEdit : undefined,
+				compressImages: this.hasImages ? !this.uploadStore.originalQuality : undefined,
 			}
 
 			// TODO drop with support for Nextcloud 27 and older (EOL in 06-2024):

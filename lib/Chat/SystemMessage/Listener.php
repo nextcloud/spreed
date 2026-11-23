@@ -462,10 +462,17 @@ class Listener implements IEventListener {
 			unset($metaData['threadTitle']);
 		}
 
+		try {
+			$participant = $this->participantService->getParticipant($room, $this->getUserId());
+		} catch (ParticipantNotFoundException) {
+			$participant = null;
+		}
+
 		$comment = $this->sendSystemMessage(
 			$room,
 			'file_shared',
 			['share' => $share->getId(), 'metaData' => $metaData],
+			$participant,
 			silent: $silent,
 			replyTo: $replyTo,
 			threadId: $threadId,
@@ -474,11 +481,9 @@ class Listener implements IEventListener {
 
 		if ($threadTitle !== '' && $comment->getTopmostParentId() === '0') {
 			$thread = $this->threadService->createThread($room, $messageId, $threadTitle);
-			try {
+			if ($participant instanceof Participant) {
 				// Add to subscribed threads list
-				$participant = $this->participantService->getParticipant($room, $this->getUserId());
 				$this->threadService->setNotificationLevel($participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
-			} catch (ParticipantNotFoundException) {
 			}
 
 			$this->sendSystemMessage(

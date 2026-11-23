@@ -256,3 +256,22 @@ Feature: chat-4/unread-messages
     Then user "participant1" is participant of room "room" (v4)
       | unreadMessages | lastReadMessage      |
       | 1              | FIRST_MESSAGE_UNREAD |
+
+  Scenario: polling with a reaction as newest known message moves the read marker to the last message
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends message "Message 2" to room "group room" with 201
+    And user "participant2" reads message "Message 1" in room "group room" with 200
+    And user "participant1" react with "👍" on message "Message 1" to room "group room" with 201
+    And user "participant1" sees the following system messages in room "group room" with 200
+      | room       | actorType | actorId      | systemMessage        |
+      | group room | users     | participant1 | reaction             |
+      | group room | users     | participant1 | user_added           |
+      | group room | users     | participant1 | conversation_created |
+    When user "participant2" sees the following messages in room "group room" starting with "reaction" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id         | type | lastMessage | lastReadMessage | unreadMessages |
+      | group room | 2    | Message 2   | Message 2       | 0              |

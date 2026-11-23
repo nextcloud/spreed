@@ -582,11 +582,11 @@ const actions = {
 					await makeLegacyConversationPublic(token)
 				}
 				conversation.type = CONVERSATION.TYPE.PUBLIC
-				showSuccess(t('spreed', 'You allowed guests'))
+				showSuccess(t('spreed', 'You allowed guests to join via link'))
 			} else {
 				await makeConversationPrivate(token)
 				conversation.type = CONVERSATION.TYPE.GROUP
-				showSuccess(t('spreed', 'You disallowed guests'))
+				showSuccess(t('spreed', 'You disallowed guests to join via link'))
 			}
 			commit('addConversation', conversation)
 		} catch (error) {

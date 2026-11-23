@@ -33,7 +33,7 @@
 		</template>
 		<template #description>
 			<InternalSignalingHint />
-			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
+			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token />
 		</template>
 		<NcAppSidebarTab
 			v-if="contentState === 'search'"
@@ -91,7 +91,7 @@
 				</template>
 				<BreakoutRoomsTab
 					:mainToken="mainConversationToken"
-					:mainConversation="mainConversation"
+					:mainConversation
 					:isActive="activeTab === 'breakout-rooms'" />
 			</NcAppSidebarTab>
 			<NcAppSidebarTab
@@ -104,7 +104,7 @@
 					<IconInformationOutline :size="20" />
 				</template>
 				<SetGuestUsername v-if="!getUserId" />
-				<SipSettings v-if="showSIPSettings" :conversation="conversation" />
+				<SipSettings v-if="showSIPSettings" :conversation />
 				<div v-if="!getUserId" id="app-settings">
 					<div id="app-settings-header">
 						<NcButton variant="tertiary" @click="showSettings">

@@ -25,7 +25,7 @@
 						label="displayName"
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
-						:options="options"
+						:options
 						@update:modelValue="clickAddPart">
 						<template #option="option">
 							<img
@@ -77,7 +77,7 @@
 					v-for="(part, i) in parts"
 					:key="part.type + i"
 					:num="i + 1"
-					:part="part"
+					:part
 					:type="matterbridgeTypes[part.type]"
 					:editing="part.editing"
 					:editable="!enabled"

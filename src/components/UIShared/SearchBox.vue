@@ -8,7 +8,7 @@
 		ref="searchConversations"
 		v-model="modelValue"
 		:aria-label="placeholderText"
-		:aria-describedby="ariaDescribedby"
+		:aria-describedby
 		:placeholder="placeholderText"
 		:showTrailingButton="isFocused"
 		:trailingButtonLabel="cancelSearchLabel"

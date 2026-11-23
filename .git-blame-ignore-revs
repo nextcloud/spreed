@@ -29,3 +29,5 @@ e0c0f74870124c7ab82da0150fb25e477b1362fb
 c51531f4e621c01575aa65a3f73cfa710e9e4aaf
 # Lint SPDX headers
 cfc7ab6ca637ad784431443a44a5447f65ed68dd
+# Link vue v-bind sameShorthand
+4de41b626e1417b5c4708527cd2b517cf059da08

@@ -225,7 +225,7 @@ export default {
 					contentLength: file.size,
 				})
 
-				const previewURL = await generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+				const previewURL = await generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=true', {
 					path: filePath,
 					height: 1080,
 				})
@@ -261,7 +261,7 @@ export default {
 				throw new Error(t('files', 'Invalid path selected'))
 			}
 
-			const previewURL = generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+			const previewURL = generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=true', {
 				path,
 				height: 1080,
 			})

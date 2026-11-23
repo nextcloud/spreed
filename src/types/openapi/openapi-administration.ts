@@ -309,6 +309,10 @@ export type components = {
                     folder?: string;
                     /** @description Whether per-conversation subfolders are used for attachments */
                     "conversation-subfolders": boolean;
+                    /** @description Whether shared files are editable by default */
+                    "default-allow-edit": boolean;
+                    /** @description Whether images are uploaded in original quality by default */
+                    "default-original-quality": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */

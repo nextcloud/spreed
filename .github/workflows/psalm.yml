@@ -30,7 +30,7 @@ jobs:
 
       - name: Get php version
         id: versions
-        uses: nextcloud-libraries/nextcloud-version-matrix@71959de73c244b11ecbf4503b87c41d65b0f64ae # v1.3.4
+        uses: nextcloud-libraries/nextcloud-version-matrix@d96fc6d3fd6cb9fc67f92d72aed808e802a5e65b # v1.3.6
 
       - name: Check enforcement of minimum PHP version ${{ steps.versions.outputs.php-min }} in psalm.xml
         run: grep 'phpVersion="${{ steps.versions.outputs.php-min }}' psalm.xml

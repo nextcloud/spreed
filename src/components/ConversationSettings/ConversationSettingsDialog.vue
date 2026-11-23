@@ -17,8 +17,8 @@
 			id="basic-info"
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo
-				:conversation="conversation"
-				:canFullModerate="canFullModerate" />
+				:conversation
+				:canFullModerate />
 		</NcAppSettingsSection>
 
 		<template v-if="!isBreakoutRoom">
@@ -27,18 +27,18 @@
 				v-if="!isNoteToSelf && !isOneToOneFormer"
 				id="notifications"
 				:name="t('spreed', 'Personal')">
-				<NotificationsSettings v-if="!isGuest" :conversation="conversation" />
+				<NotificationsSettings v-if="!isGuest" :conversation />
 			</NcAppSettingsSection>
 
 			<NcAppSettingsSection
 				id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
-				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token="token" :canModerate="canFullModerate" />
-				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :canModerate="canFullModerate" />
-				<LinkShareSettings v-if="!isNoteToSelf && !isClassified && !isMatrix" :token="token" :canModerate="canFullModerate" />
-				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :canModerate="selfIsOwnerOrModerator" />
-				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature && !isMatrix" :token="token" :canModerate="selfIsOwnerOrModerator" />
-				<BanSettings v-if="supportBanV1 && canFullModerate && !isMatrix" :token="token" />
+				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token :canModerate="canFullModerate" />
+				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token :canModerate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf && !isClassified && !isMatrix" :token :canModerate="canFullModerate" />
+				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token :canModerate="selfIsOwnerOrModerator" />
+				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature && !isMatrix" :token :canModerate="selfIsOwnerOrModerator" />
+				<BanSettings v-if="supportBanV1 && canFullModerate && !isMatrix" :token />
 			</NcAppSettingsSection>
 
 			<!-- Meeting: lobby and sip -->
@@ -46,7 +46,7 @@
 				v-if="canFullModerate && !isNoteToSelf && !isMatrix"
 				id="meeting"
 				:name="meetingHeader">
-				<LobbySettings :token="token" />
+				<LobbySettings :token />
 				<SipSettings v-if="canUserEnableSIP" />
 			</NcAppSettingsSection>
 
@@ -55,7 +55,7 @@
 				v-if="canFullModerate && !isNoteToSelf && !isMatrix"
 				id="permissions"
 				:name="t('spreed', 'Permissions')">
-				<ConversationPermissionsSettings :token="token" />
+				<ConversationPermissionsSettings :token />
 			</NcAppSettingsSection>
 
 			<!-- Live transcription -->
@@ -63,7 +63,7 @@
 				v-if="canConfigureLiveTranscription"
 				id="live-transcription"
 				:name="t('spreed', 'Live transcription')">
-				<LiveTranscriptionSettings :token="token" />
+				<LiveTranscriptionSettings :token />
 			</NcAppSettingsSection>
 			<NcAppSettingsSection
 				v-else-if="hintLiveTranscription"
@@ -82,7 +82,7 @@
 				v-if="canConfigureBreakoutRooms"
 				id="breakout-rooms"
 				:name="t('spreed', 'Breakout Rooms')">
-				<BreakoutRoomsSettings :token="token" />
+				<BreakoutRoomsSettings :token />
 			</NcAppSettingsSection>
 
 			<!-- Matterbridge settings -->
@@ -98,7 +98,7 @@
 				v-if="selfIsOwnerOrModerator && supportBotsV1 && !isClassified && !isMatrix"
 				id="bots"
 				:name="t('spreed', 'Bots')">
-				<BotsSettings :token="token" />
+				<BotsSettings :token />
 			</NcAppSettingsSection>
 
 			<!-- Destructive actions -->
@@ -106,8 +106,8 @@
 				v-if="canLeaveConversation || canDeleteConversation || showPreserveConversationSetting"
 				id="dangerzone"
 				:name="t('spreed', 'Danger zone')">
-				<PreserveConversationSettings v-if="showPreserveConversationSetting" :token="token" />
-				<LockingSettings v-if="canFullModerate && !isNoteToSelf && !isMatrix" :token="token" />
+				<PreserveConversationSettings v-if="showPreserveConversationSetting" :token />
+				<LockingSettings v-if="canFullModerate && !isNoteToSelf && !isMatrix" :token />
 				<template v-if="supportsArchive">
 					<h4 class="app-settings-section__subtitle">
 						{{ t('spreed', 'Archive conversation') }}
@@ -123,9 +123,9 @@
 					</NcCheckboxRadioSwitch>
 				</template>
 				<DangerZone
-					:conversation="conversation"
-					:canLeaveConversation="canLeaveConversation"
-					:canDeleteConversation="canDeleteConversation" />
+					:conversation
+					:canLeaveConversation
+					:canDeleteConversation />
 			</NcAppSettingsSection>
 		</template>
 	</NcAppSettingsDialog>

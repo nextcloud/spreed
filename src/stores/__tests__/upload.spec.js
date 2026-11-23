@@ -8,6 +8,7 @@ import { getUploader } from '@nextcloud/upload'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ATTENDEE } from '../../constants.ts'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.ts'
 import { postAttachment, probeAttachmentFolder, shareFile } from '../../services/filesSharingServices.ts'
@@ -66,6 +67,7 @@ describe('fileUploadStore', () => {
 	let uploadStore
 
 	beforeEach(() => {
+		BrowserStorage.clear()
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
 		settingsStore = useSettingsStore()
@@ -688,6 +690,71 @@ describe('fileUploadStore', () => {
 			const uploads = uploadStore.getInitialisedUploads('upload-id1')
 			expect(uploads[0][1].file.name).toBe('20210427_153000.png')
 			expect(uploads[1][1].file.name).toBe('20210425_153000.txt')
+		})
+	})
+
+	describe('upload choices', () => {
+		test('default to standard quality and view-only', () => {
+			getTalkConfig.mockReturnValue(undefined)
+			setActivePinia(createPinia())
+			uploadStore = useUploadStore()
+			getTalkConfig.mockReturnValue(true)
+
+			expect(uploadStore.originalQuality).toBe(false)
+			expect(uploadStore.allowEdit).toBe(false)
+		})
+
+		test('fall back to the admin config when browser storage is empty', () => {
+			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'default-allow-edit')
+			expect(getTalkConfig).toHaveBeenCalledWith('local', 'attachments', 'default-original-quality')
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
+		})
+
+		test('prefer browser storage over the admin config', () => {
+			BrowserStorage.setItem('originalQuality', 'false')
+			BrowserStorage.setItem('allowEdit', 'false')
+			setActivePinia(createPinia())
+			uploadStore = useUploadStore()
+
+			expect(uploadStore.originalQuality).toBe(false)
+			expect(uploadStore.allowEdit).toBe(false)
+		})
+
+		test('restore the last choices from browser storage', () => {
+			BrowserStorage.setItem('originalQuality', 'true')
+			BrowserStorage.setItem('allowEdit', 'true')
+			setActivePinia(createPinia())
+			uploadStore = useUploadStore()
+
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
+		})
+
+		test('save the choices to browser storage', () => {
+			uploadStore.updateOriginalQuality(true)
+			uploadStore.updateAllowEdit(true)
+
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
+			expect(BrowserStorage.getItem('originalQuality')).toBe('true')
+			expect(BrowserStorage.getItem('allowEdit')).toBe('true')
+		})
+
+		test('keep the choices when the upload is discarded', () => {
+			uploadStore.initialiseUpload({
+				uploadId: 'upload-id1',
+				token: 'XXTOKENXX',
+				files: [{ name: 'pngimage.png', type: 'image/png', size: 123, lastModified: Date.UTC(2021, 3, 27, 15, 30, 0) }],
+			})
+			uploadStore.updateOriginalQuality(true)
+			uploadStore.updateAllowEdit(true)
+
+			uploadStore.discardUpload('upload-id1')
+
+			expect(uploadStore.currentUploadId).not.toBeDefined()
+			expect(uploadStore.originalQuality).toBe(true)
+			expect(uploadStore.allowEdit).toBe(true)
 		})
 	})
 })

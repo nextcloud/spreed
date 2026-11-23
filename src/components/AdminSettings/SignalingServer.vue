@@ -78,7 +78,7 @@ import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
-import { EventBus } from '../../services/EventBus.ts'
+import { useAdminSettingsState } from '../../composables/useAdminSettingsState.ts'
 import { fetchSignalingSettings, getWelcomeMessage } from '../../services/signalingService.js'
 import { createConnection } from '../../utils/SignalingStandaloneTest.js'
 
@@ -122,6 +122,11 @@ export default {
 	},
 
 	emits: ['removeServer', 'update:server', 'update:verify'],
+
+	setup() {
+		const { hasFeatureJoinFeatures } = useAdminSettingsState()
+		return { hasFeatureJoinFeatures }
+	},
 
 	data() {
 		return {
@@ -244,7 +249,7 @@ export default {
 			try {
 				await signalingTest.connect()
 				this.signalingTestInfo.push({ caption: t('spreed', 'Available features'), description: signalingTest.features.join(', ') })
-				EventBus.emit('signaling-server-connected', signalingTest)
+				this.hasFeatureJoinFeatures = signalingTest.hasFeature('join-features')
 			} catch (exception) {
 				if (exception.socketMessage) {
 					this.errorMessage = t('spreed', 'Error: Websocket connection failed')

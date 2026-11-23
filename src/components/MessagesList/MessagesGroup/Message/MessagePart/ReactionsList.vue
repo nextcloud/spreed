@@ -31,7 +31,7 @@
 						class="reactions-item">
 						<AvatarWrapper
 							:id="item.actorId"
-							:token="token"
+							:token
 							:name="item.actorDisplayName"
 							:source="item.actorType"
 							:size="AVATAR.SIZE.SMALL"

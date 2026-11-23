@@ -28,10 +28,10 @@ class RoomPropertiesHelper {
 			'name' => $room->getDisplayName($userId),
 			'type' => $room->getType(),
 			'lobby-state' => $room->getLobbyState(),
-			'lobby-timer' => $room->getLobbyTimer(),
+			'lobby-timer' => $room->getLobbyTimer()?->getTimestamp() ?? 0,
 			'read-only' => $room->getReadOnly(),
 			'listable' => $room->getListable(),
-			'active-since' => $room->getActiveSince(),
+			'active-since' => $room->getActiveSince()?->getTimestamp() ?? 0,
 			'sip-enabled' => $room->getSIPEnabled(),
 		];
 

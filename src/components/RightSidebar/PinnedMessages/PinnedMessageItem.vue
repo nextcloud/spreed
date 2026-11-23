@@ -90,7 +90,7 @@ function handleClick() {
 		:data-nav-id="`pin_${item.id}`"
 		class="pin"
 		:name="subname"
-		:to="to"
+		:to
 		:active="false"
 		forceMenu
 		@click="handleClick">

@@ -49,7 +49,7 @@ function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation })
 		<ThreadItem
 			v-for="thread of threadsInformation"
 			:key="`thread_${thread.thread.id}`"
-			:thread="thread" />
+			:thread />
 	</ul>
 </template>
 

@@ -5,7 +5,7 @@
 
 <template>
 	<NcButton
-		:disabled="disabled"
+		:disabled
 		class="media-devices-speaker-test-button"
 		:title="buttonLabel"
 		:aria-label="buttonLabel"

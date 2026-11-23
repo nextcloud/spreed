@@ -142,7 +142,7 @@ import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import { EventBus } from '../../services/EventBus.ts'
+import { useAdminSettingsState } from '../../composables/useAdminSettingsState.ts'
 import { setSIPSettings } from '../../services/settingsService.ts'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
@@ -164,6 +164,11 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	setup() {
+		const { hasSIPBridge } = useAdminSettingsState()
+		return { hasSIPBridge }
 	},
 
 	data() {
@@ -249,7 +254,7 @@ export default {
 				dialOutPrefix: this.dialOutPrefix,
 				sipGroups: this.sipGroups.map((group) => group.id).join('_'),
 			}
-			EventBus.emit('sip-settings-updated', this.currentSetup)
+			this.hasSIPBridge = !!this.sharedSecret
 		},
 
 		async saveSIPSettings() {

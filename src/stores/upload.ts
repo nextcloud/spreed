@@ -20,6 +20,7 @@ import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
+import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { getDavClient } from '../services/DavClient.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -74,6 +75,28 @@ type PerformSharePayload = {
 	allowUpdate?: boolean
 }
 
+/**
+ * Get the share permission choice: browser storage, then admin config, then view-only
+ */
+function getAllowEdit(): boolean {
+	const storedValue = BrowserStorage.getItem('allowEdit')
+	if (storedValue !== null) {
+		return storedValue === 'true'
+	}
+	return getTalkConfig('local', 'attachments', 'default-allow-edit') ?? false
+}
+
+/**
+ * Get the image quality choice: browser storage, then admin config, then standard quality
+ */
+function getOriginalQuality(): boolean {
+	const storedValue = BrowserStorage.getItem('originalQuality')
+	if (storedValue !== null) {
+		return storedValue === 'true'
+	}
+	return getTalkConfig('local', 'attachments', 'default-original-quality') ?? false
+}
+
 export const useUploadStore = defineStore('upload', () => {
 	const actorStore = useActorStore()
 	const chatExtrasStore = useChatExtrasStore()
@@ -89,19 +112,36 @@ export const useUploadStore = defineStore('upload', () => {
 	const compressedFileSizes = reactive<Record<string, number>>({})
 
 	/**
-	 * The user's choices for the current upload. They are only valid until it
-	 * is sent or discarded, see resetCurrentUpload()
+	 * The user's choices for uploads, kept in browser storage across uploads
 	 */
-	const allowUpdate = ref(false)
-	const skipCompression = ref(false)
+	const allowEdit = ref(getAllowEdit())
+	const originalQuality = ref(getOriginalQuality())
 
 	/**
-	 * Closes the current upload, clearing the user's choices made for it
+	 * Update the share permission choice and keep it in storage
+	 *
+	 * @param value new 'allowEdit' value
+	 */
+	function updateAllowEdit(value: boolean) {
+		allowEdit.value = value
+		BrowserStorage.setItem('allowEdit', value.toString())
+	}
+
+	/**
+	 * Update the image quality choice and keep it in storage
+	 *
+	 * @param value new 'originalQuality' value
+	 */
+	function updateOriginalQuality(value: boolean) {
+		originalQuality.value = value
+		BrowserStorage.setItem('originalQuality', value.toString())
+	}
+
+	/**
+	 * Closes the current upload
 	 */
 	function resetCurrentUpload() {
 		currentUploadId.value = undefined
-		allowUpdate.value = false
-		skipCompression.value = false
 	}
 
 	/**
@@ -881,8 +921,11 @@ export const useUploadStore = defineStore('upload', () => {
 		currentUploadId,
 		localUrls,
 		compressedFileSizes,
-		allowUpdate,
-		skipCompression,
+		allowEdit,
+		originalQuality,
+
+		updateAllowEdit,
+		updateOriginalQuality,
 
 		getUploadsArray,
 		getInitialisedUploads,

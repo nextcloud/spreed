@@ -89,9 +89,9 @@ function handleResultClick() {
 <template>
 	<NcListItem
 		:data-nav-id="`message_${messageId}`"
-		:name="name"
-		:to="to"
-		:active="active"
+		:name
+		:to
+		:active
 		:title="richSubline"
 		:compact
 		class="search-message"
@@ -105,7 +105,7 @@ function handleResultClick() {
 				:source="actorType"
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT"
 				disableMenu
-				:token="token" />
+				:token />
 			<ConversationIcon
 				v-else
 				:item="conversation"

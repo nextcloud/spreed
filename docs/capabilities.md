@@ -133,7 +133,7 @@
 * `note-to-self` (local) - Support for "Note-to-self" conversation exists
 * `recording-consent` - Whether admins and moderators can require recording consent before joining a call
 * `sip-support-dialout` - Whether admins can enable SIP dial-out
-* `config => chat => has-translation-providers` (local) - When true, translation tuples can be loaded from the [OCS Translation API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-translation-api.html#get-available-translation-options).
+* ~~`config => chat => has-translation-providers` (local) - When true, translation tuples can be loaded from the [OCS Translation API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-translation-api.html#get-available-translation-options).~~ The OCS Translation API is deprecated, so clients should prefer `config => chat => has-translation-task-providers` (Talk 21) when it is true.
 * `config => call => recording-consent` - Whether users need to consent into call recording before joining a call (see [constants list](constants.md#recording-consent-required))
 * `config => call => sip-enabled` - Whether SIP is configured on the server allowing for SIP dial-in
 * `config => call => sip-dialout-enabled` - Whether SIP dial-out is configured on the server, additionally requires `config => call => sip-enabled`
@@ -240,8 +240,15 @@
 * `config => conversations => unarchive` (local) - User selected mode when archived conversations are unarchived automatically (`never`, `mention` or `always`)
 * `config => conversations => tags-show-unread` (local) - User selected mode when unread conversations are shown in collapsed conversation tags (`never`, `mention` or `always`)
 
+## 25.0.9
+* `config => attachments => default-allow-edit` (local) - Whether shared files are editable by default, until the user picks a choice in the upload editor
+* `config => attachments => default-original-quality` (local) - Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor
+
 ## 26
 * `talk-polls-result-visibility` - Whether `resultMode` supports bit flags for voter-name visibility and independent result previews before voting
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `config => chat => mobile-preload-chat` (local) - Whether mobile clients should preload the chat messages of conversations
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)
+* `mute-conversations` - Whether conversations can be muted for a given time
+* `federation-signaling-auth` (local) - Whether federated signaling is sending the join auth params to the clients and the HPB should not allow joining without
+* `shared-items-link` - Whether chat messages containing links are listed as `link` shared items

@@ -167,8 +167,8 @@ function updateServers() {
 				:key="index"
 				v-model:server="server.server"
 				v-model:verify="server.verify"
-				:index="index"
-				:loading="loading"
+				:index
+				:loading
 				@removeServer="removeServer"
 				@update:server="debounceUpdateServers"
 				@update:verify="debounceUpdateServers" />

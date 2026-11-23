@@ -43,7 +43,7 @@
 				:aria-label="t('spreed', 'More actions')"
 				:title="t('spreed', 'More actions')"
 				placement="bottom-end"
-				:boundariesElement="boundariesElement"
+				:boundariesElement
 				@close="onMenuClose">
 				<template v-if="submenu === null">
 					<!-- Message timestamp -->
@@ -74,6 +74,16 @@
 							<IconClockEditOutline :size="20" />
 						</template>
 						{{ editedDateTime }}
+					</NcActionText>
+					<!-- Expiring message timestamp -->
+					<NcActionText
+						v-if="message.expirationTimestamp"
+						class="label-timestamp"
+						:name="expirationLabel">
+						<template #icon>
+							<IconDeleteClockOutline :size="20" />
+						</template>
+						{{ expirationDateTime }}
 					</NcActionText>
 					<NcActionText
 						v-if="isMessagePinned"
@@ -447,6 +457,7 @@ import IconClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
@@ -513,6 +524,7 @@ export default {
 		IconClockEditOutline,
 		IconClockOutline,
 		IconContentCopy,
+		IconDeleteClockOutline,
 		IconDotsHorizontal,
 		IconTrashCanOutline,
 		IconEmoticonOutline,
@@ -612,9 +624,14 @@ export default {
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
 		const supportPinMessage = hasTalkFeature(message.value.token, 'pinned-messages')
 
-		const isTranslationAvailable = getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
-			// Fallback for the desktop client when connecting to Talk 17
-			?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0
+		const hasTranslationTaskProviders = getTalkConfig(message.value.token, 'chat', 'has-translation-task-providers')
+		const isTranslationAvailable = hasTranslationTaskProviders
+			|| (getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
+				// Fallback for the desktop client when connecting to Talk 17
+				?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0)
+
+		// TRANSLATORS: Label in the message menu, followed by the date and time when the expiring message is deleted
+		const expirationLabel = t('spreed', 'Expires')
 
 		return {
 			IconFileDownload,
@@ -629,6 +646,7 @@ export default {
 			isDeleteable,
 			isConversationReadOnly,
 			isConversationModifiable,
+			hasTranslationTaskProviders,
 			isTranslationAvailable,
 			actorStore,
 			chatExtrasStore,
@@ -637,6 +655,7 @@ export default {
 			sharedItemsStore,
 			supportPinMessage,
 			PIN_DURATION_OPTIONS,
+			expirationLabel,
 		}
 	},
 
@@ -725,6 +744,10 @@ export default {
 
 		editedDateTime() {
 			return formatDateTime(this.message.lastEditTimestamp * 1000, 'shortDateWithTime')
+		},
+
+		expirationDateTime() {
+			return formatDateTime(this.message.expirationTimestamp * 1000, 'shortDateWithTime')
 		},
 
 		customReminderDateTime: {
@@ -898,6 +921,7 @@ export default {
 			await spawnDialog(MessageTranslateDialog, {
 				message: this.message.message,
 				richParameters: this.richParameters,
+				useTaskProcessing: !!this.hasTranslationTaskProviders,
 			})
 		},
 

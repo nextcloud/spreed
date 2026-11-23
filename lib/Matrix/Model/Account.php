@@ -92,8 +92,10 @@ class Account extends SnowflakeAwareEntity implements \JsonSerializable {
 	public function jsonSerialize(): array {
 		/** @var numeric-string $homeserverId */
 		$homeserverId = $this->getHomeserverId();
+		/** @var numeric-string $id */
+		$id = $this->getId();
 		return [
-			'id' => (string)$this->getId(),
+			'id' => $id,
 			'homeserverId' => $homeserverId,
 			'mxid' => $this->getMxid(),
 			'deviceId' => $this->getDeviceId(),
