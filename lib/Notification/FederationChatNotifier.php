@@ -105,7 +105,7 @@ class FederationChatNotifier {
 	 * subscribed to the conversation, the same way as
 	 * {@see \OCA\Talk\Chat\Notifier::notifyReacted()} does for local users.
 	 *
-	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string} $reactionData
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string, defaultNotificationLevel?: int} $reactionData
 	 */
 	public function handleReaction(Room $room, Participant $participant, ProxyCacheMessage $message, array $reactionData): void {
 		if ($message->getActorType() !== Attendee::ACTOR_USERS
@@ -121,17 +121,16 @@ class FederationChatNotifier {
 			return;
 		}
 
-		if ($participant->getSession() instanceof Session && $participant->getSession()->getState() === Session::STATE_ACTIVE) {
-			// User has an active session
-			return;
-		}
-
 		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 		if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$notificationLevel = Participant::NOTIFY_ALWAYS;
 			} else {
-				$notificationLevel = $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
+				// The user's own notification level is only stored locally and
+				// never reaches the host, so when unset the host's default
+				// applies (sent with the notification)
+				$notificationLevel = $reactionData['defaultNotificationLevel']
+					?? $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
 			}
 		}
 
@@ -205,9 +204,12 @@ class FederationChatNotifier {
 	 * Creates a notification for the given proxy message and mentioned users
 	 */
 	protected function createNotification(Room $chat, ProxyCacheMessage $message, string $subject, array $subjectData = [], ?int $threadId = null): INotification {
-		// Reactions notify with the reacting user, all other subjects with the message author
-		$subjectData['userType'] ??= $message->getActorType();
-		$subjectData['userId'] ??= $message->getActorId();
+		if ($subject !== 'reaction') {
+			// Reactions notify with the reacting user (passed in $subjectData),
+			// all other subjects with the message author
+			$subjectData['userType'] = $message->getActorType();
+			$subjectData['userId'] = $message->getActorId();
+		}
 
 		$notificationParameters = [
 			'proxyId' => $message->getId(),

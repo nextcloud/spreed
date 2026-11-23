@@ -166,7 +166,9 @@ class FederationChatNotifierTest extends TestCase {
 		$this->notifier->handleReaction($room, $participant, $message, $reactionData);
 	}
 
-	public function testHandleReactionSkippedWithActiveSession(): void {
+	public function testHandleReactionWithActiveSessionStillNotifies(): void {
+		// Same as \OCA\Talk\Chat\Notifier::notifyReacted() for local users:
+		// an active session does not skip the notification
 		$session = new Session();
 		$session->setState(Session::STATE_ACTIVE);
 
@@ -174,6 +176,37 @@ class FederationChatNotifierTest extends TestCase {
 		$participant = $this->createParticipant(Participant::NOTIFY_ALWAYS, $session);
 		$message = $this->createReactedMessage();
 		$reactionData = $this->createReactionData();
+
+		$this->userConverter->method('convertTypeAndId')
+			->willReturn(['type' => Attendee::ACTOR_FEDERATED_USERS, 'id' => 'reactor@remote']);
+
+		$notification = $this->createMock(INotification::class);
+		$notification->method('setApp')->willReturnSelf();
+		$notification->method('setObject')->willReturnSelf();
+		$notification->method('setSubject')->willReturnSelf();
+		$notification->method('setMessage')->willReturnSelf();
+		$notification->method('setDateTime')->willReturnSelf();
+		$notification->method('setUser')->willReturnSelf();
+		$this->notificationManager->method('createNotification')
+			->willReturn($notification);
+		$this->notificationManager->expects($this->once())
+			->method('notify')
+			->with($notification);
+
+		$this->notifier->handleReaction($room, $participant, $message, $reactionData);
+	}
+
+	public function testHandleReactionUsesHostDefaultNotificationLevel(): void {
+		// When the user has not set a level, the host's default applies,
+		// not this server's default
+		$room = $this->createRoom(Room::TYPE_GROUP);
+		$participant = $this->createParticipant(Participant::NOTIFY_DEFAULT);
+		$message = $this->createReactedMessage();
+		$reactionData = $this->createReactionData();
+		$reactionData['defaultNotificationLevel'] = Participant::NOTIFY_MENTION;
+
+		$this->appConfig->method('getAppValueInt')
+			->willReturn(Participant::NOTIFY_ALWAYS);
 
 		$this->userConverter->method('convertTypeAndId')
 			->willReturn(['type' => Attendee::ACTOR_FEDERATED_USERS, 'id' => 'reactor@remote']);

@@ -589,13 +589,29 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 
 	/**
 	 * @param int $remoteAttendeeId
-	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, reactionData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string}} $notification
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, reactionData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string, defaultNotificationLevel?: int}} $notification
 	 * @return array
 	 * @throws ActionNotSupportedException
 	 * @throws AuthenticationFailedException
 	 * @throws ShareNotFound
 	 */
 	private function reactionAdded(int $remoteAttendeeId, array $notification): array {
+		$reactionData = $notification['reactionData'] ?? null;
+		if (!is_array($reactionData)
+			|| !isset($reactionData['remoteMessageId'], $reactionData['actorType'], $reactionData['actorId'], $reactionData['actorDisplayName'], $reactionData['reaction'], $reactionData['creationDatetime'])
+			|| !is_numeric($reactionData['remoteMessageId'])
+			|| !is_string($reactionData['actorType'])
+			|| !is_string($reactionData['actorId'])
+			|| !is_string($reactionData['actorDisplayName'])
+			|| !is_string($reactionData['reaction'])) {
+			throw new BadRequestException(['reactionData']);
+		}
+		try {
+			new \DateTime((string)$reactionData['creationDatetime']);
+		} catch (\Exception) {
+			throw new BadRequestException(['creationDatetime']);
+		}
+
 		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
 		try {
 			$room = $this->manager->getRoomById($invite->getLocalRoomId());

@@ -449,7 +449,7 @@ class BackendNotifier {
 	 * Send information to remote participants that a reaction was added to a message
 	 * Sent from Host server to Remote participant server
 	 *
-	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string} $reactionData
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string, defaultNotificationLevel: int} $reactionData
 	 */
 	public function sendReactionAdded(
 		string $remoteServer,
@@ -474,7 +474,9 @@ class BackendNotifier {
 			],
 		);
 
-		return $this->sendUpdateToRemote($remote, $notification);
+		// A failed send is not retried: the push could arrive long after
+		// the reaction was removed again
+		return $this->sendUpdateToRemote($remote, $notification, retry: false);
 	}
 
 	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0, bool $retry = true): ?bool {

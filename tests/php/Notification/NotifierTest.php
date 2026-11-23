@@ -672,6 +672,32 @@ class NotifierTest extends TestCase {
 				],
 				$deletedUser = false, $guestName = '',
 			],
+			'named guest reaction' => [
+				$subject = 'reaction', Room::TYPE_PUBLIC,   ['userType' => 'guests', 'userId' => 'random-hash', 'reaction' => '👍'], null, 'Room name',
+				'MyNameIs (guest) reacted with 👍 to your message in conversation Room name',
+				[
+					'{guest} (guest) reacted with {reaction} to your message in conversation {call}',
+					[
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => 'getAvatarUrl'],
+						'reaction' => ['type' => 'highlight', 'id' => '👍', 'name' => '👍'],
+						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
+					]
+				],
+				$deletedUser = false, $guestName = 'MyNameIs',
+			],
+			'federated guest reaction' => [
+				$subject = 'reaction', Room::TYPE_PUBLIC,   ['userType' => 'guests', 'userId' => 'remote-guest-session', 'userDisplayName' => 'Remote Guest', 'reaction' => '👍'], null, 'Room name',
+				'Remote Guest (guest) reacted with 👍 to your message in conversation Room name',
+				[
+					'{guest} (guest) reacted with {reaction} to your message in conversation {call}',
+					[
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => 'getAvatarUrl'],
+						'reaction' => ['type' => 'highlight', 'id' => '👍', 'name' => '👍'],
+						'guest' => ['type' => 'guest', 'id' => 'remote-guest-session', 'name' => 'Remote Guest'],
+					]
+				],
+				$deletedUser = false, $guestName = null,
+			],
 
 			// Push messages
 			'one-to-one push' => [
@@ -876,24 +902,25 @@ class NotifierTest extends TestCase {
 			->with('23')
 			->willReturn($comment);
 
+		$guestParticipant = null;
 		if (is_string($guestName)) {
-			$participant2 = $this->createMock(Participant::class);
-			$this->participantService->method('getParticipantByActor')
-				->with($room, Attendee::ACTOR_GUESTS, 'random-hash')
-				->willReturn($participant2);
+			$guestParticipant = $this->createMock(Participant::class);
 
 			$attendee = Attendee::fromRow([
 				'actor_type' => 'guests',
 				'actor_id' => 'random-hash',
 				'display_name' => $guestName,
 			]);
-			$participant2->method('getAttendee')
+			$guestParticipant->method('getAttendee')
 				->willReturn($attendee);
-		} else {
-			$this->participantService->method('getParticipantByActor')
-				->with($room, Attendee::ACTOR_GUESTS, 'random-hash')
-				->willThrowException(new ParticipantNotFoundException());
 		}
+		$this->participantService->method('getParticipantByActor')
+			->willReturnCallback(static function (Room $room, string $actorType, string $actorId) use ($guestParticipant) {
+				if ($guestParticipant !== null && $actorType === Attendee::ACTOR_GUESTS && $actorId === 'random-hash') {
+					return $guestParticipant;
+				}
+				throw new ParticipantNotFoundException();
+			});
 
 		$chatMessage = $this->createMock(Message::class);
 		$chatMessage->expects($this->atLeastOnce())
