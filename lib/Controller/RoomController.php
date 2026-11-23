@@ -2129,12 +2129,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 			// in the team with, and nothing runs as super user.
 			$target = $targetParticipant->getAttendee();
 			$isLocalActor = !is_null($this->userId) && $this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS;
-			if ($isLocalActor && in_array($target->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS], true)) {
+			if ($isLocalActor && in_array($target->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS, Attendee::ACTOR_EMAILS], true)) {
 				try {
 					// Stale participants that are no member anymore are only removed from the room
 					match ($target->getActorType()) {
 						Attendee::ACTOR_USERS => $this->teamRoomSyncService->removeFromTeamRoom($this->room, $target->getActorId(), $this->userId),
 						Attendee::ACTOR_FEDERATED_USERS => $this->teamRoomSyncService->removeFederatedFromTeamRoom($this->room, $target->getActorId(), $this->userId),
+						Attendee::ACTOR_EMAILS => $this->teamRoomSyncService->removeEmailFromTeamRoom($this->room, $target->getInvitedCloudId(), $this->userId),
 					};
 				} catch (\Exception $e) {
 					$this->logger->info('Attendee ' . $target->getId() . ' could not be removed from the team with the team room ' . $this->room->getToken(), ['exception' => $e]);
@@ -2149,8 +2150,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 					return new DataResponse(null);
 				}
 			} elseif ($this->teamRoomSyncService->isMemberOfTeam($this->room, $target)) {
-				// Email guests of the team are removed in the Teams app for now,
-				// and federated moderators can not change the team
+				// Federated moderators can not change the team
 				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 			}
 		}

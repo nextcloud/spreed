@@ -1262,4 +1262,35 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->expectExceptionObject($exception);
 		$this->service->removeFederatedFromTeamRoom($this->room, 'bob@remote.example', 'alice');
 	}
+
+	public function testRemovingAnEmailGuestRemovesTheEmailMember(): void {
+		$other = $this->createMock(Member::class);
+		$guest = $this->createMock(Member::class);
+		// Email and contact members: the address is the one of the member
+		$this->circlesAdapter->method('getEmailOfMember')
+			->willReturnCallback(static fn (Member $member): ?string => $member === $guest ? 'guest@example.tld' : 'other@example.tld');
+		$this->mockRemoveMatchingMember([$other, $guest], $removed, $changingFromTalk);
+
+		$this->service->removeEmailFromTeamRoom($this->room, ' Guest@Example.TLD ', 'alice');
+
+		$this->assertSame([$guest], $removed);
+		$this->assertTrue($changingFromTalk);
+	}
+
+	public function testRemovingAnEmailGuestThatLeftTheTeam(): void {
+		$this->circlesAdapter->method('getEmailOfMember')->willReturn('other@example.tld');
+		$this->mockRemoveMatchingMember([$this->createMock(Member::class)], $removed);
+
+		$this->service->removeEmailFromTeamRoom($this->room, 'guest@example.tld', 'alice');
+
+		$this->assertSame([], $removed);
+	}
+
+	public function testRemovingAnEmailGuestOfADeletedTeam(): void {
+		$this->circlesAdapter->method('removeMatchingMember')
+			->willThrowException(new \Exception('Circle not found', 0, new CircleNotFoundException('Circle not found')));
+
+		$this->service->removeEmailFromTeamRoom($this->room, 'guest@example.tld', 'alice');
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
 }

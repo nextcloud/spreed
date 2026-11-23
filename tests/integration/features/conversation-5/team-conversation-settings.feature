@@ -161,6 +161,21 @@ Feature: conversation-5/team-conversation-settings
       | users     | participant2 | 3               |
       | users     | participant3 | 3               |
 
+  Scenario: Removing an email guest in Talk removes them from the team
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And add email "guest@example.tld" to team "Team A"
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When user "participant1" removes email "guest@example.tld" from room "room" with 200 (v4)
+    # Removed from the team as well: the resync does not invite them again
+    And add user "participant4" to team "Team A"
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant2 | 3               |
+      | users     | participant3 | 3               |
+      | users     | participant4 | 3               |
+
   # Guests: the Teams app has none (guest accounts are users and can be members)
 
   Scenario: Team conversations have no anonymous phone guests

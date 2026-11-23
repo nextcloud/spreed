@@ -908,6 +908,22 @@ class TeamRoomSyncService {
 	}
 
 	/**
+	 * Removing an email guest from a team room means removing the email (or
+	 * contact) member from the team, as the acting user, so the next resync
+	 * does not invite them again.
+	 *
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function removeEmailFromTeamRoom(Room $room, #[\SensitiveParameter] string $email, string $actorUserId): void {
+		$email = mb_strtolower(mb_trim($email));
+		$this->changeTeamOfRoomFromTalk($room, fn (string $teamId) => $this->circlesAdapter->removeMatchingMember(
+			$teamId,
+			fn (Member $member): bool => $this->circlesAdapter->getEmailOfMember($member) === $email,
+			$actorUserId,
+		));
+	}
+
+	/**
 	 * Run a change of the team from Talk: the Circles events of it are skipped
 	 * (Talk updates the room itself), and a deleted team needs no change.
 	 *

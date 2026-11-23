@@ -189,38 +189,35 @@ class RoomControllerTest extends TestCase {
 	public static function dataRemoveFromTeamRoom(): array {
 		return [
 			// Removed from the team as the moderator, Circles decides
-			'member of the team' => [Attendee::ACTOR_USERS, 'bob', 'removeFromTeamRoom', Http::STATUS_OK],
-			'federated member of the team' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example', 'removeFederatedFromTeamRoom', Http::STATUS_OK],
-			// Email guests are removed in the Teams app for now
-			'email member of the team' => [Attendee::ACTOR_EMAILS, 'hash', null, Http::STATUS_BAD_REQUEST],
+			'member of the team' => [Attendee::ACTOR_USERS, 'bob', 'removeFromTeamRoom', 'bob'],
+			'federated member of the team' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example', 'removeFederatedFromTeamRoom', 'bob@remote.example'],
+			// By the address: the actor id of email guests is its hash
+			'email member of the team' => [Attendee::ACTOR_EMAILS, 'hash', 'removeEmailFromTeamRoom', 'guest@example.tld'],
 		];
 	}
 
 	#[DataProvider('dataRemoveFromTeamRoom')]
-	public function testRemovingFromTeamRoomsRemovesFromTheTeam(string $actorType, string $actorId, ?string $teamMethod, int $status): void {
+	public function testRemovingFromTeamRoomsRemovesFromTheTeam(string $actorType, string $actorId, string $teamMethod, string $removedFromTeam): void {
 		$this->inTeamRoom();
 		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
-		$attendee = Attendee::fromRow(['id' => 2, 'actor_type' => $actorType, 'actor_id' => $actorId, 'participant_type' => Participant::USER]);
+		$attendee = Attendee::fromRow(['id' => 2, 'actor_type' => $actorType, 'actor_id' => $actorId, 'invited_cloud_id' => $actorType === Attendee::ACTOR_EMAILS ? 'guest@example.tld' : null, 'participant_type' => Participant::USER]);
 		$target = $this->createMock(Participant::class);
 		$target->method('getAttendee')->willReturn($attendee);
 		$target->method('isOwner')->willReturn(false);
 		$this->participantService->method('getParticipantByAttendeeId')->with($this->room, 2)->willReturn($target);
-		// One lookup in Circles only: users and federated users are checked when they are removed from the team
-		$this->teamRoomSyncService->expects($teamMethod === null ? $this->once() : $this->never())
-			->method('isMemberOfTeam')
-			->with($this->room, $attendee)
-			->willReturn(true);
+		// One lookup in Circles only: they are checked when they are removed from the team
+		$this->teamRoomSyncService->expects($this->never())->method('isMemberOfTeam');
 
-		foreach (['removeFromTeamRoom', 'removeFederatedFromTeamRoom'] as $method) {
+		foreach (['removeFromTeamRoom', 'removeFederatedFromTeamRoom', 'removeEmailFromTeamRoom'] as $method) {
 			$expectation = $this->teamRoomSyncService->expects($method === $teamMethod ? $this->once() : $this->never())->method($method);
 			if ($method === $teamMethod) {
 				// Also stale participants that are no member anymore: only removed from the room then
-				$expectation->with($this->room, $actorId, 'alice');
+				$expectation->with($this->room, $removedFromTeam, 'alice');
 			}
 		}
-		$this->participantService->expects($status === Http::STATUS_OK ? $this->once() : $this->never())->method('removeAttendee');
+		$this->participantService->expects($this->once())->method('removeAttendee');
 
-		self::assertSame($status, $this->controller->removeAttendeeFromRoom(2)->getStatus());
+		self::assertSame(Http::STATUS_OK, $this->controller->removeAttendeeFromRoom(2)->getStatus());
 	}
 
 	public function testFederatedModeratorsCanNotRemoveMembersOfTheTeam(): void {
