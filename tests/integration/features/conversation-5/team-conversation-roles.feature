@@ -192,18 +192,33 @@ Feature: conversation-5/team-conversation-roles
 
   # Removing
 
-  Scenario: Members of the team are not removed only in Talk
-    # The next resync would add them again: that is done in the Teams app
+  Scenario: Removing a member in Talk removes them from the team
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
-    And add user "participant4" to team "Team A"
     And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
-    When user "participant1" removes "participant2" from room "room" with 400 (v4)
+    When user "participant1" removes "participant2" from room "room" with 200 (v4)
+    Then user "participant2" is no direct member of team "Team A"
+    # The resync does not add them again
+    When add user "participant4" to team "Team A"
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
-      | users     | participant2 | 3               |
       | users     | participant3 | 3               |
       | users     | participant4 | 3               |
+
+  Scenario: The team decides who can remove a member
+    # Team moderators can not remove team admins (Talk owners are protected anyway)
+    Given set level of user "participant2" in team "Team A" to "Moderator"
+    And set level of user "participant3" in team "Team A" to "Moderator"
+    And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    # Same level: Circles refuses
+    When user "participant2" removes "participant3" from room "room" with 400 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant2 | 2               |
+      | users     | participant3 | 2               |
 
   Scenario: Leaving the team conversation leaves the team
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)

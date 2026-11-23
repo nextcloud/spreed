@@ -13024,7 +13024,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Removing attendee is not possible, e.g. members of the team of a team conversation are removed from the team in the Teams app */
+            /** @description Removing attendee is not possible, e.g. the team of a team conversation refused removing the member, or federated users and email guests of the team are removed in the Teams app */
             400: {
                 headers: {
                     [name: string]: unknown;

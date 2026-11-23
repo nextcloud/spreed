@@ -770,6 +770,32 @@ class TeamRoomSyncService {
 	}
 
 	/**
+	 * Removing a user from a team conversation means removing them from the
+	 * team, as the acting user: Circles decides (moderator, and a higher level
+	 * than the removed member), like in the Teams app.
+	 *
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function removeFromTeamRoom(Room $room, string $userId, string $actorUserId): bool {
+		$success = false;
+		$teamId = $room->getObjectId();
+		try {
+			// Stale participant: removing them from the conversation is enough
+			if (is_null($this->circlesAdapter->getDirectMember($teamId, $userId))) {
+				return true;
+			}
+			$this->changeTeamFromTalk(fn () => $this->circlesAdapter->removeDirectUser($teamId, $userId, $actorUserId));
+			$success = true;
+		} catch (\Exception $e) {
+			if (!CirclesAdapter::isTeamNotFound($e)) {
+				throw $e;
+			}
+			// The team was deleted: removing them from the conversation is enough
+		}
+		return $success;
+	}
+
+	/**
 	 * @template T
 	 * @param callable(): T $change
 	 * @return T

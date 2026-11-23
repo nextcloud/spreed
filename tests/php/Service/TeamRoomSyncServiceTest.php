@@ -995,4 +995,42 @@ class TeamRoomSyncServiceTest extends TestCase {
 			$this->assertFalse($this->service->isChangingTeamFromTalk());
 		}
 	}
+
+	public function testRemovingFromTheRoomRemovesFromTheTeamAsTheModerator(): void {
+		$this->mockSnapshot(['bob' => self::LEVEL_MEMBER]);
+		$during = null;
+		$this->circlesAdapter->expects($this->once())->method('removeDirectUser')->with('team1', 'bob', 'alice')
+			->willReturnCallback(function () use (&$during): void {
+				$during = $this->service->isChangingTeamFromTalk();
+			});
+
+		$this->service->removeFromTeamRoom($this->room, 'bob', 'alice');
+
+		$this->assertTrue($during);
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testRemovingAStaleParticipantOnlyRemovesFromTheRoom(): void {
+		$this->mockSnapshot(['alice' => self::LEVEL_OWNER]);
+		$this->circlesAdapter->expects($this->never())->method('removeDirectUser');
+
+		$this->service->removeFromTeamRoom($this->room, 'bob', 'alice');
+	}
+
+	public function testRemovingFromTheRoomOfADeletedTeam(): void {
+		$this->circlesAdapter->method('getDirectMember')
+			->willThrowException(new \Exception('Circle not found', 0, new CircleNotFoundException('Circle not found')));
+		$this->circlesAdapter->expects($this->never())->method('removeDirectUser');
+
+		$this->service->removeFromTeamRoom($this->room, 'bob', 'alice');
+	}
+
+	public function testRefusedRemovalIsReported(): void {
+		$this->mockSnapshot(['bob' => self::LEVEL_ADMIN]);
+		$exception = new \Exception('Insufficient rights', 0, new \RuntimeException('Insufficient rights'));
+		$this->circlesAdapter->method('removeDirectUser')->willThrowException($exception);
+
+		$this->expectExceptionObject($exception);
+		$this->service->removeFromTeamRoom($this->room, 'bob', 'alice');
+	}
 }

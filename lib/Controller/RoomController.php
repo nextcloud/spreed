@@ -2071,7 +2071,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'|'team'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Attendee removed successfully
-	 * 400: Removing attendee is not possible, e.g. members of the team of a team conversation are removed from the team in the Teams app
+	 * 400: Removing attendee is not possible, e.g. the team of a team conversation refused removing the member, or federated users and email guests of the team are removed in the Teams app
 	 * 403: Removing attendee is not allowed
 	 * 404: Attendee not found
 	 * 502: The Matrix homeserver rejected the removal or could not be reached
@@ -2109,8 +2109,20 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->room->isTeamManaged()
 			&& $this->teamRoomSyncService->isMemberOfTeam($this->room, $targetParticipant->getAttendee())) {
-			// Members of the team are removed from the team in the Teams app, otherwise the next resync adds them again
-			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+			// Removing from room = removing from the team, otherwise the next resync adds them again.
+			// Only users so far, and only by a local user: federated moderators have no
+			// account here to act in the team with, and nothing runs as super user.
+			if ($targetParticipant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
+				|| is_null($this->userId)
+				|| $this->participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
+				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+			}
+			try {
+				$this->teamRoomSyncService->removeFromTeamRoom($this->room, $targetParticipant->getAttendee()->getActorId(), $this->userId);
+			} catch (\Exception $e) {
+				$this->logger->info('User ' . $targetParticipant->getAttendee()->getActorId() . ' could not be removed from the team of conversation ' . $this->room->getToken(), ['exception' => $e]);
+				return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {

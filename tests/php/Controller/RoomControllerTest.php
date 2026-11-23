@@ -187,27 +187,50 @@ class RoomControllerTest extends TestCase {
 
 	public static function dataRemoveFromTeamRoom(): array {
 		return [
-			// Removed again by the resync otherwise: removing from the team is done in the Teams app
-			'still a member of the team' => [true, Http::STATUS_BAD_REQUEST],
+			// Removed from the team as the moderator, Circles decides
+			'member of the team' => [Attendee::ACTOR_USERS, 'bob', true, true, Http::STATUS_OK],
 			// E.g. a participant the resync did not remove yet
-			'no member of the team anymore' => [false, Http::STATUS_OK],
+			'no member of the team anymore' => [Attendee::ACTOR_USERS, 'bob', false, false, Http::STATUS_OK],
+			// Federated users and email guests are removed in the Teams app for now
+			'federated member of the team' => [Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example', true, false, Http::STATUS_BAD_REQUEST],
+			'email member of the team' => [Attendee::ACTOR_EMAILS, 'hash', true, false, Http::STATUS_BAD_REQUEST],
 		];
 	}
 
 	#[DataProvider('dataRemoveFromTeamRoom')]
-	public function testOnlyFormerTeamMembersAreRemovedFromTeamRooms(bool $isMember, int $status): void {
+	public function testRemovingFromTeamRoomsRemovesFromTheTeam(string $actorType, string $actorId, bool $isMember, bool $removedFromTeam, int $status): void {
 		$this->inTeamRoom();
 		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
-		$attendee = Attendee::fromRow(['id' => 2, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'bob', 'participant_type' => Participant::USER]);
+		$attendee = Attendee::fromRow(['id' => 2, 'actor_type' => $actorType, 'actor_id' => $actorId, 'participant_type' => Participant::USER]);
 		$target = $this->createMock(Participant::class);
 		$target->method('getAttendee')->willReturn($attendee);
 		$target->method('isOwner')->willReturn(false);
 		$this->participantService->method('getParticipantByAttendeeId')->with($this->room, 2)->willReturn($target);
 		$this->teamRoomSyncService->method('isMemberOfTeam')->with($this->room, $attendee)->willReturn($isMember);
 
-		$this->participantService->expects($isMember ? $this->never() : $this->once())->method('removeAttendee');
+		$this->teamRoomSyncService->expects($removedFromTeam ? $this->once() : $this->never())
+			->method('removeFromTeamRoom')
+			->with($this->room, 'bob', 'alice');
+		$this->participantService->expects($status === Http::STATUS_OK ? $this->once() : $this->never())->method('removeAttendee');
 
 		self::assertSame($status, $this->controller->removeAttendeeFromRoom(2)->getStatus());
+	}
+
+	public function testTeamRefusingTheRemovalKeepsTheParticipant(): void {
+		// E.g. a team moderator removing a team admin
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+		$target = $this->createMock(Participant::class);
+		$target->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 2, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'bob']));
+		$this->participantService->method('getParticipantByAttendeeId')->willReturn($target);
+		$this->teamRoomSyncService->method('isMemberOfTeam')->willReturn(true);
+		$this->teamRoomSyncService->method('removeFromTeamRoom')->willThrowException(new \Exception('Insufficient rights'));
+
+		$this->participantService->expects($this->never())->method('removeAttendee');
+
+		$response = $this->controller->removeAttendeeFromRoom(2);
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'team'], $response->getData());
 	}
 
 	public function testLeavingTheTeamRoomLeavesTheTeam(): void {
