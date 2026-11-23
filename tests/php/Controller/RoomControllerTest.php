@@ -15,7 +15,9 @@ use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
 use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ForbiddenException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
+use OCA\Talk\Exceptions\RoomProperty\CreationException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Matrix\Service\SendException;
@@ -25,6 +27,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -50,6 +53,7 @@ class RoomControllerTest extends TestCase {
 	private FederationManager&MockObject $federationManager;
 	private BanService&MockObject $banService;
 	private GuestManager&MockObject $guestManager;
+	private RoomService&MockObject $roomService;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
 	private RoomController $controller;
@@ -66,6 +70,7 @@ class RoomControllerTest extends TestCase {
 		$this->federationManager = $this->createMock(FederationManager::class);
 		$this->banService = $this->createMock(BanService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
+		$this->roomService = $this->createMock(RoomService::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
 
@@ -86,6 +91,7 @@ class RoomControllerTest extends TestCase {
 					FederationManager::class => $this->federationManager,
 					BanService::class => $this->banService,
 					GuestManager::class => $this->guestManager,
+					RoomService::class => $this->roomService,
 					default => $this->createMock($type),
 				},
 			};
@@ -234,6 +240,30 @@ class RoomControllerTest extends TestCase {
 		$this->participantService->expects($this->once())->method('removeAttendee');
 
 		self::assertSame(Http::STATUS_OK, $this->controller->removeAttendeeFromRoom(2)->getStatus());
+	}
+
+	public function testParticipantRemovedMeanwhileByTheTeamIsRemovedOnlyOnce(): void {
+		// In web requests Circles removes the member in a separate request: its
+		// event can remove the participant before the request continues
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+		$target = $this->createMock(Participant::class);
+		$target->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 2, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'bob', 'participant_type' => Participant::USER]));
+		$target->method('isOwner')->willReturn(false);
+		$lookups = 0;
+		$this->participantService->method('getParticipantByAttendeeId')
+			->with($this->room, 2)
+			->willReturnCallback(function () use (&$lookups, $target): Participant {
+				if ($lookups++ === 0) {
+					return $target;
+				}
+				throw new ParticipantNotFoundException();
+			});
+		$this->teamRoomSyncService->expects($this->once())->method('removeFromTeamRoom')->with($this->room, 'bob', 'alice');
+		$this->participantService->expects($this->never())->method('removeAttendee');
+
+		self::assertSame(Http::STATUS_OK, $this->controller->removeAttendeeFromRoom(2)->getStatus());
+		self::assertSame(2, $lookups);
 	}
 
 	public function testFederatedModeratorsCanNotRemoveMembersOfTheTeam(): void {
@@ -492,5 +522,41 @@ class RoomControllerTest extends TestCase {
 		if ($error !== null) {
 			self::assertSame(['error' => $error], $response->getData());
 		}
+	}
+
+	/**
+	 * Creating a conversation that exists already, e.g. a team conversation,
+	 * or an external call with a meeting id that is used already
+	 */
+	private function mockExistingRoomOnCreation(Room $existingRoom): void {
+		$this->userManager->method('get')->with('alice')->willReturn($this->makeUser('alice'));
+		$this->roomService->method('createConversation')
+			->willThrowException(new CreationException(CreationException::REASON_OBJECT, $existingRoom));
+		$this->participantService->method('getParticipant')
+			->with($existingRoom, 'alice', false)
+			->willThrowException(new ParticipantNotFoundException());
+	}
+
+	public function testExistingConversationIsNotReturnedToNonParticipants(): void {
+		$existingRoom = $this->createMock(Room::class);
+		$existingRoom->method('isTeamManaged')->willReturn(false);
+		$this->mockExistingRoomOnCreation($existingRoom);
+		$this->teamRoomSyncService->expects($this->never())->method('syncUserInTeamRoom');
+
+		$this->expectException(ParticipantNotFoundException::class);
+		$this->controller->createRoom(Room::TYPE_GROUP, roomName: 'Meeting', objectType: Room::OBJECT_TYPE_EXTERNAL_CALL, objectId: 'meeting');
+	}
+
+	public function testExistingTeamConversationAddsTheTeamMember(): void {
+		$existingRoom = $this->createMock(Room::class);
+		$existingRoom->method('isTeamManaged')->willReturn(true);
+		$this->mockExistingRoomOnCreation($existingRoom);
+		$this->teamRoomSyncService->expects($this->once())
+			->method('syncUserInTeamRoom')
+			->with($existingRoom, $this->isInstanceOf(IUser::class));
+
+		$response = $this->controller->createRoom(Room::TYPE_GROUP, roomName: 'Team', objectType: Room::OBJECT_TYPE_TEAM, objectId: 'team1');
+
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
 	}
 }
