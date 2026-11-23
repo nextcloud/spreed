@@ -1374,4 +1374,61 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->expectExceptionObject($exception);
 		$this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $this->makeAlice());
 	}
+
+	public function testAddingAnEmailAddressAddsItToTheTeamAndInvitesIt(): void {
+		$this->circlesAdapter->method('getEmailMembers')->willReturn([]);
+		$this->circlesAdapter->expects($this->once())->method('addEmailMember')->with('team1', 'guest@example.tld', 'alice')->willReturn(true);
+		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+		$participant = $this->makeEmailParticipant('guest@example.tld');
+
+		// The invitation mail right away
+		$this->participantService->expects($this->once())
+			->method('inviteEmailAddress')
+			->with($this->room, hash('sha256', 'guest@example.tld'), 'guest@example.tld', null)
+			->willReturn($participant);
+		$this->guestManager->expects($this->once())->method('sendEmailInvitation')->with($this->room, $participant);
+
+		$this->assertTrue($this->service->addEmailToTeamRoom($this->room, ' Guest@Example.TLD ', 'alice'));
+	}
+
+	public function testAddingAnEmailMemberThatLeftInvitesItAgain(): void {
+		$this->circlesAdapter->method('getEmailMembers')->willReturn(['guest@example.tld' => 'Guest']);
+		$this->appConfig->method('getAppValueArray')->willReturn([7 => ['emailLeft' => [self::hmac('guest@example.tld') => true]]]);
+		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+
+		$this->circlesAdapter->expects($this->never())->method('addEmailMember');
+		// The "left" record is deleted
+		$this->appConfig->expects($this->once())->method('setAppValueArray')->with(Config::TEAM_FEDERATED_MEMBERS, []);
+		$this->participantService->expects($this->once())
+			->method('inviteEmailAddress')
+			->with($this->room, hash('sha256', 'guest@example.tld'), 'guest@example.tld', 'Guest')
+			->willReturn($this->makeEmailParticipant('guest@example.tld'));
+
+		$this->assertTrue($this->service->addEmailToTeamRoom($this->room, 'guest@example.tld', 'alice'));
+	}
+
+	public function testEmailAddressOnlyInvitedToAnInviteOnlyTeam(): void {
+		$this->circlesAdapter->method('getEmailMembers')->willReturn([]);
+		$this->circlesAdapter->method('addEmailMember')->willReturn(false);
+		$this->participantService->expects($this->never())->method('inviteEmailAddress');
+
+		$this->assertFalse($this->service->addEmailToTeamRoom($this->room, 'guest@example.tld', 'alice'));
+	}
+
+	public function testEmailGuestIsNotInvitedTwice(): void {
+		$this->circlesAdapter->method('getEmailMembers')->willReturn(['guest@example.tld' => 'guest@example.tld']);
+		$this->participantService->method('getParticipantByActor')->willReturn($this->makeEmailParticipant('guest@example.tld'));
+		$this->participantService->expects($this->never())->method('inviteEmailAddress');
+
+		$this->assertTrue($this->service->addEmailToTeamRoom($this->room, 'guest@example.tld', 'alice'));
+	}
+
+	public function testTeamRefusingTheEmailAddressIsReported(): void {
+		$this->circlesAdapter->method('getEmailMembers')->willReturn([]);
+		$exception = new \Exception('Insufficient rights');
+		$this->circlesAdapter->method('addEmailMember')->willThrowException($exception);
+
+		$this->expectExceptionObject($exception);
+		$this->service->addEmailToTeamRoom($this->room, 'guest@example.tld', 'alice');
+	}
 }

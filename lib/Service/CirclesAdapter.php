@@ -280,6 +280,21 @@ class CirclesAdapter {
 	}
 
 	/**
+	 * Add an email guest member to the team, acting as $actorUserId: Circles checks
+	 * the permissions and the team settings (with CFG_INVITE the address is only
+	 * invited). The Teams app mails the member links to what is shared with the team.
+	 *
+	 * @return bool True when the address is a member now, false when only invited
+	 * @throws \Exception
+	 */
+	public function addEmailMember(string $teamId, #[\SensitiveParameter] string $email, string $actorUserId): bool {
+		return $this->asUser($actorUserId, static function (CirclesManager $manager) use ($teamId, $email): bool {
+			$member = $manager->addMember($teamId, $manager->getFederatedUser($email, Member::TYPE_MAIL));
+			return $member->getLevel() >= Member::LEVEL_MEMBER;
+		});
+	}
+
+	/**
 	 * Set the level of a local direct member, acting as $actorUserId: Circles
 	 * checks the permissions (only the owner can make someone else owner, the
 	 * former owner becomes an admin then).

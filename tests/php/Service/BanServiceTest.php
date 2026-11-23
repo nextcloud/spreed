@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Ban;
@@ -112,6 +113,40 @@ class BanServiceTest extends TestCase {
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('moderator');
 		$this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_USERS, 'bob', new \DateTime(), 'Note');
+	}
+
+	public function testBanOfEmailGuestInTeamRoomRemovesTheEmailMemberFromTheTeam(): void {
+		$room = $this->makeTeamRoom();
+		$this->banMapper->method('insert')->willReturnArgument(0);
+		$this->circlesAdapter->method('getEmailOfMember')
+			->willReturnCallback(static fn (Member $member): ?string => $member->getUserId() === 'guest@example.tld' ? 'guest@example.tld' : null);
+
+		$other = $this->createMock(Member::class);
+		$other->method('getUserId')->willReturn('other@example.tld');
+		$guest = $this->createMock(Member::class);
+		$guest->method('getUserId')->willReturn('guest@example.tld');
+
+		$this->circlesAdapter->expects($this->once())
+			->method('removeMatchingMember')
+			->willReturnCallback(function (string $teamId, callable $match, string $actorUserId) use ($other, $guest): bool {
+				$this->assertSame('team1', $teamId);
+				$this->assertSame('alice', $actorUserId);
+				$this->assertFalse($match($other));
+				$this->assertTrue($match($guest));
+				return true;
+			});
+
+		$this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_EMAILS, hash('sha256', 'guest@example.tld'), new \DateTime(), 'Note');
+	}
+
+	public function testBanOfEmailGuestInTeamRoomIsRefusedWhenTheTeamRefusesTheRemoval(): void {
+		$room = $this->makeTeamRoom();
+		$this->circlesAdapter->method('removeMatchingMember')->willThrowException(new \InvalidArgumentException('level'));
+		$this->banMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('moderator');
+		$this->service->createBan($room, Attendee::ACTOR_USERS, 'alice', 'Alice', Attendee::ACTOR_EMAILS, hash('sha256', 'guest@example.tld'), new \DateTime(), 'Note');
 	}
 
 	public function testDeleteBanLogsCriticalAction(): void {

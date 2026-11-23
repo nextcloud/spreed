@@ -161,6 +161,18 @@ Feature: conversation-5/team-conversation-settings
       | users     | participant2 | 3               |
       | users     | participant3 | 3               |
 
+  Scenario: Adding an email address in Talk adds it to the team
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    When user "participant1" adds email "guest@example.tld" to room "room" with 200 (v4)
+    # Member of the team: the resync keeps the email guest
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId                   | participantType |
+      | users     | participant1              | 1               |
+      | users     | participant2              | 3               |
+      | users     | participant3              | 3               |
+      | emails    | SHA256(guest@example.tld) | 4               |
+
   Scenario: Removing an email guest in Talk removes them from the team
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     And add email "guest@example.tld" to team "Team A"

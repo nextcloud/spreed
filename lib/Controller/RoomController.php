@@ -1954,8 +1954,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'new-participant'|'outgoing'|'source'|'team'|'trusted-servers'}, array{}>
 	 */
 	protected function addParticipantToTeamRoom(string $newParticipant, string $source): DataResponse {
-		if ($source !== Attendee::ACTOR_USERS && $source !== Attendee::ACTOR_FEDERATED_USERS) {
-			// Groups, teams, emails and phone numbers must be added to the team in the Teams app
+		if (!in_array($source, [Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS, Attendee::ACTOR_EMAILS], true)) {
+			// Groups, teams and phone numbers must be added to the team in the Teams app
 			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
 		}
 		if (is_null($this->userId) || $this->participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS) {
@@ -1964,6 +1964,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 		if ($source === Attendee::ACTOR_FEDERATED_USERS) {
 			return $this->addFederatedToTeamRoom($newParticipant);
+		}
+		if ($source === Attendee::ACTOR_EMAILS) {
+			return $this->addEmailToTeamRoom($newParticipant);
 		}
 
 		$newUser = $this->userManager->get($newParticipant);
@@ -2018,6 +2021,35 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->teamRoomSyncService->addFederatedToTeamRoom($this->room, $cloudId, $addedBy);
 		} catch (\Exception $e) {
 			$this->logger->info('Federated user could not be added to the team with the team room ' . $this->room->getToken(), ['exception' => $e]);
+			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse([]);
+	}
+
+	/**
+	 * An email address is added to the team as email member and gets the
+	 * invitation mail of the conversation right away.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'ban'|'classified'|'new-participant'|'team'}, array{}>
+	 */
+	protected function addEmailToTeamRoom(#[SensitiveParameter] string $newParticipant): DataResponse {
+		if ($this->room->isClassified()) {
+			// Same as for other conversations: no invitation mails for classified ones
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+		$email = mb_strtolower(mb_trim($newParticipant));
+		if (!$this->guestManager->validateMailAddress($email)) {
+			return new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND);
+		}
+		if ($this->banService->isEmailBanned($this->room, $email)) {
+			return new DataResponse(['error' => 'ban'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			// False when only invited to the team: invited to the conversation by the resync after accepting
+			$this->teamRoomSyncService->addEmailToTeamRoom($this->room, $email, $this->userId);
+		} catch (\Exception $e) {
+			$this->logger->info('Email guest could not be added to the team with team room ' . $this->room->getToken(), ['exception' => $e]);
 			return new DataResponse(['error' => 'team'], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse([]);

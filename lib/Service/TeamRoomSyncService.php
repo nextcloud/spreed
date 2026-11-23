@@ -242,6 +242,41 @@ class TeamRoomSyncService {
 		}
 	}
 
+	/**
+	 * Adding an email guest to a team room means adding an email member to
+	 * the team, as the acting user: Circles decides (moderator). The address
+	 * gets the invitation mail of the conversation right away. With an
+	 * invite-only team it is only invited to the team, and invited to the
+	 * conversation by the resync after accepting.
+	 *
+	 * @return bool False when the address was only invited to the team
+	 * @throws \Exception When the team refused it or Circles is unavailable
+	 */
+	public function addEmailToTeamRoom(Room $room, #[\SensitiveParameter] string $email, string $actorUserId): bool {
+		$teamId = $room->getObjectId();
+		$email = mb_strtolower(mb_trim($email));
+
+		$members = $this->circlesAdapter->getEmailMembers($teamId);
+		if (!isset($members[$email]) && !$this->circlesAdapter->addEmailMember($teamId, $email, $actorUserId)) {
+			return false;
+		}
+
+		// Added again on purpose: invited, even after leaving before
+		$hash = $this->hashMember($email);
+		$this->updateFederatedMarkers($room, static function (array $markers) use ($hash): array {
+			unset($markers['emailLeft'][$hash]);
+			return $markers;
+		});
+
+		try {
+			$this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, hash('sha256', $email));
+			return true;
+		} catch (ParticipantNotFoundException) {
+		}
+		$this->inviteEmailMember($room, $email, $members[$email] ?? $email);
+		return true;
+	}
+
 	public function rememberEmailLeave(Room $room, #[\SensitiveParameter] string $email): void {
 		// Same key as in syncEmailMembers(), never the address itself in the app config
 		$hash = $this->hashMember(mb_strtolower(mb_trim($email)));

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use DateTime;
+use OCA\Circles\Model\Member;
 use OCA\Talk\AuditLog\Operation;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
@@ -52,6 +53,29 @@ class BanService {
 			}
 		} catch (\Exception $e) {
 			$this->logger->info('User ' . $userId . ' can not be banned from team conversation ' . $room->getToken() . ', the team refused the removal', ['exception' => $e]);
+			throw new \InvalidArgumentException('moderator', previous: $e);
+		}
+	}
+
+	/**
+	 * Remove the email (or contact) member of the team whose address has the
+	 * banned actor id (the hash of the address), as the moderator. Otherwise
+	 * it stays in the team while the ban keeps the resync from inviting it.
+	 *
+	 * @throws \InvalidArgumentException 'moderator' when the team refused it
+	 */
+	protected function removeEmailFromTeam(Room $room, #[\SensitiveParameter] string $bannedActorId, string $moderatorUserId): bool {
+		try {
+			return $this->circlesAdapter->removeMatchingMember(
+				$room->getObjectId(),
+				function (Member $member) use ($bannedActorId): bool {
+					$email = $this->circlesAdapter->getEmailOfMember($member);
+					return !is_null($email) && hash_equals($bannedActorId, hash('sha256', $email));
+				},
+				$moderatorUserId,
+			);
+		} catch (\Exception $e) {
+			$this->logger->info('Email guest can not be banned from team conversation ' . $room->getToken() . ', the team refused the removal', ['exception' => $e]);
 			throw new \InvalidArgumentException('moderator', previous: $e);
 		}
 	}
@@ -140,6 +164,12 @@ class BanService {
 				throw new \InvalidArgumentException('moderator');
 			}
 			$this->removeFromTeam($room, $bannedActorId, $moderatorActorId);
+		} elseif ($room->isTeamManaged() && $bannedActorType === Attendee::ACTOR_EMAILS) {
+			if ($moderatorActorType !== Attendee::ACTOR_USERS) {
+				// No account to act in the team with
+				throw new \InvalidArgumentException('moderator');
+			}
+			$this->removeEmailFromTeam($room, $bannedActorId, $moderatorActorId);
 		}
 
 		//Remove the banned user from the room

@@ -17,6 +17,7 @@ use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
 use OCA\Talk\Federation\FederationManager;
+use OCA\Talk\GuestManager;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Model\Attendee;
@@ -48,6 +49,7 @@ class RoomControllerTest extends TestCase {
 	private ICloudIdManager&MockObject $cloudIdManager;
 	private FederationManager&MockObject $federationManager;
 	private BanService&MockObject $banService;
+	private GuestManager&MockObject $guestManager;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
 	private RoomController $controller;
@@ -63,6 +65,7 @@ class RoomControllerTest extends TestCase {
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->federationManager = $this->createMock(FederationManager::class);
 		$this->banService = $this->createMock(BanService::class);
+		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
 
@@ -82,6 +85,7 @@ class RoomControllerTest extends TestCase {
 					ICloudIdManager::class => $this->cloudIdManager,
 					FederationManager::class => $this->federationManager,
 					BanService::class => $this->banService,
+					GuestManager::class => $this->guestManager,
 					default => $this->createMock($type),
 				},
 			};
@@ -164,7 +168,6 @@ class RoomControllerTest extends TestCase {
 			'user of an invite-only team' => ['users', 'invited', Http::STATUS_OK, null],
 			'team refused it' => ['users', 'refused', Http::STATUS_BAD_REQUEST, 'team'],
 			'banned user' => ['users', 'banned', Http::STATUS_BAD_REQUEST, 'ban'],
-			'email address' => ['emails', '', Http::STATUS_BAD_REQUEST, 'source'],
 			'group' => ['groups', '', Http::STATUS_BAD_REQUEST, 'source'],
 			'team' => ['teams', '', Http::STATUS_BAD_REQUEST, 'source'],
 			'phone number' => ['phones', '', Http::STATUS_BAD_REQUEST, 'source'],
@@ -443,5 +446,37 @@ class RoomControllerTest extends TestCase {
 
 		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 		self::assertSame(['error' => 'team'], $response->getData());
+	}
+
+	public static function dataAddEmailToTeamRoom(): array {
+		return [
+			// Added to the team as the moderator, invited to the conversation right away
+			'added' => [true, false, null, Http::STATUS_OK, null],
+			'invalid address' => [false, false, null, Http::STATUS_NOT_FOUND, 'new-participant'],
+			'banned' => [true, true, null, Http::STATUS_BAD_REQUEST, 'ban'],
+			'refused by the team' => [true, false, new \Exception('Insufficient rights'), Http::STATUS_BAD_REQUEST, 'team'],
+		];
+	}
+
+	#[DataProvider('dataAddEmailToTeamRoom')]
+	public function testAddingEmailAddressesToTeamRoomsAddsThemToTheTeam(bool $valid, bool $banned, ?\Exception $refused, int $status, ?string $error): void {
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice']));
+		$this->guestManager->method('validateMailAddress')->with('guest@example.tld')->willReturn($valid);
+		$this->banService->method('isEmailBanned')->with($this->room, 'guest@example.tld')->willReturn($banned);
+		$adding = $this->teamRoomSyncService->expects($valid && !$banned ? $this->once() : $this->never())
+			->method('addEmailToTeamRoom')
+			->with($this->room, 'guest@example.tld', 'alice');
+		if ($refused !== null) {
+			$adding->willThrowException($refused);
+		}
+		$this->participantService->expects($this->never())->method('inviteEmailAddress');
+
+		$response = $this->controller->addParticipantToRoom(' Guest@Example.TLD ', 'emails');
+
+		self::assertSame($status, $response->getStatus());
+		if ($error !== null) {
+			self::assertSame(['error' => $error], $response->getData());
+		}
 	}
 }

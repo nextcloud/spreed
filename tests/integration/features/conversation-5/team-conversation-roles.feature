@@ -235,12 +235,11 @@ Feature: conversation-5/team-conversation-roles
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
 
-  Scenario: Groups, teams and email addresses are not added to the team conversation in Talk
+  Scenario: Groups and teams are not added to the team conversation in Talk
     Given group "group1" exists
     And user "participant4" is member of group "group1"
     And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     When user "participant1" adds group "group1" to room "room" with 400 (v4)
-    And user "participant1" adds email "guest@example.tld" to room "room" with 400 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
