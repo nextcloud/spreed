@@ -1407,7 +1407,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->assertTrue($this->service->addEmailToTeamRoom($this->room, 'guest@example.tld', 'alice'));
 	}
 
-	public function testEmailAddressOnlyInvitedToAnInviteOnlyTeam(): void {
+	public function testEmailAddressNotAddedByTheTeamIsNotInvited(): void {
 		$this->circlesAdapter->method('getEmailMembers')->willReturn([]);
 		$this->circlesAdapter->method('addEmailMember')->willReturn(false);
 		$this->participantService->expects($this->never())->method('inviteEmailAddress');

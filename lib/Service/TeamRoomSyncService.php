@@ -245,11 +245,10 @@ class TeamRoomSyncService {
 	/**
 	 * Adding an email guest to a team room means adding an email member to
 	 * the team, as the acting user: Circles decides (moderator). The address
-	 * gets the invitation mail of the conversation right away. With an
-	 * invite-only team it is only invited to the team, and invited to the
-	 * conversation by the resync after accepting.
+	 * is a member right away (also in invite-only teams) and gets the
+	 * invitation mail of the conversation right away.
 	 *
-	 * @return bool False when the address was only invited to the team
+	 * @return bool False when the address is not a member of the team (Circles did not add it)
 	 * @throws \Exception When the team refused it or Circles is unavailable
 	 */
 	public function addEmailToTeamRoom(Room $room, #[\SensitiveParameter] string $email, string $actorUserId): bool {

@@ -281,10 +281,11 @@ class CirclesAdapter {
 
 	/**
 	 * Add an email guest member to the team, acting as $actorUserId: Circles checks
-	 * the permissions and the team settings (with CFG_INVITE the address is only
-	 * invited). The Teams app mails the member links to what is shared with the team.
+	 * the permissions. Email members are members right away, also in invite-only
+	 * teams (CFG_INVITE only invites users). The Teams app mails the member links
+	 * to what is shared with the team.
 	 *
-	 * @return bool True when the address is a member now, false when only invited
+	 * @return bool True when the address is a member now
 	 * @throws \Exception
 	 */
 	public function addEmailMember(string $teamId, #[\SensitiveParameter] string $email, string $actorUserId): bool {

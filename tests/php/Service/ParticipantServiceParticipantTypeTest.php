@@ -80,6 +80,7 @@ class ParticipantServiceParticipantTypeTest extends TestCase {
 		$room->method('getToken')->willReturn('token1234');
 		$room->method('getType')->willReturn($type);
 		$room->method('getObjectType')->willReturn($objectType);
+		$room->method('isTeamManaged')->willReturn($objectType === Room::OBJECT_TYPE_TEAM);
 		$room->method('getBreakoutRoomMode')->willReturn(BreakoutRoom::MODE_NOT_CONFIGURED);
 		return $room;
 	}
@@ -412,5 +413,26 @@ class ParticipantServiceParticipantTypeTest extends TestCase {
 		$service->expects($this->never())->method('updateParticipantType');
 
 		$this->assertSame(Participant::MODERATOR, $service->getParticipantTypeChangeByModerator($room, $actor, $target, true, Participant::MODERATOR));
+	}
+
+	public static function dataRolesInTeamRoomsAreTheTeamLevels(): array {
+		return [
+			// Changed in the team, see TeamRoomSyncService
+			'user' => [Attendee::ACTOR_USERS, 'user', Participant::USER],
+			'federated user' => [Attendee::ACTOR_FEDERATED_USERS, 'user@remote.example', Participant::USER],
+			// No account to moderate with: always a guest, whatever the team level is
+			'email guest' => [Attendee::ACTOR_EMAILS, 'hash', Participant::GUEST],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataRolesInTeamRoomsAreTheTeamLevels')]
+	public function testRolesInTeamRoomsAreNotChangedInTalk(string $actorType, string $actorId, int $participantType): void {
+		$room = $this->createRoom(Room::TYPE_GROUP, Room::OBJECT_TYPE_TEAM);
+		$actor = $this->createParticipant($room, Participant::OWNER, 'owner');
+		$target = $this->createParticipant($room, $participantType, $actorId, $actorType);
+
+		$this->expectException(ParticipantTypeException::class);
+		$this->expectExceptionMessage(ParticipantTypeException::REASON_ROOM_TYPE);
+		$this->service->updateParticipantTypeByModerator($room, $actor, $target, true);
 	}
 }

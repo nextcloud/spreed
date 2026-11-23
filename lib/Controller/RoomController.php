@@ -2046,7 +2046,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			// False when only invited to the team: invited to the conversation by the resync after accepting
+			// Email members are members right away, also in invite-only teams
 			$this->teamRoomSyncService->addEmailToTeamRoom($this->room, $email, $this->userId);
 		} catch (\Exception $e) {
 			$this->logger->info('Email guest could not be added to the team with team room ' . $this->room->getToken(), ['exception' => $e]);
