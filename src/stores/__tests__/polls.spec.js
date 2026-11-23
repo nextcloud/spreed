@@ -113,8 +113,8 @@ describe('pollsStore', () => {
 
 	describe('polls management', () => {
 		it('removes cached voter details when a preview response no longer includes names', () => {
-			pollsStore.addPoll({ token: TOKEN, poll: { ...pollWithVoteEnded, status: 0, showResultsBeforeVoting: true } })
-			pollsStore.addPoll({ token: TOKEN, poll: { ...poll, showResultsBeforeVoting: true } })
+			pollsStore.addPoll({ token: TOKEN, poll: { ...pollWithVoteEnded, status: 0, resultMode: 8 } })
+			pollsStore.addPoll({ token: TOKEN, poll: { ...poll, resultMode: 8 } })
 			expect(pollsStore.getPoll(TOKEN, poll.id).details).toBeUndefined()
 		})
 

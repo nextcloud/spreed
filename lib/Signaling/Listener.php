@@ -43,7 +43,6 @@ use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Message;
-use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Vote;
 use OCA\Talk\Participant;
@@ -621,7 +620,7 @@ class Listener implements IEventListener {
 		if ($messageType === 'poll_closed' && isset($params['poll']['id'])) {
 			$poll = $this->pollService->getPoll($event->getRoom()->getId(), $params['poll']['id']);
 			$data['chat']['comment']['poll'] = $poll->renderAsPoll();
-			if ($poll->getResultMode() !== Poll::MODE_HIDDEN) {
+			if (!$poll->isAnonymous()) {
 				$votes = $this->pollService->getVotes($poll);
 				$data['chat']['comment']['poll']['votes'] = array_map(fn (Vote $vote) => $vote->asArray(), $votes);
 			}

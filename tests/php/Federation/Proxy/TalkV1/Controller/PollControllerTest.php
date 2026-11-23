@@ -23,17 +23,18 @@ use Test\TestCase;
 
 class PollControllerTest extends TestCase {
 
-	public static function liveVoterRequests(): array {
-		return [
-			[false, false],
-			[false, true],
-			[true, false],
-			[true, true],
-		];
+	public static function visibilityRequests(): array {
+		$cases = [];
+		foreach (range(0, 15) as $mode) {
+			foreach ([false, true] as $updateDraft) {
+				$cases[] = [$updateDraft, $mode];
+			}
+		}
+		return $cases;
 	}
 
-	#[DataProvider('liveVoterRequests')]
-	public function testForwardsLiveVoterSetting(bool $updateDraft, bool $enabled): void {
+	#[DataProvider('visibilityRequests')]
+	public function testForwardsResultMode(bool $updateDraft, int $mode): void {
 		$attendee = new Attendee();
 		$attendee->setInvitedCloudId('alice@example.com');
 		$attendee->setAccessToken('access-token');
@@ -45,10 +46,8 @@ class PollControllerTest extends TestCase {
 		$parameters = [
 			'question' => 'Lunch?',
 			'options' => ['Pizza', 'Pasta'],
-			'resultMode' => 0,
+			'resultMode' => $mode,
 			'maxVotes' => 1,
-			'showVotersBeforeClosing' => $enabled,
-			'showResultsBeforeVoting' => $enabled,
 		];
 		if (!$updateDraft) {
 			$parameters['draft'] = true;
@@ -62,15 +61,15 @@ class PollControllerTest extends TestCase {
 			'https://example.com/ocs/v2.php/apps/spreed/api/v1/poll/remote' . ($updateDraft ? '/draft/1' : ''),
 			$parameters,
 		)->willReturn($response);
-		$data = ['id' => 1, 'showVotersBeforeClosing' => $enabled];
+		$data = ['id' => 1, 'resultMode' => $mode];
 		$proxy->method('getOCSData')->willReturn($data);
 		$converter = $this->createMock(UserConverter::class);
 		$converter->method('convertPoll')->willReturnArgument(1);
 		$controller = new PollController($proxy, $converter, $this->createMock(LoggerInterface::class));
 
 		$result = $updateDraft
-			? $controller->updateDraftPoll(1, $room, $participant, 'Lunch?', ['Pizza', 'Pasta'], 0, 1, $enabled, $enabled)
-			: $controller->createPoll($room, $participant, 'Lunch?', ['Pizza', 'Pasta'], 0, 1, true, $enabled, $enabled);
+			? $controller->updateDraftPoll(1, $room, $participant, 'Lunch?', ['Pizza', 'Pasta'], $mode, 1)
+			: $controller->createPoll($room, $participant, 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, true);
 		$this->assertSame($data, $result->getData());
 	}
 }

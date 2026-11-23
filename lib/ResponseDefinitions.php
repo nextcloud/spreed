@@ -455,23 +455,19 @@ namespace OCA\Talk;
  *     // The question of the poll
  *     question: non-empty-string,
  *     // Result mode of the poll (see [Constants - Poll mode](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-mode))
- *     resultMode: 0|1,
- *     // Whether voters can see who voted for each option before a public poll closes
- *     showVotersBeforeClosing: bool,
- *     // Whether results are visible before voting, including hidden polls
- *     showResultsBeforeVoting: bool,
+ *     resultMode: int<0, 15>,
  *     // Status of the poll (see [Constants - Poll status](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-status))
  *     status: 0|1|2,
  * }
  *
  * @psalm-type TalkPoll = TalkPollDraft&array{
- *     // Detailed voters: available for public closed polls, or with showVotersBeforeClosing after voting or when showResultsBeforeVoting is enabled
+ *     // Detailed voters, only when allowed by the resultMode flags
  *     details?: list<TalkPollVote>,
  *     // Number of unique voters (visible when results are available, or to the creator and moderators)
  *     numVoters?: int<0, max>,
  *     // Array of option ids the participant voted for
  *     votedSelf?: list<int>,
- *     // Map with `'option-' + optionId` => number of votes (visible after voting on public polls, after closing, or when showResultsBeforeVoting is enabled)
+ *     // Map of option IDs (option-N) to vote counts, only when results are visible
  *     votes?: array<string, int>,
  * }
  *

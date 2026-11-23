@@ -99,37 +99,26 @@ class PollMapperTest extends TestCase {
 		}
 	}
 
-	public static function liveVoterSettings(): array {
-		return [
-			[Poll::MODE_PUBLIC, true, false, true],
-			[Poll::MODE_PUBLIC, false, false, false],
-			[Poll::MODE_HIDDEN, true, false, false],
-			[Poll::MODE_PUBLIC, true, true, true],
-		];
+	public static function visibilitySettings(): array {
+		$cases = [];
+		foreach (range(0, 15) as $mode) {
+			foreach ([false, true] as $draft) {
+				$cases[] = [$mode, $draft];
+			}
+		}
+		return $cases;
 	}
 
-	#[DataProvider('liveVoterSettings')]
-	public function testLiveVoterSettingIsPersisted(int $mode, bool $enabled, bool $draft, bool $expected): void {
-		$poll = $this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, $draft, $enabled);
+	#[DataProvider('visibilitySettings')]
+	public function testResultModeIsPersisted(int $mode, bool $draft): void {
+		$poll = $this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, $draft);
 		$stored = $this->pollMapper->getPollByRoomIdAndPollId($this->roomId, $poll->getId());
-		$this->assertSame($expected, $stored->getShowVotersBeforeClosing());
-		$this->assertSame($expected, $stored->renderAsDraft()['showVotersBeforeClosing']);
+		$this->assertSame($mode, $stored->getResultMode());
+		$this->assertSame($mode, $stored->renderAsDraft()['resultMode']);
 	}
 
-	public static function resultPreviewSettings(): array {
-		return [
-			[Poll::MODE_PUBLIC, true, false],
-			[Poll::MODE_HIDDEN, true, false],
-			[Poll::MODE_PUBLIC, false, false],
-			[Poll::MODE_HIDDEN, true, true],
-		];
-	}
-
-	#[DataProvider('resultPreviewSettings')]
-	public function testResultPreviewIsPersisted(int $mode, bool $enabled, bool $draft): void {
-		$poll = $this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, $draft, false, $enabled);
-		$stored = $this->pollMapper->getPollByRoomIdAndPollId($this->roomId, $poll->getId());
-		$this->assertSame($enabled, $stored->getShowResultsBeforeVoting());
-		$this->assertSame($enabled, $stored->renderAsDraft()['showResultsBeforeVoting']);
+	public function testRejectsUnknownResultMode(): void {
+		$this->expectException(\OCA\Talk\Exceptions\PollPropertyException::class);
+		$this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], 16, 1, false);
 	}
 }

@@ -17,6 +17,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Close from 'vue-material-design-icons/Close.vue'
@@ -48,8 +49,7 @@ defineExpose({
 })
 
 const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
-const supportLiveVoters = hasTalkFeature(props.token, 'talk-polls-live-voters')
-const supportResultsBeforeVoting = hasTalkFeature(props.token, 'talk-polls-results-before-voting')
+const supportResultVisibility = hasTalkFeature(props.token, 'talk-polls-result-visibility')
 
 const store = useStore()
 const pollsStore = usePollsStore()
@@ -66,8 +66,6 @@ const pollForm = reactive<createPollParams>({
 	options: ['', ''],
 	resultMode: POLL.MODE.PUBLIC,
 	maxVotes: POLL.ANSWER_TYPE.SINGLE,
-	showVotersBeforeClosing: false,
-	showResultsBeforeVoting: false,
 })
 
 const isFilled = computed(() => Boolean(pollForm.question) && pollForm.options.filter((option) => Boolean(option)).length >= 2)
@@ -84,15 +82,42 @@ const createPollLabel = computed(() => {
 		: t('spreed', 'Create poll')
 })
 
-const showWhoVoted = computed({
+const nameVisibilityOptions = [
+	{ label: t('spreed', 'Always'), value: POLL.MODE.SHOW_NAMES_BEFORE_CLOSING | POLL.MODE.SHOW_NAMES_BEFORE_VOTING },
+	{ label: t('spreed', 'After voting'), value: POLL.MODE.SHOW_NAMES_BEFORE_CLOSING },
+	{ label: t('spreed', 'After the poll ends'), value: POLL.MODE.PUBLIC },
+	{ label: t('spreed', 'Never'), value: POLL.MODE.HIDDEN },
+]
+
+const nameVisibility = computed({
 	get() {
-		return pollForm.resultMode === POLL.MODE.PUBLIC
-	},
-	set(value) {
-		pollForm.resultMode = value ? POLL.MODE.PUBLIC : POLL.MODE.HIDDEN
-		if (!value) {
-			pollForm.showVotersBeforeClosing = false
+		const mode = pollForm.resultMode ?? POLL.MODE.PUBLIC
+		if (mode & POLL.MODE.HIDDEN) {
+			return nameVisibilityOptions[3]
 		}
+		if (mode & POLL.MODE.SHOW_NAMES_BEFORE_VOTING) {
+			return nameVisibilityOptions[0]
+		}
+		return nameVisibilityOptions[mode & POLL.MODE.SHOW_NAMES_BEFORE_CLOSING ? 1 : 2]
+	},
+	set(option) {
+		pollForm.resultMode = ((pollForm.resultMode ?? 0) & POLL.MODE.SHOW_RESULTS_BEFORE_VOTING) | option.value
+	},
+})
+
+const showWhoVoted = computed({
+	get: () => !((pollForm.resultMode ?? 0) & POLL.MODE.HIDDEN),
+	set: (value: boolean) => { pollForm.resultMode = value ? POLL.MODE.PUBLIC : POLL.MODE.HIDDEN },
+})
+
+const alwaysShowNames = computed(() => nameVisibility.value.value === nameVisibilityOptions[0].value)
+
+const showResultsBeforeVoting = computed({
+	get: () => alwaysShowNames.value || Boolean((pollForm.resultMode ?? 0) & POLL.MODE.SHOW_RESULTS_BEFORE_VOTING),
+	set: (value: boolean) => {
+		pollForm.resultMode = value
+			? (pollForm.resultMode ?? 0) | POLL.MODE.SHOW_RESULTS_BEFORE_VOTING
+			: (pollForm.resultMode ?? 0) & ~POLL.MODE.SHOW_RESULTS_BEFORE_VOTING
 	},
 })
 
@@ -184,8 +209,6 @@ function fillPollEditorFromDraft(id: number | null, fromDrafts: boolean, action?
 			options: [...draft.options],
 			resultMode: draft.resultMode,
 			maxVotes: draft.maxVotes,
-			showVotersBeforeClosing: draft.showVotersBeforeClosing ?? false,
-			showResultsBeforeVoting: draft.showResultsBeforeVoting ?? false,
 		})
 	}
 }
@@ -229,6 +252,10 @@ function importPoll(event: Event) {
  */
 function fillPollForm(payload: requiredPollParams) {
 	Object.assign(pollForm, payload)
+	if (!supportResultVisibility) {
+		// Older servers only support the original public and anonymous modes.
+		pollForm.resultMode = payload.resultMode & POLL.MODE.HIDDEN
+	}
 }
 
 /**
@@ -344,19 +371,21 @@ function goBack() {
 			{{ t('spreed', 'Settings') }}
 		</p>
 		<div class="poll-editor__settings">
-			<NcCheckboxRadioSwitch v-model="showWhoVoted" type="checkbox">
+			<NcSelect
+				v-if="supportResultVisibility"
+				v-model="nameVisibility"
+				:inputLabel="t('spreed', 'Show names on voted options')"
+				:options="nameVisibilityOptions"
+				:clearable="false"
+				:searchable="false"
+				label="label" />
+			<NcCheckboxRadioSwitch v-else v-model="showWhoVoted" type="checkbox">
 				{{ t('spreed', 'Show names on voted options') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch
-				v-if="supportLiveVoters"
-				v-model="pollForm.showVotersBeforeClosing"
-				:disabled="!showWhoVoted"
-				type="checkbox">
-				{{ t('spreed', 'Show names before the poll ends') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="supportResultsBeforeVoting"
-				v-model="pollForm.showResultsBeforeVoting"
+				v-if="supportResultVisibility"
+				v-model="showResultsBeforeVoting"
+				:disabled="alwaysShowNames"
 				type="checkbox">
 				{{ t('spreed', 'Show results before voting') }}
 			</NcCheckboxRadioSwitch>

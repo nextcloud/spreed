@@ -14,28 +14,11 @@ const form = {
 }
 
 describe('validatePollForm', () => {
-	it('imports older drafts with live voters disabled', () => {
-		expect(validatePollForm(form).showVotersBeforeClosing).toBe(false)
-		expect(validatePollForm(form).showResultsBeforeVoting).toBe(false)
+	it.each(Array.from({ length: 16 }, (_, mode) => mode))('preserves resultMode %i, including legacy values', (resultMode) => {
+		expect(validatePollForm({ ...form, resultMode })).toEqual({ ...form, resultMode })
 	})
 
-	it.each([0, 1])('preserves result previews independently of name visibility in mode %i', (resultMode) => {
-		expect(validatePollForm({ ...form, resultMode, showResultsBeforeVoting: true }).showResultsBeforeVoting).toBe(true)
-	})
-
-	it.each(['true', 1, null, {}, []])('rejects an invalid result preview setting: %j', (value) => {
-		expect(() => validatePollForm({ ...form, showResultsBeforeVoting: value })).toThrow('Invalid parsed value: showResultsBeforeVoting')
-	})
-
-	it('preserves the live voter setting when importing a public poll', () => {
-		expect(validatePollForm({ ...form, showVotersBeforeClosing: true }).showVotersBeforeClosing).toBe(true)
-	})
-
-	it('does not enable live voters for a hidden poll', () => {
-		expect(validatePollForm({ ...form, resultMode: 1, showVotersBeforeClosing: true }).showVotersBeforeClosing).toBe(false)
-	})
-
-	it.each(['true', 1, null, {}, []])('rejects an invalid live voter setting: %j', (value) => {
-		expect(() => validatePollForm({ ...form, showVotersBeforeClosing: value })).toThrow('Invalid parsed value: showVotersBeforeClosing')
+	it.each([-1, 16, 1.5, NaN, Infinity, '0', null, {}, []])('rejects invalid resultMode %j', (resultMode) => {
+		expect(() => validatePollForm({ ...form, resultMode })).toThrow('Invalid parsed value: resultMode')
 	})
 })

@@ -139,7 +139,7 @@ export default {
 		},
 
 		isPollPublic() {
-			return this.poll?.resultMode === POLL.MODE.PUBLIC
+			return !(this.poll?.resultMode & POLL.MODE.HIDDEN)
 		},
 
 		selfIsOwnerOrModerator() {

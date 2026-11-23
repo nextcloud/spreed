@@ -29,21 +29,17 @@ type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraf
  * @param payload.token The conversation token
  * @param payload.question The question of the poll
  * @param payload.options The options participants can vote for
- * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.resultMode Result visibility bit flags
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  * @param payload.threadId The thread id to create poll in
- * @param payload.showVotersBeforeClosing Whether voters can see names before a public poll closes
- * @param payload.showResultsBeforeVoting Whether results are visible before voting, including hidden polls
  */
-async function createPoll({ token, question, options, resultMode, maxVotes, threadId, showVotersBeforeClosing = false, showResultsBeforeVoting = false }: createPollPayload): createPollResponse {
+async function createPoll({ token, question, options, resultMode, maxVotes, threadId }: createPollPayload): createPollResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}', { token }), {
 		question,
 		options,
 		resultMode,
 		maxVotes,
 		draft: false,
-		showVotersBeforeClosing,
-		showResultsBeforeVoting,
 		threadId,
 	} as createPollParams)
 }
@@ -53,20 +49,16 @@ async function createPoll({ token, question, options, resultMode, maxVotes, thre
  * @param payload.token The conversation token
  * @param payload.question The question of the poll
  * @param payload.options The options participants can vote for
- * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.resultMode Result visibility bit flags
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
- * @param payload.showVotersBeforeClosing Whether voters can see names before a public poll closes
- * @param payload.showResultsBeforeVoting Whether results are visible before voting, including hidden polls
  */
-async function createPollDraft({ token, question, options, resultMode, maxVotes, showVotersBeforeClosing = false, showResultsBeforeVoting = false }: createPollPayload): createPollDraftResponse {
+async function createPollDraft({ token, question, options, resultMode, maxVotes }: createPollPayload): createPollDraftResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}', { token }), {
 		question,
 		options,
 		resultMode,
 		maxVotes,
 		draft: true,
-		showVotersBeforeClosing,
-		showResultsBeforeVoting,
 	} as createPollParams)
 }
 
@@ -76,19 +68,15 @@ async function createPollDraft({ token, question, options, resultMode, maxVotes,
  * @param payload.pollId The id of poll draft
  * @param payload.question The question of the poll
  * @param payload.options The options participants can vote for
- * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.resultMode Result visibility bit flags
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
- * @param payload.showVotersBeforeClosing Whether voters can see names before a public poll closes
- * @param payload.showResultsBeforeVoting Whether results are visible before voting, including hidden polls
  */
-async function updatePollDraft({ token, pollId, question, options, resultMode, maxVotes, showVotersBeforeClosing = false, showResultsBeforeVoting = false }: updatePollDraftPayload): updatePollDraftResponse {
+async function updatePollDraft({ token, pollId, question, options, resultMode, maxVotes }: updatePollDraftPayload): updatePollDraftResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}/draft/{pollId}', { token, pollId }), {
 		question,
 		options,
 		resultMode,
 		maxVotes,
-		showVotersBeforeClosing,
-		showResultsBeforeVoting,
 	} as updatePollDraftParams)
 }
 

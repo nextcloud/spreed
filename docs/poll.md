@@ -2,25 +2,45 @@
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
-With the `talk-polls-live-voters` capability, public polls can opt into showing
-voter names before the poll closes. Pass the optional boolean
-`showVotersBeforeClosing` when creating a poll or creating/updating a draft.
-It defaults to `false` and is ignored for hidden polls (`resultMode = 1`).
-Existing polls keep their previous behavior. While an opted-in public poll is
-open, voters can see who voted for each option after casting their own
-vote, or before voting when `showResultsBeforeVoting` is also enabled.
-Withdrawing the vote hides these details again unless result previews are enabled. Once a public poll is
-closed, all participants can see the voter details as before. Hidden polls
-never expose names.
+With the `talk-polls-result-visibility` capability, `resultMode` is a bitmask.
+Combine the flags with bitwise OR:
 
-With `talk-polls-results-before-voting`, the optional boolean
-`showResultsBeforeVoting` allows all participants to see counts and percentages
-before voting. It defaults to `false` and works independently of `resultMode`
-and `showVotersBeforeClosing`, including on hidden polls. It does not grant
-access to voter names by itself: those remain hidden until closing unless
-`showVotersBeforeClosing` is also enabled on a public poll. With both settings
-enabled, names are visible before voting as well. The setting is
-preserved in drafts and can be changed when editing a draft.
+| Flag | Meaning |
+|------|---------|
+| `1` | Anonymous: never expose voter identities, regardless of the other flags |
+| `2` | Show voter names before closing, after the participant has voted |
+| `4` | Show voter names and results before voting, unless anonymous |
+| `8` | Show results before voting, independently of voter-name visibility |
+
+The web editor offers these name-visibility settings:
+
+| Setting | `resultMode` without / with result preview |
+|---------|-------------------------------------------|
+| Always | `6` / `14` |
+| After voting | `2` / `10` |
+| After the poll ends | `0` / `8` |
+| Never | `1` / `9` |
+
+Names are never returned for drafts. Anonymous polls never expose voter identities
+in API responses, exports, or signaling payloads. Flag `8` does not grant access to
+names: with mode `10`, results are visible before voting but names appear only after
+voting. Withdrawing a vote hides names again in modes `2` and `10`.
+
+### Backward compatibility
+
+The existing values retain their behavior: `0` shows results after voting and
+names after closing; `1` hides results until closing and never shows names.
+Existing polls require no database migration. The API parameters and response
+fields are unchanged; settings are persisted in the existing `resultMode` column
+and preserved in drafts, imports, exports, and federated requests. Unknown bits
+and negative values are rejected with HTTP 400.
+
+Clients must check `talk-polls-result-visibility` before submitting values other
+than `0` and `1`. The web editor falls back to the original checkbox on older
+servers and strips unsupported flags from imported drafts. Older clients can
+continue creating polls using `0` and `1`; displaying the new modes correctly
+requires clients to interpret the bitmask. Server-side visibility checks apply
+regardless of the client version.
 
 ## Create a poll in a conversation
 
@@ -33,9 +53,7 @@ preserved in drafts and can be changed when editing a draft.
 |--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `question`   | string       | The question of the poll                                                                                                                                                                                                       |
 | `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
-| `resultMode` | int          | `0`: Results are visible after voting; names are shown after closing, or after voting when `showVotersBeforeClosing` is enabled. `1`: Only the summary is published after closing, without names. |
-| `showVotersBeforeClosing` | bool | Optional, defaults to `false`. Show names to voters before closing a public poll. Requires `talk-polls-live-voters`. |
-| `showResultsBeforeVoting` | bool | Optional, defaults to `false`. Show counts and percentages before voting, including hidden polls. Requires `talk-polls-results-before-voting`. |
+| `resultMode` | int | Result visibility bitmask described above. Values other than `0` and `1` require `talk-polls-result-visibility`. |
 | `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
 
 * Response:
@@ -63,9 +81,7 @@ preserved in drafts and can be changed when editing a draft.
 |--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `question`   | string       | The question of the poll                                                                                                                                                                                                       |
 | `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
-| `resultMode` | int          | `0`: Results are visible after voting; names are shown after closing, or after voting when `showVotersBeforeClosing` is enabled. `1`: Only the summary is published after closing, without names. |
-| `showVotersBeforeClosing` | bool | Optional, defaults to `false`. Show names to voters before closing a public poll. Requires `talk-polls-live-voters`. |
-| `showResultsBeforeVoting` | bool | Optional, defaults to `false`. Show counts and percentages before voting, including hidden polls. Requires `talk-polls-results-before-voting`. |
+| `resultMode` | int | Result visibility bitmask described above. Values other than `0` and `1` require `talk-polls-result-visibility`. |
 | `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
 
 * Response:
@@ -154,18 +170,16 @@ preserved in drafts and can be changed when editing a draft.
 | `id`               | int      | ID of the poll                                                                                                                                          |
 | `question`         | string   | The question of the poll                                                                                                                                |
 | `options`          | string[] | The options participants can vote for                                                                                                                   |
-| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (available after voting on public polls, after closing, or when `showResultsBeforeVoting` is enabled) |
+| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (available after voting on public polls, after closing, or when result previews are enabled) |
 | `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))                                                           |
 | `actorId`          | string   | Actor ID identifying the poll author                                                                                                                    |
 | `actorDisplayName` | string   | Display name of the poll author                                                                                                                         |
 | `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                                                                            |
-| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                                                                           |
+| `resultMode` | int | Result visibility bitmask described above. Values other than `0` and `1` require `talk-polls-result-visibility`. |
 | `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                                                                                      |
 | `votedSelf`        | int[]    | Array of option ids the participant voted for                                                                                                           |
 | `numVoters`        | int      | The number of unique voters (available when results are visible, or to the creator and moderators) |
-| `showVotersBeforeClosing` | bool | Whether names are visible to voters before closing a public poll |
-| `showResultsBeforeVoting` | bool | Whether counts and percentages are visible before voting |
-| `details`          | array[]  | Who voted for each option: available for public closed polls, or with `showVotersBeforeClosing` after voting or when result previews are enabled. See [Details](#details). |
+| `details` | array[] | Who voted for each option, only when permitted by `resultMode`. Never returned for anonymous polls or drafts. See [Details](#details). |
 
 ### Details
 

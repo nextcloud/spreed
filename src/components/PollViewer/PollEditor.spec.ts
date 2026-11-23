@@ -8,21 +8,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import PollEditor from './PollEditor.vue'
 
 const mocks = vi.hoisted(() => ({
-	liveVoters: true,
-	resultPreview: true,
+	visibility: true,
 	createPoll: vi.fn(),
 	updatePollDraft: vi.fn(),
 	draft: {
 		question: 'Lunch?',
 		options: ['Pizza', 'Pasta'],
-		resultMode: 0,
+		resultMode: 14,
 		maxVotes: 1,
-		showVotersBeforeClosing: true,
-		showResultsBeforeVoting: true,
 	},
 }))
 
@@ -31,10 +29,7 @@ vi.mock('../../composables/useGetThreadId.ts', () => ({ useGetThreadId: () => re
 vi.mock('../../composables/useGetToken.ts', () => ({ useGetToken: () => ref('room') }))
 vi.mock('../../services/CapabilitiesManager.ts', () => ({
 	hasTalkFeature: (_token: string, feature: string) => {
-		if (feature === 'talk-polls-live-voters') {
-			return mocks.liveVoters
-		}
-		return feature !== 'talk-polls-results-before-voting' || mocks.resultPreview
+		return feature !== 'talk-polls-result-visibility' || mocks.visibility
 	},
 }))
 vi.mock('../../stores/polls.ts', () => ({
@@ -58,16 +53,18 @@ function mountEditor() {
 describe('PollEditor', () => {
 	beforeEach(() => {
 		vi.clearAllMocks()
-		mocks.liveVoters = true
-		mocks.resultPreview = true
+		mocks.visibility = true
+		mocks.draft.resultMode = 14
 	})
 
-	it('leaves live voters disabled by default and submits the selected setting', async () => {
+	it.each([6, 2, 0, 1])('submits name visibility %i with an independent result preview', async (mode) => {
 		const wrapper = mountEditor()
-		const checkboxes = wrapper.findAllComponents(NcCheckboxRadioSwitch)
-		expect(checkboxes[1].props('modelValue')).toBe(false)
-		checkboxes[1].vm.$emit('update:modelValue', true)
-		checkboxes[2].vm.$emit('update:modelValue', true)
+		const select = wrapper.findComponent(NcSelect)
+		const selectProps = select.props() as { modelValue: { value: number }, options: { label: string, value: number }[] }
+		expect(selectProps.modelValue).toEqual(expect.objectContaining({ value: 0 }))
+		expect(selectProps.options.map((option) => option.label)).toEqual(['Always', 'After voting', 'After the poll ends', 'Never'])
+		select.vm.$emit('update:modelValue', selectProps.options.find((option) => option.value === mode))
+		wrapper.findAllComponents(NcCheckboxRadioSwitch)[0].vm.$emit('update:modelValue', true)
 		const fields = wrapper.findAllComponents(NcTextField)
 		fields[0].vm.$emit('update:modelValue', 'Lunch?')
 		fields[1].vm.$emit('update:modelValue', 'Pizza')
@@ -75,50 +72,49 @@ describe('PollEditor', () => {
 		await flushPromises()
 		wrapper.findAllComponents(NcButton).find((button) => button.text() === 'Create poll')!.vm.$emit('click')
 		await flushPromises()
-		expect(mocks.createPoll).toHaveBeenCalledWith(expect.objectContaining({
-			form: expect.objectContaining({ showVotersBeforeClosing: true, showResultsBeforeVoting: true, resultMode: 0 }),
-		}))
+		expect(mocks.createPoll).toHaveBeenCalledWith(expect.objectContaining({ form: expect.objectContaining({ resultMode: mode | 8 }) }))
 	})
 
-	it('clears and disables live voters when names are hidden', async () => {
-		const wrapper = mountEditor()
-		const checkboxes = wrapper.findAllComponents(NcCheckboxRadioSwitch)
-		checkboxes[1].vm.$emit('update:modelValue', true)
-		checkboxes[0].vm.$emit('update:modelValue', false)
-		await flushPromises()
-		expect(checkboxes[1].props('modelValue')).toBe(false)
-		expect(checkboxes[1].props('disabled')).toBe(true)
-	})
-
-	it('restores live voters when editing a draft', async () => {
+	it.each([0, 1, 2, 6, 8, 9, 10, 14])('restores and saves draft resultMode %i', async (mode) => {
+		mocks.draft.resultMode = mode
 		const wrapper = mountEditor()
 		wrapper.vm.fillPollEditorFromDraft(1, true, 'edit')
 		await flushPromises()
-		expect(wrapper.findAllComponents(NcCheckboxRadioSwitch)[1].props('modelValue')).toBe(true)
-		expect(wrapper.findAllComponents(NcCheckboxRadioSwitch)[2].props('modelValue')).toBe(true)
 		wrapper.findAllComponents(NcButton).find((button) => button.text() === 'Save')!.vm.$emit('click')
 		await flushPromises()
-		expect(mocks.updatePollDraft).toHaveBeenCalledWith(expect.objectContaining({
-			pollId: 1,
-			form: expect.objectContaining({ showVotersBeforeClosing: true, showResultsBeforeVoting: true }),
-		}))
+		expect(mocks.updatePollDraft).toHaveBeenCalledWith(expect.objectContaining({ pollId: 1, form: expect.objectContaining({ resultMode: mode }) }))
 	})
 
-	it('hides the new setting on servers without support', () => {
-		mocks.liveVoters = false
-		mocks.resultPreview = false
+	it('uses the legacy checkbox on servers without the capability', () => {
+		mocks.visibility = false
 		const wrapper = mountEditor()
+		expect(wrapper.findComponent(NcSelect).exists()).toBe(false)
 		expect(wrapper.findAllComponents(NcCheckboxRadioSwitch)).toHaveLength(2)
 	})
 
-	it('keeps result previews available when names are hidden', async () => {
+	it('enables result previews automatically for always-visible names without changing other selections', async () => {
 		const wrapper = mountEditor()
-		const checkboxes = wrapper.findAllComponents(NcCheckboxRadioSwitch)
-		expect(checkboxes[2].props('modelValue')).toBe(false)
-		checkboxes[2].vm.$emit('update:modelValue', true)
-		checkboxes[0].vm.$emit('update:modelValue', false)
+		const select = wrapper.findComponent(NcSelect)
+		const options = (select.props() as { options: { label: string, value: number }[] }).options
+		select.vm.$emit('update:modelValue', options[0])
 		await flushPromises()
-		expect(checkboxes[2].props('disabled')).toBe(false)
-		expect(checkboxes[2].props('modelValue')).toBe(true)
+		const preview = wrapper.findAllComponents(NcCheckboxRadioSwitch)[0]
+		expect(preview.props('modelValue')).toBe(true)
+		expect(preview.props('disabled')).toBe(true)
+		select.vm.$emit('update:modelValue', options[1])
+		await flushPromises()
+		expect(preview.props('modelValue')).toBe(false)
+		expect(preview.props('disabled')).toBe(false)
+	})
+
+	it.each([14, 9])('downgrades imported draft mode %i safely on an older server', async (mode) => {
+		mocks.visibility = false
+		mocks.draft.resultMode = mode
+		const wrapper = mountEditor()
+		wrapper.vm.fillPollEditorFromDraft(1, true, 'edit')
+		await flushPromises()
+		wrapper.findAllComponents(NcButton).find((button) => button.text() === 'Save')!.vm.$emit('click')
+		await flushPromises()
+		expect(mocks.updatePollDraft).toHaveBeenCalledWith(expect.objectContaining({ form: expect.objectContaining({ resultMode: mode & 1 }) }))
 	})
 })

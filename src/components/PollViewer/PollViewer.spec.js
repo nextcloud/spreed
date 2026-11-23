@@ -29,8 +29,6 @@ describe('PollViewer results', () => {
 			resultMode: 0,
 			status: 0,
 			maxVotes: 1,
-			showVotersBeforeClosing: false,
-			showResultsBeforeVoting: false,
 			votes: { 'option-0': 2, 'option-1': 1 },
 			numVoters: 3,
 			votedSelf: [],
@@ -61,7 +59,7 @@ describe('PollViewer results', () => {
 
 	it.each([0, 1])('shows counts and percentages before voting in mode %i when enabled', (mode) => {
 		poll.resultMode = mode
-		poll.showResultsBeforeVoting = true
+		poll.resultMode |= 8
 		mountViewer()
 		expect(wrapper.find('.poll-modal__options').exists()).toBe(true)
 		expect(wrapper.findAll('.percentage').map((item) => item.text())).toEqual(['2 votes (67%)', '1 vote (33%)', '0 votes (0%)'])
@@ -87,7 +85,7 @@ describe('PollViewer results', () => {
 	})
 
 	it('shows zero votes and zero percent for a poll without votes', () => {
-		poll.showResultsBeforeVoting = true
+		poll.resultMode |= 8
 		poll.votes = {}
 		poll.numVoters = 0
 		mountViewer()
@@ -96,7 +94,7 @@ describe('PollViewer results', () => {
 
 	it('can submit a vote while the result preview is visible', async () => {
 		poll.resultMode = 1
-		poll.showResultsBeforeVoting = true
+		poll.resultMode |= 8
 		mountViewer()
 		wrapper.findAllComponents(NcCheckboxRadioSwitch)[0].vm.$emit('update:modelValue', '0')
 		await flushPromises()
@@ -113,8 +111,8 @@ describe('PollViewer results', () => {
 	})
 
 	it('renders voter details before voting when both options allow it', () => {
-		poll.showResultsBeforeVoting = true
-		poll.showVotersBeforeClosing = true
+		poll.resultMode |= 8
+		poll.resultMode |= 6
 		poll.details = [{ actorType: 'users', actorId: 'alice', actorDisplayName: 'Alice', optionId: 0 }]
 		mountViewer()
 		const details = wrapper.findComponent({ name: 'PollVotersDetails' })

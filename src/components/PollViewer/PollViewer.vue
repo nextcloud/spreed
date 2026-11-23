@@ -30,8 +30,8 @@
 							{{ pollSummaryText }}
 						</span>
 					</div>
-					<div v-if="isPollOpen && isPollPublic && poll.showVotersBeforeClosing" class="poll-modal__summary">
-						{{ poll.showResultsBeforeVoting
+					<div v-if="isPollOpen && isPollPublic && showNamesBeforeClosing" class="poll-modal__summary">
+						{{ showNamesBeforeVoting
 							? t('spreed', 'You can see who voted for each option before voting')
 							: t('spreed', 'After voting, you can see who voted for each option before the poll ends') }}
 					</div>
@@ -51,7 +51,7 @@
 				</div>
 
 				<!-- results -->
-				<div v-if="modalPage === 'results' || (isPollOpen && poll.showResultsBeforeVoting)" class="results__options">
+				<div v-if="modalPage === 'results' || (isPollOpen && showResultsBeforeVoting)" class="results__options">
 					<h3 v-if="modalPage === 'voting'">
 						{{ t('spreed', 'Current results') }}
 					</h3>
@@ -243,8 +243,6 @@ export default {
 			options: poll.value.options,
 			resultMode: poll.value.resultMode,
 			maxVotes: poll.value.maxVotes,
-			showVotersBeforeClosing: poll.value.showVotersBeforeClosing ?? false,
-			showResultsBeforeVoting: poll.value.showResultsBeforeVoting ?? false,
 		}))
 		const exportPollFileName = `Talk Poll ${new Date().toISOString().slice(0, 10)}`
 
@@ -274,7 +272,19 @@ export default {
 		},
 
 		isPollPublic() {
-			return this.poll?.resultMode === POLL.MODE.PUBLIC
+			return !(this.poll?.resultMode & POLL.MODE.HIDDEN)
+		},
+
+		showNamesBeforeVoting() {
+			return this.isPollPublic && Boolean(this.poll?.resultMode & POLL.MODE.SHOW_NAMES_BEFORE_VOTING)
+		},
+
+		showNamesBeforeClosing() {
+			return this.isPollPublic && Boolean(this.poll?.resultMode & (POLL.MODE.SHOW_NAMES_BEFORE_CLOSING | POLL.MODE.SHOW_NAMES_BEFORE_VOTING))
+		},
+
+		showResultsBeforeVoting() {
+			return this.showNamesBeforeVoting || Boolean(this.poll?.resultMode & POLL.MODE.SHOW_RESULTS_BEFORE_VOTING)
 		},
 
 		isPollOpen() {

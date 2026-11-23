@@ -31,18 +31,22 @@ class PollControllerTest extends TestCase {
 
 	private PollController $controller;
 	private PollService&MockObject $service;
+	private PollExportService&MockObject $exportService;
 
 	public function setUp(): void {
 		parent::setUp();
 		$this->service = $this->createMock(PollService::class);
+		$this->exportService = $this->createMock(PollExportService::class);
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-11-23'));
 		$this->controller = new PollController(
 			'spreed',
 			$this->createMock(IRequest::class),
 			$this->createMock(ChatManager::class),
 			$this->service,
-			$this->createMock(PollExportService::class),
+			$this->exportService,
 			$this->createMock(ThreadService::class),
-			$this->createMock(ITimeFactory::class),
+			$timeFactory,
 			$this->createMock(LoggerInterface::class),
 			$this->createMock(IL10N::class),
 		);
@@ -55,7 +59,7 @@ class PollControllerTest extends TestCase {
 		$this->controller->setRoom($this->createMock(Room::class));
 	}
 
-	private function createPoll(int $status, int $mode, bool $liveVoters): Poll {
+	private function createPoll(int $status, int $mode): Poll {
 		$poll = new Poll();
 		$poll->setId(1);
 		$poll->setQuestion('Lunch?');
@@ -65,7 +69,6 @@ class PollControllerTest extends TestCase {
 		$poll->setDisplayName('Bob');
 		$poll->setStatus($status);
 		$poll->setResultMode($mode);
-		$poll->setShowVotersBeforeClosing($liveVoters);
 		$poll->setVotes('{"0":1}');
 		$poll->setNumVoters(1);
 		return $poll;
@@ -81,41 +84,47 @@ class PollControllerTest extends TestCase {
 	}
 
 	public static function visibilityCases(): array {
-		return [
-			'open enabled voter' => [Poll::STATUS_OPEN, Poll::MODE_PUBLIC, true, true, true],
-			'open disabled voter' => [Poll::STATUS_OPEN, Poll::MODE_PUBLIC, false, true, false],
-			'open enabled non-voter' => [Poll::STATUS_OPEN, Poll::MODE_PUBLIC, true, false, false],
-			'open disabled non-voter' => [Poll::STATUS_OPEN, Poll::MODE_PUBLIC, false, false, false],
-			'open hidden voter' => [Poll::STATUS_OPEN, Poll::MODE_HIDDEN, true, true, false],
-			'open hidden non-voter' => [Poll::STATUS_OPEN, Poll::MODE_HIDDEN, true, false, false],
-			'closed public voter' => [Poll::STATUS_CLOSED, Poll::MODE_PUBLIC, false, true, true],
-			'closed public non-voter' => [Poll::STATUS_CLOSED, Poll::MODE_PUBLIC, false, false, true],
-			'closed enabled non-voter' => [Poll::STATUS_CLOSED, Poll::MODE_PUBLIC, true, false, true],
-			'closed hidden voter' => [Poll::STATUS_CLOSED, Poll::MODE_HIDDEN, true, true, false],
-			'draft enabled' => [Poll::STATUS_DRAFT, Poll::MODE_PUBLIC, true, false, false],
-		];
+		$cases = [];
+		foreach ([Poll::STATUS_OPEN, Poll::STATUS_CLOSED, Poll::STATUS_DRAFT] as $status) {
+			foreach (range(0, 15) as $mode) {
+				foreach ([false, true] as $hasVoted) {
+					$anonymous = ($mode & 1) !== 0;
+					$preview = ($mode & 8) !== 0 || (!$anonymous && ($mode & 4) !== 0);
+					$results = $status !== Poll::STATUS_OPEN || $preview || (!$anonymous && $hasVoted);
+					$names = !$anonymous && $status !== Poll::STATUS_DRAFT
+						&& ($status === Poll::STATUS_CLOSED || ($mode & 4) !== 0 || ($hasVoted && ($mode & 2) !== 0));
+					$cases["status=$status mode=$mode voted=" . (int)$hasVoted] = [$status, $mode, $hasVoted, $results, $names];
+				}
+			}
+		}
+		return $cases;
 	}
 
 	#[DataProvider('visibilityCases')]
-	public function testShowPollVoterVisibility(int $status, int $mode, bool $liveVoters, bool $hasVoted, bool $expectDetails): void {
-		$poll = $this->createPoll($status, $mode, $liveVoters);
+	public function testShowPollVisibility(int $status, int $mode, bool $hasVoted, bool $expectResults, bool $expectDetails): void {
+		if ($status === Poll::STATUS_DRAFT) {
+			$participant = $this->createMock(Participant::class);
+			$participant->method('hasModeratorPermissions')->willReturn(true);
+			$this->controller->setParticipant($participant);
+		}
+		$poll = $this->createPoll($status, $mode);
 		$vote = $this->createVote();
 		$this->service->method('getPoll')->willReturn($poll);
 		$this->service->method('getVotesForActor')->willReturn($hasVoted ? [$vote] : []);
 		$this->service->expects($expectDetails ? $this->once() : $this->never())->method('getVotes')->with($poll)->willReturn([$vote]);
 
 		$data = $this->controller->showPoll(1)->getData();
+		$this->assertSame($mode, $data['resultMode']);
+		$this->assertSame($expectResults ? ['option-0' => 1] : [], $data['votes']);
+		$this->assertSame($expectResults ? 1 : 0, $data['numVoters']);
 		$this->assertSame($expectDetails, array_key_exists('details', $data));
 		if ($expectDetails) {
 			$this->assertSame([$vote->asArray()], $data['details']);
 		}
-		if ($status === Poll::STATUS_OPEN && (!$hasVoted || $mode === Poll::MODE_HIDDEN)) {
-			$this->assertSame([], $data['votes']);
-		}
 	}
 
 	public function testVoteResponseIncludesLiveVoters(): void {
-		$poll = $this->createPoll(Poll::STATUS_OPEN, Poll::MODE_PUBLIC, true);
+		$poll = $this->createPoll(Poll::STATUS_OPEN, Poll::MODE_SHOW_NAMES_BEFORE_CLOSING);
 		$vote = $this->createVote();
 		$this->service->method('getPoll')->willReturn($poll);
 		$this->service->method('votePoll')->willReturn([$vote]);
@@ -126,7 +135,7 @@ class PollControllerTest extends TestCase {
 	}
 
 	public function testWithdrawingVoteHidesLiveVoters(): void {
-		$poll = $this->createPoll(Poll::STATUS_OPEN, Poll::MODE_PUBLIC, true);
+		$poll = $this->createPoll(Poll::STATUS_OPEN, Poll::MODE_SHOW_NAMES_BEFORE_CLOSING);
 		$this->service->method('getPoll')->willReturn($poll);
 		$this->service->method('votePoll')->willReturn([]);
 		$this->service->expects($this->never())->method('getVotes');
@@ -136,40 +145,9 @@ class PollControllerTest extends TestCase {
 		$this->assertSame([], $data['votes']);
 	}
 
-	public static function resultVisibilityCases(): array {
-		$cases = [];
-		foreach ([Poll::MODE_PUBLIC, Poll::MODE_HIDDEN] as $mode) {
-			foreach ([false, true] as $preview) {
-				foreach ([false, true] as $hasVoted) {
-					foreach ([false, true] as $liveVoters) {
-						$cases[] = [$mode, $preview, $hasVoted, $liveVoters];
-					}
-				}
-			}
-		}
-		return $cases;
-	}
-
-	#[DataProvider('resultVisibilityCases')]
-	public function testResultAndNameVisibilityOptions(int $mode, bool $preview, bool $hasVoted, bool $liveVoters): void {
-		$poll = $this->createPoll(Poll::STATUS_OPEN, $mode, $liveVoters);
-		$poll->setShowResultsBeforeVoting($preview);
-		$vote = $this->createVote();
-		$this->service->method('getPoll')->willReturn($poll);
-		$this->service->method('getVotesForActor')->willReturn($hasVoted ? [$vote] : []);
-		$expectDetails = $mode === Poll::MODE_PUBLIC && $liveVoters && ($hasVoted || $preview);
-		$this->service->expects($expectDetails ? $this->once() : $this->never())->method('getVotes')->willReturn([$vote]);
-
-		$data = $this->controller->showPoll(1)->getData();
-		$expectResults = $preview || ($mode === Poll::MODE_PUBLIC && $hasVoted);
-		$this->assertSame($expectResults ? ['option-0' => 1] : [], $data['votes']);
-		$this->assertSame($expectResults ? 1 : 0, $data['numVoters']);
-		$this->assertSame($expectDetails, array_key_exists('details', $data));
-	}
-
 	public function testWithdrawingVoteKeepsEnabledPreviewAndNames(): void {
-		$poll = $this->createPoll(Poll::STATUS_OPEN, Poll::MODE_PUBLIC, true);
-		$poll->setShowResultsBeforeVoting(true);
+		$poll = $this->createPoll(Poll::STATUS_OPEN, Poll::MODE_SHOW_NAMES_BEFORE_CLOSING);
+		$poll->setResultMode(Poll::MODE_SHOW_NAMES_BEFORE_CLOSING | Poll::MODE_SHOW_NAMES_BEFORE_VOTING);
 		$this->service->method('getPoll')->willReturn($poll);
 		$this->service->method('votePoll')->willReturn([]);
 		$this->service->expects($this->once())->method('getVotes')->willReturn([]);
@@ -177,5 +155,23 @@ class PollControllerTest extends TestCase {
 		$data = $this->controller->votePoll(1, [])->getData();
 		$this->assertSame([], $data['details']);
 		$this->assertSame(['option-0' => 1], $data['votes']);
+	}
+
+	public static function exportModes(): array {
+		return array_map(static fn (int $mode) => [$mode], range(0, 15));
+	}
+
+	#[DataProvider('exportModes')]
+	public function testExportRespectsAnonymousFlag(int $mode): void {
+		$participant = $this->createMock(Participant::class);
+		$participant->method('hasModeratorPermissions')->willReturn(true);
+		$this->controller->setParticipant($participant);
+		$poll = $this->createPoll(Poll::STATUS_CLOSED, $mode);
+		$vote = $this->createVote();
+		$anonymous = ($mode & Poll::MODE_HIDDEN) !== 0;
+		$this->service->method('getPoll')->willReturn($poll);
+		$this->service->expects($anonymous ? $this->never() : $this->once())->method('getVotes')->willReturn([$vote]);
+		$this->exportService->expects($this->once())->method('exportToSpreadsheet')->with($poll, $anonymous ? [] : [$vote], 'csv')->willReturn('export');
+		$this->assertSame(200, $this->controller->exportPoll(1, 'csv')->getStatus());
 	}
 }
