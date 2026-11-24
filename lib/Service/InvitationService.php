@@ -40,11 +40,15 @@ class InvitationService {
 	}
 
 	/**
+	 * @param ?IUser $currentUser Acting user that is used to verify team memberships and invite
+	 *                            permissions. When there is no acting user (e.g. occ commands),
+	 *                            teams, federated users and phone numbers can not be invited and
+	 *                            are always reported as invalid.
 	 * @param bool $isClassified Whether the invitations target a classified conversation.
 	 *                           Only needed at creation time, when the room does not exist yet;
 	 *                           otherwise it is read from $room.
 	 */
-	public function validateInvitations(array $participants, IUser $currentUser, ?Room $room = null, bool $isClassified = false): InvitationList {
+	public function validateInvitations(array $participants, ?IUser $currentUser, ?Room $room = null, bool $isClassified = false): InvitationList {
 		$isClassified = $isClassified || $room?->isClassified() === true;
 
 		$invitationList = new InvitationList();
@@ -134,8 +138,8 @@ class InvitationService {
 	/**
 	 * @param list<string> $teamIds
 	 */
-	protected function validateTeamInvitations(InvitationList $invitationList, array $teamIds, IUser $currentUser): void {
-		if (!$this->appManager->isEnabledForUser('circles')) {
+	protected function validateTeamInvitations(InvitationList $invitationList, array $teamIds, ?IUser $currentUser): void {
+		if ($currentUser === null || !$this->appManager->isEnabledForUser('circles')) {
 			$invitationList->setTeamResults([], $teamIds);
 			return;
 		}
@@ -157,14 +161,14 @@ class InvitationService {
 	/**
 	 * @param list<string> $cloudIds
 	 */
-	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, IUser $currentUser, bool $isClassified): void {
+	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, ?IUser $currentUser, bool $isClassified): void {
 		if ($isClassified) {
 			// The remote server would receive the conversation and its messages
 			$invitationList->setFederatedUserResults([], $cloudIds);
 			return;
 		}
 
-		if (!$this->talkConfig->isFederationEnabled()) {
+		if ($currentUser === null || !$this->talkConfig->isFederationEnabled()) {
 			$invitationList->setFederatedUserResults([], $cloudIds);
 			return;
 		}
@@ -185,14 +189,14 @@ class InvitationService {
 	/**
 	 * @param list<string> $phoneNumbers
 	 */
-	protected function validatePhoneInvitations(InvitationList $invitationList, array $phoneNumbers, IUser $currentUser, ?Room $room, bool $isClassified): void {
+	protected function validatePhoneInvitations(InvitationList $invitationList, array $phoneNumbers, ?IUser $currentUser, ?Room $room, bool $isClassified): void {
 		if ($isClassified) {
 			// Classified conversations can not dial out
 			$invitationList->setPhoneNumberResults([], $phoneNumbers);
 			return;
 		}
 
-		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->canUserDialOutSIP($currentUser)) {
+		if ($currentUser === null || !$this->talkConfig->isSIPConfigured() || !$this->talkConfig->canUserDialOutSIP($currentUser)) {
 			$invitationList->setPhoneNumberResults([], $phoneNumbers);
 			return;
 		}

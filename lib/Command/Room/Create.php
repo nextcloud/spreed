@@ -111,6 +111,16 @@ class Create extends Base {
 			return 1;
 		}
 
+		$invitationList = $this->invitationService->validateInvitations([
+			'users' => $users,
+			'groups' => $groups,
+		], null);
+		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
+			// Nothing could be invited at all, so the room is not created
+			$this->printInvalidInvitations($invitationList, $output);
+			return 1;
+		}
+
 		$roomType = $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP;
 		try {
 			$room = $this->roomService->createConversation($roomType, $name);
@@ -134,8 +144,7 @@ class Create extends Base {
 				$this->setRoomPassword($room, $password);
 			}
 
-			$this->addRoomParticipants($room, $users);
-			$this->addRoomParticipantsByGroup($room, $groups);
+			$this->addRoomParticipants($room, $invitationList);
 			$this->addRoomModerators($room, $moderators);
 
 			if ($owner !== null) {
@@ -156,6 +165,10 @@ class Create extends Base {
 			return 1;
 		}
 		$output->writeln('Room token: ' . $room->getToken());
+		if ($invitationList->hasInvalidInvitations()) {
+			$this->printInvalidInvitations($invitationList, $output);
+			return 1;
+		}
 
 		$output->writeln('<info>Room successfully created.</info>');
 		return 0;
