@@ -18,6 +18,7 @@ use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
@@ -302,7 +303,7 @@ class TeamRoomSyncService {
 
 		$left = $this->getAllFederatedMarkers()[$room->getId()]['emailLeft'] ?? [];
 		$formerLeft = array_diff_key($left, array_flip(array_map($this->hashMember(...), array_keys($expectedEmails))));
-		if ($formerLeft !== []) {
+		if (!empty($formerLeft)) {
 			// Removed from the team: invited again when added again
 			$this->updateFederatedMarkers($room, static function (array $markers) use ($formerLeft): array {
 				$markers['emailLeft'] = array_diff_key($markers['emailLeft'] ?? [], $formerLeft);
@@ -653,7 +654,7 @@ class TeamRoomSyncService {
 	 * them, not for somebody else of the conversation
 	 */
 	protected function getUserWhoAddedTheMember(string $invitedBy): ?IUser {
-		return $invitedBy !== '' ? $this->userManager->get($invitedBy) : null;
+		return !empty($invitedBy) ? $this->userManager->get($invitedBy) : null;
 	}
 
 	/**
@@ -831,6 +832,12 @@ class TeamRoomSyncService {
 		$teamId = $room->getObjectId();
 
 		$this->roomService->setReadOnly($room, Room::READ_ONLY);
+		try {
+			// Not listed anymore: nobody can join the team through it, there is no team to join
+			$this->roomService->setListable($room, Room::LISTABLE_NONE);
+		} catch (ListableException $e) {
+			$this->logger->warning('Team room ' . $room->getToken() . ' of the deleted team could not be unlisted: ' . $e->getReason());
+		}
 
 		foreach ([Attendee::ACTOR_USERS, Attendee::ACTOR_FEDERATED_USERS] as $actorType) {
 			foreach ($this->participantService->getParticipantsByActorType($room, $actorType) as $participant) {

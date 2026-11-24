@@ -749,6 +749,8 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->mockParticipants([$owner, $member], [$federatedModerator]);
 
 		$this->roomService->expects($this->once())->method('setReadOnly')->with($this->room, Room::READ_ONLY);
+		// Not listed anymore, there is no team to join
+		$this->roomService->expects($this->once())->method('setListable')->with($this->room, Room::LISTABLE_NONE);
 		$changed = [];
 		$this->participantService->method('updateParticipantType')
 			->willReturnCallback(static function (Room $room, Participant $participant, int $type) use (&$changed): void {
