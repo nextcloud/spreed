@@ -1149,4 +1149,29 @@ class TeamRoomSyncService {
 		$this->participantService->removeAttendee($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 	}
 
+	/**
+	 * A local user became a member of the team (added, joined, accepted the
+	 * invitation) or got another level in the Teams app: applied right away,
+	 * like removals, instead of only with the resync. Members of other
+	 * servers and email guests are invited by the resync in the background,
+	 * groups and teams as members are no participants.
+	 *
+	 * @throws ForbiddenException When the user is banned from the room
+	 * @throws \Exception When Circles is unavailable
+	 */
+	public function applyTeamMember(Room $room, Member $member): void {
+		if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal() || empty($member->getUserId())) {
+			return;
+		}
+
+		$user = $this->userManager->get($member->getUserId());
+		if (!$user instanceof IUser) {
+			return;
+		}
+
+		// Reads the member from the team again: also correct for an invited
+		// user (not added) or a change that is already outdated
+		$this->syncUserInTeamRoom($room, $user);
+	}
+
 }
