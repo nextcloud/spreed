@@ -207,11 +207,6 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareOCSController $controller
-	 * @param bool $moderatorRequired
-	 * @throws NotAModeratorException
-	 */
-	/**
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
 	 * @throws RoomNotFoundException
@@ -238,6 +233,11 @@ class InjectionMiddleware extends Middleware {
 		$controller->setParticipant($participant);
 	}
 
+	/**
+	 * @param AEnvironmentAwareOCSController $controller
+	 * @param bool $moderatorRequired
+	 * @throws NotAModeratorException
+	 */
 	protected function getLoggedIn(AEnvironmentAwareOCSController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$sessionId = $this->talkSession->getSessionForRoom($token);
