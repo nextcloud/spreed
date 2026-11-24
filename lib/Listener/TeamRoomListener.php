@@ -219,12 +219,22 @@ class TeamRoomListener implements IEventListener {
 	 * The system messages of the change name the user who made it in the
 	 * Teams app, same as CircleMembershipListener does for other rooms. In
 	 * web requests Circles applies adding and removing in a separate request
-	 * without a user session, there they would show a guest otherwise. A
-	 * logged-in user (change in the same request) is used before these values.
+	 * without a user session, there they would show a guest otherwise.
+	 *
+	 * With a logged-in user (change in the same request) the session is not
+	 * touched: the system messages name that user anyway, and in OCS requests
+	 * the session is closed, set() writes the values to the stored session while
+	 * remove() only drops them in this request. They would stay for the user's
+	 * later requests (e.g. as actor of bots).
 	 *
 	 * @param callable(): void $change
 	 */
 	protected function asActorOfTeamChange(Circle $circle, ?Member $member, callable $change): void {
+		if (!is_null($this->userSession->getUser())) {
+			$change();
+			return;
+		}
+
 		$actor = $circle->hasInitiator() ? $circle->getInitiator() : ($member?->hasInvitedBy() ? $member->getInvitedBy() : null);
 
 		$previous = [];

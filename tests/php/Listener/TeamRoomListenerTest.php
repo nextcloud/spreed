@@ -267,6 +267,16 @@ class TeamRoomListenerTest extends TestCase {
 		$this->assertSame([], $this->sessionValues);
 	}
 
+	public function testSessionIsNotTouchedWithALoggedInUser(): void {
+		// The system messages name the logged-in user anyway, values set in a
+		// closed session would stay for the user's later requests
+		$this->userSession->method('getUser')->willReturn($this->createMock(IUser::class));
+		$this->session->expects($this->never())->method('set');
+		$this->syncService->expects($this->once())->method('applyTeamMember');
+
+		$this->applyAddedMemberBy($this->makeInitiator(Member::TYPE_USER, 'alice'));
+	}
+
 	public function testSystemMessagesOfOccNameTheAdministrator(): void {
 		$during = $this->applyAddedMemberBy($this->makeInitiator(Member::TYPE_APP, 'occ'));
 
