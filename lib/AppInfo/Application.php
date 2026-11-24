@@ -11,6 +11,8 @@ namespace OCA\Talk\AppInfo;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleEditedEvent;
+use OCA\Circles\Events\CircleMemberAddedEvent;
+use OCA\Circles\Events\CircleMemberEditedEvent;
 use OCA\Circles\Events\EditingCircleEvent;
 use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
@@ -317,6 +319,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddingCircleMemberEvent::class, TeamRoomListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, TeamRoomListener::class);
 		$context->registerEventListener(EditingCircleMemberEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(CircleMemberAddedEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(CircleMemberEditedEvent::class, TeamRoomListener::class);
 		$context->registerEventListener(EditingCircleEvent::class, TeamRoomSettingsListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TeamRoomSettingsListener::class);
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, TeamRoomSettingsListener::class);

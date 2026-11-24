@@ -299,8 +299,8 @@ class TeamRoomSyncService {
 	}
 
 	protected function inviteEmailMember(Room $room, #[\SensitiveParameter] string $email, #[\SensitiveParameter] string $displayName): void {
-		$actorId = hash('sha256', $email);
-		if ($this->banService->isEmailBanned($room, $email)) {
+		$actorId = hash('sha256', mb_strtolower(mb_trim($email)));
+		if ($this->isEmailBanned($room, $email)) {
 			// Also when the account with this address is banned
 			return;
 		}
@@ -434,7 +434,8 @@ class TeamRoomSyncService {
 	 * @param int $failures Failed invitations so far, for the pause before the next try
 	 */
 	protected function inviteFederatedMember(Room $room, #[\SensitiveParameter] ICloudId $cloudId, #[\SensitiveParameter] string $displayName, int $participantType, IUser $inviter, int $failures = 0): bool {
-		if ($this->banService->isActorBanned($room, Attendee::ACTOR_FEDERATED_USERS, $cloudId->getId())) {
+		if ($this->isBannedInResync($room, Attendee::ACTOR_FEDERATED_USERS, $cloudId->getId())
+			?? $this->banService->isActorBanned($room, Attendee::ACTOR_FEDERATED_USERS, $cloudId->getId())) {
 			return false;
 		}
 		$key = $this->getNormalizedCloudId($cloudId);
@@ -563,9 +564,12 @@ class TeamRoomSyncService {
 
 	/**
 	 * @param list<string> $memberKeys Normalized cloud ids of the remote members of the team
+	 * @param bool $allMembers Whether $memberKeys are all remote members of the team: then
+	 *                         the markers of former members are deleted. Lookups of single
+	 *                         members must not do that, it would delete the markers of all others.
 	 * @return array{left: array<string, true>, wait: array<string, array{count: int, until: int}>}
 	 */
-	protected function getFederatedMarkers(Room $room, #[\SensitiveParameter] array $memberKeys): array {
+	protected function getFederatedMarkers(Room $room, #[\SensitiveParameter] array $memberKeys, bool $allMembers = true): array {
 		$roomMarkers = $this->getAllFederatedMarkers()[$room->getId()] ?? [];
 		if (empty($roomMarkers)) {
 			return ['left' => [], 'wait' => []];
@@ -586,6 +590,10 @@ class TeamRoomSyncService {
 			if (isset($hashes[$hash])) {
 				$markers['wait'][$hashes[$hash]] = ['count' => (int)$wait['count'], 'until' => (int)$wait['until']];
 			}
+		}
+
+		if (!$allMembers) {
+			return $markers;
 		}
 
 		$current = ['left' => array_intersect_key($roomMarkers['left'] ?? [], $hashes), 'wait' => array_intersect_key($roomMarkers['wait'] ?? [], $hashes)];
@@ -1220,17 +1228,29 @@ class TeamRoomSyncService {
 	}
 
 	/**
-	 * A local user became a member of the team (added, joined, accepted the
-	 * invitation) or got another level in the Teams app: applied right away,
-	 * like removals, instead of only with the resync. Members of other
-	 * servers and email guests are invited by the resync in the background,
-	 * groups and teams as members are no participants.
+	 * A member was added to the team (added, joined, accepted the invitation)
+	 * or got another level in the Teams app: applied right away, like
+	 * removals, instead of only with the resync. Users of this server are
+	 * added, members of other servers and email guests are invited, with the
+	 * same rules as the resync (left, paused after failures, banned). Groups
+	 * and teams as members are no participants.
 	 *
 	 * @throws ForbiddenException When the user is banned from the room
 	 * @throws \Exception When Circles is unavailable
 	 */
-	public function applyTeamMember(Room $room, Member $member): void {
-		if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal() || empty($member->getUserId())) {
+	public function applyTeamMember(Room $room, #[\SensitiveParameter] Member $member): void {
+		if ($member->getUserType() === Member::TYPE_USER && !$member->isLocal()) {
+			$this->applyRemoteTeamMember($room, $member);
+			return;
+		}
+
+		$email = $this->circlesAdapter->getEmailOfMember($member);
+		if (!is_null($email)) {
+			$this->applyEmailTeamMember($room, $email, $member->getDisplayName());
+			return;
+		}
+
+		if ($member->getUserType() !== Member::TYPE_USER || empty($member->getUserId())) {
 			return;
 		}
 
@@ -1242,6 +1262,77 @@ class TeamRoomSyncService {
 		// Reads the member from the team again: also correct for an invited
 		// user (not added) or a change that is already outdated
 		$this->syncUserInTeamRoom($room, $user);
+	}
+
+	/**
+	 * Same as syncFederatedMembers() for one member
+	 */
+	protected function applyRemoteTeamMember(Room $room, #[\SensitiveParameter] Member $member): void {
+		if (!$this->talkConfig->isFederationEnabled()) {
+			return;
+		}
+
+		try {
+			$cloudId = $this->cloudIdManager->getCloudId($member->getUserId(), $member->getInstance());
+		} catch (\InvalidArgumentException) {
+			return;
+		}
+		$key = $this->getNormalizedCloudId($cloudId);
+
+		// As stored in the team now: the event can still carry the level before
+		// the change, and members only invited to an invite-only team are no
+		// members yet (invited to the conversation after accepting)
+		$teamMember = $this->findRemoteMember($room->getObjectId(), $key);
+		if (is_null($teamMember)) {
+			return;
+		}
+		// Federated users can not be owners
+		$participantType = max(Participant::MODERATOR, self::getParticipantTypeForLevel($teamMember['level']));
+
+		foreach ($this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_FEDERATED_USERS) as $participant) {
+			try {
+				$participantKey = $this->getNormalizedCloudId($this->cloudIdManager->resolveCloudId($participant->getAttendee()->getActorId()));
+			} catch (\InvalidArgumentException) {
+				continue;
+			}
+			if ($participantKey === $key) {
+				if ($participant->getAttendee()->getParticipantType() !== $participantType) {
+					$this->participantService->updateParticipantType($room, $participant, $participantType);
+				}
+				return;
+			}
+		}
+
+		$markers = $this->getFederatedMarkers($room, [$key], allMembers: false);
+		if (isset($markers['left'][$key])
+			|| ($markers['wait'][$key]['until'] ?? 0) > $this->timeFactory->getTime()) {
+			return;
+		}
+
+		$inviter = $this->getInviter($room);
+		if (is_null($inviter)) {
+			$this->logger->warning('Team conversation ' . $room->getToken() . ' has no local owner or moderator to invite the federated members of the team');
+			return;
+		}
+		$this->inviteFederatedMember($room, $cloudId, $teamMember['displayName'], $participantType, $inviter, $markers['wait'][$key]['count'] ?? 0);
+	}
+
+	/**
+	 * Same as syncEmailMembers() for one address: email guests are always
+	 * plain participants, their level only matters in the team
+	 */
+	protected function applyEmailTeamMember(Room $room, #[\SensitiveParameter] string $email, #[\SensitiveParameter] string $displayName): void {
+		try {
+			$this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, hash('sha256', $email));
+			return;
+		} catch (ParticipantNotFoundException) {
+		}
+
+		$left = $this->getAllFederatedMarkers()[$room->getId()]['emailLeft'] ?? [];
+		if (isset($left[$this->hashMember($email)])) {
+			return;
+		}
+		$this->inviteEmailMember($room, $email, $displayName !== '' ? $displayName : $email);
 	}
 
 }

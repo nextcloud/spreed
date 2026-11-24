@@ -1607,24 +1607,149 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->service->applyTeamMember($this->room, $this->makeCirclesMember('bob'));
 	}
 
-	public static function dataMembersLeftToTheResync(): array {
-		return [
-			'user of another server' => [Member::TYPE_USER, 'bob', 'remote.example'],
-			'email guest' => [Member::TYPE_MAIL, 'guest@example.tld', ''],
-			'group' => [Member::TYPE_GROUP, 'group1', ''],
-			'team' => [Member::TYPE_CIRCLE, 'team2', ''],
-		];
-	}
-
-	#[DataProvider('dataMembersLeftToTheResync')]
-	public function testOnlyLocalUsersAreAppliedRightAway(int $userType, string $userId, string $instance): void {
+	private function makeTeamMember(int $userType, string $userId, string $instance = '', int $level = self::LEVEL_MEMBER): Member&MockObject {
 		$member = $this->createMock(Member::class);
 		$member->method('getUserType')->willReturn($userType);
 		$member->method('getUserId')->willReturn($userId);
+		$member->method('getDisplayName')->willReturn(ucfirst($userId));
 		$member->method('isLocal')->willReturn($instance === '');
+		$member->method('getInstance')->willReturn($instance);
+		$member->method('getLevel')->willReturn($level);
+		return $member;
+	}
+
+	public static function dataNoParticipants(): array {
+		return [
+			'group' => [Member::TYPE_GROUP, 'group1'],
+			'team' => [Member::TYPE_CIRCLE, 'team2'],
+		];
+	}
+
+	#[DataProvider('dataNoParticipants')]
+	public function testGroupsAndTeamsAreNoParticipants(int $userType, string $userId): void {
+		$this->circlesAdapter->method('getEmailOfMember')->willReturn(null);
 		$this->userManager->expects($this->never())->method('get');
 		$this->circlesAdapter->expects($this->never())->method('getDirectMember');
 		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->service->applyTeamMember($this->room, $this->makeTeamMember($userType, $userId));
+	}
+
+	public function testMemberOfAnotherServerIsInvitedRightAway(): void {
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->circlesAdapter->method('getRemoteMembers')->with('team1')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER],
+		]);
+		$this->participantService->method('getParticipantsByActorType')->willReturn([]);
+		$this->appConfig->method('getAppValueArray')->willReturn([]);
+		$inviter = $this->createMock(IUser::class);
+		$this->userManager->method('get')->with('alice')->willReturn($inviter);
+
+		$this->participantService->expects($this->once())
+			->method('addUsers')
+			->with($this->room, [[
+				'actorType' => Attendee::ACTOR_FEDERATED_USERS,
+				'actorId' => 'bob@remote.example',
+				'displayName' => 'Bob',
+				'participantType' => Participant::USER,
+			]], $inviter);
+
+		$this->service->applyTeamMember($this->room, $this->makeTeamMember(Member::TYPE_USER, 'bob', 'remote.example'));
+	}
+
+	public function testLevelOfAnInvitedMemberOfAnotherServerIsAppliedRightAway(): void {
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		// The level as stored in the team, the member of the event can carry the level before the change
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MODERATOR],
+		]);
+		$participant = $this->makeFederatedParticipant('bob@remote.example');
+		$this->participantService->method('getParticipantsByActorType')->willReturn([$participant]);
+
+		$this->participantService->expects($this->never())->method('addUsers');
+		$this->participantService->expects($this->once())
+			->method('updateParticipantType')
+			->with($this->room, $participant, Participant::MODERATOR);
+
+		$this->service->applyTeamMember($this->room, $this->makeTeamMember(Member::TYPE_USER, 'bob', 'remote.example', self::LEVEL_MEMBER));
+	}
+
+	public function testMemberOfAnotherServerOnlyInvitedToTheTeamIsNotInvited(): void {
+		// Invite-only team: invited to the conversation after accepting, no member of the team yet
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->service->applyTeamMember($this->room, $this->makeTeamMember(Member::TYPE_USER, 'bob', 'remote.example', 0));
+	}
+
+	public function testMemberOfAnotherServerWhoLeftIsNotInvitedAgain(): void {
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER],
+		]);
+		$this->participantService->method('getParticipantsByActorType')->willReturn([]);
+		$hash = self::invokePrivate($this->service, 'hashMember', ['bob@remote.example']);
+		$this->appConfig->method('getAppValueArray')->willReturn([7 => ['left' => [$hash => true]]]);
+
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->service->applyTeamMember($this->room, $this->makeTeamMember(Member::TYPE_USER, 'bob', 'remote.example'));
+	}
+
+	public function testInvitingOneMemberOfAnotherServerKeepsTheMarkersOfTheOthers(): void {
+		// carol declined and dave's server is paused: still members of the team
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER],
+		]);
+		$this->participantService->method('getParticipantsByActorType')->willReturn([]);
+		$this->userManager->method('get')->with('alice')->willReturn($this->createMock(IUser::class));
+		$carol = self::invokePrivate($this->service, 'hashMember', ['carol@other.example']);
+		$dave = self::invokePrivate($this->service, 'hashMember', ['dave@down.example']);
+		$this->appConfig->method('getAppValueArray')->willReturn([7 => [
+			'left' => [$carol => true],
+			'wait' => [$dave => ['count' => 1, 'until' => 2000000]],
+		]]);
+
+		$this->participantService->expects($this->once())->method('addUsers');
+		// Only bob's own marker is cleared (he had none): carol and dave keep theirs
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with(Config::TEAM_FEDERATED_MEMBERS, [7 => [
+				'left' => [$carol => true],
+				'wait' => [$dave => ['count' => 1, 'until' => 2000000]],
+			]]);
+
+		$this->service->applyTeamMember($this->room, $this->makeTeamMember(Member::TYPE_USER, 'bob', 'remote.example'));
+	}
+
+	public function testEmailMemberIsInvitedRightAway(): void {
+		$member = $this->makeTeamMember(Member::TYPE_MAIL, 'guest@example.tld');
+		$this->circlesAdapter->method('getEmailOfMember')->with($member)->willReturn('guest@example.tld');
+		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+		$this->appConfig->method('getAppValueArray')->willReturn([]);
+		$participant = $this->makeEmailParticipant('guest@example.tld');
+
+		$this->participantService->expects($this->once())
+			->method('inviteEmailAddress')
+			->with($this->room, hash('sha256', 'guest@example.tld'), 'guest@example.tld', 'Guest@example.tld')
+			->willReturn($participant);
+		$this->guestManager->expects($this->once())->method('sendEmailInvitation')->with($this->room, $participant);
+
+		$this->service->applyTeamMember($this->room, $member);
+	}
+
+	public function testEmailGuestWhoIsAParticipantIsNotInvitedAgain(): void {
+		// E.g. the level changed in the Teams app: email guests are always plain participants
+		$member = $this->makeTeamMember(Member::TYPE_MAIL, 'guest@example.tld', '', self::LEVEL_MODERATOR);
+		$this->circlesAdapter->method('getEmailOfMember')->willReturn('guest@example.tld');
+		$this->participantService->method('getParticipantByActor')
+			->with($this->room, Attendee::ACTOR_EMAILS, hash('sha256', 'guest@example.tld'))
+			->willReturn($this->makeEmailParticipant('guest@example.tld'));
+
+		$this->participantService->expects($this->never())->method('inviteEmailAddress');
+		$this->participantService->expects($this->never())->method('updateParticipantType');
 
 		$this->service->applyTeamMember($this->room, $member);
 	}

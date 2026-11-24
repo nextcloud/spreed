@@ -10,6 +10,8 @@ namespace OCA\Talk\Tests\php\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleGenericEvent;
+use OCA\Circles\Events\CircleMemberAddedEvent;
+use OCA\Circles\Events\CircleMemberEditedEvent;
 use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Circles\Model\Circle;
@@ -23,6 +25,8 @@ use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\ISession;
+use OCP\IUser;
+use OCP\IUserSession;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -36,6 +40,7 @@ class TeamRoomListenerTest extends TestCase {
 	protected Room&MockObject $room;
 	protected Member&MockObject $member;
 	protected ISession&MockObject $session;
+	protected IUserSession&MockObject $userSession;
 	/** @var array<string, mixed> Values of the session */
 	protected array $sessionValues = [];
 
@@ -52,11 +57,16 @@ class TeamRoomListenerTest extends TestCase {
 		$this->session->method('remove')->willReturnCallback(function (string $key): void {
 			unset($this->sessionValues[$key]);
 		});
-		$this->listener = new TeamRoomListener($this->manager, $this->syncService, $this->logger, $this->session);
+		$this->userSession = $this->createMock(IUserSession::class);
+		$this->listener = new TeamRoomListener($this->manager, $this->syncService, $this->logger, $this->session, $this->userSession);
 
 		$this->room = $this->createMock(Room::class);
 		$this->room->method('getToken')->willReturn('teamroom');
+		// A user of this server: applied right away
 		$this->member = $this->createMock(Member::class);
+		$this->member->method('getUserType')->willReturn(Member::TYPE_USER);
+		$this->member->method('getUserId')->willReturn('bob');
+		$this->member->method('isLocal')->willReturn(true);
 	}
 
 	private function makeCircle(): Circle&MockObject {
@@ -301,5 +311,100 @@ class TeamRoomListenerTest extends TestCase {
 
 		$this->assertSame('alice', $during);
 		$this->assertSame([], $this->sessionValues);
+	}
+
+	private function makeRemoteMember(): Member&MockObject {
+		$member = $this->createMock(Member::class);
+		$member->method('getUserType')->willReturn(Member::TYPE_USER);
+		$member->method('getUserId')->willReturn('carol');
+		$member->method('isLocal')->willReturn(false);
+		return $member;
+	}
+
+	public function testMemberOfAnotherServerIsNotInvitedWhileCirclesAppliesTheChange(): void {
+		// A slow or failing invitation must not keep Circles from finishing the change
+		$this->withRoom();
+		$event = $this->createMock(AddingCircleMemberEvent::class);
+		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($this->makeRemoteMember());
+
+		$this->syncService->expects($this->never())->method('applyTeamMember');
+		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
+
+		$this->listener->handle($event);
+	}
+
+	public function testMemberOfAnotherServerIsInvitedOnceCirclesFinishedTheChange(): void {
+		$this->withRoom();
+		$member = $this->makeRemoteMember();
+		$event = $this->createMock(CircleMemberAddedEvent::class);
+		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($member);
+
+		$this->syncService->expects($this->once())->method('applyTeamMember')->with($this->room, $member);
+
+		$this->listener->handle($event);
+	}
+
+	public static function dataInvitedOnceCirclesFinishedTheChange(): array {
+		return [
+			'request of a user' => [true, false, 1, 0],
+			'command line' => [false, true, 1, 0],
+			// Loopback request of Circles: wrong address for links and signatures
+			'request without a user' => [false, false, 0, 1],
+		];
+	}
+
+	#[DataProvider('dataInvitedOnceCirclesFinishedTheChange')]
+	public function testMemberOfAnotherServerIsOnlyInvitedWhereTheAddressOfThisServerIsKnown(bool $withUser, bool $cli, int $invited, int $resyncs): void {
+		$this->withRoom();
+		$this->userSession->method('getUser')->willReturn($withUser ? $this->createMock(IUser::class) : null);
+		$listener = $this->getMockBuilder(TeamRoomListener::class)
+			->setConstructorArgs([$this->manager, $this->syncService, $this->logger, $this->session, $this->userSession])
+			->onlyMethods(['isCli'])
+			->getMock();
+		$listener->method('isCli')->willReturn($cli);
+		$member = $this->makeRemoteMember();
+		$event = $this->createMock(CircleMemberAddedEvent::class);
+		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($member);
+
+		$this->syncService->expects($this->exactly($invited))->method('applyTeamMember')->with($this->room, $member);
+		$this->syncService->expects($this->exactly($resyncs))->method('queueResync')->with($this->room);
+
+		$listener->handle($event);
+	}
+
+	public function testUsersOfThisServerAreNotAppliedTwice(): void {
+		// Already applied while Circles applied the change
+		$this->withRoom();
+		$event = $this->createMock(CircleMemberAddedEvent::class);
+		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($this->member);
+
+		$this->syncService->expects($this->never())->method('applyTeamMember');
+
+		$this->listener->handle($event);
+	}
+
+	public static function dataEditedResult(): array {
+		return [
+			'level changed' => [CircleGenericEvent::LEVEL, 1],
+			'display name changed' => [CircleGenericEvent::NAME, 0],
+		];
+	}
+
+	#[DataProvider('dataEditedResult')]
+	public function testOnlyLevelChangesOfMembersOfOtherServersAreApplied(int $type, int $times): void {
+		$this->withRoom();
+		$member = $this->makeRemoteMember();
+		$event = $this->createMock(CircleMemberEditedEvent::class);
+		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($member);
+		$event->method('getType')->willReturn($type);
+
+		$this->syncService->expects($this->exactly($times))->method('applyTeamMember')->with($this->room, $member);
+
+		$this->listener->handle($event);
 	}
 }

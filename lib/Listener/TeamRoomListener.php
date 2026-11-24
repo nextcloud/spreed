@@ -10,9 +10,11 @@ namespace OCA\Talk\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleGenericEvent;
-use OCA\Circles\Events\CircleMemberGenericEvent;
+use OCA\Circles\Events\CircleMemberAddedEvent;
+use OCA\Circles\Events\CircleMemberEditedEvent;
 use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
+use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Events\RoomCreatedEvent;
@@ -23,18 +25,20 @@ use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\ISession;
+use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 /**
  * Apply member changes in Circles to the team rooms and queue a resync.
  *
- * Changes of single local users are applied right away: removed members
- * can not read or write anymore, added members and new levels are there
- * without waiting. Circles fires the events after storing the change, so
- * the member can be read again. The resync is still queued: it invites
- * members of other servers and email guests, and covers the changes Circles
- * fires no event for, like the former owner being demoted or a new owner
- * being picked after the owner left.
+ * Changes of single members are applied right away: removed members can
+ * not read or write anymore, added users and new levels are there without
+ * waiting. Circles fires these events after storing the change, so the
+ * member can be read again. Members of other servers and email guests are
+ * invited once Circles finished the change (CircleMemberAddedEvent,
+ * CircleMemberEditedEvent). The resync is still queued: it retries failed
+ * invitations and covers the changes Circles fires no event for, like the
+ * former owner being demoted or a new owner being picked after the owner left.
  *
  * @template-implements IEventListener<Event>
  */
@@ -44,6 +48,7 @@ class TeamRoomListener implements IEventListener {
 		protected readonly TeamRoomSyncService $syncService,
 		protected readonly LoggerInterface $logger,
 		protected readonly ISession $session,
+		protected readonly IUserSession $userSession,
 	) {
 	}
 
@@ -61,9 +66,16 @@ class TeamRoomListener implements IEventListener {
 		if ($event instanceof EditingCircleMemberEvent) {
 			$room = $event->getType() === CircleGenericEvent::LEVEL ? $this->manager->getTeamRoom($event->getCircle()->getSingleId()) : null;
 			if (!is_null($room)) {
-				$this->asActorOfTeamChange($event, fn () => $this->applyTeamRoomMemberImmediately($room, $event->getMember()));
+				if ($this->isLocalUser($event->getMember())) {
+					$this->asActorOfTeamChange($event->getCircle(), $event->getMember(), fn () => $this->applyTeamRoomMemberImmediately($room, $event->getMember()));
+				}
 				$this->syncService->queueResync($room);
 			}
+			return;
+		}
+
+		if ($event instanceof CircleMemberAddedEvent || $event instanceof CircleMemberEditedEvent) {
+			$this->applyAfterTeamChange($event);
 			return;
 		}
 
@@ -73,15 +85,55 @@ class TeamRoomListener implements IEventListener {
 			if (is_null($room)) {
 				return;
 			}
-			$this->asActorOfTeamChange($event, function () use ($room, $event): void {
+			$this->asActorOfTeamChange($event->getCircle(), $event->getMember(), function () use ($room, $event): void {
 				if ($event instanceof RemovingCircleMemberEvent) {
 					$this->removeFromRoomImmediately($room, $event);
-				} else {
+				} elseif ($this->isLocalUser($event->getMember())) {
+					// Members of other servers and email guests: see applyAfterTeamChange()
 					$this->applyTeamRoomMemberImmediately($room, $event->getMember());
 				}
 			});
 			$this->syncService->queueResync($room);
 		}
+	}
+
+	/**
+	 * Members of other servers and email guests are invited, which means a
+	 * request to their server or a mail. That is done once Circles finished
+	 * the change on all servers (the result events), never while Circles is
+	 * still applying it: a slow or failing invitation must not keep the
+	 * change in the Teams app from being finished. Users of this server were
+	 * applied right away already.
+	 *
+	 * Only in requests of a user and on the command line: Circles often
+	 * finishes the change in its own request to this server (loopback, without
+	 * a user). Links and signatures of this server are built from the address
+	 * of the request, there that is the loopback address: other servers refuse
+	 * the invitation ("Invalid signature") and invitation mails would link to
+	 * it. The resync in the background invites them instead, there the address
+	 * is overwrite.cli.url (which has to be the public URL of this server).
+	 */
+	protected function applyAfterTeamChange(CircleMemberAddedEvent|CircleMemberEditedEvent $event): void {
+		if ($event instanceof CircleMemberEditedEvent && $event->getType() !== CircleGenericEvent::LEVEL) {
+			return;
+		}
+		$member = $event->getMember();
+		if (is_null($member) || $this->isLocalUser($member)) {
+			return;
+		}
+		$room = $this->manager->getTeamRoom($event->getCircle()->getSingleId());
+		if (is_null($room)) {
+			return;
+		}
+		if (is_null($this->userSession->getUser()) && !$this->isCli()) {
+			$this->syncService->queueResync($room);
+			return;
+		}
+		$this->asActorOfTeamChange($event->getCircle(), $member, fn () => $this->applyTeamRoomMemberImmediately($room, $member));
+	}
+
+	protected function isCli(): bool {
+		return PHP_SAPI === 'cli';
 	}
 
 	/**
@@ -110,7 +162,7 @@ class TeamRoomListener implements IEventListener {
 
 	/**
 	 * Added members (also joining or accepting the invitation) and level
-	 * changes. Only users of this server: the others are invited by the resync.
+	 * changes, see TeamRoomSyncService::applyTeamMember()
 	 */
 	protected function applyTeamRoomMemberImmediately(Room $room, Member $member): void {
 		if ($this->syncService->isChangingTeamFromTalk()) {
@@ -143,9 +195,7 @@ class TeamRoomListener implements IEventListener {
 	 *
 	 * @param callable(): void $change
 	 */
-	protected function asActorOfTeamChange(CircleMemberGenericEvent $event, callable $change): void {
-		$circle = $event->getCircle();
-		$member = $event->getMember();
+	protected function asActorOfTeamChange(Circle $circle, Member $member, callable $change): void {
 		$actor = $circle->hasInitiator() ? $circle->getInitiator() : ($member->hasInvitedBy() ? $member->getInvitedBy() : null);
 
 		$previous = [];

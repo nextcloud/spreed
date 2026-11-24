@@ -97,6 +97,27 @@ namespace OCA\Circles\Events {
 		}
 	}
 
+	class CircleResultGenericEvent extends Event {
+		public function getCircle(): Circle {
+		}
+		public function hasMember(): bool {
+		}
+		public function getMember(): ?Member {
+		}
+	}
+
+	class CircleMemberAddedEvent extends CircleResultGenericEvent {
+		public function getType(): int {
+		}
+	}
+
+	class CircleMemberEditedEvent extends CircleResultGenericEvent {
+		public function getType(): int {
+		}
+		public function getNewLevel(): int {
+		}
+	}
+
 	class EditingCircleMemberEvent extends CircleMemberGenericEvent {
 		public function getType(): int {
 		}
