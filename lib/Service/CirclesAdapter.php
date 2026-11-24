@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-type TalkTeamInfo = array{id: string, name: string, description: string, config: int, local: bool}
  * @psalm-type TalkTeamDirectMember = array{level: int, joined: int}
  * @psalm-type TalkTeamDirectMembers = array<string, TalkTeamDirectMember>
- * @psalm-type TalkTeamRemoteMember = array{userId: string, instance: string, displayName: string, level: int}
+ * @psalm-type TalkTeamRemoteMember = array{userId: string, instance: string, displayName: string, level: int, invitedBy?: string}
  */
 class CirclesAdapter {
 
@@ -127,11 +127,20 @@ class CirclesAdapter {
 			|| empty($member->getUserId()) || $member->getLevel() < Member::LEVEL_MEMBER) {
 			return null;
 		}
+		// The user of this server who added the member: sends the invitation
+		$invitedBy = '';
+		if ($member->hasInvitedBy()) {
+			$by = $member->getInvitedBy();
+			if ($by->getUserType() === Member::TYPE_USER && $by->isLocal()) {
+				$invitedBy = (string)$by->getUserId();
+			}
+		}
 		return [
 			'userId' => $member->getUserId(),
 			'instance' => $member->getInstance(),
 			'displayName' => $member->getDisplayName(),
 			'level' => $member->getLevel(),
+			'invitedBy' => $invitedBy,
 		];
 	}
 

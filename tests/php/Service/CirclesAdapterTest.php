@@ -109,7 +109,7 @@ class CirclesAdapterTest extends TestCase {
 		$this->assertSame(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => 0, 'local' => true], $snapshot['team']);
 		$this->assertSame($this->adapter->getDirectMembers('team1'), $snapshot['direct']);
 		$this->assertSame([
-			['userId' => 'alice', 'instance' => 'remote.example', 'displayName' => 'Alice', 'level' => Member::LEVEL_MODERATOR],
+			['userId' => 'alice', 'instance' => 'remote.example', 'displayName' => 'Alice', 'level' => Member::LEVEL_MODERATOR, 'invitedBy' => ''],
 		], $snapshot['remote']);
 		$this->assertSame(['guest@example.tld' => 'Guest@Example.TLD'], $snapshot['emails']);
 	}
@@ -281,5 +281,29 @@ class CirclesAdapterTest extends TestCase {
 		$this->circleService->expects($this->never())->method('updateDisplayName');
 
 		$this->adapter->updateTeam('team1', ['name' => 'New name'], 'alice');
+	}
+
+	public static function dataInvitedBy(): array {
+		return [
+			'user of this server' => [Member::TYPE_USER, true, 'carol'],
+			'user of another server' => [Member::TYPE_USER, false, ''],
+			'occ' => [Member::TYPE_APP, true, ''],
+		];
+	}
+
+	#[DataProvider('dataInvitedBy')]
+	public function testRemoteMembersKnowTheUserOfThisServerWhoAddedThem(int $type, bool $local, string $expected): void {
+		$invitedBy = $this->createMock(FederatedUser::class);
+		$invitedBy->method('getUserType')->willReturn($type);
+		$invitedBy->method('isLocal')->willReturn($local);
+		$invitedBy->method('getUserId')->willReturn($type === Member::TYPE_APP ? 'occ' : 'carol');
+		$member = $this->makeMember(Member::TYPE_USER, 'bob', Member::LEVEL_MEMBER, false);
+		$member->method('hasInvitedBy')->willReturn(true);
+		$member->method('getInvitedBy')->willReturn($invitedBy);
+		$circle = $this->createMock(Circle::class);
+		$circle->method('getMembers')->willReturn([$member]);
+		$this->circlesManager->method('getCircle')->willReturn($circle);
+
+		$this->assertSame($expected, $this->adapter->getRemoteMembers('team1')[0]['invitedBy']);
 	}
 }

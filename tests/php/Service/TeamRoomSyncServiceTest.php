@@ -469,6 +469,43 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->syncFederatedMembers();
 	}
 
+	public function testMembersAreInvitedInTheNameOfTheUserWhoAddedThem(): void {
+		// Talk's federation rules (allowed groups) are checked for the user who added them, not for the owner
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER, 'invitedBy' => 'carol'],
+		]);
+		$this->participantService->method('getParticipantsByActorType')->willReturn([]);
+		$carol = $this->createMock(IUser::class);
+		$this->userManager->method('get')->with('carol')->willReturn($carol);
+
+		$this->federationManager->expects($this->once())
+			->method('isAllowedToInvite')
+			->with($carol, $this->anything(), $this->room);
+		$this->participantService->expects($this->once())
+			->method('addUsers')
+			->with($this->room, $this->anything(), $carol);
+
+		$this->syncFederatedMembers();
+	}
+
+	public function testMembersAddedByAnUnknownUserAreInvitedInTheNameOfALocalOwner(): void {
+		// E.g. the user who added them was deleted since
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER, 'invitedBy' => 'deleted'],
+		]);
+		$this->participantService->method('getParticipantsByActorType')->willReturn([]);
+		$owner = $this->createMock(IUser::class);
+		$this->userManager->method('get')->willReturnCallback(fn (string $userId): ?IUser => $userId === 'alice' ? $owner : null);
+
+		$this->participantService->expects($this->once())
+			->method('addUsers')
+			->with($this->room, $this->anything(), $owner);
+
+		$this->syncFederatedMembers();
+	}
+
 	public function testMembersAreInvitedInTheNameOfALocalOwner(): void {
 		// Talk's federation settings (trusted servers, allowed groups) are checked for that user
 		$this->talkConfig->method('isFederationEnabled')->willReturn(true);

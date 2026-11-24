@@ -399,7 +399,7 @@ class TeamRoomSyncService {
 			return;
 		}
 
-		/** @var array<string, array{cloudId: ICloudId, displayName: string, participantType: int}> $expected Normalized cloud id => member */
+		/** @var array<string, array{cloudId: ICloudId, displayName: string, participantType: int, invitedBy: string}> $expected Normalized cloud id => member */
 		$expected = [];
 		foreach ($remoteMembers as $member) {
 			try {
@@ -412,6 +412,7 @@ class TeamRoomSyncService {
 				'displayName' => $member['displayName'],
 				// Federated users can not be owners
 				'participantType' => max(Participant::MODERATOR, self::getParticipantTypeForLevel($member['level'] ?? Member::LEVEL_MEMBER)),
+				'invitedBy' => $member['invitedBy'] ?? '',
 			];
 		}
 
@@ -427,7 +428,7 @@ class TeamRoomSyncService {
 
 		$markers = $this->getFederatedMarkers($room, array_keys($expected));
 
-		$inviter = null;
+		$roomInviter = null;
 		foreach ($expected as $key => $member) {
 			if (isset($current[$key])) {
 				if ($current[$key]->getAttendee()->getParticipantType() !== $member['participantType']) {
@@ -441,7 +442,11 @@ class TeamRoomSyncService {
 				continue;
 			}
 
-			$inviter ??= $this->getInviter($room);
+			$inviter = $this->getUserWhoAddedTheMember($member['invitedBy']);
+			if (is_null($inviter)) {
+				$roomInviter ??= $this->getInviter($room);
+				$inviter = $roomInviter;
+			}
 			if (is_null($inviter)) {
 				$this->logger->warning('Team conversation ' . $room->getToken() . ' has no local owner or moderator to invite the federated members of the team');
 				break;
@@ -641,6 +646,19 @@ class TeamRoomSyncService {
 	/**
 	 * Federated members are invited in the name of a local owner (team admin)
 	 * or moderator, Talk's federation settings are checked for that user
+	 */
+	/**
+	 * The user of this server who added the member to the team sends the
+	 * invitation: Talk's federation rules (allowed groups) are checked for
+	 * them, not for somebody else of the conversation
+	 */
+	protected function getUserWhoAddedTheMember(string $invitedBy): ?IUser {
+		return $invitedBy !== '' ? $this->userManager->get($invitedBy) : null;
+	}
+
+	/**
+	 * Fallback when the member was not added by a user of this server (e.g.
+	 * occ, another server): the owner or a moderator of the conversation
 	 */
 	protected function getInviter(Room $room): ?IUser {
 		$attendee = $this->participantService->getHighestPermissionAttendee($room);
@@ -1338,7 +1356,7 @@ class TeamRoomSyncService {
 			return;
 		}
 
-		$inviter = $this->getInviter($room);
+		$inviter = $this->getUserWhoAddedTheMember($teamMember['invitedBy'] ?? '') ?? $this->getInviter($room);
 		if (is_null($inviter)) {
 			$this->logger->warning('Team conversation ' . $room->getToken() . ' has no local owner or moderator to invite the federated members of the team');
 			return;
