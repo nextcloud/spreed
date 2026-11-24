@@ -161,6 +161,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly InvitationService $invitationService,
 		private readonly ParticipantService $participantService,
 		private readonly TeamRoomSyncService $teamRoomSyncService,
+		private readonly TeamRoomSettingsService $teamRoomSettingsService,
 		private readonly SessionService $sessionService,
 		private readonly GuestManager $guestManager,
 		private readonly IUserStatusManager $statusManager,
@@ -1275,6 +1276,17 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if (!TeamRoomSettingsService::canEditTeamSettings($this->room, $this->participant)) {
 			// Settings of the team: only team admins (the owners of the team conversation)
 			return new DataResponse(['error' => 'team'], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->room->isTeamManaged()) {
+			// The name of the team: Circles decides it, the room gets the name of the team
+			try {
+				$this->teamRoomSettingsService->renameTeamOfRoom($this->room, $roomName, (string)$this->userId);
+			} catch (\Exception $e) {
+				$this->logger->info('Team of team room ' . $this->room->getToken() . ' refused the name', ['exception' => $e]);
+				return new DataResponse(['error' => NameException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
+			}
+			return new DataResponse($this->formatRoom($this->room, $this->participant));
 		}
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {

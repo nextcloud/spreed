@@ -78,6 +78,15 @@ class TeamRoomSettingsListenerTest extends TestCase {
 		$this->listener->handle($this->makeTeamEditedEvent());
 	}
 
+	public function testRenameFromTalkIsNotAppliedTwice(): void {
+		// TeamRoomSettingsService::renameTeamOfRoom() applies the name to the room itself
+		$this->manager->method('getTeamRoom')->willReturn($this->makeRoom());
+		$this->settingsService->method('isChangingTeamFromTalk')->willReturn(true);
+		$this->settingsService->expects($this->never())->method('applyTeamToRoom');
+
+		$this->listener->handle($this->makeTeamEditedEvent());
+	}
+
 	public function testTeamWithoutRoomIsIgnored(): void {
 		$this->manager->method('getTeamRoom')->willReturn(null);
 		$this->settingsService->expects($this->never())->method('applyTeamToRoom');

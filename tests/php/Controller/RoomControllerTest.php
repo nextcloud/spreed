@@ -28,6 +28,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\TeamRoomSettingsService;
 use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -48,6 +49,7 @@ class RoomControllerTest extends TestCase {
 	private Config&MockObject $talkConfig;
 	private IEventDispatcher&MockObject $dispatcher;
 	private TeamRoomSyncService&MockObject $teamRoomSyncService;
+	private TeamRoomSettingsService&MockObject $teamRoomSettingsService;
 	private IUserManager&MockObject $userManager;
 	private ICloudIdManager&MockObject $cloudIdManager;
 	private FederationManager&MockObject $federationManager;
@@ -65,6 +67,7 @@ class RoomControllerTest extends TestCase {
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->teamRoomSyncService = $this->createMock(TeamRoomSyncService::class);
+		$this->teamRoomSettingsService = $this->createMock(TeamRoomSettingsService::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->federationManager = $this->createMock(FederationManager::class);
@@ -86,6 +89,7 @@ class RoomControllerTest extends TestCase {
 					Config::class => $this->talkConfig,
 					IEventDispatcher::class => $this->dispatcher,
 					TeamRoomSyncService::class => $this->teamRoomSyncService,
+					TeamRoomSettingsService::class => $this->teamRoomSettingsService,
 					IUserManager::class => $this->userManager,
 					ICloudIdManager::class => $this->cloudIdManager,
 					FederationManager::class => $this->federationManager,
@@ -432,6 +436,36 @@ class RoomControllerTest extends TestCase {
 
 		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
 		self::assertSame(['error' => 'team'], $response->getData());
+	}
+
+	public static function dataRenameTeamRoom(): array {
+		return [
+			'renamed by the team' => [null, Http::STATUS_OK],
+			// e.g. too short or too long for Circles, or Circles unavailable
+			'refused by the team' => [new \Exception('Circle name is too short'), Http::STATUS_BAD_REQUEST],
+		];
+	}
+
+	#[DataProvider('dataRenameTeamRoom')]
+	public function testRenamingTeamRoomsRenamesTheTeam(?\Exception $refused, int $status): void {
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::OWNER]));
+		$this->participant->method('isOwner')->willReturn(true);
+		$rename = $this->teamRoomSettingsService->expects($this->once())
+			->method('renameTeamOfRoom')
+			->with($this->room, 'New name', 'alice');
+		if ($refused !== null) {
+			$rename->willThrowException($refused);
+		}
+		// The room gets the name of the team, never the requested one directly
+		$this->roomService->expects($this->never())->method('setName');
+
+		$response = $this->controller->renameRoom('New name');
+
+		self::assertSame($status, $response->getStatus());
+		if ($refused !== null) {
+			self::assertSame(['error' => 'value'], $response->getData());
+		}
 	}
 
 	public static function dataAddFederatedToTeamRoom(): array {

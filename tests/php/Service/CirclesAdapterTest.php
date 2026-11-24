@@ -13,6 +13,7 @@ use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\Member;
+use OCA\Circles\Service\CircleService;
 use OCA\Circles\Service\FederatedUserService;
 use OCA\Talk\Service\CirclesAdapter;
 use OCP\App\IAppManager;
@@ -27,6 +28,7 @@ class CirclesAdapterTest extends TestCase {
 	protected ContainerInterface&MockObject $container;
 	protected CirclesManager&MockObject $circlesManager;
 	protected FederatedUserService&MockObject $federatedUserService;
+	protected CircleService&MockObject $circleService;
 	/** Session state of Circles, as FederatedUserService keeps it */
 	protected ?FederatedUser $currentUser = null;
 	protected bool $bypass = false;
@@ -39,9 +41,11 @@ class CirclesAdapterTest extends TestCase {
 		$this->circlesManager = $this->createMock(CirclesManager::class);
 		$this->container = $this->createMock(ContainerInterface::class);
 		$this->federatedUserService = $this->createMock(FederatedUserService::class);
+		$this->circleService = $this->createMock(CircleService::class);
 		$this->container->method('get')->willReturnCallback(fn (string $class): object => match ($class) {
 			CirclesManager::class => $this->circlesManager,
 			FederatedUserService::class => $this->federatedUserService,
+			CircleService::class => $this->circleService,
 		});
 		$this->mockSessionState();
 
@@ -267,5 +271,15 @@ class CirclesAdapterTest extends TestCase {
 
 		$this->assertTrue($this->adapter->addRemoteUser('team1', 'bob', 'remote.example', 'alice'));
 		$this->assertSame(['lookup', 'actor'], $calls);
+	}
+
+	public function testRenamingTheTeamChangesItsName(): void {
+		// Circles derives the display name from the name: changing only the
+		// display name would be replaced by the old name again
+		$this->circlesManager->method('getFederatedUser')->willReturn($this->createMock(FederatedUser::class));
+		$this->circleService->expects($this->once())->method('updateName')->with('team1', 'New name');
+		$this->circleService->expects($this->never())->method('updateDisplayName');
+
+		$this->adapter->updateTeam('team1', ['name' => 'New name'], 'alice');
 	}
 }

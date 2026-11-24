@@ -122,6 +122,55 @@ class TeamRoomSettingsServiceTest extends TestCase {
 		$this->service->applyTeamToRoom($room, self::makeTeam());
 	}
 
+	public function testRenamingTheRoomRenamesTheTeamFirst(): void {
+		// Circles decides the name, e.g. "Team name (2)": the room gets that name
+		$room = $this->makeRoom();
+		$calls = [];
+		$team = self::makeTeam();
+		$team['name'] = 'Team name (2)';
+		$this->circlesAdapter->expects($this->once())->method('updateTeam')
+			->with('team1', ['name' => 'Team name'], 'alice')
+			->willReturnCallback(function () use (&$calls): void {
+				$calls[] = 'team';
+				$this->assertTrue($this->service->isChangingTeamFromTalk());
+			});
+		$this->circlesAdapter->method('getTeam')->with('team1')->willReturn($team);
+		$this->roomService->expects($this->once())->method('setName')
+			->with($room, 'Team name (2)')
+			->willReturnCallback(function () use (&$calls): void {
+				$calls[] = 'room';
+			});
+
+		$this->service->renameTeamOfRoom($room, 'Team name', 'alice');
+
+		$this->assertSame(['team', 'room'], $calls);
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testRoomKeepsItsNameWhenTheTeamRefusesIt(): void {
+		$room = $this->makeRoom();
+		$this->circlesAdapter->method('updateTeam')->willThrowException(new \Exception('Circle name is too short'));
+		$this->roomService->expects($this->never())->method('setName');
+
+		try {
+			$this->service->renameTeamOfRoom($room, 'QA', 'alice');
+			$this->fail('The refusal of the team is passed on');
+		} catch (\Exception $e) {
+			$this->assertSame('Circle name is too short', $e->getMessage());
+		}
+		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testLongTeamDescriptionIsShortenedForTheRoom(): void {
+		// Circles has no limit, the Teams app API and occ accept longer descriptions
+		$room = $this->makeRoom();
+		$team = self::makeTeam();
+		$team['description'] = ' ' . str_repeat('ä', Room::DESCRIPTION_MAXIMUM_LENGTH + 10);
+		$this->roomService->expects($this->once())->method('setDescription')->with($room, str_repeat('ä', Room::DESCRIPTION_MAXIMUM_LENGTH));
+
+		$this->service->applyTeamToRoom($room, $team);
+	}
+
 	public function testTeamIsLoadedWhenNotGiven(): void {
 		$room = $this->makeRoom();
 		$this->circlesAdapter->expects($this->once())->method('getTeam')->with('team1')->willReturn(self::makeTeam());

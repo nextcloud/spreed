@@ -165,6 +165,8 @@ namespace OCA\Circles\Service {
 		}
 		public function circleJoin(string $circleId, ?string $invitationCode = null): array {
 		}
+		public function updateName(string $circleId, string $name): array {
+		}
 		public function updateDisplayName(string $circleId, string $displayName): array {
 		}
 		public function updateDescription(string $circleId, string $description): array {

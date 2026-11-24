@@ -363,7 +363,9 @@ class CirclesAdapter {
 		return function () use ($teamId, $settings): void {
 			$circleService = $this->getCirclesService(CircleService::class);
 			if (isset($settings['name'])) {
-				$circleService->updateDisplayName($teamId, $settings['name']);
+				// Same as the Teams app: Circles derives the display name from the
+				// name, a display name set alone is replaced by the old name again
+				$circleService->updateName($teamId, $settings['name']);
 			}
 			if (isset($settings['description'])) {
 				$circleService->updateDescription($teamId, $settings['description']);

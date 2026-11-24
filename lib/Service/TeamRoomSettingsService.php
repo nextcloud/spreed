@@ -46,6 +46,12 @@ class TeamRoomSettingsService {
 	 */
 	protected int $applyingTeamToRoom = 0;
 
+	/**
+	 * Set while Talk changes the team and applies the result to the room
+	 * itself, so the listener of the Circles event does not apply it again
+	 */
+	protected int $changingTeamFromTalk = 0;
+
 	public function __construct(
 		protected readonly CirclesAdapter $circlesAdapter,
 		protected readonly RoomService $roomService,
@@ -64,6 +70,14 @@ class TeamRoomSettingsService {
 			return $config & ~self::TEAM_CFG_OPEN;
 		}
 		return $config | self::TEAM_CFG_VISIBLE | self::TEAM_CFG_OPEN;
+	}
+
+	/**
+	 * Circles has no limit for descriptions, Talk has: the room shows the
+	 * beginning of a longer description instead of keeping an outdated one
+	 */
+	public static function getDescriptionForRoom(string $description): string {
+		return mb_substr(mb_trim($description), 0, Room::DESCRIPTION_MAXIMUM_LENGTH);
 	}
 
 	/**
@@ -98,7 +112,7 @@ class TeamRoomSettingsService {
 				$this->logger->warning('Name of team ' . $team['id'] . ' is not valid for its room: ' . $e->getReason());
 			}
 			try {
-				$this->roomService->setDescription($room, $team['description']);
+				$this->roomService->setDescription($room, self::getDescriptionForRoom($team['description']));
 			} catch (DescriptionException $e) {
 				$this->logger->warning('Description of team ' . $team['id'] . ' is not valid for its room: ' . $e->getReason());
 			}
@@ -110,6 +124,37 @@ class TeamRoomSettingsService {
 		} finally {
 			$this->applyingTeamToRoom--;
 		}
+	}
+
+	/**
+	 * Renaming a team room renames the team first, as $actorUserId: Circles
+	 * decides the name (cleans it up, refuses names that are too short or too
+	 * long, appends " (2)" when another team has the name already). The room
+	 * then gets the name of the team, with one system message.
+	 *
+	 * @throws \Exception When the team refused the name or Circles is unavailable, the room is unchanged
+	 */
+	public function renameTeamOfRoom(Room $room, string $name, string $actorUserId): void {
+		$this->changingTeamFromTalk++;
+		try {
+			$this->circlesAdapter->updateTeam($room->getObjectId(), ['name' => $name], $actorUserId);
+		} finally {
+			$this->changingTeamFromTalk--;
+		}
+
+		try {
+			$this->applyTeamToRoom($room);
+		} catch (\Exception $e) {
+			// The team is renamed already, the resync renames the room
+			$this->logger->warning('Name of team ' . $room->getObjectId() . ' could not be applied to its room yet', ['exception' => $e]);
+		}
+	}
+
+	/**
+	 * Whether Talk changes the team right now and applies it to the room itself
+	 */
+	public function isChangingTeamFromTalk(): bool {
+		return $this->changingTeamFromTalk > 0;
 	}
 
 	/**
