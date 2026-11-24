@@ -73,6 +73,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { getRootPath } from '@nextcloud/files/dav'
 import { t } from '@nextcloud/l10n'
 import { generateUrl, imagePath } from '@nextcloud/router'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
@@ -173,15 +174,8 @@ export default {
 			return
 		}
 
-		const userRoot = '/files/' + this.actorStore.userId
-		const absoluteBackgroundsFolderPath = userRoot + this.relativeBackgroundsFolderPath
-
 		try {
-			// Create the backgrounds folder if it doesn't exist
-			const client = getDavClient()
-			if (await client.exists(absoluteBackgroundsFolderPath) === false) {
-				await client.createDirectory(absoluteBackgroundsFolderPath)
-			}
+			await this.ensureBackgroundsFolder()
 		} catch (error) {
 			console.debug(error)
 		}
@@ -189,6 +183,17 @@ export default {
 
 	methods: {
 		t,
+		/**
+		 * Create the backgrounds folder, including a missing attachment folder
+		 */
+		async ensureBackgroundsFolder() {
+			const client = getDavClient()
+			const absoluteBackgroundsFolderPath = getRootPath() + this.relativeBackgroundsFolderPath
+			if (await client.exists(absoluteBackgroundsFolderPath) === false) {
+				await client.createDirectory(absoluteBackgroundsFolderPath, { recursive: true })
+			}
+		},
+
 		handleSelectBackground(path) {
 			this.$emit('updateBackground', path)
 			this.selectedBackground = path
@@ -210,7 +215,7 @@ export default {
 			event.target.value = ''
 
 			// userRoot path
-			const userRoot = '/files/' + this.actorStore.userId
+			const userRoot = getRootPath()
 
 			const filePath = this.settingsStore.attachmentFolder + '/Backgrounds/' + file.name
 
