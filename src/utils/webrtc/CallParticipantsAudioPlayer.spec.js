@@ -596,6 +596,74 @@ describe('CallParticipantsAudioPlayer', () => {
 		})
 	})
 
+	describe('change volume', () => {
+		test('volume is applied to the stream but not to the screen', () => {
+			const callParticipantModel1 = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel1)
+
+			callParticipantModel1.attributes.audioAvailable = true
+
+			const stream1 = new MediaStreamMock('stream1')
+			callParticipantModel1.set('stream', stream1)
+			const screen1 = new MediaStreamMock('screen1')
+			callParticipantModel1.set('screen', screen1)
+
+			expect(callParticipantsAudioPlayer._audioElements.get('peerId1-stream').volume).toBe(1)
+
+			callParticipantModel1.set('volume', 0.25)
+
+			expect(callParticipantsAudioPlayer._audioElements.get('peerId1-stream').volume).toBe(0.25)
+			expect(callParticipantsAudioPlayer._audioElements.get('peerId1-screen').volume).toBe(1)
+			assertAudioElement('peerId1-stream', stream1, false)
+		})
+
+		test('volume is kept when the stream changes', () => {
+			const callParticipantModel1 = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel1)
+
+			callParticipantModel1.attributes.audioAvailable = true
+
+			const stream1 = new MediaStreamMock('stream1')
+			callParticipantModel1.set('stream', stream1)
+
+			callParticipantModel1.set('volume', 0.5)
+
+			const stream2 = new MediaStreamMock('stream2')
+			callParticipantModel1.set('stream', stream2)
+
+			assertAudioElement('peerId1-stream', stream2, false)
+			expect(callParticipantsAudioPlayer._audioElements.get('peerId1-stream').volume).toBe(0.5)
+		})
+
+		test('volume of other participants is not changed', () => {
+			const callParticipantModel1 = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel1)
+			const callParticipantModel2 = new CallParticipantModelStub('peerId2')
+			addCallParticipantModel(callParticipantModel2)
+
+			callParticipantModel1.set('stream', new MediaStreamMock('stream1'))
+			callParticipantModel2.set('stream', new MediaStreamMock('stream2'))
+
+			callParticipantModel1.set('volume', 0)
+
+			expect(callParticipantsAudioPlayer._audioElements.get('peerId1-stream').volume).toBe(0)
+			expect(callParticipantsAudioPlayer._audioElements.get('peerId2-stream').volume).toBe(1)
+		})
+
+		test('volume changes are ignored after the participant is removed', () => {
+			const callParticipantModel1 = new CallParticipantModelStub('peerId1')
+			addCallParticipantModel(callParticipantModel1)
+
+			callParticipantModel1.set('stream', new MediaStreamMock('stream1'))
+
+			removeCallParticipantModel(callParticipantModel1)
+
+			callParticipantModel1.set('volume', 0.5)
+
+			expect(callParticipantsAudioPlayer._audioElements.size).toBe(0)
+		})
+	})
+
 	describe('destroy', () => {
 		test('without participants', () => {
 			callParticipantsAudioPlayer.destroy()

@@ -47,6 +47,7 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 	this._handleStreamChangedBound = this._handleStreamChanged.bind(this)
 	this._handleScreenChangedBound = this._handleScreenChanged.bind(this)
 	this._handleAudioAvailableChangedBound = this._handleAudioAvailableChanged.bind(this)
+	this._handleVolumeChangedBound = this._handleVolumeChanged.bind(this)
 
 	this._callParticipantCollection.on('add', this._handleCallParticipantAddedBound)
 	this._callParticipantCollection.on('remove', this._handleCallParticipantRemovedBound)
@@ -76,6 +77,7 @@ CallParticipantsAudioPlayer.prototype = {
 		callParticipantModel.on('change:stream', this._handleStreamChangedBound)
 		callParticipantModel.on('change:screen', this._handleScreenChangedBound)
 		callParticipantModel.on('change:audioAvailable', this._handleAudioAvailableChangedBound)
+		callParticipantModel.on('change:volume', this._handleVolumeChangedBound)
 
 		this._handleStreamChangedBound(callParticipantModel, callParticipantModel.get('stream'))
 		this._handleScreenChangedBound(callParticipantModel, callParticipantModel.get('screen'))
@@ -85,6 +87,7 @@ CallParticipantsAudioPlayer.prototype = {
 		callParticipantModel.off('change:stream', this._handleStreamChangedBound)
 		callParticipantModel.off('change:screen', this._handleScreenChangedBound)
 		callParticipantModel.off('change:audioAvailable', this._handleAudioAvailableChangedBound)
+		callParticipantModel.off('change:volume', this._handleVolumeChangedBound)
 
 		this._handleStreamChangedBound(callParticipantModel, null)
 		this._handleScreenChangedBound(callParticipantModel, null)
@@ -93,10 +96,11 @@ CallParticipantsAudioPlayer.prototype = {
 	_handleStreamChanged(callParticipantModel, stream) {
 		const id = callParticipantModel.get('peerId') + '-stream'
 		const mute = !callParticipantModel.get('audioAvailable')
+		const volume = this._getVolume(callParticipantModel)
 		if (this._mixAudio) {
-			this._setAudioNode(id, stream, mute)
+			this._setAudioNode(id, stream, mute, volume)
 		} else {
-			this._setAudioElement(id, stream, mute)
+			this._setAudioElement(id, stream, mute, volume)
 		}
 	},
 
@@ -109,12 +113,18 @@ CallParticipantsAudioPlayer.prototype = {
 		}
 	},
 
-	_setAudioNode(id, stream, mute = false) {
+	_getVolume(callParticipantModel) {
+		const volume = callParticipantModel.get('volume')
+		return volume === undefined ? 1 : volume
+	},
+
+	_setAudioNode(id, stream, mute = false, volume = 1) {
 		const audioNode = this._audioNodes.get(id)
 		if (audioNode) {
 			if (audioNode.connected) {
-				audioNode.audioSource.disconnect(this._audioDestination)
+				audioNode.gainNode.disconnect(this._audioDestination)
 			}
+			audioNode.audioSource.disconnect(audioNode.gainNode)
 
 			this._audioNodes.delete(id)
 		}
@@ -123,15 +133,20 @@ CallParticipantsAudioPlayer.prototype = {
 			return
 		}
 
+		// The gain node sits between the source and the destination so the
+		// volume of each participant can be adjusted in the mixed audio.
 		const audioSource = this._audioContext.createMediaStreamSource(stream)
+		const gainNode = this._audioContext.createGain()
+		gainNode.gain.value = volume
+		audioSource.connect(gainNode)
 		if (!mute) {
-			audioSource.connect(this._audioDestination)
+			gainNode.connect(this._audioDestination)
 		}
 
-		this._audioNodes.set(id, { audioSource, connected: !mute })
+		this._audioNodes.set(id, { audioSource, gainNode, connected: !mute })
 	},
 
-	_setAudioElement(id, stream, mute = false) {
+	_setAudioElement(id, stream, mute = false, volume = 1) {
 		let audioElement = this._audioElements.get(id)
 		if (audioElement) {
 			audioElement.srcObject = null
@@ -149,6 +164,8 @@ CallParticipantsAudioPlayer.prototype = {
 		if (mute) {
 			audioElement.muted = true
 		}
+
+		audioElement.volume = volume
 
 		this._audioElements.set(id, audioElement)
 	},
@@ -191,10 +208,10 @@ CallParticipantsAudioPlayer.prototype = {
 			}
 
 			if (audioAvailable && !audioNode.connected) {
-				audioNode.audioSource.connect(this._audioDestination)
+				audioNode.gainNode.connect(this._audioDestination)
 				audioNode.connected = true
 			} else if (!audioAvailable && audioNode.connected) {
-				audioNode.audioSource.disconnect(this._audioDestination)
+				audioNode.gainNode.disconnect(this._audioDestination)
 				audioNode.connected = false
 
 				// Force creating a new audio renderer to work around broken
@@ -211,6 +228,24 @@ CallParticipantsAudioPlayer.prototype = {
 		}
 
 		audioElement.muted = !audioAvailable
+	},
+
+	_handleVolumeChanged(callParticipantModel, volume) {
+		const id = callParticipantModel.get('peerId') + '-stream'
+
+		if (this._mixAudio) {
+			const audioNode = this._audioNodes.get(id)
+			if (audioNode) {
+				audioNode.gainNode.gain.value = volume
+			}
+
+			return
+		}
+
+		const audioElement = this._audioElements.get(id)
+		if (audioElement) {
+			audioElement.volume = volume
+		}
 	},
 
 }
