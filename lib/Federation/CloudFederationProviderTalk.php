@@ -599,7 +599,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		$reactionData = $notification['reactionData'] ?? null;
 		if (!is_array($reactionData)
 			|| !isset($reactionData['remoteMessageId'], $reactionData['actorType'], $reactionData['actorId'], $reactionData['actorDisplayName'], $reactionData['reaction'], $reactionData['creationDatetime'])
-			|| !is_numeric($reactionData['remoteMessageId'])
+			|| !is_int($reactionData['remoteMessageId'])
 			|| !is_string($reactionData['actorType'])
 			|| !is_string($reactionData['actorId'])
 			|| !is_string($reactionData['actorDisplayName'])

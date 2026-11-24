@@ -70,7 +70,6 @@ class BackendNotifierTest extends TestCase {
 			'actorDisplayName' => 'Reactor',
 			'reaction' => '👍',
 			'creationDatetime' => '2025-01-01T00:00:00+00:00',
-			'defaultNotificationLevel' => 1,
 		];
 	}
 
@@ -112,7 +111,7 @@ class BackendNotifierTest extends TestCase {
 
 		$response = $this->createMock(IResponse::class);
 		$response->method('getStatusCode')->willReturn(Http::STATUS_BAD_REQUEST);
-		$response->method('getBody')->willReturn(json_encode(['message' => FederationManager::OCM_RESOURCE_NOT_FOUND]));
+		$response->method('getBody')->willReturn(json_encode(['message' => FederationManager::OCM_RESOURCE_NOT_FOUND], JSON_THROW_ON_ERROR));
 		$this->federationProviderManager->method('sendCloudNotification')
 			->willReturn($response);
 

@@ -86,6 +86,22 @@ class CloudFederationProviderTalkTest extends TestCase {
 				'reaction' => '👍',
 				'creationDatetime' => '2025-01-01T00:00:00+00:00',
 			]]],
+			'string remoteMessageId' => [['reactionData' => [
+				'remoteMessageId' => '42',
+				'actorType' => 'users',
+				'actorId' => 'reactor',
+				'actorDisplayName' => 'Reactor',
+				'reaction' => '👍',
+				'creationDatetime' => '2025-01-01T00:00:00+00:00',
+			]]],
+			'float remoteMessageId' => [['reactionData' => [
+				'remoteMessageId' => 42.5,
+				'actorType' => 'users',
+				'actorId' => 'reactor',
+				'actorDisplayName' => 'Reactor',
+				'reaction' => '👍',
+				'creationDatetime' => '2025-01-01T00:00:00+00:00',
+			]]],
 			'missing reaction' => [['reactionData' => [
 				'remoteMessageId' => 42,
 				'actorType' => 'users',
