@@ -112,6 +112,13 @@
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
 
+				<!-- mention all participants warning -->
+				<NcNoteCard
+					v-if="showMentionAllWarning"
+					class="new-message-form__hint"
+					type="warning"
+					:text="mentionAllWarningText" />
+
 				<NcTextField
 					v-if="threadCreating"
 					ref="threadTitleInputRef"
@@ -340,7 +347,6 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import debounce from 'debounce'
 import { inject, nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -364,7 +370,6 @@ import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better indication
 import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantClockOutline.vue' // Filled for better indication
 import MessageQuote from '../MessageQuote.vue'
-import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
@@ -402,8 +407,8 @@ import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
 
-// Participant count at which mentioning `@all` requires a confirmation
-const mentionAllConfirmationThreshold = 10
+// Participant count above which mentioning `@all` shows a warning
+const mentionAllWarningThreshold = 20
 
 export default {
 	name: 'NewMessage',
@@ -817,11 +822,15 @@ export default {
 				].includes(this.conversation.participantType)
 		},
 
-		requiresMentionAllConfirmation() {
+		showMentionAllWarning() {
 			return !this.silentChat
 				&& this.canMentionAll
-				&& this.participantCount >= mentionAllConfirmationThreshold
+				&& this.participantCount >= mentionAllWarningThreshold
 				&& hasAtAllMention(this.text)
+		},
+
+		mentionAllWarningText() {
+			return n('spreed', 'You are about to mention %n participant, who will receive a notification.', 'You are about to mention %n participants, who will receive a notification.', this.participantCount)
 		},
 	},
 
@@ -1075,9 +1084,6 @@ export default {
 			}
 
 			if (supportScheduleMessages && this.scheduleMessageTime && !this.isPrivateReply) {
-				if (this.requiresMentionAllConfirmation && !(await this.confirmMentionAllParticipants())) {
-					return
-				}
 				await this.handleScheduleMessage()
 				return
 			}
@@ -1086,10 +1092,6 @@ export default {
 				// Block sending and prompt user to pick a time for scheduling
 				this.submenu = 'schedule'
 				this.isNcActionsOpen = true
-				return
-			}
-
-			if (this.requiresMentionAllConfirmation && !(await this.confirmMentionAllParticipants())) {
 				return
 			}
 
@@ -1185,26 +1187,6 @@ export default {
 		// Broadcast message to all breakout rooms
 		async submitMessage(token, temporaryMessage) {
 			this.$emit('submit', { token, temporaryMessage })
-		},
-
-		/**
-		 * Ask for confirmation before sending a message that mentions all
-		 * participants of a large conversation
-		 *
-		 * @return {Promise<boolean>} whether the user confirmed mentioning everyone
-		 */
-		async confirmMentionAllParticipants() {
-			const confirmed = await spawnDialog(ConfirmDialog, {
-				container: this.container,
-				name: t('spreed', 'Mention all participants'),
-				message: n('spreed', 'You are about to mention %n participant, who will receive a notification.', 'You are about to mention %n participants, who will receive a notification.', this.participantCount),
-				buttons: [
-					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
-					{ label: t('spreed', 'Send message'), variant: 'primary', callback: () => true },
-				],
-			})
-
-			return !!confirmed
 		},
 
 		async handleSubmitSpam(numberOfMessages) {
