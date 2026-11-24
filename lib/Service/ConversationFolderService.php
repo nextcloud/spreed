@@ -231,6 +231,60 @@ class ConversationFolderService {
 	}
 
 	/**
+	 * Move an attachment of a deleted message out of the team folder into
+	 * the Deleted folder of the conversation in the home of the author, so
+	 * only the author can still access it (like moveToDeletedFolder()).
+	 *
+	 * @throws NotPermittedException
+	 */
+	public function moveTeamAttachmentToDeletedFolder(string $ownerId, string $token, int $fileId): void {
+		$node = $this->rootFolder->getUserFolder($ownerId)->getFirstNodeById($fileId);
+		if (is_null($node) || $node->getType() !== FileInfo::TYPE_FILE) {
+			// Deleted meanwhile, or the author has no access anymore (left the team)
+			return;
+		}
+		if (!$this->isInTeamAttachmentFolderOf($node, $ownerId)) {
+			// Moved meanwhile (e.g. filed elsewhere in the team folder): the team
+			// works with it now, it is not taken away with the deleted message
+			return;
+		}
+
+		$attachmentNode = $this->getOrCreateChildFolder(
+			$this->rootFolder->getUserFolder($ownerId),
+			mb_ltrim($this->talkConfig->getAttachmentFolder($ownerId), '/'),
+		);
+
+		// The conversation folder exists already from the Draft, its name has the token at the end.
+		// Otherwise it is named after the team folder: <team folder>/.system/<user>/<file>
+		$conversationFolder = null;
+		foreach ($attachmentNode->getDirectoryListing() as $child) {
+			if ($child instanceof Folder && str_ends_with($child->getName(), '-' . $token)) {
+				$conversationFolder = $child;
+				break;
+			}
+		}
+		$conversationFolder ??= $attachmentNode->newFolder($this->talkConfig->buildConversationFolderName($node->getParent()->getParent()->getParent()->getName(), $token));
+
+		$this->finalizeUploadedFile($this->getOrCreateChildFolder($conversationFolder, 'Deleted'), $node, $node->getName());
+	}
+
+	/**
+	 * Whether the file is still where it was posted: <team folder>/.system/<name-uid>/<file>
+	 */
+	protected function isInTeamAttachmentFolderOf(Node $node, string $userId): bool {
+		try {
+			$userFolder = $node->getParent();
+			$talkFolder = $userFolder->getParent();
+			$teamFolder = $talkFolder->getParent();
+		} catch (NotFoundException) {
+			return false;
+		}
+		return str_ends_with($userFolder->getName(), '-' . $userId)
+			&& $talkFolder->getName() === self::TEAM_ATTACHMENT_FOLDER
+			&& empty($teamFolder->getInternalPath());
+	}
+
+	/**
 	 * Talk/<Conversation>-<token>/ in the home of the user, without the shared user subfolder
 	 *
 	 * @throws \RuntimeException if a path component exists but is not a folder

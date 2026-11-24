@@ -650,6 +650,41 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->service->moveToDeletedFolder('alice', 'tok', 42);
 	}
 
+	public function testTeamAttachmentOfDeletedMessageIsSkippedWhenMissing(): void {
+		// Deleted meanwhile, or the author left the team
+		$userFolder = $this->makeUserFolderMock();
+		$userFolder->method('getFirstNodeById')->with(42)->willReturn(null);
+		$this->rootFolder->method('getUserFolder')->with('alice')->willReturn($userFolder);
+
+		$userFolder->expects($this->never())->method('newFolder');
+
+		$this->service->moveTeamAttachmentToDeletedFolder('alice', 'tok', 42);
+	}
+
+	public function testTeamAttachmentMovedElsewhereStaysInTheTeamFolder(): void {
+		// Filed in another folder of the team folder: the team works with it now
+		$teamFolder = $this->createMock(Folder::class);
+		$teamFolder->method('getInternalPath')->willReturn('');
+		$documents = $this->createMock(Folder::class);
+		$documents->method('getName')->willReturn('Documents');
+		$documents->method('getParent')->willReturn($teamFolder);
+		$userSubfolder = $this->createMock(Folder::class);
+		$userSubfolder->method('getName')->willReturn('Alice-alice');
+		$userSubfolder->method('getParent')->willReturn($documents);
+		$file = $this->createMock(File::class);
+		$file->method('getType')->willReturn(FileInfo::TYPE_FILE);
+		$file->method('getParent')->willReturn($userSubfolder);
+
+		$userFolder = $this->makeUserFolderMock();
+		$userFolder->method('getFirstNodeById')->with(42)->willReturn($file);
+		$this->rootFolder->method('getUserFolder')->with('alice')->willReturn($userFolder);
+
+		$file->expects($this->never())->method('move');
+		$userFolder->expects($this->never())->method('newFolder');
+
+		$this->service->moveTeamAttachmentToDeletedFolder('alice', 'tok', 42);
+	}
+
 	// -------------------------------------------------------------------------
 	// Team conversations — team folder
 	// -------------------------------------------------------------------------

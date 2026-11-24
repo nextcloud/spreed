@@ -602,7 +602,11 @@ class ChatManager {
 		}
 
 		try {
-			$this->conversationFolderService->moveToDeletedFolder($comment->getActorId(), $token, (int)$messageData['parameters']['fileId']);
+			if (!empty($messageData['parameters']['teamFolder'])) {
+				$this->conversationFolderService->moveTeamAttachmentToDeletedFolder($comment->getActorId(), $token, (int)$messageData['parameters']['fileId']);
+			} else {
+				$this->conversationFolderService->moveToDeletedFolder($comment->getActorId(), $token, (int)$messageData['parameters']['fileId']);
+			}
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to move attachment of deleted message', ['exception' => $e]);
 		}
