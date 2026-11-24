@@ -51,11 +51,13 @@ export const useSoundsStore = defineStore('sounds', {
 			join: null,
 			leave: null,
 			wait: null,
+			raiseHand: null,
 		},
 		audioObjectsPromises: {
 			join: null,
 			leave: null,
 			wait: null,
+			raiseHand: null,
 		},
 		audioOutputDeviceId: undefined,
 	}),
@@ -113,7 +115,7 @@ export const useSoundsStore = defineStore('sounds', {
 		},
 
 		/**
-		 * If not already created, this creates audio objects for join, leave and wait sounds
+		 * If not already created, this creates audio objects for join, leave, wait and raise hand sounds
 		 */
 		initAudioObjects() {
 			if (this.audioObjectsCreated) {
@@ -123,6 +125,7 @@ export const useSoundsStore = defineStore('sounds', {
 			this.createAudioObject('join', 'join_call', 0.75)
 			this.createAudioObject('leave', 'leave_call', 0.75)
 			this.createAudioObject('wait', 'LibremPhoneCall', 0.5)
+			this.createAudioObject('raiseHand', 'raise_hand', 0.75)
 			this.audioObjectsCreated = true
 		},
 
