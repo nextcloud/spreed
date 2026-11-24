@@ -23,6 +23,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -40,6 +41,7 @@ class MessageSentListener implements IEventListener {
 		private readonly MessageParser $messageParser,
 		private readonly IFactory $l10nFactory,
 		private readonly ChatManager $chatManager,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -183,7 +185,7 @@ class MessageSentListener implements IEventListener {
 			'actorId' => $event->getActorId(),
 			'actorDisplayName' => $event->getActorDisplayName(),
 			'reaction' => $event->getReaction(),
-			'creationDatetime' => ($event->getReactionMessage()?->getCreationDateTime() ?? new \DateTime())->format(\DateTime::ATOM),
+			'creationDatetime' => ($event->getReactionMessage()?->getCreationDateTime() ?? $this->timeFactory->getDateTime())->format(\DateTime::ATOM),
 		];
 
 		$attendee = $participant->getAttendee();
