@@ -919,6 +919,10 @@ class TeamRoomSyncService {
 
 		$member = $this->findRemoteMember($teamId, $key);
 		if (is_null($member)) {
+			if ((($this->circlesAdapter->getTeam($teamId)['config'] ?? 0) & TeamRoomSettingsService::TEAM_CFG_FEDERATED) === 0) {
+				// Checked before asking Circles, which would look the user up on their server first
+				throw new \Exception('The team does not allow members of other servers ("Allow federated members" is disabled)');
+			}
 			$server = $this->cloudIdManager->removeProtocolFromUrl($cloudId->getRemote());
 			if (!$this->circlesAdapter->addRemoteUser($teamId, $cloudId->getUser(), $server, $actor->getUID())) {
 				return false;

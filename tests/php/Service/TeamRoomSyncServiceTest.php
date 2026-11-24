@@ -1405,6 +1405,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$alice = $this->makeAlice();
 		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
 		$this->participantService->method('getParticipantByActor')->willThrowException(new ParticipantNotFoundException());
+		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => TeamRoomSettingsService::TEAM_CFG_FEDERATED, 'local' => true]);
 		$this->circlesAdapter->expects($this->once())->method('addRemoteUser')->with('team1', 'bob', 'remote.example', 'alice')->willReturn(true);
 
 		// In the name of the acting user, as member
@@ -1451,6 +1452,7 @@ class TeamRoomSyncServiceTest extends TestCase {
 
 	public function testFederatedUserOnlyInvitedToAnInviteOnlyTeam(): void {
 		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
+		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => TeamRoomSettingsService::TEAM_CFG_FEDERATED, 'local' => true]);
 		$this->circlesAdapter->method('addRemoteUser')->willReturn(false);
 		$this->participantService->expects($this->never())->method('addUsers');
 
@@ -1470,9 +1472,21 @@ class TeamRoomSyncServiceTest extends TestCase {
 	public function testTeamRefusingTheFederatedUserIsReported(): void {
 		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
 		$exception = new \Exception('Federated members not allowed');
+		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => TeamRoomSettingsService::TEAM_CFG_FEDERATED, 'local' => true]);
 		$this->circlesAdapter->method('addRemoteUser')->willThrowException($exception);
 
 		$this->expectExceptionObject($exception);
+		$this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $this->makeAlice());
+	}
+
+	public function testFederatedUserIsRefusedWhenTheTeamDoesNotAllowThem(): void {
+		// "Allow federated members" disabled: refused before Circles looks the user up on their server
+		$this->circlesAdapter->method('getRemoteMembers')->willReturn([]);
+		$this->circlesAdapter->method('getTeam')->willReturn(['id' => 'team1', 'name' => 'Team', 'description' => '', 'config' => 0, 'local' => true]);
+		$this->circlesAdapter->expects($this->never())->method('addRemoteUser');
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->expectException(\Exception::class);
 		$this->service->addFederatedToTeamRoom($this->room, $this->makeCloudId('bob', 'https://remote.example'), $this->makeAlice());
 	}
 
