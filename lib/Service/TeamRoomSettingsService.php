@@ -134,10 +134,59 @@ class TeamRoomSettingsService {
 	 *
 	 * @throws \Exception When the team refused the name or Circles is unavailable, the room is unchanged
 	 */
-	public function renameTeamOfRoom(Room $room, string $name, string $actorUserId): void {
+	public function renameTeamRoom(Room $room, string $name, string $actorUserId): void {
+		$this->changeTeamRoom($room, ['name' => $name], $actorUserId);
+	}
+
+	/**
+	 * Same as renameTeamRoom() for the description: written to the team first,
+	 * the room gets the description of the team. Talk's limit is checked first.
+	 *
+	 * @throws DescriptionException When the description is too long for Talk, nothing is changed
+	 * @throws \Exception When the team refused it or Circles is unavailable, the room is unchanged
+	 */
+	public function setTeamRoomDescription(Room $room, string $description, string $actorUserId): void {
+		$description = mb_trim($description);
+		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
+			throw new DescriptionException(DescriptionException::REASON_VALUE);
+		}
+		$this->changeTeamRoom($room, ['description' => $description], $actorUserId);
+	}
+
+	/**
+	 * Same as renameTeamRoom() for the listing: written to the team first
+	 * (visible and open, or closed), the room gets the listing of the team.
+	 *
+	 * @param int $listable Room::LISTABLE_*
+	 * @throws ListableException When the room can not have this listing, nothing is changed
+	 * @throws \Exception When the team refused it or Circles is unavailable, the room is unchanged
+	 */
+	public function setTeamRoomListable(Room $room, int $listable, string $actorUserId): void {
+		if (!in_array($listable, [Room::LISTABLE_NONE, Room::LISTABLE_USERS], true)) {
+			throw new ListableException(ListableException::REASON_VALUE);
+		}
+		if ($room->isClassified() && $listable !== Room::LISTABLE_NONE) {
+			throw new ListableException(ListableException::REASON_CLASSIFIED);
+		}
+
+		$config = $this->circlesAdapter->getTeam($room->getObjectId())['config'];
+		$newConfig = self::getConfigForListable($config, $listable);
+		if ($newConfig === $config) {
+			// The team has this listing already, the room only lacked it
+			$this->applyTeamToRoom($room);
+			return;
+		}
+		$this->changeTeamRoom($room, ['config' => $newConfig], $actorUserId);
+	}
+
+	/**
+	 * @param array{name?: string, description?: string, config?: int} $settings
+	 * @throws \Exception When the team refused it or Circles is unavailable, the room is unchanged
+	 */
+	protected function changeTeamRoom(Room $room, array $settings, string $actorUserId): void {
 		$this->changingTeamFromTalk++;
 		try {
-			$this->circlesAdapter->updateTeam($room->getObjectId(), ['name' => $name], $actorUserId);
+			$this->circlesAdapter->updateTeam($room->getObjectId(), $settings, $actorUserId);
 		} finally {
 			$this->changingTeamFromTalk--;
 		}
@@ -145,8 +194,8 @@ class TeamRoomSettingsService {
 		try {
 			$this->applyTeamToRoom($room);
 		} catch (\Exception $e) {
-			// The team is renamed already, the resync renames the room
-			$this->logger->warning('Name of team ' . $room->getObjectId() . ' could not be applied to its room yet', ['exception' => $e]);
+			// The team is changed already, the next resync will update the room
+			$this->logger->warning('Settings of team ' . $room->getObjectId() . ' could not be applied to its team room yet', ['exception' => $e]);
 		}
 	}
 

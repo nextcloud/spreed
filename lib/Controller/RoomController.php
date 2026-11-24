@@ -1281,7 +1281,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($this->room->isTeamManaged()) {
 			// The name of the team: Circles decides it, the room gets the name of the team
 			try {
-				$this->teamRoomSettingsService->renameTeamOfRoom($this->room, $roomName, (string)$this->userId);
+				$this->teamRoomSettingsService->renameTeamRoom($this->room, $roomName, (string)$this->userId);
 			} catch (\Exception $e) {
 				$this->logger->info('Team of team room ' . $this->room->getToken() . ' refused the name', ['exception' => $e]);
 				return new DataResponse(['error' => NameException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
@@ -1332,6 +1332,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 		// Settings of the team: only team admins (the owners of the team room)
 		if (!TeamRoomSettingsService::canEditTeamSettings($this->room, $this->participant)) {
 			return new DataResponse(['error' => 'team'], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->room->isTeamManaged()) {
+			// The description of the team: written to the team first, the room then gets it from the team
+			try {
+				$this->teamRoomSettingsService->setTeamRoomDescription($this->room, $description, (string)$this->userId);
+			} catch (DescriptionException $e) {
+				return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+			} catch (\Exception $e) {
+				$this->logger->info('Team of team room ' . $this->room->getToken() . ' refused the description', ['exception' => $e]);
+				return new DataResponse(['error' => DescriptionException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
+			}
+			return new DataResponse($this->formatRoom($this->room, $this->participant));
 		}
 
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
@@ -2391,6 +2404,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$forced = $this->forcedParameters->getForcedParameter(Parameter::LISTABLE);
 		if ($forced !== null && $forced !== $scope) {
 			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->isTeamManaged()) {
+			// The listing of the team: written to the team first, the room then gets it from the team
+			try {
+				$this->teamRoomSettingsService->setTeamRoomListable($this->room, $scope, (string)$this->userId);
+			} catch (ListableException $e) {
+				return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+			} catch (\Exception $e) {
+				$this->logger->info('Team of team room ' . $this->room->getToken() . ' refused the listing', ['exception' => $e]);
+				return new DataResponse(['error' => ListableException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
+			}
+			return new DataResponse($this->formatRoom($this->room, $this->participant));
 		}
 
 		try {

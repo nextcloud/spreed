@@ -438,6 +438,38 @@ class RoomControllerTest extends TestCase {
 		self::assertSame(['error' => 'team'], $response->getData());
 	}
 
+	public static function dataTeamRoomSettingWrittenToTheTeam(): array {
+		return [
+			'description' => ['setDescription', 'setTeamRoomDescription', 'New description', null, Http::STATUS_OK],
+			'description refused by the team' => ['setDescription', 'setTeamRoomDescription', 'New description', new \Exception('Circles App unavailable'), Http::STATUS_BAD_REQUEST],
+			'listing' => ['setListable', 'setTeamRoomListable', Room::LISTABLE_USERS, null, Http::STATUS_OK],
+			'listing refused by the team' => ['setListable', 'setTeamRoomListable', Room::LISTABLE_USERS, new \Exception('Circles App unavailable'), Http::STATUS_BAD_REQUEST],
+		];
+	}
+
+	#[DataProvider('dataTeamRoomSettingWrittenToTheTeam')]
+	public function testTeamRoomSettingsAreWrittenToTheTeamFirst(string $method, string $serviceMethod, string|int $value, ?\Exception $refused, int $status): void {
+		$this->inTeamRoom();
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::OWNER]));
+		$this->participant->method('isOwner')->willReturn(true);
+		$change = $this->teamRoomSettingsService->expects($this->once())
+			->method($serviceMethod)
+			->with($this->room, $value, 'alice');
+		if ($refused !== null) {
+			$change->willThrowException($refused);
+		}
+		// The room gets the value of the team, never the requested one directly
+		$this->roomService->expects($this->never())->method('setDescription');
+		$this->roomService->expects($this->never())->method('setListable');
+
+		$response = $this->controller->$method($value);
+
+		self::assertSame($status, $response->getStatus());
+		if ($refused !== null) {
+			self::assertSame(['error' => 'value'], $response->getData());
+		}
+	}
+
 	public static function dataRenameTeamRoom(): array {
 		return [
 			'renamed by the team' => [null, Http::STATUS_OK],
@@ -452,7 +484,7 @@ class RoomControllerTest extends TestCase {
 		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::OWNER]));
 		$this->participant->method('isOwner')->willReturn(true);
 		$rename = $this->teamRoomSettingsService->expects($this->once())
-			->method('renameTeamOfRoom')
+			->method('renameTeamRoom')
 			->with($this->room, 'New name', 'alice');
 		if ($refused !== null) {
 			$rename->willThrowException($refused);

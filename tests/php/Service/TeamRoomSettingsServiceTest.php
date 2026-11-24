@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Exceptions\RoomProperty\DescriptionException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -141,10 +143,69 @@ class TeamRoomSettingsServiceTest extends TestCase {
 				$calls[] = 'room';
 			});
 
-		$this->service->renameTeamOfRoom($room, 'Team name', 'alice');
+		$this->service->renameTeamRoom($room, 'Team name', 'alice');
 
 		$this->assertSame(['team', 'room'], $calls);
 		$this->assertFalse($this->service->isChangingTeamFromTalk());
+	}
+
+	public function testDescriptionIsWrittenToTheTeamFirst(): void {
+		$room = $this->makeRoom();
+		$this->circlesAdapter->expects($this->once())->method('updateTeam')
+			->with('team1', ['description' => 'Team description'], 'alice');
+		$this->circlesAdapter->method('getTeam')->willReturn(self::makeTeam());
+		$this->roomService->expects($this->once())->method('setDescription')->with($room, 'Team description');
+
+		$this->service->setTeamRoomDescription($room, '  Team description ', 'alice');
+	}
+
+	public function testTooLongDescriptionIsNotWrittenToTheTeam(): void {
+		$room = $this->makeRoom();
+		$this->circlesAdapter->expects($this->never())->method('updateTeam');
+		$this->roomService->expects($this->never())->method('setDescription');
+
+		$this->expectException(DescriptionException::class);
+		$this->service->setTeamRoomDescription($room, str_repeat('a', Room::DESCRIPTION_MAXIMUM_LENGTH + 1), 'alice');
+	}
+
+	public function testRoomKeepsItsDescriptionWhenTheTeamRefusesIt(): void {
+		$room = $this->makeRoom();
+		$this->circlesAdapter->method('updateTeam')->willThrowException(new \Exception('Circles App unavailable'));
+		$this->roomService->expects($this->never())->method('setDescription');
+
+		$this->expectExceptionMessage('Circles App unavailable');
+		$this->service->setTeamRoomDescription($room, 'New description', 'alice');
+	}
+
+	public function testListingIsWrittenToTheTeamFirst(): void {
+		$room = $this->makeRoom();
+		$visibleOpen = TeamRoomSettingsService::TEAM_CFG_VISIBLE | TeamRoomSettingsService::TEAM_CFG_OPEN;
+		$this->circlesAdapter->method('getTeam')->willReturnOnConsecutiveCalls(self::makeTeam(), self::makeTeam($visibleOpen));
+		$this->circlesAdapter->expects($this->once())->method('updateTeam')
+			->with('team1', ['config' => $visibleOpen], 'alice');
+		$this->roomService->expects($this->once())->method('setListable')->with($room, Room::LISTABLE_USERS);
+
+		$this->service->setTeamRoomListable($room, Room::LISTABLE_USERS, 'alice');
+	}
+
+	public static function dataListingNotForTeams(): array {
+		return [
+			// Guests can not be members of a team
+			'everyone' => [Room::LISTABLE_ALL, false],
+			'unknown' => [42, false],
+			'classified' => [Room::LISTABLE_USERS, true],
+		];
+	}
+
+	#[DataProvider('dataListingNotForTeams')]
+	public function testListingTheTeamCanNotHaveIsNotWrittenToTheTeam(int $listable, bool $classified): void {
+		$room = $this->makeRoom();
+		$room->method('isClassified')->willReturn($classified);
+		$this->circlesAdapter->expects($this->never())->method('updateTeam');
+		$this->roomService->expects($this->never())->method('setListable');
+
+		$this->expectException(ListableException::class);
+		$this->service->setTeamRoomListable($room, $listable, 'alice');
 	}
 
 	public function testRoomKeepsItsNameWhenTheTeamRefusesIt(): void {
@@ -153,7 +214,7 @@ class TeamRoomSettingsServiceTest extends TestCase {
 		$this->roomService->expects($this->never())->method('setName');
 
 		try {
-			$this->service->renameTeamOfRoom($room, 'QA', 'alice');
+			$this->service->renameTeamRoom($room, 'QA', 'alice');
 			$this->fail('The refusal of the team is passed on');
 		} catch (\Exception $e) {
 			$this->assertSame('Circle name is too short', $e->getMessage());

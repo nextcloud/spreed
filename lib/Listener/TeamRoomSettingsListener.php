@@ -55,7 +55,7 @@ class TeamRoomSettingsListener implements IEventListener {
 
 	protected function teamEdited(EditingCircleEvent $event): void {
 		if ($this->settingsService->isChangingTeamFromTalk()) {
-			// Talk applies the result to the room itself, see TeamRoomSettingsService::renameTeamOfRoom()
+			// Talk applies the result to the room itself, see TeamRoomSettingsService::renameTeamRoom()
 			return;
 		}
 
