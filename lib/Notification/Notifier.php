@@ -582,7 +582,9 @@ class Notifier implements INotifier {
 						$reactionUser = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_FEDERATED_USERS, $subjectParameters['userId']);
 						$displayName = $reactionUser->getAttendee()->getDisplayName();
 					} catch (ParticipantNotFoundException) {
-						$displayName = $subjectParameters['userDisplayName'] ?? $cloudId->getDisplayId();
+						$displayName = !empty($subjectParameters['userDisplayName'])
+							? $subjectParameters['userDisplayName']
+							: $cloudId->getDisplayId();
 					}
 				} else {
 					$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
@@ -615,7 +617,9 @@ class Notifier implements INotifier {
 				$richSubjectUser = [
 					'type' => 'highlight',
 					'id' => $botId,
-					'name' => 'Bot',
+					'name' => !empty($subjectParameters['userDisplayName'])
+						? $subjectParameters['userDisplayName'] . ' (Bot)'
+						: 'Bot',
 				];
 			}
 		} else {
