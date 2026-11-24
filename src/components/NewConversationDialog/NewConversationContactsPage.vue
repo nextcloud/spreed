@@ -239,6 +239,7 @@ export default {
 				const response = await request({
 					searchText: this.searchText,
 					token: this.token || 'new',
+					onlyUsers: this.onlyUsers,
 					onlyLocal: this.onlyLocal,
 					// email guests are allowed directly after conversation creation,
 					// but not in classified conversations

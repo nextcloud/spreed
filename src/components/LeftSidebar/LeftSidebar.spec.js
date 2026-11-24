@@ -604,17 +604,17 @@ describe('LeftSidebar.vue', () => {
 			conversationsListMock.mockReturnValue([])
 			fetchConversationsAction.mockResolvedValueOnce()
 		})
-		test('shows new conversation button if user can start conversations', () => {
+		test('shows new conversation buttons if user can start conversations', () => {
 			const wrapper = mountComponent()
-			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
-			expect(newConversationbutton.exists()).toBeTruthy()
+			expect(findNcActionButton(wrapper, 'New private conversation').exists()).toBeTruthy()
+			expect(findNcActionButton(wrapper, 'Create a new group conversation').exists()).toBeTruthy()
 		})
-		test('does not show new conversation button if user cannot start conversations', () => {
+		test('only shows new private conversation button if user cannot start conversations', () => {
 			localCapabilities.spreed.config.conversations['can-create'] = false
 
 			const wrapper = mountComponent()
-			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
-			expect(newConversationbutton.exists()).toBeFalsy()
+			expect(findNcActionButton(wrapper, 'New private conversation').exists()).toBeTruthy()
+			expect(findNcActionButton(wrapper, 'Create a new group conversation').exists()).toBeFalsy()
 		})
 	})
 

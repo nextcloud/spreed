@@ -17,6 +17,7 @@ import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcInputField from '@nextcloud/vue/components/NcInputField'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
@@ -26,6 +27,7 @@ import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import ConversationsListVirtual from '../LeftSidebar/ConversationsList/ConversationsListVirtual.vue'
+import NewOneToOneDialog from '../NewOneToOneDialog.vue'
 import SearchMessageItem from '../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import DashboardSection from './DashboardSection.vue'
@@ -78,6 +80,7 @@ const upcomingReminders = computed(() => dashboardStore.upcomingReminders || [])
 const eventsInitialised = computed(() => dashboardStore.eventRoomsInitialised)
 const remindersInitialised = computed(() => dashboardStore.upcomingRemindersInitialised)
 const conversationName = ref('')
+const isNewOneToOneDialogOpen = ref(false)
 let actualizeDataInterval: ReturnType<typeof setInterval> | null = null
 
 // Data fetching handlers
@@ -249,13 +252,23 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					</div>
 				</NcPopover>
 				<NcButton
+					class="talk-dashboard__action"
+					@click="isNewOneToOneDialogOpen = true">
+					<template #icon>
+						<IconAccountPlusOutline :size="20" />
+					</template>
+					{{ t('spreed', 'New private conversation') }}
+				</NcButton>
+				<NewOneToOneDialog v-if="isNewOneToOneDialogOpen" @close="isNewOneToOneDialogOpen = false" />
+
+				<NcButton
 					v-if="canStartConversations"
 					class="talk-dashboard__action"
 					@click="EventBus.emit('new-conversation-dialog:show')">
 					<template #icon>
 						<IconPlus :size="20" />
 					</template>
-					{{ t('spreed', 'New conversation') }}
+					{{ t('spreed', 'New group conversation') }}
 				</NcButton>
 
 				<NcButton
