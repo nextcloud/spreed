@@ -445,6 +445,40 @@ class BackendNotifier {
 		return $this->sendUpdateToRemote($remote, $notification);
 	}
 
+	/**
+	 * Send information to remote participants that a reaction was added to a message
+	 * Sent from Host server to Remote participant server
+	 *
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string} $reactionData
+	 */
+	public function sendReactionAdded(
+		string $remoteServer,
+		int $localAttendeeId,
+		#[SensitiveParameter]
+		string $accessToken,
+		string $localToken,
+		array $reactionData,
+	): ?bool {
+		$remote = $this->prepareRemoteUrl($remoteServer);
+
+		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
+		$notification->setMessage(
+			FederationManager::NOTIFICATION_REACTION_ADDED,
+			FederationManager::TALK_ROOM_RESOURCE,
+			(string)$localAttendeeId,
+			[
+				'remoteServerUrl' => $this->getServerRemoteUrl(),
+				'sharedSecret' => $accessToken,
+				'remoteToken' => $localToken,
+				'reactionData' => $reactionData,
+			],
+		);
+
+		// A failed send is not retried: the push could arrive long after
+		// the reaction was removed again
+		return $this->sendUpdateToRemote($remote, $notification, retry: false);
+	}
+
 	protected function sendUpdateToRemote(string $remote, ICloudFederationNotification $notification, int $try = 0, bool $retry = true): ?bool {
 		try {
 			$response = $this->federationProviderManager->sendCloudNotification($remote, $notification);

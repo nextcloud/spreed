@@ -101,6 +101,52 @@ class FederationChatNotifier {
 	}
 
 	/**
+	 * Notifies the author of a message about a reaction, when they are fully
+	 * subscribed to the conversation, the same way as
+	 * {@see \OCA\Talk\Chat\Notifier::notifyReacted()} does for local users.
+	 *
+	 * @param array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string} $reactionData
+	 */
+	public function handleReaction(Room $room, Participant $participant, ProxyCacheMessage $message, array $reactionData): void {
+		if ($message->getActorType() !== Attendee::ACTOR_USERS
+			|| $message->getActorId() !== $participant->getAttendee()->getActorId()) {
+			// Only the author of the reacted-to message gets a notification
+			return;
+		}
+
+		$actor = $this->userConverter->convertTypeAndId($room, $reactionData['actorType'], $reactionData['actorId']);
+		if ($actor['type'] === $participant->getAttendee()->getActorType()
+			&& $actor['id'] === $participant->getAttendee()->getActorId()) {
+			// No notification when the user reacted to their own message
+			return;
+		}
+
+		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+		if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+				$notificationLevel = Participant::NOTIFY_ALWAYS;
+			} else {
+				$notificationLevel = $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
+			}
+		}
+
+		if ($notificationLevel !== Participant::NOTIFY_ALWAYS) {
+			return;
+		}
+
+		$notification = $this->createNotification($room, $message, 'reaction', [
+			'reaction' => $reactionData['reaction'],
+			'userType' => $actor['type'],
+			'userId' => $actor['id'],
+			// Remote participants are not attendees, so their display name can not be resolved locally
+			'userDisplayName' => $reactionData['actorDisplayName'],
+		]);
+		$notification->setUser($participant->getAttendee()->getActorId());
+		$notification->setDateTime(new \DateTime($reactionData['creationDatetime']));
+		$this->notificationManager->notify($notification);
+	}
+
+	/**
 	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string, thread_id?: int} $metaData
 	 */
 	protected function isRepliedTo(Room $room, Participant $participant, array $metaData): bool {
@@ -154,8 +200,12 @@ class FederationChatNotifier {
 	 * Creates a notification for the given proxy message and mentioned users
 	 */
 	protected function createNotification(Room $chat, ProxyCacheMessage $message, string $subject, array $subjectData = [], ?int $threadId = null): INotification {
-		$subjectData['userType'] = $message->getActorType();
-		$subjectData['userId'] = $message->getActorId();
+		if ($subject !== 'reaction') {
+			// Reactions notify with the reacting user (passed in $subjectData),
+			// all other subjects with the message author
+			$subjectData['userType'] = $message->getActorType();
+			$subjectData['userId'] = $message->getActorId();
+		}
 
 		$notificationParameters = [
 			'proxyId' => $message->getId(),

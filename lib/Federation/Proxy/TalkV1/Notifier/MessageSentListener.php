@@ -14,13 +14,16 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\BackendNotifier;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -38,6 +41,7 @@ class MessageSentListener implements IEventListener {
 		private readonly MessageParser $messageParser,
 		private readonly IFactory $l10nFactory,
 		private readonly ChatManager $chatManager,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -45,11 +49,17 @@ class MessageSentListener implements IEventListener {
 	public function handle(Event $event): void {
 		if (!$event instanceof ChatMessageSentEvent
 			&& !$event instanceof SystemMessageSentEvent
-			&& !$event instanceof SystemMessagesMultipleSentEvent) {
+			&& !$event instanceof SystemMessagesMultipleSentEvent
+			&& !$event instanceof ReactionAddedEvent) {
 			return;
 		}
 
 		if (!$event->getRoom()->hasFederatedParticipants()) {
+			return;
+		}
+
+		if ($event instanceof ReactionAddedEvent) {
+			$this->notifyAboutReaction($event);
 			return;
 		}
 
@@ -129,5 +139,67 @@ class MessageSentListener implements IEventListener {
 				$this->participantService->removeAttendee($event->getRoom(), $participant, AAttendeeRemovedEvent::REASON_LEFT);
 			}
 		}
+	}
+
+	/**
+	 * Reactions are no regular chat messages, so the server of the user that
+	 * wrote the reacted-to message is informed with a dedicated notification,
+	 * so it can notify the user when they are fully subscribed to the
+	 * conversation. The notification level of federated users is only known
+	 * on their home server, so it is checked there, like done for local users
+	 * in {@see \OCA\Talk\Chat\Notifier::notifyReacted()}.
+	 */
+	protected function notifyAboutReaction(ReactionAddedEvent $event): void {
+		$comment = $event->getMessage();
+		if ($comment->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
+			// Local users are already handled by \OCA\Talk\Chat\Notifier::notifyReacted()
+			return;
+		}
+
+		if ($comment->getActorId() === $event->getActorId()
+			&& $event->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			// User reacted to their own message
+			return;
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantByActor(
+				$event->getRoom(),
+				Attendee::ACTOR_FEDERATED_USERS,
+				$comment->getActorId(),
+			);
+		} catch (ParticipantNotFoundException) {
+			return;
+		}
+
+		if ($event->getRoom()->getLobbyState() !== Webinary::LOBBY_NONE
+			&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+			// Participants in the lobby can not see the reacted-to message,
+			// so no notification is sent
+			return;
+		}
+
+		$reactionData = [
+			'remoteMessageId' => (int)$comment->getId(),
+			'actorType' => $event->getActorType(),
+			'actorId' => $event->getActorId(),
+			'actorDisplayName' => $event->getActorDisplayName(),
+			'reaction' => $event->getReaction(),
+			'creationDatetime' => ($event->getReactionMessage()?->getCreationDateTime() ?? $this->timeFactory->getDateTime())->format(\DateTime::ATOM),
+		];
+
+		$attendee = $participant->getAttendee();
+		$cloudId = $this->cloudIdManager->resolveCloudId($attendee->getActorId());
+
+		// Remote servers that do not know this notification yet answer
+		// RESOURCE_NOT_FOUND. That is no reason to remove the participant,
+		// so the result is not checked here.
+		$this->backendNotifier->sendReactionAdded(
+			$cloudId->getRemote(),
+			$attendee->getId(),
+			$attendee->getAccessToken(),
+			$event->getRoom()->getToken(),
+			$reactionData,
+		);
 	}
 }

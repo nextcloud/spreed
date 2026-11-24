@@ -209,6 +209,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED => $this->participantModified((int)$providerId, $notification),
 			FederationManager::NOTIFICATION_ROOM_MODIFIED => $this->roomModified((int)$providerId, $notification),
 			FederationManager::NOTIFICATION_MESSAGE_POSTED => $this->messagePosted((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_REACTION_ADDED => $this->reactionAdded((int)$providerId, $notification),
 			default => throw new BadRequestException([$notificationType]),
 		};
 	}
@@ -582,6 +583,70 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);
 			$this->unarchiveService->unarchiveAfterFederatedMessage($room, $participant, $message);
 		}
+
+		return [];
+	}
+
+	/**
+	 * @param int $remoteAttendeeId
+	 * @param array{remoteServerUrl: string, sharedSecret: string, remoteToken: string, reactionData: array{remoteMessageId: int, actorType: string, actorId: string, actorDisplayName: string, reaction: string, creationDatetime: string}} $notification
+	 * @return array
+	 * @throws ActionNotSupportedException
+	 * @throws AuthenticationFailedException
+	 * @throws ShareNotFound
+	 */
+	private function reactionAdded(int $remoteAttendeeId, array $notification): array {
+		$reactionData = $notification['reactionData'] ?? null;
+		if (!is_array($reactionData)
+			|| !isset($reactionData['remoteMessageId'], $reactionData['actorType'], $reactionData['actorId'], $reactionData['actorDisplayName'], $reactionData['reaction'], $reactionData['creationDatetime'])
+			|| !is_int($reactionData['remoteMessageId'])
+			|| !is_string($reactionData['actorType'])
+			|| !is_string($reactionData['actorId'])
+			|| !is_string($reactionData['actorDisplayName'])
+			|| !is_string($reactionData['reaction'])) {
+			throw new BadRequestException(['reactionData']);
+		}
+		try {
+			new \DateTime((string)$reactionData['creationDatetime']);
+		} catch (\Exception) {
+			throw new BadRequestException(['creationDatetime']);
+		}
+
+		$invite = $this->getByRemoteAttendeeAndValidate($notification['remoteServerUrl'], $remoteAttendeeId, $notification['sharedSecret']);
+		try {
+			$room = $this->manager->getRoomById($invite->getLocalRoomId());
+		} catch (RoomNotFoundException) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		// Sanity check to make sure the room is a remote room
+		if (!$room->isFederatedConversation() || $room->getRemoteToken() !== $notification['remoteToken']) {
+			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantWithActiveSession($room, $invite->getUserId());
+		} catch (ParticipantNotFoundException) {
+			// Not accepted the invite yet
+			return [];
+		}
+
+		try {
+			$message = $this->pcmService->findByRemote(
+				$notification['remoteServerUrl'],
+				$notification['remoteToken'],
+				$reactionData['remoteMessageId'],
+			);
+		} catch (DoesNotExistException) {
+			try {
+				$message = $this->pcmService->syncRemoteMessage($room, $participant, $reactionData['remoteMessageId']);
+			} catch (\InvalidArgumentException|CannotReachRemoteException) {
+				$this->logger->info('Failed to sync chat message #' . $reactionData['remoteMessageId'] . ' for reaction notification from host ' . $notification['remoteServerUrl']);
+				return [];
+			}
+		}
+
+		$this->federationChatNotifier->handleReaction($room, $participant, $message, $notification['reactionData']);
 
 		return [];
 	}

@@ -472,6 +472,7 @@ Feature: federation/chat
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
 
+  @skip35
   Scenario: Reaction on federated chat messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
@@ -497,9 +498,9 @@ Feature: federation/chat
       | actorType       | actorId                  | actorDisplayName         | reaction |
       | users           | participant1             | participant1-displayname | 🚀       |
     And using server "REMOTE"
-    # Currently reaction notifications are not supported in federation
     Then user "participant2" has the following notifications
-      | app    | object_type | object_id                | subject                                                                | message     |
+      | app    | object_type | object_id             | subject                                                                           | message   |
+      | spreed | chat        | LOCAL::room/Message 1 | participant1-displayname reacted with 🚀 to your message in conversation room | Message 1 |
     And user "participant2" react with "🚀" on message "Message 1" to room "LOCAL::room" with 201
       | actorType       | actorId                   | actorDisplayName         | reaction |
       | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | 🚀       |
