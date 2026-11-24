@@ -78,6 +78,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\FileInfo;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException as FileNotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -2553,7 +2554,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
-			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolderForUser($uid, $this->room, $subfolder);
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (\Exception $e) {
@@ -2595,9 +2596,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 400: Path does not point to a file
 	 * 404: File not found
 	 * 422: File is not inside the conversation Draft folder for this room
-	 * 500: Could not prepare the conversation folder
+	 * 500: Could not prepare the conversation folder or move the file
 	 * 501: Conversation subfolders feature is disabled
-	 * 507: User storage quota exceeded
+	 * 507: Storage quota of the user or the team folder exceeded
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
@@ -2620,7 +2621,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// the room.  The service creates the full folder hierarchy if missing.
 		try {
 			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
-			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolderForUser($uid, $this->room, $subfolder);
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
 		} catch (\Exception $e) {
@@ -2649,7 +2650,18 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// Move the file from Draft into the shared subfolder, resolving any name
 		// conflicts by appending " (1)", " (2)", … to the base name.
 		$desiredName = $fileName !== '' ? $fileName : $node->getName();
-		$result = $this->conversationFolderService->finalizeUploadedFile($subfolder, $node, $desiredName);
+		try {
+			$result = $this->conversationFolderService->finalizeUploadedFile($subfolder, $node, $desiredName);
+		} catch (NotEnoughSpaceException) {
+			// The file stays in Draft, so the client can retry once space was freed
+			return new DataResponse(['error' => $this->l->t('Not enough free space to upload file')], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (NotPermittedException $e) {
+			$this->logger->error('postAttachment: could not move {path} out of the draft folder', [
+				'path' => $node->getPath(),
+				'exception' => $e,
+			]);
+			return new DataResponse(['error' => $this->l->t('Error while sharing file')], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
 		$renameFrom = $result['from'];
 		$renameTo = $result['to'];
 		$node = $result['node'];
@@ -2701,13 +2713,18 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		// Create the file_shared system message referencing the file by node ID.
 		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
-		// share is needed; access is controlled by the folder-level share.
+		// share is needed; access is controlled by the folder-level share,
+		// or by the team folder in team conversations ('teamFolder').
+		$parameters = ['fileId' => (string)$node->getId(), 'metaData' => $metaData];
+		if ($this->conversationFolderService->isTeamSubfolder($subfolder)) {
+			$parameters['teamFolder'] = true;
+		}
 		$comment = $this->chatManager->addSystemMessage(
 			$this->room,
 			$this->participant,
 			Attendee::ACTOR_USERS,
 			$uid,
-			json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$node->getId(), 'metaData' => $metaData]]),
+			json_encode(['message' => 'file_shared', 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(),
 			true,
 			$referenceId !== '' ? $referenceId : null,
@@ -2716,6 +2733,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$silent,
 			$threadId,
 		);
+		if (!empty($parameters['teamFolder'])) {
+			// For participants without access to the team folder
+			$this->conversationFolderService->shareTeamAttachment($node, $uid, $this->room);
+		}
 
 		if ($createThread) {
 			$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);

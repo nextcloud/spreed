@@ -10,6 +10,7 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Config as TalkConfig;
 use OCA\Talk\Room;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\Constants;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
@@ -18,9 +19,11 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
+use OCP\Teams\ITeamManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -31,9 +34,26 @@ use Psr\Log\LoggerInterface;
  *
  * and ensures a TYPE_ROOM share exists on the user subfolder so all
  * room members can access files uploaded there.
+ *
+ * Team conversations use the folder of the team instead, when there is one
+ * and the user can write to it:
+ *   <teamFolder>/Talk/<userSubfolderName>/
+ *
+ * Everything the chat adds stays inside that one "Talk" folder, so the
+ * structure of the team folder is not touched. No room share is created:
+ * the participants are the team members, they all have the team folder
+ * already, and a share would mount another "Talk" folder into every home.
+ * Drafts and attachments of deleted messages stay in the home of the user,
+ * other team members can not see them.
  */
 class ConversationFolderService {
 	public const UPDATABLE_SUFFIX = ' (u)';
+	/** Folder inside the team folder that holds the files posted in the team conversation
+	 * {TALK_PLACEHOLDER} cannot be used as there is no l10n that is available for a team */
+	public const TEAM_ATTACHMENT_FOLDER = '.system';
+
+	/** @var array<int, true> Ids of user subfolders created inside a team folder in this request */
+	private array $teamSubfolderIds = [];
 
 	public function __construct(
 		private readonly TalkConfig $talkConfig,
@@ -41,6 +61,7 @@ class ConversationFolderService {
 		private readonly IShareManager $shareManager,
 		private readonly IFilenameValidator $filenameValidator,
 		private readonly LoggerInterface $logger,
+		private readonly ITeamManager $teamManager,
 	) {
 	}
 
@@ -71,6 +92,18 @@ class ConversationFolderService {
 	 * @throws \OCP\Files\NotPermittedException if a folder cannot be created
 	 */
 	public function getOrCreateSubfolder(string $userId, Room $room, bool $allowUpdate): Folder {
+		$teamAttachmentFolder = $this->getTeamAttachmentFolder($userId, $room);
+		if (!is_null($teamAttachmentFolder)) {
+			if ($teamAttachmentFolder->getFreeSpace() === 0) {
+				throw new NotEnoughSpaceException('Team folder of ' . $room->getObjectId() . ' has no free storage quota');
+			}
+
+			// Everyone in the team can edit the team folder anyway, so no " (u)" variant
+			$subfolder = $this->getOrCreateChildFolder($teamAttachmentFolder, $this->talkConfig->getConversationSubfolderName($userId, false));
+			$this->teamSubfolderIds[$subfolder->getId()] = true;
+			return $subfolder;
+		}
+
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
 		$freeSpace = $userFolder->getFreeSpace();
@@ -130,6 +163,99 @@ class ConversationFolderService {
 	 */
 	public function getOrCreateDraftFolder(Folder $subfolder): Folder {
 		return $this->getOrCreateSiblingFolder($subfolder, 'Draft');
+	}
+
+	/**
+	 * Same as getOrCreateDraftFolder(), but for a subfolder in a team folder
+	 * the Draft folder is in the conversation folder in the home of the user,
+	 * so the team does not see files that are being composed.
+	 *
+	 * @throws \RuntimeException if a path component exists but is not a folder
+	 */
+	public function getOrCreateDraftFolderForUser(string $userId, Room $room, Folder $subfolder): Folder {
+		if (!$this->isTeamSubfolder($subfolder)) {
+			return $this->getOrCreateDraftFolder($subfolder);
+		}
+		return $this->getOrCreateChildFolder($this->getOrCreatePersonalConversationFolder($userId, $room), 'Draft');
+	}
+
+	/**
+	 * Whether the subfolder returned by getOrCreateSubfolder() is in a team folder
+	 */
+	public function isTeamSubfolder(Folder $subfolder): bool {
+		return isset($this->teamSubfolderIds[$subfolder->getId()]);
+	}
+
+	/**
+	 * The "Talk" folder inside the team folder of a team conversation,
+	 * null when the room is no team conversation, the team has no folder
+	 * or the user can not write to it (then the home folder is used)
+	 */
+	public function getTeamAttachmentFolder(string $userId, Room $room): ?Folder {
+		if (!$room->isTeamManaged()) {
+			return null;
+		}
+
+		$folder = $this->getTeamFolder($userId, $room->getObjectId());
+		if (!$folder instanceof Folder || !$folder->isCreatable()) {
+			return null;
+		}
+
+		try {
+			return $this->getOrCreateChildFolder($folder, self::TEAM_ATTACHMENT_FOLDER);
+		} catch (\Throwable $e) {
+			$this->logger->warning('Talk folder in the team folder of ' . $room->getToken() . ' could not be created', ['exception' => $e]);
+			return null;
+		}
+	}
+
+	/**
+	 * The folder of the team in the file tree of the user, null when the
+	 * team has no folder or the user can not access it
+	 */
+	public function getTeamFolder(string $userId, string $teamId): ?Folder {
+		try {
+			$teamFolder = $this->teamManager->getTeamFolderProvider()?->getTeamFolder($teamId);
+			if (is_null($teamFolder)) {
+				return null;
+			}
+			$folder = $this->rootFolder->getUserFolder($userId)->get($teamFolder->getMountPoint());
+		} catch (NotFoundException) {
+			return null;
+		} catch (\Throwable $e) {
+			$this->logger->warning('Team folder of team ' . $teamId . ' could not be found', ['exception' => $e]);
+			return null;
+		}
+		// The mount of the team folder, not a folder of the user with the same name
+		return $folder instanceof Folder && empty($folder->getInternalPath()) ? $folder : null;
+	}
+
+	/**
+	 * Talk/<Conversation>-<token>/ in the home of the user, without the shared user subfolder
+	 *
+	 * @throws \RuntimeException if a path component exists but is not a folder
+	 */
+	private function getOrCreatePersonalConversationFolder(string $userId, Room $room): Folder {
+		$attachmentNode = $this->getOrCreateChildFolder(
+			$this->rootFolder->getUserFolder($userId),
+			mb_ltrim($this->talkConfig->getAttachmentFolder($userId), '/'),
+		);
+		return $this->getOrCreateChildFolder($attachmentNode, $this->talkConfig->getConversationFolderName($room, $userId));
+	}
+
+	/**
+	 * @throws \RuntimeException if the path exists but is not a folder
+	 */
+	private function getOrCreateChildFolder(Folder $parent, string $name): Folder {
+		try {
+			$folder = $parent->get($name);
+			if (!$folder instanceof Folder) {
+				throw new \RuntimeException('Path is not a directory: ' . $name);
+			}
+			return $folder;
+		} catch (NotFoundException) {
+			return $parent->newFolder($name);
+		}
 	}
 
 	/**
@@ -205,13 +331,33 @@ class ConversationFolderService {
 	 * original file name and this method moves/renames it in one step.
 	 *
 	 * @return array{from: string, to: string, node: Node}
+	 * @throws NotEnoughSpaceException When the file does not fit into a team folder
+	 * @throws NotPermittedException
 	 */
 	public function finalizeUploadedFile(Folder $subfolder, Node $node, string $desiredName): array {
+		$isTeamSubfolder = $this->isTeamSubfolder($subfolder);
+		if ($isTeamSubfolder) {
+			// Draft is in the home of the user, the team folder is another storage
+			// with its own quota: the move is a copy that the quota can refuse
+			$freeSpace = $subfolder->getFreeSpace();
+			if ($freeSpace >= 0 && $node->getSize() > $freeSpace) {
+				throw new NotEnoughSpaceException('File exceeds the team folder quota');
+			}
+		}
+
 		$finalName = $this->findUniqueName($subfolder, $desiredName, $node);
 		$targetPath = $subfolder->getPath() . '/' . $finalName;
 		$finalNode = $node;
 		if ($node->getPath() !== $targetPath) {
-			$finalNode = $node->move($targetPath);
+			try {
+				$finalNode = $node->move($targetPath);
+			} catch (NotPermittedException $e) {
+				if ($isTeamSubfolder) {
+					// Free space changed meanwhile, or the folder reports none
+					throw new NotEnoughSpaceException($e->getMessage(), previous: $e);
+				}
+				throw $e;
+			}
 		}
 		return ['from' => $desiredName, 'to' => $finalName, 'node' => $finalNode];
 	}
@@ -318,10 +464,47 @@ class ConversationFolderService {
 	}
 
 	/**
-	 * Ensure a TYPE_ROOM share exists on $folder for the given room token.
-	 * Uses an optimistic create-and-catch approach so it works correctly even
-	 * when the folder is already shared with many rooms (no limit on the check).
+	 * Share a file posted in a team conversation with the conversation, read
+	 * only: participants without access to the team folder (federated users,
+	 * email guests) open it with the public link of this share. Only the
+	 * posted file, not the folder it is in (teammates can put other files
+	 * there). Not mounted for local users (TEAM_FOLDER_TARGET), who have the
+	 * file in the team folder.
+	 *
+	 * Created for every posted file, also without guests at the moment:
+	 * guests invited later see everything posted before, like the members of
+	 * the team. Nothing changes when the last guest leaves; whoever is removed
+	 * from the conversation (removed from the team) loses access, as with
+	 * every share of a conversation.
+	 *
+	 * Without permission to share in the team folder, only those participants
+	 * can not open the file: posting works anyway.
 	 */
+	public function shareTeamAttachment(Node $node, string $userId, Room $room): void {
+		$share = $this->shareManager->newShare();
+		$share->setNode($node)
+			->setShareType(IShare::TYPE_ROOM)
+			->setSharedBy($userId)
+			->setShareOwner($userId)
+			->setSharedWith($room->getToken())
+			->setPermissions(Constants::PERMISSION_READ)
+			->setTarget(RoomShareProvider::TEAM_FOLDER_TARGET . '/' . $node->getName())
+			->setMailSend(false);
+
+		try {
+			$this->shareManager->createShare($share);
+		} catch (\Throwable $e) {
+			if ($e instanceof GenericShareException && $e->getMessage() === 'Already shared') {
+				return;
+			}
+			$this->logger->info('File of {user} in the team folder of {token} can not be shared, federated participants and email guests can not open it', [
+				'user' => $userId,
+				'token' => $room->getToken(),
+				'exception' => $e,
+			]);
+		}
+	}
+
 	private function ensureSubfolderShared(Folder $folder, string $userId, string $token, bool $allowUpdate): void {
 		$permissions = Constants::PERMISSION_READ;
 		if ($allowUpdate) {

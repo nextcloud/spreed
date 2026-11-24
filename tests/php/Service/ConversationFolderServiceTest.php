@@ -11,7 +11,9 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Config as TalkConfig;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ConversationFolderService;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\Constants;
+use OCP\Files\File;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IFilenameValidator;
@@ -20,9 +22,13 @@ use OCP\Files\IUserFolder;
 use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
+use OCP\Teams\ITeamFolderProvider;
+use OCP\Teams\ITeamManager;
+use OCP\Teams\TeamFolder;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -33,6 +39,7 @@ class ConversationFolderServiceTest extends TestCase {
 	protected IShareManager&MockObject $shareManager;
 	protected IFilenameValidator&MockObject $filenameValidator;
 	protected LoggerInterface&MockObject $logger;
+	protected ITeamManager&MockObject $teamManager;
 	protected ConversationFolderService $service;
 
 	public function setUp(): void {
@@ -43,6 +50,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->filenameValidator = $this->createMock(IFilenameValidator::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->teamManager = $this->createMock(ITeamManager::class);
 
 		$this->service = new ConversationFolderService(
 			$this->talkConfig,
@@ -50,6 +58,7 @@ class ConversationFolderServiceTest extends TestCase {
 			$this->shareManager,
 			$this->filenameValidator,
 			$this->logger,
+			$this->teamManager,
 		);
 	}
 
@@ -639,5 +648,246 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->shareManager->expects($this->never())->method('getSharesBy');
 
 		$this->service->moveToDeletedFolder('alice', 'tok', 42);
+	}
+
+	// -------------------------------------------------------------------------
+	// Team conversations — team folder
+	// -------------------------------------------------------------------------
+
+	private function makeTeamRoom(string $token = 'tok1', string $teamId = 'team1'): Room&MockObject {
+		$room = $this->makeRoom($token);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('isTeamManaged')->willReturn(true);
+		$room->method('getObjectId')->willReturn($teamId);
+		return $room;
+	}
+
+	/**
+	 * @return array{IUserFolder&MockObject, Folder&MockObject, Folder&MockObject} User folder, team folder and the Talk folder inside it
+	 */
+	private function mockTeamFolder(string $userId, bool $writable = true): array {
+		$provider = $this->createMock(ITeamFolderProvider::class);
+		$provider->method('getTeamFolder')->with('team1')->willReturn(new TeamFolder(42, 'Team A'));
+		$this->teamManager->method('getTeamFolderProvider')->willReturn($provider);
+
+		$userFolder = $this->makeUserFolderMock();
+		$teamFolder = $this->createMock(Folder::class);
+		$teamTalkFolder = $this->createMock(Folder::class);
+		$teamTalkFolder->method('getFreeSpace')->willReturn(FileInfo::SPACE_UNLIMITED);
+
+		$this->rootFolder->method('getUserFolder')->with($userId)->willReturn($userFolder);
+		$teamFolder->method('isCreatable')->willReturn($writable);
+		$teamFolder->method('get')->with(ConversationFolderService::TEAM_ATTACHMENT_FOLDER)->willReturn($teamTalkFolder);
+
+		return [$userFolder, $teamFolder, $teamTalkFolder];
+	}
+
+	/**
+	 * @return array{0: Folder&MockObject}
+	 */
+	private function mockTeamSubfolder(): array {
+		[$userFolder, $teamFolder, $teamTalkFolder] = $this->mockTeamFolder('alice');
+		$userFolder->method('get')->with('Team A')->willReturn($teamFolder);
+
+		$subfolder = $this->createMock(Folder::class);
+		$subfolder->method('getId')->willReturn(7);
+		$subfolder->method('getName')->willReturn('Alice-alice');
+		$this->talkConfig->method('getConversationSubfolderName')->with('alice', false)->willReturn('Alice-alice');
+		$teamTalkFolder->method('get')->with('Alice-alice')->willThrowException(new NotFoundException());
+		$teamTalkFolder->expects($this->once())->method('newFolder')->with('Alice-alice')->willReturn($subfolder);
+
+		return [$subfolder];
+	}
+
+	public function testGetOrCreateSubfolderUsesTeamFolderWithoutSharingIt(): void {
+		// Teammates can put other files there: only posted files are shared
+		$room = $this->makeTeamRoom();
+		[$subfolder] = $this->mockTeamSubfolder();
+		$this->shareManager->expects($this->never())->method('createShare');
+
+		$result = $this->service->getOrCreateSubfolder('alice', $room, true);
+		$this->assertSame($subfolder, $result);
+		$this->assertTrue($this->service->isTeamSubfolder($result));
+	}
+
+	public function testPostedTeamAttachmentsAreSharedOneByOne(): void {
+		// For participants without access to the team folder (federated users,
+		// email guests), read only and not mounted for local users
+		$room = $this->makeTeamRoom();
+		$file = $this->createMock(File::class);
+		$file->method('getName')->willReturn('photo.jpg');
+		$share = $this->createMock(IShare::class);
+		foreach (['setShareType', 'setSharedBy', 'setShareOwner', 'setSharedWith', 'setMailSend'] as $method) {
+			$share->method($method)->willReturnSelf();
+		}
+		$this->shareManager->method('newShare')->willReturn($share);
+
+		$share->expects($this->once())->method('setNode')->with($file)->willReturnSelf();
+		$share->expects($this->once())->method('setPermissions')->with(Constants::PERMISSION_READ)->willReturnSelf();
+		$share->expects($this->once())->method('setTarget')->with(RoomShareProvider::TEAM_FOLDER_TARGET . '/photo.jpg')->willReturnSelf();
+		$this->shareManager->expects($this->once())->method('createShare')->with($share);
+
+		$this->service->shareTeamAttachment($file, 'alice', $room);
+	}
+
+	public function testTeamAttachmentsCanBePostedWithoutSharing(): void {
+		$room = $this->makeTeamRoom();
+		$file = $this->createMock(File::class);
+		$file->method('getName')->willReturn('photo.jpg');
+		$share = $this->makeShareMock();
+		$share->method('setTarget')->willReturnSelf();
+		$this->shareManager->method('newShare')->willReturn($share);
+		$this->shareManager->method('createShare')->willThrowException(new GenericShareException('Sharing is not allowed'));
+
+		// Only participants without access to the team folder can not open it
+		$this->service->shareTeamAttachment($file, 'alice', $room);
+		$this->addToAssertionCount(1);
+	}
+
+	public function testGetOrCreateSubfolderFallsBackWithoutTeamFolderProvider(): void {
+		$room = $this->makeTeamRoom();
+		$this->teamManager->method('getTeamFolderProvider')->willReturn(null);
+
+		$subfolder = $this->createStub(Folder::class);
+		$convFolder = $this->createMock(Folder::class);
+		$attachmentNode = $this->createMock(Folder::class);
+		$userFolder = $this->makeUserFolderMock();
+
+		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
+		$this->talkConfig->method('getConversationFolderName')->willReturn('Team A-tok1');
+		$this->talkConfig->method('getConversationSubfolderName')->willReturn('Alice-alice');
+		$this->rootFolder->method('getUserFolder')->willReturn($userFolder);
+		$userFolder->method('get')->with('Talk')->willReturn($attachmentNode);
+		$attachmentNode->method('get')->with('Team A-tok1')->willReturn($convFolder);
+		$convFolder->method('get')->with('Alice-alice')->willReturn($subfolder);
+
+		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
+		$this->shareManager->expects($this->once())->method('createShare');
+
+		$result = $this->service->getOrCreateSubfolder('alice', $room, false);
+		$this->assertSame($subfolder, $result);
+		$this->assertFalse($this->service->isTeamSubfolder($result));
+	}
+
+	public function testGetOrCreateSubfolderFallsBackWhenTeamFolderIsReadOnly(): void {
+		$room = $this->makeTeamRoom();
+		[$userFolder, $teamFolder] = $this->mockTeamFolder('alice', false);
+
+		$subfolder = $this->createStub(Folder::class);
+		$convFolder = $this->createMock(Folder::class);
+		$attachmentNode = $this->createMock(Folder::class);
+
+		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
+		$this->talkConfig->method('getConversationFolderName')->willReturn('Team A-tok1');
+		$this->talkConfig->method('getConversationSubfolderName')->willReturn('Alice-alice');
+		$userFolder->method('get')->willReturnMap([
+			['Team A', $teamFolder],
+			['Talk', $attachmentNode],
+		]);
+		$attachmentNode->method('get')->with('Team A-tok1')->willReturn($convFolder);
+		$convFolder->method('get')->with('Alice-alice')->willReturn($subfolder);
+
+		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
+		$this->shareManager->expects($this->once())->method('createShare');
+
+		$this->assertSame($subfolder, $this->service->getOrCreateSubfolder('alice', $room, false));
+	}
+
+	public function testGetOrCreateDraftFolderForUserKeepsTeamDraftsInHome(): void {
+		$room = $this->makeTeamRoom();
+		[$userFolder, $teamFolder, $teamTalkFolder] = $this->mockTeamFolder('alice');
+
+		$subfolder = $this->createMock(Folder::class);
+		$subfolder->method('getId')->willReturn(7);
+		$subfolder->expects($this->never())->method('getParent');
+		$this->talkConfig->method('getConversationSubfolderName')->willReturn('Alice-alice');
+		$teamTalkFolder->method('get')->with('Alice-alice')->willReturn($subfolder);
+
+		$attachmentNode = $this->createMock(Folder::class);
+		$convFolder = $this->createMock(Folder::class);
+		$draftFolder = $this->createStub(Folder::class);
+		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
+		$this->talkConfig->method('getConversationFolderName')->willReturn('Team A-tok1');
+		$userFolder->method('get')->willReturnMap([
+			['Team A', $teamFolder],
+			['Talk', $attachmentNode],
+		]);
+		$attachmentNode->method('get')->with('Team A-tok1')->willReturn($convFolder);
+		$convFolder->method('get')->with('Draft')->willReturn($draftFolder);
+
+		$subfolder = $this->service->getOrCreateSubfolder('alice', $room, false);
+		$this->assertSame($draftFolder, $this->service->getOrCreateDraftFolderForUser('alice', $room, $subfolder));
+	}
+
+	public function testGetOrCreateDraftFolderForUserUsesSiblingOutsideTeamFolder(): void {
+		$convFolder = $this->createMock(Folder::class);
+		$subfolder = $this->createMock(Folder::class);
+		$draftFolder = $this->createStub(Folder::class);
+		$subfolder->method('getId')->willReturn(9);
+		$subfolder->method('getParent')->willReturn($convFolder);
+		$convFolder->method('get')->with('Draft')->willReturn($draftFolder);
+
+		$this->assertSame($draftFolder, $this->service->getOrCreateDraftFolderForUser('alice', $this->makeRoom(), $subfolder));
+	}
+
+	// -------------------------------------------------------------------------
+	// finalizeUploadedFile — quota of the team folder
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Returns a team subfolder registered with the service, with the given free space
+	 */
+	private function makeTeamSubfolder(int|float $freeSpace): Folder&MockObject {
+		$room = $this->makeTeamRoom();
+		[$userFolder, $teamFolder, $teamTalkFolder] = $this->mockTeamFolder('alice');
+		$userFolder->method('get')->with('Team A')->willReturn($teamFolder);
+
+		$subfolder = $this->createMock(Folder::class);
+		$subfolder->method('getId')->willReturn(7);
+		$subfolder->method('getPath')->willReturn('/__groupfolders/1/Talk/Alice-alice');
+		$subfolder->method('getFreeSpace')->willReturn($freeSpace);
+		$subfolder->method('get')->willThrowException(new NotFoundException());
+		$this->talkConfig->method('getConversationSubfolderName')->willReturn('Alice-alice');
+		$teamTalkFolder->method('get')->with('Alice-alice')->willReturn($subfolder);
+
+		return $this->service->getOrCreateSubfolder('alice', $room, false);
+	}
+
+	public function testFinalizeUploadedFileRefusesFileLargerThanTeamFolderSpace(): void {
+		$subfolder = $this->makeTeamSubfolder(100);
+
+		$node = $this->createMock(Node::class);
+		$node->method('getSize')->willReturn(101);
+		$node->expects($this->never())->method('move');
+
+		$this->expectException(NotEnoughSpaceException::class);
+		$this->service->finalizeUploadedFile($subfolder, $node, 'big.zip');
+	}
+
+	public function testFinalizeUploadedFileTurnsRefusedMoveIntoTeamFolderIntoQuotaError(): void {
+		$subfolder = $this->makeTeamSubfolder(FileInfo::SPACE_UNLIMITED);
+
+		$node = $this->createMock(Node::class);
+		$node->method('getSize')->willReturn(101);
+		$node->method('getPath')->willReturn('/alice/files/Talk/Team A-tok1/Draft/uuid');
+		$node->method('move')->willThrowException(new NotPermittedException('Could not move'));
+
+		$this->expectException(NotEnoughSpaceException::class);
+		$this->service->finalizeUploadedFile($subfolder, $node, 'big.zip');
+	}
+
+	public function testFinalizeUploadedFileKeepsMoveErrorsOutsideTeamFolders(): void {
+		$subfolder = $this->createMock(Folder::class);
+		$subfolder->method('getId')->willReturn(9);
+		$subfolder->method('getPath')->willReturn('/alice/files/Talk/Room-tok1/Alice-alice');
+		$subfolder->method('get')->willThrowException(new NotFoundException());
+		$subfolder->expects($this->never())->method('getFreeSpace');
+
+		$node = $this->createMock(Node::class);
+		$node->method('getPath')->willReturn('/alice/files/Talk/Room-tok1/Draft/uuid');
+		$node->method('move')->willThrowException(new NotPermittedException('Could not move'));
+
+		$this->expectException(NotPermittedException::class);
+		$this->service->finalizeUploadedFile($subfolder, $node, 'photo.jpg');
 	}
 }

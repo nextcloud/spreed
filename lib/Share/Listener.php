@@ -72,6 +72,11 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if (str_starts_with((string)$share->getTarget(), RoomShareProvider::TEAM_FOLDER_TARGET . '/')) {
+			// Share of a "Talk" subfolder in a team folder, never mounted for users
+			return;
+		}
+
 		// For shares of nodes that live inside the user's attachment subfolder
 		// hierarchy (e.g. /Talk/<ConvFolder>/<UserSubfolder>) we want the full
 		// relative path in the target so that recipients see the correct mount

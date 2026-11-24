@@ -63,6 +63,13 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 	public const TALK_FOLDER = '/Talk';
 	public const TALK_FOLDER_PLACEHOLDER = '/{TALK_PLACEHOLDER}';
+	/**
+	 * Target of the shares of the "Talk" subfolders in team folders: only for
+	 * the public links of participants without access to the team folder
+	 * (federated users, email guests). Not mounted for local users, who have
+	 * the files in the team folder already.
+	 */
+	public const TEAM_FOLDER_TARGET = '/{TALK_TEAM_FOLDER}';
 
 	private CappedMemoryCache $sharesByIdCache;
 
@@ -877,6 +884,11 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					continue;
 				}
 
+				if (str_starts_with((string)$data['file_target'], self::TEAM_FOLDER_TARGET)) {
+					// In the team folder of the user already
+					continue;
+				}
+
 				if (!$this->isAccessibleResult($data)) {
 					continue;
 				}
@@ -1047,6 +1059,11 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$cursor = $qb->executeQuery();
 			while ($data = $cursor->fetchAssociative()) {
 				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
+					continue;
+				}
+
+				if (str_starts_with((string)$data['file_target'], self::TEAM_FOLDER_TARGET)) {
+					// In the team folder of the user already
 					continue;
 				}
 
