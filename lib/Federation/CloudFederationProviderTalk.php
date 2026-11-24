@@ -620,7 +620,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		}
 
 		// Sanity check to make sure the room is a remote room
-		if (!$room->isFederatedConversation()) {
+		if (!$room->isFederatedConversation() || $room->getRemoteToken() !== $notification['remoteToken']) {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
@@ -635,11 +635,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			$message = $this->pcmService->findByRemote(
 				$notification['remoteServerUrl'],
 				$notification['remoteToken'],
-				$notification['reactionData']['remoteMessageId'],
+				$reactionData['remoteMessageId'],
 			);
 		} catch (DoesNotExistException) {
-			// The message that was reacted to is not cached, so no notification can be rendered
-			return [];
+			try {
+				$message = $this->pcmService->syncRemoteMessage($room, $participant, $reactionData['remoteMessageId']);
+			} catch (\InvalidArgumentException|CannotReachRemoteException) {
+				$this->logger->info('Failed to sync chat message #' . $reactionData['remoteMessageId'] . ' for reaction notification from host ' . $notification['remoteServerUrl']);
+				return [];
+			}
 		}
 
 		$this->federationChatNotifier->handleReaction($room, $participant, $message, $notification['reactionData']);
