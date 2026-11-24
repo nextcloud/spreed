@@ -22,6 +22,7 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Ban;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
@@ -802,6 +803,58 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->participantService->expects($this->never())->method('removeAttendee');
 
 		$this->service->removeFormerTeamMember($this->room, $member, false);
+	}
+
+	private static function makeBan(string $actorType, string $actorId): Ban {
+		$ban = new Ban();
+		$ban->setBannedActorType($actorType);
+		$ban->setBannedActorId($actorId);
+		return $ban;
+	}
+
+	public function testBansAreLoadedOncePerResync(): void {
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->mockSnapshot(['alice' => self::LEVEL_OWNER], [
+			['userId' => 'bob', 'instance' => 'remote.example', 'displayName' => 'Bob', 'level' => self::LEVEL_MEMBER],
+		], [
+			'banned@example.tld' => 'Banned',
+			'guest@example.tld' => 'Guest',
+		]);
+		$this->mockParticipants([$this->makeUserParticipant('alice', Participant::OWNER)]);
+		$this->mockUsers();
+
+		$this->banService->expects($this->once())
+			->method('getBansForRoom')
+			->willReturn([
+				self::makeBan(Attendee::ACTOR_FEDERATED_USERS, 'bob@remote.example'),
+				self::makeBan(Attendee::ACTOR_EMAILS, hash('sha256', 'banned@example.tld')),
+			]);
+		$this->banService->expects($this->never())->method('isActorBanned');
+		$this->banService->expects($this->never())->method('isEmailBanned');
+		// No banned users: accounts with the address are not looked up
+		$this->userManager->expects($this->never())->method('getByEmail');
+
+		$this->participantService->expects($this->never())->method('addUsers');
+		$this->participantService->expects($this->once())
+			->method('inviteEmailAddress')
+			->with($this->room, hash('sha256', 'guest@example.tld'), 'guest@example.tld', 'Guest')
+			->willReturn($this->makeEmailParticipant('guest@example.tld'));
+
+		$this->service->resyncRoom($this->room, true);
+	}
+
+	public function testEmailOfBannedAccountIsNotInvitedByTheResync(): void {
+		$this->mockSnapshot(['alice' => self::LEVEL_OWNER], [], ['bob@example.tld' => 'Bob']);
+		$this->mockParticipants([$this->makeUserParticipant('alice', Participant::OWNER)]);
+		$this->mockUsers();
+		$this->banService->method('getBansForRoom')->willReturn([self::makeBan(Attendee::ACTOR_USERS, 'bob')]);
+		$bob = $this->createMock(IUser::class);
+		$bob->method('getUID')->willReturn('bob');
+		$this->userManager->method('getByEmail')->with('bob@example.tld')->willReturn([$bob]);
+
+		$this->participantService->expects($this->never())->method('inviteEmailAddress');
+
+		$this->service->resyncRoom($this->room, true);
 	}
 
 	public function testMarkersAreWrittenOncePerResync(): void {

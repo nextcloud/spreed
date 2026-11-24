@@ -55,6 +55,14 @@ class TeamRoomSyncService {
 	 */
 	protected ?array $markerBatch = null;
 
+	/** Room of the resync running now, its bans are loaded once, see isBannedInResync() */
+	protected ?Room $resyncBansRoom = null;
+
+	/**
+	 * @var array<string, array<string, true>>|null Banned actor type => actor ids, loaded on first use
+	 */
+	protected ?array $resyncBans = null;
+
 	public function __construct(
 		protected readonly CirclesAdapter $circlesAdapter,
 		protected readonly Manager $manager,
@@ -176,11 +184,73 @@ class TeamRoomSyncService {
 		$this->updateTypes($room, $expected, $current);
 		$this->removeFormer($room, $expected, $current);
 
-		// Marker changes of all invitations are written once
-		$this->withMarkerBatch(function () use ($room, $direct, $inviteFederated, $snapshot): void {
+		// Marker changes of all invitations are written once, bans are loaded once
+		$this->withBansOfResync($room, fn () => $this->withMarkerBatch(function () use ($room, $inviteFederated, $snapshot): void {
 			$this->syncFederatedMembers($room, $inviteFederated, $snapshot['remote']);
 			$this->syncEmailMembers($room, $inviteFederated, $snapshot['emails']);
-		});
+		}));
+	}
+
+	/**
+	 * The invitations of the callback check the bans of the room against one
+	 * list, loaded with the first check: a banned member that is still in the
+	 * team is missing from the room with every resync.
+	 *
+	 * @template T
+	 * @param callable(): T $callback
+	 * @return T
+	 */
+	protected function withBansOfResync(Room $room, callable $callback): mixed {
+		$this->resyncBansRoom = $room;
+		$this->resyncBans = null;
+		try {
+			return $callback();
+		} finally {
+			$this->resyncBansRoom = null;
+			$this->resyncBans = null;
+		}
+	}
+
+	/**
+	 * Same as BanService::isActorBanned(), from the bans loaded once per
+	 * resync. Null outside of a resync or for another room: check directly then.
+	 */
+	protected function isBannedInResync(Room $room, string $actorType, #[\SensitiveParameter] string $actorId): ?bool {
+		if ($this->resyncBansRoom?->getId() !== $room->getId()) {
+			return null;
+		}
+		if (is_null($this->resyncBans)) {
+			$this->resyncBans = [];
+			foreach ($this->banService->getBansForRoom($room->getId()) as $ban) {
+				$this->resyncBans[$ban->getBannedActorType()][$ban->getBannedActorId()] = true;
+			}
+		}
+		return isset($this->resyncBans[$actorType][$actorId]);
+	}
+
+	/**
+	 * Same as BanService::isEmailBanned(): banned as email guest (by the hash
+	 * of the address) or with an account that has the address. Accounts are
+	 * only looked up when the room has banned users.
+	 */
+	protected function isEmailBanned(Room $room, #[\SensitiveParameter] string $email): bool {
+		$email = mb_strtolower(mb_trim($email));
+		$banned = $this->isBannedInResync($room, Attendee::ACTOR_EMAILS, hash('sha256', $email));
+		if (is_null($banned)) {
+			return $this->banService->isEmailBanned($room, $email);
+		}
+		if ($banned) {
+			return true;
+		}
+		if (empty($this->resyncBans[Attendee::ACTOR_USERS])) {
+			return false;
+		}
+		foreach ($this->userManager->getByEmail($email) as $user) {
+			if (isset($this->resyncBans[Attendee::ACTOR_USERS][$user->getUID()])) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
