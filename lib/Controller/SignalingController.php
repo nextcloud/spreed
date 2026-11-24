@@ -257,6 +257,13 @@ class SignalingController extends OCSController {
 			];
 		}
 
+		$remoteSettings = $this->getRemoteSignalingSettings($room);
+		if ($remoteSettings !== null) {
+			// Federated calls use the Janus of the hosting server, which might
+			// only be reachable through the TURN servers of the hosting server.
+			$turn = array_merge($remoteSettings['turnservers'] ?? [], $turn);
+		}
+
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		$signalingServers = $this->talkConfig->getSignalingServers();
 		$signaling = $signalingServers[0]['server'] ?? '';
@@ -266,7 +273,7 @@ class SignalingController extends OCSController {
 			'userId' => $this->userId,
 			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
 			'server' => $signaling,
-			'federation' => $this->getFederationSettings($room),
+			'federation' => $this->getFederationSettings($room, $remoteSettings),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
 			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
@@ -344,9 +351,9 @@ class SignalingController extends OCSController {
 	}
 
 	/**
-	 * @psalm-return ?TalkSignalingFederationSettings
+	 * @psalm-return ?TalkSignalingSettings
 	 */
-	private function getFederationSettings(?Room $room): ?array {
+	private function getRemoteSignalingSettings(?Room $room): ?array {
 		if ($room === null || !$room->isFederatedConversation()) {
 			return null;
 		}
@@ -365,8 +372,18 @@ class SignalingController extends OCSController {
 			return null;
 		}
 
-		/** @var TalkSignalingSettings $data */
-		$data = $response->getData();
+		/** @var TalkSignalingSettings */
+		return $response->getData();
+	}
+
+	/**
+	 * @psalm-param ?TalkSignalingSettings $data
+	 * @psalm-return ?TalkSignalingFederationSettings
+	 */
+	private function getFederationSettings(?Room $room, ?array $data): ?array {
+		if ($room === null || $data === null) {
+			return null;
+		}
 
 		return [
 			'server' => $data['server'],
