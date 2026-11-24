@@ -1093,6 +1093,7 @@
     "Cancel quote" : "Cancel quote",
     "24 hours" : "24 hours",
     "Clear reminder – {timeLocale}" : "Clear reminder – {timeLocale}",
+    "Until {absoluteDate}" : "1{absoluteDate} - მდე",
     "Message text copied to clipboard" : "Message text copied to clipboard",
     "Message text could not be copied" : "Message text could not be copied",
     "Message forwarded to \"Note to self\"" : "Message forwarded to \"Note to self\"",
