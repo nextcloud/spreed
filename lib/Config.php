@@ -484,14 +484,6 @@ class Config implements IAppConfig {
 	public function getAllServerUrlsForCSP(): array {
 		$urls = [];
 
-		foreach ($this->getStunServers() as $server) {
-			$urls[] = $server;
-		}
-
-		foreach ($this->getTurnServers() as $server) {
-			$urls[] = $server['server'];
-		}
-
 		foreach ($this->getSignalingServers() as $server) {
 			$urls[] = $this->getWebSocketDomainForSignalingServer($server['server']);
 		}
