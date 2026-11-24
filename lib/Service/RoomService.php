@@ -246,6 +246,11 @@ class RoomService {
 		}
 
 		if ($objectType === Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			// Lowercase only, so the same meeting can not be created twice with different casing
+			if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $objectId)) {
+				throw new CreationException(CreationException::REASON_OBJECT_ID);
+			}
+
 			try {
 				$room = $this->manager->getRoomByObject(Room::OBJECT_TYPE_EXTERNAL_CALL, $objectId);
 				throw new CreationException(CreationException::REASON_OBJECT, $room);

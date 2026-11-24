@@ -77,6 +77,9 @@ class FeatureContext implements Context {
 	protected static array $botIdToName;
 	/** @var array<string, int> */
 	protected static array $botNameToId;
+	protected array $lastExternalCallServiceRequest = [];
+	/** @var array<string, array{private: string, public: string}> */
+	protected static array $externalCallServiceKeys = [];
 	/** @var array<string, string> */
 	protected static array $botNameToHash;
 	/** @var array<string, string> */
@@ -1208,8 +1211,8 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	#[Then('/^external call service creates room "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
-	public function externalCallServiceCreatesRoom(string $identifier, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+	#[Then('/^external call service creates room "([^"]*)" with key "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceCreatesRoom(string $identifier, string $key, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$body = $formData ? $formData->getRowsHash() : [];
 		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
 			$body['roomName'] = $identifier;
@@ -1218,18 +1221,12 @@ class FeatureContext implements Context {
 			$body['permissions'] = $this->mapPermissionsTestInput($body['permissions']);
 		}
 
-		$headers = [];
-		if ($secret !== '') {
-			$random = bin2hex(random_bytes(32));
-			$checksum = hash_hmac('sha256', $random . ($body['owner'] ?? ''), $secret);
-			$headers = [
-				'x-nextcloud-talk-external-service-random' => $random,
-				'x-nextcloud-talk-external-service-checksum' => $checksum,
-			];
-		}
-
 		$this->setCurrentUser('');
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body, $headers);
+		if ($key !== '') {
+			$this->sendExternalCallServiceRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body, $key);
+		} else {
+			$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
+		}
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($statusCode === 201 || $statusCode === 200) {
@@ -1244,25 +1241,80 @@ class FeatureContext implements Context {
 		}
 	}
 
-	#[Then('/^external call service syncs participants of room "([^"]*)" as "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
-	public function externalCallServiceSyncsParticipants(string $identifier, string $owner, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+	#[Then('/^external call service syncs participants of room "([^"]*)" as "([^"]*)" with key "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceSyncsParticipants(string $identifier, string $owner, string $key, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$participants = [];
 		foreach ($formData ? $formData->getRowsHash() : [] as $type => $ids) {
 			$participants[$type] = $ids === '' ? [] : explode(',', $ids);
 		}
 
-		$random = bin2hex(random_bytes(32));
-		$headers = [
-			'x-nextcloud-talk-external-service-random' => $random,
-			'x-nextcloud-talk-external-service-checksum' => hash_hmac('sha256', $random . $owner, $secret),
-		];
-
 		$this->setCurrentUser('');
-		$this->sendRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants', [
+		$this->sendExternalCallServiceRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/participants', [
 			'owner' => $owner,
 			'participants' => $participants,
-		], $headers);
+		], $key);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[Then('/^external call service renames room "([^"]*)" to "([^"]*)" as "([^"]*)" with key "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceRenamesRoom(string $identifier, string $roomName, string $owner, string $key, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser('');
+		$this->sendExternalCallServiceRequest('PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier], [
+			'owner' => $owner,
+			'roomName' => $roomName,
+		], $key);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[Then('/^external call service replays the last request with (\d+)$/')]
+	public function externalCallServiceReplaysLastRequest(int $statusCode): void {
+		$this->setCurrentUser('');
+		$this->sendRequest(...$this->lastExternalCallServiceRequest);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * Key pairs of the external call service: "valid" matches the configured
+	 * public key (config value PUBLIC_KEY), "invalid" does not.
+	 *
+	 * @return array{private: string, public: string}
+	 */
+	private static function externalCallServiceKeyPair(string $name): array {
+		if (!isset(self::$externalCallServiceKeys[$name])) {
+			$key = openssl_pkey_new(['private_key_type' => OPENSSL_KEYTYPE_EC, 'curve_name' => 'prime256v1']);
+			openssl_pkey_export($key, $private);
+			self::$externalCallServiceKeys[$name] = ['private' => $private, 'public' => openssl_pkey_get_details($key)['key']];
+		}
+		return self::$externalCallServiceKeys[$name];
+	}
+
+	private function sendExternalCallServiceRequest(string $verb, string $url, array $body, string $key): void {
+		$json = json_encode($body, JSON_THROW_ON_ERROR);
+		$now = time();
+		$base64Url = static fn (string $data): string => rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+		$unsigned = $base64Url('{"typ":"JWT","alg":"ES256"}') . '.' . $base64Url(json_encode([
+			'iat' => $now,
+			'exp' => $now + 60,
+			'jti' => bin2hex(random_bytes(32)),
+			'method' => $verb,
+			'uri' => '/ocs/v2.php' . $url,
+			'body' => hash('sha256', $json),
+		], JSON_THROW_ON_ERROR));
+
+		openssl_sign($unsigned, $der, self::externalCallServiceKeyPair($key)['private'], OPENSSL_ALGO_SHA256);
+		// Convert the DER signature SEQUENCE { INTEGER r, INTEGER s } to the 64 byte r || s JWS format
+		$rLength = ord($der[3]);
+		$r = substr($der, 4, $rLength);
+		$s = substr($der, 6 + $rLength, ord($der[5 + $rLength]));
+		$signature = str_pad(ltrim($r, "\0"), 32, "\0", STR_PAD_LEFT) . str_pad(ltrim($s, "\0"), 32, "\0", STR_PAD_LEFT);
+
+		$headers = [
+			'Content-Type' => 'application/json',
+			'x-nextcloud-talk-external-service-jwt' => $unsigned . '.' . $base64Url($signature),
+		];
+
+		$this->lastExternalCallServiceRequest = [$verb, $url, $json, $headers];
+		$this->sendRequest($verb, $url, $json, $headers);
 	}
 
 	#[Then('/^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/')]
@@ -4072,6 +4124,9 @@ class FeatureContext implements Context {
 			if ($row[0] === 'force_permissions') {
 				$row[1] = $this->mapPermissionsTestInput($row[1]);
 			}
+			if ($row[0] === 'external_call_service_public_key' && $row[1] === 'PUBLIC_KEY') {
+				$row[1] = self::externalCallServiceKeyPair('valid')['public'];
+			}
 
 			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $row[0], [
 				'value' => $row[1],
@@ -5409,7 +5464,7 @@ class FeatureContext implements Context {
 	}
 
 	#[When('/^sending "([^"]*)" to "([^"]*)" with$/')]
-	public function sendRequest(string $verb, string $url, TableNode|array|null $body = null, array $headers = [], array $options = []): void {
+	public function sendRequest(string $verb, string $url, TableNode|array|string|null $body = null, array $headers = [], array $options = []): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}

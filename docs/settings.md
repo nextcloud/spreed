@@ -106,7 +106,7 @@ Legend:
 | `external_call_service_auth_user` | string | `''` | Yes |  | HTTP Basic Auth username used when Talk calls the external service |
 | `external_call_service_frame_origins` | `list<string>` | `[]` | No |  | JSON array of scheme+host(+port) origins that may be loaded in the iframe.<br>Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone |
 | `external_call_service_iframe_field` | string | `''` | Yes |  | JSON field name in the external service response that contains the iframe URL |
-| `external_call_service_shared_secret` | string | `''` | Yes |  | Shared secret used for two purposes:<br>as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.<br>Minimum 64 characters, `a-zA-Z0-9` recommended |
+| `external_call_service_public_key` | string | `''` | Yes |  | PEM encoded ECDSA P-256 public key of the external service, used to verify the ES256 JWT the external service sends to Talk |
 | `feature_hints_hidden` | int | `0` | Yes |  | Feature hints that should be hidden. Set to `999999` to hide all. |
 | `federation_allowed_groups` | `list<string>` | `[]` | Yes | 🖌️ | List of local group ids that are allowed to use federated features (everyone when empty) |
 | `federation_enabled` | bool | `false` | Yes | 🖌️ | Whether or not federation with this instance is allowed |

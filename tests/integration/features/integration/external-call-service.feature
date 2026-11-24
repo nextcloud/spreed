@@ -1,19 +1,20 @@
-Feature: conversation-1/create-external-service
+Feature: integration/create-external-service
   Background:
     Given user "participant1" exists
 
   Scenario: External call service creates a room on behalf of a user
     Given the following "spreed" app config is set
-      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_public_key | PUBLIC_KEY |
       | external_call_service_auth_user | nextcloud |
       | external_call_service_iframe_field | targetUrl |
     Given external call server is started
-    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+    When external call service creates room "room" with key "valid" with 201 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
       | objectType | external_call |
       | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    And external call service replays the last request with 401
     Then user "participant1" is participant of the following rooms (v4)
       | id   | name | type | participantType | objectType    | objectId                             |
       | room | room | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
@@ -26,17 +27,17 @@ Feature: conversation-1/create-external-service
 
   Scenario: External call service creating a room with a duplicate object id returns the existing room
     Given the following "spreed" app config is set
-      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_public_key | PUBLIC_KEY |
       | external_call_service_auth_user | nextcloud |
       | external_call_service_iframe_field | targetUrl |
     Given external call server is started
-    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+    When external call service creates room "room" with key "valid" with 201 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
       | objectType | external_call |
       | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
-    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+    When external call service creates room "room" with key "valid" with 200 (v4)
       | roomType | 3 |
       | roomName | second attempt |
       | owner | participant1 |
@@ -52,17 +53,17 @@ Feature: conversation-1/create-external-service
 
   Scenario: External call service creating a room with a different object id creates a second room
     Given the following "spreed" app config is set
-      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_public_key | PUBLIC_KEY |
       | external_call_service_auth_user | nextcloud |
       | external_call_service_iframe_field | targetUrl |
     Given external call server is started
-    When external call service creates room "room1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+    When external call service creates room "room1" with key "valid" with 201 (v4)
       | roomType | 3 |
       | roomName | room1 |
       | owner | participant1 |
       | objectType | external_call |
       | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
-    When external call service creates room "room2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+    When external call service creates room "room2" with key "valid" with 201 (v4)
       | roomType | 3 |
       | roomName | room2 |
       | owner | participant1 |
@@ -76,28 +77,34 @@ Feature: conversation-1/create-external-service
   Scenario: External call service can only create external call rooms
     Given the following "spreed" app config is set
       | external_call_service               | https://external-service.example.org/ |
-      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
-    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 400 (v4)
+      | external_call_service_public_key | PUBLIC_KEY |
+    When external call service creates room "room" with key "valid" with 400 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
-    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 400 (v4)
+    When external call service creates room "room" with key "valid" with 400 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
       | objectType | note_to_self |
       | objectId | participant1 |
+    When external call service creates room "room" with key "valid" with 400 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | not-a-uuid |
     Then user "participant1" is participant of the following rooms (v4)
 
   Scenario: Unauthenticated user without external service header is rejected
     Given the following "spreed" app config is set
       | external_call_service               | https://external-service.example.org/ |
-      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
-    When external call service creates room "room" with secret "bbbbbbbbbb" with 401 (v4)
+      | external_call_service_public_key | PUBLIC_KEY |
+    When external call service creates room "room" with key "invalid" with 401 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
-    When external call service creates room "room" with secret "" with 401 (v4)
+    When external call service creates room "room" with key "" with 401 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
@@ -107,17 +114,17 @@ Feature: conversation-1/create-external-service
     Given user "participant2" exists
     Given user "participant3" exists
     Given the following "spreed" app config is set
-      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_public_key | PUBLIC_KEY |
       | external_call_service_auth_user | nextcloud |
       | external_call_service_iframe_field | targetUrl |
     Given external call server is started
-    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+    When external call service creates room "room" with key "valid" with 201 (v4)
       | roomType | 3 |
       | roomName | room |
       | owner | participant1 |
       | objectType | external_call |
       | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
-    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+    When external call service syncs participants of room "room" as "participant1" with key "valid" with 200 (v4)
       | users  | participant2 |
       | emails | test@example.tld |
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
@@ -125,24 +132,57 @@ Feature: conversation-1/create-external-service
       | users      | participant1                                                     | 1               |
       | users      | participant2                                                     | 3               |
       | emails     | SHA256(test@example.tld)                                         | 4               |
-    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+    When external call service syncs participants of room "room" as "participant1" with key "valid" with 200 (v4)
       | users  | participant2,participant3 |
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
       | users      | participant3 | 3               |
-    When external call service syncs participants of room "room" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+    When external call service syncs participants of room "room" as "participant1" with key "valid" with 200 (v4)
       | users  | |
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
-    When external call service syncs participants of room "room" as "participant2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 404 (v4)
+    When external call service syncs participants of room "room" as "participant2" with key "valid" with 404 (v4)
       | users  | participant2 |
-    When external call service syncs participants of room "room" as "participant1" with secret "bbbbbbbbbb" with 401 (v4)
+    When external call service syncs participants of room "room" as "participant1" with key "invalid" with 401 (v4)
       | users  | participant2 |
     Given user "participant1" creates room "room2" (v4)
       | roomType | 3 |
       | roomName | room2 |
-    When external call service syncs participants of room "room2" as "participant1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 400 (v4)
+    When external call service syncs participants of room "room2" as "participant1" with key "valid" with 400 (v4)
       | users  | participant2 |
+
+  Scenario: External call service renames a room
+    Given user "participant2" exists
+    Given the following "spreed" app config is set
+      | external_call_service_public_key | PUBLIC_KEY |
+      | external_call_service_auth_user | nextcloud |
+      | external_call_service_iframe_field | targetUrl |
+    Given external call server is started
+    When external call service creates room "room" with key "valid" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service renames room "room" to "renamed" as "participant1" with key "valid" with 200 (v4)
+    And external call service replays the last request with 401
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | name    | type | participantType | objectType    | objectId                             |
+      | room | renamed | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service renames room "room" to "" as "participant1" with key "valid" with 400 (v4)
+    When external call service renames room "room" to "other" as "participant2" with key "valid" with 404 (v4)
+    When external call service syncs participants of room "room" as "participant1" with key "valid" with 200 (v4)
+      | users  | participant2 |
+    When external call service renames room "room" to "other" as "participant2" with key "valid" with 403 (v4)
+    When external call service renames room "room" to "other" as "participant1" with key "invalid" with 401 (v4)
+    Given user "participant1" creates room "room2" (v4)
+      | roomType | 3 |
+      | roomName | room2 |
+    When external call service renames room "room2" to "other" as "participant1" with key "valid" with 404 (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | id    | name    | type | participantType |
+      | room  | renamed | 3    | 1               |
+      | room2 | room2   | 3    | 1               |

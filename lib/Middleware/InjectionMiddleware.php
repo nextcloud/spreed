@@ -15,7 +15,9 @@ use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\AllowExternalCallService;
 use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\MatrixSupported;
@@ -41,6 +43,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
+use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
@@ -49,6 +52,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
@@ -72,6 +76,7 @@ class InjectionMiddleware extends Middleware {
 		private readonly Authenticator $federationAuthenticator,
 		private readonly BanService $banService,
 		private readonly RoomService $roomService,
+		private readonly ChecksumVerificationService $checksumVerificationService,
 		private readonly LoggerInterface $logger,
 		private readonly ?string $userId,
 	) {
@@ -86,6 +91,7 @@ class InjectionMiddleware extends Middleware {
 	 * @throws ReadOnlyException
 	 * @throws ForbiddenException
 	 * @throws RoomNotFoundException
+	 * @throws UnauthorizedException
 	 */
 	#[\Override]
 	public function beforeController(Controller $controller, string $methodName): void {
@@ -97,6 +103,12 @@ class InjectionMiddleware extends Middleware {
 
 		$apiVersion = $this->request->getParam('apiVersion');
 		$controller->setAPIVersion((int)substr((string)$apiVersion, 1));
+
+		if (!empty($reflectionMethod->getAttributes(AllowExternalCallService::class))
+			&& $this->request->getHeader('x-nextcloud-talk-external-service-jwt') !== '') {
+			$this->getExternalCallServiceOwner($controller);
+			return;
+		}
 
 		if (!empty($reflectionMethod->getAttributes(AllowWithoutParticipantWhenPendingInvitation::class))) {
 			try {
@@ -199,6 +211,33 @@ class InjectionMiddleware extends Middleware {
 	 * @param bool $moderatorRequired
 	 * @throws NotAModeratorException
 	 */
+	/**
+	 * @throws NotAModeratorException
+	 * @throws ParticipantNotFoundException
+	 * @throws RoomNotFoundException
+	 * @throws UnauthorizedException
+	 */
+	protected function getExternalCallServiceOwner(AEnvironmentAwareOCSController $controller): void {
+		if (!$this->checksumVerificationService->validateExternalCallServiceRequest()) {
+			throw new UnauthorizedException();
+		}
+
+		$owner = (string)$this->request->getParam('owner', '');
+
+		$room = $this->manager->getRoomForUserByToken($this->request->getParam('token'), $owner);
+		if ($room->getObjectType() !== Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			throw new RoomNotFoundException();
+		}
+
+		$participant = $this->participantService->getParticipant($room, $owner, false);
+		if (!$participant->isOwner()) {
+			throw new NotAModeratorException();
+		}
+
+		$controller->setRoom($room);
+		$controller->setParticipant($participant);
+	}
+
 	protected function getLoggedIn(AEnvironmentAwareOCSController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$sessionId = $this->talkSession->getSessionForRoom($token);
@@ -475,6 +514,16 @@ class InjectionMiddleware extends Middleware {
 				}
 
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
+			}
+
+			return new RedirectResponse($this->url->linkToDefaultPageUrl());
+		}
+
+		if ($exception instanceof UnauthorizedException) {
+			if ($controller instanceof OCSController) {
+				$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkExternalCallServiceSecret']);
+				return $response;
 			}
 
 			return new RedirectResponse($this->url->linkToDefaultPageUrl());

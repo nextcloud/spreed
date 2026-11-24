@@ -250,7 +250,7 @@ PROMPT;
 				new Entry(Config::EXTERNAL_CALL_SERVICE, ValueType::STRING, '', definition: 'URL of the external service endpoint. `{meetingId}` is replaced with the conversation\'s `objectId` when Talk makes the request'),
 				hash: true,
 			),
-			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret used for two purposes:' . PHP_EOL . 'as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.' . PHP_EOL . 'Minimum 64 characters, `a-zA-Z0-9` recommended', flags: IAppConfig::FLAG_SENSITIVE),
+			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_PUBLIC_KEY, ValueType::STRING, '', definition: 'PEM encoded ECDSA P-256 public key of the external service, used to verify the ES256 JWT the external service sends to Talk'),
 				hash: true,
 			),
 			new AppConfigEntry(new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_USER, ValueType::STRING, '', definition: 'HTTP Basic Auth username used when Talk calls the external service'),

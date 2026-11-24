@@ -50,6 +50,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\AllowExternalCallService;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\MatrixSupported;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
@@ -590,25 +591,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Check if the current request is coming from the configured external call service
-	 *
-	 * @param string $owner User ID the external call service wants to act as
-	 * @return bool True if the request is from the external call service and valid
-	 */
-	private function validateExternalCallServiceRequest(string $owner, string $random, #[SensitiveParameter] string $checksum): bool {
-		if ($owner === '' || !$this->talkConfig->isExternalCallServiceConfigured()) {
-			return false;
-		}
-
-		$secret = $this->talkConfig->getExternalCallServiceSharedSecret();
-		try {
-			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $owner);
-		} catch (UnauthorizedException) {
-			return false;
-		}
-	}
-
-	/**
 	 * @return TalkRoom
 	 */
 	protected function formatRoom(
@@ -647,10 +629,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * or `$participants` parameter is supported.
 	 *
 	 * The endpoint can also be used unauthenticated by an external call service
-	 * by signing the request with the configured shared secret via the
-	 * `x-nextcloud-talk-external-service-random` and
-	 * `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the
-	 * random seed and the `$owner` user ID).
+	 * by signing the request with its private key via the
+	 * `x-nextcloud-talk-external-service-jwt` header.
 	 *
 	 * @param int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
@@ -683,7 +663,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
-	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored.
+	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated as external call service, otherwise ignored.
 	 * @param ?string $preset Identifier of the preset that was used (only available with `conversation-preset` capability)
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'classified'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'owner'|'password'|'permissions'|'preset'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
 	 *
@@ -699,8 +679,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI]
 	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
-	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-jwt', description: 'ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room', requirements: [
 		'apiVersion' => '(v4)',
 	])]
@@ -729,14 +708,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		string $owner = '',
 		?string $preset = null,
 	): DataResponse {
-		$externalServiceRandom = $this->request->getHeader('x-nextcloud-talk-external-service-random');
-		$externalServiceChecksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
-		if ($externalServiceRandom !== '' || $externalServiceChecksum !== '') {
+		if ($this->request->getHeader('x-nextcloud-talk-external-service-jwt') !== '') {
 			if ($owner === '') {
 				return new DataResponse(['error' => 'owner'], Http::STATUS_BAD_REQUEST);
 			}
 
-			if (!$this->validateExternalCallServiceRequest($owner, $externalServiceRandom, $externalServiceChecksum)) {
+			if (!$this->checksumVerificationService->validateExternalCallServiceRequest()) {
 				$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkExternalCallServiceSecret']);
 				return $response;
@@ -947,9 +924,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * the list are removed (except owners), participants new in the list are added.
 	 *
 	 * @param string $token Token of the room
+	 * @param string $owner User ID of an owner of the conversation that will be used as actor
 	 * @param array<string, list<string>> $participants List of participants the conversation should have grouped by type
 	 * @psalm-param TalkInvitationList $participants
-	 * @param string $owner User ID of an owner of the conversation that will be used as actor
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'owner'|'room'|'room-type'}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
 	 *
 	 * 200: Participants synchronized successfully
@@ -962,16 +939,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[OpenAPI(scope: 'external-call')]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
-	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-jwt', description: 'ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)', indirect: true)]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/participants', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function syncParticipants(string $token, array $participants = [], string $owner = ''): DataResponse {
-		$externalServiceRandom = $this->request->getHeader('x-nextcloud-talk-external-service-random');
-		$externalServiceChecksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
-		if (!$this->validateExternalCallServiceRequest($owner, $externalServiceRandom, $externalServiceChecksum)) {
+	public function syncParticipants(string $token, string $owner, array $participants = []): DataResponse {
+		if (!$this->checksumVerificationService->validateExternalCallServiceRequest()) {
 			$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkExternalCallServiceSecret']);
 			return $response;
@@ -1242,7 +1216,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Rename a room
 	 *
+	 * The endpoint can also be used unauthenticated by an external call service
+	 * for its own conversations, by signing the request with its private key
+	 * via the `x-nextcloud-talk-external-service-jwt` header.
+	 *
 	 * @param string $roomName New name
+	 * @param string $owner User ID of an owner of the conversation that will be used as actor. Required when the request is authenticated as external call service, otherwise ignored.
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'event'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 *
 	 * 200: Room renamed successfully
@@ -1251,14 +1230,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: The Matrix room or the linked Matrix account of the user was not found
 	 * 502: The Matrix homeserver rejected the change or could not be reached
 	 */
+	#[AllowExternalCallService]
 	#[MatrixSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[OpenAPI]
+	#[OpenAPI(scope: 'external-call')]
+	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-jwt', description: 'ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)', indirect: true)]
 	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function renameRoom(string $roomName): DataResponse {
+	public function renameRoom(string $roomName, string $owner = ''): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
 		}
