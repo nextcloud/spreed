@@ -11,11 +11,14 @@ namespace OCA\Talk\Tests\php\Signaling;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
+use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
 use OCA\Talk\Events\ChatMessageSentEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
+use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\ReactionAddedEvent;
 use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
@@ -25,6 +28,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Thread;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
@@ -542,5 +546,72 @@ class ListenerTest extends TestCase {
 			]);
 
 		$this->listener->handle($event);
+	}
+
+	private function makeInternalSignalingListener(Messages&MockObject $messages): Listener {
+		$config = $this->createMock(Config::class);
+		$config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
+		return new Listener(
+			$config,
+			$messages,
+			$this->backendNotifier,
+			$this->manager,
+			$this->participantService,
+			$this->sessionService,
+			$this->timeFactory,
+			$this->messageParser,
+			$this->threadService,
+			$this->l10nFactory,
+			$this->pollService,
+		);
+	}
+
+	private function makeRoom(bool $teamManaged): Room&MockObject {
+		$room = $this->createMock(Room::class);
+		$room->method('isTeamManaged')->willReturn($teamManaged);
+		return $room;
+	}
+
+	public static function dataTeamRoomRefresh(): array {
+		return [
+			// Added and changed by the team, not by a Talk client
+			'team conversation' => [true, 1],
+			// The Talk client that changed it reloads its own list, as before
+			'other conversation' => [false, 0],
+		];
+	}
+
+	#[DataProvider('dataTeamRoomRefresh')]
+	public function testAddedAttendeesRefreshTheParticipantListOfTeamRooms(bool $teamManaged, int $refreshes): void {
+		$room = $this->makeRoom($teamManaged);
+		$messages = $this->createMock(Messages::class);
+		$messages->expects($this->exactly($refreshes))
+			->method('addMessageForAllParticipants')
+			->with($room, 'refresh-participant-list');
+
+		$this->makeInternalSignalingListener($messages)->handle(new AttendeesAddedEvent($room, [new Attendee()]));
+	}
+
+	#[DataProvider('dataTeamRoomRefresh')]
+	public function testRoleChangesRefreshTheParticipantListOfTeamRooms(bool $teamManaged, int $refreshes): void {
+		$room = $this->makeRoom($teamManaged);
+		$messages = $this->createMock(Messages::class);
+		$messages->expects($this->exactly($refreshes))
+			->method('addMessageForAllParticipants')
+			->with($room, 'refresh-participant-list');
+
+		$event = new ParticipantModifiedEvent($room, $this->createMock(Participant::class), AParticipantModifiedEvent::PROPERTY_TYPE, Participant::MODERATOR, Participant::USER);
+		$this->makeInternalSignalingListener($messages)->handle($event);
+	}
+
+	public function testOtherParticipantChangesRefreshAllRoomsAsBefore(): void {
+		$room = $this->makeRoom(false);
+		$messages = $this->createMock(Messages::class);
+		$messages->expects($this->once())
+			->method('addMessageForAllParticipants')
+			->with($room, 'refresh-participant-list');
+
+		$event = new ParticipantModifiedEvent($room, $this->createMock(Participant::class), AParticipantModifiedEvent::PROPERTY_PERMISSIONS, 1, 0);
+		$this->makeInternalSignalingListener($messages)->handle($event);
 	}
 }

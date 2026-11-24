@@ -12,6 +12,16 @@ namespace OCA\Circles {
 
 namespace OCA\Circles\Model {
 	class FederatedUser implements \OCA\Circles\IFederatedUser {
+		public function getUserId(): string {
+		}
+		public function getUserType(): int {
+		}
+		public function getDisplayName(): string {
+		}
+		public function isLocal(): bool {
+		}
+		public function getBasedOn(): ?Circle {
+		}
 	}
 }
 
@@ -21,7 +31,7 @@ namespace OCA\Circles\Events {
 	use OCA\Circles\Model\Member;
 	use OCP\EventDispatcher\Event;
 
-	class AddingCircleMemberEvent extends Event {
+	class AddingCircleMemberEvent extends CircleMemberGenericEvent {
 		public function getCircle(): Circle {
 		}
 		public function getMember(): Member {
@@ -33,7 +43,7 @@ namespace OCA\Circles\Events {
 		}
 	}
 
-	class RemovingCircleMemberEvent extends Event {
+	class RemovingCircleMemberEvent extends CircleMemberGenericEvent {
 		public function getCircle(): Circle {
 		}
 		public function getMember(): Member {

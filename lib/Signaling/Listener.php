@@ -137,7 +137,8 @@ class Listener implements IEventListener {
 			GuestJoinedRoomEvent::class,
 			BeforeRoomDeletedEvent::class,
 			UserJoinedRoomEvent::class => $this->refreshParticipantList($event->getRoom()),
-			ParticipantModifiedEvent::class => $this->refreshParticipantListParticipantModified($event), // in_call, name, permissions
+			AttendeesAddedEvent::class => $this->refreshParticipantListOfTeamRoom($event->getRoom()),
+			ParticipantModifiedEvent::class => $this->refreshParticipantListParticipantModified($event), // in_call, name, permissions, type (team rooms)
 			RoomModifiedEvent::class => $this->refreshParticipantListRoomModified($event), // *_permissions
 			default => null, // Ignoring events subscribed by the external signaling
 		};
@@ -147,7 +148,23 @@ class Listener implements IEventListener {
 		$this->internalSignaling->addMessageForAllParticipants($room, 'refresh-participant-list');
 	}
 
+	/**
+	 * Participants of team rooms are added and their roles changed by
+	 * the team (Teams app, background resync), not by a Talk client that
+	 * reloads its own list afterwards
+	 */
+	protected function refreshParticipantListOfTeamRoom(Room $room): void {
+		if ($room->isTeamManaged()) {
+			$this->refreshParticipantList($room);
+		}
+	}
+
 	protected function refreshParticipantListParticipantModified(ParticipantModifiedEvent $event): void {
+		if ($event->getProperty() === AParticipantModifiedEvent::PROPERTY_TYPE) {
+			$this->refreshParticipantListOfTeamRoom($event->getRoom());
+			return;
+		}
+
 		if (!in_array($event->getProperty(), [
 			AParticipantModifiedEvent::PROPERTY_IN_CALL,
 			AParticipantModifiedEvent::PROPERTY_NAME,
