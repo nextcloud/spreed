@@ -1502,4 +1502,84 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->expectExceptionObject($exception);
 		$this->service->changeFederatedRoleInTeam($this->room, $actor, $target, false);
 	}
+
+	public function testMemberAddedInTheTeamsAppIsAddedRightAway(): void {
+		$this->mockUsers();
+		$this->circlesAdapter->expects($this->once())
+			->method('getDirectMember')
+			->with('team1', 'bob')
+			->willReturn(['level' => self::LEVEL_MEMBER, 'joined' => 2]);
+		// Not a participant yet, found after adding (syncUserInTeamRoom() returns the participant)
+		$participant = $this->makeUserParticipant('bob');
+		$lookups = 0;
+		$this->participantService->method('getParticipant')->willReturnCallback(function () use (&$lookups, $participant): Participant {
+			if ($lookups++ === 0) {
+				throw new ParticipantNotFoundException();
+			}
+			return $participant;
+		});
+		$this->participantService->expects($this->once())
+			->method('addUsers')
+			->with($this->room, [[
+				'actorType' => Attendee::ACTOR_USERS,
+				'actorId' => 'bob',
+				'displayName' => 'Bob',
+				'participantType' => Participant::USER,
+			]]);
+
+		$this->service->applyTeamMember($this->room, $this->makeCirclesMember('bob'));
+		$this->assertSame(2, $lookups);
+	}
+
+	public function testLevelChangedInTheTeamsAppIsAppliedRightAway(): void {
+		$this->mockUsers();
+		$participant = $this->makeUserParticipant('bob');
+		$this->circlesAdapter->method('getDirectMember')->with('team1', 'bob')->willReturn(['level' => self::LEVEL_MODERATOR, 'joined' => 2]);
+		$this->participantService->method('getParticipant')->willReturn($participant);
+		$this->participantService->expects($this->never())->method('addUsers');
+		$this->participantService->expects($this->once())
+			->method('updateParticipantType')
+			->with($this->room, $participant, Participant::MODERATOR);
+
+		$this->service->applyTeamMember($this->room, $this->makeCirclesMember('bob'));
+	}
+
+	public function testOutdatedChangeIsNotApplied(): void {
+		// E.g. removed again before the event arrived: the team decides
+		$this->mockUsers();
+		$this->circlesAdapter->method('getDirectMember')->willReturn(null);
+		$this->participantService->method('getParticipant')->willThrowException(new ParticipantNotFoundException());
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->service->applyTeamMember($this->room, $this->makeCirclesMember('bob'));
+	}
+
+	public static function dataMembersLeftToTheResync(): array {
+		return [
+			'user of another server' => [Member::TYPE_USER, 'bob', 'remote.example'],
+			'email guest' => [Member::TYPE_MAIL, 'guest@example.tld', ''],
+			'group' => [Member::TYPE_GROUP, 'group1', ''],
+			'team' => [Member::TYPE_CIRCLE, 'team2', ''],
+		];
+	}
+
+	#[DataProvider('dataMembersLeftToTheResync')]
+	public function testOnlyLocalUsersAreAppliedRightAway(int $userType, string $userId, string $instance): void {
+		$member = $this->createMock(Member::class);
+		$member->method('getUserType')->willReturn($userType);
+		$member->method('getUserId')->willReturn($userId);
+		$member->method('isLocal')->willReturn($instance === '');
+		$this->userManager->expects($this->never())->method('get');
+		$this->circlesAdapter->expects($this->never())->method('getDirectMember');
+		$this->participantService->expects($this->never())->method('addUsers');
+
+		$this->service->applyTeamMember($this->room, $member);
+	}
+
+	public function testDeletedUserIsNotApplied(): void {
+		$this->userManager->method('get')->willReturn(null);
+		$this->circlesAdapter->expects($this->never())->method('getDirectMember');
+
+		$this->service->applyTeamMember($this->room, $this->makeCirclesMember('deleted'));
+	}
 }

@@ -134,8 +134,8 @@ Feature: conversation-5/team-conversation-settings
       | users     | participant1 | 1               |
       | users     | participant2 | 3               |
       | users     | participant3 | 2               |
+    # Right away, without the resync
     When user "participant4" joins team "Team A" in the Teams app
-    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     Then user "participant4" has level "Member" in team "Team A"
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |

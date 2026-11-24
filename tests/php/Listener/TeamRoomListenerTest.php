@@ -17,10 +17,12 @@ use OCA\Circles\Model\Federated\FederatedEvent;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Tools\Model\SimpleDataStore;
 use OCA\Talk\Events\RoomCreatedEvent;
+use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Listener\TeamRoomListener;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\TeamRoomSyncService;
+use OCP\ISession;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -33,13 +35,24 @@ class TeamRoomListenerTest extends TestCase {
 	protected TeamRoomListener $listener;
 	protected Room&MockObject $room;
 	protected Member&MockObject $member;
+	protected ISession&MockObject $session;
+	/** @var array<string, mixed> Values of the session */
+	protected array $sessionValues = [];
 
 	public function setUp(): void {
 		parent::setUp();
 		$this->manager = $this->createMock(Manager::class);
 		$this->syncService = $this->createMock(TeamRoomSyncService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
-		$this->listener = new TeamRoomListener($this->manager, $this->syncService, $this->logger);
+		$this->session = $this->createMock(ISession::class);
+		$this->session->method('get')->willReturnCallback(fn (string $key): mixed => $this->sessionValues[$key] ?? null);
+		$this->session->method('set')->willReturnCallback(function (string $key, mixed $value): void {
+			$this->sessionValues[$key] = $value;
+		});
+		$this->session->method('remove')->willReturnCallback(function (string $key): void {
+			unset($this->sessionValues[$key]);
+		});
+		$this->listener = new TeamRoomListener($this->manager, $this->syncService, $this->logger, $this->session);
 
 		$this->room = $this->createMock(Room::class);
 		$this->room->method('getToken')->willReturn('teamroom');
@@ -113,15 +126,21 @@ class TeamRoomListenerTest extends TestCase {
 		$this->listener->handle($this->makeRemovingEvent());
 	}
 
-	public function testAddedMemberIsOnlyResynced(): void {
-		$this->withRoom();
+	private function makeAddingEvent(): AddingCircleMemberEvent&MockObject {
 		$event = $this->createMock(AddingCircleMemberEvent::class);
 		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($this->member);
+		return $event;
+	}
 
+	public function testAddedMemberIsAppliedRightAwayAndResynced(): void {
+		$this->withRoom();
 		$this->syncService->expects($this->never())->method('removeFormerTeamMember');
+		$this->syncService->expects($this->once())->method('applyTeamMember')->with($this->room, $this->member);
+		// Members of other servers and email guests are invited by the resync
 		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
 
-		$this->listener->handle($event);
+		$this->listener->handle($this->makeAddingEvent());
 	}
 
 	public static function dataEditedMember(): array {
@@ -132,15 +151,45 @@ class TeamRoomListenerTest extends TestCase {
 	}
 
 	#[DataProvider('dataEditedMember')]
-	public function testOnlyLevelChangesAreResynced(int $type, int $resyncs): void {
+	public function testOnlyLevelChangesAreAppliedAndResynced(int $type, int $times): void {
 		$this->withRoom();
 		$event = $this->createMock(EditingCircleMemberEvent::class);
 		$event->method('getCircle')->willReturn($this->makeCircle());
+		$event->method('getMember')->willReturn($this->member);
 		$event->method('getType')->willReturn($type);
 
-		$this->syncService->expects($this->exactly($resyncs))->method('queueResync')->with($this->room);
+		$this->syncService->expects($this->exactly($times))->method('applyTeamMember')->with($this->room, $this->member);
+		$this->syncService->expects($this->exactly($times))->method('queueResync')->with($this->room);
 
 		$this->listener->handle($event);
+	}
+
+	public function testChangeMadeByTalkIsNotAppliedAgain(): void {
+		$this->withRoom();
+		$this->syncService->method('isChangingTeamFromTalk')->willReturn(true);
+		$this->syncService->expects($this->never())->method('applyTeamMember');
+		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
+
+		$this->listener->handle($this->makeAddingEvent());
+	}
+
+	public function testBannedMemberStaysOutWithoutWarning(): void {
+		$this->withRoom();
+		$this->syncService->method('applyTeamMember')->willThrowException(new ForbiddenException());
+		$this->logger->expects($this->never())->method('warning');
+		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
+
+		$this->listener->handle($this->makeAddingEvent());
+	}
+
+	public function testFailureToApplyDoesNotBreakTheTeamChange(): void {
+		$this->withRoom();
+		$this->syncService->method('applyTeamMember')->willThrowException(new \RuntimeException('database gone'));
+		$this->logger->expects($this->once())->method('warning');
+		// The resync applies it later
+		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
+
+		$this->listener->handle($this->makeAddingEvent());
 	}
 
 	public static function dataCreatedRoom(): array {
@@ -167,5 +216,90 @@ class TeamRoomListenerTest extends TestCase {
 		$this->syncService->expects($this->once())->method('queueResync')->with($this->room);
 
 		$this->listener->handle($this->makeRemovingEvent(CircleGenericEvent::LEFT));
+	}
+
+	private function makeInitiator(int $userType, string $userId, bool $local = true): Member&MockObject {
+		$initiator = $this->createMock(Member::class);
+		$initiator->method('getUserType')->willReturn($userType);
+		$initiator->method('getUserId')->willReturn($userId);
+		$initiator->method('getDisplayName')->willReturn(ucfirst($userId));
+		$initiator->method('isLocal')->willReturn($local);
+		return $initiator;
+	}
+
+	/**
+	 * @return array<string, mixed> Session values while the change was applied
+	 */
+	private function applyAddedMemberBy(Member $initiator): array {
+		$circle = $this->makeCircle();
+		$circle->method('hasInitiator')->willReturn(true);
+		$circle->method('getInitiator')->willReturn($initiator);
+		$event = $this->createMock(AddingCircleMemberEvent::class);
+		$event->method('getCircle')->willReturn($circle);
+		$event->method('getMember')->willReturn($this->member);
+		$this->withRoom();
+
+		$during = null;
+		$this->syncService->method('applyTeamMember')->willReturnCallback(function () use (&$during): void {
+			$during = $this->sessionValues;
+		});
+
+		$this->listener->handle($event);
+		return $during ?? [];
+	}
+
+	public function testSystemMessagesNameTheUserOfTheTeamsApp(): void {
+		// Circles adds members in a separate request without a user session
+		$during = $this->applyAddedMemberBy($this->makeInitiator(Member::TYPE_USER, 'alice'));
+
+		$this->assertSame(['talk-overwrite-actor-id' => 'alice', 'talk-overwrite-actor-displayname' => 'Alice'], $during);
+		$this->assertSame([], $this->sessionValues);
+	}
+
+	public function testSystemMessagesOfOccNameTheAdministrator(): void {
+		$during = $this->applyAddedMemberBy($this->makeInitiator(Member::TYPE_APP, 'occ'));
+
+		$this->assertSame(['talk-overwrite-actor-cli' => 'cli'], $during);
+		$this->assertSame([], $this->sessionValues);
+	}
+
+	public function testUserOfAnotherServerIsNoLocalActor(): void {
+		$during = $this->applyAddedMemberBy($this->makeInitiator(Member::TYPE_USER, 'alice', false));
+
+		$this->assertSame([], $during);
+	}
+
+	public function testActorOfTheCallerIsRestored(): void {
+		// E.g. Circles runs the change while another listener set its actor
+		$this->sessionValues = ['talk-overwrite-actor-id' => 'bob', 'talk-overwrite-actor-displayname' => 'Bob'];
+
+		$during = $this->applyAddedMemberBy($this->makeInitiator(Member::TYPE_USER, 'alice'));
+
+		$this->assertSame('alice', $during['talk-overwrite-actor-id']);
+		$this->assertSame(['talk-overwrite-actor-id' => 'bob', 'talk-overwrite-actor-displayname' => 'Bob'], $this->sessionValues);
+	}
+
+	public function testRemovalsNameTheUserOfTheTeamsApp(): void {
+		$this->withRoom();
+		$circle = $this->makeCircle();
+		$circle->method('hasInitiator')->willReturn(true);
+		$circle->method('getInitiator')->willReturn($this->makeInitiator(Member::TYPE_USER, 'alice'));
+		$federatedEvent = $this->createMock(FederatedEvent::class);
+		$federatedEvent->method('getData')->willReturn(new SimpleDataStore());
+		$event = $this->createMock(RemovingCircleMemberEvent::class);
+		$event->method('getCircle')->willReturn($circle);
+		$event->method('getMember')->willReturn($this->member);
+		$event->method('getType')->willReturn(CircleGenericEvent::REMOVED);
+		$event->method('getFederatedEvent')->willReturn($federatedEvent);
+
+		$during = null;
+		$this->syncService->method('removeFormerTeamMember')->willReturnCallback(function () use (&$during): void {
+			$during = $this->sessionValues['talk-overwrite-actor-id'] ?? null;
+		});
+
+		$this->listener->handle($event);
+
+		$this->assertSame('alice', $during);
+		$this->assertSame([], $this->sessionValues);
 	}
 }

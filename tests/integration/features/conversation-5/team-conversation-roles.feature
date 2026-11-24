@@ -2,9 +2,11 @@ Feature: conversation-5/team-conversation-roles
   # Team conversations: group conversations with the object type "team" and
   # the team id as object id. The direct users of the team are the
   # participants, their team level is their role (Owner/Admin: owner,
-  # Moderator: moderator, Member: user). Changes in the Teams app are synced
-  # by the ResyncTeamRoom background job, which is queued by the member events
-  # of the Teams app.
+  # Moderator: moderator, Member: user). Changes of single users in the Teams
+  # app are applied right away. Everything else (the other members after
+  # creating, members of other servers, email guests, the former owner) is
+  # synced by the ResyncTeamRoom background job, which is queued by the member
+  # events of the Teams app.
 
   Background:
     Given user "participant1" exists
@@ -31,9 +33,18 @@ Feature: conversation-5/team-conversation-roles
 
   Scenario: The other members of the team are added by the resync
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
-    # Any change of the members queues the resync of the team conversation
-    When add user "participant4" to team "Team A"
+    # Creating the conversation queues the resync
+    When run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType | actorId      | participantType |
+      | users     | participant1 | 1               |
+      | users     | participant2 | 3               |
+      | users     | participant3 | 3               |
+
+  Scenario: Members added in the Teams app are added right away
+    Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
+    When add user "participant4" to team "Team A"
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
@@ -107,18 +118,17 @@ Feature: conversation-5/team-conversation-roles
 
   # Team → Talk
 
-  Scenario: Level changes in the team are synced to the conversation
+  Scenario: Level changes in the team are applied to the conversation right away
     Given user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
+    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     When set level of user "participant2" in team "Team A" to "Admin"
     And set level of user "participant3" in team "Team A" to "Moderator"
-    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
       | users     | participant2 | 1               |
       | users     | participant3 | 2               |
     When set level of user "participant2" in team "Team A" to "Member"
-    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
@@ -210,8 +220,8 @@ Feature: conversation-5/team-conversation-roles
     And user "participant1" creates team conversation "room" for team "Team A" with 201 (v4)
     When user "participant1" adds user "participant4" to room "room" with 200 (v4)
     Then user "participant4" is no direct member of team "Team A"
+    # Right away, without the resync
     When user "participant4" joins team "Team A" in the Teams app
-    And run "OCA\Talk\BackgroundJob\ResyncTeamRoom" background jobs
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType | actorId      | participantType |
       | users     | participant1 | 1               |
