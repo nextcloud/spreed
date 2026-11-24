@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
+use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\ResponseDefinitions;
@@ -30,6 +31,7 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 		string $appName,
 		IRequest $request,
 		private readonly MatterbridgeManager $bridgeManager,
+		private readonly Manager $manager,
 		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -95,6 +97,10 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 		if ($this->room->isClassified()) {
 			// A bridge would forward the messages of a classified conversation
 			return new DataResponse(['error' => 'classified'], Http::STATUS_NOT_ACCEPTABLE);
+		}
+
+		if ($enabled && !is_null($this->manager->getTeamRoomOf($this->room))) {
+			return new DataResponse(['error' => 'team'], Http::STATUS_NOT_ACCEPTABLE);
 		}
 
 		try {
