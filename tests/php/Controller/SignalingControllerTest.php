@@ -31,6 +31,7 @@ use OCA\Talk\Signaling\RoomPropertiesHelper;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
@@ -377,6 +378,68 @@ class SignalingControllerTest extends TestCase {
 		// "turnservers" is always returned, even if empty
 		$this->assertArrayHasKey('turnservers', $settings);
 		$this->assertSame($expectedTurnServers, $settings['turnservers']);
+	}
+
+	public function testGetSettingsFederatedConversationUsesHostTurnServers(): void {
+		$this->config = $this->createMock(Config::class);
+		$this->recreateSignalingController();
+
+		$this->config->method('getStunServers')->willReturn(['stun.local.example:443']);
+		$this->config->method('getTurnSettings')->willReturn([[
+			'schemes' => 'turn',
+			'server' => 'turn.local.example:3478',
+			'username' => 'localUserName',
+			'password' => 'localPassword',
+			'protocols' => 'udp',
+		]]);
+		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_EXTERNAL);
+		$this->config->method('getSignalingServers')->willReturn([['server' => 'https://signaling.local.example']]);
+		$this->config->method('getSignalingTicket')->willReturn('ticket');
+		$this->config->method('getFederationSignalingAuthTicket')->willReturn('federationTicket');
+
+		$room = $this->createMock(Room::class);
+		$room->method('isFederatedConversation')->willReturn(true);
+		$room->method('getRemoteServer')->willReturn('https://host.example');
+		$room->method('getRemoteToken')->willReturn('remoteToken');
+		$this->manager->method('getRoomForUserByToken')
+			->with('localToken', $this->userId)
+			->willReturn($room);
+		$this->participantService->method('getParticipant')
+			->willReturn($this->createMock(Participant::class));
+
+		$hostTurnServer = [
+			'urls' => ['turn:turn.host.example:3478?transport=udp'],
+			'username' => 'hostUserName',
+			'credential' => 'hostPassword',
+		];
+		$proxy = $this->createMock(\OCA\Talk\Federation\Proxy\TalkV1\Controller\SignalingController::class);
+		$proxy->method('getSettings')
+			->willReturn(new DataResponse([
+				'server' => 'https://signaling.host.example',
+				'stunservers' => [['urls' => ['stun:stun.host.example:443']]],
+				'turnservers' => [$hostTurnServer],
+				'helloAuthParams' => ['2.0' => ['token' => 'hostHelloToken']],
+			]));
+		$this->overwriteService(\OCA\Talk\Federation\Proxy\TalkV1\Controller\SignalingController::class, $proxy);
+
+		try {
+			$settings = $this->controller->getSettings('localToken')->getData();
+		} finally {
+			$this->restoreService(\OCA\Talk\Federation\Proxy\TalkV1\Controller\SignalingController::class);
+		}
+
+		$this->assertSame([['urls' => ['stun:stun.local.example:443']]], $settings['stunservers']);
+		$this->assertSame([
+			$hostTurnServer,
+			[
+				'urls' => ['turn:turn.local.example:3478?transport=udp'],
+				'username' => 'localUserName',
+				'credential' => 'localPassword',
+			],
+		], $settings['turnservers']);
+		$this->assertSame('https://signaling.host.example', $settings['federation']['server']);
+		$this->assertSame('hostHelloToken', $settings['federation']['helloAuthParams']['token']);
+		$this->assertSame('remoteToken', $settings['federation']['roomId']);
 	}
 
 	public static function dataIsTryingToPublishMedia(): array {
