@@ -2734,6 +2734,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$threadId,
 		);
 		if (!empty($parameters['teamFolder'])) {
+			// For the thread of the file in the Files sidebar
+			$this->conversationFolderService->rememberTeamAttachmentMessage($node, (int)$comment->getId());
 			// For participants without access to the team folder
 			$this->conversationFolderService->shareTeamAttachment($node, $uid, $this->room);
 		}

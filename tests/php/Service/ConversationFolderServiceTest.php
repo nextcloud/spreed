@@ -23,6 +23,7 @@ use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
@@ -59,6 +60,7 @@ class ConversationFolderServiceTest extends TestCase {
 			$this->filenameValidator,
 			$this->logger,
 			$this->teamManager,
+			$this->createMock(IFilesMetadataManager::class),
 		);
 	}
 

@@ -20,6 +20,8 @@ use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
@@ -51,6 +53,8 @@ class ConversationFolderService {
 	/** Folder inside the team folder that holds the files posted in the team conversation
 	 * {TALK_PLACEHOLDER} cannot be used as there is no l10n that is available for a team */
 	public const TEAM_ATTACHMENT_FOLDER = '.system';
+	/** File metadata: the message that posted a file of the team folder, for its thread */
+	public const TEAM_ATTACHMENT_MESSAGE_METADATA = 'talk-message-id';
 
 	/** @var array<int, true> Ids of user subfolders created inside a team folder in this request */
 	private array $teamSubfolderIds = [];
@@ -62,6 +66,7 @@ class ConversationFolderService {
 		private readonly IFilenameValidator $filenameValidator,
 		private readonly LoggerInterface $logger,
 		private readonly ITeamManager $teamManager,
+		private readonly IFilesMetadataManager $filesMetadataManager,
 	) {
 	}
 
@@ -207,6 +212,38 @@ class ConversationFolderService {
 			$this->logger->warning('Talk folder in the team folder of ' . $room->getToken() . ' could not be created', ['exception' => $e]);
 			return null;
 		}
+	}
+
+	/**
+	 * Remember the message that posted a file of the team folder, so its
+	 * thread is found without searching the chat (TeamFileThreadService)
+	 */
+	public function rememberTeamAttachmentMessage(Node $node, int $messageId): void {
+		try {
+			$metadata = $this->filesMetadataManager->getMetadataForNode($node, true);
+			$metadata->setInt(self::TEAM_ATTACHMENT_MESSAGE_METADATA, $messageId);
+			$this->filesMetadataManager->saveMetadata($metadata);
+		} catch (\Throwable $e) {
+			// Only slower: the thread is found by searching the chat then
+			$this->logger->info('Message of team attachment ' . $node->getId() . ' could not be remembered', ['exception' => $e]);
+		}
+	}
+
+	/**
+	 * The message that posted a file of the team folder, null when unknown
+	 * (e.g. posted before it was remembered)
+	 */
+	public function getTeamAttachmentMessageId(Node $node): ?int {
+		try {
+			$metadata = $this->filesMetadataManager->getMetadataForNode($node);
+			if ($metadata->hasKey(self::TEAM_ATTACHMENT_MESSAGE_METADATA)) {
+				return $metadata->getInt(self::TEAM_ATTACHMENT_MESSAGE_METADATA);
+			}
+		} catch (FilesMetadataNotFoundException) {
+		} catch (\Throwable $e) {
+			$this->logger->info('Message of team attachment ' . $node->getId() . ' could not be read', ['exception' => $e]);
+		}
+		return null;
 	}
 
 	/**
