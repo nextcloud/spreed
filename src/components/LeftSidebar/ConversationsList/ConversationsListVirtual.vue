@@ -15,7 +15,7 @@ import ConversationTagHeader from './ConversationTagHeader.vue'
 import { AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { useSettingsStore } from '../../../stores/settings.ts'
-import { hasCall, hasUnreadMentions, hasUnreadMessages } from '../../../utils/conversation.ts'
+import { hasCall, hasUnreadDirectMentions, hasUnreadMentions, hasUnreadMessages } from '../../../utils/conversation.ts'
 
 export type VirtualListItem = (Conversation | TagHeaderItem) & { _key?: string }
 
@@ -55,6 +55,8 @@ function isUnreadShownCollapsed(conversation: Conversation): boolean {
 			return hasUnreadMessages(conversation)
 		case CONVERSATION.TAGS_SHOW_UNREAD.MENTION:
 			return hasUnreadMentions(conversation)
+		case CONVERSATION.TAGS_SHOW_UNREAD.MENTION_DIRECT:
+			return hasUnreadDirectMentions(conversation)
 		case CONVERSATION.TAGS_SHOW_UNREAD.NEVER:
 		default:
 			return false

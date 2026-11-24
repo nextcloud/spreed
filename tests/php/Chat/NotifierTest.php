@@ -191,6 +191,36 @@ class NotifierTest extends TestCase {
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
+	public static function dataShouldMentionedUserBeNotifiedMentionAll(): array {
+		return [
+			'direct mention, level mention' => [Participant::NOTIFY_MENTION, Participant::NOTIFY_ALWAYS, false, Notifier::PRIORITY_NORMAL],
+			'@all mention, level mention' => [Participant::NOTIFY_MENTION, Participant::NOTIFY_ALWAYS, true, Notifier::PRIORITY_NORMAL],
+			'direct mention, level direct mention' => [Participant::NOTIFY_MENTION_DIRECT, Participant::NOTIFY_ALWAYS, false, Notifier::PRIORITY_NORMAL],
+			'@all mention, level direct mention' => [Participant::NOTIFY_MENTION_DIRECT, Participant::NOTIFY_ALWAYS, true, Notifier::PRIORITY_NONE],
+			'@all mention, default level direct mention' => [Participant::NOTIFY_DEFAULT, Participant::NOTIFY_MENTION_DIRECT, true, Notifier::PRIORITY_NONE],
+			'@all mention, default level always' => [Participant::NOTIFY_DEFAULT, Participant::NOTIFY_ALWAYS, true, Notifier::PRIORITY_NORMAL],
+			'@all mention, level never' => [Participant::NOTIFY_NEVER, Participant::NOTIFY_ALWAYS, true, Notifier::PRIORITY_NONE],
+		];
+	}
+
+	#[DataProvider('dataShouldMentionedUserBeNotifiedMentionAll')]
+	public function testShouldMentionedUserBeNotifiedMentionAll(int $notificationLevel, int $defaultLevel, bool $isMentionAll, int $expected): void {
+		$this->appConfig->method('getAppValueInt')
+			->willReturn($defaultLevel);
+		$room = $this->createMock(Room::class);
+		$room->method('getType')
+			->willReturn(Room::TYPE_GROUP);
+		$attendee = Attendee::fromRow([
+			'actor_type' => Attendee::ACTOR_USERS,
+			'actor_id' => 'anotherUser',
+			'notification_level' => $notificationLevel,
+		]);
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @all');
+
+		$actual = self::invokePrivate($this->getNotifier(), 'shouldMentionedUserBeNotified', ['anotherUser', $comment, $room, $attendee, $isMentionAll]);
+		$this->assertSame($expected, $actual);
+	}
+
 	public static function dataShouldParticipantBeNotified(): array {
 		return [
 			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false, 0, Notifier::PRIORITY_NONE],

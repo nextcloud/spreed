@@ -80,6 +80,7 @@ Required capability: `config => conversations => unarchive`
 
 * `never` (default) - Archived conversations stay archived until unarchived manually
 * `mention` - Archived conversations are unarchived when the user is mentioned directly or via `@all` or when one of their messages is replied to, or on any new chat message in one-to-one conversations, the same cases that show the mention marker in the conversation list
+* `mention-direct` - Like `mention`, but `@all` mentions are ignored (only with `notify-direct-mentions` capability)
 * `always` - Archived conversations are unarchived on any new chat message by other participants, the same cases that show the unread marker in the conversation list
 
 Shared files and objects (e.g. polls) are treated like chat messages. Own messages and other system messages never unarchive a conversation. Silent messages are treated like normal messages, as they also show the markers.
@@ -91,6 +92,7 @@ Collapsed tag sections always show the active conversation and conversations wit
 
 * `never` - Unread conversations are hidden in collapsed tag sections, the tag header shows a counter of unread conversations instead
 * `mention` - Unread conversations are shown in collapsed tag sections when the user is mentioned directly or via `@all` or when one of their messages is replied to, or on any new chat message in one-to-one conversations, the same cases that show the mention marker in the conversation list. The tag header shows a counter of unread conversations
+* `mention-direct` - Like `mention`, but `@all` mentions are ignored (only with `notify-direct-mentions` capability)
 * `always` (default) - All unread conversations are shown in collapsed tag sections
 
 ### Conversation attributes
@@ -121,10 +123,11 @@ Required capability: `conversation-presets`
 * `8` Uses SIP dial-in
 
 ### Participant notification levels
-* `0` Default (`1` for one-to-one conversations, `2` for other conversations)
+* `0` Default (`1` for one-to-one conversations, `default_group_notification` app config for other conversations)
 * `1` Always notify
-* `2` Notify on mention
+* `2` Notify on mention, including `@all`
 * `3` Never notify
+* `4` Notify on direct mention only, excluding `@all` (only for group conversations, see capability `notify-direct-mentions`)
 
 ### Participant call notification levels
 * `0` Off

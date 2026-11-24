@@ -144,6 +144,7 @@ class Capabilities implements IPublicCapability {
 		'mute-conversations',
 		'federation-signaling-auth',
 		'shared-items-link',
+		'notify-direct-mentions',
 	];
 
 	public const CONDITIONAL_FEATURES = [

@@ -786,7 +786,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkThreadAttendee = array{
  *      // The notification level for the user in this thread (See [Participant notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-notification-levels))
- *      notificationLevel: 0|1|2|3,
+ *      notificationLevel: 0|1|2|3|4,
  * }
  *
  * @psalm-type TalkThreadInfo = array{
@@ -908,9 +908,9 @@ namespace OCA\Talk;
  *             // User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))
  *             group-mode: 'none'|'group-first'|'private-first',
  *             // User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))
- *             unarchive: 'never'|'mention'|'always',
+ *             unarchive: 'never'|'mention-direct'|'mention'|'always',
  *             // User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))
- *             tags-show-unread: 'never'|'mention'|'always',
+ *             tags-show-unread: 'never'|'mention-direct'|'mention'|'always',
  *         },
  *         federation: array{
  *             // Whether federation is enabled

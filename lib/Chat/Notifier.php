@@ -85,7 +85,7 @@ class Notifier {
 		}
 
 		foreach ($usersToNotify as $mentionedUser) {
-			$shouldMentionedUserBeNotified = $this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat, $mentionedUser['attendee'] ?? null);
+			$shouldMentionedUserBeNotified = $this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat, $mentionedUser['attendee'] ?? null, ($mentionedUser['reason'] ?? '') === 'all');
 			if ($shouldMentionedUserBeNotified !== self::PRIORITY_NONE) {
 				if (!$silent) {
 					$notification->setUser($mentionedUser['id']);
@@ -660,8 +660,9 @@ class Notifier {
 	 * 2. The user must exist
 	 * 3. The user must be a participant of the room
 	 * 4. The user must not be active in the room
+	 * 5. The user did not limit notifications to direct mentions when it is an "@all" mention
 	 */
-	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room, ?Attendee $attendee = null): int {
+	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room, ?Attendee $attendee = null, bool $isMentionAll = false): int {
 		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return self::PRIORITY_NONE;
@@ -706,6 +707,9 @@ class Notifier {
 				}
 			}
 			if ($notificationLevel === Participant::NOTIFY_NEVER) {
+				return self::PRIORITY_NONE;
+			}
+			if ($isMentionAll && $notificationLevel === Participant::NOTIFY_MENTION_DIRECT) {
 				return self::PRIORITY_NONE;
 			}
 

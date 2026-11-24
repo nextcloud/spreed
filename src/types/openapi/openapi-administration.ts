@@ -455,12 +455,12 @@ export type components = {
                      * @description User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))
                      * @enum {string}
                      */
-                    unarchive: "never" | "mention" | "always";
+                    unarchive: "never" | "mention-direct" | "mention" | "always";
                     /**
                      * @description User selected mode when unread conversations are shown in collapsed conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-show-unread-mode))
                      * @enum {string}
                      */
-                    "tags-show-unread": "never" | "mention" | "always";
+                    "tags-show-unread": "never" | "mention-direct" | "mention" | "always";
                 };
                 federation: {
                     /** @description Whether federation is enabled */

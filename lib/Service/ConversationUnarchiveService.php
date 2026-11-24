@@ -28,7 +28,8 @@ use OCP\Config\ValueType;
  *
  * A conversation is unarchived when the conversation list would show a marker
  * for the message: a mention marker with "mention" (any message in one-to-one
- * conversations), an unread marker with "always".
+ * conversations), an unread marker with "always". "mention-direct" is like
+ * "mention", but ignores "@all".
  * Own messages create no marker and never unarchive.
  */
 class ConversationUnarchiveService {
@@ -54,7 +55,8 @@ class ConversationUnarchiveService {
 		$mentions = $this->getMentions($comment);
 		$mentionedUserIds = $this->getMentionedUserIds($mentions, $parent);
 		// Any message in a one-to-one conversation shows the mention marker
-		$everyoneMentioned = $room->getType() === Room::TYPE_ONE_TO_ONE || $this->isEveryoneMentioned($mentions);
+		$isOneToOne = $room->getType() === Room::TYPE_ONE_TO_ONE;
+		$everyoneMentioned = $isOneToOne || $this->isEveryoneMentioned($mentions);
 
 		$attendeeIds = [];
 		foreach ($archivedAttendees as $attendee) {
@@ -65,7 +67,9 @@ class ConversationUnarchiveService {
 			$mode = $modes[$attendee->getActorId()] ?? UserPreference::CONVERSATIONS_UNARCHIVE_NEVER;
 			if ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS
 				|| ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_MENTION
-					&& ($everyoneMentioned || in_array($attendee->getActorId(), $mentionedUserIds, true)))) {
+					&& ($everyoneMentioned || in_array($attendee->getActorId(), $mentionedUserIds, true)))
+				|| ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT
+					&& ($isOneToOne || in_array($attendee->getActorId(), $mentionedUserIds, true)))) {
 				$attendeeIds[] = $attendee->getId();
 			}
 		}
@@ -93,7 +97,9 @@ class ConversationUnarchiveService {
 		$mode = $this->talkConfig->getConversationsUnarchive($attendee->getActorId());
 		if ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS
 			|| ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_MENTION
-				&& $this->isMentionedInFederatedMessage($room, $attendee, $message))) {
+				&& $this->isMentionedInFederatedMessage($room, $attendee, $message))
+			|| ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT
+				&& $this->isMentionedInFederatedMessage($room, $attendee, $message, false))) {
 			$this->participantService->unarchiveConversation($participant);
 		}
 	}
@@ -154,10 +160,10 @@ class ConversationUnarchiveService {
 		return false;
 	}
 
-	protected function isMentionedInFederatedMessage(Room $room, Attendee $attendee, ProxyCacheMessage $message): bool {
+	protected function isMentionedInFederatedMessage(Room $room, Attendee $attendee, ProxyCacheMessage $message, bool $includeMentionAll = true): bool {
 		foreach ($message->getParsedMessageParameters() as $parameter) {
 			// RichObjectDefinition types, not Attendee::ACTOR_*
-			if ($parameter['type'] === 'call' && $parameter['id'] === $room->getToken()) {
+			if ($includeMentionAll && $parameter['type'] === 'call' && $parameter['id'] === $room->getToken()) {
 				return true;
 			}
 			if ($parameter['type'] === 'user' && $parameter['id'] === $attendee->getActorId() && empty($parameter['server'])) {

@@ -669,6 +669,32 @@ class RoomSyncServiceTest extends TestCase {
 		];
 	}
 
+	public static function dataPushRulesKeepDirectMentions(): array {
+		return [
+			'mentions keep direct mentions' => [[], false],
+			'all messages replace direct mentions' => [['notify'], true],
+		];
+	}
+
+	#[DataProvider('dataPushRulesKeepDirectMentions')]
+	public function testPushRulesKeepDirectMentions(array $actions, bool $expectUpdate): void {
+		$this->memberMapper->method('getForAccount')->with('7')->willReturn([
+			$this->member('@alice:example.org', 'join', '7'),
+		]);
+		$this->roomMapper->method('getById')->with('100')->willReturn(MatrixRoom::fromRow(['id' => '100', 'room_id' => 23, 'matrix_room_id' => '!room:example.org']));
+		$this->manager->method('getRoomById')->with(23)->willReturn($this->room);
+		$alice = $this->participant(Attendee::ACTOR_USERS, 'alice');
+		$alice->getAttendee()->setNotificationLevel(Participant::NOTIFY_MENTION_DIRECT);
+		$this->participantService->method('getParticipantByActor')->with($this->room, Attendee::ACTOR_USERS, 'alice')->willReturn($alice);
+		$this->attendeeMapper->expects($expectUpdate ? self::once() : self::never())
+			->method('update');
+
+		$this->service->process($this->account(), $this->client, SyncBatch::fromArray([
+			'next_batch' => 'next',
+			'account_data' => ['events' => [['type' => 'm.push_rules', 'content' => ['global' => ['room' => [['rule_id' => '!room:example.org', 'actions' => $actions]]]]]]],
+		]), false);
+	}
+
 	#[DataProvider('dataNotificationLevel')]
 	public function testGetNotificationLevel(array $pushRules, int $expected): void {
 		self::assertSame($expected, RoomSyncService::getNotificationLevel($pushRules, '!room:example.org'));

@@ -51,7 +51,8 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },
-	{ value: 2, label: t('spreed', '@-mentions only') },
+	{ value: 2, label: t('spreed', '@-mentions & @all') },
+	{ value: 4, label: t('spreed', '@-mentions only') },
 	{ value: 3, label: t('spreed', 'Off') },
 ]
 export default {
@@ -88,7 +89,7 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('spreed', 'default_group_notification')) - 1]
+		this.defaultGroupNotification = defaultGroupNotificationOptions.find((option) => option.value === parseInt(loadState('spreed', 'default_group_notification')))
 		this.loading = false
 	},
 

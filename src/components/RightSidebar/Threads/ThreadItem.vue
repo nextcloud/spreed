@@ -28,7 +28,7 @@ import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
-import { notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
+import { getNotificationLevels, notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
 
 const { thread } = defineProps<{ thread: ThreadInfo }>()
 
@@ -76,6 +76,7 @@ const timeFormat = computed<Intl.DateTimeFormatOptions>(() => {
 	return { dateStyle: 'short' }
 })
 
+const threadNotificationLevels = computed(() => getNotificationLevels(thread.thread.roomToken))
 const threadNotificationLabel = computed(() => notificationLevels.find((l) => l.value === thread.attendee.notificationLevel)?.label)
 
 const isModeratorOrOwner = computed(() => {
@@ -167,7 +168,7 @@ function handleActionsMenuOpen(open: boolean) {
 				<NcActionSeparator />
 
 				<NcActionButton
-					v-for="level in notificationLevels"
+					v-for="level in threadNotificationLevels"
 					:key="level.value"
 					:modelValue="thread.attendee.notificationLevel.toString()"
 					:value="level.value.toString()"

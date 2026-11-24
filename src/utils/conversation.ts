@@ -78,6 +78,28 @@ export function hasUnreadMentions(conversation: Conversation): boolean {
 }
 
 /**
+ * check if the conversation has unread mentions, ignoring "@all"
+ *
+ * @param conversation conversation object
+ */
+export function hasUnreadDirectMentions(conversation: Conversation): boolean {
+	return conversation.unreadMentionDirect
+		|| (conversation.unreadMessages > 0
+			&& (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
+}
+
+/**
+ * Check if the notification level for direct mentions only (without "@all") can be selected
+ *
+ * @param conversation conversation object
+ */
+export function supportsDirectMentionsNotification(conversation: Conversation): boolean {
+	return conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+		&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		&& hasTalkFeature(conversation.token, 'notify-direct-mentions')
+}
+
+/**
  * check if the conversation has ongoing call
  *
  * @param conversation conversation object

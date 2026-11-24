@@ -461,12 +461,12 @@ PROMPT;
 			new UserPreferenceEntry(
 				new Entry(UserPreference::CONVERSATIONS_UNARCHIVE, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_NEVER, definition: 'When archived conversations are unarchived automatically, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversations-unarchive-mode'),
 				provisionable: true,
-				enumType: UserPreference::CONVERSATIONS_UNARCHIVE_NEVER . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_MENTION . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
+				enumType: UserPreference::CONVERSATIONS_UNARCHIVE_NEVER . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_MENTION . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_MENTION_DIRECT . '|' . UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
 			),
 			new UserPreferenceEntry(
 				new Entry(UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD, ValueType::STRING, UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS, definition: 'Which unread conversations are shown in collapsed tag sections, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#conversations-tags-show-unread-mode'),
 				provisionable: true,
-				enumType: UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
+				enumType: UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_NEVER . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_MENTION_DIRECT . '|' . UserPreference::CONVERSATIONS_TAGS_SHOW_UNREAD_ALWAYS,
 			),
 			new UserPreferenceEntry(
 				new Entry(UserPreference::ATTACHMENT_FOLDER, ValueType::STRING),
