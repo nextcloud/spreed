@@ -4735,6 +4735,25 @@ class FeatureContext implements Context {
 		}
 	}
 
+	/**
+	 * The folder of the team in the files of the user (needs an app providing
+	 * team folders). "unknown team" is a team id that does not exist.
+	 */
+	#[Then('/^user "([^"]*)" gets the folder of (team "[^"]*"|unknown team) with (\d+) \((v1)\)$/')]
+	public function userGetsTheFolderOfTeam(string $user, string $team, int $statusCode, string $apiVersion, ?TableNode $expected = null): void {
+		$teamId = $team === 'unknown team'
+			? 'NotExistingTeamId00000000000000'
+			: self::getTeamIdForLabel($this->currentServer, substr($team, 6, -1));
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/team/' . $teamId . '/folder');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($expected instanceof TableNode) {
+			Assert::assertSame($expected->getRowsHash(), $this->getDataFromResponse($this->response));
+		}
+	}
+
 	#[When('/^team "([^"]*)" is deleted$/')]
 	public function teamIsDeleted(string $team): void {
 		$this->deleteTeam($team);
