@@ -16347,7 +16347,7 @@
             "post": {
                 "operationId": "room-create-room",
                 "summary": "Create a room with a user, a group or a circle",
-                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.\nThe endpoint can also be used unauthenticated by an external call service by signing the request with the configured shared secret via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the random seed and the `$owner` user ID).",
+                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.\nThe endpoint can also be used unauthenticated by an external call service by signing the request with its private key via the `x-nextcloud-talk-external-service-jwt` header.",
                 "tags": [
                     "room"
                 ],
@@ -16509,7 +16509,7 @@
                                     "owner": {
                                         "type": "string",
                                         "default": "",
-                                        "description": "User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored."
+                                        "description": "User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated as external call service, otherwise ignored."
                                     }
                                 }
                             }
@@ -16530,17 +16530,9 @@
                         }
                     },
                     {
-                        "name": "x-nextcloud-talk-external-service-random",
+                        "name": "x-nextcloud-talk-external-service-jwt",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-talk-external-service-checksum",
-                        "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
+                        "description": "ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)",
                         "schema": {
                             "type": "string"
                         }
@@ -17319,6 +17311,7 @@
             "put": {
                 "operationId": "room-rename-room",
                 "summary": "Rename a room",
+                "description": "The endpoint can also be used unauthenticated by an external call service for its own conversations, by signing the request with its private key via the `x-nextcloud-talk-external-service-jwt` header.",
                 "tags": [
                     "room"
                 ],
@@ -17344,6 +17337,11 @@
                                     "roomName": {
                                         "type": "string",
                                         "description": "New name"
+                                    },
+                                    "owner": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User ID of an owner of the conversation that will be used as actor. Required when the request is authenticated as external call service, otherwise ignored."
                                     }
                                 }
                             }
@@ -17370,6 +17368,14 @@
                         "schema": {
                             "type": "string",
                             "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-jwt",
+                        "in": "header",
+                        "description": "ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -17641,767 +17647,6 @@
                                                 },
                                                 "data": {
                                                     "$ref": "#/components/schemas/Room"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Current user is not logged in",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
-            "put": {
-                "operationId": "room-sync-participants",
-                "summary": "Synchronize the participants of a conversation with the given list",
-                "description": "Only available for the external call service. Participants missing from the list are removed (except owners), participants new in the list are added.",
-                "tags": [
-                    "room"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": false,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "participants": {
-                                        "$ref": "#/components/schemas/InvitationList",
-                                        "default": [],
-                                        "description": "List of participants the conversation should have grouped by type"
-                                    },
-                                    "owner": {
-                                        "type": "string",
-                                        "default": "",
-                                        "description": "User ID of an owner of the conversation that will be used as actor"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v4"
-                            ],
-                            "default": "v4"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "description": "Token of the room",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-talk-external-service-random",
-                        "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-talk-external-service-checksum",
-                        "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Participants synchronized successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "$ref": "#/components/schemas/Room"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "202": {
-                        "description": "Participants synchronized but not all participants could be added",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "$ref": "#/components/schemas/RoomWithInvalidInvitations"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Room is not an external call service conversation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "owner",
-                                                                "room",
-                                                                "room-type"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Owner is not an owner of the conversation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "owner",
-                                                                "room",
-                                                                "room-type"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Room or owner not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "owner",
-                                                                "room",
-                                                                "room-type"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid external call service secret",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "auth"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "get": {
-                "operationId": "room-get-participants",
-                "summary": "Get a list of participants for a room",
-                "tags": [
-                    "room"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v4"
-                            ],
-                            "default": "v4"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "includeStatus",
-                        "in": "query",
-                        "description": "Include the user statuses",
-                        "schema": {
-                            "type": "boolean",
-                            "default": false
-                        }
-                    },
-                    {
-                        "name": "x-nextcloud-federation",
-                        "in": "header",
-                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Participants returned",
-                        "headers": {
-                            "X-Nextcloud-Has-User-Statuses": {
-                                "schema": {
-                                    "type": "boolean"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/Participant"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Missing permissions for getting participants",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "nullable": true
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "operationId": "room-add-participant-to-room",
-                "summary": "Add a participant to a room",
-                "tags": [
-                    "room"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "newParticipant"
-                                ],
-                                "properties": {
-                                    "newParticipant": {
-                                        "type": "string",
-                                        "description": "New participant"
-                                    },
-                                    "source": {
-                                        "type": "string",
-                                        "default": "users",
-                                        "enum": [
-                                            "users",
-                                            "groups",
-                                            "circles",
-                                            "emails",
-                                            "federated_users",
-                                            "phones",
-                                            "teams"
-                                        ],
-                                        "description": "Source of the participant"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v4"
-                            ],
-                            "default": "v4"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Participant successfully added",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "type": {
-                                                            "type": "integer",
-                                                            "format": "int64"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key)",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "ban",
-                                                                "cloud-id",
-                                                                "federation",
-                                                                "moderator",
-                                                                "new-participant",
-                                                                "outgoing",
-                                                                "reach-remote",
-                                                                "room-type",
-                                                                "sip",
-                                                                "source",
-                                                                "trusted-servers"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User, group or other target to invite was not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "ban",
-                                                                "cloud-id",
-                                                                "federation",
-                                                                "moderator",
-                                                                "new-participant",
-                                                                "outgoing",
-                                                                "reach-remote",
-                                                                "room-type",
-                                                                "sip",
-                                                                "source",
-                                                                "trusted-servers"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "501": {
-                        "description": "SIP dial-out is not configured",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "ban",
-                                                                "cloud-id",
-                                                                "federation",
-                                                                "moderator",
-                                                                "new-participant",
-                                                                "outgoing",
-                                                                "reach-remote",
-                                                                "room-type",
-                                                                "sip",
-                                                                "source",
-                                                                "trusted-servers"
-                                                            ]
-                                                        }
-                                                    }
                                                 }
                                             }
                                         }
@@ -19257,6 +18502,761 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "object-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
+            "get": {
+                "operationId": "room-get-participants",
+                "summary": "Get a list of participants for a room",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "includeStatus",
+                        "in": "query",
+                        "description": "Include the user statuses",
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-federation",
+                        "in": "header",
+                        "description": "Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Participants returned",
+                        "headers": {
+                            "X-Nextcloud-Has-User-Statuses": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Participant"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Missing permissions for getting participants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "room-add-participant-to-room",
+                "summary": "Add a participant to a room",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "newParticipant"
+                                ],
+                                "properties": {
+                                    "newParticipant": {
+                                        "type": "string",
+                                        "description": "New participant"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "default": "users",
+                                        "enum": [
+                                            "users",
+                                            "groups",
+                                            "circles",
+                                            "emails",
+                                            "federated_users",
+                                            "phones",
+                                            "teams"
+                                        ],
+                                        "description": "Source of the participant"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Participant successfully added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ban",
+                                                                "cloud-id",
+                                                                "federation",
+                                                                "moderator",
+                                                                "new-participant",
+                                                                "outgoing",
+                                                                "reach-remote",
+                                                                "room-type",
+                                                                "sip",
+                                                                "source",
+                                                                "trusted-servers"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User, group or other target to invite was not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ban",
+                                                                "cloud-id",
+                                                                "federation",
+                                                                "moderator",
+                                                                "new-participant",
+                                                                "outgoing",
+                                                                "reach-remote",
+                                                                "room-type",
+                                                                "sip",
+                                                                "source",
+                                                                "trusted-servers"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "SIP dial-out is not configured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "ban",
+                                                                "cloud-id",
+                                                                "federation",
+                                                                "moderator",
+                                                                "new-participant",
+                                                                "outgoing",
+                                                                "reach-remote",
+                                                                "room-type",
+                                                                "sip",
+                                                                "source",
+                                                                "trusted-servers"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "room-sync-participants",
+                "summary": "Synchronize the participants of a conversation with the given list",
+                "description": "Only available for the external call service. Participants missing from the list are removed (except owners), participants new in the list are added.",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "owner"
+                                ],
+                                "properties": {
+                                    "owner": {
+                                        "type": "string",
+                                        "description": "User ID of an owner of the conversation that will be used as actor"
+                                    },
+                                    "participants": {
+                                        "$ref": "#/components/schemas/InvitationList",
+                                        "default": [],
+                                        "description": "List of participants the conversation should have grouped by type"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Token of the room",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service-jwt",
+                        "in": "header",
+                        "description": "ES256 JWT signed with the private key of the external call service, with the claims `iat`, `exp` (at most 60 seconds after `iat`), `jti` (unique, at least 32 characters), `method`, `uri` (request URI including web root and query string, e.g. `/ocs/v2.php/apps/spreed/…`) and `body` (SHA256 hex of the raw request body)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Participants synchronized successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Participants synchronized but not all participants could be added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoomWithInvalidInvitations"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Room is not an external call service conversation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "owner",
+                                                                "room",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Owner is not an owner of the conversation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "owner",
+                                                                "room",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Room or owner not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "owner",
+                                                                "room",
+                                                                "room-type"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid external call service secret",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "auth"
                                                             ]
                                                         }
                                                     }
