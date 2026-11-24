@@ -21,6 +21,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
@@ -37,6 +38,7 @@ class MessageSentListenerTest extends TestCase {
 	protected MessageParser&MockObject $messageParser;
 	protected IFactory&MockObject $l10nFactory;
 	protected ChatManager&MockObject $chatManager;
+	protected ITimeFactory&MockObject $timeFactory;
 	protected MessageSentListener $listener;
 
 	public function setUp(): void {
@@ -48,6 +50,7 @@ class MessageSentListenerTest extends TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 
 		$this->listener = new MessageSentListener(
 			$this->backendNotifier,
@@ -56,6 +59,7 @@ class MessageSentListenerTest extends TestCase {
 			$this->messageParser,
 			$this->l10nFactory,
 			$this->chatManager,
+			$this->timeFactory,
 		);
 	}
 
