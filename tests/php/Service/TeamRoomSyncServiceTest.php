@@ -407,7 +407,16 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->assertSame(0, $this->service->resyncFrom(0, 60));
 	}
 
-	public function testOneBrokenRoomDoesNotStopTheResync(): void {
+	public static function dataBrokenRoom(): array {
+		return [
+			'error' => [new \TypeError('broken')],
+			// e.g. a unique constraint violation of Talk: not Circles, the pass goes on
+			'exception of Talk' => [new \RuntimeException('Duplicate entry')],
+		];
+	}
+
+	#[DataProvider('dataBrokenRoom')]
+	public function testOneBrokenRoomDoesNotStopTheResync(\Throwable $failure): void {
 		$this->circlesAdapter->method('isAvailable')->willReturn(true);
 		$broken = $this->createMock(Room::class);
 		$broken->method('getId')->willReturn(1);
@@ -416,9 +425,9 @@ class TeamRoomSyncServiceTest extends TestCase {
 		$this->manager->method('getRoomsByObjectType')->willReturnOnConsecutiveCalls([$broken, $this->room], []);
 		$this->mockSnapshot([]);
 		$this->participantService->method('getParticipantsByActorType')
-			->willReturnCallback(static function (Room $room) use ($broken): array {
+			->willReturnCallback(static function (Room $room) use ($broken, $failure): array {
 				if ($room === $broken) {
-					throw new \TypeError('broken');
+					throw $failure;
 				}
 				return [];
 			});

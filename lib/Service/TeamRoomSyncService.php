@@ -87,6 +87,10 @@ class TeamRoomSyncService {
 	/**
 	 * Resync team rooms with an id higher than $afterId until the time budget is used up
 	 *
+	 * Only failing Circles (loading the team) stops the pass: then every further
+	 * room would fail as well. Any other failure is logged for its room and the
+	 * pass continues with the next one.
+	 *
 	 * @return int|null The id of the last synced room, 0 when the full pass is done,
 	 *                  null when teams are unavailable and nothing more was touched
 	 */
@@ -106,16 +110,25 @@ class TeamRoomSyncService {
 
 			foreach ($rooms as $room) {
 				try {
-					$this->resyncRoom($room, true);
+					$snapshot = $this->loadTeamSnapshot($room);
 				} catch (\Exception $e) {
 					// Circles broke mid-run: don't touch any further room
 					$this->logger->warning('Teams unavailable, team room resync stopped before room ' . $room->getToken(), ['exception' => $e]);
 					return null;
+				}
+
+				try {
+					$this->applyTeamSnapshot($room, $snapshot, true);
 				} catch (\Throwable $e) {
 					// One broken room must not stop the resync of all the others
 					$this->logger->error('Resync of team room ' . $room->getToken() . ' failed', ['exception' => $e]);
 				}
 				$cursor = $room->getId();
+
+				// Checked after every room: one room can take long (invitations to other servers, mails)
+				if ($this->timeFactory->getTime() - $start >= $timeBudget) {
+					return $cursor;
+				}
 			}
 		}
 
@@ -145,20 +158,36 @@ class TeamRoomSyncService {
 	}
 
 	public function resyncRoom(Room $room, bool $inviteFederated): void {
-		$teamId = $room->getObjectId();
+		$this->applyTeamSnapshot($room, $this->loadTeamSnapshot($room), $inviteFederated);
+	}
 
+	/**
+	 * One lookup of the team for the whole resync
+	 *
+	 * @return array{team: array, direct: TalkTeamDirectMembers, remote: list<TalkTeamRemoteMember>, emails: array<string, string>}|null Null when the team was deleted
+	 * @throws \Exception When Circles is unavailable or failed: nothing is changed, the next resync tries again
+	 */
+	protected function loadTeamSnapshot(Room $room): ?array {
 		try {
-			// One lookup of the team for the whole resync
-			$snapshot = $this->circlesAdapter->getTeamSnapshot($teamId);
+			return $this->circlesAdapter->getTeamSnapshot($room->getObjectId());
 		} catch (\Exception $e) {
 			if (!CirclesAdapter::isTeamNotFound($e)) {
-				// Circles is unavailable or failed: nothing is changed, the next resync tries again
 				throw $e;
 			}
+			return null;
+		}
+	}
+
+	/**
+	 * @param array{team: array, direct: TalkTeamDirectMembers, remote: list<TalkTeamRemoteMember>, emails: array<string, string>}|null $snapshot Null when the team was deleted
+	 */
+	protected function applyTeamSnapshot(Room $room, ?array $snapshot, bool $inviteFederated): void {
+		if (is_null($snapshot)) {
 			// Also when the CircleDestroyedEvent was missed (e.g. Circles was disabled meanwhile)
 			$this->archiveForDeletedTeam($room);
 			return;
 		}
+		$teamId = $room->getObjectId();
 		$team = $snapshot['team'];
 		$direct = $snapshot['direct'];
 
