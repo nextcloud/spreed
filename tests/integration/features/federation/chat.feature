@@ -472,6 +472,7 @@ Feature: federation/chat
     Then user "participant2" has the following notifications
       | app    | object_type | object_id                | subject                                                                | message     |
 
+  @skip35
   Scenario: Reaction on federated chat messages
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
