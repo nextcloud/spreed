@@ -17,22 +17,19 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\TeamRoomSyncService;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CircleDeletedListenerTest extends TestCase {
 	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
-	protected TeamRoomSyncService&MockObject $syncService;
 	protected CircleDeletedListener $listener;
 
 	public function setUp(): void {
 		parent::setUp();
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
-		$this->syncService = $this->createMock(TeamRoomSyncService::class);
-		$this->listener = new CircleDeletedListener($this->manager, $this->participantService, $this->syncService);
+		$this->listener = new CircleDeletedListener($this->manager, $this->participantService);
 	}
 
 	private function makeEvent(): CircleDestroyedEvent&MockObject {
@@ -43,25 +40,12 @@ class CircleDeletedListenerTest extends TestCase {
 		return $event;
 	}
 
-	public function testRoomOfTheTeamIsArchivedNotDeleted(): void {
-		$teamRoom = $this->createMock(Room::class);
-		$this->manager->method('getTeamRoom')->with('team1')->willReturn($teamRoom);
-		$this->manager->method('getRoomsForActor')->willReturn([]);
-
-		$this->syncService->expects($this->once())->method('archiveForDeletedTeam')->with($teamRoom);
-		$this->participantService->expects($this->never())->method('removeAttendee');
-
-		$this->listener->handle($this->makeEvent());
-	}
-
 	public function testTeamAsParticipantIsStillRemovedFromOtherRooms(): void {
-		$this->manager->method('getTeamRoom')->willReturn(null);
 		$room = $this->createMock(Room::class);
 		$this->manager->method('getRoomsForActor')->with(Attendee::ACTOR_CIRCLES, 'team1')->willReturn([$room]);
 		$participant = $this->createMock(Participant::class);
 		$this->participantService->method('getParticipantByActor')->with($room, Attendee::ACTOR_CIRCLES, 'team1')->willReturn($participant);
 
-		$this->syncService->expects($this->never())->method('archiveForDeletedTeam');
 		$this->participantService->expects($this->once())->method('removeAttendee')->with($room, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
 
 		$this->listener->handle($this->makeEvent());

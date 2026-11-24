@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
+use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleGenericEvent;
 use OCA\Circles\Events\CircleMemberAddedEvent;
 use OCA\Circles\Events\CircleMemberEditedEvent;
@@ -79,6 +80,11 @@ class TeamRoomListener implements IEventListener {
 			return;
 		}
 
+		if ($event instanceof CircleDestroyedEvent) {
+			$this->archiveForDeletedTeam($event);
+			return;
+		}
+
 		if ($event instanceof AddingCircleMemberEvent || $event instanceof RemovingCircleMemberEvent) {
 			// Only direct members are participants, parent teams are not affected
 			$room = $this->manager->getTeamRoom($event->getCircle()->getSingleId());
@@ -134,6 +140,29 @@ class TeamRoomListener implements IEventListener {
 
 	protected function isCli(): bool {
 		return PHP_SAPI === 'cli';
+	}
+
+	/**
+	 * Safeguard: The team room is archived and blocked rather than being deleted:
+	 * Administrators can convert it, delete it, or attach it to a team singleId as
+	 * the room objectId and with objectType room to a team again.
+	 * Circles deletes teams, in its own request (loopback), the system messages
+	 * name the user who deleted the team in the Teams app as Actor.
+	 * FIXME: when team deletion is stable, deleting a team can also delete a team
+	 * FIXME: room, but for now archiving it to avoid potential data loss on failures
+	 */
+	protected function archiveForDeletedTeam(CircleDestroyedEvent $event): void {
+		$room = $this->manager->getTeamRoom($event->getCircle()->getSingleId());
+		if (is_null($room)) {
+			return;
+		}
+
+		try {
+			$this->asActorOfTeamChange($event->getCircle(), null, fn () => $this->syncService->archiveForDeletedTeam($room));
+		} catch (\Throwable $e) {
+			// Never fail the deletion in the Teams app, the resync archives it (the team is not found)
+			$this->logger->warning('Team room ' . $room->getToken() . ' of the deleted team could not be archived yet, will be archived by the next resync', ['exception' => $e]);
+		}
 	}
 
 	/**
@@ -195,8 +224,8 @@ class TeamRoomListener implements IEventListener {
 	 *
 	 * @param callable(): void $change
 	 */
-	protected function asActorOfTeamChange(Circle $circle, Member $member, callable $change): void {
-		$actor = $circle->hasInitiator() ? $circle->getInitiator() : ($member->hasInvitedBy() ? $member->getInvitedBy() : null);
+	protected function asActorOfTeamChange(Circle $circle, ?Member $member, callable $change): void {
+		$actor = $circle->hasInitiator() ? $circle->getInitiator() : ($member?->hasInvitedBy() ? $member->getInvitedBy() : null);
 
 		$previous = [];
 		foreach (self::ACTOR_SESSION_KEYS as $key) {

@@ -13,7 +13,6 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\TeamRoomSyncService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
@@ -25,7 +24,6 @@ class CircleDeletedListener implements IEventListener {
 	public function __construct(
 		private readonly Manager $manager,
 		private readonly ParticipantService $participantService,
-		private readonly TeamRoomSyncService $teamRoomSyncService,
 	) {
 	}
 
@@ -37,13 +35,6 @@ class CircleDeletedListener implements IEventListener {
 		}
 
 		$circleId = $event->getCircle()->getSingleId();
-
-		// The conversation of the team is archived and blocked, not deleted:
-		// converting or deleting it is up to administrators
-		$teamRoom = $this->manager->getTeamRoom($circleId);
-		if (!is_null($teamRoom)) {
-			$this->teamRoomSyncService->archiveForDeletedTeam($teamRoom);
-		}
 
 		// Remove the circle itself from being a participant
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $circleId);

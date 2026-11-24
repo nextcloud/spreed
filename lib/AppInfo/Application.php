@@ -321,6 +321,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(EditingCircleMemberEvent::class, TeamRoomListener::class);
 		$context->registerEventListener(CircleMemberAddedEvent::class, TeamRoomListener::class);
 		$context->registerEventListener(CircleMemberEditedEvent::class, TeamRoomListener::class);
+		$context->registerEventListener(CircleDestroyedEvent::class, TeamRoomListener::class);
 		$context->registerEventListener(EditingCircleEvent::class, TeamRoomSettingsListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, TeamRoomSettingsListener::class);
 		$context->registerEventListener(BeforeUserJoinedRoomEvent::class, TeamRoomSettingsListener::class);

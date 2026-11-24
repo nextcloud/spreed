@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
+use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleGenericEvent;
 use OCA\Circles\Events\CircleMemberAddedEvent;
 use OCA\Circles\Events\CircleMemberEditedEvent;
@@ -311,6 +312,38 @@ class TeamRoomListenerTest extends TestCase {
 
 		$this->assertSame('alice', $during);
 		$this->assertSame([], $this->sessionValues);
+	}
+
+	public function testDeletedTeamArchivesItsRoomAsTheUserWhoDeletedIt(): void {
+		$this->withRoom();
+		$circle = $this->makeCircle();
+		$circle->method('hasInitiator')->willReturn(true);
+		$circle->method('getInitiator')->willReturn($this->makeInitiator(Member::TYPE_USER, 'alice'));
+		$event = $this->createMock(CircleDestroyedEvent::class);
+		$event->method('getCircle')->willReturn($circle);
+
+		$during = null;
+		$this->syncService->expects($this->once())->method('archiveForDeletedTeam')->with($this->room)
+			->willReturnCallback(function () use (&$during): void {
+				$during = $this->sessionValues['talk-overwrite-actor-id'] ?? null;
+			});
+
+		$this->listener->handle($event);
+
+		$this->assertSame('alice', $during);
+		$this->assertSame([], $this->sessionValues);
+	}
+
+	public function testFailingArchiveDoesNotBreakTheDeletionOfTheTeam(): void {
+		$this->withRoom();
+		$event = $this->createMock(CircleDestroyedEvent::class);
+		$event->method('getCircle')->willReturn($this->makeCircle());
+		$this->syncService->method('archiveForDeletedTeam')->willThrowException(new \RuntimeException('Deadlock'));
+
+		// The resync archives it: the team is not found anymore
+		$this->logger->expects($this->once())->method('warning');
+
+		$this->listener->handle($event);
 	}
 
 	private function makeRemoteMember(): Member&MockObject {

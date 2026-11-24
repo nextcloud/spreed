@@ -29,17 +29,11 @@ namespace OCA\Circles\Events {
 
 	use OCA\Circles\Model\Circle;
 	use OCA\Circles\Model\Member;
-	use OCP\EventDispatcher\Event;
 
 	class AddingCircleMemberEvent extends CircleMemberGenericEvent {
 		public function getCircle(): Circle {
 		}
 		public function getMember(): Member {
-		}
-	}
-
-	class CircleDestroyedEvent extends Event {
-		public function getCircle(): Circle {
 		}
 	}
 
@@ -104,6 +98,9 @@ namespace OCA\Circles\Events {
 		}
 		public function getMember(): ?Member {
 		}
+	}
+
+	class CircleDestroyedEvent extends CircleResultGenericEvent {
 	}
 
 	class CircleMemberAddedEvent extends CircleResultGenericEvent {
