@@ -42,6 +42,7 @@ export const Sounds = {
 	isInCall: false,
 	lastPlayedJoin: 0,
 	lastPlayedLeave: 0,
+	lastPlayedRaiseHand: 0,
 	playedWaiting: 0,
 	backgroundInterval: null,
 
@@ -145,5 +146,21 @@ export const Sounds = {
 		if (playWaitingSound) {
 			this.playWaiting()
 		}
+	},
+
+	playRaiseHand() {
+		if (!soundsStore.shouldPlaySounds) {
+			return
+		}
+
+		const currentTime = (new Date()).getTime()
+		if (this.lastPlayedRaiseHand >= (currentTime - this.BLOCK_SOUND_TIMEOUT)) {
+			console.debug('Skipping raise hand sound because it was played %.2f seconds ago', (currentTime - this.lastPlayedRaiseHand) / 1000)
+			return
+		}
+		this.lastPlayedRaiseHand = currentTime
+
+		console.debug('Playing raise hand sound')
+		soundsStore.playAudio('raiseHand')
 	},
 }

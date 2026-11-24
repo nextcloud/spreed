@@ -192,6 +192,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { Sounds } from '../../utils/sounds.js'
 import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
@@ -825,6 +826,10 @@ export default {
 				if (raisedHand?.state) {
 					showMessage(t('spreed', 'A participant raised their hand.'))
 				}
+			}
+
+			if (raisedHand?.state) {
+				Sounds.playRaiseHand()
 			}
 
 			this.participantActivityStore.setParticipantHandRaised({
