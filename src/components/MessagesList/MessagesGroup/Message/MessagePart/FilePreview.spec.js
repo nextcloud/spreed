@@ -230,6 +230,8 @@ describe('FilePreview.vue', () => {
 				}
 
 				getCurrentUser.mockReturnValue(null)
+				actorStore.userId = null
+				const consoleError = vi.spyOn(console, 'error')
 
 				props.file.id = 'temp-123'
 				props.file.index = 'index-1'
@@ -241,6 +243,7 @@ describe('FilePreview.vue', () => {
 				await wrapper.find('img').trigger('load')
 
 				expect(getUploader).not.toHaveBeenCalled()
+				expect(consoleError).not.toHaveBeenCalled()
 				const progressEl = wrapper.findComponent(NcProgressBar)
 				expect(progressEl.exists()).toBe(true)
 				expect(progressEl.props('value')).toBe(40)

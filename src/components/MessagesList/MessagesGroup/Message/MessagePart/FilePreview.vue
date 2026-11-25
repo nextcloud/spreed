@@ -472,6 +472,9 @@ export default {
 		},
 
 		isViewerAvailable() {
+			if (this.isTemporaryUpload && !getCurrentUser()) {
+				return false
+			}
 			return this.canOpenInViewer(this.file)
 		},
 
