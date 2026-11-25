@@ -78,8 +78,7 @@
 
 			<NcButton
 				v-if="showStopFollowingButton"
-				class="following-button"
-				variant="tertiary"
+				variant="secondary"
 				@click="handleStopFollowing">
 				{{ t('spreed', 'Stop following') }}
 			</NcButton>
@@ -307,9 +306,11 @@ export default {
 		},
 
 		switchToScreen() {
-			if (!this.sharedData.screenVisible || !this.isBig) {
-				emit('switch-screen-to-id', this.model.attributes.peerId)
+			// Screen already in the main area
+			if (this.sharedData.screenVisible && !this.callViewStore.isGrid && this.callViewStore.selectedVideoPeerId === null) {
+				return
 			}
+			emit('switch-screen-to-id', this.model.attributes.peerId)
 		},
 
 		handleStopFollowing() {
@@ -359,16 +360,6 @@ export default {
 
 	& .media-indicators {
 		display: flex;
-	}
-
-	& .following-button {
-		opacity: 0.8;
-		background-color: var(--color-background-dark);
-
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
 	}
 }
 

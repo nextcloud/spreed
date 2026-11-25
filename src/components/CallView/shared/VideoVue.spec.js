@@ -3,15 +3,24 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { emit } from '@nextcloud/event-bus'
 import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
+import IconAccountCircleOutline from 'vue-material-design-icons/AccountCircleOutline.vue'
+import ScreenShare from './ScreenShare.vue'
 import VideoVue from './VideoVue.vue'
 import storeConfig from '../../../store/storeConfig.js'
+import { useCallViewStore } from '../../../stores/callView.ts'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
 import { CallParticipantModel } from '../../../utils/webrtc/models/CallParticipantModel.js'
+
+vi.mock('@nextcloud/event-bus', async (importOriginal) => ({
+	...(await importOriginal()),
+	emit: vi.fn(),
+}))
 
 describe('VideoVue.vue', () => {
 	let store
@@ -74,6 +83,48 @@ describe('VideoVue.vue', () => {
 		callParticipantModel = new CallParticipantModel({
 			peerId: 'theId',
 			webRtc: webRtcMock,
+		})
+	})
+
+	describe('selected participant sharing a screen', () => {
+		let wrapper
+
+		beforeEach(() => {
+			useCallViewStore().setSelectedVideoPeerId('theId')
+			callParticipantModel.set('screen', {})
+
+			wrapper = mount(VideoVue, {
+				global: {
+					plugins: [store],
+					stubs: { ScreenShare: true },
+				},
+				props: {
+					model: callParticipantModel,
+					token: 'theToken',
+					isStripe: true,
+					isSelected: true,
+					sharedData: {
+						remoteVideoBlocker: {
+							increaseVisibleCounter: vi.fn(),
+							isVideoEnabled: vi.fn().mockReturnValue(true),
+						},
+						promoted: false,
+						screenVisible: true,
+					},
+				},
+			})
+		})
+
+		test('stripe tile shows the screen instead of a placeholder', () => {
+			expect(wrapper.findComponent(ScreenShare).exists()).toBe(true)
+			expect(wrapper.findComponent(IconAccountCircleOutline).exists()).toBe(false)
+		})
+
+		test('click on the screen brings it to the main area', async () => {
+			await wrapper.trigger('click')
+
+			expect(emit).toHaveBeenCalledWith('switch-screen-to-id', 'theId')
+			expect(wrapper.emitted('clickVideo')).toBeUndefined()
 		})
 	})
 
