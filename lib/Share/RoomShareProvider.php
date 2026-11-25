@@ -16,6 +16,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -1098,7 +1099,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			throw new ShareNotFound();
 		}
 
-		if ($room->getType() !== Room::TYPE_PUBLIC) {
+		if ($room->getType() !== Room::TYPE_PUBLIC && $this->getCurrentParticipant($room) === null) {
 			throw new ShareNotFound();
 		}
 
