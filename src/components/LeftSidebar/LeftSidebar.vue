@@ -44,7 +44,8 @@
 									<template #icon>
 										<IconAt :size="20" />
 									</template>
-									{{ t('spreed', 'Unread mentions') }}
+									<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
+									{{ t('spreed', 'Mentions & important') }}
 								</NcActionButton>
 
 								<NcActionButton
@@ -379,7 +380,8 @@
 					class="unread-mention-button"
 					variant="primary"
 					@click="scrollBottomUnread">
-					{{ t('spreed', 'Unread mentions') }}
+					<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
+					{{ t('spreed', 'Mentions & important') }}
 				</NcButton>
 			</template>
 
@@ -505,6 +507,7 @@ import {
 	filterConversation,
 	hasCall,
 	hasUnreadMentions,
+	hasUnreadMentionsOrImportant,
 	shouldIncludeArchived,
 	sortConversationsList,
 } from '../../utils/conversation.ts'
@@ -527,7 +530,8 @@ const supportTags = hasTalkFeature('local', 'conversation-tags')
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
 const FILTER_LABELS = {
 	unread: t('spreed', 'Unread'),
-	mentions: t('spreed', 'Mentions'),
+	// TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations
+	mentions: t('spreed', 'Mentions & important'),
 	events: t('spreed', 'Meetings'),
 	default: '',
 }
@@ -717,7 +721,7 @@ export default {
 		},
 
 		hasUnreadMentionsInList() {
-			return this.sortedConversationsList.filter(hasUnreadMentions).length
+			return this.sortedConversationsList.filter(hasUnreadMentionsOrImportant).length
 		},
 
 		emptyContentLabel() {
@@ -737,7 +741,7 @@ export default {
 				return t('spreed', 'Subscribe to an existing thread or start your own.')
 			}
 			if (this.filters.length === 1 && this.filters[0] === 'mentions') {
-				return t('spreed', 'You have no unread mentions.')
+				return t('spreed', 'You have no unread mentions or messages in important conversations.')
 			} else if (this.filters.length === 1 && this.filters[0] === 'unread') {
 				return t('spreed', 'You have no unread messages.')
 			} else {

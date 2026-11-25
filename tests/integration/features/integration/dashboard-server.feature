@@ -5,7 +5,7 @@ Feature: integration/dashboard-server
   Scenario: User gets the available dashboard widgets
     When user "participant1" sees the following entry when loading the list of dashboard widgets (v1)
       | id     | title         | icon_class          | icon_url         | widget_url                       | item_icons_round | order | buttons | item_api_versions | reload_interval |
-      | spreed | Talk mentions | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More conversations","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1,2] | 30 |
+      | spreed | Mentions & important | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More conversations","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1,2] | 30 |
 
   Scenario: User gets the dashboard widget content
     Given user "participant2" exists

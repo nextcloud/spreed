@@ -73,7 +73,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 */
 	#[\Override]
 	public function getTitle(): string {
-		return $this->l10n->t('Talk mentions');
+		// TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations
+		return $this->l10n->t('Mentions & important');
 	}
 
 	/**
@@ -173,9 +174,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				return true;
 			}
 
-			return ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
-				&& $room->getLastMessageId() > $attendee->getLastReadMessage()
-				&& $this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0;
+			return ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER || $attendee->isImportant())
+				&& $this->hasUnreadMessages($room, $attendee);
 		});
 
 		uasort($rooms, $this->sortRooms(...));
@@ -232,15 +232,10 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				continue;
 			}
 
-			if (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
-				&& $room->getLastMessageId() > $attendee->getLastReadMessage()) {
-				// If there are "unread" messages in one-to-one or former one-to-one
-				// we check if they are actual messages or system messages not
-				// considered by the read-marker
-				if ($this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0) {
-					// Unread message in one-to-one are considered "mentions"
-					$mentions[] = $room;
-				}
+			if (($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER || $attendee->isImportant())
+				&& $this->hasUnreadMessages($room, $attendee)) {
+				// Unread messages in one-to-one and important conversations are considered "mentions"
+				$mentions[] = $room;
 			}
 		}
 
@@ -260,7 +255,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		return new WidgetItems(
 			$result,
 			empty($result) ? $this->l10n->t('Say hi to your friends and colleagues!') : '',
-			empty($mentions) ? $this->l10n->t('No unread mentions') : '',
+			empty($mentions) ? $this->l10n->t('No unread mentions or messages in important conversations') : '',
 		);
 	}
 
@@ -338,6 +333,16 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * last_mention_message is 0 when there is no mention, while last_read_message
 	 * can be negative ({@see ChatManager::UNREAD_FIRST_MESSAGE}, {@see ChatManager::UNREAD_MIGRATION}).
 	 */
+	protected function hasUnreadMessages(Room $room, Attendee $attendee): bool {
+		if ($room->isFederatedConversation()) {
+			return $attendee->getUnreadMessages() > 0;
+		}
+
+		// System messages are not considered by the read marker, so check for actual messages
+		return $room->getLastMessageId() > $attendee->getLastReadMessage()
+			&& $this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0;
+	}
+
 	protected function hasUnreadMention(Attendee $attendee): bool {
 		$lastMention = $attendee->getLastMentionMessage();
 		return $lastMention > 0 && $lastMention > $attendee->getLastReadMessage();

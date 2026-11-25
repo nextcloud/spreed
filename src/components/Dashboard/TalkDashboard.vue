@@ -35,7 +35,7 @@ import { getTalkConfig, hasTalkFeature, localCapabilities } from '../../services
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
-import { hasUnreadMentions } from '../../utils/conversation.ts'
+import { hasUnreadMentionsOrImportant } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 import generatePassword from '../../utils/generatePassword.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
@@ -144,7 +144,7 @@ const resizeObserver = new ResizeObserver(() => {
 const conversationsInitialised = computed(() => store.getters.conversationsInitialised)
 const filteredConversations = computed(() => {
 	return (store.getters.conversationsList as Conversation[])
-		.filter(hasUnreadMentions)
+		.filter(hasUnreadMentionsOrImportant)
 		.sort((conversation1, conversation2) => conversation2.lastActivity - conversation1.lastActivity)
 })
 
@@ -363,9 +363,10 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			</div>
 			<div class="talk-dashboard__chats">
 				<div class="talk-dashboard__unread-mentions">
+					<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
 					<DashboardSection
 						v-if="filteredConversations.length > 0 || !conversationsInitialised"
-						:title="t('spreed', 'Unread mentions')"
+						:title="t('spreed', 'Mentions & important')"
 						:backgroundImage="illustration('mentions')">
 						<template #list>
 							<ConversationsListVirtual
@@ -374,10 +375,11 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 								:loading="!conversationsInitialised" />
 						</template>
 					</DashboardSection>
+					<!-- TRANSLATORS Unread @-mentions and unread messages in conversations marked as "Important conversation", so "important" refers to these conversations -->
 					<DashboardSection
 						v-else
-						:title="t('spreed', 'Unread mentions')"
-						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')"
+						:title="t('spreed', 'Mentions & important')"
+						:description="t('spreed', 'Messages where you were mentioned and messages in important conversations will show up here. You can mention people by typing @ followed by their name')"
 						:backgroundImage="illustration('mentions')" />
 				</div>
 				<div
