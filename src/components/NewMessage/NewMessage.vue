@@ -396,6 +396,7 @@ import { useUploadStore } from '../../stores/upload.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../utils/getCustomDateOptions.ts'
+import { isCountedParticipant } from '../../utils/participants.ts'
 import {
 	getCurrentSelectionRange,
 	getRangeAtEnd,
@@ -810,7 +811,7 @@ export default {
 		},
 
 		participantCount() {
-			return this.$store.getters.participantsList(this.token).length
+			return this.$store.getters.participantsList(this.token).filter(isCountedParticipant).length
 		},
 
 		canMentionAll() {
