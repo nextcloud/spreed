@@ -175,7 +175,8 @@ export default {
 		 * @param observer
 		 */
 		handleResize(entries: ResizeObserverEntry[], observer: ResizeObserver) {
-			if (!this.$refs.transcriptBlocks) {
+			// No layout while hidden; the resize on show runs this again
+			if (!this.$refs.transcriptBlocks || !this.$refs.transcript.getClientRects().length) {
 				return
 			}
 
@@ -269,7 +270,8 @@ export default {
 		 * If there are no more lines the no longer visible blocks are removed.
 		 */
 		scrollToBottomLineByLine() {
-			if (this.pendingScrollToBottomLineByLine) {
+			// No layout while hidden; the resize on show scrolls to the bottom
+			if (this.pendingScrollToBottomLineByLine || !this.$refs.transcript.getClientRects().length) {
 				return
 			}
 
