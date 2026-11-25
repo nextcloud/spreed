@@ -344,7 +344,7 @@ export default {
 		},
 
 		supportsUploadsWithoutStorage() {
-			return hasTalkFeature(this.token, 'uploads-without-storage')
+			return getTalkConfig(this.token, 'attachments', 'guests-upload')
 				&& !this.isNoteToSelf
 				&& !this.isOneToOne
 				&& !this.isMatrix

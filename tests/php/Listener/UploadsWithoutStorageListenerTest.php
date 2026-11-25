@@ -20,8 +20,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\UploadsWithoutStorageService;
-use OCP\Files\Folder;
-use OCP\Files\NotFoundException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -29,7 +27,6 @@ class UploadsWithoutStorageListenerTest extends TestCase {
 	protected RoomService&MockObject $roomService;
 	protected UploadsWithoutStorageService&MockObject $uploadsWithoutStorageService;
 	protected UploadsWithoutStorageListener $listener;
-	protected Folder&MockObject $guestsFolder;
 
 	#[\Override]
 	public function setUp(): void {
@@ -38,26 +35,11 @@ class UploadsWithoutStorageListenerTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->uploadsWithoutStorageService = $this->createMock(UploadsWithoutStorageService::class);
 		$this->listener = new UploadsWithoutStorageListener($this->roomService, $this->uploadsWithoutStorageService);
-
-		$this->guestsFolder = $this->createMock(Folder::class);
-		$this->uploadsWithoutStorageService->method('getGuestsFolderById')->willReturnCallback(function (int $folderId): Folder {
-			if ($folderId !== 42) {
-				throw new NotFoundException();
-			}
-			return $this->guestsFolder;
-		});
-		$this->uploadsWithoutStorageService->method('getGuestsFolder')->willReturnCallback(function (Room $room): Folder {
-			if ($room->getGuestsFolderId() !== 42) {
-				throw new NotFoundException();
-			}
-			return $this->guestsFolder;
-		});
-		$this->uploadsWithoutStorageService->method('getOwnerId')->willReturn('alice');
 	}
 
-	private function createRoom(int $guestsFolderId): Room&MockObject {
+	private function createRoom(string $guestsFolderOwner): Room&MockObject {
 		$room = $this->createMock(Room::class);
-		$room->method('getGuestsFolderId')->willReturn($guestsFolderId);
+		$room->method('getGuestsFolderOwner')->willReturn($guestsFolderOwner);
 		return $room;
 	}
 
@@ -68,36 +50,42 @@ class UploadsWithoutStorageListenerTest extends TestCase {
 		return $attendee;
 	}
 
-	public function testChangingTheGuestsFolderRevokesLinksOfThePreviousOne(): void {
-		$room = $this->createRoom(0);
+	public function testChangingTheOwnerRevokesLinksOfThePreviousOne(): void {
+		$room = $this->createRoom('');
 		$this->uploadsWithoutStorageService->expects($this->once())
 			->method('revokeUploadLinks')
-			->with($this->guestsFolder, $room);
+			->with($room, 'alice');
 
-		$this->listener->handle(new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, 0, 42));
+		$this->listener->handle(new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, '', 'alice'));
+	}
+
+	public function testTurningUploadsOnRevokesNothing(): void {
+		$this->uploadsWithoutStorageService->expects($this->never())->method('revokeUploadLinks');
+
+		$this->listener->handle(new RoomModifiedEvent($this->createRoom('alice'), ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, 'alice', ''));
 	}
 
 	public function testPublicConversationBecomingGroupRevokesLinks(): void {
-		$room = $this->createRoom(42);
+		$room = $this->createRoom('alice');
 		$this->uploadsWithoutStorageService->expects($this->once())
 			->method('revokeUploadLinks')
-			->with($this->guestsFolder, $room);
+			->with($room, 'alice');
 
 		$this->listener->handle(new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_TYPE, Room::TYPE_GROUP, Room::TYPE_PUBLIC));
 	}
 
 	public function testDeletingTheRoomRevokesLinks(): void {
-		$room = $this->createRoom(42);
+		$room = $this->createRoom('alice');
 		$this->uploadsWithoutStorageService->expects($this->once())
 			->method('revokeUploadLinks')
-			->with($this->guestsFolder, $room);
+			->with($room, 'alice');
 
 		$this->listener->handle(new RoomDeletedEvent($room));
 	}
 
 	public function testRemovingTheModeratorTurnsUploadsOff(): void {
-		$room = $this->createRoom(42);
-		$this->roomService->expects($this->once())->method('setGuestsFolderId')->with($room, 0);
+		$room = $this->createRoom('alice');
+		$this->roomService->expects($this->once())->method('setGuestsFolder')->with($room, '', 0);
 		$this->uploadsWithoutStorageService->expects($this->never())->method('revokeUploadLinks');
 
 		$this->listener->handle(new AttendeesRemovedEvent($room, [
@@ -107,12 +95,12 @@ class UploadsWithoutStorageListenerTest extends TestCase {
 	}
 
 	public function testRemovingAGuestRevokesTheirLinks(): void {
-		$room = $this->createRoom(42);
+		$room = $this->createRoom('alice');
 		$guest = $this->createAttendee(Attendee::ACTOR_GUESTS, 'guest');
-		$this->roomService->expects($this->never())->method('setGuestsFolderId');
+		$this->roomService->expects($this->never())->method('setGuestsFolder');
 		$this->uploadsWithoutStorageService->expects($this->once())
 			->method('revokeUploadLinks')
-			->with($this->guestsFolder, $room, $guest);
+			->with($room, 'alice', $guest);
 
 		$this->listener->handle(new AttendeesRemovedEvent($room, [$guest]));
 	}
@@ -125,15 +113,15 @@ class UploadsWithoutStorageListenerTest extends TestCase {
 	}
 
 	public function testDemotingTheModeratorTurnsUploadsOff(): void {
-		$room = $this->createRoom(42);
-		$this->roomService->expects($this->once())->method('setGuestsFolderId')->with($room, 0);
+		$room = $this->createRoom('alice');
+		$this->roomService->expects($this->once())->method('setGuestsFolder')->with($room, '', 0);
 
 		$this->listener->handle($this->createParticipantModifiedEvent($room, 'alice', false));
 	}
 
 	public function testDemotingSomeoneElseKeepsUploads(): void {
-		$this->roomService->expects($this->never())->method('setGuestsFolderId');
+		$this->roomService->expects($this->never())->method('setGuestsFolder');
 
-		$this->listener->handle($this->createParticipantModifiedEvent($this->createRoom(42), 'bob', false));
+		$this->listener->handle($this->createParticipantModifiedEvent($this->createRoom('alice'), 'bob', false));
 	}
 }

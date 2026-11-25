@@ -20,7 +20,6 @@ use OCP\Files\IUserFolder;
 use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
-use OCP\IUser;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
@@ -594,10 +593,6 @@ class ConversationFolderServiceTest extends TestCase {
 		$file->method('getParent')->willReturn($subfolder);
 		$file->method('getName')->willReturn('photo.jpg');
 		$file->method('getPath')->willReturn('/alice/files/Talk/Room-tok/Alice-alice/photo.jpg');
-		$owner = $this->createMock(IUser::class);
-		$owner->method('getUID')->willReturn('alice');
-		$file->method('getOwner')->willReturn($owner);
-		$this->rootFolder->method('getFirstNodeById')->with(42)->willReturn($file);
 
 		$userFolder = $this->makeUserFolderMock();
 		$userFolder->method('getFirstNodeById')->with(42)->willReturn($file);
@@ -625,7 +620,7 @@ class ConversationFolderServiceTest extends TestCase {
 			->with('/alice/files/Talk/Room-tok/Deleted/photo.jpg')
 			->willReturn($file);
 
-		$this->service->moveToDeletedFolder('tok', 42);
+		$this->service->moveToDeletedFolder('alice', 'tok', 42);
 	}
 
 	public function testMoveToDeletedFolderSkipsWhenParentNotSharedWithRoom(): void {
@@ -634,14 +629,16 @@ class ConversationFolderServiceTest extends TestCase {
 		$convFolder->expects($this->never())->method('get');
 		$file->expects($this->never())->method('move');
 
-		$this->service->moveToDeletedFolder('tok', 42);
+		$this->service->moveToDeletedFolder('alice', 'tok', 42);
 	}
 
 	public function testMoveToDeletedFolderSkipsMissingFile(): void {
-		$this->rootFolder->method('getFirstNodeById')->with(42)->willReturn(null);
+		$userFolder = $this->makeUserFolderMock();
+		$userFolder->method('getFirstNodeById')->with(42)->willReturn(null);
+		$this->rootFolder->method('getUserFolder')->with('alice')->willReturn($userFolder);
 
 		$this->shareManager->expects($this->never())->method('getSharesBy');
 
-		$this->service->moveToDeletedFolder('tok', 42);
+		$this->service->moveToDeletedFolder('alice', 'tok', 42);
 	}
 }

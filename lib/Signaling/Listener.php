@@ -77,7 +77,6 @@ class Listener implements IEventListener {
 		ARoomModifiedEvent::PROPERTY_READ_ONLY,
 		ARoomModifiedEvent::PROPERTY_SIP_ENABLED,
 		ARoomModifiedEvent::PROPERTY_TYPE,
-		ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER,
 	];
 
 	public const SYSTEM_MESSAGE_TYPE_RELAY = [

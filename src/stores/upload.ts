@@ -48,7 +48,7 @@ type UploadsState = {
 	[uploadId: string]: {
 		token: string
 		draftFolderPath?: string | null
-		uploadLink?: { uploadToken: string, uploadPassword: string } | null
+		uploadLink?: { uploadToken: string, uploadPassword: string, fileNames: string[] } | null
 		allowUpdate?: boolean
 		files: {
 			[index: string]: UploadFile
@@ -587,9 +587,11 @@ export const useUploadStore = defineStore('upload', () => {
 				.map(([, uploadedFile]) => uploadedFile.file.name)
 			try {
 				const response = await probeAttachmentFolder({ token, fileNames, allowUpdate })
-				const { folder, uploadToken, uploadPassword } = response.data.ocs.data
+				const { folder, renames, uploadToken, uploadPassword } = response.data.ocs.data
 				uploads[uploadId].draftFolderPath = folder
-				uploads[uploadId].uploadLink = uploadToken && uploadPassword ? { uploadToken, uploadPassword } : null
+				uploads[uploadId].uploadLink = uploadToken && uploadPassword
+					? { uploadToken, uploadPassword, fileNames: fileNames.map((fileName, index) => renames[index]?.[fileName] ?? fileName) }
+					: null
 				uploads[uploadId].allowUpdate = allowUpdate
 
 				// Update temporary messages with predicted rename-on-conflict
@@ -669,13 +671,14 @@ export const useUploadStore = defineStore('upload', () => {
 		const draftFolderPath = uploads[uploadId]?.draftFolderPath
 		const uploadLink = uploads[uploadId]?.uploadLink
 		if (draftFolderPath || uploadLink) {
-			// Upload to a random temp name inside the Draft folder; the backend
+			// Upload to a random temp name inside the Draft folder, or with the
+			// predicted name into the folder of the upload link; the backend
 			// resolves the final name (and any conflicts) when postAttachment
 			// moves the file out of Draft.
-			for (const [index] of getInitialisedUploads(uploadId)) {
+			for (const [position, [index]] of getInitialisedUploads(uploadId).entries()) {
 				// crypto.randomUUID() is not available in insecure context
 				const tempName = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
-				const sharePath = uploadLink ? uploadLink.uploadToken + '-' + tempName : '/' + draftFolderPath + '/' + tempName
+				const sharePath = uploadLink ? uploadLink.fileNames[position]! : '/' + draftFolderPath + '/' + tempName
 				markFileAsPendingUpload({ uploadId, index, sharePath })
 			}
 			return
@@ -753,7 +756,8 @@ export const useUploadStore = defineStore('upload', () => {
 				const uploadLink = uploads[uploadId]?.uploadLink
 				if (uploadLink) {
 					await uploadToLink({
-						...uploadLink,
+						uploadToken: uploadLink.uploadToken,
+						uploadPassword: uploadLink.uploadPassword,
 						fileName: uploadedFile.sharePath!,
 						file: currentFile,
 						onProgress: (percent) => {

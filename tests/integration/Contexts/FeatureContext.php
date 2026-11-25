@@ -5505,9 +5505,8 @@ class FeatureContext implements Context {
 			return;
 		}
 
-		$uploadedName = $this->lastUploadLink['uploadToken'] . '-' . $fileName;
-		$this->putThroughUploadLink($uploadedName, 201);
-		$this->postUpload($user, $uploadedName, $fileName, $identifier, 200, $apiVersion);
+		$this->putThroughUploadLink($fileName, 201);
+		$this->postUpload($user, $fileName, $fileName, $identifier, 200, $apiVersion);
 	}
 
 	#[When('/^user "([^"]*)" gets an upload link in room "([^"]*)" with (\d+) \((v1)\)$/')]
@@ -5522,14 +5521,13 @@ class FeatureContext implements Context {
 
 	#[When('/^user "([^"]*)" posts "([^"]*)" uploaded by someone else to room "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userPostsUploadOfSomeoneElse(string $user, string $fileName, string $identifier, int $statusCode, string $apiVersion): void {
-		$uploadedName = $this->lastUploadLink['uploadToken'] . '-' . $fileName;
 		$this->requestUploadLink($user, $identifier, 200, $apiVersion, true);
-		$this->postUpload($user, $uploadedName, $fileName, $identifier, $statusCode, $apiVersion);
+		$this->postUpload($user, $fileName, $fileName, $identifier, $statusCode, $apiVersion);
 	}
 
 	#[Then('/^the last upload link accepts a file with (\d+)$/')]
 	public function theLastUploadLinkAcceptsAFile(int $statusCode): void {
-		$this->putThroughUploadLink($this->lastUploadLink['uploadToken'] . '-late.txt', $statusCode);
+		$this->putThroughUploadLink('late.txt', $statusCode);
 	}
 
 	private function requestUploadLink(string $user, string $identifier, int $statusCode, string $apiVersion, bool $supportsUploadLink): void {

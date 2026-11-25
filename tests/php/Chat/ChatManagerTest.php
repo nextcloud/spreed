@@ -650,7 +650,16 @@ class ChatManagerTest extends TestCase {
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
 	}
 
-	public function testDeleteMessageConversationFolderFile(): void {
+	public static function dataDeleteMessageConversationFolderFile(): array {
+		return [
+			'user' => [Attendee::ACTOR_USERS, 'user', '', [['user', 'T0k3N', 42]]],
+			'guest with uploads without storage' => [Attendee::ACTOR_GUESTS, 'guest', 'alice', [['alice', 'T0k3N', 42]]],
+			'user with a quota of 0' => [Attendee::ACTOR_USERS, 'user', 'alice', [['user', 'T0k3N', 42], ['alice', 'T0k3N', 42]]],
+		];
+	}
+
+	#[DataProvider('dataDeleteMessageConversationFolderFile')]
+	public function testDeleteMessageConversationFolderFile(string $actorType, string $actorId, string $guestsFolderOwner, array $moves): void {
 		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$attendee = $mapper->createAttendeeFromRow([
 			'a_id' => 1,
@@ -695,6 +704,8 @@ class ChatManagerTest extends TestCase {
 		$chat->expects($this->any())
 			->method('getToken')
 			->willReturn('T0k3N');
+		$chat->method('getGuestsFolderOwner')
+			->willReturn($guestsFolderOwner);
 		$participant = new Participant($chat, $attendee, null);
 
 		$date = new \DateTime();
@@ -714,16 +725,19 @@ class ChatManagerTest extends TestCase {
 			->with('comment_deleted');
 
 		$comment->method('getActorType')
-			->willReturn(Attendee::ACTOR_USERS);
+			->willReturn($actorType);
 		$comment->method('getActorId')
-			->willReturn('user');
+			->willReturn($actorId);
 
 		$this->shareManager->expects($this->never())
 			->method('deleteShare');
 
-		$this->conversationFolderService->expects($this->once())
+		$calls = [];
+		$this->conversationFolderService->expects($this->exactly(count($moves)))
 			->method('moveToDeletedFolder')
-			->with('T0k3N', 42);
+			->willReturnCallback(function (string $ownerId, string $token, int $fileId) use (&$calls): void {
+				$calls[] = [$ownerId, $token, $fileId];
+			});
 
 		$this->commentsManager->expects($this->once())
 			->method('save')
@@ -738,6 +752,7 @@ class ChatManagerTest extends TestCase {
 			->willReturn($systemMessage);
 
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
+		$this->assertSame($moves, $calls);
 	}
 
 	public function testDeleteExpiredMessagesMovesConversationFolderAttachments(): void {
@@ -761,7 +776,7 @@ class ChatManagerTest extends TestCase {
 
 		$this->conversationFolderService->expects($this->once())
 			->method('moveToDeletedFolder')
-			->with('T0k3N', 42);
+			->with('user', 'T0k3N', 42);
 
 		$this->commentsManager->expects($this->once())
 			->method('deleteCommentsExpiredAtObject')

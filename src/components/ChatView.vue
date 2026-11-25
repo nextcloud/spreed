@@ -17,8 +17,9 @@
 					:name="dropHintText"
 					class="dragover">
 					<template #icon>
-						<NcIconSvgWrapper v-if="!isReadOnly" :svg="IconFileUpload" />
-						<IconAlertOctagonOutline v-else />
+						<NcIconSvgWrapper v-if="!needsLoginToUpload && !isReadOnly" :svg="IconFileUpload" />
+						<IconAccountOutline v-else-if="needsLoginToUpload" />
+						<IconAlertOctagonOutline v-else-if="isReadOnly" />
 					</template>
 				</NcEmptyContent>
 			</TransitionWrapper>
@@ -64,6 +65,7 @@ import { provide } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconAlertOctagonOutline from 'vue-material-design-icons/AlertOctagonOutline.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
@@ -97,6 +99,7 @@ export default {
 		TransitionWrapper,
 		GuestWelcomeWindow,
 		// icons
+		IconAccountOutline,
 		IconAlertOctagonOutline,
 		IconChevronDoubleDown,
 	},
@@ -146,6 +149,10 @@ export default {
 			return this.isGuest && !this.actorStore.displayName
 		},
 
+		needsLoginToUpload() {
+			return this.isGuest && !allowsUploadsWithoutStorage(this.conversation)
+		},
+
 		canUploadFiles() {
 			return (getTalkConfig(this.token, 'attachments', 'allowed') || allowsUploadsWithoutStorage(this.conversation))
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
@@ -158,7 +165,9 @@ export default {
 		},
 
 		dropHintText() {
-			if (this.isReadOnly) {
+			if (this.needsLoginToUpload) {
+				return t('spreed', 'You need to be logged in to upload files')
+			} else if (this.isReadOnly) {
 				return t('spreed', 'This conversation is read-only')
 			} else {
 				return t('spreed', 'Drop your files to upload')
@@ -210,7 +219,8 @@ export default {
 
 			// Restore non dragover state
 			this.isDraggingOver = false
-			if (this.isReadOnly) {
+			// Stop the executin if the user is a guest
+			if (this.needsLoginToUpload || this.isReadOnly) {
 				return
 			}
 			// Stage the files, they are uploaded and shared on submit

@@ -153,7 +153,6 @@ class Capabilities implements IPublicCapability {
 		'chat-summary-api',
 		'call-end-to-end-encryption',
 		'recording-chunked-upload',
-		'uploads-without-storage',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -186,7 +185,6 @@ class Capabilities implements IPublicCapability {
 		'announcement-preset',
 		'matrix-rooms',
 		'federation-signaling-auth',
-		'uploads-without-storage',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -196,6 +194,7 @@ class Capabilities implements IPublicCapability {
 			'conversation-subfolders',
 			'default-allow-edit',
 			'default-original-quality',
+			'guests-upload',
 		],
 		'call' => [
 			'predefined-backgrounds',
@@ -298,6 +297,7 @@ class Capabilities implements IPublicCapability {
 					'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
 					'default-allow-edit' => $this->appConfig->getAppValueBool(Config::DEFAULT_ATTACHMENTS_ALLOW_EDIT),
 					'default-original-quality' => $this->appConfig->getAppValueBool(Config::DEFAULT_ATTACHMENTS_ORIGINAL_QUALITY),
+					'guests-upload' => $this->uploadsWithoutStorageService->isAvailable(),
 				],
 				'call' => [
 					'enabled' => $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) !== Room::START_CALL_NOONE,
@@ -467,10 +467,6 @@ class Capabilities implements IPublicCapability {
 		if ($this->shareManager->shareApiAllowLinks()
 			&& $this->shareManager->shareApiLinkAllowPublicUpload()) {
 			$capabilities['features'][] = 'recording-chunked-upload';
-		}
-
-		if ($this->uploadsWithoutStorageService->isAvailable()) {
-			$capabilities['features'][] = 'uploads-without-storage';
 		}
 
 		return [

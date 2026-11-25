@@ -634,7 +634,7 @@ namespace OCA\Talk;
  *     attributes: int,
  *     // Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
  *     muteUntil: int,
- *     // Required capability: `uploads-without-storage`. Whether participants without storage can upload files into the storage of a moderator
+ *     // Required capability: `config => attachments => guests-upload`. Whether participants without storage can upload files into the storage of a moderator
  *     uploadsWithoutStorage: bool,
  * }
  *
@@ -819,6 +819,8 @@ namespace OCA\Talk;
  *             'default-allow-edit': bool,
  *             // Whether images are uploaded in original quality by default
  *             'default-original-quality': bool,
+ *             // Whether moderators can let participants without storage upload files
+ *             'guests-upload': bool,
  *         },
  *         call: array{
  *             // Whether calls are enabled

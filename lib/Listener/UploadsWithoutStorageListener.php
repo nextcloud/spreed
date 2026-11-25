@@ -20,7 +20,6 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\Files\NotFoundException;
 
 /**
  * Stops uploads without storage when the moderator providing the Guests folder
@@ -39,40 +38,38 @@ class UploadsWithoutStorageListener implements IEventListener {
 	public function handle(Event $event): void {
 		if ($event instanceof RoomModifiedEvent) {
 			$room = $event->getRoom();
-			$oldGuestsFolderId = $event->getOldValue();
-			if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER && is_int($oldGuestsFolderId)) {
-				$this->revokeUploadLinks($room, $oldGuestsFolderId);
+			$oldOwner = $event->getOldValue();
+			if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER && is_string($oldOwner) && $oldOwner !== '') {
+				$this->uploadsWithoutStorageService->revokeUploadLinks($room, $oldOwner);
 			}
 			// Turning a public conversation into a group conversation removes
 			// the guests without an AttendeesRemovedEvent
 			if ($event->getProperty() === ARoomModifiedEvent::PROPERTY_TYPE && $event->getOldValue() === Room::TYPE_PUBLIC) {
-				$this->revokeUploadLinks($room, $room->getGuestsFolderId());
+				$this->revokeUploadLinks($room);
 			}
 			return;
 		}
 
 		if ($event instanceof RoomDeletedEvent) {
-			$this->revokeUploadLinks($event->getRoom(), $event->getRoom()->getGuestsFolderId());
+			$this->revokeUploadLinks($event->getRoom());
 			return;
 		}
 
 		if ($event instanceof AttendeesRemovedEvent) {
 			$room = $event->getRoom();
-			try {
-				$guestsFolder = $this->uploadsWithoutStorageService->getGuestsFolder($room);
-				$ownerId = $this->uploadsWithoutStorageService->getOwnerId($guestsFolder);
-			} catch (NotFoundException) {
+			$ownerId = $room->getGuestsFolderOwner();
+			if ($ownerId === '') {
 				return;
 			}
 
 			foreach ($event->getAttendees() as $attendee) {
 				if ($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $ownerId) {
-					$this->roomService->setGuestsFolderId($room, 0);
+					$this->roomService->setGuestsFolder($room, '', 0);
 					return;
 				}
 			}
 			foreach ($event->getAttendees() as $attendee) {
-				$this->uploadsWithoutStorageService->revokeUploadLinks($guestsFolder, $room, $attendee);
+				$this->uploadsWithoutStorageService->revokeUploadLinks($room, $ownerId, $attendee);
 			}
 			return;
 		}
@@ -82,23 +79,15 @@ class UploadsWithoutStorageListener implements IEventListener {
 			&& !$event->getParticipant()->hasModeratorPermissions(false)) {
 			$room = $event->getRoom();
 			$attendee = $event->getParticipant()->getAttendee();
-			try {
-				$ownerId = $this->uploadsWithoutStorageService->getOwnerId($this->uploadsWithoutStorageService->getGuestsFolder($room));
-			} catch (NotFoundException) {
-				return;
-			}
-			if ($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $ownerId) {
-				$this->roomService->setGuestsFolderId($room, 0);
+			if ($attendee->getActorType() === Attendee::ACTOR_USERS && $attendee->getActorId() === $room->getGuestsFolderOwner()) {
+				$this->roomService->setGuestsFolder($room, '', 0);
 			}
 		}
 	}
 
-	private function revokeUploadLinks(Room $room, int $guestsFolderId): void {
-		try {
-			$guestsFolder = $this->uploadsWithoutStorageService->getGuestsFolderById($guestsFolderId);
-		} catch (NotFoundException) {
-			return;
+	private function revokeUploadLinks(Room $room): void {
+		if ($room->getGuestsFolderOwner() !== '') {
+			$this->uploadsWithoutStorageService->revokeUploadLinks($room, $room->getGuestsFolderOwner());
 		}
-		$this->uploadsWithoutStorageService->revokeUploadLinks($guestsFolder, $room);
 	}
 }

@@ -315,7 +315,8 @@
                                     "allowed",
                                     "conversation-subfolders",
                                     "default-allow-edit",
-                                    "default-original-quality"
+                                    "default-original-quality",
+                                    "guests-upload"
                                 ],
                                 "properties": {
                                     "allowed": {
@@ -337,6 +338,10 @@
                                     "default-original-quality": {
                                         "type": "boolean",
                                         "description": "Whether images are uploaded in original quality by default"
+                                    },
+                                    "guests-upload": {
+                                        "type": "boolean",
+                                        "description": "Whether moderators can let participants without storage upload files"
                                     }
                                 }
                             },
@@ -2571,7 +2576,7 @@
                     },
                     "uploadsWithoutStorage": {
                         "type": "boolean",
-                        "description": "Required capability: `uploads-without-storage`. Whether participants without storage can upload files into the storage of a moderator"
+                        "description": "Required capability: `config => attachments => guests-upload`. Whether participants without storage can upload files into the storage of a moderator"
                     }
                 }
             },
@@ -12719,7 +12724,7 @@
             "post": {
                 "operationId": "chat-probe-attachment-folder",
                 "summary": "Prepare the conversation attachment folder and probe filename conflicts",
-                "description": "Creates the caller's conversation subfolder (and the room share) if not yet present, then creates or returns a Draft folder for staging uploads. Simulates the rename-on-conflict logic for each requested filename without requiring the files to already exist.\nThe returned `folder` is the Draft path — a staging area that is NOT shared with the room, so other participants cannot see in-progress uploads or files from aborted messages. Files are moved into the shared subfolder atomically when the attachment endpoint is called.\nRecommended client flow: 1. Call this endpoint to obtain the Draft folder path and predicted final names. 2. Display the predicted names as accessibility placeholders immediately. 3. Upload each file to a random temporary name (e.g. a UUID) inside the returned Draft folder — do NOT upload to the predicted final name. 4. Call the attachment endpoint with the temp path as `filePath` and the original desired name as `fileName`. The server moves the file from Draft into the shared subfolder, resolves any conflicts, and posts the message.\nGuests, email guests and users with a quota of 0 get a temporary upload link instead, when a moderator allowed uploads without storage: PUT `{uploadToken}-{temp name}` to `public.php/dav/files/{uploadToken}/`.",
+                "description": "Creates the caller's conversation subfolder (and the room share) if not yet present, then creates or returns a Draft folder for staging uploads. Simulates the rename-on-conflict logic for each requested filename without requiring the files to already exist.\nThe returned `folder` is the Draft path — a staging area that is NOT shared with the room, so other participants cannot see in-progress uploads or files from aborted messages. Files are moved into the shared subfolder atomically when the attachment endpoint is called.\nRecommended client flow: 1. Call this endpoint to obtain the Draft folder path and predicted final names. 2. Display the predicted names as accessibility placeholders immediately. 3. Upload each file to a random temporary name (e.g. a UUID) inside the returned Draft folder — do NOT upload to the predicted final name. 4. Call the attachment endpoint with the temp path as `filePath` and the original desired name as `fileName`. The server moves the file from Draft into the shared subfolder, resolves any conflicts, and posts the message.\nGuests, email guests and users with a quota of 0 get a temporary upload link instead, when a moderator allowed uploads without storage: PUT the file to `public.php/dav/files/{uploadToken}/{file name}`.",
                 "tags": [
                     "chat"
                 ],
@@ -28078,6 +28083,334 @@
                 }
             }
         },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/uploads-without-storage": {
+            "put": {
+                "operationId": "room-set-uploads-without-storage",
+                "summary": "Allow or stop uploads of guests, email guests and users with a quota of 0",
+                "description": "Their files are stored in the Guests folder of the moderator who allowed it.\nRequired capability: `config => attachments => guests-upload`",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "allowed"
+                                ],
+                                "properties": {
+                                    "allowed": {
+                                        "type": "boolean",
+                                        "description": "Whether participants without storage may upload files into the current user's storage"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Setting updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Updating the setting is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "breakout-room",
+                                                                "federated",
+                                                                "matrix",
+                                                                "storage",
+                                                                "type",
+                                                                "unavailable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "operationId": "room-get-uploads-without-storage",
+                "summary": "Get the moderator whose Guests folder stores uploads of participants without storage",
+                "description": "Required capability: `config => attachments => guests-upload`",
+                "tags": [
+                    "room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v4"
+                            ],
+                            "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Display name of the moderator, and the path of the folder in their files when they are the current user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "owner",
+                                                        "path"
+                                                    ],
+                                                    "properties": {
+                                                        "owner": {
+                                                            "type": "string"
+                                                        },
+                                                        "path": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Uploads without storage are off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/password": {
             "put": {
                 "operationId": "room-set-password",
@@ -35116,333 +35449,6 @@
                                                         }
                                                     }
                                                 }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/uploads-without-storage": {
-            "put": {
-                "operationId": "uploads_without_storage-set-uploads-without-storage",
-                "summary": "Allow or stop uploads of guests, email guests and users with a quota of 0",
-                "description": "Their files are stored in the Guests folder of the moderator who allowed it.\nRequired capability: `uploads-without-storage`",
-                "tags": [
-                    "uploads_without_storage"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "allowed"
-                                ],
-                                "properties": {
-                                    "allowed": {
-                                        "type": "boolean",
-                                        "description": "Whether participants without storage may upload files into the current user's storage"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v4"
-                            ],
-                            "default": "v4"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Setting updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "$ref": "#/components/schemas/Room"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Updating the setting is not possible",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "breakout-room",
-                                                                "federated",
-                                                                "matrix",
-                                                                "storage",
-                                                                "type",
-                                                                "unavailable"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Current user is not logged in",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "get": {
-                "operationId": "uploads_without_storage-get-uploads-without-storage",
-                "summary": "Get the Guests folder that stores uploads of participants without storage",
-                "description": "Required capability: `uploads-without-storage`",
-                "tags": [
-                    "uploads_without_storage"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "apiVersion",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "v4"
-                            ],
-                            "default": "v4"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Display name of the moderator and the path of the folder in their files",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "owner",
-                                                        "path"
-                                                    ],
-                                                    "properties": {
-                                                        "owner": {
-                                                            "type": "string"
-                                                        },
-                                                        "path": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Uploads without storage are off",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "nullable": true
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Current user is not logged in",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
                                             }
                                         }
                                     }

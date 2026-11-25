@@ -19,6 +19,7 @@ use OCP\Migration\SimpleMigrationStep;
 use Override;
 
 #[AddColumn(table: 'talk_rooms', name: 'guests_folder_id', type: ColumnType::BIGINT)]
+#[AddColumn(table: 'talk_rooms', name: 'guests_folder_owner', type: ColumnType::STRING)]
 class Version26000Date20261119120000 extends SimpleMigrationStep {
 
 	/**
@@ -37,6 +38,12 @@ class Version26000Date20261119120000 extends SimpleMigrationStep {
 			$table->addColumn('guests_folder_id', Types::BIGINT, [
 				'notnull' => true,
 				'default' => 0,
+			]);
+		}
+		if (!$table->hasColumn('guests_folder_owner')) {
+			$table->addColumn('guests_folder_owner', Types::STRING, [
+				'notnull' => false,
+				'length' => 64,
 			]);
 		}
 

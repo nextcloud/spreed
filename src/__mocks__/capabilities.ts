@@ -149,6 +149,7 @@ export const mockedCapabilities: Capabilities = {
 				'conversation-subfolders': true,
 				'default-allow-edit': false,
 				'default-original-quality': false,
+				'guests-upload': false,
 			},
 			call: {
 				enabled: true,

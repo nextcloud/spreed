@@ -139,7 +139,7 @@ class Listener implements IEventListener {
 			}
 
 			// Allowing uploads without storage shares the Guests folder for access only
-			if ($route === 'ocs.spreed.uploadswithoutstorage.setuploadswithoutstorage') {
+			if ($route === 'ocs.spreed.room.setuploadswithoutstorage') {
 				return;
 			}
 

@@ -108,6 +108,7 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 		$room->method('getType')->willReturn($type);
 		$room->method('getObjectType')->willReturn($objectType);
 		$room->method('getGuestsFolderId')->willReturn($guestsFolderId);
+		$room->method('getGuestsFolderOwner')->willReturn($guestsFolderId === 0 ? '' : 'alice');
 		return $room;
 	}
 
@@ -120,32 +121,39 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 	/**
 	 * The Guests folder with id 42 as seen by its owner
 	 */
-	private function mockGuestsFolder(string $ownerId = 'alice'): Folder&MockObject {
+	private function mockGuestsFolder(): Folder&MockObject {
 		$folder = $this->createMock(Folder::class);
-		$folder->method('getOwner')->willReturn($this->createUser($ownerId));
 		$folder->method('getId')->willReturn(42);
 
-		$this->rootFolder->method('getFirstNodeById')->with(42)->willReturn($folder);
 		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->method('getFirstNodeById')->with(42)->willReturn($folder);
-		$this->rootFolder->method('getUserFolder')->with($ownerId)->willReturn($userFolder);
+		$this->rootFolder->method('getUserFolder')->with('alice')->willReturn($userFolder);
 
 		return $folder;
 	}
 
-	private function createDraftFolder(array $fileNames = []): Folder&MockObject {
+	private function createDraftFolder(?Folder $uploadFolder = null): Folder&MockObject {
 		$draftFolder = $this->createMock(Folder::class);
 		$draftFolder->method('getId')->willReturn(23);
-		$draftFolder->method('getOwner')->willReturn($this->createUser('alice'));
-		$draftFolder->method('getDirectoryListing')->willReturn(array_map(function (string $name) {
+		$draftFolder->method('getFirstNodeById')->willReturnCallback(fn (int $id) => $id === 24 ? $uploadFolder : null);
+		return $draftFolder;
+	}
+
+	private function createUploadFolder(array $fileNames = [], int $parentId = 23): Folder&MockObject {
+		$parent = $this->createMock(Folder::class);
+		$parent->method('getId')->willReturn($parentId);
+		$uploadFolder = $this->createMock(Folder::class);
+		$uploadFolder->method('getId')->willReturn(24);
+		$uploadFolder->method('getParent')->willReturn($parent);
+		$uploadFolder->method('getDirectoryListing')->willReturn(array_map(function (string $name) {
 			$file = $this->createMock(File::class);
 			$file->method('getName')->willReturn($name);
 			return $file;
 		}, $fileNames));
-		return $draftFolder;
+		return $uploadFolder;
 	}
 
-	private function createLink(string $label, int $nodeId = 23): IShare&MockObject {
+	private function createLink(string $label, int $nodeId = 24): IShare&MockObject {
 		$share = $this->createMock(IShare::class);
 		$share->method('getShareType')->willReturn(IShare::TYPE_LINK);
 		$share->method('getLabel')->willReturn($label);
@@ -178,7 +186,7 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 		$guestsFolder->method('getId')->willReturn(42);
 		$this->conversationFolderService->method('getOrCreateGuestsFolder')->with('alice', $room)->willReturn($guestsFolder);
 
-		$this->roomService->expects($this->once())->method('setGuestsFolderId')->with($room, 42);
+		$this->roomService->expects($this->once())->method('setGuestsFolder')->with($room, 'alice', 42);
 
 		$this->service->allowUploads($this->createParticipant(Attendee::ACTOR_USERS, 'alice'), $room);
 	}
@@ -198,7 +206,7 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 		$this->mockAvailable($available);
 		$this->userManager->method('get')->willReturn($this->createUser('alice', $quotaBytes));
 		$this->conversationFolderService->expects($this->never())->method('getOrCreateGuestsFolder');
-		$this->roomService->expects($this->never())->method('setGuestsFolderId');
+		$this->roomService->expects($this->never())->method('setGuestsFolder');
 
 		try {
 			$this->service->allowUploads($this->createParticipant(Attendee::ACTOR_USERS, 'alice'), $this->createRoom(0, $type, $objectType));
@@ -212,30 +220,42 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 		$this->mockAvailable();
 		$this->userManager->method('get')->willReturn($this->createUser('alice', 1024));
 		$this->conversationFolderService->method('getOrCreateGuestsFolder')->willThrowException(new NotEnoughSpaceException());
-		$this->roomService->expects($this->never())->method('setGuestsFolderId');
+		$this->roomService->expects($this->never())->method('setGuestsFolder');
 
 		$this->expectException(UploadsWithoutStorageException::class);
 		$this->service->allowUploads($this->createParticipant(Attendee::ACTOR_USERS, 'alice'), $this->createRoom());
 	}
 
 	public function testGetGuestsFolderWhenOff(): void {
-		$this->rootFolder->expects($this->never())->method('getFirstNodeById');
+		$this->rootFolder->expects($this->never())->method('getUserFolder');
 
 		$this->expectException(NotFoundException::class);
 		$this->service->getGuestsFolder($this->createRoom());
 	}
 
-	public function testGetGuestsFolderLocation(): void {
+	public static function dataGetGuestsFolderLocation(): array {
+		return [
+			'owner' => ['alice', 'Talk/Lorem-abcdef/Guests'],
+			'other moderator' => ['bob', null],
+		];
+	}
+
+	#[DataProvider('dataGetGuestsFolderLocation')]
+	public function testGetGuestsFolderLocation(string $moderatorId, ?string $path): void {
 		$guestsFolder = $this->mockGuestsFolder();
+		$this->userManager->method('getDisplayName')->with('alice')->willReturn('Alice');
 		$this->conversationFolderService->method('getRelativePath')->with('alice', $guestsFolder)->willReturn('Talk/Lorem-abcdef/Guests');
 
-		$this->assertSame(['owner' => 'Alice', 'path' => 'Talk/Lorem-abcdef/Guests'], $this->service->getGuestsFolderLocation($this->createRoom(42)));
+		$this->assertSame(
+			['owner' => 'Alice', 'path' => $path],
+			$this->service->getGuestsFolderLocation($this->createRoom(42), $this->createParticipant(Attendee::ACTOR_USERS, $moderatorId)),
+		);
 	}
 
 	public function testGetUploadFolders(): void {
 		$room = $this->createRoom(42);
 		$guestsFolder = $this->mockGuestsFolder();
-		$draftFolder = $this->createDraftFolder();
+		$draftFolder = $this->createMock(Folder::class);
 		$this->mockAvailable();
 		$this->conversationFolderService->expects($this->once())->method('shareGuestsFolder')->with($guestsFolder, 'alice', $room);
 		$this->conversationFolderService->method('getOrCreateDraftFolder')->with($guestsFolder)->willReturn($draftFolder);
@@ -270,10 +290,12 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 			->with('talk-uploads-without-storage', 30, 3600, '192.0.2.1');
 
 		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime('2026-11-19 12:00:00'));
-		$draftFolder = $this->createDraftFolder();
+		$draftFolder = $this->createMock(Folder::class);
+		$uploadFolder = $this->createMock(Folder::class);
+		$draftFolder->expects($this->once())->method('newFolder')->with('password')->willReturn($uploadFolder);
 
 		$share = $this->createMock(IShare::class);
-		$share->expects($this->once())->method('setNode')->with($draftFolder)->willReturnSelf();
+		$share->expects($this->once())->method('setNode')->with($uploadFolder)->willReturnSelf();
 		$share->expects($this->once())->method('setShareType')->with(IShare::TYPE_LINK)->willReturnSelf();
 		$share->expects($this->once())->method('setPermissions')->with(Constants::PERMISSION_CREATE)->willReturnSelf();
 		$share->expects($this->once())->method('setSharedBy')->with('alice')->willReturnSelf();
@@ -307,70 +329,66 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 		$this->shareManager->method('newShare')->willReturn($share);
 		$this->shareManager->method('createShare')->willReturn($share);
 
-		$this->service->createUploadLink($this->createParticipant(Attendee::ACTOR_USERS, 'bob'), $this->createRoom(42), $this->createDraftFolder());
+		$draftFolder = $this->createMock(Folder::class);
+		$draftFolder->method('newFolder')->willReturn($this->createMock(Folder::class));
+		$this->service->createUploadLink($this->createParticipant(Attendee::ACTOR_USERS, 'bob'), $this->createRoom(42), $draftFolder);
 	}
 
-	public function testGetUploadedFile(): void {
+	public function testGetUploadFolder(): void {
 		$this->shareManager->method('getShareByToken')->with('linktoken')->willReturn($this->createLink('Talk upload abcdef 7'));
-		$draftFolder = $this->createDraftFolder();
-		$file = $this->createMock(File::class);
-		$draftFolder->method('get')->with('linktoken-photo.jpg')->willReturn($file);
+		$uploadFolder = $this->createUploadFolder();
 
-		$this->assertSame($file, $this->service->getUploadedFile($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7), $this->createRoom(42), $draftFolder, 'linktoken', 'linktoken-photo.jpg'));
+		$this->assertSame($uploadFolder, $this->service->getUploadFolder($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7), $this->createRoom(42), $this->createDraftFolder($uploadFolder), 'linktoken'));
 	}
 
-	public static function dataGetUploadedFileRefused(): array {
+	public static function dataGetUploadFolderRefused(): array {
 		return [
-			'link of another guest' => ['Talk upload abcdef 8', 23, 'linktoken-photo.jpg'],
-			'link of another conversation' => ['Talk upload ghijkl 7', 23, 'linktoken-photo.jpg'],
-			'link on another folder' => ['Talk upload abcdef 7', 99, 'linktoken-photo.jpg'],
-			'other link of the moderator' => ['Holiday photos', 23, 'linktoken-photo.jpg'],
-			'file of another link' => ['Talk upload abcdef 7', 23, 'othertoken-photo.jpg'],
-			'file of the moderator' => ['Talk upload abcdef 7', 23, 'draft.jpg'],
+			'link of another guest' => ['Talk upload abcdef 8', 24, 23],
+			'link of another conversation' => ['Talk upload ghijkl 7', 24, 23],
+			'other link of the moderator' => ['Holiday photos', 24, 23],
+			'link on a folder outside the Draft folder' => ['Talk upload abcdef 7', 99, 23],
+			'link on a folder deeper in the Draft folder' => ['Talk upload abcdef 7', 24, 25],
 		];
 	}
 
-	#[DataProvider('dataGetUploadedFileRefused')]
-	public function testGetUploadedFileRefused(string $label, int $nodeId, string $filePath): void {
+	#[DataProvider('dataGetUploadFolderRefused')]
+	public function testGetUploadFolderRefused(string $label, int $nodeId, int $parentId): void {
 		$this->shareManager->method('getShareByToken')->willReturn($this->createLink($label, $nodeId));
-		$draftFolder = $this->createDraftFolder();
-		$draftFolder->expects($this->never())->method('get');
 
-		$this->expectException(NotFoundException::class);
-		$this->service->getUploadedFile($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7), $this->createRoom(42), $draftFolder, 'linktoken', $filePath);
+		$this->expectException(NotPermittedException::class);
+		$this->service->getUploadFolder($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7), $this->createRoom(42), $this->createDraftFolder($this->createUploadFolder([], $parentId)), 'linktoken');
 	}
 
-	public function testGetUploadedFileWithUnknownLink(): void {
+	public function testGetUploadFolderWithUnknownLink(): void {
 		$this->shareManager->method('getShareByToken')->willThrowException(new ShareNotFound());
 
-		$this->expectException(NotFoundException::class);
-		$this->service->getUploadedFile($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest'), $this->createRoom(42), $this->createDraftFolder(), 'linktoken', 'linktoken-photo.jpg');
+		$this->expectException(NotPermittedException::class);
+		$this->service->getUploadFolder($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest'), $this->createRoom(42), $this->createDraftFolder(), 'linktoken');
 	}
 
-	public function testFinishUploadKeepsLinkWhileFilesWait(): void {
-		$this->shareManager->method('getShareByToken')->willReturn($this->createLink('Talk upload abcdef 7'));
+	public function testFinishUploadKeepsFolderWhileFilesWait(): void {
+		$uploadFolder = $this->createUploadFolder(['b.jpg']);
+		$uploadFolder->expects($this->never())->method('delete');
 		$this->shareManager->expects($this->never())->method('deleteShare');
 
-		$this->service->finishUpload($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7), $this->createRoom(42), $this->createDraftFolder(['othertoken-a.jpg', 'linktoken-b.jpg']), 'linktoken');
+		$this->service->finishUpload($this->createRoom(42), $uploadFolder);
 	}
 
-	public function testFinishUploadDeletesLinkWhenDone(): void {
+	public function testFinishUploadDeletesLinkAndFolderWhenDone(): void {
+		$uploadFolder = $this->createUploadFolder();
+		$uploadFolder->expects($this->once())->method('delete');
 		$link = $this->createLink('Talk upload abcdef 7');
-		$this->shareManager->method('getShareByToken')->willReturn($link);
+		$this->shareManager->method('getSharesBy')->with('alice', IShare::TYPE_LINK, $uploadFolder, false, -1)->willReturn([$link]);
 		$this->shareManager->expects($this->once())->method('deleteShare')->with($link);
 
-		$this->service->finishUpload($this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7), $this->createRoom(42), $this->createDraftFolder(['othertoken-a.jpg', 'draft.jpg']), 'linktoken');
+		$this->service->finishUpload($this->createRoom(42), $uploadFolder);
 	}
 
 	public function testRevokeUploadLinksOfTheConversation(): void {
-		$guestsFolder = $this->mockGuestsFolder();
-		$draftFolder = $this->createDraftFolder();
-		$this->conversationFolderService->method('getOrCreateDraftFolder')->with($guestsFolder)->willReturn($draftFolder);
-
 		$guestLink = $this->createLink('Talk upload abcdef 7');
 		$otherGuestLink = $this->createLink('Talk upload abcdef 8');
 		$this->shareManager->method('getSharesBy')
-			->with('alice', IShare::TYPE_LINK, $draftFolder, false, -1)
+			->with('alice', IShare::TYPE_LINK, null, false, -1)
 			->willReturn([$guestLink, $otherGuestLink, $this->createLink('Talk upload ghijkl 7'), $this->createLink('Holiday photos')]);
 
 		$deleted = [];
@@ -378,18 +396,15 @@ class UploadsWithoutStorageServiceTest extends TestCase {
 			$deleted[] = $share;
 		});
 
-		$this->service->revokeUploadLinks($guestsFolder, $this->createRoom(42));
+		$this->service->revokeUploadLinks($this->createRoom(42), 'alice');
 		$this->assertSame([$guestLink, $otherGuestLink], $deleted);
 	}
 
 	public function testRevokeUploadLinksOfOneAttendee(): void {
-		$guestsFolder = $this->mockGuestsFolder();
-		$this->conversationFolderService->method('getOrCreateDraftFolder')->willReturn($this->createDraftFolder());
-
 		$guestLink = $this->createLink('Talk upload abcdef 7');
 		$this->shareManager->method('getSharesBy')->willReturn([$guestLink, $this->createLink('Talk upload abcdef 8')]);
 		$this->shareManager->expects($this->once())->method('deleteShare')->with($guestLink);
 
-		$this->service->revokeUploadLinks($guestsFolder, $this->createRoom(42), $this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7)->getAttendee());
+		$this->service->revokeUploadLinks($this->createRoom(42), 'alice', $this->createParticipant(Attendee::ACTOR_GUESTS, 'guest', 7)->getAttendee());
 	}
 }

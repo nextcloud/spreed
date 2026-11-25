@@ -48,6 +48,7 @@ class SelectHelper {
 			$alias . 'last_pinned_id',
 			$alias . 'attributes',
 			$alias . 'guests_folder_id',
+			$alias . 'guests_folder_owner',
 		])->selectAlias($alias . 'id', 'r_id');
 	}
 

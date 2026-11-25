@@ -254,7 +254,7 @@ class RoomFormatter {
 			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 			'mentionPermissions' => $room->getMentionPermissions(),
-			'uploadsWithoutStorage' => $room->getGuestsFolderId() !== 0 && $this->uploadsWithoutStorageService->isAvailable(),
+			'uploadsWithoutStorage' => $room->getGuestsFolderOwner() !== '' && $this->uploadsWithoutStorageService->isAvailable(),
 			'liveTranscriptionLanguageId' => $room->getLiveTranscriptionLanguageId(),
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),

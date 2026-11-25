@@ -186,12 +186,7 @@ class ConversationFolderService {
 	 *
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-	public function moveToDeletedFolder(string $token, int $fileId): void {
-		$ownerId = $this->rootFolder->getFirstNodeById($fileId)?->getOwner()?->getUID();
-		if ($ownerId === null) {
-			return;
-		}
-
+	public function moveToDeletedFolder(string $ownerId, string $token, int $fileId): void {
 		$node = $this->rootFolder->getUserFolder($ownerId)->getFirstNodeById($fileId);
 		if ($node === null || $node->getType() !== FileInfo::TYPE_FILE) {
 			return;

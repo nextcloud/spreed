@@ -202,6 +202,7 @@ class CapabilitiesTest extends TestCase {
 						'conversation-subfolders' => false,
 						'default-allow-edit' => false,
 						'default-original-quality' => false,
+						'guests-upload' => false,
 					],
 					'call' => [
 						'enabled' => true,
@@ -458,6 +459,7 @@ class CapabilitiesTest extends TestCase {
 						'conversation-subfolders' => true,
 						'default-allow-edit' => true,
 						'default-original-quality' => true,
+						'guests-upload' => false,
 						'folder' => '/Talk',
 					],
 					'call' => [

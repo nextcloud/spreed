@@ -124,7 +124,7 @@ async function postAttachment({ token, filePath, fileName, referenceId, talkMeta
  * @param payload The function payload
  * @param payload.uploadToken The upload link token
  * @param payload.uploadPassword The upload link password
- * @param payload.fileName Temporary file name, starting with the upload token
+ * @param payload.fileName File name in the folder of the upload link
  * @param payload.file The file to upload
  * @param payload.onProgress Called with the uploaded percentage
  */

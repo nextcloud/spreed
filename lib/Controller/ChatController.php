@@ -2529,7 +2529,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Guests, email guests and users with a quota of 0 get a temporary upload
 	 * link instead, when a moderator allowed uploads without storage: PUT
-	 * `{uploadToken}-{temp name}` to `public.php/dav/files/{uploadToken}/`.
+	 * the file to `public.php/dav/files/{uploadToken}/{file name}`.
 	 *
 	 * @param list<string> $fileNames Desired filenames to probe
 	 * @param bool $allowUpdate Allow recipients to modify shared files
@@ -2664,6 +2664,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
 			} else {
 				['guestsFolder' => $subfolder, 'draftFolder' => $draftFolder] = $this->uploadsWithoutStorageService->getUploadFolders($this->participant, $this->room);
+				$draftFolder = $this->uploadsWithoutStorageService->getUploadFolder($this->participant, $this->room, $draftFolder, $uploadToken);
 			}
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
@@ -2681,8 +2682,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		try {
 			$node = $hasOwnStorage
 				? $this->conversationFolderService->getFileNode($uid, $filePath)
-				: $this->uploadsWithoutStorageService->getUploadedFile($this->participant, $this->room, $draftFolder, $uploadToken, $filePath);
-		} catch (FileNotFoundException) {
+				: $draftFolder->get(basename($filePath));
+		} catch (FileNotFoundException|NotPermittedException) {
 			return new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
 		}
 		if ($node->getType() !== FileInfo::TYPE_FILE) {
@@ -2703,7 +2704,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$node = $result['node'];
 
 		if (!$hasOwnStorage) {
-			$this->uploadsWithoutStorageService->finishUpload($this->participant, $this->room, $draftFolder, $uploadToken);
+			$this->uploadsWithoutStorageService->finishUpload($this->room, $draftFolder);
 		}
 
 		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.

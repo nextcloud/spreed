@@ -137,6 +137,7 @@ class Room {
 		private int $lastPinnedId,
 		private int $attributes,
 		private int $guestsFolderId,
+		private string $guestsFolderOwner,
 	) {
 	}
 
@@ -464,8 +465,13 @@ class Room {
 		return $this->guestsFolderId;
 	}
 
-	public function setGuestsFolderId(int $guestsFolderId): void {
-		$this->guestsFolderId = $guestsFolderId;
+	public function getGuestsFolderOwner(): string {
+		return $this->guestsFolderOwner;
+	}
+
+	public function setGuestsFolder(string $owner, int $folderId): void {
+		$this->guestsFolderOwner = $owner;
+		$this->guestsFolderId = $folderId;
 	}
 
 	public function setObjectId(string $objectId): void {

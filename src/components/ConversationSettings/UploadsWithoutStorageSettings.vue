@@ -20,15 +20,20 @@ const props = defineProps<{
 
 const vuexStore = useStore()
 const isLoading = ref(false)
-const guestsFolder = ref<{ owner: string, path: string } | null>(null)
+const guestsFolder = ref<{ owner: string, path: string | null } | null>(null)
 
 const conversation = computed(() => vuexStore.getters.conversation(props.token) || vuexStore.getters.dummyConversation as Conversation)
 
 const isAllowed = computed(() => conversation.value.uploadsWithoutStorage)
 
-const guestsFolderLabel = computed(() => guestsFolder.value
-	? t('spreed', 'Folder: {path} ({owner})', guestsFolder.value)
-	: '')
+const guestsFolderLabel = computed(() => {
+	if (!guestsFolder.value) {
+		return ''
+	}
+	return guestsFolder.value.path
+		? t('spreed', 'Folder: {path}', { path: guestsFolder.value.path })
+		: t('spreed', 'Uploading to shared folder of {owner}', { owner: guestsFolder.value.owner })
+})
 
 const summaryLabel = computed(() => isAllowed.value
 	? t('spreed', 'Guests and participants without storage can upload files')
