@@ -86,7 +86,7 @@ class PageController extends Controller {
 	#[FrontpageRoute(verb: 'GET', url: '/call/{token}', requirements: [
 		'token' => '[a-z0-9]{4,30}',
 	], root: '')]
-	public function showCall(string $token, string $email = '', string $access = ''): Response {
+	public function showCall(string $token, string $email = '', #[SensitiveParameter] string $access = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->pageHandler($token, email: $email, accessToken: $access);
 	}

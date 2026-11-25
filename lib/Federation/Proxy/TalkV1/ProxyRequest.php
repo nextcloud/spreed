@@ -82,9 +82,9 @@ class ProxyRequest {
 	}
 
 	protected function generateDefaultRequestOptions(
-		?string $cloudId,
+		string $cloudId,
 		#[SensitiveParameter]
-		?string $accessToken,
+		string $accessToken = '',
 	): array {
 		$options = [
 			'verify' => !$this->config->getSystemValueBool('sharing.federation.allowSelfSignedCertificates'),
@@ -100,7 +100,7 @@ class ProxyRequest {
 			'timeout' => 5,
 		];
 
-		if ($cloudId !== null && $accessToken !== null) {
+		if (!empty($accessToken)) {
 			$options['auth'] = [urlencode($cloudId), $accessToken];
 		}
 
@@ -120,9 +120,9 @@ class ProxyRequest {
 	 */
 	protected function request(
 		string $verb,
-		?string $cloudId,
+		string $cloudId,
 		#[SensitiveParameter]
-		?string $accessToken,
+		string $accessToken,
 		string $url,
 		array $parameters,
 	): IResponse {
@@ -176,8 +176,8 @@ class ProxyRequest {
 	): IResponse {
 		return $this->request(
 			'get',
-			$cloudId,
-			$accessToken,
+			$cloudId ?: '',
+			$accessToken ?: '',
 			$url,
 			$parameters,
 		);

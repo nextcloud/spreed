@@ -2684,8 +2684,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$room = $this->manager->getRoomByRemoteAccess(
 					$token,
 					Attendee::ACTOR_FEDERATED_USERS,
-					$this->federationAuthenticator->getCloudId(),
-					$this->federationAuthenticator->getAccessToken(),
+					$this->federationAuthenticator->getCloudId() ? '',
+					$this->federationAuthenticator->getAccessToken() ? '',
 				);
 			}
 
