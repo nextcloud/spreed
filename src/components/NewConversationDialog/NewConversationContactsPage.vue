@@ -17,7 +17,7 @@
 				:showTrailingButton="isSearching"
 				:trailingButtonLabel="cancelSearchLabel"
 				@trailingButtonClick="abortSearch"
-				@input="handleInput">
+				@input="debounceFetchSearchResults">
 				<template #icon>
 					<Magnify :size="20" />
 				</template>
@@ -156,8 +156,7 @@ export default {
 			searchText: '',
 			searchResults: [],
 			cachedFullSearchResults: [],
-			// The loading state is true when the component is initialised as we perform a search for 'contacts'
-			// with an empty screen as search text.
+			// Only true until the first search completes: later searches keep showing the previous results
 			contactsLoading: true,
 			noResults: false,
 			participantPhoneItem: {},
@@ -212,14 +211,10 @@ export default {
 
 	methods: {
 		t,
-		handleInput() {
-			this.noResults = false
-			this.contactsLoading = true
-			this.searchResults = []
-			this.debounceFetchSearchResults()
-		},
-
 		abortSearch() {
+			// A pending search would replace the restored results
+			this.debounceFetchSearchResults.clear?.()
+			this.cancelSearchPossibleConversations('canceled')
 			this.noResults = false
 			this.contactsLoading = false
 			this.searchResults = this.cachedFullSearchResults
@@ -230,7 +225,6 @@ export default {
 
 		async fetchSearchResults() {
 			this.resetNavigation()
-			this.contactsLoading = true
 			try {
 				this.cancelSearchPossibleConversations('canceled')
 				const { request, cancel } = CancelableRequest(autocompleteQuery)
@@ -246,9 +240,7 @@ export default {
 				})
 
 				this.searchResults = response?.data?.ocs?.data || []
-				if (this.searchResults.length === 0) {
-					this.noResults = true
-				}
+				this.noResults = this.searchResults.length === 0
 				if (!this.searchText) {
 					this.cachedFullSearchResults = this.searchResults
 				}
