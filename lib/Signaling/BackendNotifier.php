@@ -397,6 +397,7 @@ class BackendNotifier {
 				'inCall' => Participant::FLAG_DISCONNECTED,
 				'lastPing' => 0,
 				'sessionId' => '0',
+				'nextcloudSessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
 				'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 				'displayName' => $attendee->getDisplayName(),
@@ -412,6 +413,7 @@ class BackendNotifier {
 				$data['inCall'] = $session->getInCall();
 				$data['lastPing'] = $session->getLastPing();
 				$data['sessionId'] = $session->getSessionId();
+				$data['nextcloudSessionId'] = $session->getSessionId();
 				$data['participantPermissions'] = $participant->getPermissions();
 				$users[] = $data;
 
