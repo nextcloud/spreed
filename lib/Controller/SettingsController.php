@@ -71,8 +71,8 @@ class SettingsController extends OCSController {
 		foreach ($this->configLexicon->getTalkUserAppPreferences() as $config) {
 			if ($key === $config->entry->getKey()) {
 				match ($config->entry->getValueType()) {
-					ValueType::INT, ValueType::BOOL, ValueType::FLOAT => $this->userConfig->setValueInt($this->userId, Application::APP_ID, $key, (int)$value),
-					ValueType::STRING => $this->userConfig->setValueString($this->userId, Application::APP_ID, $key, $value),
+					ValueType::BOOL => $this->userConfig->setValueBool($this->userId, Application::APP_ID, $key, in_array(mb_strtolower($value), [1, '1', 'true', 'yes'], true)),
+					ValueType::INT => $this->userConfig->setValueInt($this->userId, Application::APP_ID, $key, (int)$value),
 					default => $this->userConfig->setValueString($this->userId, Application::APP_ID, $key, (string)$value),
 				};
 				break;
