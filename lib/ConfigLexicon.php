@@ -441,6 +441,7 @@ PROMPT;
 			),
 			new AppConfigEntry(
 				new Entry(Config::LIVE_TRANSCRIPTION_APP_ID, ValueType::STRING, 'live_transcription', definition: 'App ID of the external App from the Nextcloud AppStore to use for live transcription in Nextcloud Talk'),
+				hash: true,
 			)
 		];
 	}
