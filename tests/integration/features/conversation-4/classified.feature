@@ -196,9 +196,9 @@ Feature: conversation-4/classified
       | users     | participant1 | away   |
       | users     | participant2 | online |
 
-  Scenario: The name of a classified conversation never appears in the notification list
-    # Both the invitation and the call notification must show the conversation as
-    # "Private conversation" instead of its name.
+  Scenario: The name of a classified conversation is hidden on invitation notifications
+    # The invitation shows the conversation as "Private conversation",
+    # while the call notification shows its name.
     Given user "participant1" creates room "classified" (v4)
       | roomType | 2 |
       | roomName | classified |
@@ -213,7 +213,7 @@ Feature: conversation-4/classified
     And user "participant1" joins call "classified" with 200 (v4)
     Then user "participant2" has the following notifications
       | app    | object_type | object_id  | subject                                          |
-      | spreed | call        | classified | A group call has started in Private conversation |
+      | spreed | call        | classified | A group call has started in classified |
 
   Scenario: Email guests can not be added to a classified conversation
     # The invitation mail would carry the conversation name and description into

@@ -1043,10 +1043,10 @@ class Notifier implements INotifier {
 
 	/**
 	 * Resolves the conversation name for a notification, hiding it when the
-	 * conversation is classified or sensitive for the user
+	 * conversation is classified or sensitive for the user (unless calls)
 	 */
-	protected function getNotificationRoomName(Room $room, ?Participant $participant, INotification $notification, IL10N $l): string {
-		if ($room->isClassified() || $participant?->getAttendee()->isSensitive() === true) {
+	protected function getNotificationRoomName(Room $room, ?Participant $participant, INotification $notification, IL10N $l, bool $filterSensitive = true): string {
+		if ($filterSensitive && ($room->isClassified() || $participant?->getAttendee()->isSensitive())) {
 			return $l->t('Private conversation');
 		}
 
@@ -1123,7 +1123,7 @@ class Notifier implements INotifier {
 			throw new UnknownNotificationException('Unknown object type');
 		}
 
-		$roomName = $this->getNotificationRoomName($room, $participant, $notification, $l);
+		$roomName = $this->getNotificationRoomName($room, $participant, $notification, $l, false);
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$parameters = $notification->getSubjectParameters();
 			$calleeId = $parameters['callee']; // TODO can be null on federated conversations, so needs to be changed once we have federated 1-1
