@@ -344,6 +344,7 @@ class RoomFormatter {
 					&& $room->getObjectType() !== Room::OBJECT_TYPE_MATRIX
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = $room->getType() !== Room::TYPE_NOTE_TO_SELF
+					&& $room->getObjectType() !== 'team'
 					&& (!$room->isAnnouncement() || $currentParticipant->hasModeratorPermissions(false));
 
 				if ($this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
