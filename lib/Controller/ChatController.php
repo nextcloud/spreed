@@ -2755,12 +2755,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// Create the file_shared system message referencing the file by node ID.
 		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
 		// share is needed; access is controlled by the folder-level share.
+		$parameters = ['fileId' => (string)$node->getId(), 'metaData' => $metaData];
+		if (!$hasOwnStorage) {
+			$parameters['owner'] = $this->room->getGuestsFolderOwner();
+		}
 		$comment = $this->chatManager->addSystemMessage(
 			$this->room,
 			$this->participant,
 			$this->participant->getAttendee()->getActorType(),
 			$this->participant->getAttendee()->getActorId(),
-			json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$node->getId(), 'metaData' => $metaData]]),
+			json_encode(['message' => 'file_shared', 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(),
 			true,
 			$referenceId !== '' ? $referenceId : null,
