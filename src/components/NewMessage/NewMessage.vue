@@ -830,7 +830,7 @@ export default {
 		},
 
 		mentionAllWarningText() {
-			return n('spreed', 'You are about to mention %n participant, who will receive a notification.', 'You are about to mention %n participants, who will receive a notification.', this.participantCount)
+			return n('spreed', 'This will notify %n participant.', 'This will notify %n participants.', this.participantCount)
 		},
 	},
 
