@@ -57,6 +57,14 @@ export default class MediaDevicesSource extends TrackSource {
 		return this._videoAllowed
 	}
 
+	/**
+	 * @param {string} kind "audio" or "video"
+	 * @return {boolean} true if the track of the given kind is being replaced
+	 */
+	isInputIdChangePending(kind) {
+		return !!(kind === 'audio' ? this._pendingAudioInputIdChangedCount : this._pendingVideoInputIdChangedCount)
+	}
+
 	setAudioAllowed(audioAllowed) {
 		if (this._audioAllowed === audioAllowed) {
 			return
@@ -269,6 +277,8 @@ export default class MediaDevicesSource extends TrackSource {
 
 			if (audioInputIdChangedAgain) {
 				this._handleAudioInputIdChanged(mediaDevicesManager, mediaDevicesManager.get('audioInputId'))
+			} else {
+				this._trigger('inputIdChangeSettled', ['audio'])
 			}
 		}
 
@@ -336,6 +346,8 @@ export default class MediaDevicesSource extends TrackSource {
 
 			if (videoInputIdChangedAgain) {
 				this._handleVideoInputIdChanged(mediaDevicesManager, mediaDevicesManager.get('videoInputId'))
+			} else {
+				this._trigger('inputIdChangeSettled', ['video'])
 			}
 		}
 
