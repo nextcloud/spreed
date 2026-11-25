@@ -14,6 +14,7 @@ use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\TeamFileThreadService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -52,6 +53,7 @@ class FilesIntegrationController extends OCSController {
 		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
 		private readonly IL10N $l,
+		private readonly TeamFileThreadService $teamFileThreadService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -80,7 +82,12 @@ class FilesIntegrationController extends OCSController {
 	 * owner of such a file.
 	 *
 	 * @param string $fileId ID of the file
-	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, null, array{}>
+	 *                       Files posted in a team conversation (stored in the team folder) are
+	 *                       discussed in a thread on their message in the team conversation instead,
+	 *                       for the participants of the team conversation: then also the id of the
+	 *                       thread is returned.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{token: string, threadId?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, null, array{}>
 	 * @throws OCSNotFoundException Share not found
 	 *
 	 * 200: Room token returned
@@ -104,6 +111,14 @@ class FilesIntegrationController extends OCSController {
 		$node = $this->util->getAnyNodeOfFileAccessibleByUser($fileId, $currentUser->getUID());
 		if ($node === null) {
 			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+		}
+
+		$teamThread = $this->teamFileThreadService->getThreadForFile($currentUser, $node);
+		if ($teamThread !== null) {
+			return new DataResponse([
+				'token' => $teamThread['room']->getToken(),
+				'threadId' => $teamThread['threadId'],
+			]);
 		}
 
 		$users = $this->util->getUsersWithAccessFile($fileId, $currentUser->getUID());

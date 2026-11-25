@@ -70,6 +70,18 @@
 								</NcActionButton>
 
 								<NcActionButton
+									v-if="showTeamsFilter"
+									closeAfterClick
+									type="checkbox"
+									:modelValue="filters.includes('teams')"
+									@click="handleFilter('teams')">
+									<template #icon>
+										<IconAccountGroupOutline :size="20" />
+									</template>
+									{{ t('spreed', 'Teams') }}
+								</NcActionButton>
+
+								<NcActionButton
 									v-if="isFiltered"
 									closeAfterClick
 									class="filter-actions__clearbutton"
@@ -330,6 +342,7 @@
 					<template #icon>
 						<IconAt v-if="filters.length === 1 && filters[0] === 'mentions'" :size="64" />
 						<IconMessageBadgeOutline v-else-if="filters.length === 1 && filters[0] === 'unread'" :size="64" />
+						<IconAccountGroupOutline v-else-if="filters.length === 1 && filters[0] === 'teams'" :size="64" />
 						<IconArchiveOutline v-else-if="showArchived" :size="64" />
 						<IconForumOutline v-else-if="showThreadsList" :size="64" />
 						<IconMessageOutline v-else :size="64" />
@@ -446,6 +459,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import IconAccountGroupOutline from 'vue-material-design-icons/AccountGroupOutline.vue'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
@@ -505,6 +519,7 @@ import {
 	filterConversation,
 	hasCall,
 	hasUnreadMentions,
+	isTeamConversation,
 	shouldIncludeArchived,
 	sortConversationsList,
 } from '../../utils/conversation.ts'
@@ -587,6 +602,7 @@ export default {
 		IconFilterVariantRemove,
 		IconArchiveOutline,
 		IconArrowLeft,
+		IconAccountGroupOutline,
 		IconCalendarBlankOutline,
 		IconForumOutline,
 		IconHomeOutline,
@@ -740,6 +756,8 @@ export default {
 				return t('spreed', 'You have no unread mentions.')
 			} else if (this.filters.length === 1 && this.filters[0] === 'unread') {
 				return t('spreed', 'You have no unread messages.')
+			} else if (this.filters.length === 1 && this.filters[0] === 'teams') {
+				return t('spreed', 'No conversations found')
 			} else {
 				return ''
 			}
@@ -800,6 +818,12 @@ export default {
 
 		isCompact() {
 			return this.settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT
+		},
+
+		showTeamsFilter() {
+			// Only when the user has team conversations, and always while it is active
+			return this.filters.includes('teams')
+				|| this.conversationsList.some((conversation) => isTeamConversation(conversation))
 		},
 
 		isFiltered() {

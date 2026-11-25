@@ -13,7 +13,7 @@
 			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
 		</NcCheckboxRadioSwitch>
 		<NcCheckboxRadioSwitch
-			v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
+			v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled && !isTeam"
 			class="additional-top-margin"
 			:modelValue="listable === LISTABLE.ALL"
 			:disabled="isListableLoading || isPreserved || disabled"
@@ -40,6 +40,7 @@ import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import { CONVERSATION } from '../../constants.ts'
 import { hasServerAppCapabilities } from '../../services/CapabilitiesManager.ts'
+import { isTeamConversation, isTeamError } from '../../utils/conversation.ts'
 
 export default {
 	name: 'ListableSettings',
@@ -89,6 +90,11 @@ export default {
 
 		isPreserved() {
 			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.PRESERVE)
+		},
+
+		isTeam() {
+			// Users of the Guests app can not be members of a team
+			return isTeamConversation(this.conversation)
 		},
 
 		summaryLabel() {
@@ -169,7 +175,11 @@ export default {
 				this.listable = listable
 			} catch (e) {
 				console.error('Error occurred when opening or limiting the conversation', e)
-				showError(t('spreed', 'Error occurred when opening or limiting the conversation'))
+				if (isTeamError(e)) {
+					showError(t('spreed', 'Team conversation: members, name and picture are managed in the Teams app'))
+				} else {
+					showError(t('spreed', 'Error occurred when opening or limiting the conversation'))
+				}
 				this.listable = this.conversation.listable
 			}
 			this.isListableLoading = false

@@ -251,3 +251,4 @@
 * `mute-conversations` - Whether conversations can be muted for a given time
 * `federation-signaling-auth` (local) - Whether federated signaling is sending the join auth params to the clients and the HPB should not allow joining without
 * `shared-items-link` - Whether chat messages containing links are listed as `link` shared items
+* `team-folder` (local) - Whether files posted in team conversations are stored in the folder of the team (when an app provides team folders), `GET /team/{teamId}/folder` returns that folder and the Files sidebar opens a thread of the team conversation for such files

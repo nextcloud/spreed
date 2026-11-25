@@ -835,8 +835,15 @@ export const useUploadStore = defineStore('upload', () => {
 		} catch (error) {
 			console.error('Error while sharing file: ', error)
 
+			let reason = 'failed-share'
 			if (isAxiosErrorResponse(error) && error.response?.status === 403) {
 				showError(t('spreed', 'You are not allowed to share files'))
+			} else if (isAxiosErrorResponse(error) && error.response?.status === 507) {
+				// Storage full (e.g. the team folder): no retry, it would fail the same way.
+				// Every other error keeps 'failed-share', which can be retried.
+				reason = 'quota'
+				const message = (error.response.data as unknown as { ocs?: { data?: { error?: string } | null } } | undefined)?.ocs?.data?.error
+				showError(message ?? t('spreed', 'Not enough free space to upload file "{fileName}"', { fileName: fileName ?? '' }))
 			} else if (isAxiosErrorResponse(error) && error.response?.data?.ocs?.meta?.message) {
 				showError(error.response.data.ocs.meta.message)
 			} else {
@@ -844,7 +851,7 @@ export const useUploadStore = defineStore('upload', () => {
 			}
 
 			if (uploadId) {
-				vuexStore.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
+				vuexStore.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason })
 			}
 		}
 	}

@@ -25,6 +25,7 @@ import LoadingComponent from '../../LoadingComponent.vue'
 import ThreadItem from '../Threads/ThreadItem.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
+import TeamFolderSection from './TeamFolderSection.vue'
 import IconPermMediaOutline from '../../../../img/material-icons/perm-media-outline.svg?raw'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION, SHARED_ITEM } from '../../../constants.ts'
@@ -55,6 +56,7 @@ const showSharedItemsBrowser = ref(false)
 const browserActiveTab = ref('')
 const projectsEnabled = loadState('core', 'projects_enabled', false)
 const hasRelatedResources = ref(false)
+const hasTeamFolder = ref(false)
 
 const store = useStore()
 const chatExtrasStore = useChatExtrasStore()
@@ -68,6 +70,12 @@ const canCreatePollDrafts = computed(() => {
 		&& [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(conversation.value.type)
 })
 const sharedItems = computed(() => sharedItemsStore.sharedItems(token.value))
+const teamId = computed(() => {
+	// Team conversations of this server (the copies on other servers have no team folder here)
+	return conversation.value?.objectType === CONVERSATION.OBJECT_TYPE.TEAM && !conversation.value.remoteServer
+		? conversation.value.objectId
+		: ''
+})
 const hasSharedItems = computed(() => Object.keys(sharedItems.value).length > 0)
 
 const supportThreads = computed(() => hasTalkFeature(token.value, 'threads'))
@@ -147,6 +155,13 @@ function openPollDraftHandler() {
 					</NcButton>
 				</ul>
 			</template>
+			<!-- Team conversations: the folder of the team -->
+			<TeamFolderSection
+				v-if="teamId"
+				class="shared-items-tab__section"
+				:teamId
+				:active="active && sidebarStore.show"
+				@available="(value: boolean) => hasTeamFolder = value" />
 			<!-- Shared items grouped by type -->
 			<template v-for="type in sharedItemsOrder" :key="type">
 				<div v-if="sharedItems[type]" class="shared-items-tab__section">
@@ -200,7 +215,7 @@ function openPollDraftHandler() {
 
 			<!-- No shared content -->
 			<NcEmptyContent
-				v-else-if="!hasSharedItems && !hasRelatedResources"
+				v-else-if="!hasSharedItems && !hasRelatedResources && !(teamId && hasTeamFolder)"
 				class="shared-items-tab__empty-content"
 				:name="t('spreed', 'No shared items')">
 				<template #icon>

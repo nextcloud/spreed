@@ -2471,46 +2471,84 @@
                         }
                     },
                     "403": {
-                        "description": "The Matrix account of the user can not rename the Matrix room",
+                        "description": "The Matrix account of the user can not rename the Matrix room, or only team admins can rename a team conversation",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
+                                    "anyOf": [
+                                        {
                                             "type": "object",
                                             "required": [
-                                                "meta",
-                                                "data"
+                                                "ocs"
                                             ],
                                             "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
+                                                "ocs": {
                                                     "type": "object",
                                                     "required": [
-                                                        "error"
+                                                        "meta",
+                                                        "data"
                                                     ],
                                                     "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "account",
-                                                                "encrypted",
-                                                                "matrix",
-                                                                "message",
-                                                                "permission"
-                                                            ]
+                                                        "meta": {
+                                                            "$ref": "#/components/schemas/OCSMeta"
+                                                        },
+                                                        "data": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "account",
+                                                                        "encrypted",
+                                                                        "matrix",
+                                                                        "message",
+                                                                        "permission"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "type": "object",
+                                            "required": [
+                                                "ocs"
+                                            ],
+                                            "properties": {
+                                                "ocs": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "meta",
+                                                        "data"
+                                                    ],
+                                                    "properties": {
+                                                        "meta": {
+                                                            "$ref": "#/components/schemas/OCSMeta"
+                                                        },
+                                                        "data": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "team"
+                                                                    ]
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
+                                    ]
                                 }
                             }
                         }

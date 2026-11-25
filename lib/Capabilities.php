@@ -143,6 +143,7 @@ class Capabilities implements IPublicCapability {
 		'matrix-rooms',
 		'mute-conversations',
 		'federation-signaling-auth',
+		'team-folder',
 		'shared-items-link',
 	];
 
@@ -184,6 +185,7 @@ class Capabilities implements IPublicCapability {
 		'announcement-preset',
 		'matrix-rooms',
 		'federation-signaling-auth',
+		'team-folder',
 	];
 
 	public const LOCAL_CONFIGS = [

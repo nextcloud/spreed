@@ -451,6 +451,34 @@ describe('fileUploadStore', () => {
 				expect(shareFile).not.toHaveBeenCalled()
 			})
 
+			// Storage full (507): the server message and no retry; other errors can be retried
+			test.each([
+				[507, 'Not enough free space to upload file', 'quota'],
+				[500, 'Error while sharing file', 'failed-share'],
+			])('marks the message when posting fails with %i', async (status, error, reason) => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
+				postAttachment.mockRejectedValueOnce({
+					isAxiosError: true,
+					response: {
+						status,
+						data: { ocs: { meta: { status: 'failure', statuscode: status }, data: { error } } },
+					},
+				})
+
+				const file = { name: 'big.zip', type: 'application/zip', size: 123, lastModified: Date.UTC(2021, 3, 27, 15, 30, 0) }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: { silent: false } })
+
+				if (status === 507) {
+					expect(showError).toHaveBeenCalledWith(error)
+				}
+				expect(vuexStoreDispatch).toHaveBeenCalledWith('markTemporaryMessageAsFailed', expect.objectContaining({
+					uploadId: 'upload-id1',
+					reason,
+				}))
+			})
+
 			test('probes with all file names and posts each file in a multi-file upload', async () => {
 				conversationGetter.mockReturnValue({ type: 2, displayName: 'Room' })
 

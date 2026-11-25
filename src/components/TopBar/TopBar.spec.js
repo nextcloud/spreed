@@ -19,6 +19,7 @@ const TOKEN = 'XXTOKENXX'
 describe('TopBar.vue', () => {
 	let store
 	let activityStore
+	let conversation
 
 	/**
 	 * @param {number} attendeeId Unique attendee id
@@ -81,7 +82,7 @@ describe('TopBar.vue', () => {
 		setActivePinia(createPinia())
 		activityStore = useParticipantActivityStore()
 
-		const conversation = {
+		conversation = {
 			token: TOKEN,
 			displayName: 'Team call',
 			type: CONVERSATION.TYPE.GROUP,
@@ -129,5 +130,38 @@ describe('TopBar.vue', () => {
 		const wrapper = await mountTopBar()
 
 		expect(findBadge(wrapper).text()).toBe('3')
+	})
+
+	describe('team badge', () => {
+		const findTeamBadge = (wrapper) => wrapper.find('.top-bar__team')
+
+		test('copy of a team conversation shows the server of the team', async () => {
+			conversation.attributes = CONVERSATION.ATTRIBUTE.TEAM
+			conversation.remoteServer = 'https://host.example/nextcloud/'
+
+			const wrapper = await mountTopBar()
+
+			// Label and tooltip, also when only the icon is shown (the test window is mobile size)
+			expect(findTeamBadge(wrapper).attributes('aria-label')).toBe('Team (host.example/nextcloud)')
+			expect(findTeamBadge(wrapper).attributes('title')).toBe('Team (host.example/nextcloud)')
+			// Managed on the server of the team, no link to the local Teams app
+			expect(findTeamBadge(wrapper).attributes('href')).toBeUndefined()
+		})
+
+		test('team conversation on this server', async () => {
+			conversation.objectType = CONVERSATION.OBJECT_TYPE.TEAM
+			conversation.objectId = 'team1'
+			conversation.attributes = CONVERSATION.ATTRIBUTE.TEAM
+
+			const wrapper = await mountTopBar()
+
+			expect(findTeamBadge(wrapper).attributes('aria-label')).toBe('Team')
+		})
+
+		test('no badge for other conversations', async () => {
+			const wrapper = await mountTopBar()
+
+			expect(findTeamBadge(wrapper).exists()).toBe(false)
+		})
 	})
 })

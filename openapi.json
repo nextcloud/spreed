@@ -13063,7 +13063,7 @@
                         }
                     },
                     "500": {
-                        "description": "Could not prepare the conversation folder",
+                        "description": "Could not prepare the conversation folder or move the file",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -13101,7 +13101,7 @@
                         }
                     },
                     "507": {
-                        "description": "User storage quota exceeded",
+                        "description": "Storage quota of the user or the team folder exceeded",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -14215,7 +14215,7 @@
                     {
                         "name": "fileId",
                         "in": "path",
-                        "description": "ID of the file",
+                        "description": "ID of the file Files posted in a team conversation (stored in the team folder) are discussed in a thread on their message in the team conversation instead, for the participants of the team conversation: then also the id of the thread is returned.",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -14262,6 +14262,10 @@
                                                     "properties": {
                                                         "token": {
                                                             "type": "string"
+                                                        },
+                                                        "threadId": {
+                                                            "type": "integer",
+                                                            "format": "int64"
                                                         }
                                                     }
                                                 }
@@ -33598,6 +33602,171 @@
                                                 "data": {
                                                     "type": "string"
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/team/{teamId}/folder": {
+            "get": {
+                "operationId": "team-get-team-folder",
+                "summary": "Get the folder of a team",
+                "description": "The path is relative to the files of the current user, clients can list it with WebDAV. Files posted in the team conversation are in the `attachmentFolder` inside it, clients that show them as shared items already should leave that folder out.",
+                "tags": [
+                    "team"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "teamId",
+                        "in": "path",
+                        "description": "singleID of the team",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9]{31}$"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Folder of the team returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "path",
+                                                        "attachmentFolder"
+                                                    ],
+                                                    "properties": {
+                                                        "path": {
+                                                            "type": "string"
+                                                        },
+                                                        "attachmentFolder": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The team has no folder or the current user can not access it",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "team"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }

@@ -5,38 +5,40 @@
 
 <template>
 	<div>
-		<NcTextField
-			ref="conversationName"
-			v-model="conversationName"
-			:placeholder="t('spreed', 'Enter a name for this conversation')"
-			:label="t('spreed', 'Name')"
-			:error="!!nameErrorLabel"
-			labelVisible
-			@keydown.enter="$emit('handleEnter')" />
-		<span v-if="nameErrorLabel" class="new-group-conversation__error">
-			{{ nameErrorLabel }}
-		</span>
-		<NcTextArea
-			v-model="conversationDescription"
-			:placeholder="t('spreed', 'Enter a description for this conversation')"
-			:label="t('spreed', 'Description')"
-			:error="!!descriptionErrorLabel"
-			resize="vertical"
-			labelVisible />
-		<span v-if="descriptionErrorLabel" class="new-group-conversation__error">
-			{{ descriptionErrorLabel }}
-		</span>
+		<template v-if="!isTeam">
+			<NcTextField
+				ref="conversationName"
+				v-model="conversationName"
+				:placeholder="t('spreed', 'Enter a name for this conversation')"
+				:label="t('spreed', 'Name')"
+				:error="!!nameErrorLabel"
+				labelVisible
+				@keydown.enter="$emit('handleEnter')" />
+			<span v-if="nameErrorLabel" class="new-group-conversation__error">
+				{{ nameErrorLabel }}
+			</span>
+			<NcTextArea
+				v-model="conversationDescription"
+				:placeholder="t('spreed', 'Enter a description for this conversation')"
+				:label="t('spreed', 'Description')"
+				:error="!!descriptionErrorLabel"
+				resize="vertical"
+				labelVisible />
+			<span v-if="descriptionErrorLabel" class="new-group-conversation__error">
+				{{ descriptionErrorLabel }}
+			</span>
 
-		<template v-if="supportsAvatar">
-			<label class="new-group-conversation__label">
-				{{ t('spreed', 'Picture') }}
-			</label>
-			<ConversationAvatarEditor
-				ref="conversationAvatar"
-				:conversation="newConversation"
-				controlled
-				editable
-				@avatarEdited="$emit('avatarEdited', $event)" />
+			<template v-if="supportsAvatar">
+				<label class="new-group-conversation__label">
+					{{ t('spreed', 'Picture') }}
+				</label>
+				<ConversationAvatarEditor
+					ref="conversationAvatar"
+					:conversation="newConversation"
+					controlled
+					editable
+					@avatarEdited="$emit('avatarEdited', $event)" />
+			</template>
 		</template>
 
 		<template v-if="conversationTypeOptions.length > 0">
@@ -69,33 +71,39 @@
 			<span>{{ t('spreed', 'These settings can be changed once the conversation is created.') }}</span>
 		</div>
 
-		<label class="new-group-conversation__label">
-			{{ t('spreed', 'Conversation visibility') }}
-		</label>
-		<NcCheckboxRadioSwitch
-			v-model="isPublic"
-			type="switch"
-			:disabled="isClassified">
-			{{ t('spreed', 'Allow guests to join via link') }}
-		</NcCheckboxRadioSwitch>
-		<div class="new-group-conversation__wrapper">
+		<p v-if="isTeam" class="new-group-conversation__hint">
+			{{ t('spreed', 'Team conversation: members, name and picture are managed in the Teams app') }}
+		</p>
+
+		<template v-if="!isTeam">
+			<label class="new-group-conversation__label">
+				{{ t('spreed', 'Conversation visibility') }}
+			</label>
 			<NcCheckboxRadioSwitch
-				v-model="hasPassword"
+				v-model="isPublic"
 				type="switch"
-				:disabled="!isPublic || forcePasswordProtection || isClassified">
-				<span class="checkbox__label">{{ t('spreed', 'Password protection') }}</span>
+				:disabled="isClassified">
+				{{ t('spreed', 'Allow guests to join via link') }}
 			</NcCheckboxRadioSwitch>
-			<NcPasswordField
-				v-if="hasPassword"
-				v-model="passwordValue"
-				autocomplete="new-password"
-				checkPasswordStrength
-				:placeholder="t('spreed', 'Enter password')"
-				:aria-label="t('spreed', 'Enter password')"
-				@valid="$emit('isPasswordValid', true)"
-				@invalid="$emit('isPasswordValid', false)" />
-		</div>
-		<ListableSettings v-model="listableValue" :disabled="isClassified" />
+			<div class="new-group-conversation__wrapper">
+				<NcCheckboxRadioSwitch
+					v-model="hasPassword"
+					type="switch"
+					:disabled="!isPublic || forcePasswordProtection || isClassified">
+					<span class="checkbox__label">{{ t('spreed', 'Password protection') }}</span>
+				</NcCheckboxRadioSwitch>
+				<NcPasswordField
+					v-if="hasPassword"
+					v-model="passwordValue"
+					autocomplete="new-password"
+					checkPasswordStrength
+					:placeholder="t('spreed', 'Enter password')"
+					:aria-label="t('spreed', 'Enter password')"
+					@valid="$emit('isPasswordValid', true)"
+					@invalid="$emit('isPasswordValid', false)" />
+			</div>
+			<ListableSettings v-model="listableValue" :disabled="isClassified" />
+		</template>
 	</div>
 </template>
 
@@ -106,6 +114,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconAccountGroupOutline from 'vue-material-design-icons/AccountGroupOutline.vue'
 import IconBullhornOutline from 'vue-material-design-icons/BullhornOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconMonitorAccount from 'vue-material-design-icons/MonitorAccount.vue'
@@ -132,6 +141,7 @@ const presetIcons = {
 	[CONVERSATION.PRESET.CLASSIFIED]: { icon: IconShieldLockOutline },
 	[CONVERSATION.PRESET.CHANNEL]: { icon: IconBullhornOutline },
 	[CONVERSATION.PRESET.ANNOUNCEMENT]: { icon: IconBullhornOutline },
+	[CONVERSATION.PRESET.TEAM]: { icon: IconAccountGroupOutline },
 }
 
 /**
@@ -313,6 +323,10 @@ export default {
 			return this.preset === CONVERSATION.PRESET.CLASSIFIED
 		},
 
+		isTeam() {
+			return this.preset === CONVERSATION.PRESET.TEAM
+		},
+
 		hasPassword: {
 			get() {
 				return this.newConversation.hasPassword
@@ -379,6 +393,11 @@ export default {
 			}
 
 			const update = { attributes, preset }
+			if (preset === CONVERSATION.PRESET.TEAM) {
+				// Team members only, no guests via link
+				update.type = CONVERSATION.TYPE.GROUP
+				update.hasPassword = false
+			}
 			let nextListable = this.listable
 
 			for (const [key, value] of Object.entries(parameters)) {
@@ -434,6 +453,11 @@ export default {
 
 	&__error {
 		color: var(--color-text-error);
+	}
+
+	&__hint {
+		margin-top: 10px;
+		color: var(--color-text-maxcontrast);
 	}
 }
 

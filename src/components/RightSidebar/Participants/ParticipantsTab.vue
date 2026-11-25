@@ -121,7 +121,7 @@ import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import CancelableRequest from '../../../utils/CancelableRequest.ts'
-import { isClassifiedConversation } from '../../../utils/conversation.ts'
+import { isClassifiedConversation, isTeamConversation } from '../../../utils/conversation.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 
@@ -372,7 +372,27 @@ export default {
 				this.abortSearch()
 			} catch (exception) {
 				console.debug(exception)
-				showError(t('spreed', 'An error occurred while adding the participants'))
+				if (isTeamConversation(this.conversation)) {
+					showError(this.teamAddError(exception))
+				} else {
+					showError(t('spreed', 'An error occurred while adding the participants'))
+				}
+			}
+		},
+
+		/**
+		 * Adding to a team conversation adds to the team: explain refusals of the team
+		 *
+		 * @param {object} exception the error of the request
+		 */
+		teamAddError(exception) {
+			switch (exception?.response?.data?.ocs?.data?.error) {
+				case 'team':
+					return t('spreed', 'The team did not accept the new member. Check the settings of the team in the Teams app.')
+				case 'ban':
+					return t('spreed', 'The account is banned from this conversation')
+				default:
+					return t('spreed', 'An error occurred while adding the participants')
 			}
 		},
 

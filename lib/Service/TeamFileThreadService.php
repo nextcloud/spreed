@@ -34,9 +34,8 @@ use OCP\IUser;
  * team): everyone else with access to the file keeps the conversation of the
  * file.
  *
- * Not used by the Files sidebar yet: clients first need to know that the
- * answer can be a thread of the team conversation (capability), otherwise
- * they would open the whole team conversation instead of the file.
+ * Used by the Files sidebar (FilesIntegrationController::getRoomByFileId()),
+ * which returns the id of the thread with the token of the team conversation.
  */
 class TeamFileThreadService {
 	public function __construct(

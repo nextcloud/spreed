@@ -4,7 +4,7 @@
  */
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { defaultRemoteURL } from '@nextcloud/files/dav'
+import { defaultRemoteURL, getDavNameSpaces, getDavProperties } from '@nextcloud/files/dav'
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
@@ -90,4 +90,56 @@ export function generatePublicSharePreviewUrl(shareLink: string, path: string, {
 		y,
 		etag,
 	})
+}
+
+/**
+ * WebDAV SEARCH body for the most recently modified files in a folder of the current user
+ *
+ * @param folderPath - The folder, relative to the user's files, e.g., Team A
+ * @param limit - Maximum number of files
+ * @return The SEARCH request body
+ */
+export function generateRecentFilesInFolderSearch(folderPath: string, limit: number) {
+	const userId = getCurrentUser()?.uid
+	if (!userId) {
+		throw new TypeError('Cannot search files without a user')
+	}
+	const scope = '/files/' + encodeURIComponent(userId) + encodePath('/' + folderPath.replace(/^\/+/, ''))
+	return `<?xml version="1.0" encoding="UTF-8"?>
+<d:searchrequest ${getDavNameSpaces()}>
+	<d:basicsearch>
+		<d:select>
+			<d:prop>
+				${getDavProperties()}
+			</d:prop>
+		</d:select>
+		<d:from>
+			<d:scope>
+				<d:href>${scope}</d:href>
+				<d:depth>infinity</d:depth>
+			</d:scope>
+		</d:from>
+		<d:where>
+			<d:not>
+				<d:eq>
+					<d:prop>
+						<d:getcontenttype/>
+					</d:prop>
+					<d:literal>httpd/unix-directory</d:literal>
+				</d:eq>
+			</d:not>
+		</d:where>
+		<d:orderby>
+			<d:order>
+				<d:prop>
+					<d:getlastmodified/>
+				</d:prop>
+				<d:descending/>
+			</d:order>
+		</d:orderby>
+		<d:limit>
+			<d:nresults>${limit}</d:nresults>
+		</d:limit>
+	</d:basicsearch>
+</d:searchrequest>`
 }

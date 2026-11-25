@@ -18,7 +18,7 @@
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo
 				:conversation
-				:canFullModerate />
+				:canFullModerate="canEditTeamSettings" />
 		</NcAppSettingsSection>
 
 		<template v-if="!isBreakoutRoom">
@@ -33,9 +33,9 @@
 			<NcAppSettingsSection
 				id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
-				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token :canModerate="canFullModerate" />
+				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token :canModerate="canEditTeamSettings" />
 				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token :canModerate="canFullModerate" />
-				<LinkShareSettings v-if="!isNoteToSelf && !isClassified && !isMatrix" :token :canModerate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf && !isClassified && !isMatrix && !isTeam" :token :canModerate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token :canModerate="selfIsOwnerOrModerator" />
 				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature && !isMatrix" :token :canModerate="selfIsOwnerOrModerator" />
 				<BanSettings v-if="supportBanV1 && canFullModerate && !isMatrix" :token />
@@ -87,7 +87,7 @@
 
 			<!-- Matterbridge settings -->
 			<NcAppSettingsSection
-				v-if="canFullModerate && matterbridgeEnabled && !isClassified && !isMatrix"
+				v-if="canFullModerate && matterbridgeEnabled && !isClassified && !isMatrix && !isTeam"
 				id="matterbridge"
 				:name="t('spreed', 'Matterbridge')">
 				<MatterbridgeSettings />
@@ -163,7 +163,7 @@ import {
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { isChannelConversation, isClassifiedConversation, isMatrixConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation, isMatrixConversation, isTeamConversation } from '../../utils/conversation.ts'
 
 // FIXME Should use remote not local
 const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
@@ -271,8 +271,22 @@ export default {
 					|| this.conversation.type === CONVERSATION.TYPE.PUBLIC)
 		},
 
+		/**
+		 * Name, description, listing and deleting of a team conversation are
+		 * settings of the team: only team admins (owners of the conversation)
+		 * can change them. Other conversations: all moderators.
+		 */
+		canEditTeamSettings() {
+			if (this.isTeam) {
+				return this.participantType === PARTICIPANT.TYPE.OWNER
+			}
+			return this.canFullModerate
+		},
+
 		canDeleteConversation() {
+			// The server refuses it for moderators of team conversations who are no team admins
 			return this.conversation.canDeleteConversation
+				&& (!this.isTeam || this.participantType === PARTICIPANT.TYPE.OWNER)
 		},
 
 		canLeaveConversation() {
@@ -285,6 +299,11 @@ export default {
 
 		isMatrix() {
 			return isMatrixConversation(this.conversation)
+		},
+
+		isTeam() {
+			// Team conversations: settings of the team, no bridges and no public link
+			return isTeamConversation(this.conversation)
 		},
 
 		supportBotsV1() {

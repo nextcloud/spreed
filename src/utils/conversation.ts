@@ -6,12 +6,13 @@
 import type { MaybeRef } from 'vue'
 import type { Conversation, EventTimeRange } from '../types/index.ts'
 
+import { generateUrl } from '@nextcloud/router'
 import { toValue } from 'vue'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { ONE_HOUR_IN_MS } from './formattedTime.ts'
 
-type Filter = 'unread' | 'mentions' | 'events'
+type Filter = 'unread' | 'mentions' | 'events' | 'teams'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportsAvatar = hasTalkFeature('local', 'avatar')
@@ -25,6 +26,39 @@ const supportsConversationTags = hasTalkFeature('local', 'conversation-tags')
  */
 export function isClassifiedConversation(conversation: Conversation | undefined): boolean {
 	return Boolean(conversation && conversation.attributes & CONVERSATION.ATTRIBUTE.CLASSIFIED)
+}
+
+/**
+ * Check if the conversation is the conversation of a team (members synced with the team).
+ * The copy of a federated team conversation only has the TEAM attribute, no object type.
+ *
+ * @param conversation conversation object
+ */
+export function isTeamConversation(conversation: Conversation | undefined): boolean {
+	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.TEAM
+		|| Boolean(conversation && conversation.attributes & CONVERSATION.ATTRIBUTE.TEAM)
+}
+
+/**
+ * Check if the server refused a change because the conversation belongs to a
+ * team (the change has to be done in the team, or is not available for teams)
+ *
+ * @param error error of the request
+ */
+export function isTeamError(error: unknown): boolean {
+	return (error as { response?: { data?: { ocs?: { data?: { error?: string } } } } })?.response?.data?.ocs?.data?.error === 'team'
+}
+
+/**
+ * Link to the page of the team in the Teams app, empty when the app is not enabled
+ *
+ * @param teamId id of the team (object id of the team conversation)
+ */
+export function getTeamPageUrl(teamId: string): string {
+	if (!(window as unknown as { OC?: { appswebroots?: Record<string, unknown> } }).OC?.appswebroots?.circles) {
+		return ''
+	}
+	return generateUrl('/apps/circles/teams/team/{teamId}', { teamId })
 }
 
 /**
@@ -194,6 +228,7 @@ export function filterConversation(conversation: Conversation, filters: Filter[]
 	return (!filters.includes('unread') || hasUnreadMessages(conversation))
 		&& (!filters.includes('mentions') || hasUnreadMentions(conversation))
 		&& (!filters.includes('events') || isEvent(conversation))
+		&& (!filters.includes('teams') || isTeamConversation(conversation))
 }
 
 /**

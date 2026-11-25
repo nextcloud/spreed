@@ -2193,6 +2193,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/team/{teamId}/folder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the folder of a team
+         * @description The path is relative to the files of the current user, clients can list it with WebDAV. Files posted in the team conversation are in the `attachmentFolder` inside it, clients that show them as shared items already should leave that folder out.
+         */
+        get: operations["team-get-team-folder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/temp-user-avatar": {
         parameters: {
             query?: never;
@@ -7780,7 +7800,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Could not prepare the conversation folder */
+            /** @description Could not prepare the conversation folder or move the file */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -7812,7 +7832,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description User storage quota exceeded */
+            /** @description Storage quota of the user or the team folder exceeded */
             507: {
                 headers: {
                     [name: string]: unknown;
@@ -8230,7 +8250,7 @@ export interface operations {
             };
             path: {
                 apiVersion: "v1";
-                /** @description ID of the file */
+                /** @description ID of the file Files posted in a team conversation (stored in the team folder) are discussed in a thread on their message in the team conversation instead, for the participants of the team conversation: then also the id of the thread is returned. */
                 fileId: string;
             };
             cookie?: never;
@@ -8248,6 +8268,8 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 token: string;
+                                /** Format: int64 */
+                                threadId?: number;
                             };
                         };
                     };
@@ -15840,6 +15862,72 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "team-get-team-folder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                /** @description singleID of the team */
+                teamId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Folder of the team returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                path: string;
+                                attachmentFolder: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The team has no folder or the current user can not access it */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "team";
+                            };
                         };
                     };
                 };

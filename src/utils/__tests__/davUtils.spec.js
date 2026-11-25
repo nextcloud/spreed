@@ -3,9 +3,21 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
-import { describe, expect, it } from 'vitest'
-import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl } from '../davUtils.ts'
+import { describe, expect, it, vi } from 'vitest'
+import { generatePreviewUrl, generatePublicShareDownloadUrl, generatePublicSharePreviewUrl, generateRecentFilesInFolderSearch } from '../davUtils.ts'
+
+vi.mock('@nextcloud/files/dav', async (importOriginal) => ({
+	...(await importOriginal()),
+	getDavNameSpaces: vi.fn(() => 'xmlns:d="DAV:"'),
+	getDavProperties: vi.fn(() => '<d:getlastmodified />'),
+}))
+
+vi.mock('@nextcloud/auth', async (importOriginal) => ({
+	...(await importOriginal()),
+	getCurrentUser: vi.fn(() => ({ uid: 'alice', displayName: 'Alice', isAdmin: false })),
+}))
 
 describe('davUtils', () => {
 	describe('generatePublicShareDownloadUrl', () => {
@@ -43,6 +55,22 @@ describe('davUtils', () => {
 		it('adds etag to the preview link', () => {
 			expect(generatePublicSharePreviewUrl('https://nextcloud.ltd/index.php/s/TOKEN', '/photo.jpg', { x: -1, y: 384, etag: 'abc123' }))
 				.toBe(generateUrl('/apps/files_sharing/publicpreview/TOKEN?file=%2Fphoto.jpg&x=-1&y=384&a=true&etag=abc123'))
+		})
+	})
+
+	describe('generateRecentFilesInFolderSearch', () => {
+		it('limits the search to the folder, newest files first', () => {
+			const search = generateRecentFilesInFolderSearch('/Team A/Docs', 20)
+			expect(search).toContain('<d:href>/files/alice/Team%20A/Docs</d:href>')
+			expect(search).toContain('<d:depth>infinity</d:depth>')
+			expect(search).toContain('<d:literal>httpd/unix-directory</d:literal>')
+			expect(search).toContain('<d:descending/>')
+			expect(search).toContain('<d:nresults>20</d:nresults>')
+		})
+
+		it('requires a user', () => {
+			vi.mocked(getCurrentUser).mockReturnValueOnce(null)
+			expect(() => generateRecentFilesInFolderSearch('Team A', 5)).toThrow(TypeError)
 		})
 	})
 })

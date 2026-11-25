@@ -80,6 +80,7 @@ import { useReactionsStore } from '../stores/reactions.js'
 import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { useTokenStore } from '../stores/token.ts'
+import { isTeamError } from '../utils/conversation.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { getDisplayNamesList } from '../utils/getDisplayName.ts'
 
@@ -777,6 +778,10 @@ const actions = {
 			commit('addConversation', conversation)
 		} catch (error) {
 			console.error('Error while updating listable state: ', error)
+			if (isTeamError(error)) {
+				// Team conversations: only team admins, the settings show why
+				throw error
+			}
 		}
 	},
 
@@ -1239,6 +1244,11 @@ const actions = {
 
 			const token = response.data.ocs.data.token
 			context.dispatch('addConversation', response.data.ocs.data)
+
+			if (objectType === CONVERSATION.OBJECT_TYPE.TEAM && response.status === 200) {
+				// The team has a conversation already, the user was added to it instead
+				showInfo(t('spreed', 'You joined the conversation'))
+			}
 
 			const promises = []
 

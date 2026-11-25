@@ -30,8 +30,12 @@
 					@isPasswordValid="setIsPasswordValid" />
 
 				<!-- Second page -->
+				<NewConversationTeamPage
+					v-if="page === 1 && isTeam"
+					v-model:selectedTeam="selectedTeam"
+					class="new-group-conversation__content" />
 				<NewConversationContactsPage
-					v-if="page === 1"
+					v-else-if="page === 1"
 					v-model:selectedParticipants="selectedParticipants"
 					class="new-group-conversation__content"
 					:canModerateSipDialOut
@@ -43,7 +47,7 @@
 			<div class="new-group-conversation__footer">
 				<!-- First page -->
 				<NcButton
-					v-if="page === 0 && conversationName"
+					v-if="page === 0 && conversationName && !isTeam"
 					:disabled
 					variant="tertiary"
 					@click="handleCreateConversation">
@@ -55,7 +59,7 @@
 					:disabled
 					class="new-group-conversation__button"
 					@click="switchToPage(1)">
-					{{ t('spreed', 'Add participants') }}
+					{{ isTeam ? t('spreed', 'Teams') : t('spreed', 'Add participants') }}
 				</NcButton>
 				<!-- Second page -->
 				<NcButton
@@ -68,6 +72,7 @@
 					v-if="page === 1"
 					variant="primary"
 					class="new-group-conversation__button"
+					:disabled="isTeam && !selectedTeam"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
 				</NcButton>
@@ -126,6 +131,7 @@ import Check from 'vue-material-design-icons/Check.vue'
 import LoadingComponent from '../LoadingComponent.vue'
 import NewConversationContactsPage from './NewConversationContactsPage.vue'
 import NewConversationSetupPage from './NewConversationSetupPage.vue'
+import NewConversationTeamPage from './NewConversationTeamPage.vue'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -160,6 +166,7 @@ export default {
 		NcEmptyContent,
 		NcModal,
 		NewConversationContactsPage,
+		NewConversationTeamPage,
 		Check,
 		IconAlertCircleOutline,
 	},
@@ -208,6 +215,7 @@ export default {
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
 			isPasswordValid: true,
+			selectedTeam: null,
 		}
 	},
 
@@ -226,8 +234,16 @@ export default {
 			return this.newConversation.displayName.trim()
 		},
 
+		// Team conversations take name, description, picture and participants from the team
+		isTeam() {
+			return this.newConversation.preset === CONVERSATION.PRESET.TEAM
+		},
+
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
+			if (this.isTeam) {
+				return false
+			}
 			return this.conversationName === '' || (this.newConversation.hasPassword && (this.password === '' || !this.isPasswordValid))
 				|| this.conversationName.length > CONVERSATION.MAX_NAME_LENGTH
 				|| this.newConversation.description.length > maxDescriptionLength
@@ -244,6 +260,9 @@ export default {
 			} else if (this.error) {
 				if (this.errorReason === 'password_required') {
 					return t('spreed', 'Error: A password is required to create the conversation.')
+				}
+				if (this.errorReason === 'ban') {
+					return t('spreed', 'The account is banned from the conversation of this team')
 				}
 				return t('spreed', 'Error while creating the conversation')
 			} else if (this.success && this.isPublic) {
@@ -302,6 +321,7 @@ export default {
 			this.isAvatarEdited = false
 			this.selectedParticipants = []
 			this.lockedParticipants = []
+			this.selectedTeam = null
 		},
 
 		switchToPage(value) {
@@ -328,30 +348,32 @@ export default {
 					}
 				}
 				const preset = this.newConversation.preset !== CONVERSATION.PRESET.DEFAULT ? this.newConversation.preset : undefined
-				const conversation = await this.$store.dispatch('createGroupConversation', {
-					roomName: this.conversationName,
-					roomType: this.isPublic ? CONVERSATION.TYPE.PUBLIC : CONVERSATION.TYPE.GROUP,
-					password: this.password,
-					description: this.newConversation.description,
-					listable: this.listable,
-					messageExpiration: this.newConversation.messageExpiration,
-					readOnly: this.newConversation.readOnly,
-					lobbyState: this.newConversation.lobbyState,
-					lobbyTimer: this.newConversation.lobbyTimer,
-					recordingConsent: this.newConversation.recordingConsent,
-					sipEnabled: this.newConversation.sipEnabled,
-					permissions: this.newConversation.permissions,
-					mentionPermissions: this.newConversation.mentionPermissions,
-					participants: this.selectedParticipants,
-					avatar,
-					preset,
-				})
+				const conversation = this.isTeam
+					? await this.createTeamConversation(preset)
+					: await this.$store.dispatch('createGroupConversation', {
+							roomName: this.conversationName,
+							roomType: this.isPublic ? CONVERSATION.TYPE.PUBLIC : CONVERSATION.TYPE.GROUP,
+							password: this.password,
+							description: this.newConversation.description,
+							listable: this.listable,
+							messageExpiration: this.newConversation.messageExpiration,
+							readOnly: this.newConversation.readOnly,
+							lobbyState: this.newConversation.lobbyState,
+							lobbyTimer: this.newConversation.lobbyTimer,
+							recordingConsent: this.newConversation.recordingConsent,
+							sipEnabled: this.newConversation.sipEnabled,
+							permissions: this.newConversation.permissions,
+							mentionPermissions: this.newConversation.mentionPermissions,
+							participants: this.selectedParticipants,
+							avatar,
+							preset,
+						})
 				this.newConversation.token = conversation.token
 			} catch (exception) {
 				console.error('Error creating new conversation: ', exception)
 				this.isLoading = false
 				this.error = true
-				this.errorReason = exception.message
+				this.errorReason = exception?.response?.data?.ocs?.data?.error ?? exception.message
 				// Stop the execution of the method on exceptions.
 				return
 			}
@@ -372,6 +394,23 @@ export default {
 			if (!this.isPublic) {
 				this.closeModal()
 			}
+		},
+
+		/**
+		 * Create the conversation of the selected team. When the team has one
+		 * already, the server adds the user to it (if they may) and returns it.
+		 *
+		 * @param {string|undefined} preset - the preset
+		 */
+		async createTeamConversation(preset) {
+			return this.$store.dispatch('createGroupConversation', {
+				roomName: this.selectedTeam.displayName,
+				roomType: CONVERSATION.TYPE.GROUP,
+				objectType: CONVERSATION.OBJECT_TYPE.TEAM,
+				objectId: this.selectedTeam.id,
+				participants: [],
+				preset,
+			})
 		},
 
 		/** Handles the press of the enter key */

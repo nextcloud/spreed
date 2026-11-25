@@ -30,6 +30,8 @@ const props = defineProps<{
 const appContainer = useTemplateRef<HTMLDivElement>('appContainer')
 const isTalkSidebarSupportedForFile = ref<boolean | undefined>(undefined)
 const token = ref<string>()
+/** Files posted in a team conversation are discussed in a thread there */
+const threadId = ref<number>(0)
 const isTalkSidebarMounted = ref<boolean>(false)
 
 const isOtherTalkInstanceMounted = ref<boolean>(false)
@@ -50,6 +52,7 @@ watch(() => props.active, (active) => {
 async function setTalkSidebarSupportedForFile() {
 	isTalkSidebarSupportedForFile.value = undefined
 	token.value = ''
+	threadId.value = 0
 
 	if (!props.node || !props.node.fileid) {
 		isTalkSidebarSupportedForFile.value = false
@@ -69,7 +72,7 @@ async function setTalkSidebarSupportedForFile() {
 
 	if (!props.node.attributes?.['share-types']) {
 		try {
-			token.value = (await getFileConversation(props.node.fileid)).data.ocs.data.token || ''
+			await loadFileConversation(props.node.fileid)
 			isTalkSidebarSupportedForFile.value = !!token.value
 		} catch (error) {
 			isTalkSidebarSupportedForFile.value = false
@@ -89,7 +92,7 @@ async function setTalkSidebarSupportedForFile() {
 
 	if (shareTypes.length === 0) {
 		try {
-			token.value = (await getFileConversation(props.node.fileid)).data.ocs.data.token || ''
+			await loadFileConversation(props.node.fileid)
 			isTalkSidebarSupportedForFile.value = !!token.value
 		} catch (error) {
 			isTalkSidebarSupportedForFile.value = false
@@ -98,6 +101,18 @@ async function setTalkSidebarSupportedForFile() {
 	}
 
 	isTalkSidebarSupportedForFile.value = true
+}
+
+/**
+ * Get the conversation of the file, or the team conversation and the
+ * thread when the file was posted in a team conversation
+ *
+ * @param fileId - id of the file
+ */
+async function loadFileConversation(fileId: number) {
+	const data = (await getFileConversation(fileId)).data.ocs.data
+	token.value = data.token || ''
+	threadId.value = data.threadId ?? 0
 }
 
 /**
@@ -112,12 +127,12 @@ async function joinConversation() {
 		}
 
 		if (!token.value) {
-			token.value = (await getFileConversation(props.node.fileid!)).data.ocs.data.token || ''
+			await loadFileConversation(props.node.fileid!)
 		}
 
 		import('./mainFilesSidebar.js')
 			.then((module) => {
-				module.mountApp(appContainer.value, props, token.value)
+				module.mountApp(appContainer.value, props, token.value, threadId.value)
 				isTalkSidebarMounted.value = true
 			})
 	} catch (error) {

@@ -31,6 +31,15 @@
 				:aria-label="conversationType.label">
 				<component :is="conversationType.icon" :size="size * 0.3" />
 			</span>
+			<!-- Team conversations, in addition to the badge above (e.g. federated) -->
+			<span
+				v-if="!hideUserStatus && isTeam"
+				class="conversation-icon__type conversation-icon__type--team"
+				role="img"
+				aria-hidden="false"
+				:aria-label="t('spreed', 'Team conversation')">
+				<IconAccountGroup :size="size * 0.3" />
+			</span>
 		</template>
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
 		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
@@ -63,6 +72,7 @@ import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { h, ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import IconAccountGroup from 'vue-material-design-icons/AccountGroup.vue'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
@@ -71,7 +81,7 @@ import IconVolumeHighOutline from '../../img/material-icons/volume-high-outline.
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { getFallbackIconClass } from '../utils/conversation.ts'
+import { getFallbackIconClass, isTeamConversation } from '../utils/conversation.ts'
 import { getPreloadedUserStatus } from '../utils/userStatus.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
@@ -80,6 +90,7 @@ export default {
 	name: 'ConversationIcon',
 
 	components: {
+		IconAccountGroup,
 		IconStar,
 		IconVideo,
 		NcAvatar,
@@ -197,6 +208,11 @@ export default {
 			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
+		isTeam() {
+			// Also the copy of a team conversation on another server (TEAM attribute)
+			return isTeamConversation(this.item)
+		},
+
 		conversationType() {
 			if (this.item.remoteServer) {
 				return { key: 'federated', icon: IconWeb, label: t('spreed', 'Federated conversation') }
@@ -263,6 +279,12 @@ export default {
 		background-color: var(--color-main-background);
 		color: var(--color-main-text);
 		border-radius: 50%;
+
+		// Start corner: the end corner is used by federated, public and voice rooms
+		&--team {
+			inset-inline-start: -2px;
+			inset-inline-end: auto;
+		}
 	}
 
 	.overlap-icon {

@@ -59,6 +59,12 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		/** Thread of the file in a team conversation, 0 for the whole conversation */
+		threadId: {
+			type: Number,
+			default: 0,
+		},
 	},
 
 	setup() {
@@ -153,7 +159,11 @@ export default {
 			// if this conversation is joined again.
 			await this.$store.dispatch('purgeParticipantsStore', this.token)
 
-			await this.$router.push({ name: 'conversation', params: { token: this.token } })
+			await this.$router.push({
+				name: 'conversation',
+				params: { token: this.token },
+				query: this.threadId ? { threadId: String(this.threadId) } : {},
+			})
 			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// The current participant (which is automatically set when fetching

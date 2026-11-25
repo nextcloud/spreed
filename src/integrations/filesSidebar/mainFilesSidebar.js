@@ -16,13 +16,14 @@ import pinia from '../../stores/pinia.ts'
  * @param container - selector or ref to mount to
  * @param rootProps - Sidebar props
  * @param token - conversation token
+ * @param threadId - thread to open in the conversation, 0 for the whole conversation
  */
-export function mountApp(container, rootProps, token) {
+export function mountApp(container, rootProps, token, threadId = 0) {
 	initializeTalk()
 
 	const router = createMemoryRouter()
 
-	const instance = createApp(FilesSidebarTabApp, { ...rootProps, token })
+	const instance = createApp(FilesSidebarTabApp, { ...rootProps, token, threadId })
 		.use(store)
 		.use(pinia)
 		.use(router)

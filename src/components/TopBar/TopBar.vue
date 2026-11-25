@@ -139,6 +139,21 @@
 					</span>
 				</span>
 
+				<!-- Team conversation indicator, links to the team when the Teams app is enabled -->
+				<component
+					:is="teamUrl ? 'a' : 'span'"
+					v-if="isTeam"
+					class="top-bar__team"
+					:href="teamUrl || undefined"
+					:role="teamUrl ? undefined : 'img'"
+					:title="teamBadgeLabel"
+					:aria-label="teamBadgeLabel">
+					<IconAccountGroupOutline :size="20" />
+					<span v-if="!isMobile" class="top-bar__team-label">
+						{{ teamBadgeText }}
+					</span>
+				</component>
+
 				<!-- Upcoming meetings -->
 				<CalendarEventsDialog
 					v-if="showCalendarEvents"
@@ -185,6 +200,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
+import IconAccountGroupOutline from 'vue-material-design-icons/AccountGroupOutline.vue'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
@@ -210,7 +226,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
-import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
+import { getTeamPageUrl, isChannelConversation, isClassifiedConversation, isTeamConversation } from '../../utils/conversation.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
@@ -241,6 +257,7 @@ export default {
 		IconChevronRight,
 		IconClockOutline,
 		IconMagnify,
+		IconAccountGroupOutline,
 		IconShieldLockOutline,
 	},
 
@@ -300,6 +317,40 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isTeam() {
+			return isTeamConversation(this.conversation)
+		},
+
+		teamUrl() {
+			// The team page of the Teams app, only when the app is enabled. Not for
+			// federated conversations: the team is managed on the host server
+			if (!this.isTeam || this.conversation.remoteServer) {
+				return ''
+			}
+			return getTeamPageUrl(this.conversation.objectId)
+		},
+
+		teamHost() {
+			// Copy of a team conversation on another server: the server of the team
+			return this.conversation.remoteServer
+				? this.conversation.remoteServer.replace(/^https?:\/\//, '').replace(/\/+$/, '')
+				: ''
+		},
+
+		teamBadgeText() {
+			// Server in brackets like after the names of federated users
+			return this.teamHost
+				? t('spreed', 'Team') + ' (' + this.teamHost + ')'
+				: t('spreed', 'Team')
+		},
+
+		teamBadgeLabel() {
+			// Accessible name also when only the icon is shown (mobile)
+			return this.teamUrl
+				? t('spreed', 'Team conversation: members, name and picture are managed in the Teams app')
+				: this.teamBadgeText
 		},
 
 		isClassified() {
@@ -506,6 +557,7 @@ export default {
 	& > :deep(.button-vue),
 	& > .top-bar__calendar-events,
 	& > .top-bar__classified,
+	& > .top-bar__team,
 	.top-bar__calendar-events :deep(.v-popper),
 	.top-bar__calendar-events :deep(.button-vue) {
 		min-width: 0;
@@ -572,6 +624,31 @@ export default {
 	border-radius: var(--border-radius-element, var(--border-radius-pill));
 	color: var(--color-element-error, var(--color-error));
 	white-space: nowrap;
+
+	&-label {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-weight: bold;
+	}
+}
+
+.top-bar__team {
+	display: flex;
+	align-items: center;
+	gap: var(--default-grid-baseline);
+	min-width: var(--default-clickable-area);
+	padding: 0 calc(2 * var(--default-grid-baseline));
+	height: var(--default-clickable-area);
+	border: var(--border-width-input-focused) solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, var(--border-radius-pill));
+	color: var(--color-main-text);
+	white-space: nowrap;
+
+	&:is(a):hover,
+	&:is(a):focus-visible {
+		background-color: var(--color-background-hover);
+	}
 
 	&-label {
 		min-width: 0;
