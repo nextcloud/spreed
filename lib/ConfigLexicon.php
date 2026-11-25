@@ -439,6 +439,10 @@ PROMPT;
 				new Entry(Config::SIGNALING_SERVERS_SECRET, ValueType::STRING, '', definition: 'Shared secret between Nextcloud and the signaling servers, should be configured via the web interface or the OCC commands', flags: IAppConfig::FLAG_SENSITIVE),
 				occCommands: [SignalingAdd::class, SignalingDelete::class],
 			),
+			new AppConfigEntry(
+				new Entry(Config::LIVE_TRANSCRIPTION_APP_ID, ValueType::STRING, 'live_transcription', definition: 'App ID of the external App from the Nextcloud AppStore to use for live transcription in Nextcloud Talk'),
+				hash: true,
+			)
 		];
 	}
 

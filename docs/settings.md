@@ -124,6 +124,7 @@ Legend:
 | `hosted_signaling_server_nonce` | string | `''` | No |  | Temporary nonce while configuring the hosted signaling server |
 | `inactivity_enable_lobby` | bool | `false` | No |  | Additionally enable the lobby for inactive rooms so they can only be read by moderators. |
 | `inactivity_lock_after_days` | int | `0` | No |  | A duration (in days) after which rooms are locked. Calculated from the last activity in the room. |
+| `live_transcription_app_id` | string | `live_transcription` | Yes |  | App ID of the external App from the Nextcloud AppStore to use for live transcription in Nextcloud Talk |
 | `matrix_allowed_groups` | `list<string>` | `[]` | No | 🖌️ | List of group ids that are allowed to link a Matrix account (everyone when empty) |
 | `matrix_enabled` | bool | `false` | No | 🖌️ | Whether users can link a Matrix account and use their Matrix rooms as conversations |
 | `matterbridge_binary` | string | `''` | No |  | Path to the matterbridge binary file |

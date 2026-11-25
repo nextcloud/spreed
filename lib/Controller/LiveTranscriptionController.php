@@ -43,7 +43,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'|'in-call'}, array{}>
 	 *
 	 * 200: Live transcription enabled successfully
-	 * 400: The external app "live_transcription" is not available
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available
 	 * 400: The participant is not in the call
 	 * 400: The conversation is classified
 	 */
@@ -87,7 +87,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'in-call'}, array{}>
 	 *
 	 * 200: Live transcription stopped successfully
-	 * 400: The external app "live_transcription" is not available
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available
 	 * 400: The participant is not in the call
 	 */
 	#[PublicPage]
@@ -121,7 +121,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, array<string, TalkLiveTranscriptionLanguage>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'}, array{}>
 	 *
 	 * 200: Available languages got successfully
-	 * 400: The external app "live_transcription" is not available
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available
 	 */
 	#[PublicPage]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/live-transcription/languages', requirements: [
@@ -150,8 +150,8 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, array{originLanguages: array<string, TalkLiveTranscriptionLanguage>, targetLanguages: array<string, TalkLiveTranscriptionLanguage>, defaultTargetLanguageId: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'translations'}, array{}>
 	 *
 	 * 200: Available languages got successfully
-	 * 400: The external app "live_transcription" is not available or
-	 * translations are not supported.
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available
+	 * or translations are not supported.
 	 */
 	#[PublicPage]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/live-transcription/translation-languages', requirements: [
@@ -176,7 +176,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'app'}, array{}>
 	 *
 	 * 200: Language set successfully
-	 * 400: The external app "live_transcription" is not available
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available
 	 * 400: The conversation is classified
 	 * 403: Participant is not a moderator
 	 */
@@ -214,7 +214,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'|'translations'|'in-call'}, array{}>
 	 *
 	 * 200: Target language set successfully
-	 * 400: The external app "live_transcription" is not available or
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available or
 	 * translations are not supported.
 	 * 400: The participant is not in the call.
 	 * 400: The conversation is classified
