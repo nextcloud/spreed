@@ -6,6 +6,16 @@
 // @flow
 
 /**
+ * Window radius of the guided filter, in mask pixels.
+ * Larger value - smoother mask over a wider area. Low GPU impact.
+ */
+const GUIDED_RADIUS = 2
+/**
+ * Regularization of the guided filter.
+ * Smaller value - mask edges follow the frame edges more closely.
+ */
+const GUIDED_EPS = 0.001
+/**
  * Number of horizontal + vertical blur iterations applied.
  * Larger value - stronger blur effect. Low GPU impact.
  */
@@ -141,6 +151,89 @@ export default class WebGLCompositor {
 			outColor = vec4(vec3(0.0), newVal);
 		}`
 
+		// --- Temporal mask smoothing: follows movement quickly, damps flicker ---
+		const smoothFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_newMask;
+		uniform sampler2D u_previousMask;
+		uniform float u_reset;
+
+		in vec2 v_texCoord;
+		out vec4 outColor;
+
+		void main() {
+			float newVal = texture(u_newMask, v_texCoord).r;
+			float previousVal = texture(u_previousMask, v_texCoord).r;
+			float k = max(u_reset, clamp(abs(newVal - previousVal) * 4.0, 0.3, 1.0));
+			outColor = vec4(mix(previousVal, newVal, k), 0.0, 0.0, 1.0);
+		}`
+
+		// --- Guided filter shaders (fast guided filter at mask resolution) ---
+		// Separate programs, not uniform branches: ANGLE on D3D flattens branches
+		// with texture() inside, so every pixel would run all of them.
+		const guidedStatsFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_inputFrame;
+		uniform sampler2D u_segmentationMask;
+
+		in vec2 v_texCoord;
+		out vec4 outColor;
+
+		void main() {
+			float i = dot(texture(u_inputFrame, v_texCoord).rgb, vec3(0.299, 0.587, 0.114));
+			float p = texture(u_segmentationMask, v_texCoord).r;
+			outColor = vec4(i, p, i * p, i * i);
+		}`
+
+		const boxFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_input;
+		uniform ivec2 u_direction;
+
+		out vec4 outColor;
+
+		void main() {
+			ivec2 p = ivec2(gl_FragCoord.xy);
+			ivec2 last = textureSize(u_input, 0) - 1;
+			vec4 sum = vec4(0.0);
+			for (int k = -${GUIDED_RADIUS}; k <= ${GUIDED_RADIUS}; k++) {
+				sum += texelFetch(u_input, clamp(p + u_direction * k, ivec2(0), last), 0);
+			}
+			outColor = sum / ${2 * GUIDED_RADIUS + 1}.0;
+		}`
+
+		const guidedCoefficientsFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_input;
+		uniform float u_eps;
+
+		out vec4 outColor;
+
+		void main() {
+			vec4 m = texelFetch(u_input, ivec2(gl_FragCoord.xy), 0);
+			float a = (m.z - m.x * m.y) / (m.w - m.x * m.x + u_eps);
+			outColor = vec4(a, m.y - a * m.x, 0.0, 0.0);
+		}`
+
+		const guidedApplyFS = `#version 300 es
+		precision highp float;
+
+		uniform sampler2D u_inputFrame;
+		uniform sampler2D u_coefficients;
+
+		in vec2 v_texCoord;
+		out vec4 outColor;
+
+		void main() {
+			float i = dot(texture(u_inputFrame, v_texCoord).rgb, vec3(0.299, 0.587, 0.114));
+			vec2 ab = texture(u_coefficients, v_texCoord).xy;
+			outColor = vec4(vec3(0.0), clamp(ab.x * i + ab.y, 0.0, 1.0));
+		}`
+
 		// --- Gaussian Blur Fragment Shader ---
 		const blurFS = `#version 300 es
 		precision highp float;
@@ -242,9 +335,19 @@ export default class WebGLCompositor {
 
 		// --- Link Programs ---
 		this.progBilateral = this._linkProgram(gl, vs, bilateralFS)
+		this.progSmooth = this._linkProgram(gl, vs, smoothFS)
 		this.progBlur = this._linkProgram(gl, vs, blurFS)
 		this.progBlend = this._linkProgram(gl, vsOutput, blendFS)
 		this.progHUD = this._linkProgram(gl, hudVS, hudFS)
+
+		// The guided filter needs float render targets, the bilateral filter is the fallback
+		this.useGuidedFilter = !!gl.getExtension('EXT_color_buffer_float')
+		if (this.useGuidedFilter) {
+			this.progGuidedStats = this._linkProgram(gl, vs, guidedStatsFS)
+			this.progBox = this._linkProgram(gl, vs, boxFS)
+			this.progGuidedCoefficients = this._linkProgram(gl, vs, guidedCoefficientsFS)
+			this.progGuidedApply = this._linkProgram(gl, vs, guidedApplyFS)
+		}
 
 		// --- Setup vertex buffers ---
 		this.vertexArray = gl.createVertexArray()
@@ -268,8 +371,8 @@ export default class WebGLCompositor {
 
 		// --- Textures ---
 		this.texFrame = this._makeTex()
-		this.texMask = this._makeTex()
 		this.texMaskFiltered = this._makeTex()
+		this.texMaskSmoothed = [this._makeTex(), this._makeTex()]
 		this.texBg = this._makeTex()
 		this.texBlurred1 = this._makeTex()
 		this.texBlurred2 = this._makeTex()
@@ -279,11 +382,12 @@ export default class WebGLCompositor {
 		this.fboBlur1 = gl.createFramebuffer()
 		this.fboBlur2 = gl.createFramebuffer()
 
-		// --- Blit variables, lazy loaded ---
-		this.progBlit = null
-		this.blitBuf = null
-		this.blitPosLoc = null
-		this.blitSamplerLoc = null
+		// --- Guided filter resources, allocated at mask size on first use ---
+		this.texGuidedA = this._makeTex()
+		this.texGuidedB = this._makeTex()
+		this.fboGuided = gl.createFramebuffer()
+		this.guidedWidth = 0
+		this.guidedHeight = 0
 
 		// --- Default parameters ---
 		this.coverage = [0.45, 0.75]
@@ -292,6 +396,20 @@ export default class WebGLCompositor {
 		this.bgScale = [1.0, 1.0]
 		this.lastOutW = 0
 		this.lastOutH = 0
+
+		// Tracks the size texMaskFiltered/texBlurred{1,2} are currently
+		// allocated at, so their storage is only reallocated on resize
+		// instead of on every render() call.
+		this._maskFilteredW = 0
+		this._maskFilteredH = 0
+		this._blurW = 0
+		this._blurH = 0
+
+		// Ping-pong state of texMaskSmoothed; size 0 resets the smoothing.
+		this._smoothIndex = 0
+		this._smoothW = 0
+		this._smoothH = 0
+		this._smoothedMask = null
 	}
 
 	/**
@@ -361,78 +479,6 @@ export default class WebGLCompositor {
 		}
 
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source)
-	}
-
-	/**
-	 * Initialize shaders and buffers for blitting textures.
-	 *
-	 * @private
-	 * @param {WebGLRenderingContext} gl - GL context.
-	 * @return {void}
-	 */
-	_initBlitResources(gl) {
-		if (this.progBlit) {
-			return
-		}
-
-		const blitVS = `
-		attribute vec2 a_pos;
-		varying vec2 v_uv;
-		void main() {
-		  v_uv = (a_pos + 1.0) * 0.5;
-		  gl_Position = vec4(a_pos, 0.0, 1.0);
-		}`
-		const blitFS = `
-		precision mediump float;
-		varying vec2 v_uv;
-		uniform sampler2D u_tex;
-		void main() {
-		  gl_FragColor = texture2D(u_tex, v_uv);
-		}`
-
-		this.progBlit = this._linkProgram(gl, blitVS, blitFS)
-
-		this.blitBuf = gl.createBuffer()
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.blitBuf)
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
-
-		this.blitPosLoc = gl.getAttribLocation(this.progBlit, 'a_pos')
-		this.blitSamplerLoc = gl.getUniformLocation(this.progBlit, 'u_tex')
-	}
-
-	/**
-	 * Copy a MediaPipe mask texture into a canvas.
-	 *
-	 * @private
-	 * @param {object} mask - MediaPipe mask object with canvas + getAsWebGLTexture().
-	 * @return {void}
-	 */
-	_blitTextureToCanvas(mask) {
-		const gl = mask.canvas.getContext('webgl2')
-		if (!gl) {
-			console.error('Could not get WebGL context from mask canvas.')
-			return
-		}
-		this._initBlitResources(gl)
-
-		const texture = mask.getAsWebGLTexture()
-		const { width, height } = mask
-
-		gl.useProgram(this.progBlit)
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.blitBuf)
-		gl.enableVertexAttribArray(this.blitPosLoc)
-		gl.vertexAttribPointer(this.blitPosLoc, 2, gl.FLOAT, false, 0, 0)
-
-		gl.activeTexture(gl.TEXTURE0)
-		gl.bindTexture(gl.TEXTURE_2D, texture)
-		gl.uniform1i(this.blitSamplerLoc, 0)
-
-		gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-		gl.viewport(0, 0, width, height)
-		gl.clearColor(0, 0, 0, 0)
-		gl.clear(gl.COLOR_BUFFER_BIT)
-		gl.drawArrays(gl.TRIANGLES, 0, 6)
 	}
 
 	/**
@@ -507,9 +553,133 @@ export default class WebGLCompositor {
 		gl.activeTexture(gl.TEXTURE0)
 		gl.bindTexture(gl.TEXTURE_2D, this.texFrame)
 		gl.activeTexture(gl.TEXTURE1)
-		gl.bindTexture(gl.TEXTURE_2D, this.texMask)
+		gl.bindTexture(gl.TEXTURE_2D, this.texMaskSmoothed[this._smoothIndex])
 
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
+	 * Smooth the new mask with the previous one over time.
+	 *
+	 * @private
+	 * @param {WebGLTexture} maskTexture - New mask from MediaPipe, in this context.
+	 * @param {number} width - Output width.
+	 * @param {number} height - Output height.
+	 * @return {void}
+	 */
+	_applyTemporalSmoothing(maskTexture, width, height) {
+		const gl = this.gl
+
+		// The first mask after a start or a resize is taken as is.
+		const reset = this._smoothW !== width || this._smoothH !== height
+		if (reset) {
+			for (const tex of this.texMaskSmoothed) {
+				gl.bindTexture(gl.TEXTURE_2D, tex)
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			}
+			this._smoothW = width
+			this._smoothH = height
+		}
+
+		const previous = this.texMaskSmoothed[this._smoothIndex]
+		this._smoothIndex = 1 - this._smoothIndex
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboMask)
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.texMaskSmoothed[this._smoothIndex], 0)
+
+		gl.viewport(0, 0, width, height)
+		gl.useProgram(this.progSmooth)
+		this._setupVertexAttributes(this.progSmooth)
+
+		gl.uniform1i(gl.getUniformLocation(this.progSmooth, 'u_newMask'), 0)
+		gl.uniform1i(gl.getUniformLocation(this.progSmooth, 'u_previousMask'), 1)
+		gl.uniform1f(gl.getUniformLocation(this.progSmooth, 'u_reset'), reset ? 1 : 0)
+
+		gl.activeTexture(gl.TEXTURE0)
+		gl.bindTexture(gl.TEXTURE_2D, maskTexture)
+		gl.activeTexture(gl.TEXTURE1)
+		gl.bindTexture(gl.TEXTURE_2D, previous)
+
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
+	 * Run one guided filter pass into a texture of the bound framebuffer.
+	 *
+	 * @private
+	 * @param {WebGLProgram} prog - Shader program.
+	 * @param {WebGLTexture} target - Texture to render into.
+	 * @param {object} textures - Sampler uniform names mapped to textures.
+	 * @param {Function} [setUniforms] - Sets further uniforms.
+	 * @return {void}
+	 */
+	_guidedPass(prog, target, textures, setUniforms) {
+		const gl = this.gl
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, target, 0)
+		gl.useProgram(prog)
+		this._setupVertexAttributes(prog)
+		Object.entries(textures).forEach(([name, texture], unit) => {
+			gl.activeTexture(gl.TEXTURE0 + unit)
+			gl.bindTexture(gl.TEXTURE_2D, texture)
+			gl.uniform1i(gl.getUniformLocation(prog, name), unit)
+		})
+		setUniforms?.()
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
+	 * Box mean of a texture in place, horizontal then vertical.
+	 *
+	 * @private
+	 * @param {WebGLTexture} texture - Texture to filter.
+	 * @param {WebGLTexture} temp - Texture of the same size for the first pass.
+	 * @return {void}
+	 */
+	_applyBoxMean(texture, temp) {
+		const gl = this.gl
+		const direction = gl.getUniformLocation(this.progBox, 'u_direction')
+		this._guidedPass(this.progBox, temp, { u_input: texture }, () => gl.uniform2i(direction, 1, 0))
+		this._guidedPass(this.progBox, texture, { u_input: temp }, () => gl.uniform2i(direction, 0, 1))
+	}
+
+	/**
+	 * Apply the fast guided filter (He and Sun, 2015) to the mask: linear
+	 * coefficients of the frame luma at mask size, applied at output size.
+	 *
+	 * @private
+	 * @param {number} width - Output width.
+	 * @param {number} height - Output height.
+	 * @param {number} maskWidth - Mask width.
+	 * @param {number} maskHeight - Mask height.
+	 * @return {void}
+	 */
+	_applyGuidedFilter(width, height, maskWidth, maskHeight) {
+		const gl = this.gl
+
+		if (this.guidedWidth !== maskWidth || this.guidedHeight !== maskHeight) {
+			for (const texture of [this.texGuidedA, this.texGuidedB]) {
+				gl.bindTexture(gl.TEXTURE_2D, texture)
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, maskWidth, maskHeight, 0, gl.RGBA, gl.HALF_FLOAT, null)
+			}
+			this.guidedWidth = maskWidth
+			this.guidedHeight = maskHeight
+		}
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboGuided)
+		gl.viewport(0, 0, maskWidth, maskHeight)
+
+		// Means of luma, mask, their product and luma squared
+		this._guidedPass(this.progGuidedStats, this.texGuidedA, { u_inputFrame: this.texFrame, u_segmentationMask: this.texMaskSmoothed[this._smoothIndex] })
+		this._applyBoxMean(this.texGuidedA, this.texGuidedB)
+
+		// Means of the coefficients a and b
+		const eps = gl.getUniformLocation(this.progGuidedCoefficients, 'u_eps')
+		this._guidedPass(this.progGuidedCoefficients, this.texGuidedB, { u_input: this.texGuidedA }, () => gl.uniform1f(eps, GUIDED_EPS))
+		this._applyBoxMean(this.texGuidedB, this.texGuidedA)
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboMask)
+		gl.viewport(0, 0, width, height)
+		this._guidedPass(this.progGuidedApply, this.texMaskFiltered, { u_inputFrame: this.texFrame, u_coefficients: this.texGuidedB })
 	}
 
 	/**
@@ -528,11 +698,17 @@ export default class WebGLCompositor {
 		const texelWidth = 1 / blurWidth
 		const texelHeight = 1 / blurHeight
 
-		// Allocate blur textures
-		gl.bindTexture(gl.TEXTURE_2D, this.texBlurred1)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
-		gl.bindTexture(gl.TEXTURE_2D, this.texBlurred2)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+		// Allocate blur textures, only reallocating storage when the blur
+		// size actually changes (see the matching comment on texMaskFiltered
+		// in render() for why this check matters).
+		if (this._blurW !== blurWidth || this._blurH !== blurHeight) {
+			gl.bindTexture(gl.TEXTURE_2D, this.texBlurred1)
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			gl.bindTexture(gl.TEXTURE_2D, this.texBlurred2)
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			this._blurW = blurWidth
+			this._blurH = blurHeight
+		}
 
 		// Setup FBOs
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboBlur1)
@@ -707,6 +883,14 @@ export default class WebGLCompositor {
 			this.canvas.height = outH
 		}
 
+		// MediaPipe renders in this context too, so reset the state it may leave.
+		gl.bindVertexArray(this.vertexArray)
+		gl.disable(gl.BLEND)
+		gl.disable(gl.SCISSOR_TEST)
+		gl.disable(gl.DEPTH_TEST)
+		gl.disable(gl.STENCIL_TEST)
+		gl.disable(gl.CULL_FACE)
+
 		// Upload video frame
 		this._upload(this.texFrame, videoEl)
 
@@ -716,19 +900,21 @@ export default class WebGLCompositor {
 			if (showProgress) {
 				this._drawProgressBar(outW, outH)
 			}
+			gl.bindVertexArray(null)
 			return
 		}
 
-		// Allocate mask filtered texture
+		// Allocate mask filtered texture, only reallocating storage when the
+		// output size actually changes (texImage2D(null) forces the GPU to
+		// allocate new backing storage every call, which is wasted work when
+		// called every frame at an unchanged size).
 		const maskW = Math.ceil(outW / 2)
 		const maskH = Math.ceil(outH / 2)
-		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskW, maskH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
-
-		// Upload and process mask
-		if (mask) {
-			this._blitTextureToCanvas(mask)
-			this._upload(this.texMask, mask.canvas, { flipY: true })
+		if (this._maskFilteredW !== maskW || this._maskFilteredH !== maskH) {
+			gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskW, maskH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			this._maskFilteredW = maskW
+			this._maskFilteredH = maskH
 		}
 
 		// Upload background if in image mode
@@ -744,11 +930,19 @@ export default class WebGLCompositor {
 		this.lastOutW = outW
 		this.lastOutH = outH
 
-		gl.bindVertexArray(this.vertexArray)
-
 		// Apply bilateral filter to mask
 		if (mask) {
-			this._applyBilateralFilter(maskW, maskH)
+			// Redraws with the same mask reuse the smoothed one.
+			if (mask !== this._smoothedMask) {
+				this._applyTemporalSmoothing(mask.getAsWebGLTexture(), mask.width, mask.height)
+				this._smoothedMask = mask
+			}
+			// Guided filter, or the bilateral filter as fallback
+			if (this.useGuidedFilter) {
+				this._applyGuidedFilter(maskW, maskH, mask.width, mask.height)
+			} else {
+				this._applyBilateralFilter(maskW, maskH)
+			}
 		}
 
 		// Apply multi-pass blur if in blur mode
@@ -790,6 +984,7 @@ export default class WebGLCompositor {
 		if (showProgress) {
 			this._drawProgressBar(outW, outH)
 		}
+		gl.bindVertexArray(null)
 	}
 
 	/**
@@ -805,8 +1000,8 @@ export default class WebGLCompositor {
 
 		// Delete textures
 		gl.deleteTexture(this.texFrame)
-		gl.deleteTexture(this.texMask)
 		gl.deleteTexture(this.texMaskFiltered)
+		this.texMaskSmoothed.forEach((tex) => gl.deleteTexture(tex))
 		gl.deleteTexture(this.texBg)
 		gl.deleteTexture(this.texBlurred1)
 		gl.deleteTexture(this.texBlurred2)
@@ -817,23 +1012,34 @@ export default class WebGLCompositor {
 
 		// Delete programs
 		gl.deleteProgram(this.progBilateral)
+		gl.deleteProgram(this.progSmooth)
 		gl.deleteProgram(this.progBlur)
 		gl.deleteProgram(this.progBlend)
 		gl.deleteProgram(this.progHUD)
+		if (this.useGuidedFilter) {
+			gl.deleteProgram(this.progGuidedStats)
+			gl.deleteProgram(this.progBox)
+			gl.deleteProgram(this.progGuidedCoefficients)
+			gl.deleteProgram(this.progGuidedApply)
+		}
 
 		// Delete framebuffers
 		gl.deleteFramebuffer(this.fboMask)
 		gl.deleteFramebuffer(this.fboBlur1)
 		gl.deleteFramebuffer(this.fboBlur2)
+		gl.deleteFramebuffer(this.fboGuided)
+		gl.deleteTexture(this.texGuidedA)
+		gl.deleteTexture(this.texGuidedB)
 
 		// Delete vertex array
 		gl.deleteVertexArray(this.vertexArray)
 
 		// Clear references
-		this.texFrame = this.texMask = this.texMaskFiltered = null
+		this.texFrame = this.texMaskFiltered = this.texMaskSmoothed = null
 		this.texBg = this.texBlurred1 = this.texBlurred2 = null
-		this.positionBuffer = this.texCoordBuffer = this.blitBuf = null
-		this.progBilateral = this.progBlur = this.progBlend = this.progBlit = null
+		this.positionBuffer = this.texCoordBuffer = null
+		this.progBilateral = this.progSmooth = this.progBlur = this.progBlend = null
+		this._smoothedMask = null
 		this.fboMask = this.fboBlur1 = this.fboBlur2 = null
 		this.vertexArray = null
 	}
