@@ -601,6 +601,14 @@ export default {
 			// also parse mentions
 			newMessageText = parseMentions(newMessageText, this.message.messageParameters)
 			try {
+				if (this.isScheduledMessage) {
+					await this.chatExtrasStore.editScheduledMessage(this.message.token, this.message.id, {
+						message: newMessageText,
+						sendAt: this.message.timestamp,
+						silent: this.message.silent,
+					})
+					return
+				}
 				await this.$store.dispatch('editMessage', {
 					token: this.message.token,
 					messageId: this.message.id,
