@@ -27,11 +27,13 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class CircleMembershipListenerTest extends TestCase {
+	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected CircleMembershipListener $listener;
 
 	public function setUp(): void {
 		parent::setUp();
+		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		// No further group or team memberships that keep the user in the room
 		$appManager = $this->createMock(IAppManager::class);
@@ -40,7 +42,7 @@ class CircleMembershipListenerTest extends TestCase {
 		$groupManager->method('getUserGroupIds')->willReturn([]);
 
 		$this->listener = new CircleMembershipListener(
-			$this->createMock(Manager::class),
+			$this->manager,
 			$appManager,
 			$groupManager,
 			$this->participantService,
@@ -82,5 +84,44 @@ class CircleMembershipListenerTest extends TestCase {
 			->with($room, $user, AAttendeeRemovedEvent::REASON_REMOVED);
 
 		self::invokePrivate($this->listener, 'removeFromRoomsUnlessStillLinked', [[$room], $user]);
+	}
+
+	public static function dataLevelChangedInTheTeam(): array {
+		return [
+			'user to moderator' => [Participant::MODERATOR, Participant::USER, true],
+			'self-joined to moderator' => [Participant::MODERATOR, Participant::USER_SELF_JOINED, true],
+			'user to owner' => [Participant::OWNER, Participant::USER, true],
+			'moderator to owner' => [Participant::OWNER, Participant::MODERATOR, true],
+			'owner to moderator' => [Participant::MODERATOR, Participant::OWNER, true],
+			'owner to user' => [Participant::USER, Participant::OWNER, true],
+			'moderator to user' => [Participant::USER, Participant::MODERATOR, true],
+			'self-joined stays self-joined' => [Participant::USER, Participant::USER_SELF_JOINED, false],
+		];
+	}
+
+	#[DataProvider('dataLevelChangedInTheTeam')]
+	public function testLevelChangesInTheTeamAreMirrored(int $newType, int $participantType, bool $updated): void {
+		$teamRoom = $this->createMock(Room::class);
+		$teamRoom->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		// Only the team conversation follows the levels of the team
+		$otherRoom = $this->createMock(Room::class);
+		$otherRoom->method('getObjectType')->willReturn('');
+		$this->manager->method('getRoomsForActor')
+			->with(Attendee::ACTOR_CIRCLES, 'team')
+			->willReturn([$teamRoom, $otherRoom]);
+
+		$participant = $this->createMock(Participant::class);
+		$participant->method('getAttendee')->willReturn(Attendee::fromRow([
+			'actor_type' => Attendee::ACTOR_USERS,
+			'actor_id' => 'alice',
+			'participant_type' => $participantType,
+		]));
+		$this->participantService->method('getParticipant')->with($teamRoom, 'alice')->willReturn($participant);
+
+		$this->participantService->expects($updated ? $this->once() : $this->never())
+			->method('updateParticipantType')
+			->with($teamRoom, $participant, $newType);
+
+		self::invokePrivate($this->listener, 'setUserTypeInTeamConversations', ['team', 'alice', $newType]);
 	}
 }

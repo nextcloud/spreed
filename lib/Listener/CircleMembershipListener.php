@@ -9,12 +9,15 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 use OCA\Circles\Events\AddingCircleMemberEvent;
+use OCA\Circles\Events\CircleGenericEvent;
+use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Circles\Model\Member;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
@@ -55,6 +58,10 @@ class CircleMembershipListener extends AMembershipListener {
 
 		if ($event instanceof RemovingCircleMemberEvent) {
 			$this->removeFormerMemberFromRooms($event);
+		}
+
+		if ($event instanceof EditingCircleMemberEvent && $event->getType() === CircleGenericEvent::LEVEL) {
+			$this->updateMemberInTeamConversations($event);
 		}
 	}
 
@@ -181,5 +188,53 @@ class CircleMembershipListener extends AMembershipListener {
 		$this->session->remove('talk-overwrite-actor-displayname');
 		$this->session->remove('talk-overwrite-actor-id');
 		$this->session->remove('talk-overwrite-actor-cli');
+	}
+
+	protected function updateMemberInTeamConversations(EditingCircleMemberEvent $event): void {
+		$participantType = match (true) {
+			$event->getLevel() >= Member::LEVEL_ADMIN => Participant::OWNER,
+			$event->getLevel() >= Member::LEVEL_MODERATOR => Participant::MODERATOR,
+			default => Participant::USER,
+		};
+
+		$member = $event->getMember();
+		if ($member->getUserType() !== Member::TYPE_USER || $member->getUserId() === '') {
+			return;
+		}
+
+		$circle = $event->getCircle();
+		$changedBy = $circle->hasInitiator() ? $circle->getInitiator() : null;
+		if ($changedBy?->getUserType() === Member::TYPE_USER && $changedBy->getUserId() !== '') {
+			$this->session->set('talk-overwrite-actor-id', $changedBy->getUserId());
+			$this->session->set('talk-overwrite-actor-displayname', $changedBy->getDisplayName());
+		} elseif ($changedBy?->getUserType() === Member::TYPE_APP && $changedBy->getBasedOn()?->getSource() === Member::APP_OCC) {
+			$this->session->set('talk-overwrite-actor-cli', 'cli');
+		}
+
+		$this->setUserTypeInTeamConversations($circle->getSingleId(), $member->getUserId(), $participantType);
+
+		$this->session->remove('talk-overwrite-actor-displayname');
+		$this->session->remove('talk-overwrite-actor-id');
+		$this->session->remove('talk-overwrite-actor-cli');
+	}
+
+	protected function setUserTypeInTeamConversations(string $teamId, string $userId, int $participantType): void {
+		foreach ($this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $teamId) as $room) {
+			if ($room->getObjectType() !== Room::OBJECT_TYPE_TEAM) {
+				continue;
+			}
+
+			try {
+				$participant = $this->participantService->getParticipant($room, $userId);
+			} catch (ParticipantNotFoundException) {
+				continue;
+			}
+
+			$currentType = $participant->getAttendee()->getParticipantType();
+			if ($participantType === Participant::USER && $currentType === Participant::USER_SELF_JOINED) {
+				continue;
+			}
+			$this->participantService->updateParticipantType($room, $participant, $participantType);
+		}
 	}
 }

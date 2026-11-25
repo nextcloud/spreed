@@ -12,6 +12,7 @@ use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\CircleEditedEvent;
 use OCA\Circles\Events\EditingCircleEvent;
+use OCA\Circles\Events\EditingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
@@ -304,6 +305,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(EditingCircleEvent::class, CircleEditedListener::class);
 		$context->registerEventListener(CircleEditedEvent::class, CircleEditedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
+		$context->registerEventListener(EditingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
 
 		// Notification listeners

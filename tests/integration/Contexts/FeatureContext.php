@@ -4550,6 +4550,18 @@ class FeatureContext implements Context {
 		$this->theCommandWasSuccessful();
 	}
 
+	#[Given('/^user "([^"]*)" is (?:promoted|demoted) to (member|moderator|admin|owner) in team "([^"]*)"$/')]
+	public function setTeamMemberLevel(string $user, string $level, string $team): void {
+		$teamId = self::$createdTeams[$this->currentServer][$team];
+		$this->runOcc(['circles:members:list', '--output', 'json', $teamId]);
+		$this->theCommandWasSuccessful();
+		$members = json_decode($this->getLastStdOut(), true, flags: JSON_THROW_ON_ERROR);
+		$memberId = array_column($members, 'id', 'userId')[$user];
+
+		$this->runOcc(['circles:members:level', $memberId, $level]);
+		$this->theCommandWasSuccessful();
+	}
+
 	public function deleteTeam(string $team): void {
 		$this->runOcc(['circles:manage:destroy', self::$createdTeams[$this->currentServer][$team]]);
 		$this->theCommandWasSuccessful();
