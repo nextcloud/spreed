@@ -9,13 +9,13 @@ import type { Conversation } from '../types/index.ts'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { provide, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import NewConversationContactsPage from './NewConversationDialog/NewConversationContactsPage.vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
+import { EventBus } from '../services/EventBus.ts'
 
 const props = defineProps<{
 	token: string
@@ -23,7 +23,6 @@ const props = defineProps<{
 }>()
 
 const store = useStore()
-const router = useRouter()
 
 const selectedParticipants = ref(getArrayWithSecondAttendee(props.token))
 provide('selectedParticipants', selectedParticipants)
@@ -62,7 +61,7 @@ async function extendOneToOneConversation() {
 			newParticipants: selectedParticipants.value,
 		})
 		if (newConversation) {
-			await router.push({ name: 'conversation', params: { token: newConversation.token } })
+			EventBus.emit('switch-to-conversation', { token: newConversation.token })
 		}
 	} catch (error) {
 		console.error('Error creating new conversation: ', error)
