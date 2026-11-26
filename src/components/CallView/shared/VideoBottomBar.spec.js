@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
@@ -46,6 +47,7 @@ describe('VideoBottomBar.vue', () => {
 	const videoIndicatorAriaLabels = [t('spreed', 'Disable video'), t('spreed', 'Enable video')]
 	const screenSharingAriaLabel = t('spreed', 'Show screen')
 	const followingButtonAriaLabel = t('spreed', 'Stop following')
+	const volumeButtonAriaLabel = t('spreed', 'Adjust volume for you')
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
@@ -377,6 +379,97 @@ describe('VideoBottomBar.vue', () => {
 					await screenSharingIndicator.trigger('click')
 
 					expect(emit).toHaveBeenCalledWith('switch-screen-to-id', PEER_ID)
+				})
+			})
+
+			describe('volume button', () => {
+				beforeEach(() => {
+					componentProps.model.attributes.stream = { id: 'stream' }
+					componentProps.model.attributes.volume = 1
+					componentProps.model.setVolume = vi.fn()
+				})
+
+				test('button is not rendered without stream', () => {
+					componentProps.model.attributes.stream = null
+					const wrapper = mountVideoBottomBar(componentProps)
+					const volumeButton = findNcButton(wrapper, volumeButtonAriaLabel)
+					expect(volumeButton.exists()).toBeFalsy()
+				})
+
+				test('button is rendered when stream is available', () => {
+					const wrapper = mountVideoBottomBar(componentProps)
+					const volumeButton = findNcButton(wrapper, volumeButtonAriaLabel)
+					expect(volumeButton.exists()).toBeTruthy()
+					expect(volumeButton.classes()).not.toContain('volumeIndicator--reduced')
+				})
+
+				test('button is not rendered when connection failed', () => {
+					componentProps.model.attributes.connectionState = ConnectionState.FAILED_NO_RESTART
+					const wrapper = mountVideoBottomBar(componentProps)
+					expect(wrapper.find('.volumeIndicator').exists()).toBeFalsy()
+				})
+
+				test('button shows the reduced volume', () => {
+					componentProps.model.attributes.volume = 0.5
+					const wrapper = mountVideoBottomBar(componentProps)
+					const volumeButton = wrapper.findComponent('.volumeIndicator')
+					expect(volumeButton.classes()).toContain('volumeIndicator--reduced')
+					expect(volumeButton.vm.ariaLabel).toBe(t('spreed', 'Volume for you: {volume}', { volume: '50%' }))
+				})
+
+				test('slider shows the volume and sets it on input', async () => {
+					componentProps.model.attributes.volume = 0.3
+					const wrapper = mount(VideoBottomBar, {
+						global: {
+							plugins: [store],
+							stubs: {
+								// Render the popover content inline
+								NcPopover: { template: '<div><slot name="trigger" /><slot /></div>' },
+							},
+						},
+						props: componentProps,
+					})
+
+					const slider = wrapper.find('.volume-popover__slider')
+					expect(slider.exists()).toBeTruthy()
+					expect(slider.element.value).toBe('30')
+					expect(slider.attributes('aria-valuetext')).toBe('30%')
+					expect(wrapper.find(`label[for="${slider.attributes('id')}"]`).text())
+						.toBe(t('spreed', 'Volume of {participantName} for you', { participantName: PARTICIPANT_NAME }))
+
+					await slider.setValue('65')
+					expect(componentProps.model.setVolume).toHaveBeenCalledWith(0.65)
+				})
+
+				test('slider ids are unique for the same participant', () => {
+					// Same participant shown in two tiles of the same app
+					const wrapper = mount({
+						components: { VideoBottomBar },
+						setup: () => ({ componentProps }),
+						template: '<div><VideoBottomBar v-bind="componentProps" /><VideoBottomBar v-bind="componentProps" /></div>',
+					}, {
+						global: { plugins: [store] },
+					})
+					const [bar1, bar2] = wrapper.findAllComponents(VideoBottomBar)
+					expect(bar1.vm.volumeInputId).not.toBe(bar2.vm.volumeInputId)
+				})
+
+				test('indicators stay visible while the popover is open', async () => {
+					const wrapper = mount(VideoBottomBar, {
+						global: { plugins: [store] },
+						props: componentProps,
+						attachTo: document.body,
+					})
+					await wrapper.findComponent(NcPopover).vm.$emit('update:shown', true)
+
+					componentProps.showVideoOverlay = false
+					await wrapper.setProps(cloneDeep(componentProps))
+					expect(wrapper.find('.media-indicators').isVisible()).toBeTruthy()
+
+					await wrapper.findComponent(NcPopover).vm.$emit('update:shown', false)
+					expect(wrapper.find('.media-indicators').isVisible()).toBeFalsy()
+
+					wrapper.unmount()
 				})
 			})
 

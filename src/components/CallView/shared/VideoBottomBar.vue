@@ -27,7 +27,7 @@
 
 			<div
 				v-if="!isScreen"
-				v-show="showVideoOverlay"
+				v-show="showVideoOverlay || volumePopoverShown"
 				class="media-indicators">
 				<NcButton
 					v-if="showAudioIndicator"
@@ -42,6 +42,46 @@
 						<NcIconSvgWrapper v-else :svg="IconMicrophoneOffOutline" :size="20" />
 					</template>
 				</NcButton>
+
+				<div
+					v-if="showVolumeButton"
+					class="volume-control"
+					@click.stop>
+					<NcPopover v-model:shown="volumePopoverShown" popupRole="dialog">
+						<template #trigger>
+							<NcButton
+								:title="volumeButtonTitle"
+								:aria-label="volumeButtonTitle"
+								class="volumeIndicator"
+								:class="{ 'volumeIndicator--reduced': volumePercent < 100 }"
+								variant="tertiary-no-background">
+								<template #icon>
+									<NcIconSvgWrapper
+										:svg="volumePercent === 0 ? IconVolumeOffOutline : IconVolumeHighOutline"
+										:size="20" />
+								</template>
+							</NcButton>
+						</template>
+						<div class="volume-popover">
+							<label :for="volumeInputId" class="volume-popover__label">
+								{{ volumeLabel }}
+							</label>
+							<div class="volume-popover__row">
+								<input
+									:id="volumeInputId"
+									class="volume-popover__slider"
+									type="range"
+									min="0"
+									max="100"
+									step="5"
+									:value="volumePercent"
+									:aria-valuetext="volumeValueText"
+									@input="setVolume($event.target.value)">
+								<span class="volume-popover__value">{{ volumeValueText }}</span>
+							</div>
+						</div>
+					</NcPopover>
+				</div>
 
 				<NcButton
 					v-if="showVideoIndicator"
@@ -89,9 +129,11 @@
 
 <script>
 import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
+import { getLanguage, t } from '@nextcloud/l10n'
+import { useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
 import IconMicrophone from 'vue-material-design-icons/Microphone.vue' // Filled for better indication
@@ -99,11 +141,15 @@ import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
 import IconMicrophoneOffOutline from '../../../../img/material-icons/microphone-off-outline.svg?raw'
+import IconVolumeHighOutline from '../../../../img/material-icons/volume-high-outline.svg?raw'
+import IconVolumeOffOutline from '../../../../img/material-icons/volume-off-outline.svg?raw'
 import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+
+const percentFormat = new Intl.NumberFormat(getLanguage(), { style: 'percent' })
 
 export default {
 	name: 'VideoBottomBar',
@@ -117,6 +163,7 @@ export default {
 		IconVideoOffOutline,
 		NcButton,
 		NcIconSvgWrapper,
+		NcPopover,
 	},
 
 	inheritAttrs: false,
@@ -185,7 +232,10 @@ export default {
 
 	setup() {
 		return {
+			volumeInputId: `volume-${useId()}`,
 			IconMicrophoneOffOutline,
+			IconVolumeHighOutline,
+			IconVolumeOffOutline,
 			callViewStore: useCallViewStore(),
 			actorStore: useActorStore(),
 			participantActivityStore: useParticipantActivityStore(),
@@ -195,6 +245,7 @@ export default {
 	data() {
 		return {
 			mouseover: false,
+			volumePopoverShown: false,
 		}
 	},
 
@@ -233,6 +284,30 @@ export default {
 			return this.model.attributes.audioAvailable
 				? t('spreed', 'Mute')
 				: t('spreed', 'Muted')
+		},
+
+		// Volume control
+		showVolumeButton() {
+			return !this.connectionStateFailedNoRestart && !!this.model.attributes.stream
+		},
+
+		volumePercent() {
+			const volume = this.model.attributes.volume
+			return Math.round((volume === undefined ? 1 : volume) * 100)
+		},
+
+		volumeValueText() {
+			return percentFormat.format(this.volumePercent / 100)
+		},
+
+		volumeLabel() {
+			return t('spreed', 'Volume of {participantName} for you', { participantName: this.participantName })
+		},
+
+		volumeButtonTitle() {
+			return this.volumePercent < 100
+				? t('spreed', 'Volume for you: {volume}', { volume: this.volumeValueText })
+				: t('spreed', 'Adjust volume for you')
 		},
 
 		// Video indicator
@@ -300,6 +375,10 @@ export default {
 
 		forceMute() {
 			this.model.forceMute()
+		},
+
+		setVolume(percent) {
+			this.model.setVolume(Number(percent) / 100)
 		},
 
 		toggleVideo() {
@@ -414,6 +493,7 @@ export default {
 }
 
 .audioIndicator,
+.volumeIndicator,
 .videoIndicator,
 .screenSharingIndicator,
 .iceFailedIndicator,
@@ -430,6 +510,41 @@ export default {
 	&:hover,
 	&:focus {
 		opacity: 1;
+	}
+}
+
+.volumeIndicator {
+	opacity: .7;
+
+	&--reduced,
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
+.volume-popover {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 2);
+	padding: calc(var(--default-grid-baseline) * 3);
+	min-width: calc(60 * var(--default-grid-baseline));
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: calc(var(--default-grid-baseline) * 2);
+	}
+
+	&__slider {
+		flex: 1;
+		accent-color: var(--color-primary-element);
+	}
+
+	&__value {
+		min-width: 4ch;
+		text-align: end;
+		font-variant-numeric: tabular-nums;
 	}
 }
 </style>

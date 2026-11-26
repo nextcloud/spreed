@@ -292,6 +292,7 @@ export interface CallParticipantModel extends SuperEmittedMixin<CallParticipantM
 	setNameForUserFromPeerNick(nick: string): void
 	setNextcloudSessionId(nextcloudSessionId: string): void
 	setVideoBlocked(blocked: boolean): void
+	setVolume(volume: number): void
 	setSimulcastVideoQuality(quality: number): void
 	setSimulcastScreenQuality(quality: number): void
 }

@@ -45,6 +45,10 @@ export function CallParticipantModel(options) {
 		connectedAtLeastOnce: false,
 		stream: null,
 		audioAvailable: undefined,
+		// Local playback volume of the participant audio, between 0 and 1.
+		// It only affects what the local user hears and it is not sent to
+		// other participants.
+		volume: 1,
 		speaking: undefined,
 		// "videoBlocked" is "true" only if the video is blocked and it would
 		// have been available in the remote peer if not blocked.
@@ -175,6 +179,18 @@ CallParticipantModel.prototype = {
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
 		}
+	},
+
+	/**
+	 * Sets the local playback volume of the participant audio.
+	 *
+	 * The volume is applied only locally; other participants are not
+	 * affected.
+	 *
+	 * @param {number} volume the volume, between 0 and 1.
+	 */
+	setVolume(volume) {
+		this.set('volume', Math.min(1, Math.max(0, volume)))
 	},
 
 	forceMute() {
