@@ -10,6 +10,7 @@ import type {
 	UserProfileData,
 } from '../../types/index.ts'
 
+import { emit as emitGlobal } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateAvatarUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
@@ -25,13 +26,14 @@ import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
+import IconLink from 'vue-material-design-icons/Link.vue'
 import IconOfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
 import IconWeb from 'vue-material-design-icons/Web.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
 import IconMatrix from '../../../img/icon-matrix-white.svg?raw'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { CONVERSATION } from '../../constants.ts'
+import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
 import { hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
@@ -132,8 +134,10 @@ const avatarUrl = computed(() => {
 		: getConversationAvatarOcsUrl(token.value, isDarkTheme.value, conversation.value.avatarVersion)
 })
 
+const isModerator = computed(() => [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR].includes(conversation.value.participantType))
+
 const profileInformation = computed(() => {
-	const fields = []
+	const fields: { key: string, icon: unknown, label: string, onClick?: () => void }[] = []
 
 	if (conversation.value.remoteServer) {
 		fields.push({
@@ -149,11 +153,21 @@ const profileInformation = computed(() => {
 		})
 	}
 
+	if (conversation.value.type === CONVERSATION.TYPE.PUBLIC) {
+		fields.push({
+			key: 'public',
+			icon: IconLink,
+			label: t('spreed', 'Guests can join via link'),
+			onClick: isModerator.value ? openModerationSettings : undefined,
+		})
+	}
+
 	if (isMessageExpirationSet.value) {
 		fields.push({
 			key: 'expiration',
 			icon: IconDeleteClockOutline,
 			label: t('spreed', 'Message expiration set: {duration}', { duration: messageExpirationDuration.value }),
+			onClick: isModerator.value ? openModerationSettings : undefined,
 		})
 	}
 
@@ -216,6 +230,13 @@ watch(token, async () => {
  */
 function joinFields(firstSubstring?: string | null, secondSubstring?: string | null): string {
 	return [firstSubstring, secondSubstring].filter(Boolean).join(' · ')
+}
+
+/**
+ * Opens the conversation settings at the moderation section
+ */
+function openModerationSettings() {
+	emitGlobal('show-conversation-settings', { token: token.value, section: 'conversation-settings' })
 }
 
 /**
@@ -285,13 +306,16 @@ function handleHeaderClick() {
 					<div
 						v-if="mode !== 'compact'"
 						class="content__info">
-						<span
+						<component
+							:is="row.onClick ? 'button' : 'span'"
 							v-for="row in profileInformation"
 							:key="row.key"
-							class="content__info-row">
+							class="content__info-row"
+							:class="{ 'content__info-row--clickable': row.onClick }"
+							@click="row.onClick?.()">
 							<component :is="row.icon" :size="16" />
 							{{ row.label }}
-						</span>
+						</component>
 						<LocalTime
 							v-if="profileInfo?.timezone"
 							class="content__info-row"
@@ -522,6 +546,22 @@ function handleHeaderClick() {
 			&-row {
 				display: flex;
 				gap: var(--default-grid-baseline);
+
+				&--clickable {
+					all: unset;
+					display: flex;
+					gap: var(--default-grid-baseline);
+					cursor: pointer;
+
+					&:hover,
+					&:focus-visible {
+						text-decoration: underline;
+					}
+
+					&:focus-visible {
+						outline: 2px solid var(--color-main-text);
+					}
+				}
 			}
 		}
 	}

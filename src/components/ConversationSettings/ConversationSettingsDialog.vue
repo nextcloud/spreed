@@ -371,9 +371,14 @@ export default {
 		 *
 		 * @param payload event payload
 		 * @param payload.token conversation token
+		 * @param payload.section id of the section to scroll to
 		 */
-		handleShowSettings(payload) {
+		async handleShowSettings(payload) {
 			this.token = payload.token
+			if (payload.section) {
+				await this.$nextTick()
+				document.getElementById('settings-section_' + payload.section)?.scrollIntoView()
+			}
 		},
 
 		handleHideSettings() {

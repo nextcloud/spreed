@@ -76,4 +76,20 @@ describe('ConversationSettingsDialog.vue', () => {
 			expect(settings).not.toContain(hidden)
 		}
 	})
+
+	it('scrolls to the requested section when opened', async () => {
+		const section = document.createElement('div')
+		section.id = 'settings-section_conversation-settings'
+		section.scrollIntoView = vi.fn()
+		document.body.appendChild(section)
+
+		const wrapper = shallowMount(ConversationSettingsDialog, {
+			global: { plugins: [createStore({ getters: { conversation: () => () => null, dummyConversation: () => ({}) } })] },
+		})
+		await wrapper.vm.handleShowSettings({ token: TOKEN, section: 'conversation-settings' })
+
+		expect(wrapper.vm.token).toBe(TOKEN)
+		expect(section.scrollIntoView).toHaveBeenCalled()
+		section.remove()
+	})
 })

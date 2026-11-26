@@ -503,7 +503,7 @@ export default {
 				// Discard notification if the conversation changes or closed
 				this.notifyUnreadMessages(null)
 
-				if (this.isOneToOne || this.conversation.messageExpiration || this.conversation.remoteServer || this.conversation.matrixServer) {
+				if (this.isOneToOne || this.conversation.messageExpiration || this.conversation.remoteServer || this.conversation.matrixServer || this.conversation.type === CONVERSATION.TYPE.PUBLIC) {
 					this.contentModeIndex = 1
 				} else {
 					this.contentModeIndex = 0
