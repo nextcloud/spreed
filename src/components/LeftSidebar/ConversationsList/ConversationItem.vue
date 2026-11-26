@@ -324,6 +324,7 @@ import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
+import IconBellSleepOutline from 'vue-material-design-icons/BellSleepOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
@@ -347,7 +348,7 @@ import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { isClassifiedConversation } from '../../../utils/conversation.ts'
-import { formatDateTime, getDiffInDays } from '../../../utils/formattedTime.ts'
+import { convertToUnix, formatDateTime, getDiffInDays } from '../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -535,7 +536,9 @@ export default {
 			if (this.showArchivedIndicator && this.item.isArchived) {
 				indicators.push({ component: IconArchiveOutline, text: t('spreed', 'Archived') })
 			}
-			if (this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
+			if (this.item.muteUntil > convertToUnix(Date.now())) {
+				indicators.push({ component: IconBellSleepOutline, text: t('spreed', 'Notifications paused') })
+			} else if (this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
 				indicators.push({ component: IconBellOffOutline, text: t('spreed', 'Notifications off') })
 			}
 			return indicators

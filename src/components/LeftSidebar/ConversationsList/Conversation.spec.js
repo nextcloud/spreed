@@ -11,6 +11,7 @@ import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconBellSleepOutline from 'vue-material-design-icons/BellSleepOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
@@ -154,6 +155,35 @@ describe('ConversationItem.vue', () => {
 			const name = wrapper.find('.list-item-content__name')
 			expect(name.findComponent(IconBellOffOutline).exists()).toBe(true)
 			expect(name.text()).toContain('Notifications off')
+		})
+
+		test('renders paused indicator when temporarily muted', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.ALWAYS
+			item.muteUntil = convertToUnix(Date.now()) + 3600
+			const wrapper = mountConversation(false)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconBellSleepOutline).exists()).toBe(true)
+			expect(details.findComponent(IconBellOffOutline).exists()).toBe(false)
+			expect(details.text()).toContain('Notifications paused')
+		})
+
+		test('renders paused indicator when off and temporarily muted', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.NEVER
+			item.muteUntil = convertToUnix(Date.now()) + 3600
+			const wrapper = mountConversation(false)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconBellSleepOutline).exists()).toBe(true)
+			expect(details.findComponent(IconBellOffOutline).exists()).toBe(false)
+		})
+
+		test('renders no indicator when mute has expired', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.ALWAYS
+			item.muteUntil = convertToUnix(Date.now()) - 60
+			const wrapper = mountConversation(false)
+
+			expect(wrapper.find('.list-item-details__details').findComponent(IconBellSleepOutline).exists()).toBe(false)
 		})
 
 		test('renders no indicator when notifications are on', () => {
