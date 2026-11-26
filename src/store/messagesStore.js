@@ -5,6 +5,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { throttle } from 'es-toolkit/function'
 import { cloneDeep } from 'es-toolkit/object'
 import {
 	ATTENDEE,
@@ -39,6 +40,10 @@ import CancelableRequest from '../utils/CancelableRequest.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { isHiddenSystemMessage, isLinkShareMessage, isTemporaryId } from '../utils/message.ts'
+
+// Throttle for the open conversation: busy group chats (e.g. call joins) otherwise POST read marker per message
+let readMarkerThrottleToken = null
+let readMarkerThrottleFunction = null
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -866,11 +871,12 @@ const actions = {
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the token of the conversation to be updated;
 	 * @param {boolean} data.updateVisually whether to also clear the marker visually in the UI;
+	 * @param {boolean} data.throttled whether to throttle the request to the server;
 	 */
-	async clearLastReadMessage(context, { token, updateVisually = false }) {
+	async clearLastReadMessage(context, { token, updateVisually = false, throttled = false }) {
 		const conversation = context.getters.conversation(token)
 		if (hasTalkFeature(token, 'chat-read-last')) {
-			context.dispatch('updateLastReadMessage', { token, id: null, updateVisually })
+			context.dispatch('updateLastReadMessage', { token, id: null, updateVisually, throttled })
 			return
 		}
 		// federated conversations don't proxy lastMessage id
@@ -878,7 +884,7 @@ const actions = {
 			return
 		}
 		// set the id to the last message
-		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually })
+		context.dispatch('updateLastReadMessage', { token, id: conversation.lastMessage.id, updateVisually, throttled })
 	},
 
 	/**
@@ -890,8 +896,9 @@ const actions = {
 	 * @param {string} data.token the token of the conversation to be updated;
 	 * @param {number|null} data.id the id of the message on which to set the read marker;
 	 * @param {boolean} data.updateVisually whether to also update the marker visually in the UI;
+	 * @param {boolean} data.throttled whether to throttle the request to the server;
 	 */
-	async updateLastReadMessage(context, { token, id = 0, updateVisually = false }) {
+	async updateLastReadMessage(context, { token, id = 0, updateVisually = false, throttled = false }) {
 		const conversation = context.getters.conversation(token)
 		if (!conversation || conversation.lastReadMessage === id) {
 			return
@@ -916,8 +923,33 @@ const actions = {
 		const actorStore = useActorStore()
 		if (actorStore.userId) {
 			// only update on server side if there's an actual user, not guest
-			const response = await updateLastReadMessage(token, id)
-			context.dispatch('addConversation', response.data.ocs.data)
+			if (readMarkerThrottleToken !== token) {
+				readMarkerThrottleFunction?.flush()
+				readMarkerThrottleToken = token
+				readMarkerThrottleFunction = throttle(async (context, lastReadMessage) => {
+					// Kept on the throttle to await it before fetching the room list
+					readMarkerThrottleFunction.request = updateLastReadMessage(token, lastReadMessage)
+					const response = await readMarkerThrottleFunction.request
+					context.dispatch('addConversation', response.data.ocs.data)
+				}, 30_000)
+			}
+			readMarkerThrottleFunction(context, id)
+			if (!throttled || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+				readMarkerThrottleFunction.flush()
+			}
+		}
+	},
+
+	/**
+	 * Sends the pending throttled read marker and waits for the request to finish
+	 */
+	async flushLastReadMessage() {
+		// Must not throw, room list polling depends on it
+		try {
+			readMarkerThrottleFunction?.flush()
+			await readMarkerThrottleFunction?.request
+		} catch (error) {
+			console.error('Error while flushing read marker', error)
 		}
 	},
 

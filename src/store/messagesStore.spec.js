@@ -57,6 +57,8 @@ vi.mock('../services/conversationsService', () => ({
 
 vi.mock('../utils/CancelableRequest')
 
+vi.mock('es-toolkit/function', () => ({ throttle: (fn) => Object.assign(fn, { flush: vi.fn() }) }))
+
 // Test actions with 'chat-read-last' feature
 vi.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: vi.fn(() => ({
