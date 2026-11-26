@@ -744,6 +744,8 @@ export type components = {
              * @description Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
              */
             lobbyTimer: number;
+            /** @description Server name of the Matrix room (only available for conversations synced with a Matrix room) */
+            matrixServer?: string;
             /**
              * Format: int64
              * @description Whether all participants can mention using `@all` or only moderators (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#mention-permissions)) (only available with `mention-permissions` capability)
