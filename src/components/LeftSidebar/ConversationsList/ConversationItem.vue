@@ -43,6 +43,15 @@
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
+			<template v-if="compact && isNotificationOff">
+				<IconBellOffOutline :size="15" />
+				<span class="hidden-visually">{{ t('spreed', 'Notifications off') }}</span>
+			</template>
+		</template>
+		<template v-if="!compact && isNotificationOff" #details>
+			<IconBellOffOutline :size="15" />
+			<span class="hidden-visually">{{ t('spreed', 'Notifications off') }}</span>
+			{{ lastActivityTimeString }}
 		</template>
 		<template v-if="!compact && !item.isSensitive && !isVoiceRoom" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
@@ -357,6 +366,7 @@ export default {
 		IconArchiveOffOutline,
 		IconArrowLeft,
 		IconArrowRight,
+		IconBellOffOutline,
 		IconBellOutline,
 		IconCogOutline,
 		IconContentCopy,
@@ -510,6 +520,10 @@ export default {
 
 			const isSameYear = new Date(timestampInMs).getFullYear() === new Date().getFullYear()
 			return formatDateTime(timestampInMs, isSameYear ? 'shortDateSameYear' : 'shortDate')
+		},
+
+		isNotificationOff() {
+			return this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER
 		},
 
 		isVoiceRoom() {
@@ -776,6 +790,11 @@ export default {
 	& :deep(.list-item .list-item-content__details) {
 		justify-content: flex-start;
 		font-size: var(--font-size-small);
+	}
+	& :deep(.list-item .list-item-details__details) {
+		display: flex;
+		align-items: center;
+		gap: calc(var(--default-grid-baseline) / 2);
 	}
 	& :deep(.list-item .list-item-details__extra) {
 		margin-block-start: 0;

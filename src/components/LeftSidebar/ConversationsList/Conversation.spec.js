@@ -9,6 +9,7 @@ import { cloneDeep } from 'es-toolkit'
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
@@ -127,6 +128,39 @@ describe('ConversationItem.vue', () => {
 		const wrapper = mountConversation(false)
 
 		expect(wrapper.findComponent(IconVideo).exists()).toBe(false)
+	})
+
+	describe('notifications off indicator', () => {
+		afterEach(() => {
+			compact = undefined
+		})
+
+		test('renders indicator in details when notifications are off', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.NEVER
+			const wrapper = mountConversation(false)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconBellOffOutline).exists()).toBe(true)
+			expect(details.text()).toContain('Notifications off')
+		})
+
+		test('renders indicator after the name in compact mode', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.NEVER
+			compact = true
+			const wrapper = mountConversation(false)
+
+			const name = wrapper.find('.list-item-content__name')
+			expect(name.findComponent(IconBellOffOutline).exists()).toBe(true)
+			expect(name.text()).toContain('Notifications off')
+		})
+
+		test('renders no indicator when notifications are on', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.ALWAYS
+			const wrapper = mountConversation(false)
+
+			expect(wrapper.find('.list-item-content__name').findComponent(IconBellOffOutline).exists()).toBe(false)
+			expect(wrapper.find('.list-item-details__details').findComponent(IconBellOffOutline).exists()).toBe(false)
+		})
 	})
 
 	describe('displayed subname', () => {
