@@ -52,8 +52,9 @@ let encryption = null
 /**
  * @param {string} token The token of the conversation to get the signaling settings for
  * @param {object} options The additional options for the request
+ * @param {boolean} [options.throwOnNotFound] Rethrow a 404 instead of returning null
  */
-async function getSignalingSettings(token, options) {
+async function getSignalingSettings(token, { throwOnNotFound = false, ...options } = {}) {
 	// If getSignalingSettings is called again while a previous one was still
 	// being executed the previous one is cancelled.
 	if (cancelFetchSignalingSettings) {
@@ -76,6 +77,9 @@ async function getSignalingSettings(token, options) {
 		if (isCancel(exception)) {
 			console.debug('Getting the signaling settings for ' + token + ' was cancelled by a newer getSignalingSettings')
 		} else {
+			if (throwOnNotFound && exception.response?.status === 404) {
+				throw exception
+			}
 			console.warn('Failed to get the signaling settings for ' + token)
 		}
 	}
@@ -127,9 +131,15 @@ async function connectSignaling(token) {
 	if (!signaling) {
 		signaling = Signaling.createConnection(settings)
 		signaling.on('updateSettings', async function() {
-			const settings = await getSignalingSettings(token)
-			console.debug('Received updated settings', settings)
-			signaling.setSettings(settings)
+			const currentToken = signaling.currentRoomToken || token
+			try {
+				const settings = await getSignalingSettings(currentToken, { throwOnNotFound: true })
+				console.debug('Received updated settings', settings)
+				signaling.setSettings(settings)
+			} catch {
+				// Not retried: each 404 counts against brute force protection
+				console.warn('Conversation not found when updating signaling settings', currentToken)
+			}
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
