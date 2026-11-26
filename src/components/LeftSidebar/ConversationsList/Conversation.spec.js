@@ -9,6 +9,7 @@ import { cloneDeep } from 'es-toolkit'
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
+import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue'
@@ -44,7 +45,7 @@ describe('ConversationItem.vue', () => {
 	/**
 	 * Shared function to mount component
 	 */
-	function mountConversation(isSearchResult = false) {
+	function mountConversation(isSearchResult = false, showArchivedIndicator = false) {
 		return mount(ConversationItem, {
 			global: {
 				plugins: [router, store],
@@ -58,6 +59,7 @@ describe('ConversationItem.vue', () => {
 				isSearchResult,
 				item,
 				compact,
+				showArchivedIndicator,
 			},
 		})
 	}
@@ -160,6 +162,26 @@ describe('ConversationItem.vue', () => {
 
 			expect(wrapper.find('.list-item-content__name').findComponent(IconBellOffOutline).exists()).toBe(false)
 			expect(wrapper.find('.list-item-details__details').findComponent(IconBellOffOutline).exists()).toBe(false)
+		})
+	})
+
+	describe('archived indicator', () => {
+		beforeEach(() => {
+			item.isArchived = true
+		})
+
+		test('renders indicator in details when requested', () => {
+			const wrapper = mountConversation(false, true)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconArchiveOutline).exists()).toBe(true)
+			expect(details.text()).toContain('Archived')
+		})
+
+		test('renders no indicator when not requested', () => {
+			const wrapper = mountConversation(false)
+
+			expect(wrapper.find('.list-item-details__details').findComponent(IconArchiveOutline).exists()).toBe(false)
 		})
 	})
 

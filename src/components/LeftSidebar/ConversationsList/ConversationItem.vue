@@ -43,14 +43,18 @@
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
-			<template v-if="compact && isNotificationOff">
-				<IconBellOffOutline :size="15" />
-				<span class="hidden-visually">{{ t('spreed', 'Notifications off') }}</span>
+			<template v-if="compact">
+				<template v-for="indicator in indicators" :key="indicator.text">
+					<component :is="indicator.component" :size="15" fillColor="var(--color-text-maxcontrast)" />
+					<span class="hidden-visually">{{ indicator.text }}</span>
+				</template>
 			</template>
 		</template>
-		<template v-if="!compact && isNotificationOff" #details>
-			<IconBellOffOutline :size="15" />
-			<span class="hidden-visually">{{ t('spreed', 'Notifications off') }}</span>
+		<template v-if="!compact && indicators.length" #details>
+			<template v-for="indicator in indicators" :key="indicator.text">
+				<component :is="indicator.component" :size="15" fillColor="var(--color-text-maxcontrast)" />
+				<span class="hidden-visually">{{ indicator.text }}</span>
+			</template>
 			{{ lastActivityTimeString }}
 		</template>
 		<template v-if="!compact && !item.isSensitive && !isVoiceRoom" #subname>
@@ -366,7 +370,6 @@ export default {
 		IconArchiveOffOutline,
 		IconArrowLeft,
 		IconArrowRight,
-		IconBellOffOutline,
 		IconBellOutline,
 		IconCogOutline,
 		IconContentCopy,
@@ -421,6 +424,11 @@ export default {
 		},
 
 		compact: {
+			type: Boolean,
+			default: false,
+		},
+
+		showArchivedIndicator: {
 			type: Boolean,
 			default: false,
 		},
@@ -522,8 +530,15 @@ export default {
 			return formatDateTime(timestampInMs, isSameYear ? 'shortDateSameYear' : 'shortDate')
 		},
 
-		isNotificationOff() {
-			return this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER
+		indicators() {
+			const indicators = []
+			if (this.showArchivedIndicator && this.item.isArchived) {
+				indicators.push({ component: IconArchiveOutline, text: t('spreed', 'Archived') })
+			}
+			if (this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
+				indicators.push({ component: IconBellOffOutline, text: t('spreed', 'Notifications off') })
+			}
+			return indicators
 		},
 
 		isVoiceRoom() {

@@ -328,6 +328,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:ref="`conversation-${item.data.object.token}`"
 					:item="item.data.object"
 					:compact="isCompact"
+					showArchivedIndicator
 					@click="emit('abortSearch')" />
 				<NcListItem
 					v-else-if="item.data.type === 'action'"
