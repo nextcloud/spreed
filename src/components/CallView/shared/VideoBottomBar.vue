@@ -27,7 +27,7 @@
 
 			<div
 				v-if="!isScreen"
-				v-show="showVideoOverlay"
+				v-show="showVideoOverlay || volumePopoverShown"
 				class="media-indicators">
 				<NcButton
 					v-if="showAudioIndicator"
@@ -47,7 +47,7 @@
 					v-if="showVolumeButton"
 					class="volume-control"
 					@click.stop>
-					<NcPopover popupRole="dialog">
+					<NcPopover v-model:shown="volumePopoverShown" popupRole="dialog">
 						<template #trigger>
 							<NcButton
 								:title="volumeButtonTitle"
@@ -64,7 +64,7 @@
 						</template>
 						<div class="volume-popover">
 							<label :for="volumeInputId" class="volume-popover__label">
-								{{ t('spreed', 'Volume of {participantName} for you', { participantName }) }}
+								{{ volumeLabel }}
 							</label>
 							<div class="volume-popover__row">
 								<input
@@ -129,7 +129,8 @@
 
 <script>
 import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
+import { getLanguage, t } from '@nextcloud/l10n'
+import { useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -147,6 +148,8 @@ import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+
+const percentFormat = new Intl.NumberFormat(getLanguage(), { style: 'percent' })
 
 export default {
 	name: 'VideoBottomBar',
@@ -229,6 +232,7 @@ export default {
 
 	setup() {
 		return {
+			volumeInputId: `volume-${useId()}`,
 			IconMicrophoneOffOutline,
 			IconVolumeHighOutline,
 			IconVolumeOffOutline,
@@ -241,6 +245,7 @@ export default {
 	data() {
 		return {
 			mouseover: false,
+			volumePopoverShown: false,
 		}
 	},
 
@@ -292,17 +297,17 @@ export default {
 		},
 
 		volumeValueText() {
-			return this.volumePercent + ' %'
+			return percentFormat.format(this.volumePercent / 100)
+		},
+
+		volumeLabel() {
+			return t('spreed', 'Volume of {participantName} for you', { participantName: this.participantName })
 		},
 
 		volumeButtonTitle() {
 			return this.volumePercent < 100
 				? t('spreed', 'Volume for you: {volume}', { volume: this.volumeValueText })
 				: t('spreed', 'Adjust volume for you')
-		},
-
-		volumeInputId() {
-			return 'volume-' + this.model.attributes.peerId
 		},
 
 		// Video indicator
@@ -523,7 +528,7 @@ export default {
 	flex-direction: column;
 	gap: calc(var(--default-grid-baseline) * 2);
 	padding: calc(var(--default-grid-baseline) * 3);
-	min-width: 240px;
+	min-width: calc(60 * var(--default-grid-baseline));
 
 	&__row {
 		display: flex;

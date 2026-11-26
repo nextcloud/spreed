@@ -236,7 +236,9 @@ CallParticipantsAudioPlayer.prototype = {
 		if (this._mixAudio) {
 			const audioNode = this._audioNodes.get(id)
 			if (audioNode) {
-				audioNode.gainNode.gain.value = volume
+				// Ramp to the new value instead of setting it directly to
+				// avoid audible clicks while the slider is being dragged.
+				audioNode.gainNode.gain.setTargetAtTime(volume, this._audioContext.currentTime, 0.015)
 			}
 
 			return
