@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\AppAPI\PublicFunctions;
+use OCA\AppAPI\Service\ExAppService;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\LiveTranscriptionAppAPIException;
@@ -16,6 +17,7 @@ use OCA\Talk\Exceptions\LiveTranscriptionAppNotEnabledException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppResponseException;
 use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
@@ -25,6 +27,10 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type TalkLiveTranscriptionProvider from ResponseDefinitions
+ * @psalm-import-type TalkLiveTranscriptionProviderStatus from ResponseDefinitions
+ */
 class LiveTranscriptionService {
 
 	public function __construct(
@@ -52,6 +58,187 @@ class LiveTranscriptionService {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns the external apps that can be selected as live transcription
+	 * provider in the admin settings.
+	 *
+	 * AppAPI does not know which external apps provide live transcription, so
+	 * every enabled external app is asked for its capabilities and only those
+	 * announcing the "live_transcription" feature are returned. The configured
+	 * app is always included, even if it is not a valid provider (anymore), so
+	 * it stays visible in the settings.
+	 *
+	 * @return list<TalkLiveTranscriptionProvider>
+	 */
+	public function getProviders(): array {
+		$configuredAppId = $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID);
+		$configuredProvider = ['id' => $configuredAppId, 'name' => $configuredAppId];
+
+		try {
+			$appApiPublicFunctions = $this->getAppApiPublicFunctions();
+		} catch (LiveTranscriptionAppAPIException) {
+			return [$configuredProvider];
+		}
+
+		try {
+			// FIXME AppAPI has no public function to list the external apps
+			$exApps = Server::get(ExAppService::class)->getExAppsList('all');
+		} catch (\Throwable $e) {
+			$this->logger->warning('Could not get the list of external apps from AppAPI', ['exception' => $e]);
+			return [$configuredProvider];
+		}
+
+		$providers = [];
+		$isConfiguredIncluded = false;
+		foreach ($exApps as $exApp) {
+			if (!is_array($exApp) || !isset($exApp['id'])) {
+				continue;
+			}
+
+			$provider = [
+				'id' => (string)$exApp['id'],
+				'name' => (string)($exApp['name'] ?? $exApp['id']),
+			];
+
+			if ($provider['id'] === $configuredAppId) {
+				$isConfiguredIncluded = true;
+				$providers[] = $provider;
+				continue;
+			}
+
+			if (($exApp['enabled'] ?? false) && $this->announcesLiveTranscription($appApiPublicFunctions, $provider['id'])) {
+				$providers[] = $provider;
+			}
+		}
+
+		if (!$isConfiguredIncluded) {
+			array_unshift($providers, $configuredProvider);
+		}
+
+		return $providers;
+	}
+
+	/**
+	 * Returns whether the given external app announces the "live_transcription"
+	 * feature in its capabilities.
+	 *
+	 * Most external apps are not live transcription providers and will not
+	 * know the request, so failures are expected and not logged.
+	 */
+	private function announcesLiveTranscription(object $appApiPublicFunctions, string $appId): bool {
+		try {
+			$response = $appApiPublicFunctions->exAppRequest($appId, '/capabilities', $this->userId, 'GET');
+		} catch (\Throwable) {
+			return false;
+		}
+
+		if (is_array($response)) {
+			return false;
+		}
+
+		$body = $response->getBody();
+		if (!is_string($body)) {
+			return false;
+		}
+
+		try {
+			$capabilities = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+		} catch (\JsonException) {
+			return false;
+		}
+
+		return is_array($capabilities)
+			&& is_array($capabilities['live_transcription'] ?? null)
+			&& is_array($capabilities['live_transcription']['features'] ?? null)
+			&& in_array('live_transcription', $capabilities['live_transcription']['features'], true);
+	}
+
+	/**
+	 * Returns the status of the configured live transcription provider for the
+	 * admin settings.
+	 *
+	 * The checks are done in order and the first failing one defines the
+	 * status:
+	 * - "app-api": AppAPI is not enabled
+	 * - "not-found": no external app is registered with the configured id
+	 * - "disabled": the external app is registered but disabled
+	 * - "unreachable": the external app did not answer or answered with an
+	 *   error
+	 * - "invalid-capabilities": the external app answered, but not with the
+	 *   expected capabilities
+	 * - "invalid-languages": the external app did not provide the languages
+	 *   it can transcribe
+	 * - "no-capabilities": the external app provided its languages, but no
+	 *   capabilities (which is fine for older versions of the app)
+	 * - "ok": the external app provided its capabilities and languages
+	 *
+	 * @return TalkLiveTranscriptionProviderStatus
+	 */
+	public function getProviderStatus(): array {
+		$status = [
+			'appId' => $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID),
+			'status' => 'ok',
+			'name' => null,
+			'version' => null,
+		];
+
+		try {
+			$appApiPublicFunctions = $this->getAppApiPublicFunctions();
+		} catch (LiveTranscriptionAppAPIException) {
+			$status['status'] = 'app-api';
+			return $status;
+		}
+
+		$exApp = $appApiPublicFunctions->getExApp($status['appId']);
+		if ($exApp === null) {
+			$status['status'] = 'not-found';
+			return $status;
+		}
+
+		$status['name'] = isset($exApp['name']) ? (string)$exApp['name'] : null;
+		$status['version'] = isset($exApp['version']) ? (string)$exApp['version'] : null;
+
+		if (!$exApp['enabled']) {
+			$status['status'] = 'disabled';
+			return $status;
+		}
+
+		try {
+			$capabilities = $this->getCapabilities();
+		} catch (LiveTranscriptionAppNotEnabledException) {
+			$status['status'] = 'disabled';
+			return $status;
+		} catch (LiveTranscriptionAppAPIException $e) {
+			$status['status'] = str_starts_with($e->getMessage(), 'response-capabilities-') ? 'invalid-capabilities' : 'unreachable';
+			return $status;
+		} catch (LiveTranscriptionAppResponseException) {
+			$status['status'] = 'unreachable';
+			return $status;
+		}
+
+		try {
+			$languages = $this->getAvailableLanguages();
+		} catch (LiveTranscriptionAppNotEnabledException|LiveTranscriptionAppAPIException|LiveTranscriptionAppResponseException) {
+			$languages = [];
+		}
+
+		if ($languages === []) {
+			$status['status'] = 'invalid-languages';
+			return $status;
+		}
+
+		if ($capabilities === []) {
+			$status['status'] = 'no-capabilities';
+			return $status;
+		}
+
+		if (isset($capabilities['version']) && is_string($capabilities['version'])) {
+			$status['version'] = $capabilities['version'];
+		}
+
+		return $status;
 	}
 
 	/**

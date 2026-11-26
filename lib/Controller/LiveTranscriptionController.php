@@ -21,12 +21,15 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 /**
  * @psalm-import-type TalkLiveTranscriptionLanguage from ResponseDefinitions
+ * @psalm-import-type TalkLiveTranscriptionProvider from ResponseDefinitions
+ * @psalm-import-type TalkLiveTranscriptionProviderStatus from ResponseDefinitions
  */
 class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	public function __construct(
@@ -35,6 +38,36 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		private readonly LiveTranscriptionService $liveTranscriptionService,
 	) {
 		parent::__construct($appName, $request);
+	}
+
+	/**
+	 * Get the status of the configured live transcription provider
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkLiveTranscriptionProviderStatus, array{}>
+	 *
+	 * 200: Status of the live transcription provider returned
+	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/live-transcription/status', requirements: [
+		'apiVersion' => '(v1)',
+	])]
+	public function getProviderStatus(): DataResponse {
+		return new DataResponse($this->liveTranscriptionService->getProviderStatus());
+	}
+
+	/**
+	 * Get the external apps that can be used as live transcription provider
+	 *
+	 * @return DataResponse<Http::STATUS_OK, list<TalkLiveTranscriptionProvider>, array{}>
+	 *
+	 * 200: Live transcription providers returned
+	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/live-transcription/providers', requirements: [
+		'apiVersion' => '(v1)',
+	])]
+	public function getProviders(): DataResponse {
+		return new DataResponse($this->liveTranscriptionService->getProviders());
 	}
 
 	/**
