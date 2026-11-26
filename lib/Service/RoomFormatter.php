@@ -11,6 +11,8 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
+use OCA\Talk\Matrix\Client\Util\Identifier;
+use OCA\Talk\Matrix\Model\MatrixRoomMapper;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
@@ -54,6 +56,7 @@ class RoomFormatter {
 		private readonly ProxyCacheMessageService $pcmService,
 		private readonly IL10N $l10n,
 		private readonly ThreadService $threadService,
+		private readonly MatrixRoomMapper $matrixRoomMapper,
 		private readonly ?string $userId,
 	) {
 	}
@@ -378,6 +381,16 @@ class RoomFormatter {
 		if ($room->isFederatedConversation()) {
 			$roomData['remoteServer'] = $room->getRemoteServer();
 			$roomData['remoteToken'] = $room->getRemoteToken();
+		}
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			try {
+				$matrixRoom = $this->matrixRoomMapper->getById($room->getObjectId());
+				// Room ids of room version 12 and later no longer contain the server name
+				$roomData['matrixServer'] = Identifier::serverName($matrixRoom->getMatrixRoomId())
+					?: Identifier::serverName($matrixRoom->getCreator() ?? '');
+			} catch (DoesNotExistException) {
+			}
 		}
 
 		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS

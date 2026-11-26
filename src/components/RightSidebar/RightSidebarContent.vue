@@ -13,26 +13,29 @@ import type {
 import { t } from '@nextcloud/l10n'
 import { generateAvatarUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import { computed, ref, watch } from 'vue'
+import { computed, h, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppSidebarHeader from '@nextcloud/vue/components/NcAppSidebarHeader'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
 import IconOfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
+import IconWeb from 'vue-material-design-icons/Web.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
+import IconMatrix from '../../../img/icon-matrix-white.svg?raw'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
 import { hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
-import { getFallbackIconClass } from '../../utils/conversation.ts'
+import { getFallbackIconClass, getRemoteServerLabel } from '../../utils/conversation.ts'
 import { convertToUnix, formatMessageExpiration } from '../../utils/formattedTime.ts'
 
 type MutualEvent = {
@@ -131,6 +134,20 @@ const avatarUrl = computed(() => {
 
 const profileInformation = computed(() => {
 	const fields = []
+
+	if (conversation.value.remoteServer) {
+		fields.push({
+			key: 'remote-server',
+			icon: IconWeb,
+			label: t('spreed', 'Hosted on {server}', { server: getRemoteServerLabel(conversation.value.remoteServer) }),
+		})
+	} else if (conversation.value.matrixServer) {
+		fields.push({
+			key: 'matrix-server',
+			icon: h(NcIconSvgWrapper, { svg: IconMatrix, inline: true }),
+			label: t('spreed', 'Matrix room on {server}', { server: conversation.value.matrixServer }),
+		})
+	}
 
 	if (isMessageExpirationSet.value) {
 		fields.push({
