@@ -133,6 +133,25 @@ describe('ConversationItem.vue', () => {
 		expect(wrapper.findComponent(IconVideo).exists()).toBe(false)
 	})
 
+	test('renders voice room indicator before the name without a call', () => {
+		item.attributes = CONVERSATION.ATTRIBUTE.VOICE_ROOM
+		const wrapper = mountConversation(false)
+
+		const name = wrapper.find('.list-item-content__name')
+		expect(name.findComponent(IconVideo).exists()).toBe(false)
+		expect(name.text()).toContain('Voice room')
+	})
+
+	test('renders call indicator instead of voice room indicator during a call', () => {
+		item.attributes = CONVERSATION.ATTRIBUTE.VOICE_ROOM
+		item.hasCall = true
+		const wrapper = mountConversation(false)
+
+		const name = wrapper.find('.list-item-content__name')
+		expect(name.findComponent(IconVideo).exists()).toBe(true)
+		expect(name.text()).not.toContain('Voice room')
+	})
+
 	describe('notifications off indicator', () => {
 		afterEach(() => {
 			compact = undefined

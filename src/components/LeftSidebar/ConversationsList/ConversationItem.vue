@@ -35,7 +35,7 @@
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 		</template>
 		<template #name>
-			<template v-if="iconType && (compact || item.hasCall)">
+			<template v-if="iconType">
 				<component
 					:is="iconType.component"
 					:size="15"
@@ -559,7 +559,7 @@ export default {
 					color: '#E9322D',
 					text: t('spreed', 'Call in progress'),
 				}
-			} else if (!supportTags && this.item.isFavorite) {
+			} else if (this.compact && !supportTags && this.item.isFavorite) {
 				return {
 					component: IconStar,
 					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
@@ -567,7 +567,7 @@ export default {
 				}
 			} else if (this.isVoiceRoom) {
 				return {
-					component: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true }),
+					component: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true, style: { color: 'var(--color-text-maxcontrast)' } }),
 					text: t('spreed', 'Voice room'),
 				}
 			}
