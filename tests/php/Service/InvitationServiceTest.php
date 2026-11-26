@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\FederationRestrictionException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\InvitationService;
@@ -166,8 +167,8 @@ class InvitationServiceTest extends TestCase {
 		$currentUser = $this->createStub(IUser::class);
 		// Federation is available, only the classified flag must reject the invite
 		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
-		$this->cloudIdManager->expects(self::never())
-			->method('resolveCloudId');
+		$cloudId = $this->createMock(ICloudId::class);
+		$this->cloudIdManager->method('resolveCloudId')->willReturn($cloudId);
 		$this->federationManager->expects(self::never())
 			->method('isAllowedToInvite');
 
@@ -180,6 +181,10 @@ class InvitationServiceTest extends TestCase {
 		self::assertSame([], $invitationList->getFederatedUsers());
 		self::assertTrue($invitationList->hasInvalidInvitations());
 		self::assertSame(['remote-user@remote.example.tld'], $invitationList->getInvalidList()['federated_users']);
+		self::assertSame(
+			['remote-user@remote.example.tld' => 'classified'],
+			$invitationList->getFederatedUserInvalidReasons(),
+		);
 	}
 
 	public function testFederatedUserInvitationsAreRejectedForClassifiedRoom(): void {
@@ -187,6 +192,8 @@ class InvitationServiceTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')->willReturn(true);
 		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$cloudId = $this->createMock(ICloudId::class);
+		$this->cloudIdManager->method('resolveCloudId')->willReturn($cloudId);
 		$this->federationManager->expects(self::never())
 			->method('isAllowedToInvite');
 
@@ -198,6 +205,52 @@ class InvitationServiceTest extends TestCase {
 
 		self::assertSame([], $invitationList->getFederatedUsers());
 		self::assertSame(['remote-user@remote.example.tld'], $invitationList->getInvalidList()['federated_users']);
+		self::assertSame(
+			['remote-user@remote.example.tld' => 'classified'],
+			$invitationList->getFederatedUserInvalidReasons(),
+		);
+	}
+
+	public function testFederatedUserInvitationReportsCloudIdReason(): void {
+		$currentUser = $this->createStub(IUser::class);
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->cloudIdManager->method('resolveCloudId')
+			->willThrowException(new \InvalidArgumentException());
+		$this->federationManager->expects(self::never())
+			->method('isAllowedToInvite');
+
+		$invitationList = $this->service->validateInvitations(
+			['federated_users' => ['not-a-cloud-id']],
+			$currentUser,
+		);
+
+		self::assertSame([], $invitationList->getFederatedUsers());
+		self::assertSame(['not-a-cloud-id'], $invitationList->getInvalidList()['federated_users']);
+		self::assertSame(
+			['not-a-cloud-id' => 'cloud-id'],
+			$invitationList->getFederatedUserInvalidReasons(),
+		);
+	}
+
+	public function testFederatedUserInvitationReportsRestrictionReason(): void {
+		$currentUser = $this->createStub(IUser::class);
+		$cloudId = $this->createMock(ICloudId::class);
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+		$this->cloudIdManager->method('resolveCloudId')->willReturn($cloudId);
+		$this->federationManager->method('isAllowedToInvite')
+			->willThrowException(new FederationRestrictionException(FederationRestrictionException::REASON_TRUSTED_SERVERS));
+
+		$invitationList = $this->service->validateInvitations(
+			['federated_users' => ['remote-user@remote.example.tld']],
+			$currentUser,
+		);
+
+		self::assertSame([], $invitationList->getFederatedUsers());
+		self::assertSame(['remote-user@remote.example.tld'], $invitationList->getInvalidList()['federated_users']);
+		self::assertSame(
+			['remote-user@remote.example.tld' => 'trusted-servers'],
+			$invitationList->getFederatedUserInvalidReasons(),
+		);
 	}
 
 	public function testFederatedUserInvitationsAreAcceptedForRegularConversation(): void {
@@ -281,6 +334,10 @@ class InvitationServiceTest extends TestCase {
 				'phones' => ['+491601234567'],
 			],
 			$invitationList->getInvalidList(),
+		);
+		self::assertSame(
+			['remote-user@remote.example.tld' => 'federation'],
+			$invitationList->getFederatedUserInvalidReasons(),
 		);
 	}
 }

@@ -25,6 +25,8 @@ class InvitationList {
 	protected array $validFederatedUsers = [];
 	/** @var list<string> */
 	protected array $invalidFederatedUsers = [];
+	/** @var array<string, 'classified'|'cloud-id'|'federation'|'outgoing'|'trusted-servers'> */
+	protected array $invalidFederatedUserReasons = [];
 
 	/** @var array<string, IGroup> */
 	protected array $validGroups = [];
@@ -58,10 +60,12 @@ class InvitationList {
 	/**
 	 * @param array<string, ICloudId> $valid
 	 * @param list<string> $invalid
+	 * @param array<string, 'classified'|'cloud-id'|'federation'|'outgoing'|'trusted-servers'> $invalidReasons
 	 */
-	public function setFederatedUserResults(array $valid, array $invalid): void {
+	public function setFederatedUserResults(array $valid, array $invalid, array $invalidReasons = []): void {
 		$this->validFederatedUsers = $valid;
 		$this->invalidFederatedUsers = $invalid;
+		$this->invalidFederatedUserReasons = $invalidReasons;
 	}
 
 	/**
@@ -112,6 +116,16 @@ class InvitationList {
 	 */
 	public function getFederatedUsers(): array {
 		return $this->validFederatedUsers;
+	}
+
+	/**
+	 * Dedicated failure reason per invalid federated user, keyed by the
+	 * cloud id as it was passed to the validation
+	 *
+	 * @return array<string, 'classified'|'cloud-id'|'federation'|'outgoing'|'trusted-servers'>
+	 */
+	public function getFederatedUserInvalidReasons(): array {
+		return $this->invalidFederatedUserReasons;
 	}
 
 	/**

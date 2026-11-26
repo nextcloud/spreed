@@ -25,11 +25,13 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudId;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -258,5 +260,67 @@ class RoomControllerTest extends TestCase {
 		$response = $this->controller->addParticipantToRoom('+491601231212', 'phones');
 		self::assertSame(Http::STATUS_NOT_IMPLEMENTED, $response->getStatus());
 		self::assertSame(['error' => 'sip'], $response->getData());
+	}
+
+	public function testAddParticipantToRoomFederatedUserWithoutFederation(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->talkConfig->method('isFederationEnabled')->willReturn(false);
+
+		$this->invitationService->expects(self::never())->method('validateInvitations');
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example.tld', 'federated_users');
+		self::assertSame(Http::STATUS_NOT_IMPLEMENTED, $response->getStatus());
+		self::assertSame(['error' => 'federation'], $response->getData());
+	}
+
+	public static function dataAddParticipantToRoomFederatedUserFailureReason(): array {
+		return [
+			'cloud-id' => ['cloud-id'],
+			'trusted-servers' => ['trusted-servers'],
+			'outgoing' => ['outgoing'],
+			'classified' => ['classified'],
+		];
+	}
+
+	#[DataProvider('dataAddParticipantToRoomFederatedUserFailureReason')]
+	public function testAddParticipantToRoomFederatedUserUsesDedicatedFailureReason(string $reason): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+
+		$invitationList = new InvitationList();
+		$invitationList->setFederatedUserResults([], ['bob@remote.example.tld'], ['bob@remote.example.tld' => $reason]);
+		$this->invitationService->expects(self::once())
+			->method('validateInvitations')
+			->with(['federated_users' => ['bob@remote.example.tld']], $this->user, $this->room)
+			->willReturn($invitationList);
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example.tld', 'federated_users');
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => $reason], $response->getData());
+	}
+
+	public function testAddParticipantToRoomAddsValidatedFederatedUser(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getId')->willReturn('bob@remote.example.tld');
+		$invitationList = new InvitationList();
+		$invitationList->setFederatedUserResults(['bob@remote.example.tld' => $cloudId], []);
+		$this->invitationService->expects(self::once())
+			->method('validateInvitations')
+			->with(['federated_users' => ['bob@remote.example.tld']], $this->user, $this->room)
+			->willReturn($invitationList);
+		$this->participantService->expects(self::once())
+			->method('addInvitationList')
+			->with($this->room, $invitationList, $this->user);
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example.tld', 'federated_users');
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
 	}
 }

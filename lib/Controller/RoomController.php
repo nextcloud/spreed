@@ -113,7 +113,6 @@ use OCP\Config\IUserConfig;
 use OCP\Config\ValueType;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudId;
-use OCP\Federation\ICloudIdManager;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig as IServerAppConfig;
 use OCP\IConfig;
@@ -173,7 +172,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly IServerAppConfig $serverAppConfig,
 		private readonly IUserConfig $userConfig,
 		private readonly Config $talkConfig,
-		private readonly ICloudIdManager $cloudIdManager,
 		private readonly IPhoneNumberUtil $phoneNumberUtil,
 		private readonly PhoneService $phoneService,
 		private readonly IThrottler $throttler,
@@ -1749,28 +1747,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$addedBy = $this->userManager->get($this->userId);
 
 		if ($source === 'federated_users') {
-			// The federation checks produce dedicated errors that the invitation
-			// list can not express, so they are kept here instead of using
-			// InvitationService::validateInvitations()
+			// Federation being unavailable at all is a 501, while the failure
+			// reasons the validation detects are 400s, so this check is kept
+			// here instead of using InvitationService::validateInvitations()
 			if (!$this->talkConfig->isFederationEnabled()) {
 				return new DataResponse(['error' => 'federation'], Http::STATUS_NOT_IMPLEMENTED);
 			}
-			try {
-				$newUser = $this->cloudIdManager->resolveCloudId($newParticipant);
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error($e->getMessage(), [
-					'exception' => $e,
-				]);
-				return new DataResponse(['error' => 'cloud-id'], Http::STATUS_BAD_REQUEST);
-			}
-			try {
-				$this->federationManager->isAllowedToInvite($addedBy, $newUser, $this->room);
-			} catch (FederationRestrictionException $e) {
-				return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
-			}
-
-			$invitationList = new InvitationList();
-			$invitationList->setFederatedUserResults([$newParticipant => $newUser], []);
 		} else {
 			if ($source === 'teams' && !$this->appManager->isEnabledForUser('circles')) {
 				return new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST);
@@ -1798,21 +1780,27 @@ class RoomController extends AEnvironmentAwareOCSController {
 					return new DataResponse(['error' => 'sip'], Http::STATUS_NOT_IMPLEMENTED);
 				}
 			}
+		}
 
-			$invitationList = $this->invitationService->validateInvitations(
-				[$source => [$newParticipant]],
-				$addedBy,
-				$this->room,
-			);
+		$invitationList = $this->invitationService->validateInvitations(
+			[$source => [$newParticipant]],
+			$addedBy,
+			$this->room,
+		);
 
-			$invalidInvitations = $invitationList->getInvalidList();
-			if (isset($invalidInvitations[$source])) {
-				return match ($source) {
-					'emails' => new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST),
-					'phones' => new DataResponse([], Http::STATUS_BAD_REQUEST),
-					default => new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND),
-				};
+		$invalidInvitations = $invitationList->getInvalidList();
+		if (isset($invalidInvitations[$source])) {
+			if ($source === 'federated_users') {
+				$error = $invitationList->getFederatedUserInvalidReasons()[$newParticipant]
+					?? FederationRestrictionException::REASON_CLOUD_ID;
+				return new DataResponse(['error' => $error], Http::STATUS_BAD_REQUEST);
 			}
+
+			return match ($source) {
+				'emails' => new DataResponse(['error' => 'new-participant'], Http::STATUS_BAD_REQUEST),
+				'phones' => new DataResponse([], Http::STATUS_BAD_REQUEST),
+				default => new DataResponse(['error' => 'new-participant'], Http::STATUS_NOT_FOUND),
+			};
 		}
 
 		if ($source === 'users') {
