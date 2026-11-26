@@ -277,6 +277,9 @@ class AvatarService {
 		if ($room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return __DIR__ . '/../../img/icon-conversation-event-' . $colorTone . '.svg';
 		}
+		if ($room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			return __DIR__ . '/../../img/icon-conversation-matrix-' . $colorTone . '.svg';
+		}
 		if ($room->isFederatedConversation()) {
 			return __DIR__ . '/../../img/icon-conversation-federation-' . $colorTone . '.svg';
 		}
