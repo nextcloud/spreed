@@ -71,6 +71,7 @@ Adapt the comment style to the file type; files that can't carry a header (binar
 
 - Do **not** commit or push unless explicitly asked. Leave changes in the working dir, summarize, and suggest a commit message.
 - Never commit/push to `main` — use a `type/issue-or-noid/short-description` branch (e.g. `fix/12345/handle-mcu-disconnect`), not generated names like `agent-xxxx`.
+- Never merge the base branch (e.g. `main`) into your branch. To update your branch, rebase onto the base branch instead.
 - Follow Conventional Commits with a component scope: `feat(chat): …`, `fix(call): …`, `fix(api): …`.
 - Backports happen via a `/backport to stable-X.Y` comment on the merged PR — don't cherry-pick manually.
 
