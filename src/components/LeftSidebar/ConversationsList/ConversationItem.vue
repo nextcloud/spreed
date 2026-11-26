@@ -29,7 +29,6 @@
 			<ConversationIcon
 				:key="item.token"
 				:item
-				:hideFavorite="compact || supportTags"
 				:hideUserStatus="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:showUserOnlineStatus="compact"
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
@@ -559,7 +558,7 @@ export default {
 					color: '#E9322D',
 					text: t('spreed', 'Call in progress'),
 				}
-			} else if (this.compact && !supportTags && this.item.isFavorite) {
+			} else if (!supportTags && this.item.isFavorite) {
 				return {
 					component: IconStar,
 					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
@@ -798,12 +797,6 @@ export default {
 }
 
 .conversation {
-	// Overwrite ConversationIcon styles to blend a type icon with NcListItem
-	& :deep(.list-item:hover .conversation-icon__type) {
-		background-color: var(--color-background-hover);
-		border-color: var(--color-background-hover);
-	}
-
 	// Overwrite NcListItem styles to reduce timestamp size and fit two lines in 40px height limit
 	& :deep(.list-item .list-item-content__details) {
 		justify-content: flex-start;
@@ -819,20 +812,6 @@ export default {
 	}
 	& :deep(.list-item .counter-bubble__counter) {
 		--counter-bubble-height: 20px !important;
-	}
-
-	&--active {
-		&:deep(.list-item .conversation-icon__type) {
-			color: var(--color-primary-element-text);
-			background-color: var(--color-primary-element);
-			border-color: var(--color-primary-element);
-		}
-
-		&:deep(.list-item:hover .conversation-icon__type) {
-			color: var(--color-primary-element-text);
-			background-color: var(--color-primary-element-hover);
-			border-color: var(--color-primary-element-hover);
-		}
 	}
 
 	&:deep(.list-item-content__name) {

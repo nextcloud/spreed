@@ -15,8 +15,7 @@
 		<template #icon>
 			<ConversationIcon
 				:key="item.token"
-				:item
-				:hideFavorite="!item?.attendeeId" />
+				:item />
 		</template>
 		<template #name>
 			<template v-if="item.attendeeId && item.hasCall">

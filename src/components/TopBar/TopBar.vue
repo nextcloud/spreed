@@ -30,8 +30,7 @@
 				:item="conversation"
 				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
 				:disableMenu="showBackAction"
-				showUserOnlineStatus
-				:hideFavorite="false" />
+				showUserOnlineStatus />
 		</a>
 
 		<div

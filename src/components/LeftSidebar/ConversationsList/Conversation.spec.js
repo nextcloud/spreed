@@ -114,7 +114,6 @@ describe('ConversationItem.vue', () => {
 
 		const icon = el.findComponent(ConversationIcon)
 		expect(icon.props('item')).toStrictEqual(item)
-		expect(icon.props('hideFavorite')).toStrictEqual(true)
 	})
 
 	test('renders call indicator before the name during a call', () => {

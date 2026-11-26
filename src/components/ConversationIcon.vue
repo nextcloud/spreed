@@ -23,14 +23,6 @@
 				:alt="item.displayName"
 				class="avatar icon"
 				@error="onError">
-			<span
-				v-if="!hideUserStatus && conversationType"
-				class="conversation-icon__type"
-				role="img"
-				aria-hidden="false"
-				:aria-label="conversationType.label">
-				<component :is="conversationType.icon" :size="size * 0.3" />
-			</span>
 		</template>
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
 		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
@@ -46,23 +38,13 @@
 			:hideStatus="hideUserStatus"
 			:verboseStatus="showUserOnlineStatus"
 			class="conversation-icon__avatar" />
-		<div v-if="showFavorite" class="overlap-icon">
-			<IconStar :size="size * 0.5" fillColor="#FFCC00" />
-			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
-		</div>
 	</div>
 </template>
 
 <script>
-import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import { h, ref } from 'vue'
+import { ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import IconLink from 'vue-material-design-icons/Link.vue'
-import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
-import IconWeb from 'vue-material-design-icons/Web.vue'
-import IconVolumeHighOutline from '../../img/material-icons/volume-high-outline.svg?raw'
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -75,19 +57,10 @@ export default {
 	name: 'ConversationIcon',
 
 	components: {
-		IconStar,
 		NcAvatar,
 	},
 
 	props: {
-		/**
-		 * Allow to hide the favorite icon, e.g. on mentions
-		 */
-		hideFavorite: {
-			type: Boolean,
-			default: true,
-		},
-
 		disableMenu: {
 			type: Boolean,
 			default: true,
@@ -110,7 +83,6 @@ export default {
 					objectType: '',
 					type: 0,
 					displayName: '',
-					isFavorite: false,
 				}
 			},
 		},
@@ -149,10 +121,6 @@ export default {
 	},
 
 	computed: {
-		showFavorite() {
-			return !this.hideFavorite && this.item.isFavorite
-		},
-
 		preloadedUserStatus() {
 			if (this.hideUserStatus) {
 				return undefined
@@ -182,17 +150,6 @@ export default {
 			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
-		conversationType() {
-			if (this.item.remoteServer) {
-				return { key: 'federated', icon: IconWeb, label: t('spreed', 'Federated conversation') }
-			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return { key: 'public', icon: IconLink, label: t('spreed', 'Public conversation') }
-			} else if (this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
-				return { key: 'voice_room', icon: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline }), label: t('spreed', 'Voice room') }
-			}
-			return null
-		},
-
 		avatarUrl() {
 			if (!this.canRequestAvatar) {
 				return undefined
@@ -200,10 +157,6 @@ export default {
 
 			return getConversationAvatarOcsUrl(this.item.token, this.isDarkTheme, this.item.avatarVersion)
 		},
-	},
-
-	methods: {
-		t,
 	},
 }
 </script>
@@ -235,29 +188,6 @@ export default {
 		background-color: #3B3B3B;
 	}
 
-	&__type {
-		position: absolute;
-		inset-inline-end: -2px;
-		bottom: -2px;
-		display: flex;
-		align-content: center;
-		justify-content: center;
-		height: clamp(10px, 40%, 18px);
-		width: clamp(10px, 40%, 18px);
-		border: 1px solid var(--color-main-background);
-		background-color: var(--color-main-background);
-		color: var(--color-main-text);
-		border-radius: 50%;
-	}
-
-	.overlap-icon {
-		position: absolute;
-		top: 0;
-		inset-inline-start: calc(var(--icon-size) * 0.7);
-		line-height: 100%;
-		display: inline-block;
-		vertical-align: middle;
-	}
 }
 
 .offline {
