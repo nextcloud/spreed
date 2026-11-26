@@ -248,6 +248,8 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 			return 'icon-phone'
 		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
 			return 'icon-event'
+		} else if (isMatrixConversation(conversation)) {
+			return 'icon-matrix'
 		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
 			return 'icon-team'
 		} else if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {

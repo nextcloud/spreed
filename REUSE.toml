@@ -96,7 +96,7 @@ SPDX-FileCopyrightText = "Discord Inc."
 SPDX-License-Identifier = "LicenseRef-Discord"
 
 [[annotations]]
-path = "img/bridge-services/matrix.svg"
+path = ["img/bridge-services/matrix.svg", "img/icon-conversation-matrix-bright.svg", "img/icon-conversation-matrix-dark.svg", "img/icon-matrix-white.svg"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Matrix.org"
 SPDX-License-Identifier = "CC0-1.0"
