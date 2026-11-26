@@ -14,6 +14,7 @@ import EndToEndEncryptionSettings from './components/AdminSettings/EndToEndEncry
 import FederationSettings from './components/AdminSettings/FederationSettings.vue'
 import GeneralSettings from './components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from './components/AdminSettings/HostedSignalingServer.vue'
+import LiveTranscriptionProvider from './components/AdminSettings/LiveTranscriptionProvider.vue'
 import MatrixSettings from './components/AdminSettings/MatrixSettings.vue'
 import MatterbridgeIntegration from './components/AdminSettings/MatterbridgeIntegration.vue'
 import RecordingServers from './components/AdminSettings/RecordingServers.vue'
@@ -54,6 +55,7 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 		<StunServers />
 		<TurnServers />
 		<RecordingServers :hasSignalingServers />
+		<LiveTranscriptionProvider :hasSignalingServers />
 		<SIPBridge :hasSignalingServers />
 		<MatterbridgeIntegration />
 	</div>

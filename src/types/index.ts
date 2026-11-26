@@ -92,6 +92,7 @@ export type InitialState = {
 		federation_outgoing_enabled: boolean
 		has_cache_configured: boolean
 		has_valid_subscription: boolean
+		live_transcription_app_id: string
 		matrix_allowed_groups: { id: string, displayname: string }[]
 		matrix_enabled: boolean
 		signaling_mode: string
@@ -763,9 +764,13 @@ export type UploadEntry = [index: string, file: UploadFile]
 
 // Live transcription
 export type LiveTranscriptionLanguage = components['schemas']['LiveTranscriptionLanguage']
+export type LiveTranscriptionProvider = componentsAdmin['schemas']['LiveTranscriptionProvider']
+export type LiveTranscriptionProviderStatus = componentsAdmin['schemas']['LiveTranscriptionProviderStatus']
 
 export type liveTranscriptionDisableResponse = ApiResponse<operations['live_transcription-disable']['responses'][200]['content']['application/json']>
 export type liveTranscriptionEnableResponse = ApiResponse<operations['live_transcription-enable']['responses'][200]['content']['application/json']>
+export type liveTranscriptionGetProvidersResponse = ApiResponse<operationsAdmin['live_transcription-get-providers']['responses'][200]['content']['application/json']>
+export type liveTranscriptionGetProviderStatusResponse = ApiResponse<operationsAdmin['live_transcription-get-provider-status']['responses'][200]['content']['application/json']>
 export type liveTranscriptionGetAvailableLanguagesResponse = ApiResponse<operations['live_transcription-get-available-languages']['responses'][200]['content']['application/json']>
 export type liveTranscriptionGetAvailableTranslationLanguagesResponse = ApiResponse<operations['live_transcription-get-available-translation-languages']['responses'][200]['content']['application/json']>
 export type liveTranscriptionSetLanguageResponse = ApiResponse<operations['live_transcription-set-language']['responses'][200]['content']['application/json']>

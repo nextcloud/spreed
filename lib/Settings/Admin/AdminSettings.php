@@ -62,6 +62,7 @@ class AdminSettings implements ISettings {
 		$this->initSignalingServers();
 		$this->initRequestSignalingServerTrial();
 		$this->initRecording();
+		$this->initLiveTranscription();
 		$this->initSIPBridge();
 
 		Util::addScript('spreed', 'talk-admin-settings');
@@ -460,6 +461,10 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('recording_consent', $this->appConfig->getAppValueInt(Config::RECORDING_CONSENT));
 		$this->initialState->provideInitialState('call_recording_transcription', $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION));
 		$this->initialState->provideInitialState('call_recording_summary', $this->appConfig->getAppValueBool(Config::CALL_RECORDING_SUMMARY));
+	}
+
+	protected function initLiveTranscription(): void {
+		$this->initialState->provideInitialState('live_transcription_app_id', $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID));
 	}
 
 	protected function initSIPBridge(): void {
