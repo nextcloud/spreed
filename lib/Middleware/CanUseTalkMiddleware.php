@@ -10,6 +10,7 @@ namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Config;
 use OCA\Talk\Controller\BotController;
+use OCA\Talk\Controller\CertificateController;
 use OCA\Talk\Controller\HostedSignalingServerController;
 use OCA\Talk\Controller\RecordingController;
 use OCA\Talk\Controller\SignalingController;
@@ -107,6 +108,12 @@ class CanUseTalkMiddleware extends Middleware {
 
 			if ($methodName === 'adminListBots'
 				&& $controller instanceof BotController
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
+			if ($methodName === 'getCertificateExpiration'
+				&& $controller instanceof CertificateController
 				&& $this->groupManager->isAdmin($user->getUID())) {
 				return;
 			}
