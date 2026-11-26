@@ -568,6 +568,8 @@ namespace OCA\Talk;
  *     lobbyState: int,
  *     // Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)
  *     lobbyTimer: int,
+ *     // Server name of the Matrix room (only available for conversations synced with a Matrix room)
+ *     matrixServer?: string,
  *     // Whether all participants can mention using `@all` or only moderators (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#mention-permissions)) (only available with `mention-permissions` capability)
  *     mentionPermissions: 0|1,
  *     // The message expiration time in seconds in this chat. Zero if disabled. (only available with `message-expiration` capability)
