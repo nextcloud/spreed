@@ -31,8 +31,7 @@
 				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
 				:disableMenu="showBackAction"
 				showUserOnlineStatus
-				:hideFavorite="false"
-				:hideCall="false" />
+				:hideFavorite="false" />
 		</a>
 
 		<div

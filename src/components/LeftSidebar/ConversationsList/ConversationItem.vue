@@ -30,13 +30,12 @@
 				:key="item.token"
 				:item
 				:hideFavorite="compact || supportTags"
-				:hideCall="compact"
 				:hideUserStatus="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:showUserOnlineStatus="compact"
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 		</template>
 		<template #name>
-			<template v-if="compact && iconType">
+			<template v-if="iconType && (compact || item.hasCall)">
 				<component
 					:is="iconType.component"
 					:size="15"
@@ -799,12 +798,13 @@ export default {
 		}
 	}
 
+	&:deep(.list-item-content__name) {
+		display: flex;
+		gap: calc(var(--default-grid-baseline) / 2);
+	}
+
 	&--compact {
 		padding-block: 2px !important; // Overwrite list-item 4px padding
-		&:deep(.list-item-content__name) {
-			display: flex;
-			gap: calc(var(--default-grid-baseline) / 2);
-		}
 		&__read {
 			&:deep(.list-item-content__name) {
 				font-weight: 400;

@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import ConversationItem from './ConversationItem.vue'
 import router from '../../../__mocks__/router.js'
@@ -110,7 +111,22 @@ describe('ConversationItem.vue', () => {
 		const icon = el.findComponent(ConversationIcon)
 		expect(icon.props('item')).toStrictEqual(item)
 		expect(icon.props('hideFavorite')).toStrictEqual(true)
-		expect(icon.props('hideCall')).toStrictEqual(false)
+	})
+
+	test('renders call indicator before the name during a call', () => {
+		item.hasCall = true
+		const wrapper = mountConversation(false)
+
+		const name = wrapper.findComponent(NcListItem)
+		expect(name.findComponent(IconVideo).exists()).toBe(true)
+		expect(name.text()).toContain('Call in progress')
+		expect(wrapper.findComponent(ConversationIcon).text()).not.toContain('Call in progress')
+	})
+
+	test('renders no call indicator without a call', () => {
+		const wrapper = mountConversation(false)
+
+		expect(wrapper.findComponent(IconVideo).exists()).toBe(false)
 	})
 
 	describe('displayed subname', () => {

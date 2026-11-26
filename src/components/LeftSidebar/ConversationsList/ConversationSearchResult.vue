@@ -16,8 +16,14 @@
 			<ConversationIcon
 				:key="item.token"
 				:item
-				:hideFavorite="!item?.attendeeId"
-				:hideCall="!item?.attendeeId" />
+				:hideFavorite="!item?.attendeeId" />
+		</template>
+		<template #name>
+			<template v-if="item.attendeeId && item.hasCall">
+				<IconVideo :size="15" fillColor="#E9322D" />
+				<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
+			</template>
+			<span class="text"> {{ item.displayName }} </span>
 		</template>
 		<template v-if="conversationInformation.message" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
@@ -40,8 +46,10 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
 import { inject, ref, toRefs } from 'vue'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
+import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import ConversationIcon from './../../ConversationIcon.vue'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 
@@ -50,6 +58,7 @@ export default {
 
 	components: {
 		ConversationIcon,
+		IconVideo,
 		NcListItem,
 	},
 
@@ -95,6 +104,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		onClick() {
 			this.$emit('click', this.item)
 		},
@@ -103,6 +114,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+:deep(.list-item-content__name) {
+	display: flex;
+	gap: calc(var(--default-grid-baseline) / 2);
+}
+
+.text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .conversation__subname {
 	display: flex;
 	gap: var(--default-grid-baseline);

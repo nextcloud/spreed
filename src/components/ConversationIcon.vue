@@ -46,11 +46,7 @@
 			:hideStatus="hideUserStatus"
 			:verboseStatus="showUserOnlineStatus"
 			class="conversation-icon__avatar" />
-		<div v-if="showCall" class="overlap-icon">
-			<IconVideo :size="size * 0.5" fillColor="#E9322D" />
-			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
-		</div>
-		<div v-else-if="showFavorite" class="overlap-icon">
+		<div v-if="showFavorite" class="overlap-icon">
 			<IconStar :size="size * 0.5" fillColor="#FFCC00" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
@@ -65,7 +61,6 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
-import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconWeb from 'vue-material-design-icons/Web.vue'
 import IconVolumeHighOutline from '../../img/material-icons/volume-high-outline.svg?raw'
 import { AVATAR, CONVERSATION } from '../constants.ts'
@@ -81,7 +76,6 @@ export default {
 
 	components: {
 		IconStar,
-		IconVideo,
 		NcAvatar,
 	},
 
@@ -90,11 +84,6 @@ export default {
 		 * Allow to hide the favorite icon, e.g. on mentions
 		 */
 		hideFavorite: {
-			type: Boolean,
-			default: true,
-		},
-
-		hideCall: {
 			type: Boolean,
 			default: true,
 		},
@@ -160,10 +149,6 @@ export default {
 	},
 
 	computed: {
-		showCall() {
-			return !this.hideCall && this.item.hasCall
-		},
-
 		showFavorite() {
 			return !this.hideFavorite && this.item.isFavorite
 		},
