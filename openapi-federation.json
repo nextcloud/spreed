@@ -1239,6 +1239,10 @@
                         "format": "int64",
                         "description": "Timestamp when the lobby will be automatically disabled (only available with `webinary-lobby` capability)"
                     },
+                    "matrixServer": {
+                        "type": "string",
+                        "description": "Server name of the Matrix room (only available for conversations synced with a Matrix room)"
+                    },
                     "mentionPermissions": {
                         "type": "integer",
                         "format": "int64",
