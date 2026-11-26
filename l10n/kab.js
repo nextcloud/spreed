@@ -341,7 +341,6 @@ OC.L10N.register(
     "Move down" : "Ader",
     "Home" : "Amager",
     "Unread" : "Ur nettwaɣra ara",
-    "Mentions" : "Tibdarin",
     "No matches found" : "Ur d-nufi ara tinmeɣra",
     "No conversations found" : "Ulac idiwenniyen yettwafen",
     "Unread messages" : "Iznan ur nettwaɣra ara",
@@ -444,6 +443,7 @@ OC.L10N.register(
     "Talk to %s" : "Mmeslay d %s",
     "Saving …" : "Asekles ...",
     "Loading …" : "Asali ...",
+    "Mentions" : "Tibdarin",
     "Send" : "Tuzna",
     "Searching …" : "Anadi …",
     "Search …" : "Nadi ..."
