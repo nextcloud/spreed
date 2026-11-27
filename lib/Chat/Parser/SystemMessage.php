@@ -1264,6 +1264,7 @@ class SystemMessage implements IEventListener {
 	}
 
 	protected function loadCircleDetails(string $circleId): void {
+		$circlesManager = null;
 		try {
 			$circlesManager = Server::get(CirclesManager::class);
 			$circlesManager->startSuperSession();
@@ -1273,7 +1274,7 @@ class SystemMessage implements IEventListener {
 			$this->circleNames[$circleId] = $circle->getDisplayName();
 			$this->circleLinks[$circleId] = $circle->getUrl();
 		} catch (\Exception) {
-			$circlesManager->stopSession();
+			$circlesManager?->stopSession();
 		}
 	}
 
