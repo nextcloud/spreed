@@ -5,7 +5,10 @@
 
 import { defineStore } from 'pinia'
 import { computed, onScopeDispose, ref } from 'vue'
+import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
+
+const RECENT_TOKENS_LIMIT = 6
 
 export const useTokenStore = defineStore('token', () => {
 	const token = ref<'' | (string & {})>('')
@@ -18,6 +21,8 @@ export const useTokenStore = defineStore('token', () => {
 	 * A in the signaling server.
 	 */
 	const lastJoinedConversationToken = ref<'' | (string & {})>('')
+
+	const recentTokens = ref(readRecentTokens())
 
 	const currentConversationIsJoined = computed(() => token.value !== '' && lastJoinedConversationToken.value === token.value)
 
@@ -62,14 +67,42 @@ export const useTokenStore = defineStore('token', () => {
 		lastJoinedConversationToken.value = newToken
 	}
 
+	/**
+	 * Move the token to the top of the recently opened conversations
+	 *
+	 * @param newToken token of opened conversation
+	 */
+	function addRecentToken(newToken: string) {
+		recentTokens.value = [newToken, ...readRecentTokens().filter((recentToken) => recentToken !== newToken)].slice(0, RECENT_TOKENS_LIMIT)
+		BrowserStorage.setItem('recentTokens', recentTokens.value.join(','))
+	}
+
+	/**
+	 * Read the recently opened conversations, which other tabs may have changed
+	 */
+	function readRecentTokens(): string[] {
+		return BrowserStorage.getItem('recentTokens')?.split(',') ?? []
+	}
+
+	/**
+	 * Forget the recently opened conversations
+	 */
+	function clearRecentTokens() {
+		recentTokens.value = []
+		BrowserStorage.removeItem('recentTokens')
+	}
+
 	return {
 		token,
 		fileIdForToken,
 		lastJoinedConversationToken,
 		currentConversationIsJoined,
+		recentTokens,
 
 		updateToken,
 		updateTokenAndFileIdForToken,
 		updateLastJoinedConversationToken,
+		addRecentToken,
+		clearRecentTokens,
 	}
 })

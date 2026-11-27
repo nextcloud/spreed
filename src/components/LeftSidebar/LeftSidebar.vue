@@ -17,8 +17,9 @@
 								v-model:value="searchText"
 								v-model:isFocused="isFocused"
 								:placeholderText="t('spreed', 'Search in app')"
-								:listRef="[scroller, searchResultsPossibleConversations]"
+								:listRef="[scroller, searchResults, searchResultsPossibleConversations]"
 								@input="debounceFetchSearchResults"
+								@focus="$nextTick(() => initializeNavigation())"
 								@abortSearch="abortSearch" />
 						</div>
 
@@ -323,7 +324,7 @@
 
 		<template #list>
 			<!-- Conversations List -->
-			<template v-if="!isSearching">
+			<template v-if="!isSearching && !isFocused">
 				<NcEmptyContent
 					v-if="showEmptyContent"
 					:name="emptyContentLabel"
@@ -393,10 +394,11 @@
 				:searchText
 				:searchResultsLoading
 				:searchFilters
-				:conversationsList
+				:conversationsList="isSearching ? conversationsList : filteredConversationsList"
 				:searchResults="searchResultsPossibleConversations"
 				:searchResultsMessages
 				:searchResultsListedConversations
+				@focusout="handleSearchResultsFocusOut"
 				@abortSearch="abortSearch"
 				@createNewConversation="createConversation"
 				@createAndJoinConversation="createAndJoinConversation" />
@@ -610,6 +612,7 @@ export default {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
 		const scroller = ref(null)
+		const searchResults = ref(null)
 
 		const showArchived = ref(false)
 		const showThreadsList = ref(false)
@@ -643,6 +646,7 @@ export default {
 			filters,
 			searchBox,
 			scroller,
+			searchResults,
 			federationStore,
 			talkHashStore,
 			isMobile,
@@ -1073,6 +1077,22 @@ export default {
 			this.searchText = ''
 			this.isFocused = false
 			this.abortSearchRequests()
+		},
+
+		handleSearchResultsFocusOut(event) {
+			if (event.relatedTarget) {
+				this.leaveRecentConversations(event.relatedTarget)
+			} else {
+				// Non-focusable element was clicked, check its target after the click
+				document.addEventListener('click', (clickEvent) => this.leaveRecentConversations(clickEvent.target), { capture: true, once: true })
+			}
+		},
+
+		leaveRecentConversations(target) {
+			// Ignore popovers and dialogs, which are rendered outside the app root
+			if (!this.isSearching && this.$root.$el.contains(target) && !this.$el.contains(target)) {
+				this.isFocused = false
+			}
 		},
 
 		showSettings() {
