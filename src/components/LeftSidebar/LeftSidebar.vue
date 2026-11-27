@@ -163,13 +163,22 @@
 									<IconChatPlusOutline :size="20" />
 								</template>
 								<NcActionButton
+									closeAfterClick
+									@click="showNewOneToOneDialog = true">
+									<template #icon>
+										<IconAccountPlusOutline :size="20" />
+									</template>
+									{{ t('spreed', 'New private conversation') }}
+								</NcActionButton>
+
+								<NcActionButton
 									v-if="canStartConversations"
 									closeAfterClick
 									@click="showModalNewConversation">
 									<template #icon>
 										<IconPlus :size="20" />
 									</template>
-									{{ t('spreed', 'Create a new conversation') }}
+									{{ t('spreed', 'Create a new group conversation') }}
 								</NcActionButton>
 
 								<NcActionButton
@@ -226,6 +235,8 @@
 						<OpenConversationsList ref="openConversationsList" />
 
 						<MatrixRoomDialog v-if="showMatrixRoomDialog" @close="showMatrixRoomDialog = false" />
+
+						<NewOneToOneDialog v-if="showNewOneToOneDialog" @close="showNewOneToOneDialog = false" />
 
 						<!-- New Conversation dialog -->
 						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut />
@@ -451,6 +462,7 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
+import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline.vue'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
@@ -470,6 +482,7 @@ import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconSortAlphabeticalAscending from 'vue-material-design-icons/SortAlphabeticalAscending.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
+import NewOneToOneDialog from '../NewOneToOneDialog.vue'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
@@ -571,6 +584,7 @@ export default {
 		NcChip,
 		SearchBox,
 		NewConversationDialog,
+		NewOneToOneDialog,
 		MatrixRoomDialog,
 		OpenConversationsList,
 		NcActions,
@@ -584,6 +598,7 @@ export default {
 		LeftSidebarButton,
 		// Icons
 		IconAccountMultiplePlusOutline,
+		IconAccountPlusOutline,
 		IconAt,
 		IconMessageBadgeOutline,
 		IconMessageOutline,
@@ -685,6 +700,7 @@ export default {
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
 			isMatrixEnabled: getTalkConfig('local', 'matrix', 'enabled') === true,
 			showMatrixRoomDialog: false,
+			showNewOneToOneDialog: false,
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
