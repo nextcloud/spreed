@@ -113,4 +113,33 @@ class RoomControllerTest extends TestCase {
 			$this->restoreService(IClientService::class);
 		}
 	}
+
+	public static function dataTeamConversationActions(): array {
+		return [
+			'adding a participant' => ['addParticipantToRoom', ['bob', 'users']],
+			'leaving' => ['removeSelfFromRoom', []],
+			'removing a participant' => ['removeAttendeeFromRoom', [2]],
+			'promoting' => ['promoteModerator', [2]],
+			'demoting' => ['demoteModerator', [2]],
+		];
+	}
+
+	#[\PHPUnit\Framework\Attributes\DataProvider('dataTeamConversationActions')]
+	public function testTeamConversationActionsAreRefused(string $method, array $arguments): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$this->participant->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 1, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'alice', 'participant_type' => Participant::OWNER]));
+		$this->participantService->expects(self::never())->method('addUsers');
+		$this->participantService->expects(self::never())->method('removeUser');
+		$this->participantService->expects(self::never())->method('removeAttendee');
+		$target = $this->createMock(Participant::class);
+		$target->method('getAttendee')->willReturn(Attendee::fromRow(['id' => 2, 'actor_type' => Attendee::ACTOR_USERS, 'actor_id' => 'bob', 'participant_type' => Participant::USER]));
+		$this->participantService->method('getParticipantByAttendeeId')->willReturn($target);
+		$this->participantService->expects(self::never())->method('updateParticipantTypeByModerator');
+
+		$response = $this->controller->$method(...$arguments);
+
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'room-type'], $response->getData());
+	}
 }

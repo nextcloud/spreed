@@ -1177,6 +1177,11 @@ class FeatureContext implements Context {
 			}
 		}
 
+		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'team'
+			&& preg_match('/^TEAM_ID\(([^)]+)\)$/', $body['objectId'], $matches)) {
+			$body['objectId'] = self::getTeamIdForLabel($this->currentServer, $matches[1]);
+		}
+
 		if (isset($body['objectType']) && $body['objectType'] === 'event') {
 			[$start, $end] = explode('#', $body['objectId']);
 			$body['objectId'] = (time() + (int)$start) . '#' . (time() + (int)$end);
@@ -4597,6 +4602,18 @@ class FeatureContext implements Context {
 	#[Given('/^add user "([^"]*)" to team "([^"]*)"$/')]
 	public function addTeamMember(string $user, string $team): void {
 		$this->runOcc(['circles:members:add', '--type', '1', self::$createdTeams[$this->currentServer][$team], $user]);
+		$this->theCommandWasSuccessful();
+	}
+
+	#[Given('/^user "([^"]*)" is (?:promoted|demoted) to (member|moderator|admin|owner) in team "([^"]*)"$/')]
+	public function setTeamMemberLevel(string $user, string $level, string $team): void {
+		$teamId = self::$createdTeams[$this->currentServer][$team];
+		$this->runOcc(['circles:members:list', '--output', 'json', $teamId]);
+		$this->theCommandWasSuccessful();
+		$members = json_decode($this->getLastStdOut(), true, flags: JSON_THROW_ON_ERROR);
+		$memberId = array_column($members, 'id', 'userId')[$user];
+
+		$this->runOcc(['circles:members:level', $memberId, $level]);
 		$this->theCommandWasSuccessful();
 	}
 

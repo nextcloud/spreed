@@ -49,7 +49,7 @@ abstract class AMembershipListener implements IEventListener {
 			try {
 				$participant = $this->participantService->getParticipant($room, $user->getUID());
 				$participantType = $participant->getAttendee()->getParticipantType();
-				if ($participantType === Participant::USER) {
+				if ($participantType === Participant::USER || $room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
 					$this->participantService->removeUser($room, $user, AAttendeeRemovedEvent::REASON_REMOVED);
 				}
 			} catch (ParticipantNotFoundException) {

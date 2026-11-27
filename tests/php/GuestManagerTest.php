@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php;
 
-use OCA\Talk\Config;
 use OCA\Talk\Exceptions\GuestImportException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
@@ -32,7 +31,6 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class GuestManagerTest extends TestCase {
-	protected Config&MockObject $talkConfig;
 	protected IAppConfig&MockObject $appConfig;
 	protected IEmailValidator&MockObject $emailValidator;
 	protected IMailer&MockObject $mailer;
@@ -49,7 +47,6 @@ class GuestManagerTest extends TestCase {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->talkConfig = $this->createMock(Config::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->emailValidator = $this->createMock(IEmailValidator::class);
 		$this->mailer = $this->createMock(IMailer::class);
@@ -69,7 +66,6 @@ class GuestManagerTest extends TestCase {
 		if (!empty($methods)) {
 			return $this->getMockBuilder(GuestManager::class)
 				->setConstructorArgs([
-					$this->talkConfig,
 					$this->appConfig,
 					$this->emailValidator,
 					$this->mailer,
@@ -89,7 +85,6 @@ class GuestManagerTest extends TestCase {
 		}
 
 		return new GuestManager(
-			$this->talkConfig,
 			$this->appConfig,
 			$this->emailValidator,
 			$this->mailer,
@@ -197,5 +192,19 @@ class GuestManagerTest extends TestCase {
 		$this->expectExceptionMessage('Cannot send email for classified conversation');
 
 		$this->getGuestManager()->sendEmailInvitation($room, $participant);
+	}
+
+	public function testImportEmailsThrowsForTeamConversation(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+
+		$this->participantService->expects(self::never())
+			->method('inviteEmailAddress');
+
+		$this->expectException(GuestImportException::class);
+		$this->expectExceptionMessage(GuestImportException::REASON_ROOM);
+
+		$guestManager = $this->getGuestManager(['sendEmailInvitation']);
+		$guestManager->importEmails($room, __DIR__ . '/data/import-valid-only-email.csv', false);
 	}
 }

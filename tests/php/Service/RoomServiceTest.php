@@ -695,4 +695,57 @@ class RoomServiceTest extends TestCase {
 		$this->assertCount(1, $otherBots);
 		$botConversationMapper->delete($otherBots[0]);
 	}
+
+	private function createTeamRoom(): Room&MockObject {
+		$room = $this->createMock(Room::class);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_TEAM);
+		$room->method('getListable')->willReturn(Room::LISTABLE_NONE);
+		$room->method('getSIPEnabled')->willReturn(Webinary::SIP_DISABLED);
+		return $room;
+	}
+
+	public function testCreateTeamConversationMustBeAGroupConversation(): void {
+		$this->manager->expects($this->never())->method('createRoom');
+
+		$this->expectException(CreationException::class);
+		$this->expectExceptionMessage(CreationException::REASON_TYPE);
+
+		$this->service->createConversation(Room::TYPE_PUBLIC, 'Team', null, Room::OBJECT_TYPE_TEAM, 'team1');
+	}
+
+	public function testCreateTeamConversationIsNeverListedOrReachableByPhone(): void {
+		$room = $this->createMock(Room::class);
+		$this->manager->expects($this->once())
+			->method('createRoom')
+			->willReturnCallback(function (int $type, string $name, string $objectType, string $objectId, string $password, ?int $readOnly, ?int $listable, ?int $messageExpiration, ?int $lobbyState, ?\DateTime $lobbyTimer, ?int $sipEnabled) use ($room): Room {
+				$this->assertSame(Room::OBJECT_TYPE_TEAM, $objectType);
+				$this->assertSame(Room::LISTABLE_NONE, $listable);
+				$this->assertSame(Webinary::SIP_DISABLED, $sipEnabled);
+				return $room;
+			});
+
+		$this->service->createConversation(Room::TYPE_GROUP, 'Team', null, Room::OBJECT_TYPE_TEAM, 'team1', listable: Room::LISTABLE_ALL, sipEnabled: Webinary::SIP_ENABLED);
+	}
+
+	public function testSetTypeToPublicThrowsForTeamConversation(): void {
+		$this->expectException(TypeException::class);
+		$this->expectExceptionMessage(TypeException::REASON_TYPE);
+
+		$this->service->setType($this->createTeamRoom(), Room::TYPE_PUBLIC);
+	}
+
+	public function testSetListableThrowsForTeamConversation(): void {
+		$this->expectException(ListableException::class);
+		$this->expectExceptionMessage(ListableException::REASON_TYPE);
+
+		$this->service->setListable($this->createTeamRoom(), Room::LISTABLE_USERS);
+	}
+
+	public function testSetSIPEnabledThrowsForTeamConversation(): void {
+		$this->expectException(SipConfigurationException::class);
+		$this->expectExceptionMessage(SipConfigurationException::REASON_TYPE);
+
+		$this->service->setSIPEnabled($this->createTeamRoom(), Webinary::SIP_ENABLED);
+	}
 }

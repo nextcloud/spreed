@@ -827,6 +827,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
+		if ($objectType === Room::OBJECT_TYPE_TEAM) {
+			// The participants are the members of the team, added with the team itself
+			$participants = ['teams' => [$objectId]];
+		}
+
 		$invitationList = $this->invitationService->validateInvitations($participants, $user, isClassified: $isClassified);
 		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
 			// FIXME add the list of failed invitations?
@@ -1686,7 +1691,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $this->room->getType() === Room::TYPE_NOTE_TO_SELF
-			|| $this->room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION) {
+			|| $this->room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION
+			|| $this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
 			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1938,6 +1944,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'announcement'], Http::STATUS_BAD_REQUEST);
 		}
 
+		// The participants are the members of the team: they leave the team in the Teams app
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 			if ($participant->hasModeratorPermissions(false)
 				&& $this->participantService->getNumberOfUsers($room) > 1
@@ -2006,7 +2017,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
 			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -3201,6 +3213,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'encrypted'|'matrix'|'message'|'permission'}, array{}>
 	 */
 	protected function changeParticipantType(int $attendeeId, bool $promote, int $participantType = 0): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_TEAM) {
+			return new DataResponse(['error' => 'room-type'], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {

@@ -18,6 +18,21 @@ namespace OCA\Circles\Events {
 		}
 	}
 
+	class CircleGenericEvent extends Event {
+		public const LEVEL = 6;
+	}
+
+	class EditingCircleMemberEvent extends CircleGenericEvent {
+		public function getCircle(): Circle {
+		}
+		public function getMember(): Member {
+		}
+		public function getType(): int {
+		}
+		public function getLevel(): int {
+		}
+	}
+
 	class CircleDestroyedEvent extends Event {
 		public function getCircle(): Circle {
 		}

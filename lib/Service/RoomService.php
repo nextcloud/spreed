@@ -221,6 +221,7 @@ class RoomService {
 			Room::OBJECT_TYPE_EVENT,
 			Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
 			Room::OBJECT_TYPE_INSTANT_MEETING,
+			Room::OBJECT_TYPE_TEAM,
 		];
 		if ($allowInternalTypes) {
 			$objectTypes[] = BreakoutRoom::PARENT_OBJECT_TYPE;
@@ -260,6 +261,15 @@ class RoomService {
 
 			$this->session->set('talk-overwrite-actor-type', Attendee::ACTOR_GUESTS);
 			$this->session->set('talk-overwrite-actor-id', Attendee::ACTOR_ID_SYSTEM);
+		}
+
+		if ($objectType === Room::OBJECT_TYPE_TEAM) {
+			if ($type !== Room::TYPE_GROUP) {
+				throw new CreationException(CreationException::REASON_TYPE);
+			}
+			// Only the members of the team: no listing and no dial-in
+			$listable = Room::LISTABLE_NONE;
+			$sipEnabled = Webinary::SIP_DISABLED;
 		}
 
 		if ($type === Room::TYPE_PUBLIC && $password === '' && $this->config->isPasswordEnforced()) {
@@ -444,6 +454,11 @@ class RoomService {
 
 		if ($room->isClassified() && $newSipEnabled !== Webinary::SIP_DISABLED) {
 			throw new SipConfigurationException(SipConfigurationException::REASON_CLASSIFIED);
+		}
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newSipEnabled !== Webinary::SIP_DISABLED) {
+			// Only the members of the team, no phone guests
+			throw new SipConfigurationException(SipConfigurationException::REASON_TYPE);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
@@ -725,6 +740,11 @@ class RoomService {
 			throw new TypeException(TypeException::REASON_CLASSIFIED);
 		}
 
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newType === Room::TYPE_PUBLIC) {
+			// Only the members of the team, no guests
+			throw new TypeException(TypeException::REASON_TYPE);
+		}
+
 		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
 			throw new TypeException(TypeException::REASON_TYPE);
 		}
@@ -874,6 +894,11 @@ class RoomService {
 
 		if ($room->isClassified() && $newState !== Room::LISTABLE_NONE) {
 			throw new ListableException(ListableException::REASON_CLASSIFIED);
+		}
+
+		if ($room->getObjectType() === Room::OBJECT_TYPE_TEAM && $newState !== Room::LISTABLE_NONE) {
+			// Only the members of the team
+			throw new ListableException(ListableException::REASON_TYPE);
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
