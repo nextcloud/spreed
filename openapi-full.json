@@ -1585,6 +1585,67 @@
                     }
                 }
             },
+            "MatrixDirectoryRoom": {
+                "type": "object",
+                "required": [
+                    "roomId",
+                    "alias",
+                    "name",
+                    "topic",
+                    "members",
+                    "joinRule",
+                    "token"
+                ],
+                "properties": {
+                    "roomId": {
+                        "type": "string",
+                        "description": "Matrix room id, e.g. `!abc:example.org`"
+                    },
+                    "alias": {
+                        "type": "string",
+                        "description": "Canonical alias, e.g. `#room:example.org`, empty when the room has none"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Empty when the room has no name"
+                    },
+                    "topic": {
+                        "type": "string"
+                    },
+                    "members": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Number of joined members",
+                        "minimum": 0
+                    },
+                    "joinRule": {
+                        "type": "string",
+                        "description": "Join rule of the room, e.g. `public` or `knock`; rooms that are not `public` need an invite"
+                    },
+                    "token": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Token of the conversation when the room is already mirrored for the user, null otherwise"
+                    }
+                }
+            },
+            "MatrixDirectoryUser": {
+                "type": "object",
+                "required": [
+                    "mxid",
+                    "displayName"
+                ],
+                "properties": {
+                    "mxid": {
+                        "type": "string",
+                        "description": "Full Matrix user id, e.g. `@alice:example.org`"
+                    },
+                    "displayName": {
+                        "type": "string",
+                        "description": "Empty when the user has no display name"
+                    }
+                }
+            },
             "MatrixHomeserver": {
                 "type": "object",
                 "required": [
@@ -17663,6 +17724,559 @@
                                                                 "matrix",
                                                                 "recovery-key",
                                                                 "unavailable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/directory/rooms": {
+            "get": {
+                "operationId": "matrix_room-search-rooms",
+                "summary": "Search the public room directory of the homeserver of the linked Matrix account",
+                "description": "Spaces are left out, as they are not mirrored as conversations.",
+                "tags": [
+                    "matrix_room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Matches name, topic and alias of the rooms, empty for all rooms",
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of rooms per page, at most 50",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "since",
+                        "in": "query",
+                        "description": "Pagination token of the previous page",
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rooms of the directory, `nextBatch` is null on the last page. `total` is the estimate of the homeserver for its whole directory, which does not take the search term into account, or null when it has none",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "rooms",
+                                                        "nextBatch",
+                                                        "total"
+                                                    ],
+                                                    "properties": {
+                                                        "rooms": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/MatrixDirectoryRoom"
+                                                            }
+                                                        },
+                                                        "nextBatch": {
+                                                            "type": "string",
+                                                            "nullable": true
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "format": "int64",
+                                                            "nullable": true,
+                                                            "minimum": 0
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Matrix account not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "matrix",
+                                                                "ratelimited",
+                                                                "unreachable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "The Matrix homeserver rate limited the search",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "matrix",
+                                                                "ratelimited",
+                                                                "unreachable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "The Matrix homeserver could not be reached or rejected the search",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "matrix",
+                                                                "ratelimited",
+                                                                "unreachable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/directory/users": {
+            "get": {
+                "operationId": "matrix_room-search-users",
+                "summary": "Search users in the user directory of the homeserver of the linked Matrix account",
+                "description": "The homeserver decides which users it finds, e.g. Synapse only finds users who share a room with the searching user or are in a public room unless `user_directory.search_all_users` is enabled.",
+                "tags": [
+                    "matrix_room"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Name or Matrix user id",
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of users, at most 50",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Users found, `limited` is true when the homeserver has more results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "users",
+                                                        "limited"
+                                                    ],
+                                                    "properties": {
+                                                        "users": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/MatrixDirectoryUser"
+                                                            }
+                                                        },
+                                                        "limited": {
+                                                            "type": "boolean"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Matrix account not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "matrix",
+                                                                "ratelimited",
+                                                                "unreachable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "The Matrix homeserver rate limited the search",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "matrix",
+                                                                "ratelimited",
+                                                                "unreachable"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "The Matrix homeserver could not be reached or rejected the search",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "account",
+                                                                "matrix",
+                                                                "ratelimited",
+                                                                "unreachable"
                                                             ]
                                                         }
                                                     }

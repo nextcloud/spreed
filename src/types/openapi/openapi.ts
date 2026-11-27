@@ -1076,6 +1076,46 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/directory/rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search the public room directory of the homeserver of the linked Matrix account
+         * @description Spaces are left out, as they are not mirrored as conversations.
+         */
+        get: operations["matrix_room-search-rooms"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/directory/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search users in the user directory of the homeserver of the linked Matrix account
+         * @description The homeserver decides which users it finds, e.g. Synapse only finds users who share a room with the searching user or are in a public room unless `user_directory.search_all_users` is enabled.
+         */
+        get: operations["matrix_room-search-users"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/invite/{id}": {
         parameters: {
             query?: never;
@@ -2970,6 +3010,30 @@ export type components = {
             lastSync: number;
             /** @description Whether another device cross-signed the device of the server, null when encryption is not available on the server */
             verified: boolean | null;
+        };
+        MatrixDirectoryRoom: {
+            /** @description Matrix room id, e.g. `!abc:example.org` */
+            roomId: string;
+            /** @description Canonical alias, e.g. `#room:example.org`, empty when the room has none */
+            alias: string;
+            /** @description Empty when the room has no name */
+            name: string;
+            topic: string;
+            /**
+             * Format: int64
+             * @description Number of joined members
+             */
+            members: number;
+            /** @description Join rule of the room, e.g. `public` or `knock`; rooms that are not `public` need an invite */
+            joinRule: string;
+            /** @description Token of the conversation when the room is already mirrored for the user, null otherwise */
+            token: string | null;
+        };
+        MatrixDirectoryUser: {
+            /** @description Full Matrix user id, e.g. `@alice:example.org` */
+            mxid: string;
+            /** @description Empty when the user has no display name */
+            displayName: string;
         };
         MatrixHomeserver: {
             /** @description SnowflakeID */
@@ -9587,6 +9651,216 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "account" | "backup" | "matrix" | "recovery-key" | "unavailable";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_room-search-rooms": {
+        parameters: {
+            query?: {
+                /** @description Matches name, topic and alias of the rooms, empty for all rooms */
+                search?: string;
+                /** @description Number of rooms per page, at most 50 */
+                limit?: number;
+                /** @description Pagination token of the previous page */
+                since?: string;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rooms of the directory, `nextBatch` is null on the last page. `total` is the estimate of the homeserver for its whole directory, which does not take the search term into account, or null when it has none */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                rooms: components["schemas"]["MatrixDirectoryRoom"][];
+                                nextBatch: string | null;
+                                /** Format: int64 */
+                                total: number | null;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Matrix account not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "ratelimited" | "unreachable";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rate limited the search */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "ratelimited" | "unreachable";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver could not be reached or rejected the search */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "ratelimited" | "unreachable";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "matrix_room-search-users": {
+        parameters: {
+            query?: {
+                /** @description Name or Matrix user id */
+                search?: string;
+                /** @description Number of users, at most 50 */
+                limit?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Users found, `limited` is true when the homeserver has more results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                users: components["schemas"]["MatrixDirectoryUser"][];
+                                limited: boolean;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Matrix account not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "ratelimited" | "unreachable";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver rate limited the search */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "ratelimited" | "unreachable";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The Matrix homeserver could not be reached or rejected the search */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "account" | "matrix" | "ratelimited" | "unreachable";
                             };
                         };
                     };

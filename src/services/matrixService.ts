@@ -24,6 +24,10 @@ import type {
 	removeMatrixHomeserverResponse,
 	restoreMatrixBackupParams,
 	restoreMatrixBackupResponse,
+	searchMatrixRoomsParams,
+	searchMatrixRoomsResponse,
+	searchMatrixUsersParams,
+	searchMatrixUsersResponse,
 	startMatrixVerificationResponse,
 	testMatrixHomeserverResponse,
 	unlinkMatrixAccountResponse,
@@ -113,6 +117,28 @@ async function joinMatrixRoom(payload: joinMatrixRoomParams): joinMatrixRoomResp
 }
 
 /**
+ * Search the public room directory of the homeserver
+ *
+ * @param params Search term, number of rooms and the pagination token of the previous page
+ * @param options Request options, e.g. an AbortSignal
+ * @param options.signal Signal to cancel an outdated search
+ */
+async function searchMatrixRooms(params: searchMatrixRoomsParams, options?: { signal?: AbortSignal }): searchMatrixRoomsResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/matrix/directory/rooms'), { params, signal: options?.signal })
+}
+
+/**
+ * Search users in the user directory of the homeserver
+ *
+ * @param params Search term and number of users
+ * @param options Request options, e.g. an AbortSignal
+ * @param options.signal Signal to cancel an outdated search
+ */
+async function searchMatrixUsers(params: searchMatrixUsersParams, options?: { signal?: AbortSignal }): searchMatrixUsersResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/matrix/directory/users'), { params, signal: options?.signal })
+}
+
+/**
  * Check the connection to the homeserver again
  */
 async function checkMatrixConnection(): checkMatrixConnectionResponse {
@@ -186,6 +212,8 @@ export {
 	reloginMatrixAccount,
 	removeMatrixHomeserver,
 	restoreMatrixBackup,
+	searchMatrixRooms,
+	searchMatrixUsers,
 	startMatrixVerification,
 	testMatrixHomeserver,
 	unlinkMatrixAccount,

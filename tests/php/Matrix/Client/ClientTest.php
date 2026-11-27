@@ -28,6 +28,8 @@ class ClientTest extends TestCase {
 	private array $queries = [];
 	/** @var list<string> */
 	private array $methods = [];
+	/** @var list<string> */
+	private array $bodies = [];
 	private Client $client;
 
 	protected function setUp(): void {
@@ -50,7 +52,62 @@ class ClientTest extends TestCase {
 		$this->paths[] = $request->getUri()->getPath();
 		$this->queries[] = $request->getUri()->getQuery();
 		$this->methods[] = $request->getMethod();
+		$this->bodies[] = (string)$request->getBody();
 		return array_shift($this->responses) ?? new Response(404);
+	}
+
+	public function testSearchPublicRooms(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], json_encode([
+			'chunk' => [
+				['room_id' => '!a:hs', 'canonical_alias' => '#a:hs', 'name' => 'A', 'topic' => 'About A', 'num_joined_members' => 3, 'avatar_url' => 'mxc://hs/x', 'join_rule' => 'knock'],
+				['room_id' => '!b:hs', 'num_joined_members' => -1],
+				['room_id' => '!space:hs', 'name' => 'Space', 'room_type' => 'm.space'],
+				['name' => 'Without room id'],
+				'invalid',
+			],
+			'next_batch' => 'p2',
+			'total_room_count_estimate' => 134,
+		]));
+
+		self::assertSame([
+			'rooms' => [
+				['roomId' => '!a:hs', 'alias' => '#a:hs', 'name' => 'A', 'topic' => 'About A', 'members' => 3, 'joinRule' => 'knock'],
+				['roomId' => '!b:hs', 'alias' => '', 'name' => '', 'topic' => '', 'members' => 0, 'joinRule' => 'public'],
+			],
+			'nextBatch' => 'p2',
+			'total' => 134,
+		], $this->client->searchPublicRooms('team', 20, 'p1'));
+		self::assertSame(['/_matrix/client/v3/publicRooms'], $this->paths);
+		self::assertSame(['POST'], $this->methods);
+		self::assertSame(['limit' => 20, 'filter' => ['room_types' => [null], 'generic_search_term' => 'team'], 'since' => 'p1'], json_decode($this->bodies[0], true));
+	}
+
+	public function testSearchPublicRoomsWithoutSearchTerm(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"chunk":[],"total_room_count_estimate":-1}');
+
+		self::assertSame(['rooms' => [], 'nextBatch' => null, 'total' => null], $this->client->searchPublicRooms('', 5));
+		self::assertSame(['limit' => 5, 'filter' => ['room_types' => [null]]], json_decode($this->bodies[0], true));
+	}
+
+	public function testSearchUsers(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], json_encode([
+			'results' => [
+				['user_id' => '@alice:hs', 'display_name' => 'Alice', 'avatar_url' => 'mxc://hs/a'],
+				['user_id' => '@bob:hs'],
+				['display_name' => 'Without user id'],
+			],
+			'limited' => true,
+		]));
+
+		self::assertSame([
+			'users' => [
+				['mxid' => '@alice:hs', 'displayName' => 'Alice'],
+				['mxid' => '@bob:hs', 'displayName' => ''],
+			],
+			'limited' => true,
+		], $this->client->searchUsers('ali', 10));
+		self::assertSame(['/_matrix/client/v3/user_directory/search'], $this->paths);
+		self::assertSame(['search_term' => 'ali', 'limit' => 10], json_decode($this->bodies[0], true));
 	}
 
 	public function testDownloadMedia(): void {
