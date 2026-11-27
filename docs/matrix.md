@@ -25,6 +25,8 @@ Accounts are listed, synced and unlinked with the `occ talk:matrix-account:*` co
 * Authenticated media (spec v1.11) is used when available, with a fallback to the older media API
 * Threads (spec v1.4) and intentional mentions (`m.mentions`, spec v1.7) degrade to replies and plain names on older homeservers and clients
 
+Homeservers usually rate limit logins per IP address and per account (Synapse: `rc_login`, by default 5 logins and then one every few minutes). All users link their accounts from the address of the Nextcloud server, so when many users link at the same time the admins of the homeserver may need to raise that limit for it. A rate limited login shows when to try again.
+
 ## Supported features
 
 * Messages with formatting, replies, threads, edits, deletions, reactions and mentions in both directions

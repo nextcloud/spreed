@@ -12,6 +12,7 @@ use OCA\Talk\Controller\MatrixAccountController;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Verification\SasVerification;
+use OCA\Talk\Matrix\Client\Exception\RateLimitedException;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Service\AccountService;
 use OCA\Talk\Matrix\Service\CryptoService;
@@ -164,5 +165,23 @@ class MatrixAccountControllerTest extends TestCase {
 		$this->roomSyncService->expects(self::once())->method('decryptWaitingEvents')->with($this->account, self::anything(), [['!room:hs', 'S1'], ['!room:hs', 'S2']]);
 
 		self::assertSame(['restored' => 2], $this->controller->restoreBackup('key')->getData());
+	}
+
+	public function testLinkRateLimited(): void {
+		$this->accountService->method('link')->willThrowException(new RateLimitedException('Too Many Requests', Http::STATUS_TOO_MANY_REQUESTS, 'M_LIMIT_EXCEEDED', ['retry_after_ms' => 124500]));
+
+		$response = $this->controller->linkAccount('1', 'alice', 'secret');
+
+		self::assertSame(Http::STATUS_TOO_MANY_REQUESTS, $response->getStatus());
+		self::assertSame(['error' => 'ratelimited', 'retryAfter' => 125], $response->getData());
+	}
+
+	public function testReloginRateLimitedWithoutRetryAfter(): void {
+		$this->accountService->method('relogin')->willThrowException(new RateLimitedException('Too Many Requests', Http::STATUS_TOO_MANY_REQUESTS, 'M_LIMIT_EXCEEDED'));
+
+		$response = $this->controller->reloginAccount('secret');
+
+		self::assertSame(Http::STATUS_TOO_MANY_REQUESTS, $response->getStatus());
+		self::assertSame(['error' => 'ratelimited', 'retryAfter' => null], $response->getData());
 	}
 }
