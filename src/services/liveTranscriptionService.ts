@@ -8,6 +8,8 @@ import type {
 	liveTranscriptionEnableResponse,
 	liveTranscriptionGetAvailableLanguagesResponse,
 	liveTranscriptionGetAvailableTranslationLanguagesResponse,
+	liveTranscriptionGetProvidersResponse,
+	liveTranscriptionGetProviderStatusResponse,
 	liveTranscriptionSetLanguageResponse,
 	liveTranscriptionSetTargetLanguageResponse,
 } from '../types/index.ts'
@@ -31,6 +33,20 @@ async function enableLiveTranscription(token: string): liveTranscriptionEnableRe
  */
 async function disableLiveTranscription(token: string): liveTranscriptionDisableResponse {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}', { token }))
+}
+
+/**
+ * Get the external apps that can be used as live transcription provider (admin only)
+ */
+async function getLiveTranscriptionProviders(): liveTranscriptionGetProvidersResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/live-transcription/providers'))
+}
+
+/**
+ * Get the status of the configured live transcription provider (admin only)
+ */
+async function getLiveTranscriptionProviderStatus(): liveTranscriptionGetProviderStatusResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/live-transcription/status'))
 }
 
 /**
@@ -75,6 +91,8 @@ export {
 	disableLiveTranscription,
 	enableLiveTranscription,
 	getLiveTranscriptionLanguages,
+	getLiveTranscriptionProviders,
+	getLiveTranscriptionProviderStatus,
 	getLiveTranscriptionTranslationLanguages,
 	setLiveTranscriptionLanguage,
 	setLiveTranscriptionTargetLanguage,

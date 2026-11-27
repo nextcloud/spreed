@@ -973,6 +973,24 @@ namespace OCA\Talk;
  *     },
  * }
  *
+ * @psalm-type TalkLiveTranscriptionProvider = array{
+ *     // App ID of the external app
+ *     id: string,
+ *     // Display name of the external app
+ *     name: string,
+ * }
+ *
+ * @psalm-type TalkLiveTranscriptionProviderStatus = array{
+ *     // App ID of the external app configured as live transcription provider
+ *     appId: string,
+ *     // Result of the checks, the first failing one defines the status
+ *     status: 'app-api'|'disabled'|'invalid-capabilities'|'invalid-languages'|'no-capabilities'|'not-found'|'ok'|'unreachable',
+ *     // Display name of the external app, null if it is not installed
+ *     name: ?string,
+ *     // Version of the external app, null if it is not installed
+ *     version: ?string,
+ * }
+ *
  * @psalm-type TalkScheduledMessage = array{
  *     // SnowflakeID
  *     id: numeric-string,

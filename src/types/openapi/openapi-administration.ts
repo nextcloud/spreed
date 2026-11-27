@@ -84,6 +84,46 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the status of the configured live transcription provider
+         * @description This endpoint requires admin access
+         */
+        get: operations["live_transcription-get-provider-status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the external apps that can be used as live transcription provider
+         * @description This endpoint requires admin access
+         */
+        get: operations["live_transcription-get-providers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/matrix/admin/homeserver": {
         parameters: {
             query?: never;
@@ -535,6 +575,25 @@ export type components = {
             /** @description Version of the Talk app */
             version: string;
         };
+        LiveTranscriptionProvider: {
+            /** @description App ID of the external app */
+            id: string;
+            /** @description Display name of the external app */
+            name: string;
+        };
+        LiveTranscriptionProviderStatus: {
+            /** @description App ID of the external app configured as live transcription provider */
+            appId: string;
+            /**
+             * @description Result of the checks, the first failing one defines the status
+             * @enum {string}
+             */
+            status: "app-api" | "disabled" | "invalid-capabilities" | "invalid-languages" | "no-capabilities" | "not-found" | "ok" | "unreachable";
+            /** @description Display name of the external app, null if it is not installed */
+            name: string | null;
+            /** @description Version of the external app, null if it is not installed */
+            version: string | null;
+        };
         MatrixHomeserver: {
             /** @description SnowflakeID */
             id: string;
@@ -883,6 +942,122 @@ export interface operations {
                             data: {
                                 message: string;
                             };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-get-provider-status": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Status of the live transcription provider returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["LiveTranscriptionProviderStatus"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Logged in account must be an admin */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-get-providers": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Live transcription providers returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["LiveTranscriptionProvider"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Logged in account must be an admin */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
