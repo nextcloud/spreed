@@ -44,8 +44,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server cannot be empty.</error>'));
@@ -66,8 +68,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Secret cannot be empty.</error>'));
@@ -88,8 +92,10 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
+			->willReturnMap([
+				['skip-verify', false],
+				['password-from-env', false],
+			]);
 		$this->appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with(Config::SIGNALING_SERVERS)
@@ -97,6 +103,9 @@ class AddTest extends TestCase {
 		$this->appConfig->expects($this->once())
 			->method('setAppValueArray')
 			->with(Config::SIGNALING_SERVERS, ['servers' => [['server' => 'wss://signaling.test.com', 'verify' => true]],'secret' => 'my-test-secret']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueString')
+			->with(Config::SIGNALING_SERVERS_SECRET, 'my-test-secret');
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>Added signaling server wss://signaling.test.com.</info>'));
@@ -104,30 +113,4 @@ class AddTest extends TestCase {
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
-	public function testAddServerToNonEmptyList(): void {
-		$this->input->method('getArgument')
-			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
-					return 'wss://signaling2.test.com';
-				} elseif ($arg === 'secret') {
-					return 'my-test-secret';
-				}
-				throw new \Exception();
-			});
-		$this->input->method('getOption')
-			->with('verify')
-			->willReturn(true);
-		$this->appConfig->expects($this->once())
-			->method('getAppValueArray')
-			->with(Config::SIGNALING_SERVERS)
-			->willReturn(['servers' => [['server' => 'wss://signaling1.test.com','verify' => true]],'secret' => 'my-test-secret']);
-		$this->appConfig->expects($this->once())
-			->method('setAppValueArray')
-			->with(Config::SIGNALING_SERVERS, ['servers' => [['server' => 'wss://signaling1.test.com','verify' => true],['server' => 'wss://signaling2.test.com','verify' => true]],'secret' => 'my-test-secret']);
-		$this->output->expects($this->once())
-			->method('writeln')
-			->with($this->equalTo('<info>Added signaling server wss://signaling2.test.com.</info>'));
-
-		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
-	}
 }

@@ -12,10 +12,12 @@ use OC\Core\Command\Base;
 use OCA\Talk\Config;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Security\ISecureRandom;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 class Add extends Base {
 
@@ -53,6 +55,11 @@ class Add extends Base {
 				null,
 				InputOption::VALUE_NONE,
 				'Generate secret if set.'
+			)->addOption(
+				'password-from-env',
+				null,
+				InputOption::VALUE_NONE,
+				'Read secret from environment variable NC_PASS or interactively from prompt if environment variable is not set.'
 			);
 	}
 
@@ -62,6 +69,7 @@ class Add extends Base {
 		$protocols = $input->getArgument('protocols');
 		$secret = $input->getOption('secret');
 		$generate = $input->getOption('generate-secret');
+		$passwordFromEnv = $input->getOption('password-from-env');
 
 		if (!in_array($schemes, ['turn', 'turns', 'turn,turns'], true)) {
 			$output->writeln('<error>Not allowed schemes, must be turn or turns or turn,turns.</error>');
@@ -76,18 +84,49 @@ class Add extends Base {
 			$output->writeln('<error>Server cannot be empty.</error>');
 			return 1;
 		}
-		if (($generate === false && $secret === null)
+		if (($generate === false && $secret === null && !$passwordFromEnv)
 			|| ($generate && $secret !== null)) {
 			$output->writeln('<error>You must provide --secret or --generate-secret.</error>');
 			return 1;
 		}
-		if (!$generate && trim($secret) === '') {
+		$secret = $secret ? trim($secret) : '';
+		if (!$generate && empty($secret) && !$passwordFromEnv) {
 			$output->writeln('<error>Secret cannot be empty.</error>');
 			return 1;
 		}
 		if ($generate) {
 			$secret = $this->secureRandom->generate(128);
 		}
+
+		if (empty($secret) && $passwordFromEnv) {
+			$secret = getenv('NC_PASS') ?: '';
+			$secret = $secret ? trim($secret) : '';
+		}
+
+		if (empty($secret) && $passwordFromEnv && $input->isInteractive()) {
+			/** @var QuestionHelper $helper */
+			$helper = $this->getHelper('question');
+
+			$question = new Question('Enter secret: ');
+			$question->setHidden(true);
+			$secret = $helper->ask($input, $output, $question);
+
+			$question = new Question('Confirm secret: ');
+			$question->setHidden(true);
+			$confirmSecret = $helper->ask($input, $output, $question);
+
+			if ($secret !== $confirmSecret) {
+				$output->writeln('<error>Secrets did not match!</error>');
+				return 1;
+			}
+
+			if (empty($secret)) {
+				$output->writeln('<error>Secret cannot be empty.</error>');
+			}
+
+			$secret = $secret ? trim($secret) : '';
+		}
+
 		if (stripos($server, 'https://') === 0) {
 			$server = substr($server, 8);
 		}
