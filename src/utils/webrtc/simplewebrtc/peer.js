@@ -380,11 +380,18 @@ Peer.prototype.offer = async function(options) {
 			if (!parameters) {
 				parameters = {}
 			}
+			// The layers are listed in ascending order: the order of the
+			// streams in the "a=simulcast" send direction is the order of
+			// preference, the first one being the most preferred (RFC 8853),
+			// so the lowest layer is the one kept when the bandwidth is too low
+			// for all of them. Janus is told about this order with "rid_order"
+			// in the offer.
 			parameters.encodings = [
 				{
-					rid: 'h',
+					rid: 'l',
 					active: true,
-					maxBitrate: this.maxBitrates.high,
+					maxBitrate: this.maxBitrates.low,
+					scaleResolutionDownBy: 4,
 				},
 				{
 					rid: 'm',
@@ -393,10 +400,9 @@ Peer.prototype.offer = async function(options) {
 					scaleResolutionDownBy: 2,
 				},
 				{
-					rid: 'l',
+					rid: 'h',
 					active: true,
-					maxBitrate: this.maxBitrates.low,
-					scaleResolutionDownBy: 4,
+					maxBitrate: this.maxBitrates.high,
 				},
 			]
 			try {
@@ -424,14 +430,17 @@ Peer.prototype.offer = async function(options) {
 		}
 
 		this.pc.setLocalDescription(offer).then(function() {
-			if (this.parent.config.nick) {
-				// The offer is a RTCSessionDescription that only serializes
-				// its own attributes to JSON, so if extra attributes are needed
-				// a regular object has to be sent instead.
+			// Janus assumes by default that the highest layer comes first, so
+			// it needs to be told that the Firefox layers are in ascending order.
+			const ridOrderLmh = sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox'
+			const nick = this.parent.config.nick
+			if (nick || ridOrderLmh) {
+				// RTCSessionDescription serializes only type and sdp, so extra fields need a plain object
 				offer = {
 					type: offer.type,
 					sdp: offer.sdp,
-					nick: this.parent.config.nick,
+					...(nick && { nick }),
+					...(ridOrderLmh && { rid_order: 'lmh' }),
 				}
 			}
 			this.send('offer', offer)
