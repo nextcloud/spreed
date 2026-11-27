@@ -4,10 +4,11 @@
 -->
 
 <script setup lang="ts">
-import type { MatrixAccount, MatrixHomeserver } from '../../types/index.ts'
+import type { MatrixAccount, MatrixLinkHomeserver } from '../../types/index.ts'
 
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, onMounted, reactive, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -35,6 +36,11 @@ import { MATRIX } from '../../constants.ts'
 import { checkMatrixConnection, getMatrixAccount, linkMatrixAccount, reloginMatrixAccount, unlinkMatrixAccount } from '../../services/matrixService.ts'
 import { isAxiosErrorResponse } from '../../types/guards.ts'
 
+const props = defineProps<{
+	/** Result of a single sign-on the server sent the browser back with */
+	ssoResult?: { result: string, reason: string } | null
+}>()
+
 const LINK_ERRORS: Record<string, string> = {
 	credentials: t('spreed', 'Wrong Matrix username or password'),
 	unreachable: t('spreed', 'The homeserver could not be reached'),
@@ -49,6 +55,17 @@ const RELOGIN_ERRORS: Record<string, string> = {
 	user: t('spreed', 'The login belongs to a different Matrix account'),
 }
 
+const SSO_ERRORS: Record<string, string> = {
+	...LINK_ERRORS,
+	user: t('spreed', 'The login belongs to a Matrix user of another homeserver or to a different Matrix account'),
+	token: t('spreed', 'The homeserver did not accept the login, try again'),
+	state: t('spreed', 'The login could not be matched to this session, try again'),
+	expired: t('spreed', 'The login took too long, try again'),
+	cancelled: t('spreed', 'The login was cancelled'),
+	sso: t('spreed', 'The homeserver does not offer single sign-on'),
+	account: t('spreed', 'No Matrix account is linked'),
+}
+
 const { getActionStatus, runAction } = useActionStatus()
 
 const loaded = ref(false)
@@ -56,8 +73,8 @@ const loading = ref(false)
 const canLink = ref(false)
 const account = ref<MatrixAccount | null>(null)
 const connected = ref(true)
-const homeservers = ref<MatrixHomeserver[]>([])
-const form = reactive<{ homeserver: MatrixHomeserver | null, user: string, password: string }>({
+const homeservers = ref<MatrixLinkHomeserver[]>([])
+const form = reactive<{ homeserver: MatrixLinkHomeserver | null, user: string, password: string }>({
 	homeserver: null,
 	user: '',
 	password: '',
@@ -84,7 +101,69 @@ const verifiedDescription = computed(() => {
 		: t('spreed', 'Not verified')
 })
 
-onMounted(loadMatrixDetails)
+/** Homeserver of the linked account, for logging in again */
+const accountHomeserver = computed(() => homeservers.value.find((homeserver) => homeserver.id === account.value?.homeserverId) ?? null)
+
+/** Login types of the homeserver, password login when the server does not tell */
+const linkPasswordLogin = computed(() => form.homeserver?.passwordLogin ?? true)
+const reloginPasswordLogin = computed(() => accountHomeserver.value?.passwordLogin ?? true)
+
+const linkDescription = computed(() => linkPasswordLogin.value
+	? t('spreed', 'Your password is only used once to log in and is not stored. This client appears as a new device on your Matrix account.')
+	: t('spreed', 'You log in at your homeserver. This client appears as a new device on your Matrix account.'))
+
+onMounted(() => {
+	showSsoResult()
+	loadMatrixDetails()
+})
+
+/**
+ * Show the result of a single sign-on, after the server sent the browser back
+ */
+function showSsoResult() {
+	if (!props.ssoResult) {
+		return
+	}
+	if (props.ssoResult.result === 'ok') {
+		showSuccess(t('spreed', 'Logged in to Matrix'))
+	} else {
+		showError(SSO_ERRORS[props.ssoResult.reason] || t('spreed', 'Could not log in to Matrix'))
+	}
+}
+
+/**
+ * Buttons for the single sign-on of a homeserver, one per identity provider
+ *
+ * @param homeserver The homeserver
+ */
+function ssoButtons(homeserver: MatrixLinkHomeserver | null): { idp: string, label: string }[] {
+	if (!homeserver?.ssoLogin) {
+		return []
+	}
+	if (homeserver.ssoProviders.length === 0) {
+		return [{ idp: '', label: t('spreed', 'Log in with single sign-on') }]
+	}
+	return homeserver.ssoProviders.map((provider) => ({
+		idp: provider.id,
+		// TRANSLATORS: {name} is the name of the identity provider of the Matrix homeserver, e.g. "GitHub"
+		label: t('spreed', 'Log in with {name}', { name: provider.name }),
+	}))
+}
+
+/**
+ * Leave for the single sign-on of the homeserver, it sends the browser back to the server
+ *
+ * @param homeserverId The homeserver
+ * @param idp The identity provider, empty for the default of the homeserver
+ * @param mode Link a new account or log in again
+ */
+function startSso(homeserverId: string, idp: string, mode: 'link' | 'relogin') {
+	const query = new URLSearchParams({ mode })
+	if (idp) {
+		query.set('idp', idp)
+	}
+	window.location.href = generateUrl('/apps/spreed/matrix/sso/{homeserverId}/start', { homeserverId }) + '?' + query.toString()
+}
 
 /**
  * Load the linked account and the homeservers available for linking
@@ -243,7 +322,9 @@ async function restoreBackup() {
 			hideLabel>
 			<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
 				<p class="matrix-account__warning">
-					{{ t('spreed', 'The homeserver ended the session of this client. Enter your Matrix password to log in again.') }}
+					{{ reloginPasswordLogin
+						? t('spreed', 'The homeserver ended the session of this client. Enter your Matrix password to log in again.')
+						: t('spreed', 'The homeserver ended the session of this client. Log in again to continue.') }}
 				</p>
 				<p v-if="account.lastError" class="matrix-account__hint">
 					{{ account.lastError }}
@@ -260,20 +341,32 @@ async function restoreBackup() {
 			</NcNoteCard>
 			<NcFormBox>
 				<template v-if="account.status === MATRIX.ACCOUNT_STATUS.TOKEN_INVALID">
-					<NcPasswordField
-						v-model="form.password"
-						:label="t('spreed', 'Matrix password')"
-						autocomplete="current-password"
-						:disabled="loading"
-						@keydown.enter="reloginAccount" />
+					<template v-if="reloginPasswordLogin">
+						<NcPasswordField
+							v-model="form.password"
+							:label="t('spreed', 'Matrix password')"
+							autocomplete="current-password"
+							:disabled="loading"
+							@keydown.enter="reloginAccount" />
+						<NcFormBoxButton
+							:disabled="loading || !form.password"
+							@click="reloginAccount">
+							<!-- TRANSLATORS: Button to log in to Matrix again with the password -->
+							{{ t('spreed', 'Log in') }}
+							<template #icon>
+								<NcLoadingIcon v-if="loading" :size="20" />
+								<IconLogin v-else :size="20" />
+							</template>
+						</NcFormBoxButton>
+					</template>
 					<NcFormBoxButton
-						:disabled="loading || !form.password"
-						@click="reloginAccount">
-						<!-- TRANSLATORS: Button to log in to Matrix again with the password -->
-						{{ t('spreed', 'Log in') }}
+						v-for="button in ssoButtons(accountHomeserver)"
+						:key="'relogin-' + button.idp"
+						:disabled="loading"
+						@click="startSso(account.homeserverId, button.idp, 'relogin')">
+						{{ button.label }}
 						<template #icon>
-							<NcLoadingIcon v-if="loading" :size="20" />
-							<IconLogin v-else :size="20" />
+							<IconLogin :size="20" />
 						</template>
 					</NcFormBoxButton>
 				</template>
@@ -331,7 +424,7 @@ async function restoreBackup() {
 		<NcFormGroup
 			v-else
 			:label="t('spreed', 'Link account')"
-			:description="t('spreed', 'Your password is only used once to log in and is not stored. This client appears as a new device on your Matrix account.')">
+			:description="linkDescription">
 			<NcFormBox>
 				<NcSelect
 					v-if="homeservers.length > 1"
@@ -341,27 +434,39 @@ async function restoreBackup() {
 					label="name"
 					:clearable="false"
 					:disabled="loading" />
-				<NcTextField
-					v-model="form.user"
-					:label="t('spreed', 'Matrix username')"
-					:placeholder="form.homeserver ? '@user:' + form.homeserver.serverName : ''"
-					autocomplete="username"
-					:disabled="loading"
-					@keydown.enter="linkAccount" />
-				<NcPasswordField
-					v-model="form.password"
-					:label="t('spreed', 'Matrix password')"
-					autocomplete="current-password"
-					:disabled="loading"
-					@keydown.enter="linkAccount" />
+				<template v-if="linkPasswordLogin">
+					<NcTextField
+						v-model="form.user"
+						:label="t('spreed', 'Matrix username')"
+						:placeholder="form.homeserver ? '@user:' + form.homeserver.serverName : ''"
+						autocomplete="username"
+						:disabled="loading"
+						@keydown.enter="linkAccount" />
+					<NcPasswordField
+						v-model="form.password"
+						:label="t('spreed', 'Matrix password')"
+						autocomplete="current-password"
+						:disabled="loading"
+						@keydown.enter="linkAccount" />
+					<NcFormBoxButton
+						:disabled="loading || !form.homeserver || !form.user || !form.password"
+						@click="linkAccount">
+						<!-- TRANSLATORS: Section title and button to log in and link the Matrix account to this client -->
+						{{ t('spreed', 'Link account') }}
+						<template #icon>
+							<NcLoadingIcon v-if="loading" :size="20" />
+							<IconLinkVariant v-else :size="20" />
+						</template>
+					</NcFormBoxButton>
+				</template>
 				<NcFormBoxButton
-					:disabled="loading || !form.homeserver || !form.user || !form.password"
-					@click="linkAccount">
-					<!-- TRANSLATORS: Section title and button to log in and link the Matrix account to this client -->
-					{{ t('spreed', 'Link account') }}
+					v-for="button in ssoButtons(form.homeserver)"
+					:key="'link-' + button.idp"
+					:disabled="loading || !form.homeserver"
+					@click="startSso(form.homeserver!.id, button.idp, 'link')">
+					{{ button.label }}
 					<template #icon>
-						<NcLoadingIcon v-if="loading" :size="20" />
-						<IconLinkVariant v-else :size="20" />
+						<IconLogin :size="20" />
 					</template>
 				</NcFormBoxButton>
 			</NcFormBox>

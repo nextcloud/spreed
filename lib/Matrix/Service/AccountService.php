@@ -13,6 +13,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
+use OCA\Talk\Matrix\Client\Model\LoginResult;
 use OCA\Talk\Matrix\Client\Util\Identifier;
 use OCA\Talk\Matrix\ClientFactory;
 use OCA\Talk\Matrix\Model\Account;
@@ -82,33 +83,83 @@ class AccountService {
 	 * @throws MatrixException login failure, ForbiddenException for wrong credentials
 	 */
 	public function link(IUser $user, string $homeserverId, string $matrixUser, #[\SensitiveParameter] string $password): Account {
-		if (!$this->config->canLinkMatrixAccount($user)) {
-			throw new \InvalidArgumentException('not-allowed');
-		}
-		if ($this->getForUser($user->getUID()) !== null) {
-			throw new \InvalidArgumentException('already-linked');
-		}
-		$homeserver = $this->getEnabledHomeserver($homeserverId);
+		$homeserver = $this->getHomeserverToLink($user, $homeserverId);
 
 		try {
 			$mxid = Identifier::normalizeUserId($matrixUser, $homeserver->getServerName());
 		} catch (\InvalidArgumentException) {
 			throw new \InvalidArgumentException('user');
 		}
-		if (strcasecmp(Identifier::serverName($mxid), $homeserver->getServerName()) !== 0) {
+		if (!$this->belongsToHomeserver($mxid, $homeserver)) {
 			throw new \InvalidArgumentException('user');
 		}
 
 		$login = $this->clientFactory->forHomeserver($homeserver)
 			->loginWithPassword(Identifier::localpart($mxid), $password, $this->getDeviceName());
 
+		return $this->insertAccount($user, $homeserver, $login->userId !== '' ? $login->userId : $mxid, $login);
+	}
+
+	/**
+	 * Link an account with the login token of a single sign-on, the homeserver
+	 * decides which Matrix user it belongs to
+	 *
+	 * @throws \InvalidArgumentException 'not-allowed' | 'already-linked' | 'homeserver' | 'user'
+	 * @throws MatrixException login failure, ForbiddenException for an invalid or expired token
+	 */
+	public function linkWithLoginToken(IUser $user, string $homeserverId, #[\SensitiveParameter] string $loginToken): Account {
+		$homeserver = $this->getHomeserverToLink($user, $homeserverId);
+
+		$client = $this->clientFactory->forHomeserver($homeserver);
+		$login = $client->loginWithToken($loginToken, $this->getDeviceName());
+		if ($login->userId === '' || !$this->belongsToHomeserver($login->userId, $homeserver)) {
+			$this->logoutQuietly($client, $login->accessToken, $login->userId);
+			throw new \InvalidArgumentException('user');
+		}
+
+		return $this->insertAccount($user, $homeserver, $login->userId, $login);
+	}
+
+	/**
+	 * @throws \InvalidArgumentException 'not-allowed' | 'already-linked' | 'homeserver'
+	 */
+	private function getHomeserverToLink(IUser $user, string $homeserverId): Homeserver {
+		if (!$this->config->canLinkMatrixAccount($user)) {
+			throw new \InvalidArgumentException('not-allowed');
+		}
+		if ($this->getForUser($user->getUID()) !== null) {
+			throw new \InvalidArgumentException('already-linked');
+		}
+		return $this->getEnabledHomeserver($homeserverId);
+	}
+
+	private function belongsToHomeserver(string $mxid, Homeserver $homeserver): bool {
+		try {
+			return strcasecmp(Identifier::serverName($mxid), $homeserver->getServerName()) === 0;
+		} catch (\InvalidArgumentException) {
+			return false;
+		}
+	}
+
+	private function insertAccount(IUser $user, Homeserver $homeserver, string $mxid, LoginResult $login): Account {
 		$account = new Account();
 		$account->setUserId($user->getUID());
 		$account->setHomeserverId((string)$homeserver->getId());
-		$account->setMxid($login->userId !== '' ? $login->userId : $mxid);
+		$account->setMxid($mxid);
 		$account->setAccessToken($this->crypto->encrypt($login->accessToken));
 		$account->setDeviceId($login->deviceId);
 		return $this->mapper->insert($account);
+	}
+
+	private function logoutQuietly(Client $client, #[\SensitiveParameter] string $accessToken, string $mxid): void {
+		if ($accessToken === '') {
+			return;
+		}
+		try {
+			$client->withAccessToken($accessToken)->logout();
+		} catch (MatrixException $e) {
+			$this->logger->info('Matrix logout of mismatching login failed for ' . $mxid, ['exception' => $e]);
+		}
 	}
 
 	/**
@@ -119,19 +170,48 @@ class AccountService {
 	 * @throws MatrixException login failure, ForbiddenException for wrong credentials
 	 */
 	public function relogin(IUser $user, Account $account, #[\SensitiveParameter] string $password): Account {
-		if (!$this->config->canLinkMatrixAccount($user)) {
-			throw new \InvalidArgumentException('not-allowed');
-		}
-		$homeserver = $this->getEnabledHomeserver($account->getHomeserverId());
+		$homeserver = $this->getHomeserverToRelogin($user, $account);
 
 		$client = $this->clientFactory->forHomeserver($homeserver);
 		$login = $client->loginWithPassword(Identifier::localpart($account->getMxid()), $password, $this->getDeviceName(), $account->getDeviceId());
-		if ($login->userId !== '' && strcasecmp($login->userId, $account->getMxid()) !== 0) {
-			try {
-				$client->withAccessToken($login->accessToken)->logout();
-			} catch (MatrixException $e) {
-				$this->logger->info('Matrix logout of mismatching re-login failed for ' . $login->userId, ['exception' => $e]);
-			}
+		return $this->applyRelogin($account, $client, $login, false);
+	}
+
+	/**
+	 * Log in again with the login token of a single sign-on, the device id is
+	 * reused so the device of Talk stays the same
+	 *
+	 * @throws \InvalidArgumentException 'not-allowed' | 'homeserver' | 'user'
+	 * @throws MatrixException login failure, ForbiddenException for an invalid or expired token
+	 */
+	public function reloginWithLoginToken(IUser $user, Account $account, #[\SensitiveParameter] string $loginToken): Account {
+		$homeserver = $this->getHomeserverToRelogin($user, $account);
+
+		$client = $this->clientFactory->forHomeserver($homeserver);
+		$login = $client->loginWithToken($loginToken, $this->getDeviceName(), $account->getDeviceId());
+		return $this->applyRelogin($account, $client, $login, true);
+	}
+
+	/**
+	 * @throws \InvalidArgumentException 'not-allowed' | 'homeserver'
+	 */
+	private function getHomeserverToRelogin(IUser $user, Account $account): Homeserver {
+		if (!$this->config->canLinkMatrixAccount($user)) {
+			throw new \InvalidArgumentException('not-allowed');
+		}
+		return $this->getEnabledHomeserver($account->getHomeserverId());
+	}
+
+	/**
+	 * @param bool $requireUserId Whether the homeserver has to name the user, a single sign-on can log in any user
+	 * @throws \InvalidArgumentException 'user' when the login belongs to another Matrix user
+	 */
+	private function applyRelogin(Account $account, Client $client, LoginResult $login, bool $requireUserId): Account {
+		$mismatch = $login->userId === ''
+			? $requireUserId
+			: strcasecmp($login->userId, $account->getMxid()) !== 0;
+		if ($mismatch) {
+			$this->logoutQuietly($client, $login->accessToken, $login->userId);
 			throw new \InvalidArgumentException('user');
 		}
 

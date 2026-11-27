@@ -1495,6 +1495,55 @@
                     }
                 }
             },
+            "MatrixIdentityProvider": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Id of the identity provider on the homeserver, e.g. `oidc-github`"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name shown to users"
+                    }
+                }
+            },
+            "MatrixLinkHomeserver": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/MatrixHomeserver"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "passwordLogin",
+                            "ssoLogin",
+                            "ssoProviders"
+                        ],
+                        "properties": {
+                            "passwordLogin": {
+                                "type": "boolean",
+                                "description": "Whether the homeserver offers a password login"
+                            },
+                            "ssoLogin": {
+                                "type": "boolean",
+                                "description": "Whether the homeserver offers single sign-on"
+                            },
+                            "ssoProviders": {
+                                "type": "array",
+                                "description": "Identity providers of the single sign-on, empty when the homeserver does not list them",
+                                "items": {
+                                    "$ref": "#/components/schemas/MatrixIdentityProvider"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
             "MatrixVerification": {
                 "type": "object",
                 "required": [
@@ -15526,7 +15575,7 @@
             "get": {
                 "operationId": "matrix_account-get-account",
                 "summary": "Get the linked Matrix account and the homeservers an account can be linked on",
-                "description": "The access token of the linked account is checked with the homeserver, the result is reused for 5 minutes.",
+                "description": "The access token of the linked account is checked with the homeserver, the result is reused for 5 minutes.\nThe login types of the homeservers are reused for an hour.",
                 "tags": [
                     "matrix_account"
                 ],
@@ -15609,7 +15658,7 @@
                                                         "homeservers": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/components/schemas/MatrixHomeserver"
+                                                                "$ref": "#/components/schemas/MatrixLinkHomeserver"
                                                             }
                                                         }
                                                     }

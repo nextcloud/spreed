@@ -69,7 +69,7 @@
 			v-if="!isGuest && matrixEnabled"
 			id="matrix_account"
 			:name="t('spreed', 'Matrix account')">
-			<MatrixAccountSettings />
+			<MatrixAccountSettings :ssoResult="matrixSsoResult" />
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
@@ -242,6 +242,7 @@ export default {
 	data() {
 		return {
 			showSettings: false,
+			matrixSsoResult: null,
 			attachmentFolderLoading: true,
 			privacyLoading: false,
 			mediaLoading: false,
@@ -281,6 +282,7 @@ export default {
 	mounted() {
 		subscribe('show-settings', this.handleShowSettings)
 		this.attachmentFolderLoading = false
+		this.openWithMatrixSsoResult()
 	},
 
 	beforeUnmount() {
@@ -358,6 +360,24 @@ export default {
 		},
 
 		handleShowSettings() {
+			this.showSettings = true
+		},
+
+		/**
+		 * After a single sign-on for Matrix the server sends the browser back
+		 * with the result in the URL: show it in the settings and clean the URL
+		 */
+		openWithMatrixSsoResult() {
+			const params = new URLSearchParams(window.location.search)
+			const result = params.get('matrix_sso')
+			if (result === null) {
+				return
+			}
+			this.matrixSsoResult = { result, reason: params.get('reason') ?? '' }
+			params.delete('matrix_sso')
+			params.delete('reason')
+			const query = params.toString()
+			window.history.replaceState(window.history.state, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash)
 			this.showSettings = true
 		},
 

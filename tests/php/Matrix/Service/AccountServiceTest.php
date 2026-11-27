@@ -336,6 +336,114 @@ class AccountServiceTest extends TestCase {
 		$this->service->relogin($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'secret');
 	}
 
+	public function testLinkWithLoginToken(): void {
+		$this->allowLinking();
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'user_id' => '@bob:example.org',
+			'access_token' => 'syt_token',
+			'device_id' => 'DEVICE',
+		]);
+
+		$account = $this->service->linkWithLoginToken($this->user, '42', 'login-token');
+
+		self::assertSame('alice', $account->getUserId());
+		self::assertSame('@bob:example.org', $account->getMxid());
+		self::assertSame('DEVICE', $account->getDeviceId());
+		self::assertSame('encrypted:syt_token', $account->getAccessToken());
+		self::assertCount(1, $this->requests);
+		self::assertFalse($this->requests[0]->hasHeader('Authorization'));
+		self::assertSame([
+			'type' => 'm.login.token',
+			'token' => 'login-token',
+			'initial_device_display_name' => 'Nextcloud Talk (Cloud)',
+		], json_decode((string)$this->requests[0]->getBody(), true));
+	}
+
+	public static function dataLinkWithLoginTokenOfWrongUser(): array {
+		return [
+			'other server' => ['@bob:other.org'],
+			'no user id' => [''],
+		];
+	}
+
+	#[DataProvider('dataLinkWithLoginTokenOfWrongUser')]
+	public function testLinkWithLoginTokenOfWrongUser(string $userId): void {
+		$this->allowLinking();
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'user_id' => $userId,
+			'access_token' => 'syt_other',
+			'device_id' => 'OTHER',
+		]);
+		$this->responses['POST /_matrix/client/v3/logout'] = $this->json(200, []);
+		$this->mapper->expects(self::never())->method('insert');
+
+		try {
+			$this->service->linkWithLoginToken($this->user, '42', 'login-token');
+			self::fail('Expected exception');
+		} catch (\InvalidArgumentException $e) {
+			self::assertSame('user', $e->getMessage());
+		}
+		self::assertCount(2, $this->requests);
+		self::assertSame('/_matrix/client/v3/logout', $this->requests[1]->getUri()->getPath());
+		self::assertSame('Bearer syt_other', $this->requests[1]->getHeaderLine('Authorization'));
+	}
+
+	public function testLinkWithLoginTokenAlreadyLinked(): void {
+		$this->config->method('canLinkMatrixAccount')->willReturn(true);
+		$this->mapper->method('getByUserId')->with('alice')->willReturn(new Account());
+
+		$this->expectExceptionObject(new \InvalidArgumentException('already-linked'));
+		$this->service->linkWithLoginToken($this->user, '42', 'login-token');
+	}
+
+	public function testLinkWithInvalidLoginToken(): void {
+		$this->allowLinking();
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(403, ['errcode' => 'M_FORBIDDEN', 'error' => 'Invalid login token']);
+		$this->mapper->expects(self::never())->method('insert');
+
+		$this->expectException(ForbiddenException::class);
+		$this->service->linkWithLoginToken($this->user, '42', 'login-token');
+	}
+
+	public function testReloginWithLoginToken(): void {
+		$this->config->method('canLinkMatrixAccount')->with($this->user)->willReturn(true);
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'user_id' => '@bob:example.org',
+			'access_token' => 'syt_new',
+			'device_id' => 'DEVICE',
+		]);
+		$this->cryptoService->expects(self::never())->method('wipe');
+
+		$account = $this->service->reloginWithLoginToken($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'login-token');
+
+		self::assertSame(Account::STATUS_ACTIVE, $account->getStatus());
+		self::assertSame('encrypted:syt_new', $account->getAccessToken());
+		self::assertSame([
+			'type' => 'm.login.token',
+			'token' => 'login-token',
+			'initial_device_display_name' => 'Nextcloud Talk (Cloud)',
+			'device_id' => 'DEVICE',
+		], json_decode((string)$this->requests[0]->getBody(), true));
+	}
+
+	public function testReloginWithLoginTokenWithoutUserId(): void {
+		$this->config->method('canLinkMatrixAccount')->willReturn(true);
+		$this->homeserver();
+		$this->responses['POST /_matrix/client/v3/login'] = $this->json(200, [
+			'access_token' => 'syt_new',
+			'device_id' => 'DEVICE',
+		]);
+		$this->responses['POST /_matrix/client/v3/logout'] = $this->json(200, []);
+		$this->mapper->expects(self::never())->method('update');
+
+		$this->expectExceptionObject(new \InvalidArgumentException('user'));
+		$this->service->reloginWithLoginToken($this->user, $this->account(Account::STATUS_TOKEN_INVALID), 'login-token');
+	}
+
 	public function testCheckConnectionValid(): void {
 		$this->homeserver();
 		$this->responses['GET /_matrix/client/v3/account/whoami'] = $this->json(200, ['user_id' => '@bob:example.org']);

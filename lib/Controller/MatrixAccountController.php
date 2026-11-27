@@ -36,7 +36,7 @@ use OCP\IUserSession;
 
 /**
  * @psalm-import-type TalkMatrixAccount from \OCA\Talk\ResponseDefinitions
- * @psalm-import-type TalkMatrixHomeserver from \OCA\Talk\ResponseDefinitions
+ * @psalm-import-type TalkMatrixLinkHomeserver from \OCA\Talk\ResponseDefinitions
  * @psalm-import-type TalkMatrixVerification from \OCA\Talk\ResponseDefinitions
  */
 class MatrixAccountController extends OCSController {
@@ -66,7 +66,9 @@ class MatrixAccountController extends OCSController {
 	 * The access token of the linked account is checked with the homeserver,
 	 * the result is reused for 5 minutes.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{canLink: bool, account: ?TalkMatrixAccount, connected: bool, homeservers: list<TalkMatrixHomeserver>}, array{}>
+	 * The login types of the homeservers are reused for an hour.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{canLink: bool, account: ?TalkMatrixAccount, connected: bool, homeservers: list<TalkMatrixLinkHomeserver>}, array{}>
 	 *
 	 * 200: Account information returned
 	 */
@@ -79,7 +81,7 @@ class MatrixAccountController extends OCSController {
 		$homeservers = [];
 		if ($canLink) {
 			$homeservers = array_values(array_map(
-				static fn (Homeserver $homeserver): array => $homeserver->jsonSerialize(),
+				fn (Homeserver $homeserver): array => $this->formatLinkHomeserver($homeserver),
 				array_filter($this->homeserverService->getAll(), static fn (Homeserver $homeserver): bool => $homeserver->getEnabled()),
 			));
 		}
@@ -93,6 +95,18 @@ class MatrixAccountController extends OCSController {
 			'connected' => $connected,
 			'homeservers' => $homeservers,
 		]);
+	}
+
+	/**
+	 * @return TalkMatrixLinkHomeserver
+	 */
+	private function formatLinkHomeserver(Homeserver $homeserver): array {
+		$flows = $this->homeserverService->getLoginFlows($homeserver);
+		return $homeserver->jsonSerialize() + [
+			'passwordLogin' => $flows['password'],
+			'ssoLogin' => $flows['sso'],
+			'ssoProviders' => $flows['identityProviders'],
+		];
 	}
 
 	/**

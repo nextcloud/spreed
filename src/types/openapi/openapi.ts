@@ -1003,6 +1003,7 @@ export type paths = {
         /**
          * Get the linked Matrix account and the homeservers an account can be linked on
          * @description The access token of the linked account is checked with the homeserver, the result is reused for 5 minutes.
+         *     The login types of the homeservers are reused for an hour.
          */
         get: operations["matrix_account-get-account"];
         /** Log in again after the homeserver rejected the access token */
@@ -2979,6 +2980,20 @@ export type components = {
             baseUrl: string;
             enabled: boolean;
             specVersions: string[];
+        };
+        MatrixIdentityProvider: {
+            /** @description Id of the identity provider on the homeserver, e.g. `oidc-github` */
+            id: string;
+            /** @description Name shown to users */
+            name: string;
+        };
+        MatrixLinkHomeserver: components["schemas"]["MatrixHomeserver"] & {
+            /** @description Whether the homeserver offers a password login */
+            passwordLogin: boolean;
+            /** @description Whether the homeserver offers single sign-on */
+            ssoLogin: boolean;
+            /** @description Identity providers of the single sign-on, empty when the homeserver does not list them */
+            ssoProviders: components["schemas"]["MatrixIdentityProvider"][];
         };
         MatrixVerification: {
             /** @description One of `requested`, `ready`, `started`, `accepted`, `keys_exchanged`, `mac_sent`, `done` and `cancelled` */
@@ -8781,7 +8796,7 @@ export interface operations {
                                 canLink: boolean;
                                 account: components["schemas"]["MatrixAccount"] | null;
                                 connected: boolean;
-                                homeservers: components["schemas"]["MatrixHomeserver"][];
+                                homeservers: components["schemas"]["MatrixLinkHomeserver"][];
                             };
                         };
                     };

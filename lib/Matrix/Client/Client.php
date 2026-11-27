@@ -51,6 +51,59 @@ class Client {
 	}
 
 	/**
+	 * m.login.token, with the login token the homeserver handed out after a single sign-on
+	 *
+	 * @param string $deviceId Reuse an existing device instead of creating a new one
+	 * @throws MatrixException
+	 */
+	public function loginWithToken(#[\SensitiveParameter] string $loginToken, string $initialDeviceDisplayName, string $deviceId = ''): LoginResult {
+		$body = [
+			'type' => 'm.login.token',
+			'token' => $loginToken,
+			'initial_device_display_name' => $initialDeviceDisplayName,
+		];
+		if ($deviceId !== '') {
+			$body['device_id'] = $deviceId;
+		}
+		return LoginResult::fromArray($this->transport->withAccessToken(null)->post(self::PREFIX . '/login', $body));
+	}
+
+	/**
+	 * Login types the homeserver offers
+	 *
+	 * @return array{password: bool, sso: bool, identityProviders: list<array{id: string, name: string}>}
+	 * @throws MatrixException
+	 */
+	public function getLoginFlows(): array {
+		$flows = $this->transport->withAccessToken(null)->get(self::PREFIX . '/login')['flows'] ?? [];
+		$result = ['password' => false, 'sso' => false, 'identityProviders' => []];
+		if (!is_array($flows)) {
+			return $result;
+		}
+		foreach ($flows as $flow) {
+			if (!is_array($flow)) {
+				continue;
+			}
+			$type = $flow['type'] ?? null;
+			if ($type === 'm.login.password') {
+				$result['password'] = true;
+			} elseif ($type === 'm.login.sso') {
+				$result['sso'] = true;
+				foreach (is_array($flow['identity_providers'] ?? null) ? $flow['identity_providers'] : [] as $provider) {
+					if (!is_array($provider) || !is_string($provider['id'] ?? null) || $provider['id'] === '') {
+						continue;
+					}
+					$result['identityProviders'][] = [
+						'id' => $provider['id'],
+						'name' => is_string($provider['name'] ?? null) && $provider['name'] !== '' ? $provider['name'] : $provider['id'],
+					];
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
 	 * Owner of the access token
 	 *
 	 * @return string Matrix user id
