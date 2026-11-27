@@ -16,6 +16,7 @@ use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Service\PollService;
 use OCP\IDBConnection;
 use OCP\Server;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Test\TestCase;
 
@@ -96,5 +97,28 @@ class PollMapperTest extends TestCase {
 		} catch (\Exception) {
 			return null;
 		}
+	}
+
+	public static function visibilitySettings(): array {
+		$cases = [];
+		foreach (range(0, 15) as $mode) {
+			foreach ([false, true] as $draft) {
+				$cases[] = [$mode, $draft];
+			}
+		}
+		return $cases;
+	}
+
+	#[DataProvider('visibilitySettings')]
+	public function testResultModeIsPersisted(int $mode, bool $draft): void {
+		$poll = $this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], $mode, 1, $draft);
+		$stored = $this->pollMapper->getPollByRoomIdAndPollId($this->roomId, $poll->getId());
+		$this->assertSame($mode, $stored->getResultMode());
+		$this->assertSame($mode, $stored->renderAsDraft()['resultMode']);
+	}
+
+	public function testRejectsUnknownResultMode(): void {
+		$this->expectException(\OCA\Talk\Exceptions\PollPropertyException::class);
+		$this->service->createPoll($this->roomId, 'users', 'alice', 'Alice', 'Lunch?', ['Pizza', 'Pasta'], 16, 1, false);
 	}
 }

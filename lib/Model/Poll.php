@@ -38,9 +38,8 @@ use OCP\DB\Types;
  * @method void setStatus(int $status)
  * @method int getStatus()
  * @psalm-method self::STATUS_* getStatus()
- * @method void setResultMode(int $resultMode)
  * @method int getResultMode()
- * @psalm-method self::MODE_* getResultMode()
+ * @psalm-method int<0, 15> getResultMode()
  * @method void setMaxVotes(int $maxVotes)
  * @method int getMaxVotes()
  * @psalm-method int<0, max> getMaxVotes()
@@ -57,6 +56,9 @@ class Poll extends Entity {
 	public const STATUS_DRAFT = 2;
 	public const MODE_PUBLIC = 0;
 	public const MODE_HIDDEN = 1;
+	public const MODE_SHOW_NAMES_BEFORE_CLOSING = 2;
+	public const MODE_SHOW_NAMES_BEFORE_VOTING = 4;
+	public const MODE_SHOW_RESULTS_BEFORE_VOTING = 8;
 	public const MAX_VOTES_UNLIMITED = 0;
 
 	protected int $roomId = 0;
@@ -123,6 +125,31 @@ class Poll extends Entity {
 			'resultMode' => $this->getResultMode(),
 			'maxVotes' => $this->getMaxVotes(),
 		];
+	}
+
+	public function setResultMode(int $resultMode): void {
+		if ($resultMode < 0 || $resultMode > 15) {
+			throw new PollPropertyException(PollPropertyException::REASON_POLL);
+		}
+		$this->setter('resultMode', [$resultMode]);
+	}
+
+	public function isAnonymous(): bool {
+		return ($this->getResultMode() & self::MODE_HIDDEN) !== 0;
+	}
+
+	public function canSeeResultsBeforeVoting(): bool {
+		return ($this->getResultMode() & self::MODE_SHOW_RESULTS_BEFORE_VOTING) !== 0
+			|| (!$this->isAnonymous() && ($this->getResultMode() & self::MODE_SHOW_NAMES_BEFORE_VOTING) !== 0);
+	}
+
+	public function canSeeVoterNames(bool $hasVoted): bool {
+		if ($this->isAnonymous() || $this->isDraft()) {
+			return false;
+		}
+		return $this->getStatus() === self::STATUS_CLOSED
+			|| ($this->getResultMode() & self::MODE_SHOW_NAMES_BEFORE_VOTING) !== 0
+			|| ($hasVoted && ($this->getResultMode() & self::MODE_SHOW_NAMES_BEFORE_CLOSING) !== 0);
 	}
 
 	public function isDraft(): bool {

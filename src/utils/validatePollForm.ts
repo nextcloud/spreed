@@ -39,7 +39,7 @@ function validatePollForm(jsonObject: unknown): requiredPollParams {
 		throw new Error('Invalid parsed value: question')
 	}
 
-	if (typeof typedObject.resultMode !== 'number' || !(typedObject.resultMode === 0 || typedObject.resultMode === 1)) {
+	if (typeof typedObject.resultMode !== 'number' || !Number.isInteger(typedObject.resultMode) || typedObject.resultMode < 0 || typedObject.resultMode > 15) {
 		throw new Error('Invalid parsed value: resultMode')
 	}
 

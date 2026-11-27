@@ -29,7 +29,7 @@ type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraf
  * @param payload.token The conversation token
  * @param payload.question The question of the poll
  * @param payload.options The options participants can vote for
- * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.resultMode Result visibility bit flags
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  * @param payload.threadId The thread id to create poll in
  */
@@ -49,7 +49,7 @@ async function createPoll({ token, question, options, resultMode, maxVotes, thre
  * @param payload.token The conversation token
  * @param payload.question The question of the poll
  * @param payload.options The options participants can vote for
- * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.resultMode Result visibility bit flags
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  */
 async function createPollDraft({ token, question, options, resultMode, maxVotes }: createPollPayload): createPollDraftResponse {
@@ -68,7 +68,7 @@ async function createPollDraft({ token, question, options, resultMode, maxVotes 
  * @param payload.pollId The id of poll draft
  * @param payload.question The question of the poll
  * @param payload.options The options participants can vote for
- * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
+ * @param payload.resultMode Result visibility bit flags
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
  */
 async function updatePollDraft({ token, pollId, question, options, resultMode, maxVotes }: updatePollDraftPayload): updatePollDraftResponse {

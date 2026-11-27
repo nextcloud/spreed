@@ -2,6 +2,46 @@
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
+With the `talk-polls-result-visibility` capability, `resultMode` is a bitmask.
+Combine the flags with bitwise OR:
+
+| Flag | Meaning |
+|------|---------|
+| `1` | Anonymous: never expose voter identities, regardless of the other flags |
+| `2` | Show voter names before closing, after the participant has voted |
+| `4` | Show voter names and results before voting, unless anonymous |
+| `8` | Show results before voting, independently of voter-name visibility |
+
+The web editor offers these name-visibility settings:
+
+| Setting | `resultMode` without / with result preview |
+|---------|-------------------------------------------|
+| Always | `6` / `14` |
+| After voting | `2` / `10` |
+| After the poll ends | `0` / `8` |
+| Never | `1` / `9` |
+
+Names are never returned for drafts. Anonymous polls never expose voter identities
+in API responses, exports, or signaling payloads. Flag `8` does not grant access to
+names: with mode `10`, results are visible before voting but names appear only after
+voting. Withdrawing a vote hides names again in modes `2` and `10`.
+
+### Backward compatibility
+
+The existing values retain their behavior: `0` shows results after voting and
+names after closing; `1` hides results until closing and never shows names.
+Existing polls require no database migration. The API parameters and response
+fields are unchanged; settings are persisted in the existing `resultMode` column
+and preserved in drafts, imports, exports, and federated requests. Unknown bits
+and negative values are rejected with HTTP 400.
+
+Clients must check `talk-polls-result-visibility` before submitting values other
+than `0` and `1`. The web editor falls back to the original checkbox on older
+servers and strips unsupported flags from imported drafts. Older clients can
+continue creating polls using `0` and `1`; displaying the new modes correctly
+requires clients to interpret the bitmask. Server-side visibility checks apply
+regardless of the client version.
+
 ## Create a poll in a conversation
 
 * Federation capability: `federation-v1`
@@ -13,7 +53,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 |--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `question`   | string       | The question of the poll                                                                                                                                                                                                       |
 | `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
-| `resultMode` | int          | The result and voting mode of the poll, `0` means participants can immediatelly see the result and who voted for which option. `1` means the result is hidden until the poll is closed and then only the summary is published. |
+| `resultMode` | int | Result visibility bitmask described above. Values other than `0` and `1` require `talk-polls-result-visibility`. |
 | `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
 
 * Response:
@@ -41,7 +81,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 |--------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `question`   | string       | The question of the poll                                                                                                                                                                                                       |
 | `options`    | string[]     | Array of strings with the voting options                                                                                                                                                                                       |
-| `resultMode` | int          | The result and voting mode of the poll, `0` means participants can immediatelly see the result and who voted for which option. `1` means the result is hidden until the poll is closed and then only the summary is published. |
+| `resultMode` | int | Result visibility bitmask described above. Values other than `0` and `1` require `talk-polls-result-visibility`. |
 | `maxVotes`   | int          | Maximum amount of options a participant can vote for                                                                                                                                                                           |
 
 * Response:
@@ -130,16 +170,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 | `id`               | int      | ID of the poll                                                                                                                                          |
 | `question`         | string   | The question of the poll                                                                                                                                |
 | `options`          | string[] | The options participants can vote for                                                                                                                   |
-| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (only available for when the actor voted on public poll or the poll is closed)                       |
+| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (available after voting on public polls, after closing, or when result previews are enabled) |
 | `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))                                                           |
 | `actorId`          | string   | Actor ID identifying the poll author                                                                                                                    |
 | `actorDisplayName` | string   | Display name of the poll author                                                                                                                         |
 | `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                                                                            |
-| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                                                                           |
+| `resultMode` | int | Result visibility bitmask described above. Values other than `0` and `1` require `talk-polls-result-visibility`. |
 | `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                                                                                      |
 | `votedSelf`        | int[]    | Array of option ids the participant voted for                                                                                                           |
-| `numVoters`        | int      | The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators) |
-| `details`          | array[]  | Detailed list who voted for which option (only available for public closed polls), see [Details](#details) below                                        |
+| `numVoters`        | int      | The number of unique voters (available when results are visible, or to the creator and moderators) |
+| `details` | array[] | Who voted for each option, only when permitted by `resultMode`. Never returned for anonymous polls or drafts. See [Details](#details). |
 
 ### Details
 

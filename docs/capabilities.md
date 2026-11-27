@@ -245,6 +245,7 @@
 * `config => attachments => default-original-quality` (local) - Whether images are uploaded in original quality by default, until the user picks a choice in the upload editor
 
 ## 26
+* `talk-polls-result-visibility` - Whether `resultMode` supports bit flags for voter-name visibility and independent result previews before voting
 * `config => matrix => enabled` (local) - Whether the Matrix integration is enabled, so users can manage their linked Matrix account
 * `config => chat => mobile-preload-chat` (local) - Whether mobile clients should preload the chat messages of conversations
 * `matrix-rooms` (local) - Whether Matrix accounts can be linked, see [Matrix integration](matrix.md)

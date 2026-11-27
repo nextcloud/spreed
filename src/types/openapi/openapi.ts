@@ -3083,16 +3083,16 @@ export type components = {
             callId?: string | null;
         };
         Poll: components["schemas"]["PollDraft"] & {
-            /** @description Detailed list who voted for which option (only available for public closed polls) */
+            /** @description Detailed voters, only when allowed by the resultMode flags */
             details?: components["schemas"]["PollVote"][];
             /**
              * Format: int64
-             * @description The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators)
+             * @description Number of unique voters (visible when results are available, or to the creator and moderators)
              */
             numVoters?: number;
             /** @description Array of option ids the participant voted for */
             votedSelf?: number[];
-            /** @description Map with `'option-' + optionId` => number of votes (only available when the actor voted on public poll or the poll is closed) */
+            /** @description Map of option IDs (option-N) to vote counts, only when results are visible */
             votes?: {
                 [key: string]: number;
             };
@@ -3121,9 +3121,8 @@ export type components = {
             /**
              * Format: int64
              * @description Result mode of the poll (see [Constants - Poll mode](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-mode))
-             * @enum {integer}
              */
-            resultMode: 0 | 1;
+            resultMode: number;
             /**
              * Format: int64
              * @description Status of the poll (see [Constants - Poll status](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-status))
@@ -10230,10 +10229,9 @@ export interface operations {
                     options: string[];
                     /**
                      * Format: int64
-                     * @description Mode how the results will be shown
-                     * @enum {integer}
+                     * @description Result visibility bit flags (requires `talk-polls-result-visibility` for values other than 0 and 1)
                      */
-                    resultMode: 0 | 1;
+                    resultMode: number;
                     /**
                      * Format: int64
                      * @description Number of maximum votes per voter
@@ -10327,10 +10325,9 @@ export interface operations {
                     options: string[];
                     /**
                      * Format: int64
-                     * @description Mode how the results will be shown
-                     * @enum {integer}
+                     * @description Result visibility bit flags (requires `talk-polls-result-visibility` for values other than 0 and 1)
                      */
-                    resultMode: 0 | 1;
+                    resultMode: number;
                     /**
                      * Format: int64
                      * @description Number of maximum votes per voter

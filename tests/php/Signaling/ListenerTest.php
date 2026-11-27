@@ -24,7 +24,9 @@ use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Thread;
+use OCA\Talk\Model\Vote;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
@@ -351,6 +353,43 @@ class ListenerTest extends TestCase {
 			]);
 
 		$this->listener->handle($event);
+	}
+
+	public static function pollResultModes(): array {
+		return array_map(static fn (int $mode) => [$mode], range(0, 15));
+	}
+
+	#[DataProvider('pollResultModes')]
+	public function testClosedPollSignalingRespectsAnonymousFlag(int $mode): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(1);
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => 'poll_closed', 'parameters' => ['poll' => ['id' => 1]]], JSON_THROW_ON_ERROR));
+		$message = $this->createConfiguredMock(Message::class, ['getVisibility' => true, 'toArray' => ['id' => 123]]);
+		$this->messageParser->method('createMessage')->willReturn($message);
+		$this->l10nFactory->method('get')->willReturn($this->createMock(IL10N::class));
+		$poll = new Poll();
+		$poll->setId(1);
+		$poll->setQuestion('Lunch?');
+		$poll->setOptions(['A', 'B']);
+		$poll->setVotes('{"0":1}');
+		$poll->setStatus(Poll::STATUS_CLOSED);
+		$poll->setResultMode($mode);
+		$vote = new Vote();
+		$vote->setActorType('users');
+		$vote->setActorId('alice');
+		$vote->setDisplayName('Alice');
+		$vote->setOptionId(0);
+		$anonymous = ($mode & Poll::MODE_HIDDEN) !== 0;
+		$this->pollService->method('getPoll')->willReturn($poll);
+		$this->pollService->expects($anonymous ? $this->never() : $this->once())->method('getVotes')->willReturn([$vote]);
+		$this->backendNotifier->expects($this->once())->method('sendRoomMessage')->with($room, $this->callback(function (array $data) use ($mode, $anonymous, $vote): bool {
+			$this->assertSame($mode, $data['chat']['comment']['poll']['resultMode']);
+			$this->assertSame($anonymous ? ['option-0' => 1] : [$vote->asArray()], $data['chat']['comment']['poll']['votes']);
+			return true;
+		}));
+		$this->listener->handle(new SystemMessageSentEvent($room, $comment, skipLastActivityUpdate: false));
 	}
 
 	public static function dataSystemMessageSentEventWithLobby(): array {

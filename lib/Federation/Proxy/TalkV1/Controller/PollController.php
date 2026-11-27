@@ -191,7 +191,7 @@ class PollController {
 				'question' => $question,
 				'options' => $options,
 				'resultMode' => $resultMode,
-				'maxVotes' => $maxVotes
+				'maxVotes' => $maxVotes,
 			],
 		);
 

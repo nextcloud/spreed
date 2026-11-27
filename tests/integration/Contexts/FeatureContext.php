@@ -2676,6 +2676,8 @@ class FeatureContext implements Context {
 			$data['resultMode'] = 0;
 		} elseif ($data['resultMode'] === 'hidden') {
 			$data['resultMode'] = 1;
+		} elseif (ctype_digit($data['resultMode'])) {
+			$data['resultMode'] = (int)$data['resultMode'];
 		} else {
 			throw new \Exception('Invalid result mode');
 		}
@@ -2714,6 +2716,8 @@ class FeatureContext implements Context {
 			$data['resultMode'] = 0;
 		} elseif ($data['resultMode'] === 'hidden') {
 			$data['resultMode'] = 1;
+		} elseif (ctype_digit($data['resultMode'])) {
+			$data['resultMode'] = (int)$data['resultMode'];
 		} else {
 			throw new \Exception('Invalid result mode');
 		}
@@ -2767,6 +2771,7 @@ class FeatureContext implements Context {
 			$poll['resultMode'] = match($poll['resultMode']) {
 				'public' => 0,
 				'hidden' => 1,
+				default => (int)$poll['resultMode'],
 			};
 			$poll['status'] = match($poll['status']) {
 				'open' => 0,
@@ -2863,6 +2868,10 @@ class FeatureContext implements Context {
 	}
 
 	protected function assertPollEquals(array $expected, array $response): void {
+		if (($expected['details'] ?? null) === 'absent') {
+			Assert::assertArrayNotHasKey('details', $response);
+			unset($expected['details']);
+		}
 		if (isset($expected['details'])) {
 			$response['details'] = array_map(static function (array $detail): array {
 				unset($detail['id']);
@@ -2915,7 +2924,7 @@ class FeatureContext implements Context {
 		if (isset($expected['votes'])) {
 			$expected['votes'] = json_decode($expected['votes'], true);
 		}
-		if (isset($expected['details'])) {
+		if (isset($expected['details']) && $expected['details'] !== 'absent') {
 			$expected['details'] = json_decode($expected['details'], true);
 		}
 		$expected['numVoters'] = (int)$expected['numVoters'];

@@ -221,8 +221,18 @@ Required capability: `conversation-presets`
 * `1` - Closed: Participants can no longer cast votes and the result is displayed
 
 ### Poll mode
-* `0` - Public: Participants can see the result immediately and also who voted for which option
-* `1` - Hidden: The result is hidden until the poll is closed and then only the number of votes for each option are displayed
+
+With capability `talk-polls-result-visibility`, this is a bitmask:
+
+* `0` - Legacy public mode: results after voting, names after closing
+* `1` - Hide voter identities (anonymous); without other flags, results only after closing
+* `2` - Show names before closing, after voting
+* `4` - Show names and results before voting (unless anonymous)
+* `8` - Show results before voting without changing name visibility
+
+Combine flags using bitwise OR. The anonymous flag always takes precedence over
+name visibility flags. Existing values `0` and `1` retain their meaning.
+See [Poll API](poll.md) for combinations and compatibility requirements.
 
 ## Bots
 

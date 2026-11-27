@@ -1740,7 +1740,7 @@
                         "properties": {
                             "details": {
                                 "type": "array",
-                                "description": "Detailed list who voted for which option (only available for public closed polls)",
+                                "description": "Detailed voters, only when allowed by the resultMode flags",
                                 "items": {
                                     "$ref": "#/components/schemas/PollVote"
                                 }
@@ -1748,7 +1748,7 @@
                             "numVoters": {
                                 "type": "integer",
                                 "format": "int64",
-                                "description": "The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators)",
+                                "description": "Number of unique voters (visible when results are available, or to the creator and moderators)",
                                 "minimum": 0
                             },
                             "votedSelf": {
@@ -1761,7 +1761,7 @@
                             },
                             "votes": {
                                 "type": "object",
-                                "description": "Map with `'option-' + optionId` => number of votes (only available when the actor voted on public poll or the poll is closed)",
+                                "description": "Map of option IDs (option-N) to vote counts, only when results are visible",
                                 "additionalProperties": {
                                     "type": "integer",
                                     "format": "int64"
@@ -1825,11 +1825,9 @@
                     "resultMode": {
                         "type": "integer",
                         "format": "int64",
-                        "enum": [
-                            0,
-                            1
-                        ],
-                        "description": "Result mode of the poll (see [Constants - Poll mode](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-mode))"
+                        "description": "Result mode of the poll (see [Constants - Poll mode](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-mode))",
+                        "minimum": 0,
+                        "maximum": 15
                     },
                     "status": {
                         "type": "integer",
@@ -19098,11 +19096,9 @@
                                     "resultMode": {
                                         "type": "integer",
                                         "format": "int64",
-                                        "enum": [
-                                            0,
-                                            1
-                                        ],
-                                        "description": "Mode how the results will be shown"
+                                        "description": "Result visibility bit flags (requires `talk-polls-result-visibility` for values other than 0 and 1)",
+                                        "minimum": 0,
+                                        "maximum": 15
                                     },
                                     "maxVotes": {
                                         "type": "integer",
@@ -19319,11 +19315,9 @@
                                     "resultMode": {
                                         "type": "integer",
                                         "format": "int64",
-                                        "enum": [
-                                            0,
-                                            1
-                                        ],
-                                        "description": "Mode how the results will be shown"
+                                        "description": "Result visibility bit flags (requires `talk-polls-result-visibility` for values other than 0 and 1)",
+                                        "minimum": 0,
+                                        "maximum": 15
                                     },
                                     "maxVotes": {
                                         "type": "integer",

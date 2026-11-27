@@ -64,8 +64,8 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @param string $question Question of the poll
 	 * @param string[] $options Options of the poll
 	 * @psalm-param list<string> $options
-	 * @param 0|1 $resultMode Mode how the results will be shown
-	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
+	 * @param int<0, 15> $resultMode Result visibility bit flags (requires `talk-polls-result-visibility` for values other than 0 and 1)
+	 * @psalm-param int<0, 15> $resultMode
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
 	 * @param int $threadId Thread id which this poll should be posted into (also requires `threads` capability)
@@ -170,8 +170,8 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @param string $question Question of the poll
 	 * @param string[] $options Options of the poll
 	 * @psalm-param list<string> $options
-	 * @param 0|1 $resultMode Mode how the results will be shown
-	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
+	 * @param int<0, 15> $resultMode Result visibility bit flags (requires `talk-polls-result-visibility` for values other than 0 and 1)
+	 * @psalm-param int<0, 15> $resultMode
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
@@ -313,12 +313,8 @@ class PollController extends AEnvironmentAwareOCSController {
 		}
 
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
-		$detailedVotes = [];
-		if ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
-			$detailedVotes = $this->pollService->getVotes($poll);
-		}
 
-		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
 	/**
@@ -370,7 +366,7 @@ class PollController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'options'], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($poll->getResultMode() === Poll::MODE_PUBLIC) {
+		if (!$poll->isAnonymous()) {
 			$attendee = $this->participant->getAttendee();
 			try {
 				$message = json_encode([
@@ -465,14 +461,9 @@ class PollController extends AEnvironmentAwareOCSController {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
-		$detailedVotes = [];
-		if ($poll->getResultMode() === Poll::MODE_PUBLIC) {
-			$detailedVotes = $this->pollService->getVotes($poll);
-		}
-
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
 
-		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
 	/**
@@ -515,7 +506,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		}
 
 		$detailedVotes = [];
-		if ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
+		if (!$poll->isAnonymous() && $poll->getStatus() === Poll::STATUS_CLOSED) {
 			$detailedVotes = $this->pollService->getVotes($poll);
 		}
 
@@ -542,10 +533,11 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @return TalkPoll
 	 * @throws JsonException
 	 */
-	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
+	protected function renderPoll(Poll $poll, array $votedSelf = []): array {
 		$data = $poll->renderAsPoll();
 
-		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
+		$canSeeSummary = $poll->canSeeResultsBeforeVoting()
+			|| (!empty($votedSelf) && !$poll->isAnonymous());
 
 		if (!$canSeeSummary && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
@@ -557,8 +549,9 @@ class PollController extends AEnvironmentAwareOCSController {
 			} else {
 				$data['numVoters'] = 0;
 			}
-		} elseif ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
-			$data['details'] = array_values(array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes));
+		} elseif ($poll->canSeeVoterNames(!empty($votedSelf))) {
+			$detailedVotes = $this->pollService->getVotes($poll);
+			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
 		}
 
 		$data['votedSelf'] = array_values(array_map(static fn (Vote $vote) => $vote->getOptionId(), $votedSelf));

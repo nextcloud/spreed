@@ -6,7 +6,7 @@
 import { mount } from '@vue/test-utils'
 import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createStore } from 'vuex'
 import PollViewer from './PollViewer.vue'
@@ -25,6 +25,7 @@ describe('PollViewer.vue', () => {
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		pollsStore = usePollsStore()
+		vi.spyOn(pollsStore, 'getPollData').mockResolvedValue(undefined)
 		store = createStore(cloneDeep(storeConfig))
 
 		poll = {
