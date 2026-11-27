@@ -46,6 +46,14 @@ export default class MediaDevicesSource extends TrackSource {
 		this._audioAllowed = true
 		this._videoAllowed = true
 
+		// Whether the video device should be actively grabbed. Unlike
+		// "_videoAllowed" (which reflects whether video is permitted at all, e.g.
+		// based on participant permissions), this reflects whether the video is
+		// currently enabled by the user. When the video is disabled the device
+		// is fully released (rather than just disabling the track) so the camera
+		// hardware light turns off (see spreed#4008).
+		this._videoActive = true
+
 		this._active = false
 	}
 
@@ -55,6 +63,10 @@ export default class MediaDevicesSource extends TrackSource {
 
 	isVideoAllowed() {
 		return this._videoAllowed
+	}
+
+	isVideoActive() {
+		return this._videoActive
 	}
 
 	setAudioAllowed(audioAllowed) {
@@ -103,6 +115,33 @@ export default class MediaDevicesSource extends TrackSource {
 		this._setOutputTrack('video', null)
 	}
 
+	setVideoActive(videoActive) {
+		if (this._videoActive === videoActive) {
+			return
+		}
+
+		this._videoActive = videoActive
+
+		if (!videoActive) {
+			// Fully stop the video track to release the camera (and thus turn
+			// off the camera hardware light) rather than just disabling it.
+			if (this.getOutputTrack('video')) {
+				this.getOutputTrack('video').stop()
+			}
+			this._setOutputTrack('video', null)
+
+			return
+		}
+
+		// Re-grabbing the camera only makes sense when the source is active and
+		// video is allowed.
+		if (!this._active || !this._videoAllowed) {
+			return
+		}
+
+		this._handleVideoInputIdChangedBound(mediaDevicesManager, mediaDevicesManager.get('videoInputId'))
+	}
+
 	async start(retryNoVideoCallback) {
 		this._active = true
 
@@ -116,7 +155,7 @@ export default class MediaDevicesSource extends TrackSource {
 
 		const constraints = {
 			audio: this._audioAllowed,
-			video: this._videoAllowed,
+			video: this._videoAllowed && this._videoActive,
 		}
 
 		let stream
@@ -318,6 +357,12 @@ export default class MediaDevicesSource extends TrackSource {
 
 	_handleVideoInputIdChanged(mediaDevicesManager, videoInputId) {
 		if (!this._videoAllowed) {
+			return
+		}
+
+		// While the video is disabled the camera is kept released, so device
+		// changes should not grab it again until the video is enabled.
+		if (!this._videoActive) {
 			return
 		}
 
