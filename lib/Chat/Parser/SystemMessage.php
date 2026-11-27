@@ -1101,6 +1101,7 @@ class SystemMessage implements IEventListener {
 	}
 
 	protected function loadCircleDetails(string $circleId): void {
+		$circlesManager = null;
 		try {
 			$circlesManager = Server::get(CirclesManager::class);
 			$circlesManager->startSuperSession();
