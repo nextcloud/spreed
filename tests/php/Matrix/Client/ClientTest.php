@@ -12,6 +12,7 @@ use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Matrix\Client\Client;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Exception\RateLimitedException;
 use OCA\Talk\Matrix\Client\Model\Event;
 use OCA\Talk\Matrix\Client\Transport;
 use Psr\Http\Client\ClientInterface;
@@ -28,6 +29,7 @@ class ClientTest extends TestCase {
 	private array $queries = [];
 	/** @var list<string> */
 	private array $methods = [];
+	private Transport $transport;
 	private Client $client;
 
 	protected function setUp(): void {
@@ -43,7 +45,8 @@ class ClientTest extends TestCase {
 			}
 		};
 		$factory = new HttpFactory();
-		$this->client = new Client(new Transport('https://matrix.example.org', $http, $factory, $factory));
+		$this->transport = new Transport('https://matrix.example.org', $http, $factory, $factory);
+		$this->client = new Client($this->transport);
 	}
 
 	public function respond(RequestInterface $request): ResponseInterface {
@@ -166,5 +169,43 @@ class ClientTest extends TestCase {
 	public function testDownloadInvalidContentUri(): void {
 		$this->expectException(\InvalidArgumentException::class);
 		$this->client->downloadMedia('mxc://example.org/../../admin');
+	}
+
+	public function testRateLimitedLogin(): void {
+		$this->responses[] = new Response(429, ['Content-Type' => 'application/json'], '{"errcode":"M_LIMIT_EXCEEDED","error":"Too Many Requests","retry_after_ms":125000}');
+
+		try {
+			$this->client->loginWithPassword('alice', 'secret', 'Talk');
+			self::fail('The login should be rate limited');
+		} catch (RateLimitedException $e) {
+			self::assertSame(429, $e->getHttpStatus());
+			self::assertSame(125000, $e->getRetryAfterMs());
+		}
+	}
+
+	public function testRateLimitedWithoutRetryAfter(): void {
+		$this->responses[] = new Response(429, ['Content-Type' => 'application/json'], '{"errcode":"M_LIMIT_EXCEEDED","error":"Too Many Requests"}');
+
+		try {
+			$this->client->loginWithPassword('alice', 'secret', 'Talk');
+			self::fail('The login should be rate limited');
+		} catch (RateLimitedException $e) {
+			self::assertNull($e->getRetryAfterMs());
+		}
+	}
+
+	public function testPutWaitsAsLongAsTheHomeserverAsks(): void {
+		$sleeps = [];
+		$this->transport->setSleep(static function (int $milliseconds) use (&$sleeps): void {
+			$sleeps[] = $milliseconds;
+		});
+		$this->responses[] = new Response(429, ['Content-Type' => 'application/json'], '{"errcode":"M_LIMIT_EXCEEDED","error":"Too Many Requests","retry_after_ms":1200}');
+		$this->responses[] = new Response(503, ['Content-Type' => 'application/json'], '{"errcode":"M_UNKNOWN","error":"Unavailable"}');
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{}');
+
+		$this->client->sendToDevice('m.dummy', [], 'txn1');
+
+		self::assertSame([1200, 500], $sleeps);
+		self::assertSame(['PUT', 'PUT', 'PUT'], $this->methods);
 	}
 }

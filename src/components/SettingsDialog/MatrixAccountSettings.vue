@@ -7,7 +7,7 @@
 import type { MatrixAccount, MatrixHomeserver } from '../../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, onMounted, reactive, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -47,6 +47,23 @@ const LINK_ERRORS: Record<string, string> = {
 const RELOGIN_ERRORS: Record<string, string> = {
 	...LINK_ERRORS,
 	user: t('spreed', 'The login belongs to a different Matrix account'),
+}
+
+/**
+ * Message for a failed login on the homeserver
+ *
+ * @param error The error of the request
+ * @param errors Messages for the reasons the server returns
+ * @param fallback Message when the reason is unknown
+ */
+function loginErrorMessage(error: unknown, errors: Record<string, string>, fallback: string): string {
+	const data = isAxiosErrorResponse<{ error: string, retryAfter?: number | null }>(error) ? error.response?.data?.ocs?.data : undefined
+	if (data?.error === 'ratelimited') {
+		return data.retryAfter
+			? n('spreed', 'The homeserver received too many login attempts, try again in %n minute', 'The homeserver received too many login attempts, try again in %n minutes', Math.ceil(data.retryAfter / 60))
+			: t('spreed', 'The homeserver received too many login attempts, try again later')
+	}
+	return (data?.error && errors[data.error]) || fallback
 }
 
 const { getActionStatus, runAction } = useActionStatus()
@@ -124,8 +141,7 @@ async function linkAccount() {
 		form.user = ''
 	} catch (error) {
 		console.error(error)
-		const reason = isAxiosErrorResponse<{ error: string }>(error) ? error.response?.data?.ocs?.data?.error : undefined
-		showError((reason && LINK_ERRORS[reason]) || t('spreed', 'Could not link the Matrix account'))
+		showError(loginErrorMessage(error, LINK_ERRORS, t('spreed', 'Could not link the Matrix account')))
 	} finally {
 		form.password = ''
 		loading.value = false
@@ -147,8 +163,7 @@ async function reloginAccount() {
 		connected.value = true
 	} catch (error) {
 		console.error(error)
-		const reason = isAxiosErrorResponse<{ error: string }>(error) ? error.response?.data?.ocs?.data?.error : undefined
-		showError((reason && RELOGIN_ERRORS[reason]) || t('spreed', 'Could not log in to Matrix again'))
+		showError(loginErrorMessage(error, RELOGIN_ERRORS, t('spreed', 'Could not log in to Matrix again')))
 	} finally {
 		form.password = ''
 		loading.value = false

@@ -8907,6 +8907,25 @@ export interface operations {
                     };
                 };
             };
+            /** @description The homeserver limits the login attempts, `retryAfter` is the number of seconds to wait when the homeserver tells it */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ratelimited";
+                                /** Format: int64 */
+                                retryAfter: number | null;
+                            };
+                        };
+                    };
+                };
+            };
             /** @description Homeserver unreachable */
             502: {
                 headers: {
@@ -9012,6 +9031,25 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The homeserver limits the login attempts, `retryAfter` is the number of seconds to wait when the homeserver tells it */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ratelimited";
+                                /** Format: int64 */
+                                retryAfter: number | null;
                             };
                         };
                     };

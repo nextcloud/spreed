@@ -13,6 +13,7 @@ use OCA\Talk\Matrix\Client\Crypto\CryptoException;
 use OCA\Talk\Matrix\Client\Crypto\Verification\SasVerification;
 use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Exception\RateLimitedException;
 use OCA\Talk\Matrix\Client\Exception\TransportException;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Model\Homeserver;
@@ -123,12 +124,13 @@ class MatrixAccountController extends OCSController {
 	 * @param string $homeserverId Id of the homeserver
 	 * @param string $user Matrix localpart or full user id
 	 * @param string $password Matrix password
-	 * @return DataResponse<Http::STATUS_CREATED, TalkMatrixAccount, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_UNAUTHORIZED|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkMatrixAccount, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_UNAUTHORIZED|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>|DataResponse<Http::STATUS_TOO_MANY_REQUESTS, array{error: 'ratelimited', retryAfter: ?int}, array{}>
 	 *
 	 * 201: Account linked
 	 * 400: Invalid homeserver or user, account already linked or login rejected by the homeserver
 	 * 401: Wrong credentials
 	 * 403: User is not allowed to link an account
+	 * 429: The homeserver limits the login attempts, `retryAfter` is the number of seconds to wait when the homeserver tells it
 	 * 502: Homeserver unreachable
 	 */
 	#[NoAdminRequired]
@@ -180,13 +182,14 @@ class MatrixAccountController extends OCSController {
 	 * Log in again after the homeserver rejected the access token
 	 *
 	 * @param string $password Matrix password
-	 * @return DataResponse<Http::STATUS_OK, TalkMatrixAccount, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkMatrixAccount, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_UNAUTHORIZED|Http::STATUS_NOT_FOUND|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>|DataResponse<Http::STATUS_TOO_MANY_REQUESTS, array{error: 'ratelimited', retryAfter: ?int}, array{}>
 	 *
 	 * 200: Logged in again
 	 * 400: Homeserver is not available anymore, the login belongs to another Matrix user or was rejected by the homeserver
 	 * 401: Wrong credentials
 	 * 403: User is not allowed to link an account
 	 * 404: No linked account
+	 * 429: The homeserver limits the login attempts, `retryAfter` is the number of seconds to wait when the homeserver tells it
 	 * 502: Homeserver unreachable
 	 */
 	#[NoAdminRequired]
@@ -417,9 +420,12 @@ class MatrixAccountController extends OCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_BAD_GATEWAY, array{error: string}, array{}>|DataResponse<Http::STATUS_TOO_MANY_REQUESTS, array{error: 'ratelimited', retryAfter: ?int}, array{}>
 	 */
 	private function loginErrorResponse(MatrixException $e): DataResponse {
+		if ($e instanceof RateLimitedException) {
+			return new DataResponse(['error' => 'ratelimited', 'retryAfter' => $e->getRetryAfterSeconds()], Http::STATUS_TOO_MANY_REQUESTS);
+		}
 		if ($e instanceof ForbiddenException) {
 			$response = new DataResponse(['error' => 'credentials'], Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'matrixLink']);

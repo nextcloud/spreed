@@ -10,6 +10,7 @@ namespace OCA\Talk\Matrix\Client;
 
 use OCA\Talk\Matrix\Client\Exception\ForbiddenException;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Exception\RateLimitedException;
 use OCA\Talk\Matrix\Client\Exception\TransportException;
 use OCA\Talk\Matrix\Client\Exception\UnknownTokenException;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -94,7 +95,7 @@ final class Transport {
 				if (!$retryable || $attempt >= self::MAX_RETRIES) {
 					throw $e;
 				}
-				$delay = is_int($e->getBody()['retry_after_ms'] ?? null) ? $e->getBody()['retry_after_ms'] : 500;
+				$delay = ($e instanceof RateLimitedException ? $e->getRetryAfterMs() : null) ?? 500;
 				($this->sleep)(min(self::MAX_RETRY_DELAY, $delay));
 			}
 		}
@@ -213,6 +214,7 @@ final class Transport {
 		return match ($errcode) {
 			'M_FORBIDDEN' => new ForbiddenException($message, $status, $errcode, $body),
 			'M_UNKNOWN_TOKEN', 'M_MISSING_TOKEN' => new UnknownTokenException($message, $status, $errcode, $body),
+			'M_LIMIT_EXCEEDED' => new RateLimitedException($message, $status, $errcode, $body),
 			default => new MatrixException($message, $status, $errcode, $body),
 		};
 	}
