@@ -160,22 +160,22 @@ Feature: chat-2/bots
     When invoking occ with "talk:bot:install Bot S3CR3T U"
     Then the command failed with exit code 1
     And the command output contains the text "The provided secret is too short"
-    When invoking occ with "talk:bot:install Bot invalid://localhost/bot1 Description Secret:1234567890123456789012345678901234567890"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 U"
     Then the command failed with exit code 1
     And the command output contains the text "The provided URL is not a valid URL"
 
   Scenario: Registering the same webhook or secret twice
-    Given invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret:1234567890123456789012345678901234567890"
+    Given invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
     And the command was successful
-    When invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret:1234567890123456789012345678901234567890"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
     Then the command failed with exit code 2
     And the command output contains the text "Bot with the same URL is already registered"
-    When invoking occ with "talk:bot:install Bot https://localhost.local/bot1 Description Secret:1234567890123456789012345678901234567890"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot2"
     Then the command failed with exit code 3
     And the command output contains the text "Bot with the same secret is already registered"
 
   Scenario: Set up conversation bot errors
-    Given invoking occ with "talk:bot:install ErrorBot https://localhost/bot1 Description Secret:1234567890123456789012345678901234567890"
+    Given invoking occ with "talk:bot:install ErrorBot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room" (v4)
@@ -194,7 +194,7 @@ Feature: chat-2/bots
     And the command output contains the text "Bot is already set up for the conversation"
 
   Scenario: Bot with all features
-    Given invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret1234567890123456789012345678901234567890"
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room1" (v4)
@@ -227,7 +227,7 @@ Feature: chat-2/bots
 
   # Unchanged from above
   Scenario: Bot with response only feature
-    Given invoking occ with "talk:bot:install Bot1 https://localhost/bot1 Description Secret1234567890123456789012345678901234567890 --feature=response"
+    Given invoking occ with "talk:bot:install Bot1 Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=response"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room1" (v4)
@@ -264,7 +264,7 @@ Feature: chat-2/bots
       | actorType | actorId           | actorDisplayName | reaction |
 
   Scenario: Bot with receive-only feature
-    Given invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret1234567890123456789012345678901234567890 --feature=webhook"
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=webhook"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room1" (v4)
@@ -292,7 +292,7 @@ Feature: chat-2/bots
       | reaction  | 👍 |
 
   Scenario: Bot from another room
-    Given invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret1234567890123456789012345678901234567890 --feature=response"
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=response"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room1" (v4)
@@ -351,7 +351,7 @@ Feature: chat-2/bots
     And user "participant1" sends message "Message 1" to room "room" with 201
     Then user "participant1" edits message "Message 1" in room "room" to "Message 1 - Edit 1" with 200
     And user "participant1" deletes message "Message 1 - Edit 1" from room "room" with 200
-    Given invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret1234567890123456789012345678901234567890 --feature=webhook"
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=webhook"
     And the command was successful
     And read bot ids from OCC
     And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room)"
@@ -416,7 +416,7 @@ Feature: chat-2/bots
     Then the command was successful
 
   Scenario: Bot fetches its own enabled features
-    Given invoking occ with "talk:bot:install Bot https://localhost/bot1 Description Secret1234567890123456789012345678901234567890"
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room1" (v4)

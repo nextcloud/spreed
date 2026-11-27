@@ -6,14 +6,14 @@ Install a new bot on the server
 
 ### Usage
 
-* `talk:bot:install [--output [OUTPUT]] [--no-setup] [-f|--feature FEATURE] [--password-from-env] [--] <name> <url> [<description> [<secret>]]`
+* `talk:bot:install [--output [OUTPUT]] [--no-setup] [-f|--feature FEATURE] [--password-from-env] [--] <name> <secret> <url> [<description>]`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `name` | The name under which the messages will be posted (min. 1 char, max. 64 chars) | yes | no | *Required* |
+| `secret` | Secret used to validate API calls (min. 40 chars, max. 128 chars; put "env" when using --pasword-from-env). | yes | no | *Required* |
 | `url` | Webhook endpoint to post messages to (max. 4000 chars) | yes | no | *Required* |
 | `description` | Optional description shown in the admin settings (max. 4000 chars) | no | no | `NULL` |
-| `secret` | Secret used to validate API calls (min. 40 chars, max. 128 chars). | no | no | `NULL` |
 
 | Options | Description | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|

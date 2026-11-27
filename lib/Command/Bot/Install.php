@@ -42,6 +42,11 @@ class Install extends Base {
 				'The name under which the messages will be posted (min. 1 char, max. 64 chars)'
 			)
 			->addArgument(
+				'secret',
+				InputArgument::REQUIRED,
+				'Secret used to validate API calls (min. 40 chars, max. 128 chars; put "env" when using --pasword-from-env).'
+			)
+			->addArgument(
 				'url',
 				InputArgument::REQUIRED,
 				'Webhook endpoint to post messages to (max. 4000 chars)'
@@ -50,11 +55,6 @@ class Install extends Base {
 				'description',
 				InputArgument::OPTIONAL,
 				'Optional description shown in the admin settings (max. 4000 chars)'
-			)
-			->addArgument(
-				'secret',
-				InputArgument::OPTIONAL,
-				'Secret used to validate API calls (min. 40 chars, max. 128 chars).'
 			)
 			->addOption(
 				'no-setup',
@@ -84,7 +84,7 @@ class Install extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$name = $input->getArgument('name');
-		$secret = $input->getArgument('secret') ?? '';
+		$secret = $input->getArgument('secret');
 		$url = $input->getArgument('url');
 		$description = $input->getArgument('description') ?? '';
 		$noSetup = $input->getOption('no-setup');
