@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ab7a33d9323c7d636f3e1c02397692b",
+    "content-hash": "afa54c33f0794c36d3f92cb23ebb08b2",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -65,20 +65,20 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "2.7.0",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "6e89ca1afaa8543619fd9512e4665722f225fb38"
+                "reference": "473ba512c859a4441e382ca279778a67a302971d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/6e89ca1afaa8543619fd9512e4665722f225fb38",
-                "reference": "6e89ca1afaa8543619fd9512e4665722f225fb38",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/473ba512c859a4441e382ca279778a67a302971d",
+                "reference": "473ba512c859a4441e382ca279778a67a302971d",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0 || ~8.6.0"
             },
             "conflict": {
                 "phpstan/phpstan": "<1.0 || >= 3.0",
@@ -135,7 +135,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.7.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/2.8.0"
             },
             "funding": [
                 {
@@ -143,7 +143,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-12T10:33:19+00:00"
+            "time": "2026-11-19T15:08:51+00:00"
         },
         {
             "name": "cweagans/composer-configurable-plugin",
