@@ -190,6 +190,7 @@
                                     "blur-virtual-background",
                                     "end-to-end-encryption",
                                     "live-transcription",
+                                    "live-transcription-history",
                                     "live-translation",
                                     "live-transcription-target-language-id",
                                     "play-sounds",
@@ -275,6 +276,10 @@
                                     "live-transcription": {
                                         "type": "boolean",
                                         "description": "Whether live transcription is available"
+                                    },
+                                    "live-transcription-history": {
+                                        "type": "boolean",
+                                        "description": "Whether the history of the live transcription of a call can be read"
                                     },
                                     "live-translation": {
                                         "type": "boolean",

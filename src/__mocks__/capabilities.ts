@@ -168,6 +168,7 @@ export const mockedCapabilities: Capabilities = {
 				'blur-virtual-background': false,
 				'end-to-end-encryption': false,
 				'live-transcription': false,
+				'live-transcription-history': false,
 				'live-translation': false,
 				'live-transcription-target-language-id': '',
 				'play-sounds': true,

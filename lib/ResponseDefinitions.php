@@ -853,6 +853,8 @@ namespace OCA\Talk;
  *             end-to-end-encryption: bool,
  *             // Whether live transcription is available
  *             live-transcription: bool,
+ *             // Whether the history of the live transcription of a call can be read
+ *             live-transcription-history: bool,
  *             // Whether live translation is available
  *             live-translation: bool,
  *             // The default target language for live transcription
@@ -959,6 +961,34 @@ namespace OCA\Talk;
  *     config-local: array<string, list<string>>,
  *     // Version of the Talk app
  *     version: string,
+ * }
+ *
+ * @psalm-type TalkLiveTranscriptionHistoryEntry = array{
+ *     // Position of the entry in the history of the call, starting at 1
+ *     seq: int,
+ *     // `final` for a transcribed text, `join` for a participant joining the call
+ *     type: 'final'|'join',
+ *     // Session ID of the speaker or of the participant that joined
+ *     speakerSessionId: string,
+ *     // Timestamp of the entry in milliseconds
+ *     t: int,
+ *     // Transcribed text, only for `final` entries
+ *     message?: string,
+ *     // ID of the language of the text, only for `final` entries
+ *     langId?: string,
+ *     // Actor type of the speaker, if known by the provider
+ *     actorType?: string,
+ *     // Actor ID of the speaker, if known by the provider
+ *     actorId?: string,
+ *     // Display name of the speaker, if known by the provider
+ *     actorDisplayName?: string,
+ * }
+ *
+ * @psalm-type TalkLiveTranscriptionHistory = array{
+ *     // Entries after the requested one, oldest first
+ *     entries: list<TalkLiveTranscriptionHistoryEntry>,
+ *     // Position of the latest entry the provider holds, `0` if there is none
+ *     head: int,
  * }
  *
  * @psalm-type TalkLiveTranscriptionLanguage = array{

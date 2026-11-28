@@ -223,6 +223,8 @@ export type components = {
                     "end-to-end-encryption": boolean;
                     /** @description Whether live transcription is available */
                     "live-transcription": boolean;
+                    /** @description Whether the history of the live transcription of a call can be read */
+                    "live-transcription-history": boolean;
                     /** @description Whether live translation is available */
                     "live-translation": boolean;
                     /** @description The default target language for live transcription */

@@ -251,3 +251,4 @@
 * `mute-conversations` - Whether conversations can be muted for a given time
 * `federation-signaling-auth` (local) - Whether federated signaling is sending the join auth params to the clients and the HPB should not allow joining without
 * `shared-items-link` - Whether chat messages containing links are listed as `link` shared items
+* `config => call => live-transcription-history` - Whether the history of the live transcription of a call can be read, which depends on the configured live transcription app

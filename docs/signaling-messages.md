@@ -464,6 +464,7 @@ Sent by the live transcription service. Fields are top level, not in `payload`.
 | `message`          | string  | Transcribed text                                 |
 | `langId`           | string  | Language of the text                             |
 | `final`            | boolean | Optional, `false` while the text may change. Default `true` |
+| `seq`              | integer | Optional, position of the text in the history of the call. Only sent with final texts by services that provide a history, see `config => call => live-transcription-history` in the [capabilities](capabilities.md) |
 
 ```json
 {
@@ -471,7 +472,8 @@ Sent by the live transcription service. Fields are top level, not in `payload`.
     "speakerSessionId": "alice-session-id",
     "message": "Hello everyone",
     "langId": "en",
-    "final": true
+    "final": true,
+    "seq": 23
 }
 ```
 

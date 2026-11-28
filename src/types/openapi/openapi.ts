@@ -915,6 +915,27 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/{token}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the history of the live transcription of the current call
+         * @description The history is kept by the external app only while it transcribes the call. Clients are expected to request it when they start to show the transcription and when they detect a gap in the "seq" of the transcripts received through signaling.
+         *     or it does not provide a history.
+         */
+        get: operations["live_transcription-get-history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/languages": {
         parameters: {
             query?: never;
@@ -2442,6 +2463,8 @@ export type components = {
                     "end-to-end-encryption": boolean;
                     /** @description Whether live transcription is available */
                     "live-transcription": boolean;
+                    /** @description Whether the history of the live transcription of a call can be read */
+                    "live-transcription-history": boolean;
                     /** @description Whether live translation is available */
                     "live-translation": boolean;
                     /** @description The default target language for live transcription */
@@ -2934,6 +2957,44 @@ export type components = {
             phones?: string[];
             /** @description List of team ids that could not be invited */
             teams?: string[];
+        };
+        LiveTranscriptionHistory: {
+            /** @description Entries after the requested one, oldest first */
+            entries: components["schemas"]["LiveTranscriptionHistoryEntry"][];
+            /**
+             * Format: int64
+             * @description Position of the latest entry the provider holds, `0` if there is none
+             */
+            head: number;
+        };
+        LiveTranscriptionHistoryEntry: {
+            /**
+             * Format: int64
+             * @description Position of the entry in the history of the call, starting at 1
+             */
+            seq: number;
+            /**
+             * @description `final` for a transcribed text, `join` for a participant joining the call
+             * @enum {string}
+             */
+            type: "final" | "join";
+            /** @description Session ID of the speaker or of the participant that joined */
+            speakerSessionId: string;
+            /**
+             * Format: int64
+             * @description Timestamp of the entry in milliseconds
+             */
+            t: number;
+            /** @description Transcribed text, only for `final` entries */
+            message?: string;
+            /** @description ID of the language of the text, only for `final` entries */
+            langId?: string;
+            /** @description Actor type of the speaker, if known by the provider */
+            actorType?: string;
+            /** @description Actor ID of the speaker, if known by the provider */
+            actorId?: string;
+            /** @description Display name of the speaker, if known by the provider */
+            actorDisplayName?: string;
         };
         LiveTranscriptionLanguage: {
             /** @description Name of the language */
@@ -8516,6 +8577,57 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "app" | "in-call";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-get-history": {
+        parameters: {
+            query?: {
+                /** @description Position ("seq") of the last entry known by the client, 0 to get the whole history */
+                since?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description History got successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["LiveTranscriptionHistory"];
+                        };
+                    };
+                };
+            };
+            /** @description The conversation is classified */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app" | "classified" | "history" | "in-call";
                             };
                         };
                     };

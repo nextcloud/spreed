@@ -21,6 +21,7 @@ use OCP\IAppConfig as IServerAppConfig;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IManager;
@@ -45,6 +46,7 @@ class CapabilitiesTest extends TestCase {
 	protected ITaskProcessingManager&MockObject $taskProcessingManager;
 	protected LiveTranscriptionService&MockObject $liveTranscriptionService;
 	protected IManager&MockObject $shareManager;
+	protected ISession&MockObject $session;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected ICache&MockObject $talkCache;
 
@@ -61,6 +63,7 @@ class CapabilitiesTest extends TestCase {
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 		$this->liveTranscriptionService = $this->createMock(LiveTranscriptionService::class);
 		$this->shareManager = $this->createMock(IManager::class);
+		$this->session = $this->createMock(ISession::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->talkCache = $this->createMock(ICache::class);
 
@@ -91,6 +94,7 @@ class CapabilitiesTest extends TestCase {
 			$this->taskProcessingManager,
 			$this->liveTranscriptionService,
 			$this->shareManager,
+			$this->session,
 			$this->cacheFactory,
 		);
 	}
@@ -217,6 +221,7 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'live-transcription-history' => false,
 						'live-translation' => false,
 						'play-sounds' => false,
 						'grid-limit' => 0,
@@ -474,6 +479,7 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'live-transcription-history' => false,
 						'live-translation' => false,
 						'play-sounds' => false,
 						'grid-limit' => 0,
@@ -669,6 +675,57 @@ class CapabilitiesTest extends TestCase {
 
 		$data = $capabilities->getCapabilities();
 		$this->assertEquals($data['spreed']['config']['call']['live-transcription'], $expectedEnabled);
+	}
+
+	public static function dataTestConfigCallLiveTranscriptionHistory(): array {
+		return [
+			'announced by the provider' => [true, false, null, true, true],
+			'not announced by the provider' => [true, false, null, false, false],
+			'provider can not be asked' => [true, false, null, new \Exception(), false],
+			'cached' => [true, false, true, null, true],
+			'request from an external app' => [true, true, null, null, false],
+			'live transcription not available' => [false, false, null, null, false],
+		];
+	}
+
+	#[DataProvider('dataTestConfigCallLiveTranscriptionHistory')]
+	public function testConfigCallLiveTranscriptionHistory(bool $liveTranscriptionAppEnabled, bool $isExAppRequest, ?bool $cached, bool|\Exception|null $announced, bool $expectedSupported): void {
+		$capabilities = $this->getCapabilities();
+
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn(Config::SIGNALING_EXTERNAL);
+
+		$this->liveTranscriptionService->expects($this->any())
+			->method('isLiveTranscriptionAppEnabled')
+			->willReturn($liveTranscriptionAppEnabled);
+
+		$this->appConfig->method('getAppValueString')
+			->with(Config::LIVE_TRANSCRIPTION_APP_ID)
+			->willReturn('provider_app');
+
+		$this->session->method('get')
+			->with('app_api')
+			->willReturn($isExAppRequest ? true : null);
+
+		$this->talkCache->method('get')
+			->willReturnCallback(fn (string $key): ?bool => $key === 'is_live_transcription_history_supported_provider_app' ? $cached : null);
+
+		if ($announced === null) {
+			$this->liveTranscriptionService->expects($this->never())
+				->method('isHistorySupported');
+		} elseif ($announced instanceof \Exception) {
+			$this->liveTranscriptionService->expects($this->once())
+				->method('isHistorySupported')
+				->willThrowException($announced);
+		} else {
+			$this->liveTranscriptionService->expects($this->once())
+				->method('isHistorySupported')
+				->willReturn($announced);
+		}
+
+		$data = $capabilities->getCapabilities();
+		$this->assertSame($expectedSupported, $data['spreed']['config']['call']['live-transcription-history']);
 	}
 
 	public function testCapabilitiesTranslations(): void {
