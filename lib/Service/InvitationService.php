@@ -162,28 +162,37 @@ class InvitationService {
 	 * @param list<string> $cloudIds
 	 */
 	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, ?IUser $currentUser, bool $isClassified): void {
-		if ($isClassified) {
-			// The remote server would receive the conversation and its messages
-			$invitationList->setFederatedUserResults([], $cloudIds);
-			return;
-		}
-
 		if ($currentUser === null || !$this->talkConfig->isFederationEnabled()) {
-			$invitationList->setFederatedUserResults([], $cloudIds);
+			$invitationList->setFederatedUserResults([], $cloudIds, array_fill_keys($cloudIds, FederationRestrictionException::REASON_FEDERATION));
 			return;
 		}
 
-		$invalidCloudIds = $validCloudIds = [];
+		$invalidCloudIds = $validCloudIds = $invalidReasons = [];
 		foreach ($cloudIds as $cloudIdString) {
 			try {
 				$cloudId = $this->cloudIdManager->resolveCloudId($cloudIdString);
+			} catch (\InvalidArgumentException) {
+				$invalidCloudIds[] = $cloudIdString;
+				$invalidReasons[$cloudIdString] = FederationRestrictionException::REASON_CLOUD_ID;
+				continue;
+			}
+
+			if ($isClassified) {
+				// The remote server would receive the conversation and its messages
+				$invalidCloudIds[] = $cloudIdString;
+				$invalidReasons[$cloudIdString] = FederationRestrictionException::REASON_CLASSIFIED;
+				continue;
+			}
+
+			try {
 				$this->federationManager->isAllowedToInvite($currentUser, $cloudId);
 				$validCloudIds[$cloudIdString] = $cloudId;
-			} catch (\InvalidArgumentException|FederationRestrictionException) {
+			} catch (FederationRestrictionException $e) {
 				$invalidCloudIds[] = $cloudIdString;
+				$invalidReasons[$cloudIdString] = $e->getReason();
 			}
 		}
-		$invitationList->setFederatedUserResults($validCloudIds, $invalidCloudIds);
+		$invitationList->setFederatedUserResults($validCloudIds, $invalidCloudIds, $invalidReasons);
 	}
 
 	/**

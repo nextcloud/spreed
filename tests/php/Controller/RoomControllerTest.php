@@ -16,34 +16,53 @@ use OCA\Talk\Controller\RoomController;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\InvitationList;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BanService;
+use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudId;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class RoomControllerTest extends TestCase {
 	private ParticipantService&MockObject $participantService;
+	private InvitationService&MockObject $invitationService;
+	private BanService&MockObject $banService;
+	private IUserManager&MockObject $userManager;
+	private IAppManager&MockObject $appManager;
 	private SendService&MockObject $sendService;
 	private Config&MockObject $talkConfig;
 	private IEventDispatcher&MockObject $dispatcher;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
+	private IUser&MockObject $user;
 	private RoomController $controller;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->invitationService = $this->createMock(InvitationService::class);
+		$this->banService = $this->createMock(BanService::class);
+		$this->userManager = $this->createMock(IUserManager::class);
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->sendService = $this->createMock(SendService::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
+		$this->user = $this->createMock(IUser::class);
+		$this->userManager->method('get')->willReturn($this->user);
 
 		$arguments = [];
 		foreach ((new \ReflectionClass(RoomController::class))->getConstructor()->getParameters() as $parameter) {
@@ -53,6 +72,10 @@ class RoomControllerTest extends TestCase {
 				'userId' => 'alice',
 				default => match ($type) {
 					ParticipantService::class => $this->participantService,
+					InvitationService::class => $this->invitationService,
+					BanService::class => $this->banService,
+					IUserManager::class => $this->userManager,
+					IAppManager::class => $this->appManager,
 					SendService::class => $this->sendService,
 					Config::class => $this->talkConfig,
 					IEventDispatcher::class => $this->dispatcher,
@@ -112,5 +135,192 @@ class RoomControllerTest extends TestCase {
 		} finally {
 			$this->restoreService(IClientService::class);
 		}
+	}
+
+	public function testAddParticipantToRoomWithUnsupportedSource(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->invitationService->expects(self::never())->method('validateInvitations');
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob', 'invalid-source');
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'source'], $response->getData());
+	}
+
+	public function testAddParticipantToRoomAddsValidatedUser(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+
+		$invitedUser = $this->createMock(IUser::class);
+		$invitedUser->method('getUID')->willReturn('bob');
+		$invitationList = new InvitationList();
+		$invitationList->setUserResults(['bob' => $invitedUser], []);
+
+		$this->invitationService->expects(self::once())
+			->method('validateInvitations')
+			->with(['users' => ['bob']], $this->user, $this->room)
+			->willReturn($invitationList);
+		$this->participantService->expects(self::once())
+			->method('addInvitationList')
+			->with($this->room, $invitationList, $this->user);
+
+		$response = $this->controller->addParticipantToRoom('bob');
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+	}
+
+	public function testAddParticipantToRoomWithInvalidUser(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+
+		$invitationList = new InvitationList();
+		$invitationList->setUserResults([], ['bob']);
+		$this->invitationService->method('validateInvitations')->willReturn($invitationList);
+		$this->participantService->expects(self::never())->method('addInvitationList');
+		$this->banService->expects(self::never())->method('isActorBanned');
+
+		$response = $this->controller->addParticipantToRoom('bob');
+		self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+		self::assertSame(['error' => 'new-participant'], $response->getData());
+	}
+
+	public function testAddParticipantToRoomWithBannedUser(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+
+		$invitedUser = $this->createMock(IUser::class);
+		$invitedUser->method('getUID')->willReturn('bob');
+		$invitationList = new InvitationList();
+		$invitationList->setUserResults(['bob' => $invitedUser], []);
+		$this->invitationService->method('validateInvitations')->willReturn($invitationList);
+
+		$this->banService->expects(self::once())
+			->method('isActorBanned')
+			->with($this->room, Attendee::ACTOR_USERS, 'bob')
+			->willReturn(true);
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob');
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'ban'], $response->getData());
+	}
+
+	public function testAddParticipantToRoomPromotesSelfJoinedUser(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+
+		$invitedUser = $this->createMock(IUser::class);
+		$invitedUser->method('getUID')->willReturn('bob');
+		$invitationList = new InvitationList();
+		$invitationList->setUserResults(['bob' => $invitedUser], []);
+		$this->invitationService->method('validateInvitations')->willReturn($invitationList);
+
+		$attendee = new Attendee();
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('bob');
+		$attendee->setParticipantType(Participant::USER_SELF_JOINED);
+		$selfJoined = $this->createMock(Participant::class);
+		$selfJoined->method('getAttendee')->willReturn($attendee);
+		$this->participantService->method('getParticipantsForRoom')->willReturn([$selfJoined]);
+
+		$this->participantService->expects(self::once())
+			->method('updateParticipantType')
+			->with($this->room, $selfJoined, Participant::USER);
+		// The already existing user is filtered from the invitation list
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob');
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+	}
+
+	public function testAddParticipantToRoomMapsCirclesToTeams(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->appManager->method('isEnabledForUser')->with('circles')->willReturn(true);
+
+		$this->invitationService->expects(self::once())
+			->method('validateInvitations')
+			->with(['teams' => ['team-id']], $this->user, $this->room)
+			->willReturn(new InvitationList());
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('team-id', 'circles');
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+	}
+
+	public function testAddParticipantToRoomPhonesWithoutSip(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->room->method('isClassified')->willReturn(false);
+		$this->talkConfig->method('isSIPConfigured')->willReturn(false);
+
+		$this->invitationService->expects(self::never())->method('validateInvitations');
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('+491601231212', 'phones');
+		self::assertSame(Http::STATUS_NOT_IMPLEMENTED, $response->getStatus());
+		self::assertSame(['error' => 'sip'], $response->getData());
+	}
+
+	public function testAddParticipantToRoomFederatedUserWithoutFederation(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->talkConfig->method('isFederationEnabled')->willReturn(false);
+
+		$this->invitationService->expects(self::never())->method('validateInvitations');
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example.tld', 'federated_users');
+		self::assertSame(Http::STATUS_NOT_IMPLEMENTED, $response->getStatus());
+		self::assertSame(['error' => 'federation'], $response->getData());
+	}
+
+	public static function dataAddParticipantToRoomFederatedUserFailureReason(): array {
+		return [
+			'cloud-id' => ['cloud-id'],
+			'trusted-servers' => ['trusted-servers'],
+			'outgoing' => ['outgoing'],
+			'classified' => ['classified'],
+		];
+	}
+
+	#[DataProvider('dataAddParticipantToRoomFederatedUserFailureReason')]
+	public function testAddParticipantToRoomFederatedUserUsesDedicatedFailureReason(string $reason): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+
+		$invitationList = new InvitationList();
+		$invitationList->setFederatedUserResults([], ['bob@remote.example.tld'], ['bob@remote.example.tld' => $reason]);
+		$this->invitationService->expects(self::once())
+			->method('validateInvitations')
+			->with(['federated_users' => ['bob@remote.example.tld']], $this->user, $this->room)
+			->willReturn($invitationList);
+		$this->participantService->expects(self::never())->method('addInvitationList');
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example.tld', 'federated_users');
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => $reason], $response->getData());
+	}
+
+	public function testAddParticipantToRoomAddsValidatedFederatedUser(): void {
+		$this->room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$this->room->method('getObjectType')->willReturn('');
+		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
+
+		$cloudId = $this->createMock(ICloudId::class);
+		$cloudId->method('getId')->willReturn('bob@remote.example.tld');
+		$invitationList = new InvitationList();
+		$invitationList->setFederatedUserResults(['bob@remote.example.tld' => $cloudId], []);
+		$this->invitationService->expects(self::once())
+			->method('validateInvitations')
+			->with(['federated_users' => ['bob@remote.example.tld']], $this->user, $this->room)
+			->willReturn($invitationList);
+		$this->participantService->expects(self::once())
+			->method('addInvitationList')
+			->with($this->room, $invitationList, $this->user);
+
+		$response = $this->controller->addParticipantToRoom('bob@remote.example.tld', 'federated_users');
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
 	}
 }
