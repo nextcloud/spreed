@@ -345,13 +345,15 @@ class LiveTranscriptionService {
 			throw new LiveTranscriptionAppAPIException('response-capabilities-not-array');
 		}
 
-		if (!isset($capabilities['live_transcription'])) {
-			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: wrong capabilities structure');
+		$appId = $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID);
+
+		if (!isset($capabilities[$appId])) {
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $appId . '`) failed: wrong capabilities structure');
 
 			throw new LiveTranscriptionAppAPIException('response-capabilities-wrong-structure');
 		}
 
-		return $capabilities['live_transcription'];
+		return $capabilities[$appId];
 	}
 
 	/**
