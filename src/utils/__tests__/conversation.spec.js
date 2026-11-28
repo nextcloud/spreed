@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { CONVERSATION } from '../../constants.ts'
-import { filterConversation, hasUnreadMentionsOrImportant } from '../conversation.ts'
+import { filterConversation, getRemoteServerLabel, hasUnreadMentionsOrImportant } from '../conversation.ts'
 
 const base = { type: CONVERSATION.TYPE.GROUP, unreadMessages: 0, unreadMention: false, unreadMentionDirect: false, isImportant: false }
 
@@ -24,5 +24,17 @@ describe('hasUnreadMentionsOrImportant', () => {
 		expect(hasUnreadMentionsOrImportant({ ...base, unreadMessages: 1, isImportant: true })).toBe(true)
 		expect(hasUnreadMentionsOrImportant({ ...base, unreadMessages: 1 })).toBe(false)
 		expect(hasUnreadMentionsOrImportant({ ...base, isImportant: true })).toBe(false)
+	})
+})
+
+describe('getRemoteServerLabel', () => {
+	it.each([
+		['https://cloud.example.org', 'cloud.example.org'],
+		['https://cloud.example.org:8443/nextcloud/', 'cloud.example.org:8443'],
+		['cloud.example.org/nextcloud', 'cloud.example.org'],
+		['http://cloud.example.org', 'http://cloud.example.org'],
+		['http://cloud.example.org/nextcloud', 'http://cloud.example.org'],
+	])('formats %s as %s', (input, expected) => {
+		expect(getRemoteServerLabel(input)).toBe(expected)
 	})
 })

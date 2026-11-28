@@ -316,6 +316,7 @@
 								|| showThreadsList && t('spreed', 'Threads')
 								|| t('spreed', 'Conversations')
 						}}
+						<IconArchiveOutline v-if="showArchived" :size="20" />
 					</div>
 				</div>
 			</div>
@@ -1298,6 +1299,7 @@ export default {
 .navigation-caption {
 	display: flex;
 	align-items: center;
+	gap: var(--default-grid-baseline);
 	padding-inline: var(--default-grid-baseline);
 	height: var(--default-clickable-area);
 	font-weight: bold;

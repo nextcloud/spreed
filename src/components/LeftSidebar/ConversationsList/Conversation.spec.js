@@ -9,7 +9,11 @@ import { cloneDeep } from 'es-toolkit'
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
+import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
+import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconBellSleepOutline from 'vue-material-design-icons/BellSleepOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
+import IconVideo from 'vue-material-design-icons/Video.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import ConversationItem from './ConversationItem.vue'
 import router from '../../../__mocks__/router.js'
@@ -42,7 +46,7 @@ describe('ConversationItem.vue', () => {
 	/**
 	 * Shared function to mount component
 	 */
-	function mountConversation(isSearchResult = false) {
+	function mountConversation(isSearchResult = false, showArchivedIndicator = false) {
 		return mount(ConversationItem, {
 			global: {
 				plugins: [router, store],
@@ -56,6 +60,7 @@ describe('ConversationItem.vue', () => {
 				isSearchResult,
 				item,
 				compact,
+				showArchivedIndicator,
 			},
 		})
 	}
@@ -109,8 +114,123 @@ describe('ConversationItem.vue', () => {
 
 		const icon = el.findComponent(ConversationIcon)
 		expect(icon.props('item')).toStrictEqual(item)
-		expect(icon.props('hideFavorite')).toStrictEqual(true)
-		expect(icon.props('hideCall')).toStrictEqual(false)
+	})
+
+	test('renders call indicator before the name during a call', () => {
+		item.hasCall = true
+		const wrapper = mountConversation(false)
+
+		const name = wrapper.findComponent(NcListItem)
+		expect(name.findComponent(IconVideo).exists()).toBe(true)
+		expect(name.text()).toContain('Call in progress')
+		expect(wrapper.findComponent(ConversationIcon).text()).not.toContain('Call in progress')
+	})
+
+	test('renders no call indicator without a call', () => {
+		const wrapper = mountConversation(false)
+
+		expect(wrapper.findComponent(IconVideo).exists()).toBe(false)
+	})
+
+	test('renders voice room indicator before the name without a call', () => {
+		item.attributes = CONVERSATION.ATTRIBUTE.VOICE_ROOM
+		const wrapper = mountConversation(false)
+
+		const name = wrapper.find('.list-item-content__name')
+		expect(name.findComponent(IconVideo).exists()).toBe(false)
+		expect(name.text()).toContain('Voice room')
+	})
+
+	test('renders call indicator instead of voice room indicator during a call', () => {
+		item.attributes = CONVERSATION.ATTRIBUTE.VOICE_ROOM
+		item.hasCall = true
+		const wrapper = mountConversation(false)
+
+		const name = wrapper.find('.list-item-content__name')
+		expect(name.findComponent(IconVideo).exists()).toBe(true)
+		expect(name.text()).not.toContain('Voice room')
+	})
+
+	describe('notifications off indicator', () => {
+		afterEach(() => {
+			compact = undefined
+		})
+
+		test('renders indicator in details when notifications are off', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.NEVER
+			const wrapper = mountConversation(false)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconBellOffOutline).exists()).toBe(true)
+			expect(details.text()).toContain('Notifications off')
+		})
+
+		test('renders indicator after the name in compact mode', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.NEVER
+			compact = true
+			const wrapper = mountConversation(false)
+
+			const name = wrapper.find('.list-item-content__name')
+			expect(name.findComponent(IconBellOffOutline).exists()).toBe(true)
+			expect(name.text()).toContain('Notifications off')
+		})
+
+		test('renders paused indicator when temporarily muted', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.ALWAYS
+			item.muteUntil = convertToUnix(Date.now()) + 3600
+			const wrapper = mountConversation(false)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconBellSleepOutline).exists()).toBe(true)
+			expect(details.findComponent(IconBellOffOutline).exists()).toBe(false)
+			expect(details.text()).toContain('Notifications paused')
+		})
+
+		test('renders paused indicator when off and temporarily muted', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.NEVER
+			item.muteUntil = convertToUnix(Date.now()) + 3600
+			const wrapper = mountConversation(false)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconBellSleepOutline).exists()).toBe(true)
+			expect(details.findComponent(IconBellOffOutline).exists()).toBe(false)
+		})
+
+		test('renders no indicator when mute has expired', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.ALWAYS
+			item.muteUntil = convertToUnix(Date.now()) - 60
+			const wrapper = mountConversation(false)
+
+			expect(wrapper.find('.list-item-details__details').findComponent(IconBellSleepOutline).exists()).toBe(false)
+		})
+
+		test('renders no indicator when notifications are on', () => {
+			item.notificationLevel = PARTICIPANT.NOTIFY.ALWAYS
+			const wrapper = mountConversation(false)
+
+			expect(wrapper.find('.list-item-content__name').findComponent(IconBellOffOutline).exists()).toBe(false)
+			expect(wrapper.find('.list-item-details__details').findComponent(IconBellOffOutline).exists()).toBe(false)
+		})
+	})
+
+	describe('archived indicator', () => {
+		beforeEach(() => {
+			item.isArchived = true
+		})
+
+		test('renders indicator in details when requested', () => {
+			const wrapper = mountConversation(false, true)
+
+			const details = wrapper.find('.list-item-details__details')
+			expect(details.findComponent(IconArchiveOutline).exists()).toBe(true)
+			expect(details.text()).toContain('Archived')
+		})
+
+		test('renders no indicator when not requested', () => {
+			const wrapper = mountConversation(false)
+
+			expect(wrapper.find('.list-item-details__details').findComponent(IconArchiveOutline).exists()).toBe(false)
+		})
 	})
 
 	describe('displayed subname', () => {

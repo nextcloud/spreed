@@ -47,6 +47,16 @@ export function isMatrixConversation(conversation: Conversation | undefined): bo
 }
 
 /**
+ * Short form of a federated conversation's remote server: `https://` and the path are stripped,
+ * `http://` is kept to point out the insecure connection
+ *
+ * @param remoteServer remote server URL
+ */
+export function getRemoteServerLabel(remoteServer: string): string {
+	return remoteServer.replace(/^https:\/\//, '').replace(/^(http:\/\/)?([^/]*).*$/, '$1$2')
+}
+
+/**
  * Check if the conversation is an announcement (CHANNEL+ANNOUNCEMENT attribute bits are set)
  * Feature is supported with `announcement-preset` capability.
  *
@@ -238,6 +248,8 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 			return 'icon-phone'
 		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
 			return 'icon-event'
+		} else if (isMatrixConversation(conversation)) {
+			return 'icon-matrix'
 		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
 			return 'icon-team'
 		} else if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {

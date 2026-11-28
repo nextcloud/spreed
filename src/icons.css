@@ -146,6 +146,17 @@
 	background-image: url(../img/material-icons/volume-high-outline.svg);
 }
 
+.app-talk .icon-matrix,
+.modal-mask .icon-matrix,
+.v-popper__popper .icon-matrix,
+.talk-sidebar-callview .icon-matrix,
+#talk-panel .icon-matrix,
+#talk-sidebar .icon-matrix,
+#call-container .icon-matrix,
+.talkChatTab .icon-matrix {
+	background-image: url(../img/icon-matrix-white.svg);
+}
+
 /* The tribute panel is a direct child of the body, so it is not affected by
  * .app-Talk rules above.
  * "forced-white" needs to be included in the class name as the Avatar does

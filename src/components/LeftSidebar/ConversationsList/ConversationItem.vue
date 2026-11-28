@@ -29,14 +29,12 @@
 			<ConversationIcon
 				:key="item.token"
 				:item
-				:hideFavorite="compact || supportTags"
-				:hideCall="compact"
 				:hideUserStatus="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:showUserOnlineStatus="compact"
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 		</template>
 		<template #name>
-			<template v-if="compact && iconType">
+			<template v-if="iconType">
 				<component
 					:is="iconType.component"
 					:size="15"
@@ -44,6 +42,19 @@
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
+			<template v-if="compact">
+				<template v-for="indicator in indicators" :key="indicator.text">
+					<component :is="indicator.component" :size="15" fillColor="var(--color-text-maxcontrast)" />
+					<span class="hidden-visually">{{ indicator.text }}</span>
+				</template>
+			</template>
+		</template>
+		<template v-if="!compact && indicators.length" #details>
+			<template v-for="indicator in indicators" :key="indicator.text">
+				<component :is="indicator.component" :size="15" fillColor="var(--color-text-maxcontrast)" />
+				<span class="hidden-visually">{{ indicator.text }}</span>
+			</template>
+			{{ lastActivityTimeString }}
 		</template>
 		<template v-if="!compact && !item.isSensitive && !isVoiceRoom" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
@@ -312,6 +323,7 @@ import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
+import IconBellSleepOutline from 'vue-material-design-icons/BellSleepOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
@@ -335,7 +347,7 @@ import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { isClassifiedConversation } from '../../../utils/conversation.ts'
-import { formatDateTime, getDiffInDays } from '../../../utils/formattedTime.ts'
+import { convertToUnix, formatDateTime, getDiffInDays } from '../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -412,6 +424,11 @@ export default {
 		},
 
 		compact: {
+			type: Boolean,
+			default: false,
+		},
+
+		showArchivedIndicator: {
 			type: Boolean,
 			default: false,
 		},
@@ -513,6 +530,19 @@ export default {
 			return formatDateTime(timestampInMs, isSameYear ? 'shortDateSameYear' : 'shortDate')
 		},
 
+		indicators() {
+			const indicators = []
+			if (this.showArchivedIndicator && this.item.isArchived) {
+				indicators.push({ component: IconArchiveOutline, text: t('spreed', 'Archived') })
+			}
+			if (this.item.muteUntil > convertToUnix(Date.now())) {
+				indicators.push({ component: IconBellSleepOutline, text: t('spreed', 'Notifications paused') })
+			} else if (this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
+				indicators.push({ component: IconBellOffOutline, text: t('spreed', 'Notifications off') })
+			}
+			return indicators
+		},
+
 		isVoiceRoom() {
 			return !!(this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
 		},
@@ -536,7 +566,7 @@ export default {
 				}
 			} else if (this.isVoiceRoom) {
 				return {
-					component: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true }),
+					component: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true, style: { color: 'var(--color-text-maxcontrast)' } }),
 					text: t('spreed', 'Voice room'),
 				}
 			}
@@ -767,16 +797,15 @@ export default {
 }
 
 .conversation {
-	// Overwrite ConversationIcon styles to blend a type icon with NcListItem
-	& :deep(.list-item:hover .conversation-icon__type) {
-		background-color: var(--color-background-hover);
-		border-color: var(--color-background-hover);
-	}
-
 	// Overwrite NcListItem styles to reduce timestamp size and fit two lines in 40px height limit
 	& :deep(.list-item .list-item-content__details) {
 		justify-content: flex-start;
 		font-size: var(--font-size-small);
+	}
+	& :deep(.list-item .list-item-details__details) {
+		display: flex;
+		align-items: center;
+		gap: calc(var(--default-grid-baseline) / 2);
 	}
 	& :deep(.list-item .list-item-details__extra) {
 		margin-block-start: 0;
@@ -785,26 +814,13 @@ export default {
 		--counter-bubble-height: 20px !important;
 	}
 
-	&--active {
-		&:deep(.list-item .conversation-icon__type) {
-			color: var(--color-primary-element-text);
-			background-color: var(--color-primary-element);
-			border-color: var(--color-primary-element);
-		}
-
-		&:deep(.list-item:hover .conversation-icon__type) {
-			color: var(--color-primary-element-text);
-			background-color: var(--color-primary-element-hover);
-			border-color: var(--color-primary-element-hover);
-		}
+	&:deep(.list-item-content__name) {
+		display: flex;
+		gap: calc(var(--default-grid-baseline) / 2);
 	}
 
 	&--compact {
 		padding-block: 2px !important; // Overwrite list-item 4px padding
-		&:deep(.list-item-content__name) {
-			display: flex;
-			gap: calc(var(--default-grid-baseline) / 2);
-		}
 		&__read {
 			&:deep(.list-item-content__name) {
 				font-weight: 400;
