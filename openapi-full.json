@@ -360,6 +360,7 @@
                                     "blur-virtual-background",
                                     "end-to-end-encryption",
                                     "live-transcription",
+                                    "live-transcription-history",
                                     "live-translation",
                                     "live-transcription-target-language-id",
                                     "play-sounds",
@@ -445,6 +446,10 @@
                                     "live-transcription": {
                                         "type": "boolean",
                                         "description": "Whether live transcription is available"
+                                    },
+                                    "live-transcription-history": {
+                                        "type": "boolean",
+                                        "description": "Whether the history of the live transcription of a call can be read"
                                     },
                                     "live-translation": {
                                         "type": "boolean",
@@ -1496,6 +1501,80 @@
                         "items": {
                             "type": "string"
                         }
+                    }
+                }
+            },
+            "LiveTranscriptionHistory": {
+                "type": "object",
+                "required": [
+                    "entries",
+                    "head"
+                ],
+                "properties": {
+                    "entries": {
+                        "type": "array",
+                        "description": "Entries after the requested one, oldest first",
+                        "items": {
+                            "$ref": "#/components/schemas/LiveTranscriptionHistoryEntry"
+                        }
+                    },
+                    "head": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Position of the latest entry the provider holds, `0` if there is none"
+                    }
+                }
+            },
+            "LiveTranscriptionHistoryEntry": {
+                "type": "object",
+                "required": [
+                    "seq",
+                    "type",
+                    "speakerSessionId",
+                    "t"
+                ],
+                "properties": {
+                    "seq": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Position of the entry in the history of the call, starting at 1"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "final",
+                            "join"
+                        ],
+                        "description": "`final` for a transcribed text, `join` for a participant joining the call"
+                    },
+                    "speakerSessionId": {
+                        "type": "string",
+                        "description": "Session ID of the speaker or of the participant that joined"
+                    },
+                    "t": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp of the entry in milliseconds"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Transcribed text, only for `final` entries"
+                    },
+                    "langId": {
+                        "type": "string",
+                        "description": "ID of the language of the text, only for `final` entries"
+                    },
+                    "actorType": {
+                        "type": "string",
+                        "description": "Actor type of the speaker, if known by the provider"
+                    },
+                    "actorId": {
+                        "type": "string",
+                        "description": "Actor ID of the speaker, if known by the provider"
+                    },
+                    "actorDisplayName": {
+                        "type": "string",
+                        "description": "Display name of the speaker, if known by the provider"
                     }
                 }
             },
@@ -15043,6 +15122,145 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "app",
+                                                                "in-call"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/{token}/history": {
+            "get": {
+                "operationId": "live_transcription-get-history",
+                "summary": "Get the history of the live transcription of the current call",
+                "description": "The history is kept by the external app only while it transcribes the call. Clients are expected to request it when they start to show the transcription and when they detect a gap in the \"seq\" of the transcripts received through signaling.\nor it does not provide a history.",
+                "tags": [
+                    "live_transcription"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "since",
+                        "in": "query",
+                        "description": "Position (\"seq\") of the last entry known by the client, 0 to get the whole history",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 0,
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "History got successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/LiveTranscriptionHistory"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The conversation is classified",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "app",
+                                                                "classified",
+                                                                "history",
                                                                 "in-call"
                                                             ]
                                                         }

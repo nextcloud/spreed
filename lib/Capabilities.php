@@ -20,6 +20,7 @@ use OCP\IAppConfig as IServerAppConfig;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IManager;
@@ -267,6 +268,7 @@ class Capabilities implements IPublicCapability {
 		private readonly ITaskProcessingManager $taskProcessingManager,
 		private readonly LiveTranscriptionService $liveTranscriptionService,
 		private readonly IManager $shareManager,
+		private readonly ISession $session,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -313,6 +315,7 @@ class Capabilities implements IPublicCapability {
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 					'live-transcription' => $this->isLiveTranscriptionSupported(),
+					'live-transcription-history' => $this->isLiveTranscriptionHistorySupported(),
 					'live-translation' => $this->isLiveTranslationSupported(),
 					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
 					'grid-limit' => $this->talkConfig->getGridVideosLimit(),
@@ -473,6 +476,36 @@ class Capabilities implements IPublicCapability {
 	protected function isLiveTranscriptionSupported(): bool {
 		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
 			&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled();
+	}
+
+	protected function isLiveTranscriptionHistorySupported(): bool {
+		if (!$this->isLiveTranscriptionSupported()) {
+			return false;
+		}
+
+		// The external app may request the Nextcloud capabilities to answer
+		// its own, and asking it here during its request would then enter in
+		// a loop.
+		if ($this->session->get('app_api') === true) {
+			return false;
+		}
+
+		$cacheKey = 'is_live_transcription_history_supported_' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID);
+
+		$isHistorySupported = $this->talkCache->get($cacheKey);
+		if (is_bool($isHistorySupported)) {
+			return $isHistorySupported;
+		}
+
+		try {
+			$isHistorySupported = $this->liveTranscriptionService->isHistorySupported();
+		} catch (\Exception) {
+			$isHistorySupported = false;
+		}
+
+		$this->talkCache->set($cacheKey, $isHistorySupported, 300);
+
+		return $isHistorySupported;
 	}
 
 	protected function isLiveTranslationSupported(): bool {

@@ -14,8 +14,10 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\LiveTranscriptionAppAPIException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppNotEnabledException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppResponseException;
+use OCA\Talk\Exceptions\LiveTranscriptionHistoryNotSupportedException;
 use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
@@ -25,6 +27,10 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type TalkLiveTranscriptionHistory from ResponseDefinitions
+ * @psalm-import-type TalkLiveTranscriptionHistoryEntry from ResponseDefinitions
+ */
 class LiveTranscriptionService {
 
 	public function __construct(
@@ -93,6 +99,126 @@ class LiveTranscriptionService {
 		}
 
 		return in_array('live_translation', $capabilities['features'], true);
+	}
+
+	/**
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 is not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 */
+	public function isHistorySupported(): bool {
+		$capabilities = $this->getCapabilities();
+		if (!isset($capabilities['features'])) {
+			return false;
+		}
+
+		return in_array('live_transcription_history', $capabilities['features'], true);
+	}
+
+	/**
+	 * Returns the entries of the transcription history of the current call
+	 * after the given one.
+	 *
+	 * @param int $since the "seq" of the last known entry, 0 to get the whole
+	 *                   history.
+	 * @return TalkLiveTranscriptionHistory
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 is not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 * @throws LiveTranscriptionHistoryNotSupportedException if the external
+	 *                                                       app does not
+	 *                                                       provide a history.
+	 */
+	public function getHistory(Room $room, int $since): array {
+		$parameters = [
+			'roomToken' => $room->getToken(),
+			'since' => $since,
+		];
+
+		try {
+			$history = $this->requestToExAppLiveTranscription('GET', '/api/v1/call/history', $parameters);
+		} catch (LiveTranscriptionAppResponseException $e) {
+			if ($e->getResponse()->getStatusCode() === 404) {
+				throw new LiveTranscriptionHistoryNotSupportedException();
+			}
+
+			throw $e;
+		}
+
+		$providerEntries = $history['entries'] ?? null;
+		$head = $history['head'] ?? null;
+		if (!is_array($providerEntries) || !is_int($head)) {
+			$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: wrong history structure');
+
+			throw new LiveTranscriptionAppAPIException('response-history-wrong-structure');
+		}
+
+		$entries = [];
+		foreach ($providerEntries as $entry) {
+			$entry = $this->formatHistoryEntry($entry);
+			if ($entry === null) {
+				$this->logger->error('Request to live transcription (ExApp ID: `' . $this->appConfig->getAppValueString(Config::LIVE_TRANSCRIPTION_APP_ID) . '`) failed: wrong history entry structure');
+
+				throw new LiveTranscriptionAppAPIException('response-history-wrong-entry-structure');
+			}
+
+			$entries[] = $entry;
+		}
+
+		return [
+			'entries' => $entries,
+			'head' => $head,
+		];
+	}
+
+	/**
+	 * @return ?TalkLiveTranscriptionHistoryEntry
+	 */
+	private function formatHistoryEntry(mixed $entry): ?array {
+		if (!is_array($entry)
+			|| !is_int($entry['seq'] ?? null)
+			|| !is_string($entry['speakerSessionId'] ?? null)
+			|| !is_int($entry['t'] ?? null)) {
+			return null;
+		}
+
+		$formattedEntry = [
+			'seq' => $entry['seq'],
+			'speakerSessionId' => $entry['speakerSessionId'],
+			't' => $entry['t'],
+		];
+
+		if (($entry['type'] ?? null) === 'final') {
+			if (!is_string($entry['message'] ?? null) || !is_string($entry['langId'] ?? null)) {
+				return null;
+			}
+
+			$formattedEntry['type'] = 'final';
+			$formattedEntry['message'] = $entry['message'];
+			$formattedEntry['langId'] = $entry['langId'];
+		} elseif (($entry['type'] ?? null) === 'join') {
+			$formattedEntry['type'] = 'join';
+		} else {
+			return null;
+		}
+
+		foreach (['actorType', 'actorId', 'actorDisplayName'] as $actorField) {
+			if (is_string($entry[$actorField] ?? null)) {
+				$formattedEntry[$actorField] = $entry[$actorField];
+			}
+		}
+
+		return $formattedEntry;
 	}
 
 	/**

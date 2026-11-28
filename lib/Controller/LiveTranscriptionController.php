@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Exceptions\LiveTranscriptionAppNotEnabledException;
+use OCA\Talk\Exceptions\LiveTranscriptionHistoryNotSupportedException;
 use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -26,6 +27,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 /**
+ * @psalm-import-type TalkLiveTranscriptionHistory from ResponseDefinitions
  * @psalm-import-type TalkLiveTranscriptionLanguage from ResponseDefinitions
  */
 class LiveTranscriptionController extends AEnvironmentAwareOCSController {
@@ -113,6 +115,59 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse(null);
+	}
+
+	/**
+	 * Get the history of the live transcription of the current call
+	 *
+	 * The history is kept by the external app only while it transcribes the
+	 * call. Clients are expected to request it when they start to show the
+	 * transcription and when they detect a gap in the "seq" of the transcripts
+	 * received through signaling.
+	 *
+	 * @param int<0, max> $since Position ("seq") of the last entry known by the client, 0 to get the whole history
+	 * @return DataResponse<Http::STATUS_OK, TalkLiveTranscriptionHistory, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'|'history'|'in-call'}, array{}>
+	 *
+	 * 200: History got successfully
+	 * 400: The external app in Config::LIVE_TRANSCRIPTION_APP_ID for live transcription is not available
+	 * or it does not provide a history.
+	 * 400: The participant is not in the call
+	 * 400: The conversation is classified
+	 */
+	#[PublicPage]
+	#[RequireCallEnabled]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/live-transcription/{token}/history', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function getHistory(int $since = 0): DataResponse {
+		if ($this->room->getObjectType() === Room::OBJECT_TYPE_MATRIX) {
+			throw new MatrixUnsupportedFeatureException();
+		}
+
+		if ($this->room->isClassified()) {
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
+			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$this->participant->getSession() || $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
+			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$history = $this->liveTranscriptionService->getHistory($this->room, $since);
+		} catch (LiveTranscriptionAppNotEnabledException) {
+			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
+		} catch (LiveTranscriptionHistoryNotSupportedException) {
+			return new DataResponse(['error' => 'history'], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($history);
 	}
 
 	/**
