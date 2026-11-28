@@ -33,6 +33,7 @@ Accounts are listed, synced and unlinked with the `occ talk:matrix-account:*` co
 * Room name, description and avatar, avatars of Matrix users
 * Inviting, removing, promoting and demoting members, leaving rooms, accepting and declining invites
 * Creating rooms and direct chats and joining rooms by their address
+* Searching the public room directory of the homeserver when joining a room, page by page, and its user directory when starting a direct chat or inviting users. Spaces are left out, rooms that need an invite are shown as such. The homeserver decides which rooms and users it lists: by default Synapse only lets server admins publish rooms in the directory (`room_list_publication_rules`), and only finds users who share a room with the searching user or are in a public room, unless `user_directory.search_all_users` is enabled
 * Earlier messages of new conversations and of gaps in the timeline (up to 50)
 * End-to-end encrypted rooms, including verification of the server, key requests to other devices of the user and restoring keys from the key backup
 

@@ -342,6 +342,29 @@ namespace OCA\Talk;
  *     specVersions: list<string>,
  * }
  *
+ * @psalm-type TalkMatrixDirectoryRoom = array{
+ *     // Matrix room id, e.g. `!abc:example.org`
+ *     roomId: string,
+ *     // Canonical alias, e.g. `#room:example.org`, empty when the room has none
+ *     alias: string,
+ *     // Empty when the room has no name
+ *     name: string,
+ *     topic: string,
+ *     // Number of joined members
+ *     members: non-negative-int,
+ *     // Join rule of the room, e.g. `public` or `knock`; rooms that are not `public` need an invite
+ *     joinRule: string,
+ *     // Token of the conversation when the room is already mirrored for the user, null otherwise
+ *     token: ?string,
+ * }
+ *
+ * @psalm-type TalkMatrixDirectoryUser = array{
+ *     // Full Matrix user id, e.g. `@alice:example.org`
+ *     mxid: string,
+ *     // Empty when the user has no display name
+ *     displayName: string,
+ * }
+ *
  * @psalm-type TalkFederationInvite = array{
  *     // Identifier of the invitation
  *     id: int,

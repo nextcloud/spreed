@@ -9,9 +9,12 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
+use OCA\Talk\Matrix\Client\Exception\TransportException;
 use OCA\Talk\Matrix\Model\Account;
 use OCA\Talk\Matrix\Service\AccountService;
+use OCA\Talk\Matrix\Service\DirectoryService;
 use OCA\Talk\Matrix\Service\InvitationService;
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -21,6 +24,10 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
+/**
+ * @psalm-import-type TalkMatrixDirectoryRoom from ResponseDefinitions
+ * @psalm-import-type TalkMatrixDirectoryUser from ResponseDefinitions
+ */
 class MatrixRoomController extends OCSController {
 	public function __construct(
 		string $appName,
@@ -28,8 +35,74 @@ class MatrixRoomController extends OCSController {
 		private readonly ?string $userId,
 		private readonly AccountService $accountService,
 		private readonly InvitationService $invitationService,
+		private readonly DirectoryService $directoryService,
 	) {
 		parent::__construct($appName, $request);
+	}
+
+	/**
+	 * Search the public room directory of the homeserver of the linked Matrix account
+	 *
+	 * Spaces are left out, as they are not mirrored as conversations.
+	 *
+	 * @param string $search Matches name, topic and alias of the rooms, empty for all rooms
+	 * @param int $limit Number of rooms per page, at most 50
+	 * @param string $since Pagination token of the previous page
+	 * @return DataResponse<Http::STATUS_OK, array{rooms: list<TalkMatrixDirectoryRoom>, nextBatch: ?string, total: ?non-negative-int}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_TOO_MANY_REQUESTS|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'matrix'|'ratelimited'|'unreachable'}, array{}>
+	 *
+	 * 200: Rooms of the directory, `nextBatch` is null on the last page. `total` is the estimate of the homeserver for its whole directory, which does not take the search term into account, or null when it has none
+	 * 404: Matrix account not found
+	 * 429: The Matrix homeserver rate limited the search
+	 * 502: The Matrix homeserver could not be reached or rejected the search
+	 */
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 60, period: 60)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/matrix/directory/rooms', requirements: ['apiVersion' => '(v1)'])]
+	public function searchRooms(string $search = '', int $limit = 20, string $since = ''): DataResponse {
+		$account = $this->getAccount();
+		if ($account === null) {
+			return new DataResponse(['error' => 'account'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			return new DataResponse($this->directoryService->searchRooms($account, $search, $limit, $since));
+		} catch (MatrixException $e) {
+			return $this->directoryError($e);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
+		}
+	}
+
+	/**
+	 * Search users in the user directory of the homeserver of the linked Matrix account
+	 *
+	 * The homeserver decides which users it finds, e.g. Synapse only finds users who share a room with the searching user or are in a public room unless `user_directory.search_all_users` is enabled.
+	 *
+	 * @param string $search Name or Matrix user id
+	 * @param int $limit Number of users, at most 50
+	 * @return DataResponse<Http::STATUS_OK, array{users: list<TalkMatrixDirectoryUser>, limited: bool}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_TOO_MANY_REQUESTS|Http::STATUS_BAD_GATEWAY, array{error: 'account'|'matrix'|'ratelimited'|'unreachable'}, array{}>
+	 *
+	 * 200: Users found, `limited` is true when the homeserver has more results
+	 * 404: Matrix account not found
+	 * 429: The Matrix homeserver rate limited the search
+	 * 502: The Matrix homeserver could not be reached or rejected the search
+	 */
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 60, period: 60)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/matrix/directory/users', requirements: ['apiVersion' => '(v1)'])]
+	public function searchUsers(string $search = '', int $limit = 10): DataResponse {
+		$account = $this->getAccount();
+		if ($account === null) {
+			return new DataResponse(['error' => 'account'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			return new DataResponse($this->directoryService->searchUsers($account, $search, $limit));
+		} catch (MatrixException $e) {
+			return $this->directoryError($e);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
+		}
 	}
 
 	/**
@@ -158,6 +231,19 @@ class MatrixRoomController extends OCSController {
 			return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
 		}
 		return new DataResponse(['token' => $room?->getToken()]);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_TOO_MANY_REQUESTS|Http::STATUS_BAD_GATEWAY, array{error: 'matrix'|'ratelimited'|'unreachable'}, array{}>
+	 */
+	private function directoryError(MatrixException $e): DataResponse {
+		if ($e->getHttpStatus() === Http::STATUS_TOO_MANY_REQUESTS) {
+			return new DataResponse(['error' => 'ratelimited'], Http::STATUS_TOO_MANY_REQUESTS);
+		}
+		if ($e instanceof TransportException) {
+			return new DataResponse(['error' => 'unreachable'], Http::STATUS_BAD_GATEWAY);
+		}
+		return new DataResponse(['error' => 'matrix'], Http::STATUS_BAD_GATEWAY);
 	}
 
 	protected function getAccount(): ?Account {

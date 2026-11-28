@@ -374,6 +374,84 @@ class Client {
 	}
 
 	/**
+	 * Rooms the homeserver lists in its public room directory, without spaces
+	 *
+	 * @param string $searchTerm Matches name, topic and alias, empty for all rooms
+	 * @param string $since Pagination token of the previous page
+	 * @return array{rooms: list<array{roomId: string, alias: string, name: string, topic: string, members: non-negative-int, joinRule: string}>, nextBatch: ?string, total: ?non-negative-int}
+	 * @throws MatrixException
+	 */
+	public function searchPublicRooms(string $searchTerm, int $limit, string $since = ''): array {
+		// Only rooms without a room type: spaces are not mirrored as conversations
+		$filter = ['room_types' => [null]];
+		if ($searchTerm !== '') {
+			$filter['generic_search_term'] = $searchTerm;
+		}
+		$body = ['limit' => $limit, 'filter' => $filter];
+		if ($since !== '') {
+			$body['since'] = $since;
+		}
+		$response = $this->transport->post(self::PREFIX . '/publicRooms', $body);
+
+		$rooms = [];
+		foreach (is_array($response['chunk'] ?? null) ? $response['chunk'] : [] as $room) {
+			if (!is_array($room) || !is_string($room['room_id'] ?? null) || $room['room_id'] === '') {
+				continue;
+			}
+			if (($room['room_type'] ?? null) !== null) {
+				// Homeservers without the room_types filter still list spaces
+				continue;
+			}
+			$members = $room['num_joined_members'] ?? 0;
+			$rooms[] = [
+				'roomId' => $room['room_id'],
+				'alias' => is_string($room['canonical_alias'] ?? null) ? $room['canonical_alias'] : '',
+				'name' => is_string($room['name'] ?? null) ? $room['name'] : '',
+				'topic' => is_string($room['topic'] ?? null) ? $room['topic'] : '',
+				'members' => is_int($members) && $members > 0 ? $members : 0,
+				// The spec defaults to public when the homeserver leaves it out
+				'joinRule' => is_string($room['join_rule'] ?? null) && $room['join_rule'] !== '' ? $room['join_rule'] : 'public',
+			];
+		}
+		$nextBatch = $response['next_batch'] ?? null;
+		// For the whole directory: Synapse does not take the search term into account
+		$total = $response['total_room_count_estimate'] ?? null;
+		return [
+			'rooms' => $rooms,
+			'nextBatch' => is_string($nextBatch) && $nextBatch !== '' ? $nextBatch : null,
+			'total' => is_int($total) && $total >= 0 ? $total : null,
+		];
+	}
+
+	/**
+	 * Users the homeserver finds in its user directory, which users it includes depends on its configuration
+	 *
+	 * @return array{users: list<array{mxid: string, displayName: string}>, limited: bool}
+	 * @throws MatrixException
+	 */
+	public function searchUsers(string $searchTerm, int $limit): array {
+		$response = $this->transport->post(self::PREFIX . '/user_directory/search', [
+			'search_term' => $searchTerm,
+			'limit' => $limit,
+		]);
+
+		$users = [];
+		foreach (is_array($response['results'] ?? null) ? $response['results'] : [] as $user) {
+			if (!is_array($user) || !is_string($user['user_id'] ?? null) || $user['user_id'] === '') {
+				continue;
+			}
+			$users[] = [
+				'mxid' => $user['user_id'],
+				'displayName' => is_string($user['display_name'] ?? null) ? $user['display_name'] : '',
+			];
+		}
+		return [
+			'users' => $users,
+			'limited' => ($response['limited'] ?? false) === true,
+		];
+	}
+
+	/**
 	 * Download an attachment, through the authenticated media API (spec 1.11)
 	 * with a fallback to the legacy one of older homeservers
 	 *
