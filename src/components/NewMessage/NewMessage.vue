@@ -112,6 +112,13 @@
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
 
+				<!-- mention all participants warning -->
+				<NcNoteCard
+					v-if="showMentionAllWarning"
+					class="new-message-form__hint"
+					type="warning"
+					:text="mentionAllWarningText" />
+
 				<NcTextField
 					v-if="threadCreating"
 					ref="threadTitleInputRef"
@@ -337,7 +344,7 @@
 <script>
 import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import debounce from 'debounce'
@@ -389,16 +396,20 @@ import { useUploadStore } from '../../stores/upload.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../utils/getCustomDateOptions.ts'
+import { isCountedParticipant } from '../../utils/participants.ts'
 import {
 	getCurrentSelectionRange,
 	getRangeAtEnd,
 	insertTextInElement,
 	selectRange,
 } from '../../utils/selectionRange.ts'
-import { parseSpecialSymbols } from '../../utils/textParse.ts'
+import { hasAtAllMention, parseSpecialSymbols } from '../../utils/textParse.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
+
+// Participant count above which mentioning `@all` shows a warning
+const mentionAllWarningThreshold = 20
 
 export default {
 	name: 'NewMessage',
@@ -798,6 +809,30 @@ export default {
 			// TRANSLATORS: "... sent tomorrow, <March 18, 2026>"
 			return t('spreed', 'Message will be sent {datetimeString}', { datetimeString })
 		},
+
+		participantCount() {
+			return this.$store.getters.participantsList(this.token).filter(isCountedParticipant).length
+		},
+
+		canMentionAll() {
+			return this.conversation.mentionPermissions !== CONVERSATION.MENTION_PERMISSIONS.MODERATORS
+				|| [
+					PARTICIPANT.TYPE.OWNER,
+					PARTICIPANT.TYPE.MODERATOR,
+					PARTICIPANT.TYPE.GUEST_MODERATOR,
+				].includes(this.conversation.participantType)
+		},
+
+		showMentionAllWarning() {
+			return !this.silentChat
+				&& this.canMentionAll
+				&& this.participantCount >= mentionAllWarningThreshold
+				&& hasAtAllMention(this.text)
+		},
+
+		mentionAllWarningText() {
+			return n('spreed', 'This will notify %n participant.', 'This will notify %n participants.', this.participantCount)
+		},
 	},
 
 	watch: {
@@ -939,6 +974,7 @@ export default {
 	},
 
 	methods: {
+		n,
 		t,
 
 		getCustomDateOptions,
