@@ -62,7 +62,7 @@
     "blurhash": "^2.0.5",
     "cropperjs": "^1.7.0",
     "crypto-js": "^4.2.0",
-    "debounce": "^3.0.0",
+    "debounce": "^4.0.0",
     "emoji-regex": "^11.0.0",
     "entities": "^9.0.0",
     "es-toolkit": "^1.53.2",
