@@ -342,6 +342,22 @@ namespace OCA\Talk;
  *     specVersions: list<string>,
  * }
  *
+ * @psalm-type TalkMatrixIdentityProvider = array{
+ *     // Id of the identity provider on the homeserver, e.g. `oidc-github`
+ *     id: string,
+ *     // Name shown to users
+ *     name: string,
+ * }
+ *
+ * @psalm-type TalkMatrixLinkHomeserver = TalkMatrixHomeserver&array{
+ *     // Whether the homeserver offers a password login
+ *     passwordLogin: bool,
+ *     // Whether the homeserver offers single sign-on
+ *     ssoLogin: bool,
+ *     // Identity providers of the single sign-on, empty when the homeserver does not list them
+ *     ssoProviders: list<TalkMatrixIdentityProvider>,
+ * }
+ *
  * @psalm-type TalkFederationInvite = array{
  *     // Identifier of the invitation
  *     id: int,

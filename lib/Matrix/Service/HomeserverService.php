@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Matrix\Service;
 
+use OCA\Talk\CachePrefix;
 use OCA\Talk\Matrix\Client\Exception\MatrixException;
 use OCA\Talk\Matrix\ClientFactory;
 use OCA\Talk\Matrix\Model\AccountMapper;
@@ -15,17 +16,28 @@ use OCA\Talk\Matrix\Model\Homeserver;
 use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ICache;
+use OCP\ICacheFactory;
+use Psr\Log\LoggerInterface;
 
 /**
  * Administration of the allowed homeservers.
  */
 class HomeserverService {
+	/** Seconds the login types of a homeserver are reused */
+	public const LOGIN_FLOWS_TTL = 3600;
+
+	private ICache $loginFlowsCache;
+
 	public function __construct(
 		private readonly HomeserverMapper $mapper,
 		private readonly AccountMapper $accountMapper,
 		private readonly ClientFactory $clientFactory,
 		private readonly ITimeFactory $timeFactory,
+		private readonly LoggerInterface $logger,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->loginFlowsCache = $cacheFactory->createDistributed(CachePrefix::MATRIX_LOGIN_FLOWS);
 	}
 
 	/** @return list<Homeserver> */
@@ -106,8 +118,33 @@ class HomeserverService {
 			$homeserver->setBaseUrl($baseUrl);
 			$homeserver->setVersionsJson(json_encode($versions, JSON_THROW_ON_ERROR));
 			$homeserver->setVersionsFetched($this->timeFactory->getDateTime());
+			$this->loginFlowsCache->remove($id);
 		}
 		return $this->mapper->update($homeserver);
+	}
+
+	/**
+	 * How users can log in on the homeserver, reused for LOGIN_FLOWS_TTL seconds.
+	 * When the homeserver can not be asked, password login is assumed.
+	 *
+	 * @return array{password: bool, sso: bool, identityProviders: list<array{id: string, name: string}>}
+	 */
+	public function getLoginFlows(Homeserver $homeserver): array {
+		$key = (string)$homeserver->getId();
+		$cached = $this->loginFlowsCache->get($key);
+		if (is_array($cached) && isset($cached['password'], $cached['sso'], $cached['identityProviders'])) {
+			/** @var array{password: bool, sso: bool, identityProviders: list<array{id: string, name: string}>} $cached */
+			return $cached;
+		}
+
+		try {
+			$flows = $this->clientFactory->forHomeserver($homeserver, null, 15)->getLoginFlows();
+		} catch (MatrixException $e) {
+			$this->logger->info('Login types of Matrix homeserver ' . $homeserver->getServerName() . ' could not be fetched', ['exception' => $e]);
+			return ['password' => true, 'sso' => false, 'identityProviders' => []];
+		}
+		$this->loginFlowsCache->set($key, $flows, self::LOGIN_FLOWS_TTL);
+		return $flows;
 	}
 
 	/**
@@ -120,6 +157,7 @@ class HomeserverService {
 		$versions = $this->clientFactory->discovery()->validate($homeserver->getBaseUrl());
 		$homeserver->setVersionsJson(json_encode($versions, JSON_THROW_ON_ERROR));
 		$homeserver->setVersionsFetched($this->timeFactory->getDateTime());
+		$this->loginFlowsCache->remove($id);
 		return $this->mapper->update($homeserver);
 	}
 

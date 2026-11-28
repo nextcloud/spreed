@@ -28,6 +28,8 @@ class ClientTest extends TestCase {
 	private array $queries = [];
 	/** @var list<string> */
 	private array $methods = [];
+	/** @var list<string> */
+	private array $bodies = [];
 	private Client $client;
 
 	protected function setUp(): void {
@@ -50,7 +52,49 @@ class ClientTest extends TestCase {
 		$this->paths[] = $request->getUri()->getPath();
 		$this->queries[] = $request->getUri()->getQuery();
 		$this->methods[] = $request->getMethod();
+		$this->bodies[] = (string)$request->getBody();
 		return array_shift($this->responses) ?? new Response(404);
+	}
+
+	public function testLoginWithToken(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"user_id":"@bob:hs","access_token":"syt","device_id":"DEV"}');
+
+		$login = $this->client->loginWithToken('login-token', 'Talk', 'DEV');
+
+		self::assertSame(['@bob:hs', 'syt', 'DEV'], [$login->userId, $login->accessToken, $login->deviceId]);
+		self::assertSame(['POST'], $this->methods);
+		self::assertSame(['/_matrix/client/v3/login'], $this->paths);
+		self::assertSame([
+			'type' => 'm.login.token',
+			'token' => 'login-token',
+			'initial_device_display_name' => 'Talk',
+			'device_id' => 'DEV',
+		], json_decode($this->bodies[0], true));
+	}
+
+	public function testGetLoginFlows(): void {
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], json_encode(['flows' => [
+			['type' => 'm.login.sso', 'identity_providers' => [
+				['id' => 'oidc-surfconext', 'name' => 'SURFconext', 'brand' => 'surfconext'],
+				['id' => 'oidc-noname'],
+				['name' => 'No id'],
+			]],
+			['type' => 'm.login.token'],
+			['type' => 'm.login.application_service'],
+		]]));
+		$this->responses[] = new Response(200, ['Content-Type' => 'application/json'], '{"flows":[{"type":"m.login.password"}]}');
+
+		self::assertSame([
+			'password' => false,
+			'sso' => true,
+			'identityProviders' => [
+				['id' => 'oidc-surfconext', 'name' => 'SURFconext'],
+				['id' => 'oidc-noname', 'name' => 'oidc-noname'],
+			],
+		], $this->client->getLoginFlows());
+		self::assertSame(['password' => true, 'sso' => false, 'identityProviders' => []], $this->client->getLoginFlows());
+		self::assertSame(['GET', 'GET'], $this->methods);
+		self::assertSame(['/_matrix/client/v3/login', '/_matrix/client/v3/login'], $this->paths);
 	}
 
 	public function testDownloadMedia(): void {

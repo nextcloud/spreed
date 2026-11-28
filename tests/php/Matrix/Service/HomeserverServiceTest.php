@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Matrix\Service;
 
 use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
+use OC\Memcache\ArrayCache;
 use OCA\Talk\Matrix\Client\Discovery;
 use OCA\Talk\Matrix\Client\Exception\TransportException;
 use OCA\Talk\Matrix\ClientFactory;
@@ -19,10 +20,12 @@ use OCA\Talk\Matrix\Model\HomeserverMapper;
 use OCA\Talk\Matrix\Service\HomeserverService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ICacheFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class HomeserverServiceTest extends TestCase {
@@ -58,7 +61,9 @@ class HomeserverServiceTest extends TestCase {
 		$this->clientFactory = $this->createMock(ClientFactory::class);
 		$this->clientFactory->method('discovery')->willReturn(new Discovery($http, new HttpFactory()));
 
-		$this->service = new HomeserverService($this->mapper, $this->accountMapper, $this->clientFactory, $this->timeFactory);
+		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn(new ArrayCache(''));
+		$this->service = new HomeserverService($this->mapper, $this->accountMapper, $this->clientFactory, $this->timeFactory, $this->createMock(LoggerInterface::class), $cacheFactory);
 	}
 
 	public function respond(string $url): ResponseInterface {
