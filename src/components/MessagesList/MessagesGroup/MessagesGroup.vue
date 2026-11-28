@@ -243,13 +243,14 @@ export default {
 		padding-inline: calc(2 * var(--default-grid-baseline));
 	}
 
-	&__avatar {
+	// Increased specificity to override 'position: relative' of AvatarWrapper root element
+	&__avatar-wrapper &__avatar {
 		position: sticky;
 		top: 0;
+	}
 
-		&--offseted {
-			top: calc($pinned-message-banner-height + var(--default-grid-baseline) * 2);
-		}
+	&__avatar-wrapper &__avatar--offseted {
+		top: calc($pinned-message-banner-height + var(--default-grid-baseline) * 2);
 	}
 
 	&__content {
