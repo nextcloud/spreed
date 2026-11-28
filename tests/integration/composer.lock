@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "857b46464c90f0423b217bb7e9d9d8fb",
+    "content-hash": "03579e128fbdd9c9544f3a217edc47eb",
     "packages": [],
     "packages-dev": [
         {
@@ -382,22 +382,22 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "8.5.0",
+            "version": "8.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f8aca40edffeae0ec508b92f4594766083c6e203"
+                "reference": "047202b4f2ac14265ad5f9e039932df4efe0d9bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f8aca40edffeae0ec508b92f4594766083c6e203",
-                "reference": "f8aca40edffeae0ec508b92f4594766083c6e203",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/047202b4f2ac14265ad5f9e039932df4efe0d9bf",
+                "reference": "047202b4f2ac14265ad5f9e039932df4efe0d9bf",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/promises": "^3.1",
-                "guzzlehttp/psr7": "^3.4",
+                "guzzlehttp/promises": "^3.1.1",
+                "guzzlehttp/psr7": "^3.5.1",
                 "php": "^7.4 || ^8.0",
                 "psr/http-client": "^1.0",
                 "psr/http-factory": "^1.0",
@@ -489,7 +489,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/8.5.0"
+                "source": "https://github.com/guzzle/guzzle/tree/8.5.4"
             },
             "funding": [
                 {
@@ -505,20 +505,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-13T03:12:32+00:00"
+            "time": "2026-11-20T22:56:36+00:00"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "3.1.1",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "863d10526fe8232e79a8005220472ea553fd0b82"
+                "reference": "a201cc78db93065f891278f86eaeaa1c97c5a158"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/863d10526fe8232e79a8005220472ea553fd0b82",
-                "reference": "863d10526fe8232e79a8005220472ea553fd0b82",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/a201cc78db93065f891278f86eaeaa1c97c5a158",
+                "reference": "a201cc78db93065f891278f86eaeaa1c97c5a158",
                 "shasum": ""
             },
             "require": {
@@ -573,7 +573,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/3.1.1"
+                "source": "https://github.com/guzzle/promises/tree/3.2.0"
             },
             "funding": [
                 {
@@ -589,20 +589,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-20T00:03:31+00:00"
+            "time": "2026-11-21T03:48:02+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "3.5.1",
+            "version": "3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "ef2058cc884d864affa6ef7cd23a68d45e015c2f"
+                "reference": "1fa0f8319c046b7dec80030460254283d851388e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/ef2058cc884d864affa6ef7cd23a68d45e015c2f",
-                "reference": "ef2058cc884d864affa6ef7cd23a68d45e015c2f",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/1fa0f8319c046b7dec80030460254283d851388e",
+                "reference": "1fa0f8319c046b7dec80030460254283d851388e",
                 "shasum": ""
             },
             "require": {
@@ -694,7 +694,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/3.5.1"
+                "source": "https://github.com/guzzle/psr7/tree/3.6.0"
             },
             "funding": [
                 {
@@ -710,7 +710,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-19T20:35:18+00:00"
+            "time": "2026-11-22T00:00:35+00:00"
         },
         {
             "name": "myclabs/deep-copy",
