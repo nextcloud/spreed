@@ -650,7 +650,17 @@ class ChatManagerTest extends TestCase {
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
 	}
 
-	public function testDeleteMessageConversationFolderFile(): void {
+	public static function dataDeleteMessageConversationFolderFile(): array {
+		return [
+			'user' => [Attendee::ACTOR_USERS, 'user', null, [['user', 'T0k3N', 42]]],
+			'guest with uploads without storage' => [Attendee::ACTOR_GUESTS, 'guest', 'alice', [['alice', 'T0k3N', 42]]],
+			'user with a quota of 0' => [Attendee::ACTOR_USERS, 'user', 'alice', [['alice', 'T0k3N', 42]]],
+			'guest without owner' => [Attendee::ACTOR_GUESTS, 'guest', null, []],
+		];
+	}
+
+	#[DataProvider('dataDeleteMessageConversationFolderFile')]
+	public function testDeleteMessageConversationFolderFile(string $actorType, string $actorId, ?string $owner, array $moves): void {
 		$mapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$attendee = $mapper->createAttendeeFromRow([
 			'a_id' => 1,
@@ -706,7 +716,7 @@ class ChatManagerTest extends TestCase {
 			->willReturn('object_shared');
 		$comment->expects($this->once())
 			->method('getMessage')
-			->willReturn(json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => '42']]));
+			->willReturn(json_encode(['message' => 'file_shared', 'parameters' => array_filter(['fileId' => '42', 'owner' => $owner])]));
 		$comment->expects($this->once())
 			->method('setMessage');
 		$comment->expects($this->once())
@@ -714,16 +724,19 @@ class ChatManagerTest extends TestCase {
 			->with('comment_deleted');
 
 		$comment->method('getActorType')
-			->willReturn(Attendee::ACTOR_USERS);
+			->willReturn($actorType);
 		$comment->method('getActorId')
-			->willReturn('user');
+			->willReturn($actorId);
 
 		$this->shareManager->expects($this->never())
 			->method('deleteShare');
 
-		$this->conversationFolderService->expects($this->once())
+		$calls = [];
+		$this->conversationFolderService->expects($this->exactly(count($moves)))
 			->method('moveToDeletedFolder')
-			->with('user', 'T0k3N', 42);
+			->willReturnCallback(function (string $ownerId, string $token, int $fileId) use (&$calls): void {
+				$calls[] = [$ownerId, $token, $fileId];
+			});
 
 		$this->commentsManager->expects($this->once())
 			->method('save')
@@ -738,6 +751,7 @@ class ChatManagerTest extends TestCase {
 			->willReturn($systemMessage);
 
 		$this->assertSame($systemMessage, $chatManager->deleteMessage($chat, $comment, $participant, $date));
+		$this->assertSame($moves, $calls);
 	}
 
 	public function testDeleteExpiredMessagesMovesConversationFolderAttachments(): void {
@@ -746,6 +760,12 @@ class ChatManagerTest extends TestCase {
 		$folderAttachment->method('getActorId')->willReturn('user');
 		$folderAttachment->method('getMessage')
 			->willReturn(json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => '42']]));
+
+		$guestAttachment = $this->createMock(IComment::class);
+		$guestAttachment->method('getActorType')->willReturn(Attendee::ACTOR_GUESTS);
+		$guestAttachment->method('getActorId')->willReturn('guest');
+		$guestAttachment->method('getMessage')
+			->willReturn(json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => '43', 'owner' => 'alice']]));
 
 		$fileShare = $this->createMock(IComment::class);
 		$fileShare->method('getActorType')->willReturn(Attendee::ACTOR_USERS);
@@ -756,18 +776,23 @@ class ChatManagerTest extends TestCase {
 		$this->commentsManager->method('getExpiredObjectSharedMessages')
 			->willReturn([
 				['token' => 'T0k3N', 'comment' => $folderAttachment],
+				['token' => 'T0k3N', 'comment' => $guestAttachment],
 				['token' => 'T0k3N', 'comment' => $fileShare],
 			]);
 
-		$this->conversationFolderService->expects($this->once())
+		$calls = [];
+		$this->conversationFolderService->expects($this->exactly(2))
 			->method('moveToDeletedFolder')
-			->with('user', 'T0k3N', 42);
+			->willReturnCallback(function (string $ownerId, string $token, int $fileId) use (&$calls): void {
+				$calls[] = [$ownerId, $token, $fileId];
+			});
 
 		$this->commentsManager->expects($this->once())
 			->method('deleteCommentsExpiredAtObject')
 			->with('chat', '');
 
 		$this->chatManager->deleteExpiredMessages();
+		$this->assertSame([['user', 'T0k3N', 42], ['alice', 'T0k3N', 43]], $calls);
 	}
 
 	public function testDeleteMessageFileShareNotFound(): void {

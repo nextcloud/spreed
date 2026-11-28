@@ -131,11 +131,12 @@ class AuditLogListenerTest extends TestCase {
 			[ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS, 1, 0, 'Mention permissions', 'spreed.conversation_mention_permissions.changed'],
 			[ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION, 3600, 0, 'Message expiration', 'spreed.conversation_message_expiration.changed'],
 			[ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, 1, 0, 'Recording consent requirement', 'spreed.conversation_recording_consent.changed'],
+			[ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, 'alice', '', 'Moderator storing uploads without storage', 'spreed.conversation_uploads_without_storage.changed'],
 		];
 	}
 
 	#[DataProvider('dataValueChanged')]
-	public function testValueChanged(string $property, int $newValue, int $oldValue, string $setting, string $operation): void {
+	public function testValueChanged(string $property, int|string $newValue, int|string $oldValue, string $setting, string $operation): void {
 		$this->listener->handle(new RoomModifiedEvent($this->createRoom(), $property, $newValue, $oldValue));
 
 		$this->assertAuditEvent($operation, $setting . ' of conversation "{token}" was changed from {oldValue} to {newValue}', [

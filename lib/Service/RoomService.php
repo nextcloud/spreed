@@ -982,6 +982,32 @@ class RoomService {
 	}
 
 	/**
+	 * @param string $owner Moderator storing uploads of participants without storage, empty to turn them off
+	 * @param int $folderId Guests folder of the moderator, 0 to turn them off
+	 */
+	public function setGuestsFolder(Room $room, string $owner, int $folderId): void {
+		$oldOwner = $room->getGuestsFolderOwner();
+		if ($owner === $oldOwner && $folderId === $room->getGuestsFolderId()) {
+			return;
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, $owner, $oldOwner);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('guests_folder_owner', $update->createNamedParameter($owner === '' ? null : $owner))
+			->set('guests_folder_id', $update->createNamedParameter($folderId, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setGuestsFolder($owner, $folderId);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_GUESTS_FOLDER, $owner, $oldOwner);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
+	/**
 	 * Set the ID of the language to use for live transcriptions in the given
 	 * room.
 	 *

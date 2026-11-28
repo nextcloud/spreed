@@ -42,6 +42,7 @@ use OCA\Talk\Exceptions\RoomProperty\ReadOnlyException;
 use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
+use OCA\Talk\Exceptions\RoomProperty\UploadsWithoutStorageException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
@@ -89,6 +90,7 @@ use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\TalkSession;
@@ -115,6 +117,7 @@ use OCP\Config\ValueType;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudId;
 use OCP\Federation\ICloudIdManager;
+use OCP\Files\NotFoundException;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig as IServerAppConfig;
 use OCP\IConfig;
@@ -191,6 +194,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly Forced $forcedParameters,
 		private readonly ?string $userId,
 		private readonly SendService $matrixSendService,
+		private readonly UploadsWithoutStorageService $uploadsWithoutStorageService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -2203,6 +2207,63 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Allow or stop uploads of guests, email guests and users with a quota of 0
+	 *
+	 * Their files are stored in the Guests folder of the moderator who allowed it.
+	 *
+	 * Required capability: `config => attachments => guests-upload`
+	 *
+	 * @param bool $allowed Whether participants without storage may upload files into the current user's storage
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'federated'|'matrix'|'storage'|'type'|'unavailable'}, array{}>
+	 *
+	 * 200: Setting updated successfully
+	 * 400: Updating the setting is not possible
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/uploads-without-storage', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function setUploadsWithoutStorage(bool $allowed): DataResponse {
+		try {
+			if ($allowed) {
+				$this->uploadsWithoutStorageService->allowUploads($this->participant, $this->room);
+			} else {
+				$this->roomService->setGuestsFolder($this->room, '', 0);
+			}
+		} catch (UploadsWithoutStorageException $e) {
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Get the moderator whose Guests folder stores uploads of participants without storage
+	 *
+	 * Required capability: `config => attachments => guests-upload`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{owner: string, path: ?string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
+	 *
+	 * 200: Display name of the moderator, and the path of the folder in their files when they are the current user
+	 * 404: Uploads without storage are off
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/uploads-without-storage', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function getUploadsWithoutStorage(): DataResponse {
+		try {
+			return new DataResponse($this->uploadsWithoutStorageService->getGuestsFolderLocation($this->room, $this->participant));
+		} catch (NotFoundException) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
 	}
 
 	/**

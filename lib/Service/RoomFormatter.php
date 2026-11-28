@@ -54,6 +54,7 @@ class RoomFormatter {
 		private readonly ProxyCacheMessageService $pcmService,
 		private readonly IL10N $l10n,
 		private readonly ThreadService $threadService,
+		private readonly UploadsWithoutStorageService $uploadsWithoutStorageService,
 		private readonly ?string $userId,
 	) {
 	}
@@ -154,6 +155,7 @@ class RoomFormatter {
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
+			'uploadsWithoutStorage' => false,
 			'liveTranscriptionLanguageId' => '',
 			'lastPinnedId' => 0,
 			'hiddenPinnedId' => 0,
@@ -252,6 +254,7 @@ class RoomFormatter {
 			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 			'mentionPermissions' => $room->getMentionPermissions(),
+			'uploadsWithoutStorage' => $room->getGuestsFolderOwner() !== '' && $this->uploadsWithoutStorageService->isAvailable(),
 			'liveTranscriptionLanguageId' => $room->getLiveTranscriptionLanguageId(),
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),

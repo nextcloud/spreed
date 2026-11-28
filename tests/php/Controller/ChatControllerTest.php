@@ -38,6 +38,7 @@ use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCA\Talk\Share\Helper\Preloader;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -99,6 +100,7 @@ class ChatControllerTest extends TestCase {
 	private IAppConfig&MockObject $appConfig;
 	private LoggerInterface&MockObject $logger;
 	private ConversationFolderService&MockObject $conversationFolderService;
+	private UploadsWithoutStorageService&MockObject $uploadsWithoutStorageService;
 	private Config&MockObject $talkConfig;
 	protected SendService&MockObject $sendService;
 	protected SyncService&MockObject $syncService;
@@ -149,6 +151,7 @@ class ChatControllerTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->scheduledMessageService = $this->createMock(ScheduledMessageService::class);
 		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
+		$this->uploadsWithoutStorageService = $this->createMock(UploadsWithoutStorageService::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->sendService = $this->createMock(SendService::class);
 		$this->syncService = $this->createMock(SyncService::class);
@@ -206,6 +209,7 @@ class ChatControllerTest extends TestCase {
 			$this->logger,
 			$this->scheduledMessageService,
 			$this->conversationFolderService,
+			$this->uploadsWithoutStorageService,
 			$this->talkConfig,
 			$this->sendService,
 			$this->syncService,

@@ -56,6 +56,7 @@ use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCA\Talk\Share\Helper\Preloader;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
@@ -78,6 +79,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\FileInfo;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException as FileNotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -149,6 +151,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		private readonly LoggerInterface $logger,
 		private readonly ScheduledMessageService $scheduledMessageManager,
 		private readonly ConversationFolderService $conversationFolderService,
+		private readonly UploadsWithoutStorageService $uploadsWithoutStorageService,
 		private readonly Config $talkConfig,
 		private readonly SendService $matrixSendService,
 		private readonly SyncService $matrixSyncService,
@@ -2524,27 +2527,52 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *    original desired name as `fileName`.  The server moves the file from Draft
 	 *    into the shared subfolder, resolves any conflicts, and posts the message.
 	 *
+	 * Guests, email guests and users with a quota of 0 get a temporary upload
+	 * link instead, when a moderator allowed uploads without storage: PUT
+	 * the file to `public.php/dav/files/{uploadToken}/{file name}`.
+	 *
 	 * @param list<string> $fileNames Desired filenames to probe
 	 * @param bool $allowUpdate Allow recipients to modify shared files
-	 * @return DataResponse<Http::STATUS_OK, array{folder: string, renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 * @param bool $supportsUploadLink Whether the client can upload through an upload link
+	 * @return DataResponse<Http::STATUS_OK, array{folder: string, renames: list<array<string, string>>, uploadToken?: string, uploadPassword?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_TOO_MANY_REQUESTS|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
 	 *
-	 * 200: Draft folder path and rename map returned
+	 * 200: Draft folder path or upload link and rename map returned
+	 * 403: Uploads without storage are not allowed in this conversation
+	 * 429: Too many uploads without storage
 	 * 500: Could not prepare the conversation folder
 	 * 501: Conversation subfolders feature is disabled
 	 * 507: User storage quota exceeded
 	 */
-	#[NoAdminRequired]
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
-	#[RequireLoggedInParticipant]
+	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachment/folder', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function probeAttachmentFolder(array $fileNames = [], bool $allowUpdate = false): DataResponse {
-		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
-		$uid = $this->userId;
+	public function probeAttachmentFolder(array $fileNames = [], bool $allowUpdate = false, bool $supportsUploadLink = false): DataResponse {
+		if (!$this->uploadsWithoutStorageService->hasOwnStorage($this->participant)) {
+			if (!$supportsUploadLink) {
+				return $this->noStorageResponse();
+			}
+
+			try {
+				$folders = $this->uploadsWithoutStorageService->getUploadFolders($this->participant, $this->room);
+				$uploadLink = $this->uploadsWithoutStorageService->createUploadLink($this->participant, $this->room, $folders['draftFolder']);
+			} catch (IRateLimitExceededException) {
+				return new DataResponse(['error' => $this->l->t('Too many uploads, please try again later')], Http::STATUS_TOO_MANY_REQUESTS);
+			} catch (\Exception $e) {
+				$this->logger->info('probeAttachmentFolder: uploads without storage refused: {error}', ['error' => $e->getMessage()]);
+				return $this->noStorageResponse();
+			}
+
+			$renames = $this->conversationFolderService->probeFilenames($folders['guestsFolder'], $fileNames);
+			return new DataResponse(['folder' => '', 'renames' => $renames] + $uploadLink);
+		}
+
+		$uid = $this->participant->getAttendee()->getActorId();
 
 		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
 			$this->conversationFolderService->ensureAttachmentFolderExists($uid);
@@ -2573,6 +2601,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * @return DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_INSUFFICIENT_STORAGE, array{error: string}, array{}>
+	 */
+	private function noStorageResponse(): DataResponse {
+		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
+		}
+		return new DataResponse(['error' => $this->l->t('Uploading files is not allowed in this conversation')], Http::STATUS_FORBIDDEN);
+	}
+
+	/**
 	 * Post a file from the conversation Draft folder as a chat message
 	 *
 	 * The file must be inside the Draft folder returned by the probe endpoint.
@@ -2589,40 +2627,49 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param string $fileName Desired final file name; the service resolves conflicts
 	 *                         by appending " (1)", " (2)", … if already taken
 	 * @param bool $allowUpdate Allow recipients to modify shared files
-	 * @return DataResponse<Http::STATUS_OK, array{renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 * @param string $uploadToken Upload link from the probe endpoint, for participants without storage
+	 * @return DataResponse<Http::STATUS_OK, array{renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
 	 *
 	 * 200: File moved from Draft and posted as chat message
 	 * 400: Path does not point to a file
+	 * 403: Uploads without storage are not allowed in this conversation
 	 * 404: File not found
 	 * 422: File is not inside the conversation Draft folder for this room
 	 * 500: Could not prepare the conversation folder
 	 * 501: Conversation subfolders feature is disabled
 	 * 507: User storage quota exceeded
 	 */
-	#[NoAdminRequired]
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
-	#[RequireLoggedInParticipant]
+	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachment', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = '', bool $allowUpdate = false): DataResponse {
+	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = '', bool $allowUpdate = false, string $uploadToken = ''): DataResponse {
 		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
 			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
 		}
 
-		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
-		$uid = $this->userId;
+		$hasOwnStorage = $this->uploadsWithoutStorageService->hasOwnStorage($this->participant);
+		$uid = $this->participant->getAttendee()->getActorId();
 
 		// Ensure the user's conversation subfolder exists and is shared with
 		// the room.  The service creates the full folder hierarchy if missing.
 		try {
-			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
-			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+			if ($hasOwnStorage) {
+				$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
+				$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+			} else {
+				['guestsFolder' => $subfolder, 'draftFolder' => $draftFolder] = $this->uploadsWithoutStorageService->getUploadFolders($this->participant, $this->room);
+				$draftFolder = $this->uploadsWithoutStorageService->getUploadFolder($this->participant, $this->room, $draftFolder, $uploadToken);
+			}
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (NotPermittedException) {
+			return $this->noStorageResponse();
 		} catch (\Exception $e) {
 			$this->logger->error('postAttachmentToRoom: failed to prepare conversation folder: {error}', [
 				'error' => $e->getMessage(),
@@ -2633,8 +2680,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		// Look up the file in the caller's file tree.
 		try {
-			$node = $this->conversationFolderService->getFileNode($uid, $filePath);
-		} catch (FileNotFoundException) {
+			$node = $hasOwnStorage
+				? $this->conversationFolderService->getFileNode($uid, $filePath)
+				: $draftFolder->get(basename($filePath));
+		} catch (FileNotFoundException|NotPermittedException) {
 			return new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
 		}
 		if ($node->getType() !== FileInfo::TYPE_FILE) {
@@ -2653,6 +2702,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$renameFrom = $result['from'];
 		$renameTo = $result['to'];
 		$node = $result['node'];
+
+		if (!$hasOwnStorage) {
+			$this->uploadsWithoutStorageService->finishUpload($this->room, $draftFolder);
+		}
 
 		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.
 		$metaData = json_decode($talkMetaData, true);
@@ -2702,12 +2755,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// Create the file_shared system message referencing the file by node ID.
 		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
 		// share is needed; access is controlled by the folder-level share.
+		$parameters = ['fileId' => (string)$node->getId(), 'metaData' => $metaData];
+		if (!$hasOwnStorage) {
+			$parameters['owner'] = $this->room->getGuestsFolderOwner();
+		}
 		$comment = $this->chatManager->addSystemMessage(
 			$this->room,
 			$this->participant,
-			Attendee::ACTOR_USERS,
-			$uid,
-			json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$node->getId(), 'metaData' => $metaData]]),
+			$this->participant->getAttendee()->getActorType(),
+			$this->participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'file_shared', 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(),
 			true,
 			$referenceId !== '' ? $referenceId : null,

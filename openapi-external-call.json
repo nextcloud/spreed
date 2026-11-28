@@ -119,7 +119,8 @@
                                     "allowed",
                                     "conversation-subfolders",
                                     "default-allow-edit",
-                                    "default-original-quality"
+                                    "default-original-quality",
+                                    "guests-upload"
                                 ],
                                 "properties": {
                                     "allowed": {
@@ -141,6 +142,10 @@
                                     "default-original-quality": {
                                         "type": "boolean",
                                         "description": "Whether images are uploaded in original quality by default"
+                                    },
+                                    "guests-upload": {
+                                        "type": "boolean",
+                                        "description": "Whether moderators can let participants without storage upload files"
                                     }
                                 }
                             },
@@ -1056,7 +1061,8 @@
                     "hiddenPinnedId",
                     "hasScheduledMessages",
                     "attributes",
-                    "muteUntil"
+                    "muteUntil",
+                    "uploadsWithoutStorage"
                 ],
                 "properties": {
                     "actorId": {
@@ -1382,6 +1388,10 @@
                         "type": "integer",
                         "format": "int64",
                         "description": "Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications"
+                    },
+                    "uploadsWithoutStorage": {
+                        "type": "boolean",
+                        "description": "Required capability: `config => attachments => guests-upload`. Whether participants without storage can upload files into the storage of a moderator"
                     }
                 }
             },

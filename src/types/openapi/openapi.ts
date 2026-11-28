@@ -719,6 +719,7 @@ export type paths = {
          * @description Creates the caller's conversation subfolder (and the room share) if not yet present, then creates or returns a Draft folder for staging uploads. Simulates the rename-on-conflict logic for each requested filename without requiring the files to already exist.
          *     The returned `folder` is the Draft path — a staging area that is NOT shared with the room, so other participants cannot see in-progress uploads or files from aborted messages. Files are moved into the shared subfolder atomically when the attachment endpoint is called.
          *     Recommended client flow: 1. Call this endpoint to obtain the Draft folder path and predicted final names. 2. Display the predicted names as accessibility placeholders immediately. 3. Upload each file to a random temporary name (e.g. a UUID) inside the returned Draft folder — do NOT upload to the predicted final name. 4. Call the attachment endpoint with the temp path as `filePath` and the original desired name as `fileName`. The server moves the file from Draft into the shared subfolder, resolves any conflicts, and posts the message.
+         *     Guests, email guests and users with a quota of 0 get a temporary upload link instead, when a moderator allowed uploads without storage: PUT the file to `public.php/dav/files/{uploadToken}/{file name}`.
          */
         post: operations["chat-probe-attachment-folder"];
         delete?: never;
@@ -1724,6 +1725,31 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/uploads-without-storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the moderator whose Guests folder stores uploads of participants without storage
+         * @description Required capability: `config => attachments => guests-upload`
+         */
+        get: operations["room-get-uploads-without-storage"];
+        /**
+         * Allow or stop uploads of guests, email guests and users with a quota of 0
+         * @description Their files are stored in the Guests folder of the moderator who allowed it.
+         *     Required capability: `config => attachments => guests-upload`
+         */
+        put: operations["room-set-uploads-without-storage"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/password": {
         parameters: {
             query?: never;
@@ -2400,6 +2426,8 @@ export type components = {
                     "default-allow-edit": boolean;
                     /** @description Whether images are uploaded in original quality by default */
                     "default-original-quality": boolean;
+                    /** @description Whether moderators can let participants without storage upload files */
+                    "guests-upload": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */
@@ -3477,6 +3505,8 @@ export type components = {
              * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
              */
             muteUntil: number;
+            /** @description Required capability: `config => attachments => guests-upload`. Whether participants without storage can upload files into the storage of a moderator */
+            uploadsWithoutStorage: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
@@ -7574,11 +7604,16 @@ export interface operations {
                      * @default false
                      */
                     allowUpdate?: boolean;
+                    /**
+                     * @description Whether the client can upload through an upload link
+                     * @default false
+                     */
+                    supportsUploadLink?: boolean;
                 };
             };
         };
         responses: {
-            /** @description Draft folder path and rename map returned */
+            /** @description Draft folder path or upload link and rename map returned */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7592,13 +7627,15 @@ export interface operations {
                                 renames: {
                                     [key: string]: string;
                                 }[];
+                                uploadToken?: string;
+                                uploadPassword?: string;
                             };
                         };
                     };
                 };
             };
-            /** @description Current user is not logged in */
-            401: {
+            /** @description Uploads without storage are not allowed in this conversation */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7606,7 +7643,25 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Too many uploads without storage */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -7696,6 +7751,11 @@ export interface operations {
                      * @default false
                      */
                     allowUpdate?: boolean;
+                    /**
+                     * @description Upload link from the probe endpoint, for participants without storage
+                     * @default
+                     */
+                    uploadToken?: string;
                 };
             };
         };
@@ -7734,8 +7794,8 @@ export interface operations {
                     };
                 };
             };
-            /** @description Current user is not logged in */
-            401: {
+            /** @description Uploads without storage are not allowed in this conversation */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7743,7 +7803,9 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -13518,6 +13580,137 @@ export interface operations {
                                  * @enum {integer}
                                  */
                                 forced?: 0 | 1;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-get-uploads-without-storage": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Display name of the moderator, and the path of the folder in their files when they are the current user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                owner: string;
+                                path: string | null;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Uploads without storage are off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-uploads-without-storage": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Whether participants without storage may upload files into the current user's storage */
+                    allowed: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Setting updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Updating the setting is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "federated" | "matrix" | "storage" | "type" | "unavailable";
                             };
                         };
                     };

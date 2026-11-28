@@ -138,6 +138,11 @@ class Listener implements IEventListener {
 				return;
 			}
 
+			// Allowing uploads without storage shares the Guests folder for access only
+			if ($route === 'ocs.spreed.room.setuploadswithoutstorage') {
+				return;
+			}
+
 			$room = $this->manager->getRoomByToken($share->getSharedWith());
 			// ensureOneToOneRoomIsFilled must run so attendees are persisted.
 			$this->participantService->ensureOneToOneRoomIsFilled($room);

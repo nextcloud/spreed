@@ -38,6 +38,15 @@ export function isChannelConversation(conversation: Conversation | undefined): b
 }
 
 /**
+ * Check if participants without storage can upload files in the conversation
+ *
+ * @param conversation conversation object
+ */
+export function allowsUploadsWithoutStorage(conversation: Conversation | undefined): boolean {
+	return Boolean(conversation?.uploadsWithoutStorage)
+}
+
+/**
  * Check if the conversation is synced with a Matrix room
  *
  * @param conversation conversation object

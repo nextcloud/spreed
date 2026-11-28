@@ -387,6 +387,7 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { useUploadStore } from '../../stores/upload.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
+import { allowsUploadsWithoutStorage } from '../../utils/conversation.ts'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../utils/getCustomDateOptions.ts'
 import {
@@ -648,8 +649,9 @@ export default {
 
 		canUploadFiles() {
 			// TODO attachments should be allowed on both instances?
-			return getTalkConfig(this.token, 'attachments', 'allowed')
-				&& this.canShareFiles
+			const hasOwnStorage = getTalkConfig(this.token, 'attachments', 'allowed') && !this.actorStore.isActorGuest
+			return (hasOwnStorage || allowsUploadsWithoutStorage(this.conversation))
+				&& !this.conversation.remoteServer // no attachments support in federated conversations
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 

@@ -111,6 +111,7 @@
 | `recordingConsent`      | int     | v4    |         | Whether recording consent is required before joining a call (Only 0 and 1 will be returned, see [constants list](constants.md#recording-consent-required)) (only available with `recording-consent` capability)                                                                                                                                                                                   |
 | `mentionPermissions`    | int     | v4    |         | Whether all participants can mention using `@all` or only moderators (see [constants list](constants.md#mention-permissions)) (only available with `mention-permissions` capability)                                                                                                                                                                                                              |
 | `isArchived`            | bool    | v4    |         | Flag if the conversation is archived by the user (only available with `archived-conversations-v2` capability)                                                                                                                                                                                                                                                                                     |                                                                                                                                                                                                          |
+| `uploadsWithoutStorage` | bool    | v4    |         | Whether guests, email guests and users with a quota of 0 can upload files into the Guests folder of a moderator (only available with `config => attachments => guests-upload` capability)                                                                                                                                                                                                                        |
 
 ## Creating a new conversation
 
@@ -511,6 +512,46 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 		+ `400 Bad Request` When permissions value is invalid
 		+ `403 Forbidden` When the current user is not a moderator/owner
 		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Allow uploads without storage
+
+Guests, email guests and users with a quota of 0 can then upload files. They are stored in the Guests folder of the moderator who allowed it, until that moderator is demoted or leaves.
+
+* Required capability: `config => attachments => guests-upload`
+* Method: `PUT`
+* Endpoint: `/room/{token}/uploads-without-storage`
+* Data:
+
+| field     | type | Description                                                  |
+|-----------|------|--------------------------------------------------------------|
+| `allowed` | bool | Whether participants without storage may upload files        |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the conversation is not a group or public conversation, a breakout room, a Matrix room or federated
+		+ `400 Bad Request` When the current user has no storage
+		+ `400 Bad Request` When public upload links or conversation subfolders are disabled
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Get the owner of the Guests folder
+
+* Required capability: `config => attachments => guests-upload`
+* Method: `GET`
+* Endpoint: `/room/{token}/uploads-without-storage`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When uploads without storage are off or the conversation could not be found for the participant
+	- Data:
+
+| field   | type   | Description                                              |
+|---------|--------|----------------------------------------------------------|
+| `owner` | string      | Display name of the moderator whose files store uploads                                   |
+| `path`  | string/null | Path of the Guests folder in the files of that moderator, only when it is the current user |
 
 ## Get conversation capabilities
 

@@ -17,8 +17,8 @@
 					:name="dropHintText"
 					class="dragover">
 					<template #icon>
-						<NcIconSvgWrapper v-if="!isGuest && !isReadOnly" :svg="IconFileUpload" />
-						<IconAccountOutline v-else-if="isGuest" />
+						<NcIconSvgWrapper v-if="!needsLoginToUpload && !isReadOnly" :svg="IconFileUpload" />
+						<IconAccountOutline v-else-if="needsLoginToUpload" />
 						<IconAlertOctagonOutline v-else-if="isReadOnly" />
 					</template>
 				</NcEmptyContent>
@@ -83,6 +83,7 @@ import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useSettingsStore } from '../stores/settings.ts'
+import { allowsUploadsWithoutStorage } from '../utils/conversation.ts'
 
 export default {
 
@@ -148,8 +149,12 @@ export default {
 			return this.isGuest && !this.actorStore.displayName
 		},
 
+		needsLoginToUpload() {
+			return this.isGuest && !allowsUploadsWithoutStorage(this.conversation)
+		},
+
 		canUploadFiles() {
-			return getTalkConfig(this.token, 'attachments', 'allowed')
+			return (getTalkConfig(this.token, 'attachments', 'allowed') || allowsUploadsWithoutStorage(this.conversation))
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
 		},
@@ -160,7 +165,7 @@ export default {
 		},
 
 		dropHintText() {
-			if (this.isGuest) {
+			if (this.needsLoginToUpload) {
 				return t('spreed', 'You need to be logged in to upload files')
 			} else if (this.isReadOnly) {
 				return t('spreed', 'This conversation is read-only')
@@ -215,7 +220,7 @@ export default {
 			// Restore non dragover state
 			this.isDraggingOver = false
 			// Stop the executin if the user is a guest
-			if (this.isGuest || this.isReadOnly) {
+			if (this.needsLoginToUpload || this.isReadOnly) {
 				return
 			}
 			// Stage the files, they are uploaded and shared on submit

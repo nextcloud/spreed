@@ -81,7 +81,8 @@
                                     "allowed",
                                     "conversation-subfolders",
                                     "default-allow-edit",
-                                    "default-original-quality"
+                                    "default-original-quality",
+                                    "guests-upload"
                                 ],
                                 "properties": {
                                     "allowed": {
@@ -103,6 +104,10 @@
                                     "default-original-quality": {
                                         "type": "boolean",
                                         "description": "Whether images are uploaded in original quality by default"
+                                    },
+                                    "guests-upload": {
+                                        "type": "boolean",
+                                        "description": "Whether moderators can let participants without storage upload files"
                                     }
                                 }
                             },

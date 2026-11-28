@@ -14,6 +14,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\LiveTranscriptionService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
@@ -91,6 +92,7 @@ class CapabilitiesTest extends TestCase {
 			$this->taskProcessingManager,
 			$this->liveTranscriptionService,
 			$this->shareManager,
+			$this->createMock(UploadsWithoutStorageService::class),
 			$this->cacheFactory,
 		);
 	}
@@ -200,6 +202,7 @@ class CapabilitiesTest extends TestCase {
 						'conversation-subfolders' => false,
 						'default-allow-edit' => false,
 						'default-original-quality' => false,
+						'guests-upload' => false,
 					],
 					'call' => [
 						'enabled' => true,
@@ -456,6 +459,7 @@ class CapabilitiesTest extends TestCase {
 						'conversation-subfolders' => true,
 						'default-allow-edit' => true,
 						'default-original-quality' => true,
+						'guests-upload' => false,
 						'folder' => '/Talk',
 					],
 					'call' => [

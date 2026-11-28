@@ -12,6 +12,7 @@ use OCA\Guests\UserBackend;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Capabilities\IPublicCapability;
@@ -193,6 +194,7 @@ class Capabilities implements IPublicCapability {
 			'conversation-subfolders',
 			'default-allow-edit',
 			'default-original-quality',
+			'guests-upload',
 		],
 		'call' => [
 			'predefined-backgrounds',
@@ -267,6 +269,7 @@ class Capabilities implements IPublicCapability {
 		private readonly ITaskProcessingManager $taskProcessingManager,
 		private readonly LiveTranscriptionService $liveTranscriptionService,
 		private readonly IManager $shareManager,
+		private readonly UploadsWithoutStorageService $uploadsWithoutStorageService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -294,6 +297,7 @@ class Capabilities implements IPublicCapability {
 					'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
 					'default-allow-edit' => $this->appConfig->getAppValueBool(Config::DEFAULT_ATTACHMENTS_ALLOW_EDIT),
 					'default-original-quality' => $this->appConfig->getAppValueBool(Config::DEFAULT_ATTACHMENTS_ORIGINAL_QUALITY),
+					'guests-upload' => $this->uploadsWithoutStorageService->isAvailable(),
 				],
 				'call' => [
 					'enabled' => $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) !== Room::START_CALL_NOONE,

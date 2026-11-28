@@ -35,6 +35,7 @@
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
 				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token :canModerate="canFullModerate" />
 				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token :canModerate="canFullModerate" />
+				<UploadsWithoutStorageSettings v-if="supportsUploadsWithoutStorage" :token :canModerate="canFullModerate" />
 				<LinkShareSettings v-if="!isNoteToSelf && !isClassified && !isMatrix" :token :canModerate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token :canModerate="selfIsOwnerOrModerator" />
 				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature && !isMatrix" :token :canModerate="selfIsOwnerOrModerator" />
@@ -156,6 +157,7 @@ import NotificationsSettings from './NotificationsSettings.vue'
 import PreserveConversationSettings from './PreserveConversationSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
+import UploadsWithoutStorageSettings from './UploadsWithoutStorageSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import {
 	getTalkConfig,
@@ -195,6 +197,7 @@ export default {
 		PreserveConversationSettings,
 		RecordingConsentSettings,
 		SipSettings,
+		UploadsWithoutStorageSettings,
 	},
 
 	setup() {
@@ -338,6 +341,14 @@ export default {
 
 		hasMessageExpirationFeature() {
 			return hasTalkFeature(this.token, 'message-expiration')
+		},
+
+		supportsUploadsWithoutStorage() {
+			return getTalkConfig(this.token, 'attachments', 'guests-upload')
+				&& !this.isNoteToSelf
+				&& !this.isOneToOne
+				&& !this.isMatrix
+				&& !this.conversation.remoteServer
 		},
 
 		isVoiceRoom() {

@@ -181,6 +181,8 @@ export type components = {
                     "default-allow-edit": boolean;
                     /** @description Whether images are uploaded in original quality by default */
                     "default-original-quality": boolean;
+                    /** @description Whether moderators can let participants without storage upload files */
+                    "guests-upload": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */
@@ -865,6 +867,8 @@ export type components = {
              * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving chat notifications
              */
             muteUntil: number;
+            /** @description Required capability: `config => attachments => guests-upload`. Whether participants without storage can upload files into the storage of a moderator */
+            uploadsWithoutStorage: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

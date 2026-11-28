@@ -136,6 +136,8 @@ class Room {
 		private string $liveTranscriptionLanguageId,
 		private int $lastPinnedId,
 		private int $attributes,
+		private int $guestsFolderId,
+		private string $guestsFolderOwner,
 	) {
 	}
 
@@ -457,6 +459,19 @@ class Room {
 	 */
 	public function setMentionPermissions(int $mentionPermissions): void {
 		$this->mentionPermissions = $mentionPermissions;
+	}
+
+	public function getGuestsFolderId(): int {
+		return $this->guestsFolderId;
+	}
+
+	public function getGuestsFolderOwner(): string {
+		return $this->guestsFolderOwner;
+	}
+
+	public function setGuestsFolder(string $owner, int $folderId): void {
+		$this->guestsFolderOwner = $owner;
+		$this->guestsFolderId = $folderId;
 	}
 
 	public function setObjectId(string $objectId): void {

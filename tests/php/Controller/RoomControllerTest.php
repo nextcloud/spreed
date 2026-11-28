@@ -13,14 +13,18 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\RoomController;
+use OCA\Talk\Exceptions\RoomProperty\UploadsWithoutStorageException;
 use OCA\Talk\Matrix\Service\SendException;
 use OCA\Talk\Matrix\Service\SendService;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\UploadsWithoutStorageService;
 use OCP\AppFramework\Http;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\NotFoundException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
@@ -32,6 +36,8 @@ class RoomControllerTest extends TestCase {
 	private SendService&MockObject $sendService;
 	private Config&MockObject $talkConfig;
 	private IEventDispatcher&MockObject $dispatcher;
+	private RoomService&MockObject $roomService;
+	private UploadsWithoutStorageService&MockObject $uploadsWithoutStorageService;
 	private Room&MockObject $room;
 	private Participant&MockObject $participant;
 	private RoomController $controller;
@@ -42,6 +48,8 @@ class RoomControllerTest extends TestCase {
 		$this->sendService = $this->createMock(SendService::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->roomService = $this->createMock(RoomService::class);
+		$this->uploadsWithoutStorageService = $this->createMock(UploadsWithoutStorageService::class);
 		$this->room = $this->createMock(Room::class);
 		$this->participant = $this->createMock(Participant::class);
 
@@ -56,6 +64,8 @@ class RoomControllerTest extends TestCase {
 					SendService::class => $this->sendService,
 					Config::class => $this->talkConfig,
 					IEventDispatcher::class => $this->dispatcher,
+					RoomService::class => $this->roomService,
+					UploadsWithoutStorageService::class => $this->uploadsWithoutStorageService,
 					default => $this->createMock($type),
 				},
 			};
@@ -112,5 +122,46 @@ class RoomControllerTest extends TestCase {
 		} finally {
 			$this->restoreService(IClientService::class);
 		}
+	}
+
+	public function testAllowUploadsWithoutStorage(): void {
+		$this->uploadsWithoutStorageService->expects(self::once())
+			->method('allowUploads')
+			->with($this->participant, $this->room);
+
+		self::assertSame(Http::STATUS_OK, $this->controller->setUploadsWithoutStorage(true)->getStatus());
+	}
+
+	public function testAllowUploadsWithoutStorageRefused(): void {
+		$this->uploadsWithoutStorageService->method('allowUploads')
+			->willThrowException(new UploadsWithoutStorageException(UploadsWithoutStorageException::REASON_STORAGE));
+
+		$response = $this->controller->setUploadsWithoutStorage(true);
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		self::assertSame(['error' => 'storage'], $response->getData());
+	}
+
+	public function testStopUploadsWithoutStorage(): void {
+		$this->uploadsWithoutStorageService->expects(self::never())->method('allowUploads');
+		$this->roomService->expects(self::once())->method('setGuestsFolder')->with($this->room, '', 0);
+
+		self::assertSame(Http::STATUS_OK, $this->controller->setUploadsWithoutStorage(false)->getStatus());
+	}
+
+	public function testGetUploadsWithoutStorage(): void {
+		$this->uploadsWithoutStorageService->method('getGuestsFolderLocation')
+			->with($this->room, $this->participant)
+			->willReturn(['owner' => 'Alice', 'path' => null]);
+
+		$response = $this->controller->getUploadsWithoutStorage();
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame(['owner' => 'Alice', 'path' => null], $response->getData());
+	}
+
+	public function testGetUploadsWithoutStorageWhenOff(): void {
+		$this->uploadsWithoutStorageService->method('getGuestsFolderLocation')
+			->willThrowException(new NotFoundException());
+
+		self::assertSame(Http::STATUS_NOT_FOUND, $this->controller->getUploadsWithoutStorage()->getStatus());
 	}
 }

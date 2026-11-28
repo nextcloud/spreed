@@ -313,6 +313,8 @@ export type components = {
                     "default-allow-edit": boolean;
                     /** @description Whether images are uploaded in original quality by default */
                     "default-original-quality": boolean;
+                    /** @description Whether moderators can let participants without storage upload files */
+                    "guests-upload": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */

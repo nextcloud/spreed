@@ -595,14 +595,16 @@ class ChatManager {
 	 * @return bool Whether the message is a conversation folder attachment
 	 */
 	private function moveConversationFolderAttachment(IComment $comment, string $token, array $messageData): bool {
+		$ownerId = $messageData['parameters']['owner']
+			?? ($comment->getActorType() === Attendee::ACTOR_USERS ? $comment->getActorId() : '');
 		if (!isset($messageData['message'], $messageData['parameters']['fileId'])
 			|| $messageData['message'] !== 'file_shared'
-			|| $comment->getActorType() !== Attendee::ACTOR_USERS) {
+			|| $ownerId === '') {
 			return false;
 		}
 
 		try {
-			$this->conversationFolderService->moveToDeletedFolder($comment->getActorId(), $token, (int)$messageData['parameters']['fileId']);
+			$this->conversationFolderService->moveToDeletedFolder($ownerId, $token, (int)$messageData['parameters']['fileId']);
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to move attachment of deleted message', ['exception' => $e]);
 		}

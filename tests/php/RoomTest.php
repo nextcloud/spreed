@@ -52,6 +52,8 @@ class RoomTest extends TestCase {
 			'',
 			0,
 			0,
+			0,
+			'',
 		);
 	}
 

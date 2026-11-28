@@ -237,6 +237,9 @@ export type setConversationListableParams = Required<operations['room-set-listab
 export type setConversationListableResponse = ApiResponse<operations['room-set-listable']['responses'][200]['content']['application/json']>
 export type setConversationMentionsPermissionsParams = Required<operations['room-set-mention-permissions']>['requestBody']['content']['application/json']
 export type setConversationMentionsPermissionsResponse = ApiResponse<operations['room-set-mention-permissions']['responses'][200]['content']['application/json']>
+export type setConversationUploadsWithoutStorageParams = Required<operations['room-set-uploads-without-storage']>['requestBody']['content']['application/json']
+export type setConversationUploadsWithoutStorageResponse = ApiResponse<operations['room-set-uploads-without-storage']['responses'][200]['content']['application/json']>
+export type getConversationUploadsWithoutStorageResponse = ApiResponse<operations['room-get-uploads-without-storage']['responses'][200]['content']['application/json']>
 export type setConversationPermissionsParams = Required<operations['room-set-permissions']>['requestBody']['content']['application/json']
 export type setConversationPermissionsResponse = ApiResponse<operations['room-set-permissions']['responses'][200]['content']['application/json']>
 export type setConversationMessageExpirationParams = Required<operations['room-set-message-expiration']>['requestBody']['content']['application/json']
@@ -754,6 +757,7 @@ export type UploadFile = {
 	}
 	sharePath?: string
 	status?: string
+	uploadProgress?: number
 	talkMetaData?: string
 	temporaryMessage: ChatMessage
 	totalSize?: number

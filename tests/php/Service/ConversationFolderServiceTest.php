@@ -42,6 +42,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->filenameValidator = $this->createMock(IFilenameValidator::class);
+		$this->filenameValidator->method('sanitizeFilename')->willReturnArgument(0);
 		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->service = new ConversationFolderService(

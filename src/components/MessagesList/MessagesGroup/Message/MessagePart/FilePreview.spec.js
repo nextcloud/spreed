@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl, getBaseUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
@@ -19,6 +20,10 @@ import router from '../../../../../__mocks__/router.js'
 import { SHARED_ITEM } from '../../../../../constants.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+
+vi.mock('@nextcloud/auth', () => ({
+	getCurrentUser: vi.fn(),
+}))
 
 vi.mock('vuex', () => ({
 	createStore: vi.fn(),
@@ -179,6 +184,7 @@ describe('FilePreview.vue', () => {
 					},
 				}
 
+				getCurrentUser.mockReturnValue({ uid: 'user' })
 				getUploader.mockImplementation(() => ({
 					queue: [{
 						_source: sharePath,
@@ -202,6 +208,45 @@ describe('FilePreview.vue', () => {
 				const progressEl = wrapper.findComponent(NcProgressBar)
 				expect(progressEl.exists()).toBe(true)
 				expect(progressEl.props('value')).toBe(85)
+			})
+
+			test('renders progress bar while uploading without storage', async () => {
+				uploadStore.uploads[1000] = {
+					files: {
+						'index-1': {
+							file: {
+								id: 'temp-123',
+								index: 'index-1',
+								uploadId: 1000,
+								localUrl: 'blob:XYZ',
+							},
+							sharePath: 'temporary-name',
+							status: 'uploading',
+							uploadProgress: 40,
+							temporaryMessage: {},
+							totalSize: 0,
+						},
+					},
+				}
+
+				getCurrentUser.mockReturnValue(null)
+				actorStore.userId = null
+				const consoleError = vi.spyOn(console, 'error')
+
+				props.file.id = 'temp-123'
+				props.file.index = 'index-1'
+				props.file.uploadId = 1000
+				props.file.localUrl = 'blob:XYZ'
+
+				const wrapper = mountFilePreview()
+
+				await wrapper.find('img').trigger('load')
+
+				expect(getUploader).not.toHaveBeenCalled()
+				expect(consoleError).not.toHaveBeenCalled()
+				const progressEl = wrapper.findComponent(NcProgressBar)
+				expect(progressEl.exists()).toBe(true)
+				expect(progressEl.props('value')).toBe(40)
 			})
 		})
 
