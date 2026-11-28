@@ -76,6 +76,11 @@ describe('FilePreview.vue', () => {
 		return mount(FilePreview, {
 			global: {
 				plugins: [router],
+				stubs: {
+					// Avoid teleporting the real modal (focus-trap, transitions)
+					// into jsdom; slot content still renders inline
+					NcModal: { template: '<div><slot /></div>' },
+				},
 				mocks: {
 					// Minimal store: FilePreview only reads the conversation to
 					// decide whether it is classified (blurhash-only previews)
@@ -516,6 +521,7 @@ describe('FilePreview.vue', () => {
 		beforeEach(() => {
 			props.isUploadEditor = true
 		})
+
 		test('emits event when clicking remove button when inside upload editor', async () => {
 			const wrapper = mountFilePreview()
 
@@ -524,6 +530,62 @@ describe('FilePreview.vue', () => {
 			expect(wrapper.element.tagName).toBe('DIV')
 			await wrapper.findComponent(NcButton).trigger('click')
 			expect(wrapper.emitted().removeFile).toStrictEqual([['123']])
+		})
+
+		test('opens a modal preview instead of removing the file', async () => {
+			props.file.localUrl = 'blob:XYZ'
+
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('load')
+			await wrapper.trigger('click')
+
+			expect(wrapper.emitted().removeFile).toBeUndefined()
+			const preview = wrapper.find('.local-file-preview__media')
+			expect(preview.exists()).toBe(true)
+			expect(preview.attributes('src')).toBe('blob:XYZ')
+		})
+
+		test('creates an object URL for files without a stored preview URL', async () => {
+			const stagedFile = new File(['content'], 'test.txt', { type: 'text/plain' })
+			props.file = {
+				...props.file,
+				file: stagedFile,
+				mimetype: 'text/plain',
+				'preview-available': 'no',
+			}
+			window.URL.createObjectURL.mockReturnValue('blob:TXT')
+
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('load')
+			await wrapper.trigger('click')
+
+			expect(wrapper.emitted().removeFile).toBeUndefined()
+			expect(window.URL.createObjectURL).toHaveBeenCalledWith(stagedFile)
+			const frame = wrapper.find('iframe.local-file-preview__frame')
+			expect(frame.exists()).toBe(true)
+			expect(frame.attributes('src')).toBe('blob:TXT')
+		})
+
+		test('shows a fallback when the file type cannot be previewed', async () => {
+			const stagedFile = new File(['content'], 'test.zip', { type: 'application/zip' })
+			props.file = {
+				...props.file,
+				name: 'test.zip',
+				file: stagedFile,
+				mimetype: 'application/zip',
+				'preview-available': 'no',
+			}
+			window.URL.createObjectURL.mockReturnValue('blob:ZIP')
+
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('load')
+			await wrapper.trigger('click')
+
+			expect(wrapper.emitted().removeFile).toBeUndefined()
+			expect(wrapper.find('.local-file-preview__fallback').exists()).toBe(true)
 		})
 	})
 })
