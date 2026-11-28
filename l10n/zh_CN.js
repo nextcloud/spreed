@@ -1720,6 +1720,7 @@ OC.L10N.register(
     "Show list of participants" : "显示参与者列表",
     "Assistance requested in {roomName}" : "{roomName}请求协助",
     "The message was sent to \"{roomName}\"" : "消息已发送至分组讨论室“{roomName}”",
+    "Actions for {roomName}" : "{roomName} 的操作",
     "Dismiss request for assistance" : "撤销协助请求",
     "Send message to room" : "发送消息至聊天室",
     "Back to your room" : "回到您的聊天室",
